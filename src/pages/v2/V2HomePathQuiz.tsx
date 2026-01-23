@@ -1,0 +1,569 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
+import V2Layout from "@/components/v2/V2Layout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, ArrowRight, Check, MessageCircle, Phone, BookOpen } from "lucide-react";
+
+interface QuizAnswer {
+  questionIndex: number;
+  answerIndex: number;
+}
+
+interface ContactInfo {
+  name: string;
+  email: string;
+  phone: string;
+}
+
+type ResultPath = "buying" | "selling" | "cash" | "exploring";
+
+const V2HomePathQuiz = () => {
+  const { t } = useLanguage();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [answers, setAnswers] = useState<QuizAnswer[]>([]);
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
+    name: "",
+    email: "",
+    phone: "",
+  });
+  const [isComplete, setIsComplete] = useState(false);
+
+  const questions = [
+    {
+      id: "intent",
+      question: t(
+        "What brings you here today?",
+        "¿Qué le trae por aquí hoy?"
+      ),
+      options: [
+        { en: "Buying a home", es: "Comprar una casa" },
+        { en: "Selling a home", es: "Vender una casa" },
+        { en: "Exploring cash offer options", es: "Explorar opciones de oferta en efectivo" },
+        { en: "Not sure yet — need guidance", es: "Aún no estoy seguro — necesito orientación" },
+      ],
+    },
+    {
+      id: "timeline",
+      question: t(
+        "When are you hoping to make a move?",
+        "¿Cuándo espera tomar una decisión?"
+      ),
+      options: [
+        { en: "As soon as possible", es: "Lo antes posible" },
+        { en: "3–6 months", es: "3–6 meses" },
+        { en: "6–12 months", es: "6–12 meses" },
+        { en: "Just exploring", es: "Solo explorando" },
+      ],
+    },
+    {
+      id: "experience",
+      question: t(
+        "Have you been through this process before?",
+        "¿Ha pasado por este proceso antes?"
+      ),
+      options: [
+        { en: "Yes", es: "Sí" },
+        { en: "No, first time", es: "No, es la primera vez" },
+        { en: "Started before but didn't finish", es: "Empecé antes pero no terminé" },
+        { en: "Not sure how it works", es: "No estoy seguro de cómo funciona" },
+      ],
+    },
+    {
+      id: "friction",
+      question: t(
+        "What feels most overwhelming right now?",
+        "¿Qué le resulta más abrumador en este momento?"
+      ),
+      options: [
+        { en: "Understanding my options", es: "Entender mis opciones" },
+        { en: "Financing or affordability", es: "Financiamiento o asequibilidad" },
+        { en: "Timing or pressure", es: "Tiempo o presión" },
+        { en: "Repairs or inspections", es: "Reparaciones o inspecciones" },
+        { en: "I'm not sure — I need clarity", es: "No estoy seguro — necesito claridad" },
+      ],
+    },
+    {
+      id: "contact",
+      question: t(
+        "How would you like to receive your next steps?",
+        "¿Cómo le gustaría recibir sus próximos pasos?"
+      ),
+      options: [
+        { en: "Email", es: "Correo electrónico" },
+        { en: "Chat with Selena", es: "Conversar con Selena" },
+        { en: "Talk with Kasandra", es: "Hablar con Kasandra" },
+      ],
+    },
+  ];
+
+  const totalSteps = questions.length + 1; // questions + contact form
+  const isContactStep = currentStep === questions.length;
+  const requiresPhone = answers.find(a => a.questionIndex === 4)?.answerIndex === 2;
+
+  // Determine result path based on first question answer
+  const getResultPath = (): ResultPath => {
+    const intentAnswer = answers.find(a => a.questionIndex === 0)?.answerIndex;
+    switch (intentAnswer) {
+      case 0: return "buying";
+      case 1: return "selling";
+      case 2: return "cash";
+      default: return "exploring";
+    }
+  };
+
+  const resultContent: Record<ResultPath, {
+    headline: { en: string; es: string };
+    validation: { en: string; es: string };
+    nextStep: { en: string; es: string };
+    helpfulSteps: { en: string[]; es: string[] };
+  }> = {
+    buying: {
+      headline: {
+        en: "You're Ready to Start Your Home Search",
+        es: "Está Listo Para Comenzar Su Búsqueda de Casa"
+      },
+      validation: {
+        en: "Looking to buy a home is a big step — and it's completely normal to have questions. Whether this is your first time or you've done it before, having clarity on your options makes all the difference.",
+        es: "Buscar comprar una casa es un gran paso — y es completamente normal tener preguntas. Ya sea su primera vez o lo haya hecho antes, tener claridad sobre sus opciones hace toda la diferencia."
+      },
+      nextStep: {
+        en: "Based on what you shared, here are the most helpful next steps:",
+        es: "Según lo que compartió, estos son los próximos pasos más útiles:"
+      },
+      helpfulSteps: {
+        en: [
+          "Take the Buyer Readiness Check to see where you stand",
+          "Review financing basics in our guides",
+          "Connect with Selena for personalized guidance"
+        ],
+        es: [
+          "Toma la Evaluación de Preparación del Comprador para ver dónde estás",
+          "Revisa los conceptos básicos de financiamiento en nuestras guías",
+          "Conéctate con Selena para orientación personalizada"
+        ]
+      }
+    },
+    selling: {
+      headline: {
+        en: "You're Thinking About Selling — That's a Smart Move",
+        es: "Está Pensando en Vender — Es una Decisión Inteligente"
+      },
+      validation: {
+        en: "Selling a home involves more than listing it online. Understanding your home's value, timing, and options can help you feel confident and in control of the process.",
+        es: "Vender una casa implica más que publicarla en línea. Entender el valor de su casa, el momento adecuado y sus opciones le ayudará a sentirse seguro y en control del proceso."
+      },
+      nextStep: {
+        en: "Based on what you shared, here are the most helpful next steps:",
+        es: "Según lo que compartió, estos son los próximos pasos más útiles:"
+      },
+      helpfulSteps: {
+        en: [
+          "Learn what factors affect your home's value",
+          "Understand the selling process step-by-step",
+          "Connect with Kasandra for a personalized consultation"
+        ],
+        es: [
+          "Aprende qué factores afectan el valor de tu casa",
+          "Entiende el proceso de venta paso a paso",
+          "Conéctate con Kasandra para una consulta personalizada"
+        ]
+      }
+    },
+    cash: {
+      headline: {
+        en: "Cash Offers Can Offer Speed and Simplicity",
+        es: "Las Ofertas en Efectivo Pueden Ofrecer Rapidez y Simplicidad"
+      },
+      validation: {
+        en: "If you're considering a cash offer, you're likely looking for a faster, simpler path. That's a valid option worth exploring — especially if repairs, timing, or traditional listings feel overwhelming.",
+        es: "Si está considerando una oferta en efectivo, probablemente busca un camino más rápido y sencillo. Es una opción válida que vale la pena explorar — especialmente si las reparaciones, el tiempo o las ventas tradicionales le resultan abrumadores."
+      },
+      nextStep: {
+        en: "Based on what you shared, here are the most helpful next steps:",
+        es: "Según lo que compartió, estos son los próximos pasos más útiles:"
+      },
+      helpfulSteps: {
+        en: [
+          "Learn how cash offers work in Arizona",
+          "Compare cash vs. traditional listing options",
+          "Talk with Kasandra about what fits your situation"
+        ],
+        es: [
+          "Aprende cómo funcionan las ofertas en efectivo en Arizona",
+          "Compara las opciones de efectivo vs. venta tradicional",
+          "Habla con Kasandra sobre lo que mejor se adapta a tu situación"
+        ]
+      }
+    },
+    exploring: {
+      headline: {
+        en: "It's Okay to Not Know Yet — You're in the Right Place",
+        es: "Está Bien No Saber Aún — Está en el Lugar Correcto"
+      },
+      validation: {
+        en: "Many people start their real estate journey with more questions than answers. That's exactly where you should be. Taking time to learn is never wasted.",
+        es: "Muchas personas comienzan su viaje inmobiliario con más preguntas que respuestas. Eso es exactamente donde debería estar. Tomarse el tiempo para aprender nunca es tiempo perdido."
+      },
+      nextStep: {
+        en: "Based on what you shared, here are the most helpful next steps:",
+        es: "Según lo que compartió, estos son los próximos pasos más útiles:"
+      },
+      helpfulSteps: {
+        en: [
+          "Browse our guides at your own pace",
+          "Take the quick Buyer Readiness Check",
+          "Chat with Selena for personalized direction"
+        ],
+        es: [
+          "Explora nuestras guías a tu propio ritmo",
+          "Toma la Evaluación Rápida de Preparación del Comprador",
+          "Chatea con Selena para orientación personalizada"
+        ]
+      }
+    }
+  };
+
+  const handleAnswer = (answerIndex: number) => {
+    const newAnswers = answers.filter(a => a.questionIndex !== currentStep);
+    newAnswers.push({ questionIndex: currentStep, answerIndex });
+    setAnswers(newAnswers);
+    
+    // Auto-advance after a brief delay
+    setTimeout(() => {
+      if (currentStep < questions.length) {
+        setCurrentStep(currentStep + 1);
+      }
+    }, 300);
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleSubmit = () => {
+    // Here you would send the data to your backend/CRM
+    console.log("Quiz completed:", { answers, contactInfo });
+    setIsComplete(true);
+  };
+
+  const isContactValid = () => {
+    const hasName = contactInfo.name.trim().length > 0;
+    const hasEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
+    const hasPhone = !requiresPhone || contactInfo.phone.trim().length >= 10;
+    return hasName && hasEmail && hasPhone;
+  };
+
+  const getSelectedAnswer = (questionIndex: number) => {
+    return answers.find(a => a.questionIndex === questionIndex)?.answerIndex;
+  };
+
+  // Completion screen with path-specific results
+  if (isComplete) {
+    const path = getResultPath();
+    const content = resultContent[path];
+
+    return (
+      <V2Layout>
+        <section className="min-h-[80vh] flex items-center justify-center px-4 py-16">
+          <div className="max-w-2xl mx-auto space-y-8">
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto rounded-full bg-cc-gold/20 flex items-center justify-center mb-6">
+                <Check className="w-10 h-10 text-cc-gold" />
+              </div>
+              
+              {/* Path-specific headline and validation */}
+              <h1 className="text-2xl md:text-3xl font-serif font-semibold text-cc-navy mb-4">
+                {t(content.headline.en, content.headline.es)}
+              </h1>
+              <p className="text-cc-slate text-lg leading-relaxed mb-6">
+                {t(content.validation.en, content.validation.es)}
+              </p>
+            </div>
+
+            {/* Most Helpful Next Steps */}
+            <div className="bg-cc-sand rounded-xl p-6">
+              <p className="text-cc-navy font-semibold mb-4">
+                {t(content.nextStep.en, content.nextStep.es)}
+              </p>
+              <ul className="space-y-3">
+                {content.helpfulSteps.en.map((step, index) => (
+                  <li key={index} className="flex items-start gap-3 text-cc-charcoal">
+                    <Check className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span>{t(step, content.helpfulSteps.es[index])}</span>
+                  </li>
+                ))}
+              </ul>
+              
+              {/* Personalization note */}
+              <p className="mt-6 text-sm text-cc-slate border-t border-cc-sand-dark pt-4">
+                {t(
+                  "Every recommendation is reviewed by Kasandra Prieto, licensed REALTOR®. You'll never feel pushed — just supported.",
+                  "Cada recomendación es revisada por Kasandra Prieto, REALTOR® licenciada. Nunca te sentirás presionado — solo apoyado."
+                )}
+              </p>
+            </div>
+
+            {/* Choice-based CTAs */}
+            <div className="space-y-4">
+              <p className="text-center text-sm text-cc-slate">
+                {t("Choose how you'd like to continue:", "Elige cómo te gustaría continuar:")}
+              </p>
+              
+              {/* Option A: Chat with Selena */}
+              <button
+                onClick={() => window.location.href = "/v2"}
+                className="w-full p-5 text-left rounded-xl border-2 border-cc-gold bg-cc-gold/5 hover:bg-cc-gold/10 transition-all group"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-cc-gold rounded-full flex items-center justify-center flex-shrink-0">
+                    <MessageCircle className="w-5 h-5 text-cc-navy" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark">
+                      {t("Chat with Selena", "Conversar con Selena")}
+                    </h4>
+                    <p className="text-sm text-cc-slate mt-1">
+                      {t(
+                        "Get personalized answers and direction — available 24/7 in English or Spanish.",
+                        "Obtén respuestas y orientación personalizadas — disponible 24/7 en inglés o español."
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              <div className="grid sm:grid-cols-2 gap-3">
+                {/* Option B: Talk with Kasandra */}
+                <Link
+                  to="/v2/book"
+                  className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group block"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
+                      <Phone className="w-5 h-5 text-cc-navy" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
+                        {t("Talk with Kasandra", "Hablar con Kasandra")}
+                      </h4>
+                      <p className="text-xs text-cc-slate mt-1">
+                        {t("Schedule a calm, no-pressure call.", "Agenda una llamada tranquila, sin presión.")}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+
+                {/* Option C: Continue exploring */}
+                <Link
+                  to="/v2/guides"
+                  className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group block"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="w-5 h-5 text-cc-navy" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
+                        {t("Continue Exploring", "Continuar Explorando")}
+                      </h4>
+                      <p className="text-xs text-cc-slate mt-1">
+                        {t("Browse guides at your own pace.", "Explora guías a tu propio ritmo.")}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            <p className="text-center text-sm text-cc-slate pt-4">
+              {t(
+                "You're not behind — you're exactly where you need to be.",
+                "No está atrasado — está exactamente donde necesita estar."
+              )}
+            </p>
+          </div>
+        </section>
+      </V2Layout>
+    );
+  }
+
+  return (
+    <V2Layout>
+      <section className="min-h-[80vh] flex items-center justify-center px-4 py-16">
+        <div className="w-full max-w-xl mx-auto">
+          {/* Progress indicator */}
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-muted-foreground">
+                {t("Step", "Paso")} {currentStep + 1} {t("of", "de")} {totalSteps}
+              </span>
+              {currentStep > 0 && (
+                <button
+                  onClick={handleBack}
+                  className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  {t("Back", "Atrás")}
+                </button>
+              )}
+            </div>
+            <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary transition-all duration-300 ease-out rounded-full"
+                style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Quiz title - only on first step */}
+          {currentStep === 0 && (
+            <div className="text-center mb-8">
+              <h1 className="text-2xl md:text-3xl font-display font-semibold text-foreground mb-2">
+                {t(
+                  "Find Your Best Home Path",
+                  "Encuentre Su Mejor Camino"
+                )}
+              </h1>
+              <p className="text-muted-foreground">
+                {t(
+                  "Buyer, Seller, or Cash Options — Let's find what fits you.",
+                  "Comprador, Vendedor u Opciones en Efectivo — Encontremos lo que mejor le convenga."
+                )}
+              </p>
+            </div>
+          )}
+
+          {/* Question or Contact Form */}
+          {isContactStep ? (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <h2 className="text-xl md:text-2xl font-display font-semibold text-foreground mb-2">
+                  {t(
+                    "Where should we send your next steps?",
+                    "¿A dónde debemos enviar sus próximos pasos?"
+                  )}
+                </h2>
+                <p className="text-muted-foreground text-sm">
+                  {t(
+                    "No spam, no pressure — just helpful guidance.",
+                    "Sin spam, sin presión — solo orientación útil."
+                  )}
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">
+                    {t("Name", "Nombre")} *
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder={t("Your name", "Su nombre")}
+                    value={contactInfo.name}
+                    onChange={(e) => setContactInfo({ ...contactInfo, name: e.target.value })}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">
+                    {t("Email", "Correo electrónico")} *
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder={t("your@email.com", "su@correo.com")}
+                    value={contactInfo.email}
+                    onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+                    className="w-full"
+                  />
+                </div>
+
+                {requiresPhone && (
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1.5">
+                      {t("Phone", "Teléfono")} *
+                    </label>
+                    <Input
+                      type="tel"
+                      placeholder={t("(555) 123-4567", "(555) 123-4567")}
+                      value={contactInfo.phone}
+                      onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
+                      className="w-full"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t(
+                        "Required for a phone consultation with Kasandra.",
+                        "Requerido para una consulta telefónica con Kasandra."
+                      )}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <Button
+                size="lg"
+                className="w-full gap-2"
+                disabled={!isContactValid()}
+                onClick={handleSubmit}
+              >
+                {t("Get My Next Steps", "Obtener Mis Próximos Pasos")}
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+
+              <p className="text-center text-xs text-muted-foreground">
+                {t(
+                  "Your information is private and will never be shared.",
+                  "Su información es privada y nunca será compartida."
+                )}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <h2 className="text-xl md:text-2xl font-display font-semibold text-foreground text-center mb-6">
+                {questions[currentStep].question}
+              </h2>
+
+              <div className="space-y-3">
+                {questions[currentStep].options.map((option, index) => {
+                  const isSelected = getSelectedAnswer(currentStep) === index;
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => handleAnswer(index)}
+                      className={`w-full p-4 text-left rounded-xl border-2 transition-all duration-200 ${
+                        isSelected
+                          ? "border-primary bg-primary/5 text-foreground"
+                          : "border-border bg-card hover:border-primary/50 hover:bg-accent/50 text-foreground"
+                      }`}
+                    >
+                      <span className="flex items-center gap-3">
+                        <span
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                            isSelected
+                              ? "border-primary bg-primary"
+                              : "border-muted-foreground"
+                          }`}
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-primary-foreground" />}
+                        </span>
+                        <span className="text-base">
+                          {t(option.en, option.es)}
+                        </span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+    </V2Layout>
+  );
+};
+
+export default V2HomePathQuiz;

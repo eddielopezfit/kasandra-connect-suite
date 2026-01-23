@@ -1,0 +1,204 @@
+import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
+import V2Layout from "@/components/v2/V2Layout";
+import { Heart, Users, Award, HandHeart, Store } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import arizonaDiaperBankLogo from "@/assets/arizona-diaper-bank-logo.jpg";
+import rumboAlExitoLogo from "@/assets/rumbo-al-exito-logo.jpg";
+import tucsonApplianceLogo from "@/assets/tucson-appliance-logo.jpg";
+import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
+
+const V2CommunityContent = () => {
+  const { t } = useLanguage();
+
+  return (
+    <>
+      {/* Hero */}
+      <section className="bg-cc-navy pt-32 pb-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl">
+            <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+              {t("Community Leadership", "Liderazgo Comunitario")}
+            </span>
+            <h1 className="font-serif text-4xl md:text-5xl font-bold mt-2 mb-6 text-white">
+              {t("Giving Back to Tucson", "Retribuyendo a Tucson")}
+            </h1>
+            <p className="text-lg text-white/90">
+              {t(
+                "Real estate is about more than transactions—it's about building stronger communities. I'm committed to making a difference in the lives of families across Tucson.",
+                "Los bienes raíces son más que transacciones—se trata de construir comunidades más fuertes. Estoy comprometida a hacer una diferencia en la vida de las familias en todo Tucson."
+              )}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Google Reviews Section */}
+      <GoogleReviewsSection />
+
+      {/* Arizona Diaper Bank */}
+      <section className="py-16 lg:py-20 bg-cc-ivory">
+        <div className="container mx-auto px-4">
+          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-elevated border border-cc-sand-dark/30">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+              <div>
+                <div className="w-16 h-16 bg-cc-gold/10 rounded-full flex items-center justify-center mb-6">
+                  <Heart className="w-8 h-8 text-cc-gold" />
+                </div>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
+                  Arizona Diaper Bank
+                </h2>
+                <p className="text-cc-charcoal mb-6">
+                  {t(
+                    "As Vice Chair of the Governing Board and Chair of the Ambassador Program since 2021, I work to ensure families across Arizona have access to essential supplies for their children.",
+                    "Como Vicepresidenta de la Junta Directiva y Presidenta del Programa de Embajadores desde 2021, trabajo para asegurar que las familias en todo Arizona tengan acceso a suministros esenciales para sus hijos."
+                  )}
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Award className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Vice Chair, Governing Board", "Vicepresidenta, Junta Directiva")}</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Users className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Chair, Ambassador Program", "Presidenta, Programa de Embajadores")}</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <HandHeart className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Supporting families since 2021", "Apoyando familias desde 2021")}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-cc-sand rounded-xl p-8 flex items-center justify-center border border-cc-sand-dark/30">
+                <img
+                  src={arizonaDiaperBankLogo}
+                  alt={t("Arizona Diaper Bank logo", "Logotipo de Arizona Diaper Bank")}
+                  className="max-h-[120px] w-auto object-contain"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Rumbo al Éxito */}
+      <section className="py-16 lg:py-20 bg-cc-sand">
+        <div className="container mx-auto px-4">
+          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-elevated border border-cc-sand-dark/30">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+              <div className="order-2 md:order-1 bg-cc-ivory rounded-xl p-8 flex items-center justify-center border border-cc-sand-dark/30">
+                <img
+                  src={rumboAlExitoLogo}
+                  alt={t("Rumbo al Éxito Latino Business Group logo", "Logotipo de Rumbo al Éxito Latino Business Group")}
+                  className="max-h-[120px] w-auto object-contain"
+                />
+              </div>
+              <div className="order-1 md:order-2">
+                <div className="w-16 h-16 bg-cc-navy/10 rounded-full flex items-center justify-center mb-6">
+                  <Users className="w-8 h-8 text-cc-navy" />
+                </div>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
+                  Rumbo al Éxito Latino Business Group
+                </h2>
+                <p className="text-cc-charcoal mb-6">
+                  {t(
+                    "As Vice President of this organization, I help foster entrepreneurship and professional development within the Hispanic community. We believe in lifting each other up and creating pathways to success.",
+                    "Como Vicepresidenta de esta organización, ayudo a fomentar el emprendimiento y el desarrollo profesional dentro de la comunidad hispana. Creemos en elevarnos mutuamente y crear caminos hacia el éxito."
+                  )}
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Award className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Vice President", "Vicepresidenta")}</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Users className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Supporting Latino entrepreneurs", "Apoyando emprendedores latinos")}</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <HandHeart className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Professional development programs", "Programas de desarrollo profesional")}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Tucson Appliance */}
+      <section className="py-16 lg:py-20 bg-cc-ivory">
+        <div className="container mx-auto px-4">
+          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-elevated border border-cc-sand-dark/30">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+              <div>
+                <div className="w-16 h-16 bg-cc-gold/10 rounded-full flex items-center justify-center mb-6">
+                  <Store className="w-8 h-8 text-cc-gold" />
+                </div>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
+                  Tucson Appliance
+                </h2>
+                <p className="text-sm text-cc-gold font-semibold uppercase tracking-wider mb-4">
+                  {t("Hispanic Community Spokeswoman", "Portavoz de la Comunidad Hispana")}
+                </p>
+                <p className="text-cc-charcoal mb-6">
+                  {t(
+                    "As a Hispanic spokesperson for Tucson Appliance, I help bridge trust and understanding between local businesses and the Hispanic community—ensuring families feel confident when making important home decisions.",
+                    "Como portavoz hispana de Tucson Appliance, ayudo a generar confianza y claridad entre las familias hispanas y las empresas locales, apoyando decisiones informadas para el hogar."
+                  )}
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Award className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Hispanic Community Spokeswoman", "Portavoz de la comunidad hispana")}</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Users className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Trusted local brand representation", "Representación confiable de marca local")}</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <HandHeart className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Supporting informed homeownership decisions", "Apoyo a decisiones informadas para el hogar")}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-cc-sand rounded-xl p-8 flex items-center justify-center border border-cc-sand-dark/30">
+                <img
+                  src={tucsonApplianceLogo}
+                  alt={t("Tucson Appliance logo", "Logotipo de Tucson Appliance")}
+                  className="max-h-[120px] w-auto object-contain"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Community Matters */}
+      <section className="py-16 lg:py-20 bg-cc-ivory">
+        <div className="container mx-auto px-4 text-center max-w-3xl">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
+            {t("Why Community Matters", "Por Qué la Comunidad Importa")}
+          </h2>
+          <p className="text-cc-charcoal mb-8">
+            {t(
+              "When I help you buy or sell a home, I'm not just closing a transaction—I'm helping build the foundation for your family's future. That same commitment to family and community drives everything I do, both in real estate and in my volunteer work.",
+              "Cuando le ayudo a comprar o vender una casa, no solo estoy cerrando una transacción—estoy ayudando a construir la base para el futuro de su familia. Ese mismo compromiso con la familia y la comunidad impulsa todo lo que hago, tanto en bienes raíces como en mi trabajo voluntario."
+            )}
+          </p>
+          <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
+            <Link to="/v2/book">{t("Work With Me", "Trabaje Conmigo")}</Link>
+          </Button>
+        </div>
+      </section>
+    </>
+  );
+};
+
+const V2Community = () => (
+  <V2Layout>
+    <V2CommunityContent />
+  </V2Layout>
+);
+
+export default V2Community;
