@@ -61,6 +61,14 @@ export type EventType =
   | 'guide_browse_click'
   | 'priority_call_click'
   | 'report_view_click'
+  // Guide Library Analytics (Phase 1)
+  | 'guide_opened'
+  | 'guide_category_selected'
+  | 'ask_selena_clicked'
+  | 'personalized_summary_offered'
+  | 'consultation_cta_clicked'
+  | 'start_here_intent_selected'
+  | 'situation_selected'
   // UI events
   | 'ui_language_toggle';
 

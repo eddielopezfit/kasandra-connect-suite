@@ -9,3 +9,9 @@ export { RecommendedGuidesCarousel } from './RecommendedGuidesCarousel';
 export { JourneyProgressIndicator } from './JourneyProgressIndicator';
 export { SelenaAnchorPrompt } from './SelenaAnchorPrompt';
 export { GuideCardBadge } from './GuideCardBadge';
+
+// Guide Library v2 Components
+export { StartHereLane } from './StartHereLane';
+export { SituationLane } from './SituationLane';
+export { CognitiveProgressBar } from './CognitiveProgressBar';
+export { ContextualSelenaPrompt } from './ContextualSelenaPrompt';
