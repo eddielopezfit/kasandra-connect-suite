@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, Home, DollarSign, TrendingUp, MapPin, Calculator, ArrowRight, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,11 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import {
   PersonalizedHero,
   RecommendedGuidesCarousel,
-  JourneyProgressIndicator,
-  SelenaAnchorPrompt,
   GuideCardBadge,
+  StartHereLane,
+  SituationLane,
+  CognitiveProgressBar,
+  ContextualSelenaPrompt,
 } from "@/components/v2/guides";
 import {
   getGuidesRead,
@@ -18,14 +20,18 @@ import {
   setLastGuideId,
   getLastGuideId,
   getIntent,
-  getJourneyStage,
   isReturningVisitor,
   getRecommendedGuides,
   getGridBadge,
   trackJourneyAction,
+  setIntent,
   type Guide,
 } from "@/lib/guides/personalization";
 import { logEvent } from "@/lib/analytics/logEvent";
+import { useCognitiveStage } from "@/hooks/useCognitiveStage";
+import { useRecommendationEngine } from "@/hooks/useRecommendationEngine";
+import type { StartHereIntent } from "@/components/v2/guides/StartHereLane";
+import type { Situation } from "@/components/v2/guides/SituationLane";
 
 const categories = [
   { 
@@ -240,6 +246,12 @@ function GuidesContent() {
   const [guidesRead, setGuidesReadState] = useState<string[]>([]);
   const [lastGuideId, setLastGuideIdState] = useState<string | null>(null);
   
+  // Cognitive stage hook
+  const { stage, stageId, shouldShowProgressBar, guidesReadCount, isFirstVisit, intent } = useCognitiveStage();
+  
+  // Recommendation engine
+  const { topRecommendations, hasEngaged } = useRecommendationEngine(guides);
+  
   useEffect(() => {
     // Initialize personalization state
     setGuidesReadState(getGuidesRead());
@@ -248,19 +260,18 @@ function GuidesContent() {
     // Log page view
     logEvent('guides_page_view', { returning: isReturningVisitor() });
     
-    // Show idle prompt after 10 seconds if user hasn't clicked a guide
+    // Show idle prompt after 15 seconds if user hasn't clicked a guide
     const timer = setTimeout(() => {
       if (getGuidesRead().length === 0) {
         setShowIdlePrompt(true);
       }
-    }, 10000);
+    }, 15000);
     
     return () => clearTimeout(timer);
   }, []);
   
   const isReturning = guidesRead.length > 0 || lastGuideId !== null;
-  const intent = getIntent();
-  const journeyStage = getJourneyStage();
+  const currentIntent = getIntent();
   const recommendedItems = useMemo(() => getRecommendedGuides(guides), [guidesRead, lastGuideId]);
 
   const filteredGuides = activeCategory === "all" 
@@ -273,90 +284,163 @@ function GuidesContent() {
   };
   
   // Handlers
-  const handleStartSelena = () => {
-    logEvent('hero_cta_click', { type: 'start_selena' });
+  const handleStartSelena = useCallback(() => {
+    logEvent('ask_selena_clicked', { source: 'hero', stage: stageId });
     openChat();
-  };
+  }, [openChat, stageId]);
   
-  const handleContinue = () => {
+  const handleContinue = useCallback(() => {
     logEvent('hero_cta_click', { type: 'continue' });
     if (lastGuideId) {
       navigate(`/v2/guides/${lastGuideId}`);
     } else {
       document.getElementById('guides-section')?.scrollIntoView({ behavior: 'smooth' });
     }
-  };
+  }, [lastGuideId, navigate]);
   
-  const handleBrowse = () => {
+  const handleBrowse = useCallback(() => {
     logEvent('hero_cta_click', { type: 'browse' });
     document.getElementById('guides-section')?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, []);
   
-  const handleGuideClick = (guideId: string) => {
+  const handleGuideClick = useCallback((guideId: string) => {
     setLastGuideId(guideId);
     markGuideRead(guideId);
     setShowIdlePrompt(false);
-  };
+    logEvent('guide_opened', { guideId, source: 'grid' });
+  }, []);
   
-  const handleRecommendedGuideClick = (guideId: string) => {
+  const handleRecommendedGuideClick = useCallback((guideId: string) => {
     const item = recommendedItems.find(r => r.guide.id === guideId);
-    logEvent('recommended_guide_click', { guideId, badgeType: item?.badgeType });
+    logEvent('guide_opened', { guideId, source: 'recommended', badgeType: item?.badgeType });
     handleGuideClick(guideId);
-  };
+  }, [recommendedItems, handleGuideClick]);
   
-  const handleBookConsultation = () => {
-    logEvent('hero_cta_click', { type: 'book_consultation' });
+  const handleBookConsultation = useCallback(() => {
+    logEvent('consultation_cta_clicked', { stage: stageId, source: 'progress_bar' });
     trackJourneyAction('book');
     navigate('/v2/book');
-  };
+  }, [navigate, stageId]);
   
-  const handleAskSelena = (prefillMessage?: string) => {
-    logEvent('selena_prompt_click', { variant: 'floating', prefill: !!prefillMessage });
+  const handleAskSelena = useCallback((prefillMessage?: string) => {
+    logEvent('ask_selena_clicked', { 
+      source: 'prompt', 
+      stage: stageId, 
+      hasPrefill: !!prefillMessage 
+    });
     openChat();
     if (prefillMessage) {
       setTimeout(() => sendMessage(prefillMessage), 500);
     }
-  };
+  }, [openChat, sendMessage, stageId]);
+  
+  const handleCategoryChange = useCallback((categoryId: string) => {
+    setActiveCategory(categoryId);
+    logEvent('guide_category_selected', { category: categoryId });
+  }, []);
+  
+  const handleStartHereIntent = useCallback((intentType: StartHereIntent) => {
+    logEvent('start_here_intent_selected', { intent: intentType });
+    // Store intent for personalization
+    setIntent(intentType === 'explore' ? 'explore' : intentType);
+    
+    // Navigate to appropriate category or open Selena
+    switch (intentType) {
+      case 'buy':
+        setActiveCategory('buying');
+        break;
+      case 'sell':
+        setActiveCategory('selling');
+        break;
+      case 'cash':
+        setActiveCategory('valuation');
+        break;
+      case 'explore':
+        openChat();
+        sendMessage(t(
+          "I'm just exploring my options. Can you help me understand what's possible?",
+          "Solo estoy explorando mis opciones. ¿Puedes ayudarme a entender qué es posible?"
+        ));
+        return;
+    }
+    document.getElementById('guides-section')?.scrollIntoView({ behavior: 'smooth' });
+  }, [openChat, sendMessage, t]);
+  
+  const handleSituationClick = useCallback((situation: Situation) => {
+    logEvent('situation_selected', { situation });
+  }, []);
+  
+  const handleProgressBarCta = useCallback(() => {
+    if (stage.ctaAction === 'book') {
+      handleBookConsultation();
+    } else if (stage.ctaAction === 'continue' && lastGuideId) {
+      navigate(`/v2/guides/${lastGuideId}`);
+    } else {
+      document.getElementById('guides-section')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [stage.ctaAction, handleBookConsultation, lastGuideId, navigate]);
+  
+  const handleRequestSummary = useCallback(() => {
+    logEvent('personalized_summary_offered', { 
+      guidesReadCount,
+      stage: stageId 
+    });
+  }, [guidesReadCount, stageId]);
   
   // Log journey checkpoint when stage changes
   useEffect(() => {
-    if (journeyStage >= 2) {
-      logEvent('journey_checkpoint_shown', { stage: journeyStage });
+    if (shouldShowProgressBar) {
+      logEvent('journey_checkpoint_shown', { stage: stageId, level: stage.level });
     }
-  }, [journeyStage]);
+  }, [shouldShowProgressBar, stageId, stage.level]);
 
   return (
     <>
       {/* Layer 1: Personalized Hero */}
       <PersonalizedHero
         isReturning={isReturning}
-        intent={intent}
-        journeyStage={journeyStage}
+        intent={currentIntent}
+        journeyStage={stage.level as 1 | 2 | 3 | 4 | 5}
         onStartSelena={handleStartSelena}
         onContinue={handleContinue}
         onBrowse={handleBrowse}
       />
       
-      {/* Layer 2: Recommended For You Carousel */}
-      {recommendedItems.length > 0 && (
+      {/* Layer 2: Start Here Lane - Only for first-time visitors without intent */}
+      {isFirstVisit && !currentIntent && (
+        <StartHereLane onIntentSelect={handleStartHereIntent} />
+      )}
+      
+      {/* Layer 3: Situation Lane - For new or exploring visitors */}
+      {(isFirstVisit || currentIntent === 'explore') && (
+        <SituationLane onSituationClick={handleSituationClick} />
+      )}
+      
+      {/* Layer 4: Recommended For You Carousel */}
+      {recommendedItems.length > 0 && hasEngaged && (
         <RecommendedGuidesCarousel
           items={recommendedItems}
           onGuideClick={handleRecommendedGuideClick}
         />
       )}
       
-      {/* Layer 3: Journey Progress Indicator */}
-      <JourneyProgressIndicator
-        stage={journeyStage}
-        onBookConsultation={handleBookConsultation}
+      {/* Layer 5: Cognitive Progress Bar - Hidden for first visit */}
+      <CognitiveProgressBar
+        stage={stage}
+        isVisible={shouldShowProgressBar}
+        onCtaClick={handleProgressBarCta}
+        onAskSelena={() => handleAskSelena()}
       />
       
-      {/* Layer 4: Selena Anchor Prompt (floating) */}
-      <section className="bg-cc-ivory py-6">
+      {/* Layer 6: Contextual Selena Prompt */}
+      <section className="bg-cc-ivory py-8">
         <div className="container mx-auto px-4">
-          <SelenaAnchorPrompt
-            variant="floating"
+          <ContextualSelenaPrompt
+            stageId={stageId}
+            guidesReadCount={guidesReadCount}
             onAskSelena={handleAskSelena}
+            onRequestSummary={handleRequestSummary}
+            variant="floating"
           />
         </div>
       </section>
@@ -370,7 +454,7 @@ function GuidesContent() {
               return (
                 <button
                   key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
+                  onClick={() => handleCategoryChange(category.id)}
                   className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
                     activeCategory === category.id
                       ? "bg-cc-navy text-white shadow-md"
@@ -440,12 +524,15 @@ function GuidesContent() {
             })}
           </div>
           
-          {/* Idle Selena Prompt - shows after browsing */}
+          {/* Idle Selena Prompt - shows after browsing with no clicks */}
           {showIdlePrompt && (
-            <div className="mt-12 max-w-2xl mx-auto animate-fade-up">
-              <SelenaAnchorPrompt
-                variant="grid_idle"
+            <div className="mt-12 max-w-2xl mx-auto animate-fade-in">
+              <ContextualSelenaPrompt
+                stageId={stageId}
+                guidesReadCount={guidesReadCount}
                 onAskSelena={handleAskSelena}
+                onRequestSummary={handleRequestSummary}
+                variant="inline"
               />
             </div>
           )}
@@ -460,12 +547,15 @@ function GuidesContent() {
           </h2>
           <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
             {t(
-              "If you'd like to talk through your situation, you're welcome to book a consultation.",
-              "Si deseas hablar sobre tu situación, con gusto puedes agendar una consulta."
+              "If you'd like to talk through your situation, you're welcome to book a consultation. Kasandra will personally reach out.",
+              "Si deseas hablar sobre tu situación, con gusto puedes agendar una consulta. Kasandra se comunicará personalmente."
             )}
           </p>
           <Button 
-            onClick={handleBookConsultation}
+            onClick={() => {
+              logEvent('consultation_cta_clicked', { source: 'footer', stage: stageId });
+              handleBookConsultation();
+            }}
             size="lg" 
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold max-w-full"
           >
