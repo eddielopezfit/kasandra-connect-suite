@@ -44,10 +44,13 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Normalize and sanitize email
+    const normalizedEmail = payload.email.trim().toLowerCase();
+
     // Sanitize inputs - trim and limit length
     const sanitizedPayload = {
       name: payload.name.trim().slice(0, 100),
-      email: payload.email.trim().toLowerCase().slice(0, 255),
+      email: normalizedEmail.slice(0, 255),
       situation: payload.situation?.trim().slice(0, 50) || null,
       condition: payload.condition?.trim().slice(0, 50) || null,
       timeline: payload.timeline?.trim().slice(0, 50) || null,
@@ -67,33 +70,84 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Save to Supabase
-    const { data: leadData, error: dbError } = await supabase
+    // Check for existing lead by email (dedupe logic)
+    const { data: existing } = await supabase
       .from('seller_leads')
-      .insert(sanitizedPayload)
-      .select()
-      .single();
+      .select('id, name, situation, condition, timeline')
+      .eq('email', normalizedEmail)
+      .limit(1)
+      .maybeSingle();
 
-    if (dbError) {
-      console.error("Database error:", dbError);
-      return new Response(
-        JSON.stringify({ error: "Failed to save lead" }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    let leadData;
+    let isNew = true;
+
+    if (existing) {
+      // Update existing record - merge new data (preserve non-null existing values)
+      isNew = false;
+      console.log("Updating existing seller lead:", existing.id);
+      
+      const { data, error: updateError } = await supabase
+        .from('seller_leads')
+        .update({
+          name: sanitizedPayload.name,
+          situation: sanitizedPayload.situation || existing.situation,
+          condition: sanitizedPayload.condition || existing.condition,
+          timeline: sanitizedPayload.timeline || existing.timeline,
+          estimated_value: sanitizedPayload.estimated_value,
+          calculated_cash_offer: sanitizedPayload.calculated_cash_offer,
+          calculated_listing_net: sanitizedPayload.calculated_listing_net,
+        })
+        .eq('id', existing.id)
+        .select()
+        .single();
+
+      if (updateError) {
+        console.error("Database update error:", updateError);
+        return new Response(
+          JSON.stringify({ error: "Failed to update lead" }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      leadData = data;
+    } else {
+      // Insert new record
+      const { data, error: insertError } = await supabase
+        .from('seller_leads')
+        .insert(sanitizedPayload)
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error("Database insert error:", insertError);
+        return new Response(
+          JSON.stringify({ error: "Failed to save lead" }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      leadData = data;
     }
 
-    console.log("Lead saved to database:", leadData.id);
+    console.log("Lead saved to database:", { id: leadData.id, isNew });
 
     // POST to GoHighLevel webhook
     const ghlWebhookUrl = Deno.env.get('GHL_WEBHOOK_URL');
+    let ghlSynced = false;
     
     if (ghlWebhookUrl) {
       try {
+        // Parse name into first/last
+        const nameParts = sanitizedPayload.name.split(' ');
+        const firstName = nameParts[0] || sanitizedPayload.name;
+        const lastName = nameParts.slice(1).join(' ') || '';
+
         const ghlPayload = {
-          name: sanitizedPayload.name,
           email: sanitizedPayload.email,
-          tags: ["Seller Funnel"],
+          name: sanitizedPayload.name,
+          firstName,
+          lastName,
+          tags: ["Seller Funnel", "seller_funnel"],
           customField: {
+            lead_id: leadData.id,
             situation: sanitizedPayload.situation,
             condition: sanitizedPayload.condition,
             timeline: sanitizedPayload.timeline,
@@ -116,13 +170,38 @@ Deno.serve(async (req) => {
 
         if (!ghlResponse.ok) {
           console.error("GHL webhook failed:", ghlResponse.status);
-          // Don't fail the whole request if GHL fails - lead is already saved
+          
+          // Log failure to event_log for monitoring
+          await supabase.from('event_log').insert({
+            event_type: 'ghl_sync_failed',
+            session_id: leadData.id,
+            event_payload: {
+              lead_id: leadData.id,
+              email: sanitizedPayload.email,
+              error: `HTTP ${ghlResponse.status}`,
+              funnel: 'seller',
+              timestamp: new Date().toISOString()
+            }
+          });
         } else {
+          ghlSynced = true;
           console.log("GHL webhook success");
         }
       } catch (ghlError) {
         console.error("GHL webhook error:", ghlError);
-        // Continue even if GHL fails - lead is saved in DB
+        
+        // Log exception to event_log
+        await supabase.from('event_log').insert({
+          event_type: 'ghl_sync_failed',
+          session_id: leadData.id,
+          event_payload: {
+            lead_id: leadData.id,
+            email: sanitizedPayload.email,
+            error: ghlError instanceof Error ? ghlError.message : 'Unknown error',
+            funnel: 'seller',
+            timestamp: new Date().toISOString()
+          }
+        });
       }
     } else {
       console.warn("GHL_WEBHOOK_URL not configured");
@@ -132,7 +211,9 @@ Deno.serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         message: "Lead submitted successfully",
-        leadId: leadData.id 
+        leadId: leadData.id,
+        is_new: isNew,
+        ghl_synced: ghlSynced
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

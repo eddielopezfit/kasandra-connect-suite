@@ -311,7 +311,7 @@ const SellerResult = () => {
                 Your Net Sheet is Ready
               </h3>
               <p className="text-white/60 text-sm mb-4">
-                We've sent a detailed breakdown to {email}. A member of our team will reach out shortly.
+                We've sent a detailed breakdown to {email}. Kasandra will personally reach out shortly.
               </p>
               <Button
                 asChild
