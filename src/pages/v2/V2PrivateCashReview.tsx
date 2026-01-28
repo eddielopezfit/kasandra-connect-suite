@@ -7,7 +7,8 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { CheckCircle, Calendar, MessageCircle } from "lucide-react";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 
-const V2PrivateCashReview = () => {
+// Inner component that uses SelenaChatContext (rendered inside V2Layout which provides the context)
+const PrivateCashReviewContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
   const schedulingRef = useRef<HTMLDivElement>(null);
@@ -17,7 +18,7 @@ const V2PrivateCashReview = () => {
   };
 
   return (
-    <V2Layout>
+    <>
       {/* SECTION 1 – Education Block */}
       <section className="py-20 md:py-28 bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto px-4 max-w-4xl text-center">
@@ -216,6 +217,15 @@ const V2PrivateCashReview = () => {
           </p>
         </div>
       </section>
+    </>
+  );
+};
+
+// Main component that wraps content in V2Layout (which provides SelenaChatProvider)
+const V2PrivateCashReview = () => {
+  return (
+    <V2Layout>
+      <PrivateCashReviewContent />
     </V2Layout>
   );
 };
