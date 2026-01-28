@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -70,7 +70,7 @@ const ConsentText = ({
   t: (en: string, es: string) => string;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const previewLength = 80;
+  const previewLength = 60; // Shorter preview for mobile
   const needsCollapse = text.length > previewLength;
 
   if (!needsCollapse) {
@@ -84,35 +84,67 @@ const ConsentText = ({
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <div className="text-sm text-cc-charcoal leading-relaxed">
-        {!isOpen && (
+        {!isOpen ? (
           <>
             <span>{text.slice(0, previewLength)}...</span>
+            {isRequired && <span className="text-red-500 ml-0.5">*</span>}
             <CollapsibleTrigger asChild>
               <button 
                 type="button"
-                className="text-cc-gold hover:text-cc-gold/80 font-medium ml-1 inline-flex items-center"
+                className="text-cc-gold hover:text-cc-gold/80 font-medium ml-1 inline-flex items-center whitespace-nowrap"
               >
                 {t("Read more", "Leer más")}
-                <ChevronDown className="w-3 h-3 ml-0.5" />
+                <ChevronDown className="w-3 h-3 ml-0.5 flex-shrink-0" />
               </button>
             </CollapsibleTrigger>
           </>
+        ) : (
+          <CollapsibleContent forceMount>
+            <span>{text}</span>
+            {isRequired && <span className="text-red-500 ml-0.5">*</span>}
+            <CollapsibleTrigger asChild>
+              <button 
+                type="button"
+                className="text-cc-gold hover:text-cc-gold/80 font-medium ml-1 inline-flex items-center whitespace-nowrap"
+              >
+                {t("Show less", "Mostrar menos")}
+                <ChevronUp className="w-3 h-3 ml-0.5 flex-shrink-0" />
+              </button>
+            </CollapsibleTrigger>
+          </CollapsibleContent>
         )}
-        <CollapsibleContent>
-          <span>{text}</span>
-          {isRequired && <span className="text-red-500 ml-1">*</span>}
-          <CollapsibleTrigger asChild>
-            <button 
-              type="button"
-              className="text-cc-gold hover:text-cc-gold/80 font-medium ml-1 inline-flex items-center"
-            >
-              {t("Show less", "Mostrar menos")}
-              <ChevronUp className="w-3 h-3 ml-0.5" />
-            </button>
-          </CollapsibleTrigger>
-        </CollapsibleContent>
       </div>
     </Collapsible>
+  );
+};
+
+// GHL Calendar Widget Component
+const GHLCalendarWidget = () => {
+  useEffect(() => {
+    // Load the GoHighLevel calendar embed script
+    const existingScript = document.querySelector('script[src="https://link.msgsndr.com/js/form_embed.js"]');
+    if (!existingScript) {
+      const script = document.createElement("script");
+      script.src = "https://link.msgsndr.com/js/form_embed.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  return (
+    <div className="w-full mt-6">
+      <iframe
+        src="https://api.leadconnectorhq.com/widget/booking/CY3PNu8yhtEuNMWH5e1x"
+        style={{ 
+          width: "100%", 
+          height: "700px",
+          border: "none", 
+          borderRadius: "8px",
+        }}
+        id="inline-CY3PNu8yhtEuNMWH5e1x"
+        title="Schedule a Consultation"
+      />
+    </div>
   );
 };
 
@@ -121,6 +153,7 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState("");
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const formSchema = createFormSchema(t);
 
@@ -141,20 +174,21 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
     },
   });
 
-  // Intent options - updated per requirements
+  // Intent options per requirements
   const intentOptions = [
     { value: "buyer", labelEn: "Buy a home", labelEs: "Comprar una casa" },
     { value: "seller", labelEn: "Sell a home", labelEs: "Vender una casa" },
-    { value: "cash_offer", labelEn: "Explore cash offer options", labelEs: "Explorar opciones de oferta en efectivo" },
-    { value: "questions", labelEn: "Just have questions", labelEs: "Solo tengo preguntas" },
+    { value: "cash_offer", labelEn: "Explore a cash offer", labelEs: "Explorar una oferta en efectivo" },
+    { value: "unknown", labelEn: "Not sure yet", labelEs: "Aún no estoy seguro/a" },
   ];
 
-  // Timeline options - updated per requirements
+  // Timeline options per requirements
   const timelineOptions = [
-    { value: "asap", labelEn: "ASAP", labelEs: "Lo antes posible" },
+    { value: "immediately", labelEn: "Immediately (0–30 days)", labelEs: "Inmediatamente (0–30 días)" },
     { value: "1_3_months", labelEn: "1–3 months", labelEs: "1–3 meses" },
     { value: "3_6_months", labelEn: "3–6 months", labelEs: "3–6 meses" },
     { value: "6_plus_months", labelEn: "6+ months", labelEs: "6+ meses" },
+    { value: "researching", labelEn: "Just researching", labelEs: "Solo investigando" },
   ];
 
   // Price range options
@@ -165,11 +199,10 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
     { value: "600k_plus", labelEn: "$600k+", labelEs: "$600k+" },
   ];
 
-  // Pre-approved options - updated with "In process"
+  // Pre-approved options
   const preApprovedOptions = [
     { value: "yes", labelEn: "Yes", labelEs: "Sí" },
-    { value: "no", labelEn: "No", labelEs: "No" },
-    { value: "in_process", labelEn: "In process", labelEs: "En proceso" },
+    { value: "not_yet", labelEn: "Not yet", labelEs: "Todavía no" },
   ];
 
   // Language options
@@ -178,15 +211,15 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
     { value: "es", labelEn: "Español", labelEs: "Español" },
   ];
 
-  // Consent text
+  // Consent text per requirements - using "Usted" formality
   const communicationsConsentText = t(
     "I consent to receive communications from Kasandra Prieto and Corner Connect regarding my real estate inquiry, including automated text messages and emails. Message and data rates may apply.",
-    "Doy mi consentimiento para recibir comunicaciones de Kasandra Prieto y Corner Connect sobre mi consulta inmobiliaria, incluidos mensajes de texto automatizados y correos electrónicos. Pueden aplicarse tarifas de mensajes y datos."
+    "Doy mi consentimiento para recibir comunicaciones de Kasandra Prieto y Corner Connect sobre mi consulta inmobiliaria, incluyendo mensajes de texto y correos electrónicos automatizados. Pueden aplicarse tarifas de mensajes y datos."
   );
 
   const aiConsentText = t(
     "I understand that Selena AI, an AI-powered assistant, may assist with initial communications and automated messages. All advice, recommendations, and decisions are reviewed and finalized by Kasandra Prieto, licensed REALTOR®.",
-    "Entiendo que Selena AI, un asistente impulsado por inteligencia artificial, puede ayudar con las comunicaciones iniciales y mensajes automatizados. Todas las recomendaciones y decisiones son revisadas y finalizadas por Kasandra Prieto, REALTOR® licenciada."
+    "Entiendo que Selena AI, un asistente impulsado por inteligencia artificial, puede ayudar con comunicaciones iniciales y mensajes automatizados. Toda orientación, recomendaciones y decisiones son revisadas y finalizadas por Kasandra Prieto, REALTOR® con licencia."
   );
 
   const onSubmit = async (data: FormData) => {
@@ -267,35 +300,63 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
     }
   };
 
-  // Success state
+  // Success state with calendar embed
   if (isSuccess) {
     return (
-      <div className="text-center py-8 px-4 sm:py-12 sm:px-6">
-        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 text-green-600" />
+      <div className="py-6 px-4 sm:py-8 sm:px-6">
+        {/* Confirmation */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 text-green-600" />
+          </div>
+          <h3 className="font-serif text-2xl sm:text-3xl font-bold text-cc-navy mb-4">
+            {t("Thank You!", "¡Gracias!")}
+          </h3>
+          <p className="text-cc-charcoal text-base sm:text-lg mb-2">
+            {t(
+              "Your consultation request has been received.",
+              "Su solicitud de consulta ha sido recibida."
+            )}
+          </p>
+          <p className="text-sm sm:text-base text-cc-slate mb-6">
+            {t(
+              `A confirmation has been sent to ${submittedEmail}. Kasandra will personally reach out shortly.`,
+              `Se ha enviado una confirmación a ${submittedEmail}. Kasandra se comunicará personalmente pronto.`
+            )}
+          </p>
         </div>
-        <h3 className="font-serif text-2xl sm:text-3xl font-bold text-cc-navy mb-4">
-          {t("Thank You!", "¡Gracias!")}
-        </h3>
-        <p className="text-cc-charcoal text-base sm:text-lg mb-2">
-          {t(
-            "Your consultation request has been received.",
-            "Su solicitud de consulta ha sido recibida."
-          )}
-        </p>
-        <p className="text-sm sm:text-base text-cc-slate mb-8">
-          {t(
-            `A confirmation has been sent to ${submittedEmail}. Kasandra will personally reach out shortly.`,
-            `Se ha enviado una confirmación a ${submittedEmail}. Kasandra se comunicará personalmente pronto.`
-          )}
-        </p>
-        <Button
-          onClick={() => window.open("https://api.leadconnectorhq.com/widget/booking/CY3PNu8yhtEuNMWH5e1x", "_blank")}
-          className="bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold text-base py-6 px-8"
-        >
-          <Calendar className="w-5 h-5 mr-2" />
-          {t("Schedule Your Consultation", "Agendar Su Consulta")}
-        </Button>
+
+        {/* Calendar section */}
+        {!showCalendar ? (
+          <div className="text-center">
+            <p className="text-cc-charcoal mb-4">
+              {t(
+                "Want to schedule your consultation right now?",
+                "¿Desea programar su consulta ahora mismo?"
+              )}
+            </p>
+            <Button
+              onClick={() => setShowCalendar(true)}
+              className="bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold text-base py-6 px-8"
+            >
+              <Calendar className="w-5 h-5 mr-2" />
+              {t("Schedule Your Consultation", "Agendar Su Consulta")}
+            </Button>
+            <p className="text-xs text-cc-slate mt-4">
+              {t(
+                "Or wait for Kasandra to reach out to you directly.",
+                "O espere a que Kasandra se comunique con usted directamente."
+              )}
+            </p>
+          </div>
+        ) : (
+          <div>
+            <h4 className="font-serif text-xl font-bold text-cc-navy text-center mb-4">
+              {t("Select a Time", "Seleccione un Horario")}
+            </h4>
+            <GHLCalendarWidget />
+          </div>
+        )}
       </div>
     );
   }
@@ -523,7 +584,7 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
                     "Tell me a bit about your situation...",
                     "Cuénteme un poco sobre su situación..."
                   )}
-                  className="border-cc-sand-dark/50 focus:border-cc-gold min-h-[120px] text-base"
+                  className="border-cc-sand-dark/50 focus:border-cc-gold min-h-[100px] text-base resize-none"
                   {...field}
                 />
               </FormControl>
@@ -542,10 +603,10 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
-                  className="mt-1 h-5 w-5"
+                  className="mt-0.5 h-5 w-5 flex-shrink-0"
                 />
               </FormControl>
-              <div className="space-y-1 leading-none flex-1">
+              <div className="space-y-1 leading-none flex-1 min-w-0">
                 <FormLabel className="font-normal cursor-pointer">
                   <ConsentText text={communicationsConsentText} isRequired={true} t={t} />
                 </FormLabel>
@@ -565,10 +626,10 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
-                  className="mt-1 h-5 w-5"
+                  className="mt-0.5 h-5 w-5 flex-shrink-0"
                 />
               </FormControl>
-              <div className="space-y-1 leading-none flex-1">
+              <div className="space-y-1 leading-none flex-1 min-w-0">
                 <FormLabel className="font-normal cursor-pointer">
                   <ConsentText text={aiConsentText} isRequired={true} t={t} />
                 </FormLabel>
