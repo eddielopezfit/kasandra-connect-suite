@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
-import GoHighLevelForm from "@/components/v2/GoHighLevelForm";
+import ConsultationIntakeForm from "@/components/v2/ConsultationIntakeForm";
 import { funnelTestimonials } from "@/data/testimonials";
 import { Calendar, Phone, Mail, Clock, Quote } from "lucide-react";
 
@@ -16,6 +16,10 @@ const V2BookContent = () => {
     quote: testimonialData.content[language],
     attribution: testimonialData.role[language],
     source: testimonialData.source,
+  };
+
+  const handleFormSuccess = (leadId: string) => {
+    console.log("Consultation intake submitted, lead_id:", leadId);
   };
 
   return (
@@ -130,7 +134,7 @@ const V2BookContent = () => {
               </div>
             </div>
 
-            {/* GoHighLevel Form */}
+            {/* Native Consultation Intake Form */}
             <div className="bg-white rounded-2xl shadow-elevated border border-cc-sand-dark/30 overflow-hidden w-full max-w-full">
               <div className="p-4 sm:p-6 pb-0">
                 <h3 className="font-serif text-lg sm:text-xl font-bold text-cc-navy mb-2 text-center">
@@ -138,15 +142,13 @@ const V2BookContent = () => {
                 </h3>
                 <p className="text-xs sm:text-sm text-cc-charcoal text-center mb-4">
                   {t(
-                    "Complete this form to schedule your free consultation.",
-                    "Complete este formulario para agendar su consulta gratuita."
+                    "Complete this form to request your free consultation.",
+                    "Complete este formulario para solicitar su consulta gratuita."
                   )}
                 </p>
               </div>
               
-              <div className="w-full max-w-full overflow-hidden px-2 sm:px-0">
-                <GoHighLevelForm minHeight="1000px" />
-              </div>
+              <ConsultationIntakeForm onSuccess={handleFormSuccess} />
             </div>
           </div>
         </div>
