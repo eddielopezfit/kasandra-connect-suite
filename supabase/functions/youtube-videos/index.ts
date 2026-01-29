@@ -136,6 +136,45 @@ async function fetchVideosFromRSS(channelId: string, limit: number): Promise<You
   return videos;
 }
 
+// Fetch videos using YouTube Data API v3
+async function fetchVideosFromAPI(
+  apiKey: string,
+  channelId: string,
+  limit: number
+): Promise<YouTubeVideo[]> {
+  const searchUrl = new URL('https://www.googleapis.com/youtube/v3/search');
+  searchUrl.searchParams.set('key', apiKey);
+  searchUrl.searchParams.set('channelId', channelId);
+  searchUrl.searchParams.set('part', 'snippet');
+  searchUrl.searchParams.set('order', 'date');
+  searchUrl.searchParams.set('type', 'video');
+  searchUrl.searchParams.set('maxResults', String(limit));
+
+  console.log('Fetching from YouTube Data API v3');
+  const response = await fetch(searchUrl.toString());
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('YouTube API error:', response.status, errorText);
+    throw new Error(`YouTube API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  if (!data.items || !Array.isArray(data.items)) {
+    console.warn('No items in YouTube API response');
+    return [];
+  }
+
+  return data.items.map((item: any) => ({
+    id: item.id.videoId,
+    title: item.snippet.title,
+    thumbnail: item.snippet.thumbnails?.medium?.url || `https://img.youtube.com/vi/${item.id.videoId}/mqdefault.jpg`,
+    publishedAt: item.snippet.publishedAt,
+    link: `https://www.youtube.com/watch?v=${item.id.videoId}`,
+  }));
+}
+
 function decodeHtmlEntities(text: string): string {
   return text
     .replace(/&amp;/g, '&')
@@ -165,7 +204,36 @@ Deno.serve(async (req) => {
 
     let videos: YouTubeVideo[] = [];
 
-    // If we couldn't fetch videos, use fallback
+    // Strategy 1: Try RSS feed if we have channel ID
+    if (channelId) {
+      try {
+        videos = await fetchVideosFromRSS(channelId, limit);
+        if (videos.length > 0) {
+          console.log(`Fetched ${videos.length} videos from RSS`);
+        }
+      } catch (rssError) {
+        console.error('RSS fetch failed:', rssError);
+      }
+    }
+
+    // Strategy 2: Try YouTube Data API v3 if RSS failed
+    if (videos.length === 0 && channelId) {
+      const apiKey = Deno.env.get('YOUTUBE_API_KEY');
+      if (apiKey) {
+        try {
+          videos = await fetchVideosFromAPI(apiKey, channelId, limit);
+          if (videos.length > 0) {
+            console.log(`Fetched ${videos.length} videos from YouTube API`);
+          }
+        } catch (apiError) {
+          console.error('YouTube API fetch failed:', apiError);
+        }
+      } else {
+        console.log('YOUTUBE_API_KEY not configured, skipping API fetch');
+      }
+    }
+
+    // Strategy 3: Fallback to static videos
     if (videos.length === 0) {
       console.log('Using fallback videos');
       videos = FALLBACK_VIDEOS.slice(0, limit);

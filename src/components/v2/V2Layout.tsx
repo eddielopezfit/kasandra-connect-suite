@@ -5,8 +5,10 @@ import V2Footer from "./V2Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
-import { logPageView } from "@/lib/analytics/logEvent";
+import { logPageView, logEvent } from "@/lib/analytics/logEvent";
 import { initSessionContext } from "@/lib/analytics/selenaSession";
+import { bridgeAuthToLead } from "@/lib/analytics/bridgeAuthToLead";
+import { supabase } from "@/integrations/supabase/client";
 
 interface V2LayoutProps {
   children: ReactNode;
@@ -25,6 +27,22 @@ const V2Layout = ({ children }: V2LayoutProps) => {
   useEffect(() => {
     logPageView(location.pathname);
   }, [location.pathname]);
+  
+  // Auth state listener for identity bridging
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          await bridgeAuthToLead(session.user);
+          logEvent('google_auth_complete', { 
+            email: session.user.email,
+            provider: session.user.app_metadata?.provider || 'unknown',
+          });
+        }
+      }
+    );
+    return () => subscription.unsubscribe();
+  }, []);
   
   return (
     <SelenaChatProvider>
