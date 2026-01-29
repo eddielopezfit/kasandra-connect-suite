@@ -154,9 +154,9 @@ export function setIntent(intent: Intent): void {
 }
 
 /**
- * Track journey actions (book consultation, talk to kasandra, view report)
+ * Track journey actions (book consultation, talk to kasandra, view report, use calculator)
  */
-export function trackJourneyAction(action: 'book' | 'talk' | 'report'): void {
+export function trackJourneyAction(action: 'book' | 'talk' | 'report' | 'calculator'): void {
   if (typeof window === 'undefined') return;
   try {
     const stored = localStorage.getItem(JOURNEY_ACTIONS_KEY);
