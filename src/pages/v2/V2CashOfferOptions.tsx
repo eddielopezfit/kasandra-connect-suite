@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
+import { TucsonAlphaCalculator } from "@/components/v2/calculator";
 import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText } from "lucide-react";
 
 const V2CashOfferOptionsContent = () => {
@@ -29,18 +30,38 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
-      {/* Comparison Section */}
+      {/* Interactive Calculator Section */}
+      <section className="py-12 lg:py-16 bg-cc-sand">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-4">
+                {t("Compare Your Options", "Compara Tus Opciones")}
+              </h2>
+              <p className="text-cc-charcoal max-w-2xl mx-auto">
+                {t(
+                  "Use this calculator to see estimated net proceeds for a cash offer versus a traditional listing—based on real Tucson market data.",
+                  "Usa esta calculadora para ver las ganancias netas estimadas para una oferta en efectivo versus una venta tradicional—basado en datos reales del mercado de Tucson."
+                )}
+              </p>
+            </div>
+            <TucsonAlphaCalculator />
+          </div>
+        </div>
+      </section>
+
+      {/* Static Comparison Section - Educational Reference */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
           {/* Section Header */}
           <div className="bg-cc-navy rounded-xl p-6 md:p-8 mb-10 text-center">
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-white">
-              {t("Cash Offer vs. Traditional Listing", "Oferta en Efectivo vs. Venta Tradicional")}
+              {t("Quick Reference: Cash vs. Traditional", "Referencia Rápida: Efectivo vs. Tradicional")}
             </h2>
             <p className="text-white/80 mt-3 max-w-2xl mx-auto">
               {t(
-                "Understanding the trade-offs helps you choose what's right for your situation.",
-                "Entender las ventajas y desventajas le ayuda a elegir lo que es correcto para su situación."
+                "A general overview of the trade-offs to consider.",
+                "Una visión general de las ventajas y desventajas a considerar."
               )}
             </p>
           </div>
