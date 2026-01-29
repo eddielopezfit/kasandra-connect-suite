@@ -1,484 +1,511 @@
 
 
-# Architecture Injection & Systemic Implementation Plan
-## Corner Connect Digital Concierge Platform
+# Secret Key Injection & API Authority Layer
+## Complete Implementation Plan
 
 ---
 
 ## EXECUTIVE SUMMARY
 
-This plan implements three phases of systemic improvements to align the codebase with the Decision Room Architecture defined in `plan.md`. The objective is to standardize context tracking, bridge the Ad Funnel to the V2 ecosystem, and verify security compliance.
+This plan addresses four interconnected objectives:
+1. **Secret Management** - Secure API key storage and edge function access
+2. **Authority Integration** - Dynamic Google Reviews and YouTube feeds with graceful fallbacks
+3. **Identity Handoff** - Google Sign-In with lead_id bridging
+4. **Private Cash Review Audit** - Decision Compression Room finalization
 
 ---
 
-## PHASE 1: CONTEXT STANDARDIZATION (V2 Ecosystem)
+## CURRENT STATE ANALYSIS
 
-### Current State Analysis
+### Secrets Inventory
 
-After auditing the codebase, I found the following gaps:
+| Secret | Status | Edge Function |
+|--------|--------|---------------|
+| `GOOGLE_PLACES_API_KEY` | **CONFIGURED** but returning `MISSING_KEY` | `fetch-google-reviews` |
+| `YOUTUBE_API_KEY` | **NOT CONFIGURED** | Needed for `youtube-videos` |
+| `ELEVENLABS_AGENT_ID` | Configured | `elevenlabs-conversation-token` |
+| `GHL_WEBHOOK_URL` | Configured | `submit-consultation-intake` |
+| `LOVABLE_API_KEY` | System-managed | AI operations |
 
-| Route | Layout Status | Intent Auto-Set | Session Tracking | Gap |
-|-------|---------------|-----------------|------------------|-----|
-| `/v2` | V2Layout | N/A | Page view logged | None |
-| `/v2/buy` | V2Layout | **MISSING** | Page view logged | Intent not auto-set |
-| `/v2/sell` | V2Layout | **MISSING** | Page view logged | Intent not auto-set |
-| `/v2/cash-offer-options` | V2Layout | Set by calculator | Full tracking | None |
-| `/v2/private-cash-review` | V2Layout | N/A | Page view logged | `has_viewed_report` missing |
-| `/v2/book` | V2Layout | N/A | Page view logged | `has_booked` missing |
-| `/v2/guides` | V2Layout | N/A | Full guide tracking | None |
-| `/v2/quiz` | V2Layout | N/A | Page view logged | Quiz completion not bridged |
+### API Status
 
-### Task 1.1: Extend SessionContext Interface
+| API | Current Behavior | Issue |
+|-----|------------------|-------|
+| Google Reviews | Returns `MISSING_KEY` status | Secret exists but edge function not reading it |
+| YouTube Videos | Returns **FALLBACK** videos only | Missing YouTube Data API v3 key + broken RSS fetch |
 
-**File:** `src/lib/analytics/selenaSession.ts`
+---
 
-**Add the following fields to `SessionContext`:**
+## PHASE 1: SECRET MANAGEMENT & API AUTHORITY
 
+### Task 1.1: Diagnose Google Places API Issue
+
+The `GOOGLE_PLACES_API_KEY` secret exists but the edge function returns `MISSING_KEY`. Possible causes:
+- Secret name mismatch in `Deno.env.get()`
+- Secret not deployed to edge function environment
+
+**Action:** Verify the secret is accessible via edge function test call.
+
+### Task 1.2: Add YouTube Data API Key
+
+**New Secret Required:** `YOUTUBE_API_KEY`
+
+**User Action Required:** 
+1. Navigate to Google Cloud Console
+2. Enable YouTube Data API v3
+3. Create an API key with appropriate restrictions
+4. Add to Lovable Cloud secrets
+
+### Task 1.3: Upgrade YouTube Edge Function
+
+**File:** `supabase/functions/youtube-videos/index.ts`
+
+**Current Problem:** 
+- RSS scraping fails silently
+- Falls back to hardcoded placeholder videos immediately
+- Line 169 never calls `fetchVideosFromRSS()` even when `channelId` is found
+
+**Solution:**
 ```typescript
-interface SessionContext {
-  // ... existing fields ...
-  
-  // Phase 1: Decision Room tracking
-  has_viewed_report?: boolean;
-  last_report_id?: string;
-  quiz_completed?: boolean;
-  quiz_result_path?: 'buying' | 'selling' | 'cash' | 'exploring';
-  has_booked?: boolean;
-  
-  // Phase 2: Ad Funnel bridge
-  ad_funnel_source?: 'seller_landing' | 'seller_quiz';
-  ad_funnel_value_range?: string;
+// FIX: Actually call the RSS fetch when we have a channel ID
+if (channelId) {
+  try {
+    videos = await fetchVideosFromRSS(channelId, limit);
+    console.log(`Fetched ${videos.length} videos from RSS`);
+  } catch (rssError) {
+    console.error('RSS fetch failed:', rssError);
+  }
+}
+
+// If RSS fails, try YouTube Data API (requires key)
+if (videos.length === 0) {
+  const apiKey = Deno.env.get('YOUTUBE_API_KEY');
+  if (apiKey) {
+    videos = await fetchVideosFromAPI(apiKey, channelId, limit);
+  }
+}
+
+// Only use fallback if both methods fail
+if (videos.length === 0) {
+  console.log('Using fallback videos');
+  videos = FALLBACK_VIDEOS.slice(0, limit);
 }
 ```
 
-### Task 1.2: Auto-Set Intent in V2Buy
+### Task 1.4: Add API Method to YouTube Edge Function
 
-**File:** `src/pages/v2/V2Buy.tsx`
-
-**Add `useEffect` to set intent on mount:**
+Add a `fetchVideosFromAPI()` function using YouTube Data API v3:
 
 ```typescript
-import { useEffect } from "react";
-import { updateSessionContext } from "@/lib/analytics/selenaSession";
+async function fetchVideosFromAPI(
+  apiKey: string, 
+  channelId: string, 
+  limit: number
+): Promise<YouTubeVideo[]> {
+  // Search for videos by channel
+  const searchUrl = new URL('https://www.googleapis.com/youtube/v3/search');
+  searchUrl.searchParams.set('key', apiKey);
+  searchUrl.searchParams.set('channelId', channelId);
+  searchUrl.searchParams.set('part', 'snippet');
+  searchUrl.searchParams.set('order', 'date');
+  searchUrl.searchParams.set('type', 'video');
+  searchUrl.searchParams.set('maxResults', String(limit));
 
-const V2BuyContent = () => {
-  const { t } = useLanguage();
+  const response = await fetch(searchUrl.toString());
+  if (!response.ok) throw new Error(`API error: ${response.status}`);
 
-  // Auto-set intent when entering Buyer Decision Room
-  useEffect(() => {
-    updateSessionContext({ intent: 'buy' });
-  }, []);
-
-  // ... rest of component
-};
+  const data = await response.json();
+  return data.items.map((item: any) => ({
+    id: item.id.videoId,
+    title: item.snippet.title,
+    thumbnail: item.snippet.thumbnails.medium.url,
+    publishedAt: item.snippet.publishedAt,
+    link: `https://www.youtube.com/watch?v=${item.id.videoId}`,
+  }));
+}
 ```
 
-### Task 1.3: Auto-Set Intent in V2Sell
+---
 
-**File:** `src/pages/v2/V2Sell.tsx`
+## PHASE 2: GRACEFUL FALLBACK ARCHITECTURE
 
-**Same pattern as V2Buy:**
+### Task 2.1: Authority Fallback Pattern
+
+Both Google Reviews and YouTube must implement the same fallback hierarchy:
+
+```text
+Priority 1: Live API Data
+     |
+     v (on failure)
+Priority 2: Cached Data (localStorage with TTL)
+     |
+     v (on failure)
+Priority 3: Static Fallback (curated placeholders)
+```
+
+### Task 2.2: Add Caching Layer to Google Reviews Hook
+
+**File:** `src/hooks/useGoogleReviews.ts`
 
 ```typescript
-import { useEffect } from "react";
-import { updateSessionContext } from "@/lib/analytics/selenaSession";
+const CACHE_KEY = 'cc_google_reviews_cache';
+const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24 hours
 
-const V2SellContent = () => {
-  const { t } = useLanguage();
+// Fallback reviews for graceful degradation
+const FALLBACK_REVIEWS: GoogleReview[] = [
+  {
+    author: "Maria G.",
+    rating: 5,
+    text: "Kasandra made our home buying journey so smooth. She truly cares about her clients and the community.",
+    time: "2 months ago",
+  },
+  // ... 4 more curated reviews
+];
 
-  // Auto-set intent when entering Seller Decision Room
-  useEffect(() => {
-    updateSessionContext({ intent: 'sell' });
-  }, []);
+async function fetchGoogleReviews(): Promise<GoogleReview[]> {
+  // Try live API first
+  try {
+    const { data, error } = await supabase.functions.invoke(...);
+    if (data?.ok && data.reviews.length > 0) {
+      // Cache successful response
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
+        reviews: data.reviews,
+        cachedAt: Date.now(),
+      }));
+      return data.reviews;
+    }
+  } catch (e) {
+    console.warn('[GoogleReviews] API failed, checking cache');
+  }
 
-  // ... rest of component
-};
+  // Try cache
+  const cached = localStorage.getItem(CACHE_KEY);
+  if (cached) {
+    const { reviews, cachedAt } = JSON.parse(cached);
+    if (Date.now() - cachedAt < CACHE_TTL_MS) {
+      return reviews;
+    }
+  }
+
+  // Return fallback
+  return FALLBACK_REVIEWS;
+}
 ```
 
-### Task 1.4: Track Report View in V2PrivateCashReview
+### Task 2.3: Update GoogleReviewsSection for Fallback UI
+
+**File:** `src/components/v2/GoogleReviewsSection.tsx`
+
+Currently the section returns `null` on error. Instead:
+- Show fallback reviews with subtle "Curated testimonials" badge
+- Log the fallback state for monitoring
+
+```typescript
+// Replace the early return on error with fallback display
+if (error || (!isLoading && (!reviews || reviews.length === 0))) {
+  // Don't hide - show fallback with different badge
+  // This preserves the authority signal while acknowledging limitation
+}
+```
+
+### Task 2.4: YouTube Fallback UI Enhancement
+
+**File:** `src/pages/v2/V2Podcast.tsx` (and `PodcastSection.tsx`)
+
+Current static embeds work as fallback. Add dynamic episode grid when API succeeds:
+
+```typescript
+// If live videos available, show dynamic grid
+// If not, show static curated embed (current behavior is acceptable)
+```
+
+---
+
+## PHASE 3: IDENTITY HANDOFF - GOOGLE SIGN-IN
+
+### Task 3.1: Configure Google OAuth via Lovable Cloud
+
+**Action Required:** Use `supabase--configure-social-auth` tool to:
+1. Generate the `src/integrations/lovable` module
+2. Install `@lovable.dev/cloud-auth-js`
+3. Enable managed Google OAuth
+
+### Task 3.2: Create Google Sign-In Component
+
+**New File:** `src/components/v2/GoogleSignInButton.tsx`
+
+```typescript
+import { lovable } from "@/integrations/lovable/index";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Button } from "@/components/ui/button";
+
+export function GoogleSignInButton() {
+  const { t } = useLanguage();
+  const [loading, setLoading] = useState(false);
+
+  const handleSignIn = async () => {
+    setLoading(true);
+    const { error } = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin + "/v2/community",
+    });
+    if (error) {
+      console.error("Sign-in error:", error);
+      toast.error(t("Sign-in failed", "Error al iniciar sesión"));
+    }
+    setLoading(false);
+  };
+
+  return (
+    <Button
+      onClick={handleSignIn}
+      disabled={loading}
+      className="w-full bg-white hover:bg-gray-50 text-gray-900 border border-gray-300"
+    >
+      <img src="/google-logo.svg" className="w-5 h-5 mr-2" alt="" />
+      {t("Continue with Google", "Continuar con Google")}
+    </Button>
+  );
+}
+```
+
+### Task 3.3: Bridge Google Identity to selena_lead_id
+
+**File:** `src/lib/analytics/bridgeAuthToLead.ts` (NEW)
+
+```typescript
+import { supabase } from "@/integrations/supabase/client";
+
+export async function bridgeAuthToLead(user: User): Promise<string | null> {
+  // Check if lead already exists with this email
+  const existingLeadId = localStorage.getItem('selena_lead_id');
+  
+  // Upsert to lead_profiles with auth email
+  const { data, error } = await supabase.functions.invoke('upsert-lead-profile', {
+    body: {
+      email: user.email,
+      name: user.user_metadata?.full_name,
+      source: 'google_auth',
+      existing_lead_id: existingLeadId,
+    },
+  });
+
+  if (data?.lead_id) {
+    localStorage.setItem('selena_lead_id', data.lead_id);
+    return data.lead_id;
+  }
+  
+  return null;
+}
+```
+
+### Task 3.4: Add Auth State Listener
+
+**File:** `src/components/v2/V2Layout.tsx`
+
+Add auth state listener that bridges on sign-in:
+
+```typescript
+useEffect(() => {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        await bridgeAuthToLead(session.user);
+        logEvent('google_auth_complete', { email: session.user.email });
+      }
+    }
+  );
+  return () => subscription.unsubscribe();
+}, []);
+```
+
+### Task 3.5: Integrate Sign-In on V2Community
+
+**File:** `src/pages/v2/V2Community.tsx`
+
+Add to the "Why Community Matters" section:
+
+```typescript
+{/* Under "Work With Me" button, add authenticated shortcut */}
+<div className="mt-6 flex flex-col items-center gap-3">
+  <span className="text-sm text-cc-muted">
+    {t("Or get started instantly:", "O comience al instante:")}
+  </span>
+  <GoogleSignInButton />
+</div>
+```
+
+---
+
+## PHASE 4: PRIVATE CASH REVIEW AUDIT
+
+### Current State Analysis
+
+The `/v2/private-cash-review` page currently shows:
+1. Education block with bullet points
+2. Placeholder for Selena chat integration
+3. Kasandra authority block with headshot
+4. Placeholder for video + calendar
+
+### Task 4.1: Replace Chat Placeholder with Live Selena
 
 **File:** `src/pages/v2/V2PrivateCashReview.tsx`
 
-**Add tracking on mount:**
+The placeholder Card should trigger the chat drawer:
 
 ```typescript
-import { useEffect } from "react";
-import { updateSessionContext } from "@/lib/analytics/selenaSession";
-import { logEvent } from "@/lib/analytics/logEvent";
-
-const PrivateCashReviewContent = () => {
-  const { t } = useLanguage();
-  const { openChat } = useSelenaChat();
-  const schedulingRef = useRef<HTMLDivElement>(null);
-
-  // Track when user views Private Cash Review room
-  useEffect(() => {
-    updateSessionContext({ has_viewed_report: true });
-    logEvent('private_cash_review_view', { source: 'direct_navigation' });
-  }, []);
-
-  // ... rest of component
-};
+// Replace placeholder with contextual chat trigger
+<Card className="border border-cc-gold/30 bg-gradient-to-br from-cc-sand to-cc-ivory">
+  <CardContent className="py-12 flex flex-col items-center justify-center text-center">
+    <div className="w-16 h-16 rounded-full bg-cc-navy flex items-center justify-center mb-4">
+      <MessageCircle className="w-8 h-8 text-cc-gold" />
+    </div>
+    <h3 className="font-serif text-xl font-semibold text-cc-navy mb-2">
+      {t("Chat with Selena", "Chatea con Selena")}
+    </h3>
+    <p className="text-cc-muted mb-4 max-w-sm">
+      {t(
+        "She'll gather your details and prepare your personalized cash comparison.",
+        "Ella recopilará sus datos y preparará su comparación de efectivo personalizada."
+      )}
+    </p>
+    <Button onClick={openChat} className="bg-cc-navy hover:bg-cc-navy-dark">
+      <MessageCircle className="w-4 h-4 mr-2" />
+      {t("Start My Review", "Iniciar Mi Revisión")}
+    </Button>
+  </CardContent>
+</Card>
 ```
 
-### Task 1.5: Track Booking Commitment in V2Book
+### Task 4.2: Embed GoHighLevel Calendar
 
-**File:** `src/pages/v2/V2Book.tsx`
+**File:** `src/pages/v2/V2PrivateCashReview.tsx`
 
-**Modify `handleFormSuccess` to track commitment:**
+Replace calendar placeholder with GHL embed:
 
 ```typescript
-import { updateSessionContext } from "@/lib/analytics/selenaSession";
-import { logEvent } from "@/lib/analytics/logEvent";
-
-const handleFormSuccess = (leadId: string) => {
-  console.log("Consultation intake submitted, lead_id:", leadId);
-  
-  // Track booking commitment (Stage 6 signal)
-  updateSessionContext({ has_booked: true });
-  logEvent('consultation_booked', { 
-    lead_id: leadId,
-    intent: searchParams.get("intent") || "general" 
-  });
-  
-  // Persist journey action for cognitive stage calculation
-  const actions = JSON.parse(localStorage.getItem('cc_journey_actions') || '[]');
-  if (!actions.includes('book')) {
-    actions.push('book');
-    localStorage.setItem('cc_journey_actions', JSON.stringify(actions));
-  }
-};
+<Card className="border border-cc-gold/30 overflow-hidden">
+  <CardContent className="p-0">
+    <iframe
+      src="https://api.leadconnectorhq.com/widget/booking/YOUR_CALENDAR_ID"
+      style={{ width: '100%', height: '600px', border: 'none' }}
+      scrolling="no"
+      title={t("Schedule with Kasandra", "Agendar con Kasandra")}
+    />
+  </CardContent>
+</Card>
 ```
+
+**Note:** GHL calendar ID needed from user.
+
+### Task 4.3: Add Kasandra Welcome Video
+
+**File:** `src/pages/v2/V2PrivateCashReview.tsx`
+
+Replace video placeholder with actual video embed:
+
+```typescript
+<Card className="border border-cc-sand-dark/30 overflow-hidden">
+  <CardContent className="p-0">
+    <div className="aspect-video">
+      <video
+        src="/videos/kasandra-welcome.mp4"
+        poster={kasandraHeadshot}
+        controls
+        className="w-full h-full object-cover"
+      />
+    </div>
+  </CardContent>
+</Card>
+```
+
+**Note:** Video file already exists at `/public/videos/kasandra-welcome.mp4`
 
 ---
 
-## PHASE 2: AD FUNNEL TO V2 BRIDGE
+## PHASE 5: AUTOMATED TESTING
 
-### Current State Analysis
+### Task 5.1: Edge Function Tests
 
-The Ad Funnel routes (`/ad/seller`, `/ad/seller-quiz`, `/ad/seller-result`) currently:
-- Use `SellerFunnelLayout` (voice widget, not chat)
-- Do NOT initialize session context
-- Do NOT persist lead_id for V2 continuity
-- Are English-only (no language governance)
-
-### Task 2.1: Create Ad Funnel Session Initializer
-
-**New File:** `src/lib/analytics/initAdFunnelSession.ts`
-
+**Test: Google Reviews Fallback**
 ```typescript
-/**
- * Ad Funnel Session Bridge
- * Initializes session context for ad funnel visitors
- * and bridges data to V2 ecosystem for continuity
- */
+// Test: API failure returns fallback reviews
+const response = await fetch('/functions/v1/fetch-google-reviews');
+const data = await response.json();
 
-import { 
-  initSessionContext, 
-  updateSessionContext,
-  getSessionContext 
-} from './selenaSession';
-
-export function initAdFunnelSession(): void {
-  // Initialize with English (ad funnel is English-only)
-  initSessionContext('en');
-  
-  // Capture UTMs from URL
-  const params = new URLSearchParams(window.location.search);
-  
-  updateSessionContext({
-    landing_path: window.location.pathname,
-    utm_source: params.get('utm_source') || undefined,
-    utm_medium: params.get('utm_medium') || undefined,
-    utm_campaign: params.get('utm_campaign') || undefined,
-    ad_funnel_source: window.location.pathname.includes('seller') 
-      ? 'seller_landing' 
-      : undefined,
-  });
-}
-
-export function bridgeQuizResultsToV2(quizAnswers: {
-  situation?: string;
-  condition?: string;
-  timeline?: string;
-  value?: string;
-}): void {
-  const timelineMap: Record<string, 'asap' | '30_days' | '60_90' | 'exploring'> = {
-    'asap': 'asap',
-    'soon': '30_days',
-    'flexible': '60_90',
-    'no-rush': 'exploring',
-  };
-  
-  const situationMap: Record<string, 'inherited' | 'relocating' | 'other'> = {
-    'inherited': 'inherited',
-    'relocating': 'relocating',
-    'downsizing': 'other',
-    'other': 'other',
-  };
-  
-  const conditionMap: Record<string, 'move_in_ready' | 'minor_repairs' | 'distressed'> = {
-    'excellent': 'move_in_ready',
-    'good': 'minor_repairs',
-    'fair': 'distressed',
-    'poor': 'distressed',
-  };
-
-  updateSessionContext({
-    intent: 'cash_offer',
-    timeline: quizAnswers.timeline ? timelineMap[quizAnswers.timeline] : undefined,
-    situation: quizAnswers.situation ? situationMap[quizAnswers.situation] : undefined,
-    condition: quizAnswers.condition ? conditionMap[quizAnswers.condition] : undefined,
-    quiz_completed: true,
-    ad_funnel_value_range: quizAnswers.value,
-  });
-}
-
-export function bridgeLeadIdToV2(leadId: string): void {
-  // Store lead_id in localStorage for V2 pickup
-  localStorage.setItem('selena_lead_id', leadId);
-  
-  // Log the bridge event
-  console.log('[AdFunnel] Lead ID bridged to V2:', leadId);
-}
+// Should succeed with either live or fallback reviews
+expect(response.status).toBe(200);
+expect(data.reviews.length).toBeGreaterThan(0);
 ```
 
-### Task 2.2: Initialize Session in SellerLanding
-
-**File:** `src/pages/ad/SellerLanding.tsx`
-
-**Add session initialization:**
-
+**Test: YouTube Fallback**
 ```typescript
-import { useEffect } from "react";
-import { initAdFunnelSession } from "@/lib/analytics/initAdFunnelSession";
+// Test: Always returns videos (live or fallback)
+const response = await fetch('/functions/v1/youtube-videos', {
+  method: 'POST',
+  body: JSON.stringify({ limit: 4 }),
+});
+const data = await response.json();
 
-const SellerLanding = () => {
-  // Initialize ad funnel session on mount
-  useEffect(() => {
-    initAdFunnelSession();
-  }, []);
-
-  return (
-    <SellerFunnelLayout>
-      {/* ... existing content ... */}
-    </SellerFunnelLayout>
-  );
-};
+expect(data.success).toBe(true);
+expect(data.videos.length).toBe(4);
 ```
 
-### Task 2.3: Bridge Quiz Results in SellerResult
-
-**File:** `src/pages/ad/SellerResult.tsx`
-
-**Bridge data on lead capture success:**
-
-```typescript
-import { 
-  bridgeQuizResultsToV2, 
-  bridgeLeadIdToV2 
-} from "@/lib/analytics/initAdFunnelSession";
-
-const handleSubmit = async (e: React.FormEvent) => {
-  // ... existing validation ...
-
-  try {
-    const { data, error } = await supabase.functions.invoke('submit-seller', {
-      body: { /* ... existing body ... */ },
-    });
-
-    if (error) throw error;
-
-    // Bridge quiz answers to V2 session context
-    bridgeQuizResultsToV2({
-      situation: quizAnswers.situation,
-      condition: quizAnswers.condition,
-      timeline: quizAnswers.timeline,
-      value: quizAnswers.value,
-    });
-
-    // Bridge lead_id for V2 continuity (if returned from edge function)
-    if (data?.lead_id) {
-      bridgeLeadIdToV2(data.lead_id);
-    }
-
-    setIsUnlocked(true);
-    toast.success("Report sent! Check your texts.");
-
-  } catch (error) {
-    // ... existing error handling ...
-  }
-};
-```
-
-### Task 2.4: Track Quiz Step in SellerQuiz
-
-**File:** `src/pages/ad/SellerQuiz.tsx`
-
-**Initialize session and track progress:**
-
-```typescript
-import { useEffect } from "react";
-import { initAdFunnelSession } from "@/lib/analytics/initAdFunnelSession";
-import { updateSessionContext } from "@/lib/analytics/selenaSession";
-
-const SellerQuiz = () => {
-  const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-
-  // Initialize session on mount
-  useEffect(() => {
-    initAdFunnelSession();
-    updateSessionContext({ ad_funnel_source: 'seller_quiz' });
-  }, []);
-
-  // ... rest of component
-};
-```
-
----
-
-## PHASE 3: SECURITY VERIFICATION
-
-### Task 3.1: RLS Policy Verification
-
-**Current State:**
-- `lead_reports` table has RLS enabled
-- INSERT policy: `Anyone can insert reports` (permissive for generation)
-- SELECT/UPDATE/DELETE policies: **NOT VISIBLE TO ANON USERS**
-
-**Verification Required:**
-The `get-report` edge function already implements application-level security:
-- Validates `lead_id` UUID format
-- Queries with BOTH `report_id` AND `lead_id` match
-- Returns 404 (not 403) on mismatch to prevent enumeration
-
-**Security Audit Checklist:**
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| `lead_id` required in request | PASS | Returns 400 if missing |
-| UUID format validation | PASS | Uses regex validation |
-| Dual-key lookup | PASS | `eq("id", report_id).eq("lead_id", lead_id)` |
-| Enumeration protection | PASS | Returns 404 on any mismatch |
-| Service role used | CAUTION | Uses `SUPABASE_SERVICE_ROLE_KEY` |
-
-**Recommendation:** The edge function security is solid. The use of service role key is necessary because anon users cannot SELECT from `lead_reports`. This is the correct pattern for application-level access control.
-
-### Task 3.2: Client-Side Protection in V2PrivateCashReview
-
-**Current State:** The page shows placeholder content. When actual reports are displayed, ensure:
-
-```typescript
-// When openReportById is called
-const openReportById = useCallback(async (reportId: string) => {
-  if (!leadId) {
-    // This triggers lead capture modal - CORRECT BEHAVIOR
-    setPendingReportId(reportId);
-    setShowLeadCapture(true);
-    return;
-  }
-  // ... proceed with fetch
-}, [leadId]);
-```
-
-This pattern is already implemented in `SelenaChatContext.tsx` (lines 470-477). No changes needed.
-
----
-
-## FILES TO MODIFY
-
-| Phase | File | Change Type | Priority |
-|-------|------|-------------|----------|
-| 1.1 | `src/lib/analytics/selenaSession.ts` | Extend interface | HIGH |
-| 1.2 | `src/pages/v2/V2Buy.tsx` | Add useEffect | HIGH |
-| 1.3 | `src/pages/v2/V2Sell.tsx` | Add useEffect | HIGH |
-| 1.4 | `src/pages/v2/V2PrivateCashReview.tsx` | Add tracking | HIGH |
-| 1.5 | `src/pages/v2/V2Book.tsx` | Enhance handleFormSuccess | HIGH |
-| 2.1 | `src/lib/analytics/initAdFunnelSession.ts` | **NEW FILE** | MEDIUM |
-| 2.2 | `src/pages/ad/SellerLanding.tsx` | Add session init | MEDIUM |
-| 2.3 | `src/pages/ad/SellerResult.tsx` | Bridge quiz data | MEDIUM |
-| 2.4 | `src/pages/ad/SellerQuiz.tsx` | Add session init | MEDIUM |
-
----
-
-## TESTING STRATEGY
-
-### Browser Session Test: Ad Funnel to V2 Bridge
+### Task 5.2: Browser Session Test - Authority Flow
 
 **Test Flow:**
+1. Navigate to `/v2/community`
+2. Verify Google Reviews section renders (not hidden)
+3. Verify reviews carousel is interactive
+4. Navigate to `/v2/podcast`
+5. Verify YouTube embed loads
+6. Check network tab for API calls
 
-1. **Clear localStorage** (fresh session)
-2. Navigate to `/ad/seller`
-3. Verify: `selena_context_v2` contains `ad_funnel_source: 'seller_landing'`
-4. Click "Start Free Net Sheet" → navigate to `/ad/seller-quiz`
-5. Complete quiz (inherited → excellent → asap → 200-350k)
-6. Enter name/email, submit
-7. Verify: `selena_context_v2` contains:
-   - `intent: 'cash_offer'`
-   - `timeline: 'asap'`
-   - `situation: 'inherited'`
-   - `quiz_completed: true`
-8. Verify: `selena_lead_id` is set in localStorage
-9. Navigate to `/v2/sell` or `/v2/book`
-10. Verify: Selena chat drawer has lead identity (can generate reports)
+### Task 5.3: Security Test - Report Access
 
-### Automated Test: Edge Function Security
-
-**Test:** Attempt to access report without matching lead_id
-
+**Test: Unauthorized Report Access**
 ```typescript
-// Test: Should return 404 for mismatched lead_id
+// Attempt to access report without lead_id
 const response = await fetch('/functions/v1/get-report', {
   method: 'POST',
   body: JSON.stringify({
-    lead_id: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee', // Random UUID
-    report_id: 'real-report-id-here',
+    report_id: 'valid-uuid',
+    lead_id: 'wrong-uuid',
   }),
 });
-expect(response.status).toBe(404);
+
+expect(response.status).toBe(404); // Not 403 to prevent enumeration
 ```
 
 ---
 
-## ARCHITECTURAL NOTES
+## FILES TO CREATE
 
-### Language Governance Enforcement
+| File | Purpose |
+|------|---------|
+| `src/components/v2/GoogleSignInButton.tsx` | OAuth sign-in component |
+| `src/lib/analytics/bridgeAuthToLead.ts` | Auth-to-lead identity bridge |
 
-The current architecture correctly enforces language at the session level:
-- `LanguageContext` wraps entire app in `App.tsx`
-- `V2Layout` passes `language` to `initSessionContext()`
-- Selena Chat syncs `uiLanguage` from global `language`
-- AI responses respect `context.language` parameter
+## FILES TO MODIFY
 
-**Ad Funnel Gap:** Currently hardcoded to English. For Phase 2+, consider:
-1. Adding `LanguageToggle` to `SellerFunnelLayout`
-2. Passing language to ad funnel session init
-3. Making quiz steps bilingual
+| File | Change |
+|------|--------|
+| `supabase/functions/youtube-videos/index.ts` | Fix RSS fetch + add API fallback |
+| `src/hooks/useGoogleReviews.ts` | Add caching + fallback layer |
+| `src/components/v2/GoogleReviewsSection.tsx` | Never hide, show fallback gracefully |
+| `src/pages/v2/V2Podcast.tsx` | Add dynamic episode grid (optional) |
+| `src/pages/v2/V2Community.tsx` | Add Google Sign-In CTA |
+| `src/pages/v2/V2PrivateCashReview.tsx` | Replace placeholders with live components |
+| `src/components/v2/V2Layout.tsx` | Add auth state listener |
 
-### Decision Room Flow Preserved
+---
 
-The implementation preserves the psychological progression:
+## SECRETS REQUIRED FROM USER
 
-```text
-AD FUNNEL                           V2 ECOSYSTEM
-+----------+                        +----------+
-| Landing  |---(session init)------>| Lobby    |
-+----------+                        +----------+
-     |                                   |
-+----------+                        +----------+
-| Quiz     |---(intent capture)---->| Buy/Sell |
-+----------+                        +----------+
-     |                                   |
-+----------+                        +----------+
-| Result   |---(lead_id bridge)---->| Reports  |
-+----------+                        +----------+
-                                         |
-                                    +----------+
-                                    | Book     |
-                                    +----------+
-```
+| Secret | Service | Instructions |
+|--------|---------|--------------|
+| `YOUTUBE_API_KEY` | YouTube Data API v3 | Google Cloud Console > APIs > YouTube Data API v3 > Create API Key |
+
+The `GOOGLE_PLACES_API_KEY` appears to already be configured. If issues persist, we'll troubleshoot the edge function environment.
 
 ---
 
@@ -486,11 +513,10 @@ AD FUNNEL                           V2 ECOSYSTEM
 
 After implementation:
 
-1. **V2Buy/V2Sell** automatically set `intent` when visited
-2. **V2PrivateCashReview** sets `has_viewed_report: true` on view
-3. **V2Book** sets `has_booked: true` and logs `consultation_booked` on submit
-4. **Ad funnel visitors** have session context initialized with UTMs
-5. **Quiz completers** have intent/timeline/situation bridged to V2
-6. **Lead IDs** persist from ad funnel to V2 for report continuity
-7. **get-report** edge function verified secure (dual-key lookup)
+1. **Google Reviews** - Live carousel on `/v2/community` with graceful fallback
+2. **YouTube Videos** - Dynamic episode feed on `/v2/podcast` with fallback embeds
+3. **Google Sign-In** - One-click auth on `/v2/community` that bridges to `selena_lead_id`
+4. **Private Cash Review** - Live Selena chat + video + calendar (placeholders removed)
+5. **Fallback Resilience** - No broken UI states when APIs fail
+6. **Identity Continuity** - Google auth users inherit any existing lead context
 
