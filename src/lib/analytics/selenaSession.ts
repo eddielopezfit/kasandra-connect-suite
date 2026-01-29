@@ -31,6 +31,15 @@ export interface SessionContext {
   // Tool usage memory (Phase 1 extension)
   tool_used?: ToolUsed;
   last_tool_result?: CalculatorAdvantage;
+  // Decision Room tracking (Phase 1)
+  has_viewed_report?: boolean;
+  last_report_id?: string;
+  quiz_completed?: boolean;
+  quiz_result_path?: 'buying' | 'selling' | 'cash' | 'exploring';
+  has_booked?: boolean;
+  // Ad Funnel bridge (Phase 2)
+  ad_funnel_source?: 'seller_landing' | 'seller_quiz';
+  ad_funnel_value_range?: string;
 }
 
 /**

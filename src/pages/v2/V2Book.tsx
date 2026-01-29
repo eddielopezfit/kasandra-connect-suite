@@ -4,6 +4,8 @@ import V2Layout from "@/components/v2/V2Layout";
 import ConsultationIntakeForm from "@/components/v2/ConsultationIntakeForm";
 import { funnelTestimonials } from "@/data/testimonials";
 import { Calendar, Phone, Mail, Clock, Quote } from "lucide-react";
+import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { logEvent } from "@/lib/analytics/logEvent";
 
 const V2BookContent = () => {
   const { t, language } = useLanguage();
@@ -20,6 +22,20 @@ const V2BookContent = () => {
 
   const handleFormSuccess = (leadId: string) => {
     console.log("Consultation intake submitted, lead_id:", leadId);
+    
+    // Track booking commitment (Stage 6 signal)
+    updateSessionContext({ has_booked: true });
+    logEvent('consultation_booked', { 
+      lead_id: leadId,
+      intent: searchParams.get("intent") || "general" 
+    });
+    
+    // Persist journey action for cognitive stage calculation
+    const actions = JSON.parse(localStorage.getItem('cc_journey_actions') || '[]');
+    if (!actions.includes('book')) {
+      actions.push('book');
+      localStorage.setItem('cc_journey_actions', JSON.stringify(actions));
+    }
   };
 
   return (

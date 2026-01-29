@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,12 +6,20 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { CheckCircle, Calendar, MessageCircle } from "lucide-react";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
+import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { logEvent } from "@/lib/analytics/logEvent";
 
 // Inner component that uses SelenaChatContext (rendered inside V2Layout which provides the context)
 const PrivateCashReviewContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
   const schedulingRef = useRef<HTMLDivElement>(null);
+
+  // Track when user views Private Cash Review room
+  useEffect(() => {
+    updateSessionContext({ has_viewed_report: true });
+    logEvent('private_cash_review_view', { source: 'direct_navigation' });
+  }, []);
 
   const scrollToScheduling = () => {
     schedulingRef.current?.scrollIntoView({ behavior: "smooth" });

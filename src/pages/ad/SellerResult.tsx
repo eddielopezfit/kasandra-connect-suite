@@ -8,6 +8,7 @@ import { Lock, ArrowRight, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, LabelList } from "recharts";
+import { bridgeQuizResultsToV2, bridgeLeadIdToV2 } from "@/lib/analytics/initAdFunnelSession";
 
 // Value ranges - midpoints for calculation
 const VALUE_RANGES: Record<string, number> = {
@@ -112,6 +113,19 @@ const SellerResult = () => {
       });
 
       if (error) throw error;
+
+      // Bridge quiz answers to V2 session context
+      bridgeQuizResultsToV2({
+        situation: quizAnswers.situation,
+        condition: quizAnswers.condition,
+        timeline: quizAnswers.timeline,
+        value: quizAnswers.value,
+      });
+
+      // Bridge lead_id for V2 continuity (if returned from edge function)
+      if (data?.lead_id) {
+        bridgeLeadIdToV2(data.lead_id);
+      }
 
       // Unlock the report
       setIsUnlocked(true);

@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import SellerFunnelLayout from "@/components/ad/SellerFunnelLayout";
 import { Progress } from "@/components/ui/progress";
 import { ChevronLeft } from "lucide-react";
+import { initAdFunnelSession } from "@/lib/analytics/initAdFunnelSession";
+import { updateSessionContext } from "@/lib/analytics/selenaSession";
 
 // Value ranges for calculator
 const VALUE_RANGES: Record<string, number> = {
@@ -71,6 +73,12 @@ const SellerQuiz = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+
+  // Initialize session on mount and mark as quiz entry
+  useEffect(() => {
+    initAdFunnelSession();
+    updateSessionContext({ ad_funnel_source: 'seller_quiz' });
+  }, []);
 
   const progress = ((currentStep + 1) / quizSteps.length) * 100;
   const currentQuestion = quizSteps[currentStep];
