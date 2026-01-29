@@ -76,6 +76,9 @@ interface PriorityCallState {
   onRequestCallback?: (channel: HandoffChannel, contactPref?: 'call' | 'text') => void;
 }
 
+// Calculator awareness types
+export type CalculatorAdvantage = 'cash' | 'traditional' | 'consult';
+
 interface SelenaChatContextType {
   isOpen: boolean;
   messages: ChatMessage[];
@@ -86,6 +89,9 @@ interface SelenaChatContextType {
   showLeadCapture: boolean;
   pendingReportId: string | null;
   pendingAction: 'report' | 'priority_call' | null;
+  // Calculator awareness (Task 4)
+  hasUsedCalculator: boolean;
+  lastCalculatorAdvantage: CalculatorAdvantage | null;
   openChat: () => void;
   closeChat: () => void;
   toggleChat: () => void;
@@ -100,6 +106,8 @@ interface SelenaChatContextType {
   onLeadCaptured: (newLeadId: string) => void;
   closePriorityCall: () => void;
   triggerPriorityCall: () => Promise<void>;
+  // Calculator awareness setter
+  setCalculatorResult: (advantage: CalculatorAdvantage) => void;
 }
 
 const SelenaChatContext = createContext<SelenaChatContextType | undefined>(undefined);
@@ -167,6 +175,10 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const [pendingReportId, setPendingReportId] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<'report' | 'priority_call' | null>(null);
+  
+  // Calculator awareness state (Task 4)
+  const [hasUsedCalculator, setHasUsedCalculator] = useState(false);
+  const [lastCalculatorAdvantage, setLastCalculatorAdvantage] = useState<CalculatorAdvantage | null>(null);
   
   const { language, t } = useLanguage();
   const location = useLocation();
@@ -830,6 +842,13 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('selena-priority-call', handler);
   }, [triggerPriorityCall]);
 
+  // Set calculator result - for Selena awareness (Task 4)
+  const setCalculatorResult = useCallback((advantage: CalculatorAdvantage) => {
+    setHasUsedCalculator(true);
+    setLastCalculatorAdvantage(advantage);
+    console.log('[Selena] Calculator result set:', advantage);
+  }, []);
+
   return (
     <SelenaChatContext.Provider
       value={{
@@ -842,6 +861,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         showLeadCapture,
         pendingReportId,
         pendingAction,
+        hasUsedCalculator,
+        lastCalculatorAdvantage,
         openChat,
         closeChat,
         toggleChat,
@@ -856,6 +877,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         onLeadCaptured,
         closePriorityCall,
         triggerPriorityCall,
+        setCalculatorResult,
       }}
     >
       {children}

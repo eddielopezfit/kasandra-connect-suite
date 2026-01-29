@@ -6,6 +6,9 @@
 const SESSION_KEY = 'selena_session_id';
 const CONTEXT_KEY = 'selena_context_v2';
 
+export type ToolUsed = 'tucson_alpha_calculator' | 'buyer_readiness' | 'report';
+export type CalculatorAdvantage = 'cash' | 'traditional' | 'consult';
+
 export interface SessionContext {
   session_id: string;
   language: 'en' | 'es';
@@ -25,6 +28,9 @@ export interface SessionContext {
   last_page?: string;
   last_guide_id?: string;
   last_quiz_id?: string;
+  // Tool usage memory (Phase 1 extension)
+  tool_used?: ToolUsed;
+  last_tool_result?: CalculatorAdvantage;
 }
 
 /**
