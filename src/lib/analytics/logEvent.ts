@@ -69,6 +69,12 @@ export type EventType =
   | 'consultation_cta_clicked'
   | 'start_here_intent_selected'
   | 'situation_selected'
+  // Calculator events (Phase 1)
+  | 'calculator_open'
+  | 'calculator_step_complete'
+  | 'calculator_complete'
+  | 'calculator_results_view'
+  | 'calculator_cta_click'
   // UI events
   | 'ui_language_toggle';
 

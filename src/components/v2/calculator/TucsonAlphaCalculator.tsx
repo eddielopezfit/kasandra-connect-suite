@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { trackJourneyAction } from "@/lib/guides/personalization";
+import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Calculator, Sparkles } from "lucide-react";
 
@@ -26,7 +27,7 @@ import {
 
 const TucsonAlphaCalculator = () => {
   const { t } = useLanguage();
-  const { openChat, leadId } = useSelenaChat();
+  const { openChat, leadId, setCalculatorResult } = useSelenaChat();
 
   // State machine: 0 = intro, 1 = inputs, 2 = results, 3 = next steps
   const [currentStep, setCurrentStep] = useState<0 | 1 | 2 | 3>(0);
@@ -63,27 +64,38 @@ const TucsonAlphaCalculator = () => {
     setCurrentStep(2);
 
     // Log analytics
-    logEvent('cta_click', {
-      cta: 'calculator_calculate',
+    logEvent('calculator_complete', {
       estimated_value: estimatedValue,
       motivation,
       timeline,
+      recommendation: calculationResults.recommendation,
     });
 
     // Track journey action
     trackJourneyAction('calculator');
-  }, [estimatedValue, motivation, timeline]);
+
+    // Set Selena awareness (Task 4)
+    setCalculatorResult(calculationResults.recommendation);
+
+    // Update session memory (Task 6)
+    updateSessionContext({
+      intent: 'cash_offer',
+      tool_used: 'tucson_alpha_calculator',
+      last_tool_result: calculationResults.recommendation,
+    });
+
+  }, [estimatedValue, motivation, timeline, setCalculatorResult]);
 
   // Handle going to next steps
   const handleViewNextSteps = useCallback(() => {
     setCurrentStep(3);
-    logEvent('cta_click', { cta: 'calculator_next_steps' });
+    logEvent('calculator_results_view', { step: 'next_steps' });
   }, []);
 
   // Handle asking Selena
   const handleAskSelena = useCallback(() => {
-    logEvent('cta_click', { 
-      cta: 'calculator_ask_selena',
+    logEvent('calculator_cta_click', { 
+      cta: 'ask_selena',
       context: { estimatedValue, motivation, timeline },
     });
     openChat();
@@ -99,7 +111,7 @@ const TucsonAlphaCalculator = () => {
   // Handle start
   const handleStart = useCallback(() => {
     setCurrentStep(1);
-    logEvent('cta_click', { cta: 'calculator_start' });
+    logEvent('calculator_open', { source: 'cash_offer_options' });
   }, []);
 
   return (
