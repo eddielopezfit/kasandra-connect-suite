@@ -1,9 +1,16 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import SellerFunnelLayout from "@/components/ad/SellerFunnelLayout";
 import { Button } from "@/components/ui/button";
 import SelenaTextTrigger from "@/components/ad/SelenaTextTrigger";
+import { initAdFunnelSession } from "@/lib/analytics/initAdFunnelSession";
 
 const SellerLanding = () => {
+  // Initialize ad funnel session on mount
+  useEffect(() => {
+    initAdFunnelSession();
+  }, []);
+
   return (
     <SellerFunnelLayout>
       <div className="min-h-[calc(100vh-120px)] flex flex-col items-center justify-center px-4 py-12">

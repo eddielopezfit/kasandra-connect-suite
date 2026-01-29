@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -5,9 +6,15 @@ import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle } from "lucide-react";
+import { updateSessionContext } from "@/lib/analytics/selenaSession";
 
 const V2SellContent = () => {
   const { t } = useLanguage();
+
+  // Auto-set intent when entering Seller Decision Room
+  useEffect(() => {
+    updateSessionContext({ intent: 'sell' });
+  }, []);
 
   return (
     <>

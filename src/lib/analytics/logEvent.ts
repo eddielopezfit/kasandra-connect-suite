@@ -75,6 +75,9 @@ export type EventType =
   | 'calculator_complete'
   | 'calculator_results_view'
   | 'calculator_cta_click'
+  // Decision Room tracking (Architecture Plan)
+  | 'private_cash_review_view'
+  | 'consultation_booked'
   // UI events
   | 'ui_language_toggle';
 
