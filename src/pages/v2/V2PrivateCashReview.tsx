@@ -103,18 +103,24 @@ const PrivateCashReviewContent = () => {
             </p>
           </div>
 
-          {/* Chat Widget Placeholder */}
-          <Card className="border-2 border-dashed border-primary/30 bg-primary/5">
-            <CardContent className="py-16 flex flex-col items-center justify-center text-center">
-              <MessageCircle className="w-12 h-12 text-primary/50 mb-4" />
-              <p className="text-muted-foreground mb-4">
+          {/* Live Selena Chat Trigger */}
+          <Card className="border border-primary/30 bg-gradient-to-br from-primary/5 to-background shadow-elevated">
+            <CardContent className="py-12 flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mb-4 shadow-lg">
+                <MessageCircle className="w-8 h-8 text-primary-foreground" />
+              </div>
+              <h3 className="font-serif text-xl font-semibold text-foreground mb-2">
+                {t("Chat with Selena", "Chatea con Selena")}
+              </h3>
+              <p className="text-muted-foreground mb-6 max-w-sm">
                 {t(
-                  "Chat widget will appear here",
-                  "El widget de chat aparecerá aquí"
+                  "She'll gather your details and prepare your personalized cash comparison.",
+                  "Ella recopilará sus datos y preparará su comparación de efectivo personalizada."
                 )}
               </p>
-              <Button variant="outline" onClick={openChat}>
-                {t("Open Chat with Selena", "Abrir Chat con Selena")}
+              <Button onClick={openChat} size="lg" className="rounded-full px-8">
+                <MessageCircle className="w-5 h-5 mr-2" />
+                {t("Start My Review", "Iniciar Mi Revisión")}
               </Button>
             </CardContent>
           </Card>
@@ -188,31 +194,49 @@ const PrivateCashReviewContent = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Video Placeholder */}
-            <Card className="border-2 border-dashed border-muted-foreground/30 bg-muted/20">
-              <CardContent className="py-20 flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-primary border-b-8 border-b-transparent ml-1" />
+            {/* Kasandra Welcome Video */}
+            <Card className="border border-muted overflow-hidden shadow-elevated">
+              <CardContent className="p-0">
+                <div className="aspect-video">
+                  <video
+                    src="/videos/kasandra-welcome.mp4"
+                    poster={kasandraHeadshot}
+                    controls
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <p className="text-muted-foreground">
-                  {t(
-                    "Personal video from Kasandra",
-                    "Video personal de Kasandra"
-                  )}
-                </p>
+                <div className="p-4 bg-muted/30">
+                  <p className="text-sm text-muted-foreground text-center">
+                    {t(
+                      "A personal message from Kasandra",
+                      "Un mensaje personal de Kasandra"
+                    )}
+                  </p>
+                </div>
               </CardContent>
             </Card>
 
-            {/* Calendar Placeholder */}
-            <Card className="border-2 border-dashed border-primary/30 bg-primary/5">
-              <CardContent className="py-20 flex flex-col items-center justify-center text-center">
-                <Calendar className="w-12 h-12 text-primary/50 mb-4" />
-                <p className="text-muted-foreground">
+            {/* Calendar CTA - Links to book page */}
+            <Card className="border border-primary/30 bg-gradient-to-br from-primary/5 to-background shadow-elevated">
+              <CardContent className="py-12 flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <Calendar className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="font-serif text-xl font-semibold text-foreground mb-2">
+                  {t("Ready to Schedule?", "¿Listo para Agendar?")}
+                </h3>
+                <p className="text-muted-foreground mb-6 max-w-sm">
                   {t(
-                    "GoHighLevel calendar embed",
-                    "Calendario de GoHighLevel"
+                    "Book a private consultation with Kasandra to review your options in person.",
+                    "Agende una consulta privada con Kasandra para revisar sus opciones en persona."
                   )}
                 </p>
+                <Button asChild size="lg" className="rounded-full px-8">
+                  <a href="/v2/book?intent=cash_review">
+                    <Calendar className="w-5 h-5 mr-2" />
+                    {t("Schedule My Review", "Agendar Mi Revisión")}
+                  </a>
+                </Button>
               </CardContent>
             </Card>
           </div>

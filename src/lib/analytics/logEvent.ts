@@ -78,6 +78,9 @@ export type EventType =
   // Decision Room tracking (Architecture Plan)
   | 'private_cash_review_view'
   | 'consultation_booked'
+  // Identity bridge events
+  | 'google_auth_complete'
+  | 'auth_lead_bridge_success'
   // UI events
   | 'ui_language_toggle';
 

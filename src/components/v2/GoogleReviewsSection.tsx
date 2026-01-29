@@ -64,7 +64,7 @@ const LoadingSkeleton = () => (
 
 const GoogleReviewsSection = () => {
   const { t } = useLanguage();
-  const { data: reviews, isLoading, error } = useGoogleReviews();
+  const { data: reviews, isLoading } = useGoogleReviews();
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
@@ -88,10 +88,8 @@ const GoogleReviewsSection = () => {
     });
   }, [api]);
 
-  // Don't render the section if there are no reviews or there's an error
-  if (error || (!isLoading && (!reviews || reviews.length === 0))) {
-    return null;
-  }
+  // With graceful fallback, we always have reviews to show
+  // The hook now handles API → Cache → Fallback internally
 
   return (
     <section className="py-16 lg:py-20 bg-cc-sand">

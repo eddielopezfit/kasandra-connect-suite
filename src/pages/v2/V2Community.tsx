@@ -7,6 +7,7 @@ import arizonaDiaperBankLogo from "@/assets/arizona-diaper-bank-logo.jpg";
 import rumboAlExitoLogo from "@/assets/rumbo-al-exito-logo.jpg";
 import tucsonApplianceLogo from "@/assets/tucson-appliance-logo.jpg";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
+import GoogleSignInButton from "@/components/v2/GoogleSignInButton";
 
 const V2CommunityContent = () => {
   const { t } = useLanguage();
@@ -189,6 +190,14 @@ const V2CommunityContent = () => {
           <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
             <Link to="/v2/book">{t("Work With Me", "Trabaje Conmigo")}</Link>
           </Button>
+          
+          {/* Google Sign-In CTA */}
+          <div className="mt-8 flex flex-col items-center gap-3 max-w-sm mx-auto">
+            <span className="text-sm text-cc-muted">
+              {t("Or get started instantly:", "O comience al instante:")}
+            </span>
+            <GoogleSignInButton />
+          </div>
         </div>
       </section>
     </>
