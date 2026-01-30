@@ -150,11 +150,106 @@ function detectIntent(message: string, route: string): string[] {
   return intents.length > 0 ? intents : ["exploring"];
 }
 
+// ============= SIMILARITY MATCHING =============
+/**
+ * Fuzzy match check - returns true if strings have significant word overlap
+ * Uses Jaccard similarity on word sets
+ */
+function isSimilar(str1: string, str2: string, threshold = 0.8): boolean {
+  const s1 = str1.toLowerCase().trim();
+  const s2 = str2.toLowerCase().trim();
+  
+  if (s1 === s2) return true;
+  if (s1.length === 0 || s2.length === 0) return false;
+  
+  // Word overlap check for performance
+  const words1 = new Set(s1.split(/\s+/).filter(w => w.length > 2));
+  const words2 = new Set(s2.split(/\s+/).filter(w => w.length > 2));
+  const intersection = [...words1].filter(w => words2.has(w)).length;
+  const union = new Set([...words1, ...words2]).size;
+  
+  if (union === 0) return false;
+  return (intersection / union) >= threshold;
+}
+
+// ============= PROGRESSION MAP =============
+/**
+ * Maps user selection to next-best-step suggestions
+ * When user clicks a pill, we show the logical next action instead of repeating
+ */
+const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
+  // Buyer path progressions
+  'schedule a tour': {
+    en: ["What should I prepare?", "View buyer guide", "Talk to Kasandra now"],
+    es: ["¿Qué debo preparar?", "Ver guía del comprador", "Hablar con Kasandra ahora"]
+  },
+  'take readiness check': {
+    en: ["How long does it take?", "Start now", "What does this check?"],
+    es: ["¿Cuánto tiempo toma?", "Comenzar ahora", "¿Qué verifica este análisis?"]
+  },
+  'view first-time buyer guide': {
+    en: ["Schedule a tour", "Ask about financing", "Check my readiness"],
+    es: ["Programar un recorrido", "Preguntar sobre financiamiento", "Verificar mi preparación"]
+  },
+  // Seller path progressions
+  "what's my home worth": {
+    en: ["Get a detailed estimate", "Compare cash vs. listing", "Schedule a walkthrough"],
+    es: ["Obtener estimación detallada", "Comparar efectivo vs. listado", "Agendar una visita"]
+  },
+  'compare cash vs. traditional': {
+    en: ["Request my net sheet", "Talk to Kasandra", "See cash timeline"],
+    es: ["Solicitar mi análisis", "Hablar con Kasandra", "Ver línea de tiempo en efectivo"]
+  },
+  'request a net sheet': {
+    en: ["Review my estimate", "Schedule a consultation", "Ask a question"],
+    es: ["Revisar mi estimación", "Agendar una consulta", "Hacer una pregunta"]
+  },
+  'request a cash offer': {
+    en: ["How fast can I close?", "What's the process?", "Talk to Kasandra"],
+    es: ["¿Qué tan rápido puedo cerrar?", "¿Cuál es el proceso?", "Hablar con Kasandra"]
+  },
+  // First intent declarations
+  "i'm thinking about selling": {
+    en: ["What's my home worth?", "Compare cash vs. traditional", "Request a net sheet"],
+    es: ["¿Cuánto vale mi casa?", "Comparar efectivo vs. tradicional", "Solicitar análisis de ganancias"]
+  },
+  "i'm looking to buy": {
+    en: ["Take readiness check", "View first-time buyer guide", "Schedule a tour"],
+    es: ["Tomar evaluación de preparación", "Ver guía para compradores", "Programar un recorrido"]
+  },
+  'just exploring': {
+    en: ["Tell me about selling", "Tell me about buying", "What are my options?"],
+    es: ["Cuéntame sobre vender", "Cuéntame sobre comprar", "¿Cuáles son mis opciones?"]
+  }
+};
+
 // ============= INTENT-AWARE SUGGESTION FILTERING =============
 type IntentKey = 'sell' | 'cash_offer' | 'buy' | 'exploring';
 
-function getSuggestedReplies(intent: string | undefined, language: 'en' | 'es'): string[] {
-  const replies: Record<IntentKey, { en: string[]; es: string[] }> = {
+/**
+ * Progressive suggested replies with deduplication
+ * @param intent - Current user intent (sell, buy, exploring, etc.)
+ * @param language - 'en' or 'es'
+ * @param lastUserMessage - The user's most recent message (for deduplication + progression)
+ */
+function getSuggestedReplies(
+  intent: string | undefined, 
+  language: 'en' | 'es',
+  lastUserMessage?: string
+): string[] {
+  // Step 1: Check progression map for specific next steps
+  if (lastUserMessage) {
+    const normalized = lastUserMessage.toLowerCase().trim();
+    
+    for (const [trigger, responses] of Object.entries(PROGRESSION_MAP)) {
+      if (isSimilar(normalized, trigger, 0.6) || normalized.includes(trigger)) {
+        return responses[language];
+      }
+    }
+  }
+  
+  // Step 2: Fall back to intent-based static replies
+  const staticReplies: Record<IntentKey, { en: string[]; es: string[] }> = {
     sell: {
       en: ["What's my home worth?", "Compare cash vs. traditional", "Request a net sheet"],
       es: ["¿Cuánto vale mi casa?", "Comparar efectivo vs. tradicional", "Solicitar análisis de ganancias"]
@@ -173,13 +268,19 @@ function getSuggestedReplies(intent: string | undefined, language: 'en' | 'es'):
     }
   };
   
-  // Map intent to key (prioritize cash_offer > sell > buy > exploring)
   const intentKey: IntentKey = intent === 'cash_offer' ? 'cash_offer'
                              : intent === 'sell' ? 'sell'
                              : intent === 'buy' ? 'buy'
                              : 'exploring';
   
-  return replies[intentKey][language];
+  let suggestions = [...staticReplies[intentKey][language]];
+  
+  // Step 3: Filter out any suggestion similar to user's last message
+  if (lastUserMessage) {
+    suggestions = suggestions.filter(s => !isSimilar(s, lastUserMessage, 0.7));
+  }
+  
+  return suggestions;
 }
 
 // ============= SYSTEM PROMPTS (HARDENED) =============
@@ -274,7 +375,8 @@ Example: "That's an exciting next step! To give you the most accurate market ana
     const reply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
 
     // Get intent-aware suggested replies
-    const suggestedReplies = getSuggestedReplies(effectiveIntent, language);
+    // Get intent-aware suggested replies with deduplication
+    const suggestedReplies = getSuggestedReplies(effectiveIntent, language, message);
 
     return new Response(
       JSON.stringify({
