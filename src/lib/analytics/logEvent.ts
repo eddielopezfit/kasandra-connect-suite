@@ -86,7 +86,9 @@ export type EventType =
   | 'ui_language_toggle'
   // Consultation intake events
   | 'consultation_intake_submitted'
-  | 'native_form_submit';
+  | 'native_form_submit'
+  // Proactive engagement events
+  | 'selena_proactive_loss_aversion';
 
 export interface EventPayload {
   [key: string]: unknown;

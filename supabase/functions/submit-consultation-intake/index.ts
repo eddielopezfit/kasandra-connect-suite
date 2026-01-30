@@ -191,22 +191,62 @@ Deno.serve(async (req) => {
         const firstName = nameParts[0] || input.name.trim();
         const lastName = nameParts.slice(1).join(" ") || "";
 
+        // Build semantic tags based on session context
+        const situationTagMap: Record<string, string[]> = {
+          inherited: ['Legacy Property Seller', 'situation_inherited'],
+          relocating: ['Relocation Seller', 'situation_relocating'],
+          downsizing: ['Downsizing Seller', 'situation_downsizing'],
+          divorce: ['Divorce Situation', 'situation_divorce'],
+          tired_landlord: ['Tired Landlord', 'situation_tired_landlord'],
+          upgrading: ['Upgrader', 'situation_upgrading'],
+          other: ['situation_other'],
+        };
+
+        const conditionTagMap: Record<string, string> = {
+          move_in_ready: 'condition_move_in_ready',
+          minor_repairs: 'condition_minor_repairs',
+          distressed: 'condition_distressed',
+          unknown: 'condition_unknown',
+        };
+
+        const timelineTagMap: Record<string, string> = {
+          immediately: 'timeline_urgent',
+          '1_3_months': 'timeline_30_days',
+          '3_6_months': 'timeline_flexible',
+          researching: 'timeline_exploring',
+        };
+
+        // Build semantic tags
+        const situationTags = input.situation 
+          ? (situationTagMap[input.situation] || [`situation_${input.situation}`]) 
+          : [];
+        const conditionTag = input.condition 
+          ? (conditionTagMap[input.condition] || `condition_${input.condition}`)
+          : null;
+        const timelineTag = input.timeline 
+          ? (timelineTagMap[input.timeline] || `timeline_${input.timeline}`)
+          : null;
+
+        const allTags = [
+          "Consultation Intake",
+          "consultation_intake",
+          input.language === "es" ? "spanish_speaker" : "english_speaker",
+          `intent_${input.intent || "unknown"}`,
+          input.source ? `source_${input.source}` : null,
+          ...situationTags,
+          conditionTag,
+          timelineTag,
+          input.quiz_completed ? "quiz_completed" : null,
+          input.has_viewed_report ? "viewed_report" : null,
+        ].filter(Boolean) as string[];
+
         const ghlPayload = {
           email,
           name: input.name.trim(),
           firstName,
           lastName,
           phone: input.phone.trim(),
-          tags: [
-            "Consultation Intake",
-            "consultation_intake",
-            input.language === "es" ? "spanish_speaker" : "english_speaker",
-            `intent_${input.intent || "unknown"}`,
-            input.source ? `source_${input.source}` : null,
-            input.situation ? `situation_${input.situation}` : null,
-            input.quiz_completed ? "quiz_completed" : null,
-            input.has_viewed_report ? "viewed_report" : null,
-          ].filter(Boolean),
+          tags: allTags,
           customField: {
             // Core fields
             lead_id: leadId,
@@ -246,7 +286,7 @@ Deno.serve(async (req) => {
             guide_id: input.guide_id || null,
             guide_title: input.guide_title || null,
           },
-          source: `Consultation Intake - Lovable ${input.source || '/v2/book'}`,
+          source: "Consultation Intake - Lovable " + (input.source || "/v2/book"),
         };
 
         const ghlResponse = await fetch(ghlWebhookUrl, {

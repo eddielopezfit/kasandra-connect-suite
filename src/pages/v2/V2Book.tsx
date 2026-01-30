@@ -4,13 +4,52 @@ import V2Layout from "@/components/v2/V2Layout";
 import ConsultationIntakeForm from "@/components/v2/ConsultationIntakeForm";
 import { funnelTestimonials } from "@/data/testimonials";
 import { Calendar, Phone, Mail, Clock, Quote } from "lucide-react";
-import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 
 const V2BookContent = () => {
   const { t, language } = useLanguage();
   const [searchParams] = useSearchParams();
   const intent = searchParams.get("intent") || "general"; // buyer, seller, or general
+  
+  // Get session context for ad funnel detection
+  const session = getSessionContext();
+  
+  // Detect if user came from ad funnel with net sheet data
+  const isAdFunnelVisitor = session?.ad_funnel_source && session?.intent === 'cash_offer';
+  
+  // Get stored difference from localStorage (set by SellerResult.tsx)
+  const storedDifference = typeof window !== 'undefined' 
+    ? localStorage.getItem('cc_net_sheet_difference')
+    : null;
+  const formattedDifference = storedDifference 
+    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(storedDifference))
+    : null;
+  
+  // Dynamic headline based on ad funnel context
+  const getHeadline = () => {
+    if (isAdFunnelVisitor && formattedDifference) {
+      return t(
+        `Let's Review Your ${formattedDifference} Net Sheet Analysis`,
+        `Revisemos su Análisis de Ganancias Netas de ${formattedDifference}`
+      );
+    }
+    return t("Book a Consultation", "Agendar una Cita");
+  };
+  
+  // Dynamic subheadline for ad funnel visitors
+  const getSubheadline = () => {
+    if (isAdFunnelVisitor) {
+      return t(
+        "Kasandra will personally walk you through your options and answer any questions.",
+        "Kasandra le explicará personalmente sus opciones y responderá todas sus preguntas."
+      );
+    }
+    return t(
+      "Ready to discuss your real estate goals? Schedule a free, no-obligation consultation with me.",
+      "¿Listo para discutir sus metas de bienes raíces? Agende una consulta gratuita, sin obligación, conmigo."
+    );
+  };
 
   // Get the appropriate testimonial based on intent
   const testimonialData = funnelTestimonials[intent as keyof typeof funnelTestimonials] || funnelTestimonials.general;
@@ -46,13 +85,10 @@ const V2BookContent = () => {
           <div className="max-w-3xl mx-auto text-center">
             <Calendar className="w-12 h-12 text-cc-gold mx-auto mb-6" />
             <h1 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
-              {t("Book a Consultation", "Agendar una Cita")}
+              {getHeadline()}
             </h1>
             <p className="text-lg text-white/90 mb-8">
-              {t(
-                "Ready to discuss your real estate goals? Schedule a free, no-obligation consultation with me.",
-                "¿Listo para discutir sus metas de bienes raíces? Agende una consulta gratuita, sin obligación, conmigo."
-              )}
+              {getSubheadline()}
             </p>
             
             {/* Funnel-Aligned Testimonial */}
