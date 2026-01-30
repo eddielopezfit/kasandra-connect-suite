@@ -237,7 +237,8 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
           pre_approved: data.preApproved || null,
           notes: data.notes?.trim() || null,
           session_id: sessionId,
-          source: "consultation_intake",
+          source: "lovable_native_form",
+          page_path: window.location.pathname,
           // Full Session Dossier for GHL
           ...sessionDossier,
         },
