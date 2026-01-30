@@ -121,6 +121,7 @@ export function useSessionPrePopulation(): PrePopulationData {
 
 /**
  * Get the full session dossier for edge function submission
+ * Filters out undefined values to prevent edge function issues
  */
 export function getFullSessionDossier(): Record<string, unknown> {
   const session = getSessionContext();
@@ -129,7 +130,8 @@ export function getFullSessionDossier(): Record<string, unknown> {
     return {};
   }
   
-  return {
+  // Build fields object
+  const fields: Record<string, unknown> = {
     // Session identity
     session_id: session.session_id,
     session_source: session.landing_path,
@@ -166,4 +168,14 @@ export function getFullSessionDossier(): Record<string, unknown> {
     ad_funnel_source: session.ad_funnel_source,
     ad_funnel_value_range: session.ad_funnel_value_range,
   };
+  
+  // Filter out undefined values to prevent edge function issues
+  const dossier: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(fields)) {
+    if (value !== undefined) {
+      dossier[key] = value;
+    }
+  }
+  
+  return dossier;
 }
