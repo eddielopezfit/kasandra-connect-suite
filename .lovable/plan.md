@@ -1,152 +1,349 @@
 
-# Phase 2: Complete the Oasis Shield
-## Adding Read Protection (SELECT Denial)
+# Intelligence Injection: Native Lead Capture & Dynamic Decision Rooms
+## Complete Implementation Plan
 
 ---
 
-## THE ISSUE
+## EXECUTIVE SUMMARY
 
-The Phase 1 migration successfully removed INSERT/UPDATE policies, but Supabase's RLS behavior is:
-- **With no policies**: Writes are denied, but reads may still be allowed
-- **We need**: Explicit denial of SELECT for public access
+This plan migrates from external GoHighLevel iframes to native React Hook Form components with SessionContext intelligence, making the platform truly "context-aware" where forms pre-populate with user journey data and decision rooms adapt based on cognitive stage.
 
 ---
 
-## SQL MIGRATION (Phase 2)
+## CURRENT STATE ANALYSIS
 
-```sql
--- ============================================
--- OASIS SHIELD PHASE 2: Read Protection
--- ============================================
+### What Exists
+| Component | Current State | Target State |
+|-----------|--------------|--------------|
+| `ConsultationIntakeForm.tsx` | Native form exists but no SessionContext pre-population | Pre-populate from SessionContext |
+| `GuideLeadCapture.tsx` | Uses GHL iframe (`GoHighLevelForm`) | Replace with native form |
+| `V2Book.tsx` | Uses native `ConsultationIntakeForm` + GHL calendar | Enhance with pre-population |
+| `V2HomePathQuiz.tsx` | Shows result but no dynamic pivoting | Pivot results based on intent |
+| `BuyerReadinessCheck.tsx` | Static result bullets | Dynamic re-ordering by readiness score |
+| `V2PrivateCashReview.tsx` | Static hero, no lead awareness | State machine: returning vs. new |
+| Edge Function | Sends basic data to GHL | Send full session dossier |
 
--- ====================
--- DENY PUBLIC SELECT ACCESS
--- ====================
--- These tables should ONLY be readable by Edge Functions (service role)
--- No public/anon users should be able to SELECT from them
-
--- The simplest approach: We DON'T need to add policies.
--- RLS is already enabled and with NO policies, authenticated/anon 
--- users cannot read. But the scan is detecting the tables ARE readable.
-
--- The fix: Create explicit DENY policies using FALSE condition
--- This ensures zero public read access.
-
--- 1. LEAD_PROFILES - No public read
-CREATE POLICY "Deny public read on lead_profiles" 
-  ON public.lead_profiles 
-  FOR SELECT 
-  TO anon, authenticated 
-  USING (false);
-
--- 2. SELLER_LEADS - No public read
-CREATE POLICY "Deny public read on seller_leads" 
-  ON public.seller_leads 
-  FOR SELECT 
-  TO anon, authenticated 
-  USING (false);
-
--- 3. LEAD_REPORTS - No public read
-CREATE POLICY "Deny public read on lead_reports" 
-  ON public.lead_reports 
-  FOR SELECT 
-  TO anon, authenticated 
-  USING (false);
-
--- 4. LEAD_HANDOFFS - No public read
-CREATE POLICY "Deny public read on lead_handoffs" 
-  ON public.lead_handoffs 
-  FOR SELECT 
-  TO anon, authenticated 
-  USING (false);
-
--- 5. EVENT_LOG - Deny read (keep INSERT policy for telemetry)
-CREATE POLICY "Deny public read on event_log" 
-  ON public.event_log 
-  FOR SELECT 
-  TO anon, authenticated 
-  USING (false);
-```
+### SessionContext Fields Available
+From `selenaSession.ts`:
+- `intent`: 'cash_offer' | 'sell' | 'buy' | 'investor' | 'explore'
+- `timeline`: 'asap' | '30_days' | '60_90' | 'exploring'
+- `situation`: 'inherited' | 'divorce' | 'tired_landlord' | 'upgrading' | 'relocating' | 'other'
+- `condition`: 'move_in_ready' | 'minor_repairs' | 'distressed' | 'unknown'
+- `tool_used`, `last_tool_result` (calculator awareness)
+- `quiz_completed`, `quiz_result_path`
+- `has_viewed_report`, `has_booked`
 
 ---
 
-## WHY THIS WORKS
+## IMPLEMENTATION TASKS
 
-1. **Service Role Bypasses RLS**: Edge Functions using `SUPABASE_SERVICE_ROLE_KEY` completely bypass these policies - they can still read and write.
+### Task 1: Enhance ConsultationIntakeForm with SessionContext Pre-Population
 
-2. **Explicit Denial**: The `USING (false)` condition means no row will ever match for public/authenticated users.
+**File**: `src/components/v2/ConsultationIntakeForm.tsx`
 
-3. **Telemetry Preserved**: The `event_log` INSERT policy we kept allows frontend telemetry to write, but reading is now blocked.
+**Changes**:
+1. Import `getSessionContext` from `selenaSession.ts`
+2. In `useEffect`, read SessionContext and pre-populate form fields
+3. Map session values to form values (e.g., `session.intent` → `form.intent`)
+4. Add visual indicator when fields are pre-populated ("Based on your earlier answers")
 
----
-
-## ARCHITECTURE AFTER PHASE 2
-
+**Pre-Population Logic**:
 ```text
-┌─────────────────────────────────────────────────────────────────────┐
-│                        PUBLIC INTERNET                              │
-│                                                                     │
-│   ❌ Direct DB Access (PostgREST)                                   │
-│      - lead_profiles: SELECT ❌ | INSERT ❌ | UPDATE ❌              │
-│      - lead_reports:  SELECT ❌ | INSERT ❌ | UPDATE ❌              │
-│      - seller_leads:  SELECT ❌ | INSERT ❌ | UPDATE ❌              │
-│      - lead_handoffs: SELECT ❌ | INSERT ❌ | UPDATE ❌              │
-│      - event_log:     SELECT ❌ | INSERT ✅ (telemetry) | UPDATE ❌  │
-│                                                                     │
-│   ✅ Edge Function Endpoints (Service Role bypasses ALL RLS)        │
-│      └─── Full read/write access to all tables                      │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+Session Field → Form Field Mapping:
+- session.intent → form.intent (buyer, seller, cash_offer, unknown)
+- session.timeline → form.timeline (map asap→immediately, 30_days→1_3_months, etc.)
+- session.language → form.preferredLanguage
+- localStorage.get('cc_user_name') → form.name (if from quiz)
+- localStorage.get('cc_user_email') → form.email
+- localStorage.get('cc_user_phone') → form.phone
 ```
 
 ---
 
-## EXPECTED SCAN RESULTS AFTER PHASE 2
+### Task 2: Create Native GuideLeadCaptureForm Component
 
-| Finding | Before | After |
-|---------|--------|-------|
-| Customer Contact Information Exposed | **ERROR** | **RESOLVED** |
-| Seller Contact Information Available | **ERROR** | **RESOLVED** |
-| Private Conversation Summaries Leaked | **ERROR** | **RESOLVED** |
-| Confidential Lead Reports Accessible | **ERROR** | **RESOLVED** |
-| User Activity Tracking Visible | **WARN** | **RESOLVED** |
-| RLS Enabled No Policy | **INFO** | **RESOLVED** (policies now exist) |
-| RLS Policy Always True (event_log INSERT) | **WARN** | Remains (intentional) |
+**New File**: `src/components/v2/guides/NativeGuideLeadCapture.tsx`
+
+**Features**:
+- Simplified 4-field form: Name, Email, Phone, Intent (inferred)
+- SessionContext pre-population
+- Calls `submit-consultation-intake` edge function
+- Bridges lead_id via `bridgeLeadIdToV2()`
+- Success state shows "Checklist sent!" confirmation
+
+**Replace In**:
+- `src/components/v2/guides/GuideLeadCapture.tsx` - swap GHL iframe for native form
+- `src/pages/v2/V2GuideDetail.tsx` - uses GuideLeadCapture (no changes needed if component updated)
 
 ---
 
-## VERIFICATION TESTS
+### Task 3: Dynamic Buyer Readiness Results
 
-After migration:
+**File**: `src/components/v2/BuyerReadinessCheck.tsx`
 
-```javascript
-// Test 1: Direct SELECT blocked (should return empty array)
-const { data, error } = await supabase.from('lead_profiles').select('*');
-console.log(data); // [] empty - RLS blocks it
-console.log(error); // null (no error, just no access)
+**Changes**:
+1. Calculate `readiness_score` from answers (0-100 scale)
+2. Identify `primary_priority` from question 3 answer
+3. Store in SessionContext: `updateSessionContext({ readiness_score, primary_priority })`
+4. Re-order `result.bullets` to show priority-relevant steps first
 
-// Test 2: Edge function can still read (via service role)
-const { data } = await supabase.functions.invoke('get-report', {
-  body: { report_id: 'some-id' }
-});
-console.log(data); // Works - service role bypasses RLS
+**Scoring Logic**:
+```text
+Readiness Score Calculation:
+- Question 0 (Situation): Touring +30, Active +20, Planning +10, Exploring +5
+- Question 1 (Lender): Pre-approved +30, Talked +15, Not yet +5
+- Question 2 (Priority): Mapped to next step emphasis
+- Question 3 (Comfort): Confident +10, Somewhat +5, Overwhelmed +0
 
-// Test 3: Telemetry INSERT still works
-const { error } = await supabase.from('event_log').insert({
-  session_id: 'test',
-  event_type: 'test'
-});
-console.log(error); // null - INSERT policy allows it
+Result Customization:
+- If priority = "monthly_payment" → Lead with financing bullet
+- If priority = "neighborhoods" → Lead with location bullet
+- If priority = "affordability" → Lead with budget bullet
 ```
 
 ---
 
-## IMPLEMENTATION
+### Task 4: Dynamic Path Quiz Results
 
-Run the Phase 2 SQL migration to add explicit SELECT denial policies to all sensitive tables.
+**File**: `src/pages/v2/V2HomePathQuiz.tsx`
 
-This completes the **Oasis Shield** - a fully locked-down database where:
-- All public reads are blocked
-- All public writes are blocked
-- Only Edge Functions (with service role) can access data
-- Telemetry (event_log INSERT) remains functional
+**Changes**:
+1. Store `quiz_completed: true` and `quiz_result_path` in SessionContext on completion
+2. Submit contact info to `upsert-lead-profile` edge function
+3. Pivot result content based on `getResultPath()`:
+   - **Cash Offer**: Show speed/simplicity messaging, link to `/v2/cash-offer-options`
+   - **Buyer**: Show home search roadmap, link to `/v2/buyer-readiness`
+   - **Seller**: Show value preparation, link to `/v2/sell`
+   - **Exploring**: Show gentle guidance, link to `/v2/guides`
+
+**Integration**:
+- Call `bridgeLeadIdToV2()` after quiz completion to persist identity
+
+---
+
+### Task 5: Private Cash Review State Machine
+
+**File**: `src/pages/v2/V2PrivateCashReview.tsx`
+
+**State Machine**:
+```text
+┌─────────────────────────────────────────────────────────┐
+│                   ON PAGE LOAD                          │
+│                         │                               │
+│           ┌─────────────┴─────────────┐                 │
+│           ▼                           ▼                 │
+│   [lead_id EXISTS]            [lead_id MISSING]         │
+│           │                           │                 │
+│           ▼                           ▼                 │
+│   "Welcome Back, [Name]"      "Start My Review"         │
+│   "Your Analysis is Ready"    Standard Hero             │
+│           │                           │                 │
+│           ▼                           ▼                 │
+│   CTA: "View My Report"       CTA: "Chat with Selena"   │
+│   Opens last report           Opens chat to collect     │
+│                               info for report           │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Implementation**:
+1. Check `localStorage.getItem('selena_lead_id')` on mount
+2. If exists, fetch lead name from edge function or context
+3. Check `localStorage.getItem('cc_last_report_id')` for existing report
+4. Conditionally render personalized vs. default hero
+
+---
+
+### Task 6: Full Session Dossier to GHL Webhook
+
+**File**: `supabase/functions/submit-consultation-intake/index.ts`
+
+**Enhance GHL Payload**:
+```typescript
+const ghlPayload = {
+  // Existing fields...
+  email,
+  name,
+  phone,
+  tags: [...],
+  
+  // NEW: Full Session Dossier
+  customField: {
+    lead_id: leadId,
+    language: input.language,
+    intent: input.intent,
+    timeline: input.timeline,
+    price_range: input.price_range || null,
+    pre_approved: input.pre_approved || null,
+    notes: input.notes || null,
+    
+    // NEW FIELDS - Complete Cognitive Journey
+    situation: input.situation || null,           // inherited, divorce, etc.
+    condition: input.condition || null,           // move_in_ready, distressed, etc.
+    readiness_score: input.readiness_score || null,
+    primary_priority: input.primary_priority || null,
+    quiz_completed: input.quiz_completed || false,
+    quiz_result_path: input.quiz_result_path || null,
+    tool_used: input.tool_used || null,
+    last_tool_result: input.last_tool_result || null,  // cash/traditional advantage
+    has_viewed_report: input.has_viewed_report || false,
+    session_source: input.session_source || null,      // landing path
+    utm_source: input.utm_source || null,
+    utm_campaign: input.utm_campaign || null,
+  },
+  source: "Consultation Intake - Lovable /v2/book",
+};
+```
+
+**Frontend Changes** (ConsultationIntakeForm):
+- Pass full SessionContext to edge function on submit
+
+---
+
+### Task 7: Authority Layer Verification
+
+**Files**:
+- `src/hooks/useGoogleReviews.ts` - Already has 3-tier fallback
+- `src/hooks/useYouTubeVideos.ts` - Verify fallback exists
+
+**Verification**:
+- Google Reviews: Live API → 24h Cache → Static Fallbacks (5 curated reviews)
+- YouTube Videos: Live API → Cache → Static Fallbacks (if needed)
+
+**Status**: Already implemented correctly per memory `authority-fallbacks`
+
+---
+
+## FILE CHANGES SUMMARY
+
+| File | Action | Description |
+|------|--------|-------------|
+| `src/components/v2/ConsultationIntakeForm.tsx` | MODIFY | Add SessionContext pre-population |
+| `src/components/v2/guides/NativeGuideLeadCapture.tsx` | CREATE | New native form component |
+| `src/components/v2/guides/GuideLeadCapture.tsx` | MODIFY | Replace GHL iframe with native form |
+| `src/components/v2/BuyerReadinessCheck.tsx` | MODIFY | Add dynamic result reordering |
+| `src/pages/v2/V2HomePathQuiz.tsx` | MODIFY | Add SessionContext updates, lead bridge |
+| `src/pages/v2/V2PrivateCashReview.tsx` | MODIFY | Implement state machine |
+| `supabase/functions/submit-consultation-intake/index.ts` | MODIFY | Expand GHL payload |
+| `src/lib/analytics/bridgeLeadIdToV2.ts` | CREATE | Helper for lead identity bridging |
+
+---
+
+## TECHNICAL DETAILS
+
+### SessionContext Pre-Population Hook
+
+```typescript
+// New hook: useSessionPrePopulation.ts
+export function useSessionPrePopulation() {
+  const [prePopData, setPrePopData] = useState<Partial<FormData> | null>(null);
+  
+  useEffect(() => {
+    const session = getSessionContext();
+    if (!session) return;
+    
+    const data: Partial<FormData> = {};
+    
+    // Map intent
+    if (session.intent) {
+      const intentMap: Record<string, string> = {
+        buy: 'buyer',
+        sell: 'seller', 
+        cash_offer: 'cash_offer',
+        explore: 'unknown'
+      };
+      data.intent = intentMap[session.intent] || 'unknown';
+    }
+    
+    // Map timeline
+    if (session.timeline) {
+      const timelineMap: Record<string, string> = {
+        asap: 'immediately',
+        '30_days': '1_3_months',
+        '60_90': '3_6_months',
+        exploring: 'researching'
+      };
+      data.timeline = timelineMap[session.timeline];
+    }
+    
+    // Language
+    data.preferredLanguage = session.language;
+    
+    setPrePopData(data);
+  }, []);
+  
+  return prePopData;
+}
+```
+
+### Lead Identity Bridge Helper
+
+```typescript
+// New file: src/lib/analytics/bridgeLeadIdToV2.ts
+export function bridgeLeadIdToV2(leadId: string): void {
+  localStorage.setItem('selena_lead_id', leadId);
+  
+  // Update session context
+  updateSessionContext({ 
+    has_captured_lead: true 
+  });
+  
+  // Log bridge event
+  logEvent('lead_id_bridged', { 
+    lead_id: leadId,
+    source: 'native_form' 
+  });
+}
+```
+
+---
+
+## VERIFICATION PLAN
+
+### E2E Browser Session Test Sequence
+
+1. **Clear State**: Clear localStorage to simulate new visitor
+2. **Navigate**: Go to `/v2/buyer-readiness`
+3. **Take Check**: Complete 4-question readiness assessment
+4. **Observe**: Results should show dynamic bullet ordering based on priority
+5. **Navigate**: Click through to a guide (e.g., `/v2/guides/first-time-buyer-guide`)
+6. **Scroll**: Reach mid-guide lead capture form
+7. **Verify Pre-Population**: 
+   - Intent field should show "Buy a home" (from readiness check)
+   - Language should match current language
+8. **Submit Form**: Enter name, email, phone
+9. **Verify**: 
+   - Edge function receives full session dossier
+   - GHL webhook receives complete cognitive journey
+   - `selena_lead_id` stored in localStorage
+10. **Navigate**: Go to `/v2/private-cash-review`
+11. **Verify State Machine**: Hero should show "Welcome Back" variant
+
+---
+
+## SUCCESS CRITERIA
+
+1. Native forms fully replace GHL iframes in guides
+2. Forms pre-populate 3+ fields from SessionContext when data exists
+3. BuyerReadiness results dynamically reorder based on priority
+4. Path Quiz stores `quiz_result_path` and bridges lead identity
+5. PrivateCashReview shows personalized hero for returning leads
+6. GHL receives 10+ custom fields in the Full Dossier payload
+7. Authority layer (Reviews/YouTube) gracefully degrades with fallbacks
+8. E2E test passes all verification checkpoints
+
+---
+
+## IMPLEMENTATION ORDER
+
+1. **Create** `bridgeLeadIdToV2.ts` helper (dependency for other tasks)
+2. **Enhance** `ConsultationIntakeForm.tsx` with pre-population
+3. **Create** `NativeGuideLeadCapture.tsx` component
+4. **Update** `GuideLeadCapture.tsx` to use native form
+5. **Modify** `BuyerReadinessCheck.tsx` for dynamic results
+6. **Modify** `V2HomePathQuiz.tsx` for session persistence
+7. **Modify** `V2PrivateCashReview.tsx` state machine
+8. **Enhance** `submit-consultation-intake` edge function
+9. **Verify** authority fallbacks (already implemented)
+10. **Run** E2E browser verification
+
+This plan transforms the platform from "static forms with widgets" to an "intelligent, context-aware concierge experience" where every interaction builds upon previous context.
