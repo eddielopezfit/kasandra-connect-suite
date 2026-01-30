@@ -5,11 +5,12 @@
  * Now with Concierge Tabs for mobile-first intent routing
  */
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Send, Sparkles, FileText, Loader2, Globe, Minus, MessageCircle } from 'lucide-react';
 import { useSelenaChat, ChatMessage, ChatAction } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { logEvent } from '@/lib/analytics/logEvent';
+import { getSessionContext, SessionContext } from '@/lib/analytics/selenaSession';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
@@ -29,8 +30,34 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ReportViewer } from '@/components/v2/ReportViewer';
 import LeadCaptureModal from '@/components/v2/LeadCaptureModal';
 import { PriorityCallModal } from './PriorityCallModal';
-import { ConciergeTabBar, ConciergeTab } from './ConciergeTabBar';
+import { ConciergeTabBar, ConciergeTab, JourneyIntent } from './ConciergeTabBar';
 import { ConciergeTabPanels } from './ConciergeTabPanels';
+
+/**
+ * Compute journey step based on session context
+ * Returns step 1-4 based on user progress through funnel
+ */
+function computeJourneyStep(context: SessionContext | null): number {
+  if (!context) return 0;
+  
+  let step = 1;
+  
+  // For sellers
+  if (context.intent === 'sell' || context.intent === 'cash_offer') {
+    if (context.tool_used) step = 2; // Used calculator
+    if (context.has_viewed_report) step = 3; // Viewed report
+    if (context.has_booked) step = 4; // Booked consultation
+  }
+  
+  // For buyers
+  if (context.intent === 'buy') {
+    if (context.readiness_score) step = 2; // Took readiness check
+    if (context.last_guide_id) step = 3; // Read a guide
+    if (context.has_booked) step = 4; // Booked consultation
+  }
+  
+  return step;
+}
 
 export function SelenaChatDrawer() {
   const { 
@@ -61,6 +88,15 @@ export function SelenaChatDrawer() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
+  
+  // Compute journey context for tab bar
+  const journeyContext = useMemo(() => {
+    const ctx = getSessionContext();
+    return {
+      intent: ctx?.intent as JourneyIntent | undefined,
+      step: computeJourneyStep(ctx),
+    };
+  }, [messages.length]); // Re-compute when messages change (user may have progressed)
 
   // Sync uiLanguage with global language when drawer opens
   useEffect(() => {
@@ -218,10 +254,33 @@ export function SelenaChatDrawer() {
       return null;
     }
     
+    // Get the last user message for client-side deduplication (safety net)
+    const lastUserMessage = [...messages]
+      .reverse()
+      .find(m => m.role === 'user')?.content?.toLowerCase().trim();
+    
+    // Filter out any pill that matches (or is very similar to) the last user message
+    const filteredReplies = suggestedReplies.filter(reply => {
+      if (!lastUserMessage) return true;
+      const normalized = reply.toLowerCase().trim();
+      // Exact match check
+      if (normalized === lastUserMessage) return false;
+      // Fuzzy match: check if 70%+ of words overlap
+      const replyWords = new Set(normalized.split(/\s+/).filter(w => w.length > 2));
+      const userWords = new Set(lastUserMessage.split(/\s+/).filter(w => w.length > 2));
+      if (replyWords.size === 0 || userWords.size === 0) return true;
+      const intersection = [...replyWords].filter(w => userWords.has(w)).length;
+      const union = new Set([...replyWords, ...userWords]).size;
+      if (union > 0 && (intersection / union) >= 0.7) return false;
+      return true;
+    });
+    
+    if (filteredReplies.length === 0) return null;
+    
     return (
       <div className="border-t border-border px-4 py-2.5 shrink-0 bg-background/95 backdrop-blur-sm">
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide max-w-full">
-          {suggestedReplies.map((reply, index) => (
+          {filteredReplies.map((reply, index) => (
             <button
               key={index}
               onClick={() => handleSuggestedReplyClick(reply)}
@@ -259,11 +318,13 @@ export function SelenaChatDrawer() {
         closeDrawer={closeChat}
       />
 
-      {/* Concierge Tab Bar */}
+      {/* Concierge Tab Bar with Journey Progress */}
       <ConciergeTabBar
         activeTab={activeTab}
         onTabChange={handleTabChange}
         language={uiLanguage}
+        currentIntent={journeyContext.intent}
+        journeyStep={journeyContext.step}
       />
 
       {/* Input Area */}
