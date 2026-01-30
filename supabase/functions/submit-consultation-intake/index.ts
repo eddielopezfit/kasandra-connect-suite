@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { normalizeIntent, normalizeTimeline, createStructuredError } from "../_shared/normalizeLead.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -42,11 +43,13 @@ interface ConsultationIntakeInput {
 }
 
 interface ConsultationIntakeResponse {
-  success: boolean;
+  ok: boolean;
   lead_id?: string;
   is_new?: boolean;
   ghl_synced?: boolean;
   error?: string;
+  code?: string;
+  field?: string;
 }
 
 Deno.serve(async (req) => {
@@ -60,8 +63,9 @@ Deno.serve(async (req) => {
 
     // Validate required fields
     if (!input.email || !input.name || !input.phone) {
+      const error = createStructuredError('VALIDATION', 'Name, email, and phone are required');
       return new Response(
-        JSON.stringify({ success: false, error: "Name, email, and phone are required" } as ConsultationIntakeResponse),
+        JSON.stringify(error),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -70,11 +74,16 @@ Deno.serve(async (req) => {
     const email = input.email.trim().toLowerCase();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      const error = createStructuredError('VALIDATION', 'Invalid email format', 'email');
       return new Response(
-        JSON.stringify({ success: false, error: "Invalid email format" } as ConsultationIntakeResponse),
+        JSON.stringify(error),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Normalize intent and timeline using shared helper
+    const normalizedIntent = normalizeIntent(input.intent);
+    const normalizedTimeline = normalizeTimeline(input.timeline);
 
     // Initialize Supabase
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -82,8 +91,9 @@ Deno.serve(async (req) => {
 
     if (!supabaseUrl || !supabaseServiceKey) {
       console.error("Missing Supabase environment variables");
+      const error = createStructuredError('SERVER_ERROR', 'Server configuration error');
       return new Response(
-        JSON.stringify({ success: false, error: "Server configuration error" } as ConsultationIntakeResponse),
+        JSON.stringify(error),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -95,11 +105,11 @@ Deno.serve(async (req) => {
       "source:book",
       "selena - consult intake",
       input.language === "es" ? "spanish_speaker" : "english_speaker",
-      `selena - intent ${input.intent || "unknown"}`,
+      `selena - intent ${normalizedIntent.raw || "unknown"}`,
     ];
 
-    if (input.timeline) {
-      tags.push(`timeline:${input.timeline}`);
+    if (normalizedTimeline.raw) {
+      tags.push(`timeline:${normalizedTimeline.raw}`);
     }
 
     // Check for existing lead
@@ -111,8 +121,9 @@ Deno.serve(async (req) => {
 
     if (selectError) {
       console.error("Error checking existing lead:", selectError);
+      const error = createStructuredError('SERVER_ERROR', 'Database query failed');
       return new Response(
-        JSON.stringify({ success: false, error: "Database query failed" } as ConsultationIntakeResponse),
+        JSON.stringify(error),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -125,15 +136,15 @@ Deno.serve(async (req) => {
       const existingTags = existingLead.tags || [];
       const mergedTags = [...new Set([...existingTags, ...tags])];
 
-      // Update existing lead
+      // Update existing lead with CANONICAL values for DB
       const { error: updateError } = await supabase
         .from("lead_profiles")
         .update({
           name: input.name.trim(),
           phone: input.phone.trim() || existingLead.phone,
           language: input.language || existingLead.language,
-          intent: input.intent || null,
-          timeline: input.timeline || null,
+          intent: normalizedIntent.canonical,
+          timeline: normalizedTimeline.canonical,
           session_id: input.session_id || null,
           source: input.source || "consultation_intake",
           tags: mergedTags,
@@ -142,8 +153,9 @@ Deno.serve(async (req) => {
 
       if (updateError) {
         console.error("Error updating lead:", updateError);
+        const error = createStructuredError('DB_CONSTRAINT', `Failed to update lead: ${updateError.message}`, updateError.details?.includes('intent') ? 'intent' : updateError.details?.includes('timeline') ? 'timeline' : undefined);
         return new Response(
-          JSON.stringify({ success: false, error: "Failed to update lead" } as ConsultationIntakeResponse),
+          JSON.stringify(error),
           { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -151,7 +163,7 @@ Deno.serve(async (req) => {
       leadId = existingLead.id;
       isNew = false;
     } else {
-      // Insert new lead
+      // Insert new lead with CANONICAL values for DB
       const { data: newLead, error: insertError } = await supabase
         .from("lead_profiles")
         .insert({
@@ -159,8 +171,8 @@ Deno.serve(async (req) => {
           name: input.name.trim(),
           phone: input.phone.trim(),
           language: input.language || "en",
-          intent: input.intent || null,
-          timeline: input.timeline || null,
+          intent: normalizedIntent.canonical,
+          timeline: normalizedTimeline.canonical,
           session_id: input.session_id || null,
           source: input.source || "consultation_intake",
           tags,
@@ -170,8 +182,10 @@ Deno.serve(async (req) => {
 
       if (insertError) {
         console.error("Error inserting lead:", insertError);
+        const field = insertError.message?.includes('intent') ? 'intent' : insertError.message?.includes('timeline') ? 'timeline' : undefined;
+        const error = createStructuredError('DB_CONSTRAINT', `Failed to create lead: ${insertError.message}`, field);
         return new Response(
-          JSON.stringify({ success: false, error: "Failed to create lead" } as ConsultationIntakeResponse),
+          JSON.stringify(error),
           { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -211,27 +225,32 @@ Deno.serve(async (req) => {
 
         const timelineTagMap: Record<string, string> = {
           immediately: 'timeline_urgent',
-          '1_3_months': 'timeline_30_days',
+          asap: 'timeline_urgent',
+          '30_days': 'timeline_30_days',
+          '1_3_months': 'timeline_60_90',
+          '60_90': 'timeline_60_90',
           '3_6_months': 'timeline_flexible',
+          '6_plus_months': 'timeline_flexible',
           researching: 'timeline_exploring',
+          exploring: 'timeline_exploring',
         };
 
-        // Build semantic tags
+        // Build semantic tags using RAW values for CRM clarity
         const situationTags = input.situation 
           ? (situationTagMap[input.situation] || [`situation_${input.situation}`]) 
           : [];
         const conditionTag = input.condition 
           ? (conditionTagMap[input.condition] || `condition_${input.condition}`)
           : null;
-        const timelineTag = input.timeline 
-          ? (timelineTagMap[input.timeline] || `timeline_${input.timeline}`)
+        const timelineTag = normalizedTimeline.raw 
+          ? (timelineTagMap[normalizedTimeline.raw] || `timeline_${normalizedTimeline.raw}`)
           : null;
 
         const allTags = [
           "Consultation Intake",
           "consultation_intake",
           input.language === "es" ? "spanish_speaker" : "english_speaker",
-          `intent_${input.intent || "unknown"}`,
+          `intent_${normalizedIntent.raw || "unknown"}`,
           input.source ? `source_${input.source}` : null,
           ...situationTags,
           conditionTag,
@@ -240,15 +259,13 @@ Deno.serve(async (req) => {
           input.has_viewed_report ? "viewed_report" : null,
         ].filter(Boolean) as string[];
 
-        // Pipeline stage helper
-        const getPipelineStage = (intent: string | undefined): string => {
+        // Pipeline stage helper using CANONICAL intent
+        const getPipelineStage = (intent: string | null): string => {
           switch (intent) {
-            case 'seller':
             case 'sell':
               return 'Seller Lead';
-            case 'cash_offer':
+            case 'cash':
               return 'Cash Offer Lead';
-            case 'buyer':
             case 'buy':
               return 'Buyer Lead';
             default:
@@ -256,18 +273,20 @@ Deno.serve(async (req) => {
           }
         };
 
-        // Goal label helper
-        const getGoalLabel = (intent: string | undefined, lang: string): string => {
+        // Goal label helper using RAW intent for human-readable labels
+        const getGoalLabel = (intentRaw: string | null, lang: string): string => {
           const labels: Record<string, { en: string; es: string }> = {
             seller: { en: 'Thinking about selling', es: 'Pensando en vender' },
             sell: { en: 'Thinking about selling', es: 'Pensando en vender' },
-            cash_offer: { en: 'Interested in cash offer', es: 'Interesado en oferta en efectivo' },
             buyer: { en: 'Looking to buy', es: 'Buscando comprar' },
             buy: { en: 'Looking to buy', es: 'Buscando comprar' },
-            explore: { en: 'Just exploring', es: 'Solo explorando' }
+            cash_offer: { en: 'Interested in cash offer', es: 'Interesado en oferta en efectivo' },
+            cash: { en: 'Interested in cash offer', es: 'Interesado en oferta en efectivo' },
+            exploring: { en: 'Just exploring', es: 'Solo explorando' },
+            explore: { en: 'Just exploring', es: 'Solo explorando' },
           };
           const langKey = lang === 'es' ? 'es' : 'en';
-          return labels[intent || 'explore']?.[langKey] || labels.explore[langKey];
+          return labels[intentRaw || 'explore']?.[langKey] || labels.explore[langKey];
         };
 
         const ghlPayload = {
@@ -278,11 +297,13 @@ Deno.serve(async (req) => {
           phone: input.phone.trim(),
           tags: allTags,
           customField: {
-            // Core fields
+            // Core fields - send BOTH canonical and raw
             lead_id: leadId,
             language: input.language,
-            intent: input.intent,
-            timeline: input.timeline,
+            intent_canonical: normalizedIntent.canonical,
+            intent_raw: normalizedIntent.raw,
+            timeline_canonical: normalizedTimeline.canonical,
+            timeline_raw: normalizedTimeline.raw,
             price_range: input.price_range || null,
             pre_approved: input.pre_approved || null,
             notes: input.notes || null,
@@ -315,12 +336,12 @@ Deno.serve(async (req) => {
             // Guide context
             guide_id: input.guide_id || null,
             guide_title: input.guide_title || null,
-            // NEW: Semantic intent fields for pipeline routing
-            intent_seller: input.intent === 'seller' || input.intent === 'sell' || input.intent === 'cash_offer',
-            intent_buyer: input.intent === 'buyer' || input.intent === 'buy',
-            intent_cash: input.intent === 'cash_offer',
-            pipeline_stage: getPipelineStage(input.intent),
-            last_declared_goal: getGoalLabel(input.intent, input.language),
+            // Semantic intent fields for pipeline routing (using CANONICAL)
+            intent_seller: normalizedIntent.canonical === 'sell' || normalizedIntent.canonical === 'cash',
+            intent_buyer: normalizedIntent.canonical === 'buy',
+            intent_cash: normalizedIntent.canonical === 'cash',
+            pipeline_stage: getPipelineStage(normalizedIntent.canonical),
+            last_declared_goal: getGoalLabel(normalizedIntent.raw, input.language),
           },
           source: "Consultation Intake - Lovable " + (input.source || "/v2/book"),
         };
@@ -370,7 +391,7 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({
-        success: true,
+        ok: true,
         lead_id: leadId,
         is_new: isNew,
         ghl_synced: ghlSynced,
@@ -379,8 +400,9 @@ Deno.serve(async (req) => {
     );
   } catch (error) {
     console.error("Unexpected error in submit-consultation-intake:", error);
+    const structuredError = createStructuredError('SERVER_ERROR', 'Internal server error');
     return new Response(
-      JSON.stringify({ success: false, error: "Internal server error" } as ConsultationIntakeResponse),
+      JSON.stringify(structuredError),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
