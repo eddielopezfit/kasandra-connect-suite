@@ -91,7 +91,8 @@ export type EventType =
   | 'selena_proactive_loss_aversion'
   // Chat UI events
   | 'selena_minimized'
-  | 'selena_restored';
+  | 'selena_restored'
+  | 'selena_booking_confirmation';
 
 export interface EventPayload {
   [key: string]: unknown;
