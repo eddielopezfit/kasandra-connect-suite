@@ -19,6 +19,7 @@ import {
   logChatActionClick,
   logEvent,
 } from '@/lib/analytics/logEvent';
+import { getGuideById } from '@/lib/guides/guideRegistry';
 
 const CHAT_HISTORY_KEY = 'selena_chat_history';
 const LEAD_ID_KEY = 'selena_lead_id';
@@ -255,24 +256,69 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     
     // Add greeting if no messages
     if (messages.length === 0) {
-      const greeting: ChatMessage = {
-        id: generateMessageId(),
-        role: 'assistant',
-        content: t(
+      const context = getSessionContext();
+      let greetingContent: string;
+      let suggestedReplies: string[];
+      
+      // Check if user is on a guide page
+      const guideId = context?.last_guide_id;
+      const guideEntry = guideId ? getGuideById(guideId) : null;
+      const isOnGuidePage = location.pathname.includes('/v2/guides/');
+      
+      if (guideEntry && isOnGuidePage) {
+        // Guide-aware greeting
+        const guideTitle = language === 'es' ? guideEntry.titleEs : guideEntry.titleEn;
+        
+        greetingContent = t(
+          `I see you're reading "${guideTitle}." Would you like a personalized checklist based on this guide?`,
+          `Veo que estás leyendo "${guideTitle}." ¿Te gustaría una lista de verificación personalizada basada en esta guía?`
+        );
+        
+        // Contextual suggested replies based on guide category
+        if (guideEntry.category === 'buying') {
+          suggestedReplies = [
+            t("Yes, send me the checklist", "Sí, envíame la lista"),
+            t("I have a question about buying", "Tengo una pregunta sobre comprar"),
+            t("Not right now", "Ahora no"),
+          ];
+        } else if (guideEntry.category === 'selling' || guideEntry.category === 'valuation') {
+          suggestedReplies = [
+            t("Yes, send me the checklist", "Sí, envíame la lista"),
+            t("What's my home worth?", "¿Cuánto vale mi casa?"),
+            t("Not right now", "Ahora no"),
+          ];
+        } else {
+          // Stories
+          suggestedReplies = [
+            t("I'd like similar guidance", "Me gustaría orientación similar"),
+            t("Tell me more about your services", "Cuéntame más sobre tus servicios"),
+            t("Not right now", "Ahora no"),
+          ];
+        }
+      } else {
+        // Default greeting
+        greetingContent = t(
           "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
           "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarte a explorar tus opciones con calma y sin presión.\n\n¿Estás pensando en comprar, vender, o solo explorar qué es posible?"
-        ),
-        timestamp: new Date().toISOString(),
-        suggestedReplies: [
+        );
+        suggestedReplies = [
           t("I'm thinking about selling", "Estoy pensando en vender"),
           t("I'm looking to buy", "Estoy buscando comprar"),
           t("Just exploring for now", "Solo estoy explorando"),
-        ],
+        ];
+      }
+      
+      const greeting: ChatMessage = {
+        id: generateMessageId(),
+        role: 'assistant',
+        content: greetingContent,
+        timestamp: new Date().toISOString(),
+        suggestedReplies,
       };
       setMessages([greeting]);
       saveHistory([greeting]);
     }
-  }, [messages.length, location.pathname, t]);
+  }, [messages.length, location.pathname, t, language]);
 
   const closeChat = useCallback(() => {
     setIsOpen(false);

@@ -88,7 +88,10 @@ export type EventType =
   | 'consultation_intake_submitted'
   | 'native_form_submit'
   // Proactive engagement events
-  | 'selena_proactive_loss_aversion';
+  | 'selena_proactive_loss_aversion'
+  // Chat UI events
+  | 'selena_minimized'
+  | 'selena_restored';
 
 export interface EventPayload {
   [key: string]: unknown;
