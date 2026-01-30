@@ -1,7 +1,7 @@
 /**
  * Concierge Tab Panels - Content panels for each tab
  * Slide-up panels with intent-specific actions
- * Uses uiLanguage prop for consistent UI chrome language
+ * Uses global language prop for consistent UI chrome
  */
 
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ConciergeTab } from './ConciergeTabBar';
+import { ConciergeTab, JourneyIntent } from './ConciergeTabBar';
 import { ChatAction } from '@/contexts/SelenaChatContext';
 import { logEvent, EventType } from '@/lib/analytics/logEvent';
 
@@ -29,6 +29,7 @@ interface ConciergeTabPanelsProps {
   language: 'en' | 'es';
   leadId?: string | null;
   closeDrawer: () => void;
+  currentIntent?: JourneyIntent;
 }
 
 export function ConciergeTabPanels({
@@ -39,6 +40,7 @@ export function ConciergeTabPanels({
   language,
   leadId,
   closeDrawer,
+  currentIntent,
 }: ConciergeTabPanelsProps) {
   const navigate = useNavigate();
   const t = (en: string, es: string) => language === 'es' ? es : en;
@@ -56,17 +58,6 @@ export function ConciergeTabPanels({
   const handleIntentMessage = (message: string) => {
     logEvent('concierge_intent_click', { message, tab: activeTab });
     onSendMessage(message);
-    onClose();
-  };
-
-  const handleGenerateReport = (reportType: string, label: string) => {
-    logEvent('report_cta_click', { reportType, source: 'concierge_tabs' });
-    onActionClick({
-      label,
-      type: 'generate_report',
-      reportType: reportType as any,
-      eventType: 'report_cta_click',
-    });
     onClose();
   };
 
@@ -118,9 +109,11 @@ export function ConciergeTabPanels({
           <MyOptionsPanel 
             t={t} 
             leadId={leadId}
-            onGenerateReport={handleGenerateReport}
             onActionClick={onActionClick}
             onClose={onClose}
+            onSendMessage={onSendMessage}
+            onNavigate={handleNavigate}
+            currentIntent={currentIntent}
           />
         )}
 
@@ -247,18 +240,23 @@ function GuidesPanel({
 }
 
 // === MY OPTIONS PANEL ===
+// Routes cards to Decision Rooms and chat triggers based on user intent
 function MyOptionsPanel({ 
   t,
   leadId,
-  onGenerateReport,
   onActionClick,
   onClose,
+  onSendMessage,
+  onNavigate,
+  currentIntent,
 }: { 
   t: (en: string, es: string) => string;
   leadId?: string | null;
-  onGenerateReport: (reportType: string, label: string) => void;
   onActionClick: (action: ChatAction) => void;
   onClose: () => void;
+  onSendMessage: (message: string) => void;
+  onNavigate: (path: string, eventType?: EventType) => void;
+  currentIntent?: JourneyIntent;
 }) {
   const handleViewLastReport = () => {
     logEvent('report_view_click', { source: 'concierge_tabs' });
@@ -269,6 +267,31 @@ function MyOptionsPanel({
     });
     onClose();
   };
+
+  // Valuation card → Trigger Selena chat to ask for property address
+  const handleValuationClick = () => {
+    logEvent('concierge_valuation_click', { source: 'my_options', intent: currentIntent });
+    onSendMessage(t(
+      "I'd like to know what I might walk away with if I sell.",
+      "Me gustaría saber cuánto podría recibir si vendo."
+    ));
+  };
+
+  // Cash vs Listing → Navigate to Decision Room
+  const handleCashComparisonClick = () => {
+    logEvent('concierge_cash_comparison_click', { source: 'my_options', intent: currentIntent });
+    onNavigate('/v2/cash-offer-options', 'decision_room_visit');
+  };
+
+  // Buyer Readiness → Navigate to Readiness Check
+  const handleBuyerReadinessClick = () => {
+    logEvent('concierge_buyer_readiness_click', { source: 'my_options', intent: currentIntent });
+    onNavigate('/v2/buyer-readiness', 'decision_room_visit');
+  };
+
+  // Intent-based filtering and ordering
+  const isBuyer = currentIntent === 'buy';
+  const isSeller = currentIntent === 'sell' || currentIntent === 'cash_offer';
 
   return (
     <>
@@ -293,21 +316,63 @@ function MyOptionsPanel({
       )}
 
       <div className="space-y-2">
-        <ReportOptionButton
-          onClick={() => onGenerateReport('home_value_preview', t('Home Value Preview', 'Vista Previa del Valor'))}
-          label={t("See what I might walk away with", "Ver lo que podría recibir")}
-          description={t("Quick home value preview", "Vista previa rápida del valor")}
-        />
-        <ReportOptionButton
-          onClick={() => onGenerateReport('cash_comparison', t('Cash vs Listing', 'Efectivo vs Listado'))}
-          label={t("Cash vs Listing Comparison", "Comparación: Efectivo vs Listado")}
-          description={t("Compare your options", "Compara tus opciones")}
-        />
-        <ReportOptionButton
-          onClick={() => onGenerateReport('buyer_readiness', t('Buyer Readiness', 'Preparación del Comprador'))}
-          label={t("Buyer Readiness Check", "Verificación de Preparación")}
-          description={t("See where you stand", "Ve en qué punto estás")}
-        />
+        {/* Buyer-first ordering: Readiness → Valuation → Cash Comparison */}
+        {isBuyer && (
+          <>
+            <OptionCard
+              onClick={handleBuyerReadinessClick}
+              label={t("Buyer Readiness Check", "Verificación de Preparación")}
+              description={t("See where you stand", "Ve en qué punto estás")}
+            />
+            <OptionCard
+              onClick={handleValuationClick}
+              label={t("See what I might walk away with", "Ver lo que podría recibir")}
+              description={t("Selling your current home?", "¿Vendiendo tu casa actual?")}
+            />
+            <OptionCard
+              onClick={handleCashComparisonClick}
+              label={t("Cash vs Listing Comparison", "Comparación: Efectivo vs Listado")}
+              description={t("Compare your options", "Compara tus opciones")}
+            />
+          </>
+        )}
+
+        {/* Seller-first ordering: Valuation → Cash Comparison (hide Buyer Readiness) */}
+        {isSeller && (
+          <>
+            <OptionCard
+              onClick={handleValuationClick}
+              label={t("See what I might walk away with", "Ver lo que podría recibir")}
+              description={t("Quick home value preview", "Vista previa rápida del valor")}
+            />
+            <OptionCard
+              onClick={handleCashComparisonClick}
+              label={t("Cash vs Listing Comparison", "Comparación: Efectivo vs Listado")}
+              description={t("Compare your options", "Compara tus opciones")}
+            />
+          </>
+        )}
+
+        {/* Default ordering (exploring/unknown): All cards, valuation first */}
+        {!isBuyer && !isSeller && (
+          <>
+            <OptionCard
+              onClick={handleValuationClick}
+              label={t("See what I might walk away with", "Ver lo que podría recibir")}
+              description={t("Quick home value preview", "Vista previa rápida del valor")}
+            />
+            <OptionCard
+              onClick={handleCashComparisonClick}
+              label={t("Cash vs Listing Comparison", "Comparación: Efectivo vs Listado")}
+              description={t("Compare your options", "Compara tus opciones")}
+            />
+            <OptionCard
+              onClick={handleBuyerReadinessClick}
+              label={t("Buyer Readiness Check", "Verificación de Preparación")}
+              description={t("See where you stand", "Ve en qué punto estás")}
+            />
+          </>
+        )}
       </div>
     </>
   );
@@ -410,7 +475,7 @@ function QuickLink({ label, onClick }: { label: string; onClick: () => void }) {
   );
 }
 
-function ReportOptionButton({ 
+function OptionCard({ 
   onClick, 
   label, 
   description 

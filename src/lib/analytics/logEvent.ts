@@ -61,6 +61,11 @@ export type EventType =
   | 'guide_browse_click'
   | 'priority_call_click'
   | 'report_view_click'
+  // My Options routing
+  | 'concierge_valuation_click'
+  | 'concierge_cash_comparison_click'
+  | 'concierge_buyer_readiness_click'
+  | 'decision_room_visit'
   // Guide Library Analytics (Phase 1)
   | 'guide_opened'
   | 'guide_category_selected'
