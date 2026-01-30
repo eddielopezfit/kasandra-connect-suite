@@ -133,6 +133,8 @@ const NativeGuideLeadCapture = ({
       });
     } catch (error) {
       console.error("Submission error:", error);
+      console.error("Error details:", error instanceof Error ? error.message : String(error));
+      
       toast({
         title: t("Error", "Error"),
         description: t("Something went wrong. Please try again.", "Algo salió mal. Por favor intente de nuevo."),
