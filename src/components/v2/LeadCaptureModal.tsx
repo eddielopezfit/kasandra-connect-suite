@@ -9,6 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { getSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
+import { bridgeLeadIdToV2 } from "@/lib/analytics/bridgeLeadIdToV2";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
@@ -127,6 +128,9 @@ const LeadCaptureModal = ({
       // Store lead identity
       const leadId = data.lead_id;
       setLeadIdentity(leadId);
+      
+      // Bridge lead ID to V2 ecosystem (full dossier sync)
+      bridgeLeadIdToV2(leadId, source);
 
       // Log event
       logEvent("form_submit", {
