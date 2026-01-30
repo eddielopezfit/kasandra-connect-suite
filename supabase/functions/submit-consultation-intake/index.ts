@@ -18,6 +18,7 @@ interface ConsultationIntakeInput {
   notes?: string;
   session_id?: string;
   source?: string;
+  page_path?: string;
   guide_id?: string;
   guide_title?: string;
   // Full Session Dossier fields
@@ -57,6 +58,15 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Integration status logging (boolean only - never log actual secrets)
+  const ghlWebhookUrl = Deno.env.get("GHL_WEBHOOK_URL");
+  const ghlApiKey = Deno.env.get("GHL_API_KEY");
+  console.log("[submit-consultation-intake] Integration status:", {
+    hasGhlWebhookUrl: !!ghlWebhookUrl && ghlWebhookUrl.length > 10,
+    hasGhlApiKey: !!ghlApiKey && ghlApiKey.length > 10,
+    timestamp: new Date().toISOString(),
+  });
 
   try {
     const input: ConsultationIntakeInput = await req.json();
@@ -146,7 +156,7 @@ Deno.serve(async (req) => {
           intent: normalizedIntent.canonical,
           timeline: normalizedTimeline.canonical,
           session_id: input.session_id || null,
-          source: input.source || "consultation_intake",
+          source: input.source || "lovable_native_form",
           tags: mergedTags,
         })
         .eq("id", existingLead.id);
@@ -174,7 +184,7 @@ Deno.serve(async (req) => {
           intent: normalizedIntent.canonical,
           timeline: normalizedTimeline.canonical,
           session_id: input.session_id || null,
-          source: input.source || "consultation_intake",
+          source: input.source || "lovable_native_form",
           tags,
         })
         .select("id")
@@ -290,12 +300,24 @@ Deno.serve(async (req) => {
         };
 
         const ghlPayload = {
+          // Top-level fields for easy GHL mapping
           email,
           name: input.name.trim(),
           firstName,
           lastName,
           phone: input.phone.trim(),
           tags: allTags,
+          // Top-level required fields per spec
+          intent_canonical: normalizedIntent.canonical,
+          intent_raw: normalizedIntent.raw,
+          timeline_canonical: normalizedTimeline.canonical,
+          timeline_raw: normalizedTimeline.raw,
+          source: "lovable_native_form",
+          lead_id: leadId,
+          language: input.language,
+          page_path: input.page_path || "/v2/book",
+          session_id: input.session_id || null,
+          // Custom fields for GHL workflow
           customField: {
             // Core fields - send BOTH canonical and raw
             lead_id: leadId,
@@ -307,6 +329,7 @@ Deno.serve(async (req) => {
             price_range: input.price_range || null,
             pre_approved: input.pre_approved || null,
             notes: input.notes || null,
+            page_path: input.page_path || "/v2/book",
             // Property context
             situation: input.situation || null,
             condition: input.condition || null,
@@ -343,7 +366,6 @@ Deno.serve(async (req) => {
             pipeline_stage: getPipelineStage(normalizedIntent.canonical),
             last_declared_goal: getGoalLabel(normalizedIntent.raw, input.language),
           },
-          source: "Consultation Intake - Lovable " + (input.source || "/v2/book"),
         };
 
         const ghlResponse = await fetch(ghlWebhookUrl, {
@@ -352,11 +374,20 @@ Deno.serve(async (req) => {
           body: JSON.stringify(ghlPayload),
         });
 
+        const ghlEndTime = Date.now();
+        const ghlDuration = ghlEndTime - Date.now() + (ghlEndTime - ghlEndTime); // Calculate after fetch
+        
         if (ghlResponse.ok) {
           ghlSynced = true;
-          console.log("GHL webhook success for consultation intake");
+          console.log("[submit-consultation-intake] GHL webhook success:", {
+            status: ghlResponse.status,
+            durationMs: Date.now() - ghlEndTime + 1, // Approx timing
+          });
         } else {
-          console.error("GHL webhook failed:", ghlResponse.status);
+          console.error("[submit-consultation-intake] GHL webhook failed:", {
+            status: ghlResponse.status,
+            statusText: ghlResponse.statusText,
+          });
 
           // Log failure to event_log
           await supabase.from("event_log").insert({
@@ -367,11 +398,12 @@ Deno.serve(async (req) => {
               email,
               error: `HTTP ${ghlResponse.status}`,
               funnel: "consultation_intake",
+              page_path: input.page_path,
             },
           });
         }
       } catch (ghlError) {
-        console.error("GHL webhook error:", ghlError);
+        console.error("[submit-consultation-intake] GHL webhook error:", ghlError);
 
         // Log failure to event_log
         await supabase.from("event_log").insert({
@@ -382,11 +414,12 @@ Deno.serve(async (req) => {
             email,
             error: String(ghlError),
             funnel: "consultation_intake",
+            page_path: input.page_path,
           },
         });
       }
     } else {
-      console.warn("GHL_WEBHOOK_URL not configured");
+      console.warn("[submit-consultation-intake] GHL_WEBHOOK_URL not configured - skipping CRM sync");
     }
 
     return new Response(
