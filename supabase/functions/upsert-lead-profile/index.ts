@@ -14,6 +14,9 @@ interface UpsertLeadInput {
   session_id?: string;
   utm_source?: string;
   utm_campaign?: string;
+  // Intent & property context
+  intent?: string;
+  property_address?: string;
 }
 
 interface UpsertLeadResponse {

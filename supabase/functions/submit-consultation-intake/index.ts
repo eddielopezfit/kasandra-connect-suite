@@ -240,6 +240,36 @@ Deno.serve(async (req) => {
           input.has_viewed_report ? "viewed_report" : null,
         ].filter(Boolean) as string[];
 
+        // Pipeline stage helper
+        const getPipelineStage = (intent: string | undefined): string => {
+          switch (intent) {
+            case 'seller':
+            case 'sell':
+              return 'Seller Lead';
+            case 'cash_offer':
+              return 'Cash Offer Lead';
+            case 'buyer':
+            case 'buy':
+              return 'Buyer Lead';
+            default:
+              return 'Exploring';
+          }
+        };
+
+        // Goal label helper
+        const getGoalLabel = (intent: string | undefined, lang: string): string => {
+          const labels: Record<string, { en: string; es: string }> = {
+            seller: { en: 'Thinking about selling', es: 'Pensando en vender' },
+            sell: { en: 'Thinking about selling', es: 'Pensando en vender' },
+            cash_offer: { en: 'Interested in cash offer', es: 'Interesado en oferta en efectivo' },
+            buyer: { en: 'Looking to buy', es: 'Buscando comprar' },
+            buy: { en: 'Looking to buy', es: 'Buscando comprar' },
+            explore: { en: 'Just exploring', es: 'Solo explorando' }
+          };
+          const langKey = lang === 'es' ? 'es' : 'en';
+          return labels[intent || 'explore']?.[langKey] || labels.explore[langKey];
+        };
+
         const ghlPayload = {
           email,
           name: input.name.trim(),
@@ -285,6 +315,12 @@ Deno.serve(async (req) => {
             // Guide context
             guide_id: input.guide_id || null,
             guide_title: input.guide_title || null,
+            // NEW: Semantic intent fields for pipeline routing
+            intent_seller: input.intent === 'seller' || input.intent === 'sell' || input.intent === 'cash_offer',
+            intent_buyer: input.intent === 'buyer' || input.intent === 'buy',
+            intent_cash: input.intent === 'cash_offer',
+            pipeline_stage: getPipelineStage(input.intent),
+            last_declared_goal: getGoalLabel(input.intent, input.language),
           },
           source: "Consultation Intake - Lovable " + (input.source || "/v2/book"),
         };

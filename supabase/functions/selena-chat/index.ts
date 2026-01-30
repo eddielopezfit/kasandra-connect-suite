@@ -150,6 +150,38 @@ function detectIntent(message: string, route: string): string[] {
   return intents.length > 0 ? intents : ["exploring"];
 }
 
+// ============= INTENT-AWARE SUGGESTION FILTERING =============
+type IntentKey = 'sell' | 'cash_offer' | 'buy' | 'exploring';
+
+function getSuggestedReplies(intent: string | undefined, language: 'en' | 'es'): string[] {
+  const replies: Record<IntentKey, { en: string[]; es: string[] }> = {
+    sell: {
+      en: ["What's my home worth?", "Compare cash vs. traditional", "Request a net sheet"],
+      es: ["¿Cuánto vale mi casa?", "Comparar efectivo vs. tradicional", "Solicitar análisis de ganancias"]
+    },
+    cash_offer: {
+      en: ["What's my home worth?", "How fast can I close?", "Request a cash offer"],
+      es: ["¿Cuánto vale mi casa?", "¿Qué tan rápido puedo cerrar?", "Solicitar oferta en efectivo"]
+    },
+    buy: {
+      en: ["Take readiness check", "View first-time buyer guide", "Schedule a tour"],
+      es: ["Tomar evaluación de preparación", "Ver guía para compradores", "Programar un recorrido"]
+    },
+    exploring: {
+      en: ["I'm thinking about selling", "I'm looking to buy", "What are my options?"],
+      es: ["Estoy pensando en vender", "Estoy buscando comprar", "¿Cuáles son mis opciones?"]
+    }
+  };
+  
+  // Map intent to key (prioritize cash_offer > sell > buy > exploring)
+  const intentKey: IntentKey = intent === 'cash_offer' ? 'cash_offer'
+                             : intent === 'sell' ? 'sell'
+                             : intent === 'buy' ? 'buy'
+                             : 'exploring';
+  
+  return replies[intentKey][language];
+}
+
 // ============= SYSTEM PROMPTS (HARDENED) =============
 const SYSTEM_PROMPT_EN = `You are Selena, Kasandra Prieto's digital real estate concierge. 
 Kasandra is a high-touch solo practitioner in Tucson. 
@@ -190,6 +222,14 @@ serve(async (req) => {
     // Deduplicate intent for DB (primary only)
     const primaryIntent = intents.includes("cash") ? "cash_offer" : intents[0];
 
+    // Determine the effective intent (detected now OR previously stored in context)
+    const effectiveIntent = primaryIntent !== 'exploring' ? primaryIntent : (context.intent || 'exploring');
+
+    // Check if this is the FIRST sell declaration (for address collection)
+    const isFirstSellDeclaration = 
+      (intents.includes('sell') || intents.includes('cash')) && 
+      !context.intent; // No prior intent stored in session
+
     // Identity Upgrade & Persistence
     const extractedEmail = extractEmail(message);
     if (extractedEmail) {
@@ -207,7 +247,18 @@ serve(async (req) => {
       await supabase.from("lead_profiles").update(updateObj).eq("id", leadId);
     }
 
-    const systemPrompt = language === "es" ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN;
+    // Build system prompt with optional address collection directive
+    let additionalInstruction = '';
+    if (isFirstSellDeclaration) {
+      additionalInstruction = language === 'es'
+        ? `\n\nEl usuario acaba de indicar que quiere vender. Tu respuesta DEBE terminar preguntando la dirección de la propiedad.
+Ejemplo: "¡Ese es un paso emocionante! Para darle el análisis de mercado más preciso, ¿cuál es la dirección de la propiedad que está pensando en vender?"`
+        : `\n\nThe user just indicated they want to sell. Your response MUST end with asking for the property address.
+Example: "That's an exciting next step! To give you the most accurate market analysis, what is the address of the property you're thinking about selling?"`;
+    }
+
+    const systemPrompt = (language === "es" ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN) + additionalInstruction;
+    
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`, "Content-Type": "application/json" },
@@ -222,13 +273,13 @@ serve(async (req) => {
     const data = await response.json();
     const reply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
 
+    // Get intent-aware suggested replies
+    const suggestedReplies = getSuggestedReplies(effectiveIntent, language);
+
     return new Response(
       JSON.stringify({
         reply,
-        suggestedReplies:
-          language === "es"
-            ? ["¿Cuánto vale mi casa?", "Busco comprar", "Solo exploro"]
-            : ["What's my home worth?", "Looking to buy", "Just exploring"],
+        suggestedReplies,
         actions: [
           {
             label: language === "es" ? "Agenda con Kasandra" : "Schedule with Kasandra",
@@ -238,6 +289,8 @@ serve(async (req) => {
         ],
         language,
         lead_id: leadId,
+        // Return detected intent so frontend can update SessionContext
+        detected_intent: primaryIntent !== 'exploring' ? primaryIntent : null,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
