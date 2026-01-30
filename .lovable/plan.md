@@ -1,48 +1,123 @@
 
-# Intent-Aware Suggestion Filtering & GHL Field Mapping
-## Eliminating the "Consistency Leak" in Selena Chat
+
+# Chat Intelligence Upgrade & Form Submission Fix
+## Debug & Verification Plan
 
 ---
 
-## PROBLEM ANALYSIS
+## ANALYSIS SUMMARY
 
-The current implementation has a **Consistency Principle violation**: when a user declares "I'm thinking about selling," Selena still shows:
-- "What's my home worth?" (seller-relevant)
-- "Looking to buy" (WRONG - buyer option)
-- "Just exploring" (WRONG - exploratory option)
+After thorough code review, I found that **most of the requested features are already implemented**:
 
-This breaks the psychological contract. Once intent is declared, the UI should narrow to that path only.
+| Feature | Status | Location |
+|---------|--------|----------|
+| Intent-Aware Suggestions | Already Implemented | `selena-chat/index.ts` lines 153-183 |
+| Address Collection | Already Implemented | `selena-chat/index.ts` lines 228-258 |
+| GHL Semantic Fields | Already Implemented | `submit-consultation-intake/index.ts` lines 318-323 |
+| SessionContext Sync | Already Implemented | `SelenaChatContext.tsx` lines 353-355 |
+| Native Guide Form | Already Implemented | `NativeGuideLeadCapture.tsx` |
 
-**Root Cause**: The `selena-chat` edge function returns **static suggested replies** regardless of detected intent (lines 228-231).
+The primary task is to **fix the form submission error** and verify the implementations work correctly.
 
 ---
 
-## TASK 1: Intent-Aware Suggestion Filtering
+## TASK 1: Fix NativeGuideLeadCapture Submission Error
 
-### Current Code (selena-chat/index.ts, lines 225-241)
+### Root Cause Analysis
+
+The form logic appears correct, but there are potential issues:
+
+1. **CORS Headers**: The `submit-consultation-intake` CORS headers may be missing some client-sent headers
+2. **Undefined Session Values**: `getFullSessionDossier()` may spread undefined fields that cause issues
+3. **Error Handling**: The form catches errors but doesn't expose detailed error messages for debugging
+
+### Fixes Required
+
+**File**: `supabase/functions/submit-consultation-intake/index.ts`
+
+Update CORS headers to include all Supabase client headers:
+
 ```typescript
-return new Response(
-  JSON.stringify({
-    reply,
-    suggestedReplies:
-      language === "es"
-        ? ["¿Cuánto vale mi casa?", "Busco comprar", "Solo exploro"]
-        : ["What's my home worth?", "Looking to buy", "Just exploring"],
-    // ...
-  })
-);
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
 ```
 
-### Target Implementation
+**File**: `src/hooks/useSessionPrePopulation.ts`
 
-Replace static array with intent-aware filtering logic:
+Add null-safety to `getFullSessionDossier()`:
 
 ```typescript
-// Intent-aware suggested replies
-function getSuggestedReplies(
-  intent: string | undefined, 
-  language: 'en' | 'es'
-): string[] {
+export function getFullSessionDossier(): Record<string, unknown> {
+  const session = getSessionContext();
+  
+  if (!session) {
+    return {};
+  }
+  
+  // Filter out undefined values to prevent edge function issues
+  const dossier: Record<string, unknown> = {};
+  
+  const fields = {
+    session_id: session.session_id,
+    session_source: session.landing_path,
+    intent: session.intent,
+    timeline: session.timeline,
+    situation: session.situation,
+    condition: session.condition,
+    tool_used: session.tool_used,
+    last_tool_result: session.last_tool_result,
+    quiz_completed: session.quiz_completed || false,
+    quiz_result_path: session.quiz_result_path,
+    has_viewed_report: session.has_viewed_report || false,
+    last_report_id: session.last_report_id,
+    has_booked: session.has_booked || false,
+    utm_source: session.utm_source,
+    utm_campaign: session.utm_campaign,
+    utm_medium: session.utm_medium,
+    utm_content: session.utm_content,
+    referrer: session.referrer,
+    ad_funnel_source: session.ad_funnel_source,
+    ad_funnel_value_range: session.ad_funnel_value_range,
+  };
+  
+  // Only include defined, non-undefined values
+  for (const [key, value] of Object.entries(fields)) {
+    if (value !== undefined) {
+      dossier[key] = value;
+    }
+  }
+  
+  return dossier;
+}
+```
+
+**File**: `src/components/v2/guides/NativeGuideLeadCapture.tsx`
+
+Add better error logging for debugging:
+
+```typescript
+} catch (error) {
+  console.error("Submission error:", error);
+  console.error("Error details:", error instanceof Error ? error.message : String(error));
+  
+  toast({
+    title: t("Error", "Error"),
+    description: t("Something went wrong. Please try again.", "Algo salió mal. Por favor intente de nuevo."),
+    variant: "destructive",
+  });
+}
+```
+
+---
+
+## TASK 2: Verify Intent-Aware Suggestions (Already Implemented)
+
+The `getSuggestedReplies()` function in `selena-chat/index.ts` already handles intent-based filtering:
+
+```typescript
+function getSuggestedReplies(intent: string | undefined, language: 'en' | 'es'): string[] {
   const replies = {
     sell: {
       en: ["What's my home worth?", "Compare cash vs. traditional", "Request a net sheet"],
@@ -61,144 +136,53 @@ function getSuggestedReplies(
       es: ["Estoy pensando en vender", "Estoy buscando comprar", "¿Cuáles son mis opciones?"]
     }
   };
-  
-  // Default to exploring if no intent
-  const intentKey = intent === 'cash_offer' ? 'cash_offer' 
-                  : intent === 'sell' ? 'sell'
-                  : intent === 'buy' ? 'buy'
-                  : 'exploring';
-  
-  return replies[intentKey][language];
+  // ...
 }
 ```
 
-### Detection & Storage
-
-The edge function already detects intent from the message. We need to:
-1. Also check `context.intent` (SessionContext) for previously declared intent
-2. Update SessionContext when intent is detected
-3. Return filtered suggestions based on the current/detected intent
+**Status**: No changes needed - already filtering correctly.
 
 ---
 
-## TASK 2: Linear Conversion Path (Address Collection)
+## TASK 3: Verify Address Collection (Already Implemented)
 
-When intent is "sell", Selena should proactively ask for the property address to deepen engagement.
-
-### Implementation
-
-Add to the `selena-chat` edge function after intent detection:
+The proactive address collection is already implemented in `selena-chat/index.ts`:
 
 ```typescript
-// Check if this is the first "sell" declaration
+// Check if this is the FIRST sell declaration (for address collection)
 const isFirstSellDeclaration = 
-  intents.includes('sell') && 
-  !context.intent; // No prior intent stored
+  (intents.includes('sell') || intents.includes('cash')) && 
+  !context.intent; // No prior intent stored in session
 
-// Modify AI prompt to include address collection directive
+// Build system prompt with optional address collection directive
 let additionalInstruction = '';
 if (isFirstSellDeclaration) {
-  additionalInstruction = `
-The user just indicated they want to sell. Your response MUST end with asking for the property address.
-Example: "That's an exciting next step! To give you the most accurate market analysis, what is the address of the property you're thinking about selling?"
-`;
+  additionalInstruction = language === 'es'
+    ? `\n\nEl usuario acaba de indicar que quiere vender. Tu respuesta DEBE terminar preguntando la dirección de la propiedad...`
+    : `\n\nThe user just indicated they want to sell. Your response MUST end with asking for the property address...`;
 }
-
-// Append to system prompt when calling AI
-const systemPrompt = (language === "es" ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN) 
-  + additionalInstruction;
 ```
+
+**Status**: No changes needed - already implemented.
 
 ---
 
-## TASK 3: GHL Custom Field Mapping
+## TASK 4: Verify GHL Field Enrichment (Already Implemented)
 
-Enhance the `submit-consultation-intake` and `upsert-lead-profile` edge functions to include semantic seller fields.
-
-### New Fields to Support
+The `submit-consultation-intake` edge function already includes semantic fields:
 
 ```typescript
-interface LeadSemanticFields {
-  // Intent declaration
-  intent_seller: boolean;
-  intent_buyer: boolean;
-  intent_cash: boolean;
-  
-  // Pipeline routing
-  pipeline_stage: 'Seller Lead' | 'Buyer Lead' | 'Cash Offer Lead' | 'Exploring';
-  
-  // Declaration tracking
-  last_declared_goal: string;  // e.g., "Thinking about selling"
-  
-  // Property context (future)
-  property_address?: string;
-}
-```
-
-### GHL Payload Enhancement
-
-In `submit-consultation-intake` GHL webhook:
-
-```typescript
-const ghlPayload = {
+customField: {
   // ... existing fields
-  customField: {
-    // ... existing fields
-    
-    // NEW: Semantic intent fields
-    intent_seller: input.intent === 'seller' || input.intent === 'cash_offer',
-    intent_buyer: input.intent === 'buyer',
-    intent_cash: input.intent === 'cash_offer',
-    pipeline_stage: getPipelineStage(input.intent),
-    last_declared_goal: getGoalLabel(input.intent, input.language),
-    property_address: input.property_address || null,
-  }
-};
-
-function getPipelineStage(intent: string): string {
-  switch (intent) {
-    case 'seller': return 'Seller Lead';
-    case 'cash_offer': return 'Cash Offer Lead';
-    case 'buyer': return 'Buyer Lead';
-    default: return 'Exploring';
-  }
-}
-
-function getGoalLabel(intent: string, language: string): string {
-  const labels = {
-    seller: { en: 'Thinking about selling', es: 'Pensando en vender' },
-    cash_offer: { en: 'Interested in cash offer', es: 'Interesado en oferta en efectivo' },
-    buyer: { en: 'Looking to buy', es: 'Buscando comprar' },
-    explore: { en: 'Just exploring', es: 'Solo explorando' }
-  };
-  return labels[intent]?.[language] || labels.explore[language];
+  intent_seller: input.intent === 'seller' || input.intent === 'sell' || input.intent === 'cash_offer',
+  intent_buyer: input.intent === 'buyer' || input.intent === 'buy',
+  intent_cash: input.intent === 'cash_offer',
+  pipeline_stage: getPipelineStage(input.intent),
+  last_declared_goal: getGoalLabel(input.intent, input.language),
 }
 ```
 
----
-
-## TASK 4: Frontend SessionContext Update
-
-When the user selects "I'm thinking about selling" in chat, immediately update `SessionContext` so future interactions remember this.
-
-### Implementation in SelenaChatContext.tsx
-
-After receiving a response with detected intent:
-
-```typescript
-// In sendMessage callback, after receiving response
-const data = await response.json();
-
-// If backend detected intent, update SessionContext
-if (data.detected_intent) {
-  updateSessionContext({ intent: data.detected_intent });
-}
-```
-
-This ensures the frontend also knows the intent for:
-- Form pre-population
-- Dynamic hero headlines
-- Concierge tab filtering
+**Status**: No changes needed - already implemented.
 
 ---
 
@@ -206,47 +190,45 @@ This ensures the frontend also knows the intent for:
 
 | File | Action | Description |
 |------|--------|-------------|
-| `supabase/functions/selena-chat/index.ts` | MODIFY | Add `getSuggestedReplies()` with intent filtering, return `detected_intent` |
-| `src/contexts/SelenaChatContext.tsx` | MODIFY | Update SessionContext when backend returns `detected_intent` |
-| `supabase/functions/submit-consultation-intake/index.ts` | MODIFY | Add `intent_seller`, `pipeline_stage`, `last_declared_goal` to GHL payload |
-| `supabase/functions/upsert-lead-profile/index.ts` | MODIFY | Accept and store `property_address` field |
+| `supabase/functions/submit-consultation-intake/index.ts` | MODIFY | Expand CORS headers |
+| `src/hooks/useSessionPrePopulation.ts` | MODIFY | Add null-safety to `getFullSessionDossier()` |
+| `src/components/v2/guides/NativeGuideLeadCapture.tsx` | MODIFY | Add detailed error logging |
 
 ---
 
-## VERIFICATION FLOW
+## VERIFICATION PLAN
 
-1. **Open Selena Chat** (fresh session)
-2. **See default pills**: "I'm thinking about selling", "I'm looking to buy", "Just exploring"
-3. **Click "I'm thinking about selling"**
-4. **Selena responds**: "That's an exciting next step! To give you the most accurate market analysis, what is the address of the property you're thinking about selling?"
-5. **Pills update to**: "What's my home worth?", "Compare cash vs. traditional", "Request a net sheet"
-6. **"Looking to buy" pill is GONE** (Consistency Principle maintained)
-7. **User provides email** → GHL receives: `intent_seller: true`, `pipeline_stage: "Seller Lead"`
+### Test 1: Native Form Submission
+1. Navigate to any guide page (e.g., `/v2/guides/first-time-buyer-guide`)
+2. Fill out the NativeGuideLeadCapture form
+3. Submit and verify:
+   - No "Something went wrong" error
+   - Success toast appears
+   - Lead is created in database
+   - GHL webhook receives data
 
----
+### Test 2: Intent-Aware Suggestions
+1. Open Selena Chat (fresh session)
+2. See default pills: "I'm thinking about selling", "I'm looking to buy", "What are my options?"
+3. Click "I'm thinking about selling"
+4. Verify:
+   - "Looking to buy" pill disappears
+   - New pills appear: "What's my home worth?", "Compare cash vs. traditional", "Request a net sheet"
+   - Selena asks for property address
 
-## EXPECTED BEHAVIOR
-
-### Before (Current)
-```
-User: "I'm thinking about selling"
-Selena: "I can help with that..."
-Pills: [What's my home worth?] [Looking to buy] [Just exploring]  ← LEAK
-```
-
-### After (Target)
-```
-User: "I'm thinking about selling"
-Selena: "That's an exciting next step! What is the address of the property?"
-Pills: [What's my home worth?] [Compare cash vs. traditional] [Request a net sheet]  ← FOCUSED
-```
+### Test 3: SessionContext Sync
+1. After clicking "I'm thinking about selling"
+2. Navigate to `/v2/book`
+3. Verify:
+   - ConsultationIntakeForm pre-populates with intent="seller"
 
 ---
 
 ## SUCCESS CRITERIA
 
-1. After declaring seller intent, buyer-related pills disappear instantly
-2. Selena proactively asks for property address on first sell declaration
-3. GHL receives `pipeline_stage: "Seller Lead"` for all seller intent submissions
-4. SessionContext stores intent so other pages can personalize accordingly
-5. Browser test confirms pills filter correctly in real-time
+1. Native form submissions complete without error
+2. "Looking to buy" pill disappears after declaring sell intent
+3. Selena proactively asks for property address on first sell declaration
+4. GHL receives `intent_seller: true` and `pipeline_stage: "Seller Lead"` tags
+5. SessionContext persists intent across pages
+
