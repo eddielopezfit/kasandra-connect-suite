@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageToggle from "@/components/v2/LanguageToggle";
-import { GuideCTABlock, GuideLeadCapture, GuideNextSteps, GuideComplianceFooter } from "@/components/v2/guides";
+import { AuthorityCTABlock, SelenaGuideHandoff, GuideLeadCapture, GuideNextSteps, GuideComplianceFooter } from "@/components/v2/guides";
 import { useGuideScrollTracking } from "@/hooks/useGuideScrollTracking";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { markGuideRead, setLastGuideId } from "@/lib/guides/personalization";
+import { getGuideById, type GuideCategory } from "@/lib/guides/guideRegistry";
 // Guide content type for better structure
 interface GuideSection {
   heading: string;
@@ -561,8 +562,27 @@ const V2GuideDetail = () => {
         {/* Compliance Footer */}
         <GuideComplianceFooter />
 
-        {/* Guide CTA Block */}
-        <GuideCTABlock category={guide.category} />
+        {/* Authority CTA Block (Decision-Compression) */}
+        {(() => {
+          const registryEntry = guideId ? getGuideById(guideId) : undefined;
+          const safeCategory: GuideCategory = registryEntry?.category ?? 'stories';
+          
+          return (
+            <>
+              <AuthorityCTABlock 
+                category={safeCategory}
+                guideTitle={guideTitle}
+                isCashGuide={!!registryEntry?.isCashGuide}
+                authorityBridge={registryEntry?.authorityBridge}
+                marketInsight={registryEntry?.marketInsight}
+              />
+              <SelenaGuideHandoff 
+                guideId={guideId || 'unknown'}
+                category={safeCategory}
+              />
+            </>
+          );
+        })()}
       </article>
     </V2Layout>
   );

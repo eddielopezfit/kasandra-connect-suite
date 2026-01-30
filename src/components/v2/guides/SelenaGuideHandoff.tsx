@@ -1,0 +1,86 @@
+/**
+ * SelenaGuideHandoff - Guide-Aware Selena Prompt
+ * 
+ * A subtle handoff block after the CTA that opens the existing Selena drawer.
+ * Uses the same openChat mechanism from SelenaChatContext.
+ * 
+ * Tone: Calm, supportive, no-pressure
+ */
+
+import { MessageCircle } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useSelenaChat } from '@/contexts/SelenaChatContext';
+import { logEvent } from '@/lib/analytics/logEvent';
+import type { GuideCategory } from '@/lib/guides/guideRegistry';
+
+interface SelenaGuideHandoffProps {
+  guideId: string;
+  category: GuideCategory;
+}
+
+// Category-specific handoff copy
+const HANDOFF_COPY: Record<GuideCategory, { en: string; es: string }> = {
+  buying: {
+    en: "If anything here raised a question, I can help you think it through. Or, if you're ready, I can help you book time with Kasandra.",
+    es: "Si algo aquí le generó una pregunta, puedo ayudarle a pensarlo. O, si ya está listo(a), puedo ayudarle a reservar tiempo con Kasandra.",
+  },
+  selling: {
+    en: "Thinking about your situation? I'm here to help you understand your options, no pressure, just clarity.",
+    es: "¿Pensando en su situación? Estoy aquí para ayudarle a entender sus opciones, sin presión, solo claridad.",
+  },
+  valuation: {
+    en: "Thinking about your situation? I'm here to help you understand your options, no pressure, just clarity.",
+    es: "¿Pensando en su situación? Estoy aquí para ayudarle a entender sus opciones, sin presión, solo claridad.",
+  },
+  cash: {
+    en: "Cash offers are situational. If you want to talk through whether this path makes sense for you, I'm here.",
+    es: "Las ofertas en efectivo dependen de la situación. Si quiere conversar sobre si este camino tiene sentido para usted, aquí estoy.",
+  },
+  stories: {
+    en: "Still thinking? That's okay. I'm here whenever you're ready to talk.",
+    es: "¿Aún pensándolo? Está bien. Estoy aquí cuando usted esté listo(a) para conversar.",
+  },
+};
+
+const SelenaGuideHandoff = ({ guideId, category }: SelenaGuideHandoffProps) => {
+  const { t } = useLanguage();
+  const { openChat } = useSelenaChat();
+  
+  const copy = HANDOFF_COPY[category];
+
+  const handleClick = () => {
+    logEvent('selena_guide_handoff_click', {
+      guide_id: guideId,
+      category,
+    });
+    openChat();
+  };
+
+  return (
+    <section className="bg-cc-navy/95 py-8 border-t border-white/10">
+      <div className="container mx-auto px-4">
+        <button
+          onClick={handleClick}
+          className="max-w-xl mx-auto flex items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer text-left w-full group"
+        >
+          {/* Selena Avatar */}
+          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-cc-gold/20 flex items-center justify-center group-hover:bg-cc-gold/30 transition-colors">
+            <MessageCircle className="w-6 h-6 text-cc-gold" />
+          </div>
+          
+          {/* Copy */}
+          <div className="flex-1 min-w-0">
+            <p className="text-white/60 text-xs uppercase tracking-wider mb-1">
+              {t("Selena, Digital Concierge", "Selena, Concierge Digital")}
+            </p>
+            <p className="text-white/90 text-sm md:text-base leading-relaxed">
+              {t(copy.en, copy.es)}
+            </p>
+          </div>
+        </button>
+      </div>
+    </section>
+  );
+};
+
+export default SelenaGuideHandoff;

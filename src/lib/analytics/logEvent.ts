@@ -97,7 +97,11 @@ export type EventType =
   // Chat UI events
   | 'selena_minimized'
   | 'selena_restored'
-  | 'selena_booking_confirmation';
+  | 'selena_booking_confirmation'
+  // Decision-Compression Guide System
+  | 'guide_authority_cta_view'
+  | 'guide_authority_cta_click'
+  | 'selena_guide_handoff_click';
 
 export interface EventPayload {
   [key: string]: unknown;
