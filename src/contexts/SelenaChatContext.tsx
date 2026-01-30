@@ -250,6 +250,33 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('selena-proactive-message', handleProactiveMessage);
   }, [t, location.pathname]);
 
+  // Listen for booking confirmation events (from ConsultationIntakeForm success)
+  useEffect(() => {
+    const handleBookingConfirmation = (event: Event) => {
+      const customEvent = event as CustomEvent<{ message: string }>;
+      const confirmMsg: ChatMessage = {
+        id: generateMessageId(),
+        role: 'assistant',
+        content: customEvent.detail.message,
+        timestamp: new Date().toISOString(),
+        suggestedReplies: [
+          t("What happens after I book?", "¿Qué pasa después de reservar?"),
+          t("Can I reschedule if needed?", "¿Puedo reprogramar si es necesario?"),
+          t("Thanks, Selena!", "¡Gracias, Selena!"),
+        ],
+      };
+      setMessages(prev => {
+        const updated = [...prev, confirmMsg];
+        saveHistory(updated);
+        return updated;
+      });
+      logEvent('selena_booking_confirmation', { route: location.pathname });
+    };
+    
+    window.addEventListener('selena-booking-confirmation', handleBookingConfirmation);
+    return () => window.removeEventListener('selena-booking-confirmation', handleBookingConfirmation);
+  }, [t, location.pathname]);
+
   const openChat = useCallback(() => {
     setIsOpen(true);
     logSelenaOpen(location.pathname);

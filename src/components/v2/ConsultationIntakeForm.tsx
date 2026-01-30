@@ -28,10 +28,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Loader2, CheckCircle2, Calendar, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import { Loader2, CheckCircle2, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useSessionPrePopulation, getFullSessionDossier } from "@/hooks/useSessionPrePopulation";
 import { bridgeLeadIdToV2, setStoredUserName, setStoredEmail, setStoredPhone } from "@/lib/analytics/bridgeLeadIdToV2";
+import GHLCalendarEmbed from "./GHLCalendarEmbed";
 
 // Form schema with conditional validation messages
 const createFormSchema = (t: (en: string, es: string) => string) =>
@@ -120,42 +121,14 @@ const ConsentText = ({
   );
 };
 
-// GHL Calendar Widget Component
-const GHLCalendarWidget = () => {
-  useEffect(() => {
-    // Load the GoHighLevel calendar embed script
-    const existingScript = document.querySelector('script[src="https://link.msgsndr.com/js/form_embed.js"]');
-    if (!existingScript) {
-      const script = document.createElement("script");
-      script.src = "https://link.msgsndr.com/js/form_embed.js";
-      script.async = true;
-      document.body.appendChild(script);
-    }
-  }, []);
-
-  return (
-    <div className="w-full mt-6">
-      <iframe
-        src="https://api.leadconnectorhq.com/widget/booking/CY3PNu8yhtEuNMWH5e1x"
-        style={{ 
-          width: "100%", 
-          height: "700px",
-          border: "none", 
-          borderRadius: "8px",
-        }}
-        id="inline-CY3PNu8yhtEuNMWH5e1x"
-        title="Schedule a Consultation"
-      />
-    </div>
-  );
-};
 
 const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
   const { t, language } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState("");
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [submittedName, setSubmittedName] = useState("");
+  const [submittedPhone, setSubmittedPhone] = useState("");
   
   // SessionContext pre-population
   const prePopData = useSessionPrePopulation();
@@ -301,9 +274,21 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
         },
       });
 
+      // Store submitted data for calendar pre-fill
+      setSubmittedName(data.name);
       setSubmittedEmail(data.email);
+      setSubmittedPhone(data.phone);
       setIsSuccess(true);
       onSuccess?.(response.lead_id);
+
+      // Dispatch Selena booking confirmation event
+      window.dispatchEvent(new CustomEvent('selena-booking-confirmation', {
+        detail: { 
+          message: language === 'es' 
+            ? `¡Excelente trabajo, ${data.name.split(' ')[0]}! He enviado tus datos a Kasandra. Por favor selecciona un horario en el calendario.`
+            : `Great job, ${data.name.split(' ')[0]}! I've sent your details to Kasandra. Please pick a time that works for you on the calendar.`
+        }
+      }));
 
       toast({
         title: t("Success!", "¡Éxito!"),
@@ -327,63 +312,38 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
     }
   };
 
-  // Success state with calendar embed
+  // Success state with calendar embed - immediate calendar display
   if (isSuccess) {
     return (
       <div className="py-6 px-4 sm:py-8 sm:px-6">
-        {/* Confirmation */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 text-green-600" />
+        {/* Confirmation Header */}
+        <div className="text-center mb-6">
+          <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle2 className="w-7 h-7 text-green-600" />
           </div>
-          <h3 className="font-serif text-2xl sm:text-3xl font-bold text-cc-navy mb-4">
-            {t("Thank You!", "¡Gracias!")}
+          <h3 className="font-serif text-2xl font-bold text-cc-navy mb-2">
+            {t("You're Almost There!", "¡Ya Casi Está!")}
           </h3>
-          <p className="text-cc-charcoal text-base sm:text-lg mb-2">
+          <p className="text-cc-charcoal text-base">
             {t(
-              "Your consultation request has been received.",
-              "Su solicitud de consulta ha sido recibida."
+              "Select a time below to complete your booking.",
+              "Seleccione un horario abajo para completar su reservación."
             )}
           </p>
-          <p className="text-sm sm:text-base text-cc-slate mb-6">
+          <p className="text-sm text-cc-slate mt-1">
             {t(
-              `A confirmation has been sent to ${submittedEmail}. Kasandra will personally reach out shortly.`,
-              `Se ha enviado una confirmación a ${submittedEmail}. Kasandra se comunicará personalmente pronto.`
+              `Confirmation sent to ${submittedEmail}`,
+              `Confirmación enviada a ${submittedEmail}`
             )}
           </p>
         </div>
 
-        {/* Calendar section */}
-        {!showCalendar ? (
-          <div className="text-center">
-            <p className="text-cc-charcoal mb-4">
-              {t(
-                "Want to schedule your consultation right now?",
-                "¿Desea programar su consulta ahora mismo?"
-              )}
-            </p>
-            <Button
-              onClick={() => setShowCalendar(true)}
-              className="bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold text-base py-6 px-8"
-            >
-              <Calendar className="w-5 h-5 mr-2" />
-              {t("Schedule Your Consultation", "Agendar Su Consulta")}
-            </Button>
-            <p className="text-xs text-cc-slate mt-4">
-              {t(
-                "Or wait for Kasandra to reach out to you directly.",
-                "O espere a que Kasandra se comunique con usted directamente."
-              )}
-            </p>
-          </div>
-        ) : (
-          <div>
-            <h4 className="font-serif text-xl font-bold text-cc-navy text-center mb-4">
-              {t("Select a Time", "Seleccione un Horario")}
-            </h4>
-            <GHLCalendarWidget />
-          </div>
-        )}
+        {/* Calendar Embed - Immediate with data pass-through */}
+        <GHLCalendarEmbed 
+          name={submittedName}
+          email={submittedEmail}
+          phone={submittedPhone}
+        />
       </div>
     );
   }
