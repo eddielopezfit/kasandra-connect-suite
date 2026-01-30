@@ -1,205 +1,297 @@
 
-
-# Implementation Status Report: Architecture First Build
-
----
-
-## ✅ ALL PRIORITY TASKS ALREADY COMPLETE
-
-After thoroughly auditing the codebase, I can confirm that **all four priority tasks have already been implemented** in previous sessions. The "Architecture First" foundation is fully in place.
+# Database Hardening: The Oasis Shield
+## Complete RLS Security Migration Plan
 
 ---
 
-## TASK 1: Decision Rooms Standardized ✅
+## EXECUTIVE SUMMARY
 
-### Intent Auto-Setting
+Your architectural intuition was correct. The current RLS policies have critical security vulnerabilities that allow public modification of lead data. This plan implements a **"Deny-by-Default"** architecture where:
 
-| Route | File | Implementation | Status |
-|-------|------|----------------|--------|
-| `/v2/buy` | `V2Buy.tsx` | `useEffect → updateSessionContext({ intent: 'buy' })` | ✅ Complete |
-| `/v2/sell` | `V2Sell.tsx` | `useEffect → updateSessionContext({ intent: 'sell' })` | ✅ Complete |
-| `/v2/private-cash-review` | `V2PrivateCashReview.tsx` | `updateSessionContext({ has_viewed_report: true })` | ✅ Complete |
-| `/v2/book` | `V2Book.tsx` | `updateSessionContext({ has_booked: true })` + `logEvent('consultation_booked')` | ✅ Complete |
+1. **All public write policies are removed** from sensitive tables
+2. **All data mutations flow exclusively through Edge Functions** using `SUPABASE_SERVICE_ROLE_KEY`
+3. **Telemetry (event_log) remains public** for analytics
+4. **Frontend code requires no changes** - it already calls edge functions correctly
 
-### SessionContext Extended (selenaSession.ts)
+---
 
-```typescript
-// Already implemented:
-interface SessionContext {
-  // ... base fields ...
-  has_viewed_report?: boolean;
-  last_report_id?: string;
-  quiz_completed?: boolean;
-  quiz_result_path?: 'buying' | 'selling' | 'cash' | 'exploring';
-  has_booked?: boolean;
-  ad_funnel_source?: 'seller_landing' | 'seller_quiz';
-  ad_funnel_value_range?: string;
-}
+## SECURITY AUDIT FINDINGS
+
+### Current RLS Policies (The Leak)
+
+| Table | Policy | Risk Level | Issue |
+|-------|--------|------------|-------|
+| `lead_profiles` | "Anyone can update" (UPDATE / true) | **CRITICAL** | Any actor can modify any lead's email, phone, name |
+| `lead_profiles` | "Anyone can create" (INSERT / true) | **HIGH** | Bot spam, injection attacks |
+| `lead_reports` | "Anyone can insert" (INSERT / true) | **HIGH** | Fake reports could be injected |
+| `seller_leads` | "Anyone can submit" (INSERT / true) | **HIGH** | Bot spam, fake leads |
+| `lead_handoffs` | "Allow insert" (INSERT / true) | **HIGH** | Unauthorized handoff creation |
+| `event_log` | "Allow anonymous insert" (INSERT / true) | **ACCEPTABLE** | Telemetry - intentionally public |
+
+### Edge Function Verification (All Clear)
+
+Every edge function that writes to these tables already uses `SUPABASE_SERVICE_ROLE_KEY`:
+
+| Edge Function | Tables Written | Uses Service Role |
+|--------------|----------------|-------------------|
+| `upsert-lead-profile` | `lead_profiles` | ✅ Yes |
+| `submit-seller` | `seller_leads`, `event_log` | ✅ Yes |
+| `submit-consultation-intake` | `lead_profiles`, `event_log` | ✅ Yes |
+| `generate-report` | `lead_reports` | ✅ Yes |
+| `create-handoff` | `lead_handoffs` | ✅ Yes |
+| `notify-handoff` | `lead_handoffs` | ✅ Yes |
+| `selena-chat` | `lead_profiles` | ✅ Yes |
+| `selena-log-event` | `event_log` | ✅ Yes |
+
+---
+
+## IMPLEMENTATION: SQL MIGRATION
+
+### Migration Script
+
+This migration will:
+1. Drop all permissive public INSERT/UPDATE policies on sensitive tables
+2. Keep the `event_log` telemetry policy (intentionally public)
+3. Edge Functions will continue working because they use `SUPABASE_SERVICE_ROLE_KEY` which bypasses RLS entirely
+
+```sql
+-- ============================================
+-- OASIS SHIELD: Database Hardening Migration
+-- ============================================
+
+-- ====================
+-- 1. LEAD_PROFILES
+-- ====================
+-- Drop the dangerous public UPDATE policy
+DROP POLICY IF EXISTS "Anyone can update lead profiles" ON public.lead_profiles;
+
+-- Drop the public INSERT policy 
+DROP POLICY IF EXISTS "Anyone can create a lead profile" ON public.lead_profiles;
+
+-- NOTE: We do NOT create replacement policies because:
+-- - All writes go through edge functions with service role
+-- - Service role bypasses RLS entirely
+-- - No public access = maximum security
+
+-- ====================
+-- 2. LEAD_REPORTS
+-- ====================
+-- Drop the public INSERT policy
+DROP POLICY IF EXISTS "Anyone can insert reports" ON public.lead_reports;
+
+-- ====================
+-- 3. SELLER_LEADS  
+-- ====================
+-- Drop the public INSERT policy
+DROP POLICY IF EXISTS "Anyone can submit a seller lead" ON public.seller_leads;
+
+-- ====================
+-- 4. LEAD_HANDOFFS
+-- ====================
+-- Drop the public INSERT policy
+DROP POLICY IF EXISTS "Allow insert for handoffs" ON public.lead_handoffs;
+
+-- ====================
+-- 5. EVENT_LOG (KEEP)
+-- ====================
+-- This policy remains INTENTIONALLY for telemetry
+-- No action needed - "Allow anonymous insert" stays in place
+
+-- ============================================
+-- VERIFICATION QUERIES
+-- ============================================
+
+-- Check remaining policies on lead_profiles (should be empty)
+-- SELECT * FROM pg_policies WHERE tablename = 'lead_profiles';
+
+-- Check remaining policies on lead_reports (should be empty)
+-- SELECT * FROM pg_policies WHERE tablename = 'lead_reports';
+
+-- Check remaining policies on seller_leads (should be empty)
+-- SELECT * FROM pg_policies WHERE tablename = 'seller_leads';
+
+-- Check remaining policies on lead_handoffs (should be empty)
+-- SELECT * FROM pg_policies WHERE tablename = 'lead_handoffs';
+
+-- Check event_log still has telemetry policy (should have 1 INSERT policy)
+-- SELECT * FROM pg_policies WHERE tablename = 'event_log';
 ```
 
 ---
 
-## TASK 2: Identity Bridge Built ✅
-
-### Ad Funnel Session Bridge
-
-**File:** `src/lib/analytics/initAdFunnelSession.ts` - **CREATED**
-
-```typescript
-// Functions implemented:
-export function initAdFunnelSession(): void { ... }
-export function bridgeQuizResultsToV2(quizAnswers): void { ... }
-export function bridgeLeadIdToV2(leadId: string): void { ... }
-```
-
-### Integration Points
-
-| Route | File | Implementation | Status |
-|-------|------|----------------|--------|
-| `/ad/seller` | `SellerLanding.tsx` | `useEffect → initAdFunnelSession()` | ✅ Complete |
-| `/ad/seller-quiz` | `SellerQuiz.tsx` | `initAdFunnelSession()` + `updateSessionContext({ ad_funnel_source: 'seller_quiz' })` | ✅ Complete |
-| `/ad/seller-result` | `SellerResult.tsx` | `bridgeQuizResultsToV2()` + `bridgeLeadIdToV2()` on form success | ✅ Complete |
-
-### Auth-to-Lead Bridge
-
-**File:** `src/lib/analytics/bridgeAuthToLead.ts` - **CREATED**
-
-**V2Layout.tsx** - Auth state listener added:
-```typescript
-useEffect(() => {
-  const { data: { subscription } } = supabase.auth.onAuthStateChange(
-    async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        await bridgeAuthToLead(session.user);
-        logEvent('google_auth_complete', { ... });
-      }
-    }
-  );
-  return () => subscription.unsubscribe();
-}, []);
-```
-
----
-
-## TASK 3: Private Cash Review UI ✅
-
-**File:** `src/pages/v2/V2PrivateCashReview.tsx`
-
-### Premium UI Components Implemented:
-
-1. **Education Block** - Hero section with value proposition and bullet points
-2. **Live Selena Chat Trigger** - `openChat()` button integrated
-3. **Kasandra Authority Block** - Professional headshot + credentials
-4. **Kasandra Welcome Video** - Embedded from `/videos/kasandra-welcome.mp4`
-5. **Calendar CTA** - Links to `/v2/book?intent=cash_review`
-
-### Session Tracking on Mount:
-```typescript
-useEffect(() => {
-  updateSessionContext({ has_viewed_report: true });
-  logEvent('private_cash_review_view', { source: 'direct_navigation' });
-}, []);
-```
-
----
-
-## TASK 4: API Fallback Pattern ✅
-
-### Google Reviews (3-Tier Fallback)
-
-**File:** `src/hooks/useGoogleReviews.ts`
+## SECURITY ARCHITECTURE AFTER MIGRATION
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│ Priority 1: Live Google Places API                          │
-│   → On success: Cache to localStorage (24h TTL)             │
-├─────────────────────────────────────────────────────────────┤
-│ Priority 2: localStorage Cache                               │
-│   → Key: 'cc_google_reviews_cache'                          │
-│   → TTL: 24 hours                                           │
-├─────────────────────────────────────────────────────────────┤
-│ Priority 3: Static FALLBACK_REVIEWS                          │
-│   → 5 curated 5-star reviews                                │
-│   → UI displays identical carousel (no broken states)       │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                        PUBLIC INTERNET                              │
+│                                                                     │
+│   ❌ Direct DB Access (PostgREST)                                   │
+│      - lead_profiles: BLOCKED (no RLS policies)                     │
+│      - lead_reports:  BLOCKED (no RLS policies)                     │
+│      - seller_leads:  BLOCKED (no RLS policies)                     │
+│      - lead_handoffs: BLOCKED (no RLS policies)                     │
+│      - event_log:     ✅ OPEN (telemetry only)                      │
+│                                                                     │
+│   ✅ Edge Function Endpoints                                        │
+│      └─── Validate inputs                                           │
+│           └─── Use SUPABASE_SERVICE_ROLE_KEY                        │
+│                └─── Bypass RLS, perform mutations                   │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+                              │
+                              ▼
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                       SUPABASE DATABASE                             │
+│                                                                     │
+│   lead_profiles     │ lead_reports │ seller_leads │ lead_handoffs  │
+│   ─────────────────────────────────────────────────────────────────│
+│   RLS: ENABLED      │ RLS: ENABLED │ RLS: ENABLED │ RLS: ENABLED   │
+│   Policies: NONE    │ Policies:NONE│ Policies:NONE│ Policies: NONE │
+│   Access: SVC ONLY  │ Access: SVC  │ Access: SVC  │ Access: SVC    │
+│                                                                     │
+│   event_log                                                         │
+│   ──────────────────                                                │
+│   RLS: ENABLED                                                      │
+│   Policy: "Allow anonymous insert" (FOR INSERT)                     │
+│   Access: PUBLIC for telemetry                                      │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-**GoogleReviewsSection.tsx** - Never hides, always shows content (fallback or live)
+---
 
-### YouTube Videos (3-Tier Fallback)
+## FRONTEND INTEGRATION CHECK
 
-**File:** `supabase/functions/youtube-videos/index.ts`
+### All Forms Already Use Edge Functions
 
-```text
-┌─────────────────────────────────────────────────────────────┐
-│ Strategy 1: RSS Feed (no API key required)                   │
-│   → Channel handle → Channel ID → RSS feed parse            │
-├─────────────────────────────────────────────────────────────┤
-│ Strategy 2: YouTube Data API v3                              │
-│   → Requires YOUTUBE_API_KEY secret                         │
-│   → Fallback if RSS fails                                   │
-├─────────────────────────────────────────────────────────────┤
-│ Strategy 3: Static FALLBACK_VIDEOS                           │
-│   → 4 curated placeholder videos                            │
-│   → Returns success:true (no client-side errors)            │
-└─────────────────────────────────────────────────────────────┘
+No frontend code changes required. The existing forms already call edge functions:
+
+| Component | Edge Function Called | Status |
+|-----------|---------------------|--------|
+| `LeadCaptureModal.tsx` | `upsert-lead-profile` | ✅ Correct |
+| `ConsultationIntakeForm.tsx` | `submit-consultation-intake` | ✅ Correct |
+| `SellerResult.tsx` | `submit-seller` | ✅ Correct |
+| `SelenaChatDrawer.tsx` | `selena-chat` (internal upsert) | ✅ Correct |
+| `ReportViewer.tsx` | `get-report` (read only) | ✅ Correct |
+| `PriorityCallModal.tsx` | `create-handoff` | ✅ Correct |
+| `logEvent.ts` | `selena-log-event` | ✅ Correct |
+
+### Event Logging Still Works
+
+The `event_log` table keeps its public INSERT policy, so:
+- `logEvent()` from the frontend still works
+- Analytics telemetry is unaffected
+- No code changes needed
+
+---
+
+## POST-MIGRATION VERIFICATION
+
+After running the migration, verify security with these tests:
+
+### Test 1: Direct Insert Blocked (Should Fail)
+```javascript
+// From browser console - should return error
+const { error } = await supabase.from('lead_profiles').insert({
+  email: 'attacker@evil.com',
+  name: 'Hacker'
+});
+console.log(error); // Should show RLS violation
+```
+
+### Test 2: Direct Update Blocked (Should Fail)
+```javascript
+// From browser console - should return error
+const { error } = await supabase.from('lead_profiles')
+  .update({ email: 'stolen@evil.com' })
+  .eq('id', 'some-uuid');
+console.log(error); // Should show RLS violation
+```
+
+### Test 3: Edge Function Still Works (Should Succeed)
+```javascript
+// This should still work - goes through edge function
+const { data } = await supabase.functions.invoke('upsert-lead-profile', {
+  body: { email: 'legit@test.com', name: 'Test User' }
+});
+console.log(data); // { success: true, lead_id: '...' }
+```
+
+### Test 4: Telemetry Still Works (Should Succeed)
+```javascript
+// This should still work - event_log keeps its public policy
+const { error } = await supabase.from('event_log').insert({
+  session_id: 'test',
+  event_type: 'test_event',
+  event_payload: {}
+});
+console.log(error); // Should be null (success)
 ```
 
 ---
 
-## API-READY STATUS
+## SECURITY SCAN RESOLUTION
 
-The architecture is designed to be **API-Ready** without code changes:
+After implementing this migration, the security scan should show:
 
-| Component | Without API Key | With Valid API Key |
-|-----------|-----------------|-------------------|
-| Google Reviews | Shows 5 fallback reviews | Shows live 5-star reviews + caches |
-| YouTube Videos | Shows fallback via RSS or static | Shows live episodes from channel |
-| Google Sign-In | Uses Lovable Cloud managed OAuth | Works immediately |
-
----
-
-## WHAT'S NEEDED FROM YOU
-
-### Secrets to Configure (when ready):
-
-1. **YOUTUBE_API_KEY** (Optional - RSS works without it)
-   - Google Cloud Console → APIs → YouTube Data API v3 → Create Key
-   
-2. **GOOGLE_PLACES_API_KEY** (Needs verification)
-   - Currently returning `INVALID_ARGUMENT`
-   - Ensure **Places API (New)** is enabled in Google Cloud Console
-
-### Testing Recommendations:
-
-1. **Ad Funnel → V2 Bridge Test:**
-   - Clear localStorage
-   - Navigate `/ad/seller` → Quiz → Result
-   - Check `selena_context_v2` in localStorage for bridged data
-   - Navigate to `/v2/book` - Selena should have context
-
-2. **Identity Handoff Test:**
-   - Click Google Sign-In on `/v2/community`
-   - Verify `selena_lead_id` is set/merged in localStorage
-   - Verify `google_auth_complete` event is logged
-
-3. **Fallback Resilience Test:**
-   - Navigate to `/v2/community` - Google Reviews carousel should render
-   - Navigate to `/v2/podcast` - YouTube embed should show
-   - Check console for `[GoogleReviews] Using fallback reviews` if API fails
+| Finding | Before | After |
+|---------|--------|-------|
+| "Customer Contact Information Could Be Stolen" | **CRITICAL** | **RESOLVED** |
+| "RLS Policy Always True" on lead_profiles | **HIGH** | **RESOLVED** |
+| "RLS Policy Always True" on lead_reports | **HIGH** | **RESOLVED** |
+| "RLS Policy Always True" on seller_leads | **HIGH** | **RESOLVED** |
+| "RLS Policy Always True" on lead_handoffs | **HIGH** | **RESOLVED** |
 
 ---
 
-## SUMMARY
+## EXECUTION ORDER
 
-**No code changes required.** The four priority tasks are already implemented and tested:
+1. **Run the SQL migration** using the database migration tool
+2. **Wait for confirmation** that migration completed successfully
+3. **Run verification tests** (Tests 1-4 above)
+4. **Trigger new security scan** to confirm findings resolved
+5. **Monitor edge function logs** for the next 24 hours to ensure normal operation
 
-| Task | Status |
-|------|--------|
-| 1. Decision Rooms Standardization | ✅ Complete |
-| 2. Identity Bridge (localStorage + Supabase) | ✅ Complete |
-| 3. Private Cash Review Premium UI | ✅ Complete |
-| 4. API Fallback Pattern (API-Ready) | ✅ Complete |
+---
 
-The system is ready for production testing. When you provide valid API keys, the platform will automatically switch to live data.
+## RISK MITIGATION
 
+### Rollback Plan
+
+If any edge function stops working after migration:
+
+```sql
+-- Emergency rollback (DO NOT RUN unless issues arise)
+-- Re-enable public INSERT on lead_profiles
+CREATE POLICY "Edge function insert backup" ON public.lead_profiles
+  FOR INSERT TO anon WITH CHECK (true);
+
+-- Re-enable public UPDATE on lead_profiles  
+CREATE POLICY "Edge function update backup" ON public.lead_profiles
+  FOR UPDATE TO anon USING (true) WITH CHECK (true);
+```
+
+**Note:** This rollback should NOT be needed because edge functions use `SUPABASE_SERVICE_ROLE_KEY` which bypasses RLS entirely.
+
+### Why This Is Safe
+
+1. **All edge functions already use service role** - verified in audit above
+2. **Service role bypasses RLS** - documented Supabase behavior
+3. **No frontend direct writes exist** - all go through edge functions
+4. **Telemetry is preserved** - event_log policy unchanged
+
+---
+
+## SUCCESS CRITERIA
+
+After implementation:
+
+1. ✅ No public INSERT/UPDATE policies on `lead_profiles`, `lead_reports`, `seller_leads`, `lead_handoffs`
+2. ✅ All edge functions continue operating normally
+3. ✅ Security scan shows "Customer Contact Information" finding as RESOLVED
+4. ✅ Event logging (telemetry) continues working
+5. ✅ Form submissions through edge functions work without issues
+
+This is the "Oasis Shield" - a deny-by-default security architecture where the database is locked down and all mutations flow through validated, rate-limited edge functions.
