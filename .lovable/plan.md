@@ -1,215 +1,269 @@
 
-# Intelligence Injection: Native Lead Capture & Dynamic Decision Rooms
+# Context-Aware Enhancements: Booking Hero, Loss Aversion, & Situation Tagging
 ## Complete Implementation Plan
 
 ---
 
-## EXECUTIVE SUMMARY
+## SUMMARY
 
-This plan migrates from external GoHighLevel iframes to native React Hook Form components with SessionContext intelligence, making the platform truly "context-aware" where forms pre-populate with user journey data and decision rooms adapt based on cognitive stage.
+This plan implements three behavioral psychology-driven enhancements:
 
----
-
-## CURRENT STATE ANALYSIS
-
-### What Exists
-| Component | Current State | Target State |
-|-----------|--------------|--------------|
-| `ConsultationIntakeForm.tsx` | Native form exists but no SessionContext pre-population | Pre-populate from SessionContext |
-| `GuideLeadCapture.tsx` | Uses GHL iframe (`GoHighLevelForm`) | Replace with native form |
-| `V2Book.tsx` | Uses native `ConsultationIntakeForm` + GHL calendar | Enhance with pre-population |
-| `V2HomePathQuiz.tsx` | Shows result but no dynamic pivoting | Pivot results based on intent |
-| `BuyerReadinessCheck.tsx` | Static result bullets | Dynamic re-ordering by readiness score |
-| `V2PrivateCashReview.tsx` | Static hero, no lead awareness | State machine: returning vs. new |
-| Edge Function | Sends basic data to GHL | Send full session dossier |
-
-### SessionContext Fields Available
-From `selenaSession.ts`:
-- `intent`: 'cash_offer' | 'sell' | 'buy' | 'investor' | 'explore'
-- `timeline`: 'asap' | '30_days' | '60_90' | 'exploring'
-- `situation`: 'inherited' | 'divorce' | 'tired_landlord' | 'upgrading' | 'relocating' | 'other'
-- `condition`: 'move_in_ready' | 'minor_repairs' | 'distressed' | 'unknown'
-- `tool_used`, `last_tool_result` (calculator awareness)
-- `quiz_completed`, `quiz_result_path`
-- `has_viewed_report`, `has_booked`
+1. **Context-Aware Booking Hero**: Transform the `/v2/book` headline to maintain the curiosity thread from the FB Ad funnel
+2. **Loss Aversion in Selena Chat**: Proactive chat opening after 30 seconds on the result page if form not completed
+3. **Situation Tagging**: Pass quiz situation icons as semantic tags to GHL (e.g., "Legacy Property Seller")
 
 ---
 
-## IMPLEMENTATION TASKS
+## TASK 1: Context-Aware Booking Hero
 
-### Task 1: Enhance ConsultationIntakeForm with SessionContext Pre-Population
+### Current State
+The `/v2/book` page always shows a generic headline:
+- "Book a Consultation" (English)
+- "Agendar una Cita" (Spanish)
 
-**File**: `src/components/v2/ConsultationIntakeForm.tsx`
+### Target State
+If the user came from the FB Ad funnel with calculated net sheet data, show a personalized headline that maintains the curiosity thread:
+- "Let's Review Your $47,250 Net Sheet Analysis"
 
-**Changes**:
-1. Import `getSessionContext` from `selenaSession.ts`
-2. In `useEffect`, read SessionContext and pre-populate form fields
-3. Map session values to form values (e.g., `session.intent` → `form.intent`)
-4. Add visual indicator when fields are pre-populated ("Based on your earlier answers")
+### Detection Logic
+The ad funnel stores calculated values in `SessionContext`:
+- `ad_funnel_source`: 'seller_landing' | 'seller_quiz'
+- `ad_funnel_value_range`: e.g., '200-350k'
+- `last_tool_result`: 'cash' | 'traditional'
 
-**Pre-Population Logic**:
-```text
-Session Field → Form Field Mapping:
-- session.intent → form.intent (buyer, seller, cash_offer, unknown)
-- session.timeline → form.timeline (map asap→immediately, 30_days→1_3_months, etc.)
-- session.language → form.preferredLanguage
-- localStorage.get('cc_user_name') → form.name (if from quiz)
-- localStorage.get('cc_user_email') → form.email
-- localStorage.get('cc_user_phone') → form.phone
-```
+Additionally, the `SellerResult.tsx` page calls `bridgeQuizResultsToV2()` which sets:
+- `intent: 'cash_offer'`
+- `timeline`, `situation`, `condition`
 
----
+We can also read `localStorage` for the calculated difference stored during quiz completion.
 
-### Task 2: Create Native GuideLeadCaptureForm Component
+### Implementation
 
-**New File**: `src/components/v2/guides/NativeGuideLeadCapture.tsx`
+**File**: `src/pages/v2/V2Book.tsx`
 
-**Features**:
-- Simplified 4-field form: Name, Email, Phone, Intent (inferred)
-- SessionContext pre-population
-- Calls `submit-consultation-intake` edge function
-- Bridges lead_id via `bridgeLeadIdToV2()`
-- Success state shows "Checklist sent!" confirmation
-
-**Replace In**:
-- `src/components/v2/guides/GuideLeadCapture.tsx` - swap GHL iframe for native form
-- `src/pages/v2/V2GuideDetail.tsx` - uses GuideLeadCapture (no changes needed if component updated)
-
----
-
-### Task 3: Dynamic Buyer Readiness Results
-
-**File**: `src/components/v2/BuyerReadinessCheck.tsx`
-
-**Changes**:
-1. Calculate `readiness_score` from answers (0-100 scale)
-2. Identify `primary_priority` from question 3 answer
-3. Store in SessionContext: `updateSessionContext({ readiness_score, primary_priority })`
-4. Re-order `result.bullets` to show priority-relevant steps first
-
-**Scoring Logic**:
-```text
-Readiness Score Calculation:
-- Question 0 (Situation): Touring +30, Active +20, Planning +10, Exploring +5
-- Question 1 (Lender): Pre-approved +30, Talked +15, Not yet +5
-- Question 2 (Priority): Mapped to next step emphasis
-- Question 3 (Comfort): Confident +10, Somewhat +5, Overwhelmed +0
-
-Result Customization:
-- If priority = "monthly_payment" → Lead with financing bullet
-- If priority = "neighborhoods" → Lead with location bullet
-- If priority = "affordability" → Lead with budget bullet
-```
-
----
-
-### Task 4: Dynamic Path Quiz Results
-
-**File**: `src/pages/v2/V2HomePathQuiz.tsx`
-
-**Changes**:
-1. Store `quiz_completed: true` and `quiz_result_path` in SessionContext on completion
-2. Submit contact info to `upsert-lead-profile` edge function
-3. Pivot result content based on `getResultPath()`:
-   - **Cash Offer**: Show speed/simplicity messaging, link to `/v2/cash-offer-options`
-   - **Buyer**: Show home search roadmap, link to `/v2/buyer-readiness`
-   - **Seller**: Show value preparation, link to `/v2/sell`
-   - **Exploring**: Show gentle guidance, link to `/v2/guides`
-
-**Integration**:
-- Call `bridgeLeadIdToV2()` after quiz completion to persist identity
-
----
-
-### Task 5: Private Cash Review State Machine
-
-**File**: `src/pages/v2/V2PrivateCashReview.tsx`
-
-**State Machine**:
-```text
-┌─────────────────────────────────────────────────────────┐
-│                   ON PAGE LOAD                          │
-│                         │                               │
-│           ┌─────────────┴─────────────┐                 │
-│           ▼                           ▼                 │
-│   [lead_id EXISTS]            [lead_id MISSING]         │
-│           │                           │                 │
-│           ▼                           ▼                 │
-│   "Welcome Back, [Name]"      "Start My Review"         │
-│   "Your Analysis is Ready"    Standard Hero             │
-│           │                           │                 │
-│           ▼                           ▼                 │
-│   CTA: "View My Report"       CTA: "Chat with Selena"   │
-│   Opens last report           Opens chat to collect     │
-│                               info for report           │
-└─────────────────────────────────────────────────────────┘
-```
-
-**Implementation**:
-1. Check `localStorage.getItem('selena_lead_id')` on mount
-2. If exists, fetch lead name from edge function or context
-3. Check `localStorage.getItem('cc_last_report_id')` for existing report
-4. Conditionally render personalized vs. default hero
-
----
-
-### Task 6: Full Session Dossier to GHL Webhook
-
-**File**: `supabase/functions/submit-consultation-intake/index.ts`
-
-**Enhance GHL Payload**:
 ```typescript
-const ghlPayload = {
-  // Existing fields...
-  email,
-  name,
-  phone,
-  tags: [...],
-  
-  // NEW: Full Session Dossier
-  customField: {
-    lead_id: leadId,
-    language: input.language,
-    intent: input.intent,
-    timeline: input.timeline,
-    price_range: input.price_range || null,
-    pre_approved: input.pre_approved || null,
-    notes: input.notes || null,
-    
-    // NEW FIELDS - Complete Cognitive Journey
-    situation: input.situation || null,           // inherited, divorce, etc.
-    condition: input.condition || null,           // move_in_ready, distressed, etc.
-    readiness_score: input.readiness_score || null,
-    primary_priority: input.primary_priority || null,
-    quiz_completed: input.quiz_completed || false,
-    quiz_result_path: input.quiz_result_path || null,
-    tool_used: input.tool_used || null,
-    last_tool_result: input.last_tool_result || null,  // cash/traditional advantage
-    has_viewed_report: input.has_viewed_report || false,
-    session_source: input.session_source || null,      // landing path
-    utm_source: input.utm_source || null,
-    utm_campaign: input.utm_campaign || null,
-  },
-  source: "Consultation Intake - Lovable /v2/book",
+// Add imports
+import { getSessionContext } from "@/lib/analytics/selenaSession";
+
+// Inside V2BookContent component:
+const session = getSessionContext();
+
+// Detect if user came from ad funnel with net sheet data
+const isAdFunnelVisitor = session?.ad_funnel_source && session?.intent === 'cash_offer';
+
+// Get stored difference from localStorage (set by SellerResult.tsx)
+const storedDifference = localStorage.getItem('cc_net_sheet_difference');
+const formattedDifference = storedDifference 
+  ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(storedDifference))
+  : null;
+
+// Dynamic headline logic
+const getHeadline = () => {
+  if (isAdFunnelVisitor && formattedDifference) {
+    return t(
+      `Let's Review Your ${formattedDifference} Net Sheet Analysis`,
+      `Revisemos su Análisis de Ganancias Netas de ${formattedDifference}`
+    );
+  }
+  return t("Book a Consultation", "Agendar una Cita");
+};
+
+// Also update subheadline for ad funnel visitors
+const getSubheadline = () => {
+  if (isAdFunnelVisitor) {
+    return t(
+      "Kasandra will personally walk you through your options and answer any questions.",
+      "Kasandra le explicará personalmente sus opciones y responderá todas sus preguntas."
+    );
+  }
+  return t(
+    "Ready to discuss your real estate goals? Schedule a free, no-obligation consultation with me.",
+    "¿Listo para discutir sus metas de bienes raíces? Agende una consulta gratuita, sin obligación, conmigo."
+  );
 };
 ```
 
-**Frontend Changes** (ConsultationIntakeForm):
-- Pass full SessionContext to edge function on submit
+**File**: `src/pages/ad/SellerResult.tsx`
+
+Add storage of the calculated difference for the booking page:
+
+```typescript
+// After calculations are computed, store for booking page continuity:
+useEffect(() => {
+  if (calculations.difference) {
+    localStorage.setItem('cc_net_sheet_difference', String(calculations.difference));
+  }
+}, [calculations.difference]);
+```
 
 ---
 
-### Task 7: Authority Layer Verification
+## TASK 2: Loss Aversion Selena Chat Trigger
 
-**Files**:
-- `src/hooks/useGoogleReviews.ts` - Already has 3-tier fallback
-- `src/hooks/useYouTubeVideos.ts` - Verify fallback exists
+### Current State
+Selena opens only when the user clicks the floating button.
 
-**Verification**:
-- Google Reviews: Live API → 24h Cache → Static Fallbacks (5 curated reviews)
-- YouTube Videos: Live API → Cache → Static Fallbacks (if needed)
+### Target State
+On the `/ad/seller-result` page, if the user has NOT filled out the form within 30 seconds, Selena proactively opens with a loss-aversion-framed message about the calculated difference.
 
-**Status**: Already implemented correctly per memory `authority-fallbacks`
+### Implementation
+
+**File**: `src/pages/ad/SellerResult.tsx`
+
+```typescript
+// Add imports
+import { useSelenaChat } from '@/contexts/SelenaChatContext';
+
+// Inside component:
+const { openChat, sendMessage, messages, isOpen } = useSelenaChat();
+
+// Loss aversion timer
+useEffect(() => {
+  // Only trigger if form not yet submitted and chat not already open
+  if (isUnlocked || isOpen) return;
+  
+  const timer = setTimeout(() => {
+    // Open chat with proactive message
+    openChat();
+    
+    // Wait for chat to open, then inject proactive message
+    setTimeout(() => {
+      const proactiveMessage = `I noticed the ${formatCurrency(calculations.difference)} difference in your report. Would you like me to explain exactly how we calculated the "Cost of Time" for your property?`;
+      
+      // Trigger a proactive assistant message via custom event
+      window.dispatchEvent(new CustomEvent('selena-proactive-message', {
+        detail: { message: proactiveMessage }
+      }));
+    }, 500);
+  }, 30000); // 30 seconds
+  
+  return () => clearTimeout(timer);
+}, [isUnlocked, isOpen, calculations.difference]);
+```
+
+**File**: `src/contexts/SelenaChatContext.tsx`
+
+Add support for proactive messages:
+
+```typescript
+// Listen for proactive message events
+useEffect(() => {
+  const handleProactiveMessage = (event: CustomEvent<{ message: string }>) => {
+    const proactiveMsg: ChatMessage = {
+      id: generateMessageId(),
+      role: 'assistant',
+      content: event.detail.message,
+      timestamp: new Date().toISOString(),
+      suggestedReplies: [
+        t("Yes, explain the difference", "Sí, explícame la diferencia"),
+        t("I'd like to talk to Kasandra", "Me gustaría hablar con Kasandra"),
+        t("Not right now", "Ahora no"),
+      ],
+    };
+    setMessages(prev => [...prev, proactiveMsg]);
+    saveHistory([...messages, proactiveMsg]);
+    logEvent('selena_proactive_loss_aversion', { 
+      route: location.pathname,
+      difference_amount: event.detail.message.match(/\$[\d,]+/)?.[0] || 'unknown'
+    });
+  };
+  
+  window.addEventListener('selena-proactive-message', handleProactiveMessage as EventListener);
+  return () => window.removeEventListener('selena-proactive-message', handleProactiveMessage as EventListener);
+}, [messages, t, location.pathname]);
+```
+
+---
+
+## TASK 3: Situation Tagging to GHL
+
+### Current State
+The `submit-seller` edge function sends basic tags like `["Seller Funnel", "seller_funnel"]` but does NOT include semantic situation tags.
+
+### Target State
+Add situation-based semantic tags that Kasandra's CRM can use for automation:
+
+| Situation | Tag Added |
+|-----------|-----------|
+| `inherited` | `Legacy Property Seller`, `situation_inherited` |
+| `relocating` | `Relocation Seller`, `situation_relocating` |
+| `downsizing` | `Downsizing Seller`, `situation_downsizing` |
+| `other` | `situation_other` |
+
+Also add condition and timeline tags for full context.
+
+### Implementation
+
+**File**: `supabase/functions/submit-seller/index.ts`
+
+```typescript
+// Build semantic tags based on quiz answers
+const situationTagMap: Record<string, string[]> = {
+  inherited: ['Legacy Property Seller', 'situation_inherited'],
+  relocating: ['Relocation Seller', 'situation_relocating'],
+  downsizing: ['Downsizing Seller', 'situation_downsizing'],
+  other: ['situation_other'],
+};
+
+const conditionTagMap: Record<string, string> = {
+  excellent: 'condition_move_in_ready',
+  good: 'condition_minor_repairs',
+  fair: 'condition_needs_work',
+  poor: 'condition_distressed',
+};
+
+const timelineTagMap: Record<string, string> = {
+  asap: 'timeline_urgent',
+  soon: 'timeline_30_days',
+  flexible: 'timeline_flexible',
+  'no-rush': 'timeline_no_rush',
+};
+
+// Build tags array with semantic situation tags
+const baseTags = ["Seller Funnel", "seller_funnel"];
+const situationTags = sanitizedPayload.situation 
+  ? (situationTagMap[sanitizedPayload.situation] || []) 
+  : [];
+const conditionTag = sanitizedPayload.condition 
+  ? conditionTagMap[sanitizedPayload.condition] 
+  : null;
+const timelineTag = sanitizedPayload.timeline 
+  ? timelineTagMap[sanitizedPayload.timeline] 
+  : null;
+
+const allTags = [
+  ...baseTags,
+  ...situationTags,
+  conditionTag,
+  timelineTag,
+].filter(Boolean);
+
+// Update GHL payload
+const ghlPayload = {
+  // ... existing fields
+  tags: allTags,
+  // ... rest of payload
+};
+```
+
+**File**: `supabase/functions/submit-consultation-intake/index.ts`
+
+Apply same logic to the consultation intake function:
+
+```typescript
+// Add situation-based tags to GHL sync
+const situationTagMap: Record<string, string[]> = {
+  inherited: ['Legacy Property Seller', 'situation_inherited'],
+  relocating: ['Relocation Seller', 'situation_relocating'],
+  divorce: ['Divorce Situation', 'situation_divorce'],
+  tired_landlord: ['Tired Landlord', 'situation_tired_landlord'],
+  upgrading: ['Upgrader', 'situation_upgrading'],
+  other: ['situation_other'],
+};
+
+// In the GHL payload tags array, add:
+input.situation ? (situationTagMap[input.situation] || [`situation_${input.situation}`]) : [],
+```
 
 ---
 
@@ -217,133 +271,75 @@ const ghlPayload = {
 
 | File | Action | Description |
 |------|--------|-------------|
-| `src/components/v2/ConsultationIntakeForm.tsx` | MODIFY | Add SessionContext pre-population |
-| `src/components/v2/guides/NativeGuideLeadCapture.tsx` | CREATE | New native form component |
-| `src/components/v2/guides/GuideLeadCapture.tsx` | MODIFY | Replace GHL iframe with native form |
-| `src/components/v2/BuyerReadinessCheck.tsx` | MODIFY | Add dynamic result reordering |
-| `src/pages/v2/V2HomePathQuiz.tsx` | MODIFY | Add SessionContext updates, lead bridge |
-| `src/pages/v2/V2PrivateCashReview.tsx` | MODIFY | Implement state machine |
-| `supabase/functions/submit-consultation-intake/index.ts` | MODIFY | Expand GHL payload |
-| `src/lib/analytics/bridgeLeadIdToV2.ts` | CREATE | Helper for lead identity bridging |
+| `src/pages/v2/V2Book.tsx` | MODIFY | Add context-aware headline based on ad funnel data |
+| `src/pages/ad/SellerResult.tsx` | MODIFY | Store difference in localStorage + add loss aversion timer |
+| `src/contexts/SelenaChatContext.tsx` | MODIFY | Add proactive message event listener |
+| `supabase/functions/submit-seller/index.ts` | MODIFY | Add semantic situation tags to GHL payload |
+| `supabase/functions/submit-consultation-intake/index.ts` | MODIFY | Add semantic situation tags to GHL payload |
 
 ---
 
-## TECHNICAL DETAILS
+## EXPECTED BEHAVIOR
 
-### SessionContext Pre-Population Hook
+### User Journey: FB Ad to Booking
 
-```typescript
-// New hook: useSessionPrePopulation.ts
-export function useSessionPrePopulation() {
-  const [prePopData, setPrePopData] = useState<Partial<FormData> | null>(null);
-  
-  useEffect(() => {
-    const session = getSessionContext();
-    if (!session) return;
-    
-    const data: Partial<FormData> = {};
-    
-    // Map intent
-    if (session.intent) {
-      const intentMap: Record<string, string> = {
-        buy: 'buyer',
-        sell: 'seller', 
-        cash_offer: 'cash_offer',
-        explore: 'unknown'
-      };
-      data.intent = intentMap[session.intent] || 'unknown';
-    }
-    
-    // Map timeline
-    if (session.timeline) {
-      const timelineMap: Record<string, string> = {
-        asap: 'immediately',
-        '30_days': '1_3_months',
-        '60_90': '3_6_months',
-        exploring: 'researching'
-      };
-      data.timeline = timelineMap[session.timeline];
-    }
-    
-    // Language
-    data.preferredLanguage = session.language;
-    
-    setPrePopData(data);
-  }, []);
-  
-  return prePopData;
-}
+```text
+1. User clicks FB ad → /ad/seller
+2. Takes quiz → /ad/seller-quiz
+3. Sees result → /ad/seller-result (sees $47,250 difference)
+4. Doesn't fill form...
+5. 30 seconds pass → Selena opens proactively
+   "I noticed the $47,250 difference in your report..."
+6. User engages or fills form
+7. Navigates to → /v2/book
+8. Hero shows: "Let's Review Your $47,250 Net Sheet Analysis"
+9. Form submitted → GHL receives tags: ["Legacy Property Seller", "timeline_urgent"]
 ```
 
-### Lead Identity Bridge Helper
+### GHL Tag Examples
 
-```typescript
-// New file: src/lib/analytics/bridgeLeadIdToV2.ts
-export function bridgeLeadIdToV2(leadId: string): void {
-  localStorage.setItem('selena_lead_id', leadId);
-  
-  // Update session context
-  updateSessionContext({ 
-    has_captured_lead: true 
-  });
-  
-  // Log bridge event
-  logEvent('lead_id_bridged', { 
-    lead_id: leadId,
-    source: 'native_form' 
-  });
+For a user who:
+- Selected "Inherited Property"
+- Condition: "Needs Work"
+- Timeline: "ASAP"
+
+GHL will receive:
+```json
+{
+  "tags": [
+    "Seller Funnel",
+    "seller_funnel",
+    "Legacy Property Seller",
+    "situation_inherited",
+    "condition_needs_work",
+    "timeline_urgent"
+  ]
 }
 ```
-
----
-
-## VERIFICATION PLAN
-
-### E2E Browser Session Test Sequence
-
-1. **Clear State**: Clear localStorage to simulate new visitor
-2. **Navigate**: Go to `/v2/buyer-readiness`
-3. **Take Check**: Complete 4-question readiness assessment
-4. **Observe**: Results should show dynamic bullet ordering based on priority
-5. **Navigate**: Click through to a guide (e.g., `/v2/guides/first-time-buyer-guide`)
-6. **Scroll**: Reach mid-guide lead capture form
-7. **Verify Pre-Population**: 
-   - Intent field should show "Buy a home" (from readiness check)
-   - Language should match current language
-8. **Submit Form**: Enter name, email, phone
-9. **Verify**: 
-   - Edge function receives full session dossier
-   - GHL webhook receives complete cognitive journey
-   - `selena_lead_id` stored in localStorage
-10. **Navigate**: Go to `/v2/private-cash-review`
-11. **Verify State Machine**: Hero should show "Welcome Back" variant
 
 ---
 
 ## SUCCESS CRITERIA
 
-1. Native forms fully replace GHL iframes in guides
-2. Forms pre-populate 3+ fields from SessionContext when data exists
-3. BuyerReadiness results dynamically reorder based on priority
-4. Path Quiz stores `quiz_result_path` and bridges lead identity
-5. PrivateCashReview shows personalized hero for returning leads
-6. GHL receives 10+ custom fields in the Full Dossier payload
-7. Authority layer (Reviews/YouTube) gracefully degrades with fallbacks
-8. E2E test passes all verification checkpoints
+1. `/v2/book` shows personalized headline when user comes from ad funnel with net sheet data
+2. Selena opens proactively after 30 seconds on result page with loss-aversion message
+3. GHL receives semantic situation tags (e.g., "Legacy Property Seller") for all quiz submissions
+4. Standard `/v2/book` visitors see the default "Book a Consultation" headline
+5. Timer does NOT fire if user has already completed the form
 
 ---
 
-## IMPLEMENTATION ORDER
+## VERIFICATION TESTS
 
-1. **Create** `bridgeLeadIdToV2.ts` helper (dependency for other tasks)
-2. **Enhance** `ConsultationIntakeForm.tsx` with pre-population
-3. **Create** `NativeGuideLeadCapture.tsx` component
-4. **Update** `GuideLeadCapture.tsx` to use native form
-5. **Modify** `BuyerReadinessCheck.tsx` for dynamic results
-6. **Modify** `V2HomePathQuiz.tsx` for session persistence
-7. **Modify** `V2PrivateCashReview.tsx` state machine
-8. **Enhance** `submit-consultation-intake` edge function
-9. **Verify** authority fallbacks (already implemented)
-10. **Run** E2E browser verification
+1. **Ad Funnel to Booking Flow**:
+   - Complete seller quiz → See result → Navigate to `/v2/book`
+   - Verify headline shows personalized "$X Net Sheet" message
 
-This plan transforms the platform from "static forms with widgets" to an "intelligent, context-aware concierge experience" where every interaction builds upon previous context.
+2. **Loss Aversion Timer**:
+   - Go to `/ad/seller-result` with quiz params
+   - Wait 30 seconds without filling form
+   - Verify Selena opens with proactive message
+
+3. **GHL Tagging**:
+   - Submit form with "inherited" situation
+   - Check edge function logs for "Legacy Property Seller" tag in payload
