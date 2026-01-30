@@ -349,6 +349,12 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         console.log('[Selena] Lead identity captured:', data.lead_id);
       }
       
+      // Sync detected intent to SessionContext (Intent-Aware Filtering)
+      if (data.detected_intent) {
+        updateSessionContext({ intent: data.detected_intent });
+        console.log('[Selena] Intent synced to SessionContext:', data.detected_intent);
+      }
+      
       const assistantMessage: ChatMessage = {
         id: generateMessageId(),
         role: 'assistant',
