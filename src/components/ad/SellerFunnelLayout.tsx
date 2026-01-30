@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import { Home } from "lucide-react";
 import { SelenaWidgetProvider } from "@/contexts/SelenaWidgetContext";
+import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
+import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
 import SelenaVoiceWidget from "./SelenaVoiceWidget";
 
 interface SellerFunnelLayoutProps {
@@ -9,8 +11,9 @@ interface SellerFunnelLayoutProps {
 
 const SellerFunnelLayout = ({ children }: SellerFunnelLayoutProps) => {
   return (
-    <SelenaWidgetProvider>
-      <div className="min-h-screen bg-cc-navy flex flex-col">
+    <SelenaChatProvider>
+      <SelenaWidgetProvider>
+        <div className="min-h-screen bg-cc-navy flex flex-col">
         {/* Main Content */}
         <main className="flex-1">
           {children}
@@ -41,8 +44,13 @@ const SellerFunnelLayout = ({ children }: SellerFunnelLayoutProps) => {
 
         {/* Selena AI Voice Widget */}
         <SelenaVoiceWidget />
+        
+        {/* Selena Chat - Site Wide */}
+        <SelenaFloatingButton />
+        <SelenaChatDrawer />
       </div>
     </SelenaWidgetProvider>
+  </SelenaChatProvider>
   );
 };
 
