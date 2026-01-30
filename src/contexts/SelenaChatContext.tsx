@@ -219,6 +219,36 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     }
   }, [location.pathname, hasInitialized]);
 
+  // Listen for proactive message events (e.g., loss aversion triggers)
+  useEffect(() => {
+    const handleProactiveMessage = (event: Event) => {
+      const customEvent = event as CustomEvent<{ message: string }>;
+      const proactiveMsg: ChatMessage = {
+        id: generateMessageId(),
+        role: 'assistant',
+        content: customEvent.detail.message,
+        timestamp: new Date().toISOString(),
+        suggestedReplies: [
+          t("Yes, explain the difference", "Sí, explícame la diferencia"),
+          t("I'd like to talk to Kasandra", "Me gustaría hablar con Kasandra"),
+          t("Not right now", "Ahora no"),
+        ],
+      };
+      setMessages(prev => {
+        const updated = [...prev, proactiveMsg];
+        saveHistory(updated);
+        return updated;
+      });
+      logEvent('selena_proactive_loss_aversion', { 
+        route: location.pathname,
+        difference_amount: customEvent.detail.message.match(/\$[\d,]+/)?.[0] || 'unknown'
+      });
+    };
+    
+    window.addEventListener('selena-proactive-message', handleProactiveMessage);
+    return () => window.removeEventListener('selena-proactive-message', handleProactiveMessage);
+  }, [t, location.pathname]);
+
   const openChat = useCallback(() => {
     setIsOpen(true);
     logSelenaOpen(location.pathname);

@@ -140,12 +140,55 @@ Deno.serve(async (req) => {
         const firstName = nameParts[0] || sanitizedPayload.name;
         const lastName = nameParts.slice(1).join(' ') || '';
 
+        // Build semantic tags based on quiz answers
+        const situationTagMap: Record<string, string[]> = {
+          inherited: ['Legacy Property Seller', 'situation_inherited'],
+          relocating: ['Relocation Seller', 'situation_relocating'],
+          downsizing: ['Downsizing Seller', 'situation_downsizing'],
+          divorce: ['Divorce Situation', 'situation_divorce'],
+          tired_landlord: ['Tired Landlord', 'situation_tired_landlord'],
+          other: ['situation_other'],
+        };
+
+        const conditionTagMap: Record<string, string> = {
+          excellent: 'condition_move_in_ready',
+          good: 'condition_minor_repairs',
+          fair: 'condition_needs_work',
+          poor: 'condition_distressed',
+        };
+
+        const timelineTagMap: Record<string, string> = {
+          asap: 'timeline_urgent',
+          soon: 'timeline_30_days',
+          flexible: 'timeline_flexible',
+          'no-rush': 'timeline_no_rush',
+        };
+
+        // Build tags array with semantic situation tags
+        const baseTags = ["Seller Funnel", "seller_funnel"];
+        const situationTags = sanitizedPayload.situation 
+          ? (situationTagMap[sanitizedPayload.situation] || [`situation_${sanitizedPayload.situation}`]) 
+          : [];
+        const conditionTag = sanitizedPayload.condition 
+          ? (conditionTagMap[sanitizedPayload.condition] || `condition_${sanitizedPayload.condition}`)
+          : null;
+        const timelineTag = sanitizedPayload.timeline 
+          ? (timelineTagMap[sanitizedPayload.timeline] || `timeline_${sanitizedPayload.timeline}`)
+          : null;
+
+        const allTags = [
+          ...baseTags,
+          ...situationTags,
+          conditionTag,
+          timelineTag,
+        ].filter(Boolean) as string[];
+
         const ghlPayload = {
           email: sanitizedPayload.email,
           name: sanitizedPayload.name,
           firstName,
           lastName,
-          tags: ["Seller Funnel", "seller_funnel"],
+          tags: allTags,
           customField: {
             lead_id: leadData.id,
             situation: sanitizedPayload.situation,

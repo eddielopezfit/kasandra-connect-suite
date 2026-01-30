@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import SellerFunnelLayout from "@/components/ad/SellerFunnelLayout";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, LabelList } from "recharts";
 import { bridgeQuizResultsToV2, bridgeLeadIdToV2 } from "@/lib/analytics/initAdFunnelSession";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 
 // Value ranges - midpoints for calculation
 const VALUE_RANGES: Record<string, number> = {
@@ -52,6 +53,8 @@ const SellerResult = () => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const { openChat, isOpen: isChatOpen } = useSelenaChat();
+  const hasTriggeredProactive = useRef(false);
 
   // Get quiz answers from URL params
   const quizAnswers = {
@@ -66,6 +69,37 @@ const SellerResult = () => {
     const estimatedValue = VALUE_RANGES[quizAnswers.value] || 275000;
     return calculateNetProceeds(estimatedValue);
   }, [quizAnswers.value]);
+  
+  // Store difference for booking page context continuity
+  useEffect(() => {
+    if (calculations.difference) {
+      localStorage.setItem('cc_net_sheet_difference', String(calculations.difference));
+    }
+  }, [calculations.difference]);
+  
+  // Loss aversion timer - proactive Selena chat trigger after 30 seconds
+  useEffect(() => {
+    // Only trigger if form not yet submitted, chat not already open, and not already triggered
+    if (isUnlocked || isChatOpen || hasTriggeredProactive.current) return;
+    
+    const timer = setTimeout(() => {
+      hasTriggeredProactive.current = true;
+      
+      // Open chat
+      openChat();
+      
+      // Dispatch proactive message event after short delay for chat to open
+      setTimeout(() => {
+        const proactiveMessage = `I noticed the ${formatCurrency(calculations.difference)} difference in your report. Would you like me to explain exactly how we calculated the "Cost of Time" for your property?`;
+        
+        window.dispatchEvent(new CustomEvent('selena-proactive-message', {
+          detail: { message: proactiveMessage }
+        }));
+      }, 500);
+    }, 30000); // 30 seconds
+    
+    return () => clearTimeout(timer);
+  }, [isUnlocked, isChatOpen, calculations.difference, openChat]);
 
   // Chart data
   const chartData = [
