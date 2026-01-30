@@ -1,269 +1,204 @@
 
-# Context-Aware Enhancements: Booking Hero, Loss Aversion, & Situation Tagging
-## Complete Implementation Plan
+# Intent-Aware Suggestion Filtering & GHL Field Mapping
+## Eliminating the "Consistency Leak" in Selena Chat
 
 ---
 
-## SUMMARY
+## PROBLEM ANALYSIS
 
-This plan implements three behavioral psychology-driven enhancements:
+The current implementation has a **Consistency Principle violation**: when a user declares "I'm thinking about selling," Selena still shows:
+- "What's my home worth?" (seller-relevant)
+- "Looking to buy" (WRONG - buyer option)
+- "Just exploring" (WRONG - exploratory option)
 
-1. **Context-Aware Booking Hero**: Transform the `/v2/book` headline to maintain the curiosity thread from the FB Ad funnel
-2. **Loss Aversion in Selena Chat**: Proactive chat opening after 30 seconds on the result page if form not completed
-3. **Situation Tagging**: Pass quiz situation icons as semantic tags to GHL (e.g., "Legacy Property Seller")
+This breaks the psychological contract. Once intent is declared, the UI should narrow to that path only.
 
----
-
-## TASK 1: Context-Aware Booking Hero
-
-### Current State
-The `/v2/book` page always shows a generic headline:
-- "Book a Consultation" (English)
-- "Agendar una Cita" (Spanish)
-
-### Target State
-If the user came from the FB Ad funnel with calculated net sheet data, show a personalized headline that maintains the curiosity thread:
-- "Let's Review Your $47,250 Net Sheet Analysis"
-
-### Detection Logic
-The ad funnel stores calculated values in `SessionContext`:
-- `ad_funnel_source`: 'seller_landing' | 'seller_quiz'
-- `ad_funnel_value_range`: e.g., '200-350k'
-- `last_tool_result`: 'cash' | 'traditional'
-
-Additionally, the `SellerResult.tsx` page calls `bridgeQuizResultsToV2()` which sets:
-- `intent: 'cash_offer'`
-- `timeline`, `situation`, `condition`
-
-We can also read `localStorage` for the calculated difference stored during quiz completion.
-
-### Implementation
-
-**File**: `src/pages/v2/V2Book.tsx`
-
-```typescript
-// Add imports
-import { getSessionContext } from "@/lib/analytics/selenaSession";
-
-// Inside V2BookContent component:
-const session = getSessionContext();
-
-// Detect if user came from ad funnel with net sheet data
-const isAdFunnelVisitor = session?.ad_funnel_source && session?.intent === 'cash_offer';
-
-// Get stored difference from localStorage (set by SellerResult.tsx)
-const storedDifference = localStorage.getItem('cc_net_sheet_difference');
-const formattedDifference = storedDifference 
-  ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(Number(storedDifference))
-  : null;
-
-// Dynamic headline logic
-const getHeadline = () => {
-  if (isAdFunnelVisitor && formattedDifference) {
-    return t(
-      `Let's Review Your ${formattedDifference} Net Sheet Analysis`,
-      `Revisemos su Análisis de Ganancias Netas de ${formattedDifference}`
-    );
-  }
-  return t("Book a Consultation", "Agendar una Cita");
-};
-
-// Also update subheadline for ad funnel visitors
-const getSubheadline = () => {
-  if (isAdFunnelVisitor) {
-    return t(
-      "Kasandra will personally walk you through your options and answer any questions.",
-      "Kasandra le explicará personalmente sus opciones y responderá todas sus preguntas."
-    );
-  }
-  return t(
-    "Ready to discuss your real estate goals? Schedule a free, no-obligation consultation with me.",
-    "¿Listo para discutir sus metas de bienes raíces? Agende una consulta gratuita, sin obligación, conmigo."
-  );
-};
-```
-
-**File**: `src/pages/ad/SellerResult.tsx`
-
-Add storage of the calculated difference for the booking page:
-
-```typescript
-// After calculations are computed, store for booking page continuity:
-useEffect(() => {
-  if (calculations.difference) {
-    localStorage.setItem('cc_net_sheet_difference', String(calculations.difference));
-  }
-}, [calculations.difference]);
-```
+**Root Cause**: The `selena-chat` edge function returns **static suggested replies** regardless of detected intent (lines 228-231).
 
 ---
 
-## TASK 2: Loss Aversion Selena Chat Trigger
+## TASK 1: Intent-Aware Suggestion Filtering
 
-### Current State
-Selena opens only when the user clicks the floating button.
-
-### Target State
-On the `/ad/seller-result` page, if the user has NOT filled out the form within 30 seconds, Selena proactively opens with a loss-aversion-framed message about the calculated difference.
-
-### Implementation
-
-**File**: `src/pages/ad/SellerResult.tsx`
-
+### Current Code (selena-chat/index.ts, lines 225-241)
 ```typescript
-// Add imports
-import { useSelenaChat } from '@/contexts/SelenaChatContext';
-
-// Inside component:
-const { openChat, sendMessage, messages, isOpen } = useSelenaChat();
-
-// Loss aversion timer
-useEffect(() => {
-  // Only trigger if form not yet submitted and chat not already open
-  if (isUnlocked || isOpen) return;
-  
-  const timer = setTimeout(() => {
-    // Open chat with proactive message
-    openChat();
-    
-    // Wait for chat to open, then inject proactive message
-    setTimeout(() => {
-      const proactiveMessage = `I noticed the ${formatCurrency(calculations.difference)} difference in your report. Would you like me to explain exactly how we calculated the "Cost of Time" for your property?`;
-      
-      // Trigger a proactive assistant message via custom event
-      window.dispatchEvent(new CustomEvent('selena-proactive-message', {
-        detail: { message: proactiveMessage }
-      }));
-    }, 500);
-  }, 30000); // 30 seconds
-  
-  return () => clearTimeout(timer);
-}, [isUnlocked, isOpen, calculations.difference]);
+return new Response(
+  JSON.stringify({
+    reply,
+    suggestedReplies:
+      language === "es"
+        ? ["¿Cuánto vale mi casa?", "Busco comprar", "Solo exploro"]
+        : ["What's my home worth?", "Looking to buy", "Just exploring"],
+    // ...
+  })
+);
 ```
 
-**File**: `src/contexts/SelenaChatContext.tsx`
+### Target Implementation
 
-Add support for proactive messages:
+Replace static array with intent-aware filtering logic:
 
 ```typescript
-// Listen for proactive message events
-useEffect(() => {
-  const handleProactiveMessage = (event: CustomEvent<{ message: string }>) => {
-    const proactiveMsg: ChatMessage = {
-      id: generateMessageId(),
-      role: 'assistant',
-      content: event.detail.message,
-      timestamp: new Date().toISOString(),
-      suggestedReplies: [
-        t("Yes, explain the difference", "Sí, explícame la diferencia"),
-        t("I'd like to talk to Kasandra", "Me gustaría hablar con Kasandra"),
-        t("Not right now", "Ahora no"),
-      ],
-    };
-    setMessages(prev => [...prev, proactiveMsg]);
-    saveHistory([...messages, proactiveMsg]);
-    logEvent('selena_proactive_loss_aversion', { 
-      route: location.pathname,
-      difference_amount: event.detail.message.match(/\$[\d,]+/)?.[0] || 'unknown'
-    });
+// Intent-aware suggested replies
+function getSuggestedReplies(
+  intent: string | undefined, 
+  language: 'en' | 'es'
+): string[] {
+  const replies = {
+    sell: {
+      en: ["What's my home worth?", "Compare cash vs. traditional", "Request a net sheet"],
+      es: ["¿Cuánto vale mi casa?", "Comparar efectivo vs. tradicional", "Solicitar análisis de ganancias"]
+    },
+    cash_offer: {
+      en: ["What's my home worth?", "How fast can I close?", "Request a cash offer"],
+      es: ["¿Cuánto vale mi casa?", "¿Qué tan rápido puedo cerrar?", "Solicitar oferta en efectivo"]
+    },
+    buy: {
+      en: ["Take readiness check", "View first-time buyer guide", "Schedule a tour"],
+      es: ["Tomar evaluación de preparación", "Ver guía para compradores", "Programar un recorrido"]
+    },
+    exploring: {
+      en: ["I'm thinking about selling", "I'm looking to buy", "What are my options?"],
+      es: ["Estoy pensando en vender", "Estoy buscando comprar", "¿Cuáles son mis opciones?"]
+    }
   };
   
-  window.addEventListener('selena-proactive-message', handleProactiveMessage as EventListener);
-  return () => window.removeEventListener('selena-proactive-message', handleProactiveMessage as EventListener);
-}, [messages, t, location.pathname]);
+  // Default to exploring if no intent
+  const intentKey = intent === 'cash_offer' ? 'cash_offer' 
+                  : intent === 'sell' ? 'sell'
+                  : intent === 'buy' ? 'buy'
+                  : 'exploring';
+  
+  return replies[intentKey][language];
+}
+```
+
+### Detection & Storage
+
+The edge function already detects intent from the message. We need to:
+1. Also check `context.intent` (SessionContext) for previously declared intent
+2. Update SessionContext when intent is detected
+3. Return filtered suggestions based on the current/detected intent
+
+---
+
+## TASK 2: Linear Conversion Path (Address Collection)
+
+When intent is "sell", Selena should proactively ask for the property address to deepen engagement.
+
+### Implementation
+
+Add to the `selena-chat` edge function after intent detection:
+
+```typescript
+// Check if this is the first "sell" declaration
+const isFirstSellDeclaration = 
+  intents.includes('sell') && 
+  !context.intent; // No prior intent stored
+
+// Modify AI prompt to include address collection directive
+let additionalInstruction = '';
+if (isFirstSellDeclaration) {
+  additionalInstruction = `
+The user just indicated they want to sell. Your response MUST end with asking for the property address.
+Example: "That's an exciting next step! To give you the most accurate market analysis, what is the address of the property you're thinking about selling?"
+`;
+}
+
+// Append to system prompt when calling AI
+const systemPrompt = (language === "es" ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN) 
+  + additionalInstruction;
 ```
 
 ---
 
-## TASK 3: Situation Tagging to GHL
+## TASK 3: GHL Custom Field Mapping
 
-### Current State
-The `submit-seller` edge function sends basic tags like `["Seller Funnel", "seller_funnel"]` but does NOT include semantic situation tags.
+Enhance the `submit-consultation-intake` and `upsert-lead-profile` edge functions to include semantic seller fields.
 
-### Target State
-Add situation-based semantic tags that Kasandra's CRM can use for automation:
-
-| Situation | Tag Added |
-|-----------|-----------|
-| `inherited` | `Legacy Property Seller`, `situation_inherited` |
-| `relocating` | `Relocation Seller`, `situation_relocating` |
-| `downsizing` | `Downsizing Seller`, `situation_downsizing` |
-| `other` | `situation_other` |
-
-Also add condition and timeline tags for full context.
-
-### Implementation
-
-**File**: `supabase/functions/submit-seller/index.ts`
+### New Fields to Support
 
 ```typescript
-// Build semantic tags based on quiz answers
-const situationTagMap: Record<string, string[]> = {
-  inherited: ['Legacy Property Seller', 'situation_inherited'],
-  relocating: ['Relocation Seller', 'situation_relocating'],
-  downsizing: ['Downsizing Seller', 'situation_downsizing'],
-  other: ['situation_other'],
-};
+interface LeadSemanticFields {
+  // Intent declaration
+  intent_seller: boolean;
+  intent_buyer: boolean;
+  intent_cash: boolean;
+  
+  // Pipeline routing
+  pipeline_stage: 'Seller Lead' | 'Buyer Lead' | 'Cash Offer Lead' | 'Exploring';
+  
+  // Declaration tracking
+  last_declared_goal: string;  // e.g., "Thinking about selling"
+  
+  // Property context (future)
+  property_address?: string;
+}
+```
 
-const conditionTagMap: Record<string, string> = {
-  excellent: 'condition_move_in_ready',
-  good: 'condition_minor_repairs',
-  fair: 'condition_needs_work',
-  poor: 'condition_distressed',
-};
+### GHL Payload Enhancement
 
-const timelineTagMap: Record<string, string> = {
-  asap: 'timeline_urgent',
-  soon: 'timeline_30_days',
-  flexible: 'timeline_flexible',
-  'no-rush': 'timeline_no_rush',
-};
+In `submit-consultation-intake` GHL webhook:
 
-// Build tags array with semantic situation tags
-const baseTags = ["Seller Funnel", "seller_funnel"];
-const situationTags = sanitizedPayload.situation 
-  ? (situationTagMap[sanitizedPayload.situation] || []) 
-  : [];
-const conditionTag = sanitizedPayload.condition 
-  ? conditionTagMap[sanitizedPayload.condition] 
-  : null;
-const timelineTag = sanitizedPayload.timeline 
-  ? timelineTagMap[sanitizedPayload.timeline] 
-  : null;
-
-const allTags = [
-  ...baseTags,
-  ...situationTags,
-  conditionTag,
-  timelineTag,
-].filter(Boolean);
-
-// Update GHL payload
+```typescript
 const ghlPayload = {
   // ... existing fields
-  tags: allTags,
-  // ... rest of payload
+  customField: {
+    // ... existing fields
+    
+    // NEW: Semantic intent fields
+    intent_seller: input.intent === 'seller' || input.intent === 'cash_offer',
+    intent_buyer: input.intent === 'buyer',
+    intent_cash: input.intent === 'cash_offer',
+    pipeline_stage: getPipelineStage(input.intent),
+    last_declared_goal: getGoalLabel(input.intent, input.language),
+    property_address: input.property_address || null,
+  }
 };
+
+function getPipelineStage(intent: string): string {
+  switch (intent) {
+    case 'seller': return 'Seller Lead';
+    case 'cash_offer': return 'Cash Offer Lead';
+    case 'buyer': return 'Buyer Lead';
+    default: return 'Exploring';
+  }
+}
+
+function getGoalLabel(intent: string, language: string): string {
+  const labels = {
+    seller: { en: 'Thinking about selling', es: 'Pensando en vender' },
+    cash_offer: { en: 'Interested in cash offer', es: 'Interesado en oferta en efectivo' },
+    buyer: { en: 'Looking to buy', es: 'Buscando comprar' },
+    explore: { en: 'Just exploring', es: 'Solo explorando' }
+  };
+  return labels[intent]?.[language] || labels.explore[language];
+}
 ```
 
-**File**: `supabase/functions/submit-consultation-intake/index.ts`
+---
 
-Apply same logic to the consultation intake function:
+## TASK 4: Frontend SessionContext Update
+
+When the user selects "I'm thinking about selling" in chat, immediately update `SessionContext` so future interactions remember this.
+
+### Implementation in SelenaChatContext.tsx
+
+After receiving a response with detected intent:
 
 ```typescript
-// Add situation-based tags to GHL sync
-const situationTagMap: Record<string, string[]> = {
-  inherited: ['Legacy Property Seller', 'situation_inherited'],
-  relocating: ['Relocation Seller', 'situation_relocating'],
-  divorce: ['Divorce Situation', 'situation_divorce'],
-  tired_landlord: ['Tired Landlord', 'situation_tired_landlord'],
-  upgrading: ['Upgrader', 'situation_upgrading'],
-  other: ['situation_other'],
-};
+// In sendMessage callback, after receiving response
+const data = await response.json();
 
-// In the GHL payload tags array, add:
-input.situation ? (situationTagMap[input.situation] || [`situation_${input.situation}`]) : [],
+// If backend detected intent, update SessionContext
+if (data.detected_intent) {
+  updateSessionContext({ intent: data.detected_intent });
+}
 ```
+
+This ensures the frontend also knows the intent for:
+- Form pre-population
+- Dynamic hero headlines
+- Concierge tab filtering
 
 ---
 
@@ -271,75 +206,47 @@ input.situation ? (situationTagMap[input.situation] || [`situation_${input.situa
 
 | File | Action | Description |
 |------|--------|-------------|
-| `src/pages/v2/V2Book.tsx` | MODIFY | Add context-aware headline based on ad funnel data |
-| `src/pages/ad/SellerResult.tsx` | MODIFY | Store difference in localStorage + add loss aversion timer |
-| `src/contexts/SelenaChatContext.tsx` | MODIFY | Add proactive message event listener |
-| `supabase/functions/submit-seller/index.ts` | MODIFY | Add semantic situation tags to GHL payload |
-| `supabase/functions/submit-consultation-intake/index.ts` | MODIFY | Add semantic situation tags to GHL payload |
+| `supabase/functions/selena-chat/index.ts` | MODIFY | Add `getSuggestedReplies()` with intent filtering, return `detected_intent` |
+| `src/contexts/SelenaChatContext.tsx` | MODIFY | Update SessionContext when backend returns `detected_intent` |
+| `supabase/functions/submit-consultation-intake/index.ts` | MODIFY | Add `intent_seller`, `pipeline_stage`, `last_declared_goal` to GHL payload |
+| `supabase/functions/upsert-lead-profile/index.ts` | MODIFY | Accept and store `property_address` field |
+
+---
+
+## VERIFICATION FLOW
+
+1. **Open Selena Chat** (fresh session)
+2. **See default pills**: "I'm thinking about selling", "I'm looking to buy", "Just exploring"
+3. **Click "I'm thinking about selling"**
+4. **Selena responds**: "That's an exciting next step! To give you the most accurate market analysis, what is the address of the property you're thinking about selling?"
+5. **Pills update to**: "What's my home worth?", "Compare cash vs. traditional", "Request a net sheet"
+6. **"Looking to buy" pill is GONE** (Consistency Principle maintained)
+7. **User provides email** → GHL receives: `intent_seller: true`, `pipeline_stage: "Seller Lead"`
 
 ---
 
 ## EXPECTED BEHAVIOR
 
-### User Journey: FB Ad to Booking
-
-```text
-1. User clicks FB ad → /ad/seller
-2. Takes quiz → /ad/seller-quiz
-3. Sees result → /ad/seller-result (sees $47,250 difference)
-4. Doesn't fill form...
-5. 30 seconds pass → Selena opens proactively
-   "I noticed the $47,250 difference in your report..."
-6. User engages or fills form
-7. Navigates to → /v2/book
-8. Hero shows: "Let's Review Your $47,250 Net Sheet Analysis"
-9. Form submitted → GHL receives tags: ["Legacy Property Seller", "timeline_urgent"]
+### Before (Current)
+```
+User: "I'm thinking about selling"
+Selena: "I can help with that..."
+Pills: [What's my home worth?] [Looking to buy] [Just exploring]  ← LEAK
 ```
 
-### GHL Tag Examples
-
-For a user who:
-- Selected "Inherited Property"
-- Condition: "Needs Work"
-- Timeline: "ASAP"
-
-GHL will receive:
-```json
-{
-  "tags": [
-    "Seller Funnel",
-    "seller_funnel",
-    "Legacy Property Seller",
-    "situation_inherited",
-    "condition_needs_work",
-    "timeline_urgent"
-  ]
-}
+### After (Target)
+```
+User: "I'm thinking about selling"
+Selena: "That's an exciting next step! What is the address of the property?"
+Pills: [What's my home worth?] [Compare cash vs. traditional] [Request a net sheet]  ← FOCUSED
 ```
 
 ---
 
 ## SUCCESS CRITERIA
 
-1. `/v2/book` shows personalized headline when user comes from ad funnel with net sheet data
-2. Selena opens proactively after 30 seconds on result page with loss-aversion message
-3. GHL receives semantic situation tags (e.g., "Legacy Property Seller") for all quiz submissions
-4. Standard `/v2/book` visitors see the default "Book a Consultation" headline
-5. Timer does NOT fire if user has already completed the form
-
----
-
-## VERIFICATION TESTS
-
-1. **Ad Funnel to Booking Flow**:
-   - Complete seller quiz → See result → Navigate to `/v2/book`
-   - Verify headline shows personalized "$X Net Sheet" message
-
-2. **Loss Aversion Timer**:
-   - Go to `/ad/seller-result` with quiz params
-   - Wait 30 seconds without filling form
-   - Verify Selena opens with proactive message
-
-3. **GHL Tagging**:
-   - Submit form with "inherited" situation
-   - Check edge function logs for "Legacy Property Seller" tag in payload
+1. After declaring seller intent, buyer-related pills disappear instantly
+2. Selena proactively asks for property address on first sell declaration
+3. GHL receives `pipeline_stage: "Seller Lead"` for all seller intent submissions
+4. SessionContext stores intent so other pages can personalize accordingly
+5. Browser test confirms pills filter correctly in real-time
