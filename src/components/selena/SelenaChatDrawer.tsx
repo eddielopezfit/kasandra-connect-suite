@@ -76,14 +76,10 @@ export function SelenaChatDrawer() {
     onLeadCaptured,
     leadId,
   } = useSelenaChat();
-  const { t, language } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [input, setInput] = useState('');
   const [activeTab, setActiveTab] = useState<ConciergeTab | null>(null);
   const [isMinimized, setIsMinimized] = useState(false);
-  
-  // UI language state - controls ALL UI chrome (tabs, buttons, labels)
-  // Initialized from global language context, can be toggled independently
-  const [uiLanguage, setUiLanguage] = useState<'en' | 'es'>(language);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -97,13 +93,6 @@ export function SelenaChatDrawer() {
       step: computeJourneyStep(ctx),
     };
   }, [messages.length]); // Re-compute when messages change (user may have progressed)
-
-  // Sync uiLanguage with global language when drawer opens
-  useEffect(() => {
-    if (isOpen) {
-      setUiLanguage(language);
-    }
-  }, [isOpen, language]);
 
   // Get suggested replies from the last assistant message
   const lastMessage = messages[messages.length - 1];
@@ -131,15 +120,12 @@ export function SelenaChatDrawer() {
     }
   }, [isOpen]);
 
-  // UI language toggle handler
+  // Global language toggle handler - changes site-wide language
   const handleLanguageToggle = useCallback(() => {
-    const newLang = uiLanguage === 'en' ? 'es' : 'en';
-    setUiLanguage(newLang);
-    logEvent('ui_language_toggle', { from: uiLanguage, to: newLang });
-  }, [uiLanguage]);
-
-  // UI translation helper
-  const tUI = useCallback((en: string, es: string) => uiLanguage === 'es' ? es : en, [uiLanguage]);
+    const newLang = language === 'en' ? 'es' : 'en';
+    setLanguage(newLang);
+    logEvent('ui_language_toggle', { from: language, to: newLang, source: 'selena_drawer' });
+  }, [language, setLanguage]);
 
   // Minimize handler (desktop only)
   const handleMinimize = useCallback(() => {
@@ -192,7 +178,7 @@ export function SelenaChatDrawer() {
 
   const HeaderControls = ({ showMinimize = false }: { showMinimize?: boolean }) => (
     <div className="flex items-center gap-2">
-      {/* Language Toggle Button */}
+      {/* Language Toggle Button - Global toggle */}
       <button
         onClick={handleLanguageToggle}
         className={cn(
@@ -200,10 +186,10 @@ export function SelenaChatDrawer() {
           "bg-muted hover:bg-muted/80 text-foreground",
           "transition-colors duration-200"
         )}
-        aria-label={tUI('Switch to Spanish', 'Cambiar a Inglés')}
+        aria-label={t('Switch to Spanish', 'Cambiar a Inglés')}
       >
         <Globe className="w-3.5 h-3.5" />
-        <span>{uiLanguage === 'en' ? 'ES' : 'EN'}</span>
+        <span>{language === 'en' ? 'ES' : 'EN'}</span>
       </button>
       
       {/* Minimize Button (Desktop only) */}
@@ -211,7 +197,7 @@ export function SelenaChatDrawer() {
         <button
           onClick={handleMinimize}
           className="p-1.5 rounded-full hover:bg-muted transition-colors"
-          aria-label={tUI('Minimize', 'Minimizar')}
+          aria-label={t('Minimize', 'Minimizar')}
         >
           <Minus className="w-4 h-4" />
         </button>
@@ -313,16 +299,17 @@ export function SelenaChatDrawer() {
         onClose={handleCloseTabPanel}
         onSendMessage={handleSuggestedReplyClick}
         onActionClick={handleActionClick}
-        language={uiLanguage}
+        language={language}
         leadId={leadId}
         closeDrawer={closeChat}
+        currentIntent={journeyContext.intent}
       />
 
       {/* Concierge Tab Bar with Journey Progress */}
       <ConciergeTabBar
         activeTab={activeTab}
         onTabChange={handleTabChange}
-        language={uiLanguage}
+        language={language}
         currentIntent={journeyContext.intent}
         journeyStep={journeyContext.step}
       />
@@ -338,7 +325,7 @@ export function SelenaChatDrawer() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={tUI('Type your message...', 'Escribe tu mensaje...')}
+            placeholder={t('Type your message...', 'Escribe tu mensaje...')}
             className={cn(
               "flex-1 min-w-0 px-4 py-2 rounded-full",
               "bg-muted border-0",
@@ -359,7 +346,7 @@ export function SelenaChatDrawer() {
         </div>
         
         <p className="text-xs text-muted-foreground text-center mt-2">
-          {tUI(
+          {t(
             'Selena is an AI assistant. All advice is reviewed by Kasandra Prieto, licensed Realtor®.',
             'Selena es una asistente de IA. Todo consejo es revisado por Kasandra Prieto, Realtor® licenciada.'
           )}
@@ -385,11 +372,11 @@ export function SelenaChatDrawer() {
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && handleRestore()}
-          aria-label={tUI('Restore Selena chat', 'Restaurar chat de Selena')}
+          aria-label={t('Restore Selena chat', 'Restaurar chat de Selena')}
         >
           <MessageCircle className="w-4 h-4" />
           <span className="text-sm font-medium">
-            {tUI('Selena is active', 'Selena está activa')}
+            {t('Selena is active', 'Selena está activa')}
           </span>
           <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
         </div>
@@ -441,7 +428,7 @@ export function SelenaChatDrawer() {
                   <Sparkles className="w-5 h-5 text-primary" />
                   <span>Selena</span>
                   <span className="text-sm font-normal text-muted-foreground">
-                    {tUI('Digital Concierge', 'Concierge Digital')}
+                    {t('Digital Concierge', 'Concierge Digital')}
                   </span>
                 </DrawerTitle>
                 
@@ -525,7 +512,7 @@ export function SelenaChatDrawer() {
                 <Sparkles className="w-5 h-5 text-primary" />
                 <span>Selena</span>
                 <span className="text-sm font-normal text-muted-foreground">
-                  {tUI('Digital Concierge', 'Concierge Digital')}
+                  {t('Digital Concierge', 'Concierge Digital')}
                 </span>
               </SheetTitle>
               
