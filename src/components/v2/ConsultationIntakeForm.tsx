@@ -28,8 +28,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Loader2, CheckCircle2, Calendar, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, CheckCircle2, Calendar, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useSessionPrePopulation, getFullSessionDossier } from "@/hooks/useSessionPrePopulation";
+import { bridgeLeadIdToV2, setStoredUserName, setStoredEmail, setStoredPhone } from "@/lib/analytics/bridgeLeadIdToV2";
 
 // Form schema with conditional validation messages
 const createFormSchema = (t: (en: string, es: string) => string) =>
@@ -154,6 +156,9 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState("");
   const [showCalendar, setShowCalendar] = useState(false);
+  
+  // SessionContext pre-population
+  const prePopData = useSessionPrePopulation();
 
   const formSchema = createFormSchema(t);
 
@@ -173,6 +178,20 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
       consentAI: undefined,
     },
   });
+
+  // Pre-populate form from SessionContext on mount
+  useEffect(() => {
+    if (prePopData.hasPrePopulatedData) {
+      if (prePopData.name) form.setValue('name', prePopData.name);
+      if (prePopData.email) form.setValue('email', prePopData.email);
+      if (prePopData.phone) form.setValue('phone', prePopData.phone);
+      if (prePopData.preferredLanguage) form.setValue('preferredLanguage', prePopData.preferredLanguage);
+      if (prePopData.intent) form.setValue('intent', prePopData.intent);
+      if (prePopData.timeline) form.setValue('timeline', prePopData.timeline);
+      if (prePopData.priceRange) form.setValue('priceRange', prePopData.priceRange);
+      if (prePopData.preApproved) form.setValue('preApproved', prePopData.preApproved);
+    }
+  }, [prePopData, form]);
 
   // Intent options per requirements
   const intentOptions = [
@@ -228,8 +247,11 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
     try {
       // Get session ID from localStorage
       const sessionId = localStorage.getItem("selena_session_id") || crypto.randomUUID();
+      
+      // Get full session dossier for GHL
+      const sessionDossier = getFullSessionDossier();
 
-      // Call edge function
+      // Call edge function with full session context
       const { data: response, error } = await supabase.functions.invoke("submit-consultation-intake", {
         body: {
           name: data.name.trim(),
@@ -243,6 +265,8 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
           notes: data.notes?.trim() || null,
           session_id: sessionId,
           source: "consultation_intake",
+          // Full Session Dossier for GHL
+          ...sessionDossier,
         },
       });
 
@@ -254,9 +278,12 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
         throw new Error(response?.error || "Submission failed");
       }
 
-      // Store lead_id in localStorage
+      // Bridge lead_id to V2 ecosystem and store contact info
       if (response.lead_id) {
-        localStorage.setItem("selena_lead_id", response.lead_id);
+        bridgeLeadIdToV2(response.lead_id, 'consultation_intake');
+        setStoredUserName(data.name);
+        setStoredEmail(data.email);
+        setStoredPhone(data.phone);
       }
 
       // Log event
@@ -364,6 +391,18 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 p-4 sm:p-6">
+        {/* Pre-population indicator */}
+        {prePopData.hasPrePopulatedData && (
+          <div className="flex items-center gap-2 bg-cc-gold/10 border border-cc-gold/30 rounded-lg p-3 mb-4">
+            <Sparkles className="w-4 h-4 text-cc-gold flex-shrink-0" />
+            <p className="text-sm text-cc-charcoal">
+              {t(
+                "Some fields are pre-filled based on your earlier answers.",
+                "Algunos campos están pre-llenados según sus respuestas anteriores."
+              )}
+            </p>
+          </div>
+        )}
         {/* Full Name */}
         <FormField
           control={form.control}

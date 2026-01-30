@@ -1,24 +1,51 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
-import { CheckCircle, Calendar, MessageCircle } from "lucide-react";
+import { CheckCircle, Calendar, MessageCircle, FileText, User } from "lucide-react";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
+import { getLeadId, getStoredUserName, getLastReportId } from "@/lib/analytics/bridgeLeadIdToV2";
+import { Link } from "react-router-dom";
 
 // Inner component that uses SelenaChatContext (rendered inside V2Layout which provides the context)
 const PrivateCashReviewContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
   const schedulingRef = useRef<HTMLDivElement>(null);
+  
+  // State machine: detect returning leads
+  const [isReturningLead, setIsReturningLead] = useState(false);
+  const [leadName, setLeadName] = useState<string | null>(null);
+  const [hasExistingReport, setHasExistingReport] = useState(false);
 
-  // Track when user views Private Cash Review room
+  // Check for existing lead on mount
   useEffect(() => {
+    const leadId = getLeadId();
+    const storedName = getStoredUserName();
+    const reportId = getLastReportId();
+    
+    if (leadId) {
+      setIsReturningLead(true);
+      if (storedName) {
+        // Get first name only
+        setLeadName(storedName.split(' ')[0]);
+      }
+      if (reportId) {
+        setHasExistingReport(true);
+      }
+    }
+    
+    // Track page view
     updateSessionContext({ has_viewed_report: true });
-    logEvent('private_cash_review_view', { source: 'direct_navigation' });
+    logEvent('private_cash_review_view', { 
+      source: 'direct_navigation',
+      is_returning: !!leadId,
+      has_report: !!reportId,
+    });
   }, []);
 
   const scrollToScheduling = () => {
@@ -27,53 +54,107 @@ const PrivateCashReviewContent = () => {
 
   return (
     <>
-      {/* SECTION 1 – Education Block */}
+      {/* SECTION 1 – Dynamic Hero based on lead state */}
       <section className="py-20 md:py-28 bg-gradient-to-b from-primary/5 to-background">
         <div className="container mx-auto px-4 max-w-4xl text-center">
-          <h1 className="text-3xl md:text-5xl font-serif font-bold text-foreground mb-6 leading-tight">
-            {t(
-              "Compare Your Cash Offer Options Before You Decide",
-              "Compare Sus Opciones de Oferta en Efectivo Antes de Decidir"
-            )}
-          </h1>
-          
-          <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-            {t(
-              "This platform helps you understand what a real cash sale looks like, how fast it can happen, and how it compares to a traditional listing — so you stay in control.",
-              "Esta plataforma le ayuda a entender cómo es una venta en efectivo real, qué tan rápido puede suceder, y cómo se compara con una venta tradicional — para que usted mantenga el control."
-            )}
-          </p>
-
-          <div className="flex flex-col items-start text-left max-w-xl mx-auto mb-10 space-y-4">
-            {[
-              t(
-                "Review real cash-sale timelines and outcomes",
-                "Revise cronogramas y resultados reales de ventas en efectivo"
-              ),
-              t(
-                "Understand your net, speed, and flexibility",
-                "Entienda su ganancia neta, velocidad y flexibilidad"
-              ),
-              t(
-                "Decide with clarity, not pressure",
-                "Decida con claridad, sin presión"
-              ),
-            ].map((item, index) => (
-              <div key={index} className="flex items-start gap-3">
-                <CheckCircle className="w-6 h-6 text-primary mt-0.5 shrink-0" />
-                <span className="text-foreground text-lg">{item}</span>
+          {isReturningLead ? (
+            // Returning Lead Hero - Personalized
+            <>
+              <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6">
+                <User className="w-8 h-8 text-primary" />
               </div>
-            ))}
-          </div>
+              <h1 className="text-3xl md:text-5xl font-serif font-bold text-foreground mb-6 leading-tight">
+                {t(
+                  `Welcome Back${leadName ? `, ${leadName}` : ""}`,
+                  `Bienvenido/a de Nuevo${leadName ? `, ${leadName}` : ""}`
+                )}
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
+                {hasExistingReport ? (
+                  t(
+                    "Your personalized cash offer analysis is ready for review.",
+                    "Su análisis personalizado de oferta en efectivo está listo para revisar."
+                  )
+                ) : (
+                  t(
+                    "Continue your cash offer review where you left off.",
+                    "Continue su revisión de oferta en efectivo donde lo dejó."
+                  )
+                )}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                {hasExistingReport && (
+                  <Button 
+                    size="xl" 
+                    className="rounded-full px-10"
+                    asChild
+                  >
+                    <Link to="/v2/reports">
+                      <FileText className="w-5 h-5 mr-2" />
+                      {t("View My Report", "Ver Mi Reporte")}
+                    </Link>
+                  </Button>
+                )}
+                <Button 
+                  size="xl" 
+                  variant={hasExistingReport ? "outline" : "default"}
+                  className="rounded-full px-10"
+                  onClick={openChat}
+                >
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  {t("Chat with Selena", "Chatear con Selena")}
+                </Button>
+              </div>
+            </>
+          ) : (
+            // New Visitor Hero - Standard
+            <>
+              <h1 className="text-3xl md:text-5xl font-serif font-bold text-foreground mb-6 leading-tight">
+                {t(
+                  "Compare Your Cash Offer Options Before You Decide",
+                  "Compare Sus Opciones de Oferta en Efectivo Antes de Decidir"
+                )}
+              </h1>
+              
+              <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
+                {t(
+                  "This platform helps you understand what a real cash sale looks like, how fast it can happen, and how it compares to a traditional listing — so you stay in control.",
+                  "Esta plataforma le ayuda a entender cómo es una venta en efectivo real, qué tan rápido puede suceder, y cómo se compara con una venta tradicional — para que usted mantenga el control."
+                )}
+              </p>
 
-          <Button 
-            size="xl" 
-            className="rounded-full px-10"
-            onClick={openChat}
-          >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            {t("Start My Cash Review", "Iniciar Mi Revisión en Efectivo")}
-          </Button>
+              <div className="flex flex-col items-start text-left max-w-xl mx-auto mb-10 space-y-4">
+                {[
+                  t(
+                    "Review real cash-sale timelines and outcomes",
+                    "Revise cronogramas y resultados reales de ventas en efectivo"
+                  ),
+                  t(
+                    "Understand your net, speed, and flexibility",
+                    "Entienda su ganancia neta, velocidad y flexibilidad"
+                  ),
+                  t(
+                    "Decide with clarity, not pressure",
+                    "Decida con claridad, sin presión"
+                  ),
+                ].map((item, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-primary mt-0.5 shrink-0" />
+                    <span className="text-foreground text-lg">{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Button 
+                size="xl" 
+                className="rounded-full px-10"
+                onClick={openChat}
+              >
+                <MessageCircle className="w-5 h-5 mr-2" />
+                {t("Start My Cash Review", "Iniciar Mi Revisión en Efectivo")}
+              </Button>
+            </>
+          )}
           
           <p className="text-sm text-muted-foreground mt-4">
             {t(
