@@ -17,6 +17,28 @@ interface ConsultationIntakeInput {
   notes?: string;
   session_id?: string;
   source?: string;
+  guide_id?: string;
+  guide_title?: string;
+  // Full Session Dossier fields
+  situation?: string;
+  condition?: string;
+  tool_used?: string;
+  last_tool_result?: string;
+  readiness_score?: number;
+  primary_priority?: string;
+  quiz_completed?: boolean;
+  quiz_result_path?: string;
+  has_viewed_report?: boolean;
+  last_report_id?: string;
+  has_booked?: boolean;
+  session_source?: string;
+  utm_source?: string;
+  utm_campaign?: string;
+  utm_medium?: string;
+  utm_content?: string;
+  referrer?: string;
+  ad_funnel_source?: string;
+  ad_funnel_value_range?: string;
 }
 
 interface ConsultationIntakeResponse {
@@ -180,8 +202,13 @@ Deno.serve(async (req) => {
             "consultation_intake",
             input.language === "es" ? "spanish_speaker" : "english_speaker",
             `intent_${input.intent || "unknown"}`,
-          ],
+            input.source ? `source_${input.source}` : null,
+            input.situation ? `situation_${input.situation}` : null,
+            input.quiz_completed ? "quiz_completed" : null,
+            input.has_viewed_report ? "viewed_report" : null,
+          ].filter(Boolean),
           customField: {
+            // Core fields
             lead_id: leadId,
             language: input.language,
             intent: input.intent,
@@ -189,8 +216,37 @@ Deno.serve(async (req) => {
             price_range: input.price_range || null,
             pre_approved: input.pre_approved || null,
             notes: input.notes || null,
+            // Property context
+            situation: input.situation || null,
+            condition: input.condition || null,
+            // Tool usage (calculator results)
+            tool_used: input.tool_used || null,
+            last_tool_result: input.last_tool_result || null,
+            // Buyer readiness
+            readiness_score: input.readiness_score || null,
+            primary_priority: input.primary_priority || null,
+            // Quiz completion
+            quiz_completed: input.quiz_completed || false,
+            quiz_result_path: input.quiz_result_path || null,
+            // Decision room engagement
+            has_viewed_report: input.has_viewed_report || false,
+            last_report_id: input.last_report_id || null,
+            has_booked: input.has_booked || false,
+            // Attribution
+            session_source: input.session_source || null,
+            utm_source: input.utm_source || null,
+            utm_campaign: input.utm_campaign || null,
+            utm_medium: input.utm_medium || null,
+            utm_content: input.utm_content || null,
+            referrer: input.referrer || null,
+            // Ad funnel bridge
+            ad_funnel_source: input.ad_funnel_source || null,
+            ad_funnel_value_range: input.ad_funnel_value_range || null,
+            // Guide context
+            guide_id: input.guide_id || null,
+            guide_title: input.guide_title || null,
           },
-          source: "Consultation Intake - Lovable /v2/book",
+          source: `Consultation Intake - Lovable ${input.source || '/v2/book'}`,
         };
 
         const ghlResponse = await fetch(ghlWebhookUrl, {

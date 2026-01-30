@@ -1,5 +1,6 @@
 export { default as GuideCTABlock } from './GuideCTABlock';
 export { default as GuideLeadCapture } from './GuideLeadCapture';
+export { default as NativeGuideLeadCapture } from './NativeGuideLeadCapture';
 export { default as GuideNextSteps } from './GuideNextSteps';
 export { default as GuideComplianceFooter } from './GuideComplianceFooter';
 

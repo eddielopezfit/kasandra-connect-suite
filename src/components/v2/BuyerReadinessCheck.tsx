@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, CheckCircle, MessageCircle, BookOpen } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import SelenaHandoff from "./SelenaHandoff";
+import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { logEvent } from "@/lib/analytics/logEvent";
 
 interface Answer {
   questionIndex: number;
@@ -115,6 +117,36 @@ const BuyerReadinessCheck = () => {
     },
   ];
 
+  // Calculate readiness score (0-100) and primary priority
+  const calculateReadinessData = () => {
+    let score = 0;
+    let primaryPriority = 'general';
+    
+    // Question 0: Situation (max 30 points)
+    const situationAnswer = answers.find((a) => a.questionIndex === 0)?.answerIndex ?? 0;
+    const situationScores = [5, 10, 20, 30]; // exploring, planning, active, touring
+    score += situationScores[situationAnswer] || 5;
+    
+    // Question 1: Lender (max 30 points)
+    const lenderAnswer = answers.find((a) => a.questionIndex === 1)?.answerIndex ?? 3;
+    const lenderScores = [30, 15, 5, 0]; // pre-approved, talked, not yet, unsure
+    score += lenderScores[lenderAnswer] || 0;
+    
+    // Question 2: Priority (determines primary_priority)
+    const priorityAnswer = answers.find((a) => a.questionIndex === 2)?.answerIndex ?? 0;
+    const priorityMap = ['monthly_payment', 'neighborhoods', 'affordability', 'timing'];
+    primaryPriority = priorityMap[priorityAnswer] || 'general';
+    // Add 20 points for having a clear priority
+    score += 20;
+    
+    // Question 3: Comfort (max 20 points)
+    const comfortAnswer = answers.find((a) => a.questionIndex === 3)?.answerIndex ?? 2;
+    const comfortScores = [20, 15, 5, 0]; // confident, somewhat, little, very overwhelmed
+    score += comfortScores[comfortAnswer] || 0;
+    
+    return { readiness_score: Math.min(score, 100), primary_priority: primaryPriority };
+  };
+
   const getResultProfile = () => {
     // Determine buyer stage based on answers
     const situationAnswer = answers.find((a) => a.questionIndex === 0)?.answerIndex ?? 0;
@@ -134,6 +166,18 @@ const BuyerReadinessCheck = () => {
       return "ready";
     }
     return "early";
+  };
+
+  // Get dynamic bullets based on primary priority
+  const getDynamicBullets = (baseBullets: string[], priorityIndex: number) => {
+    // Reorder bullets to put priority-relevant one first
+    const reordered = [...baseBullets];
+    if (priorityIndex >= 0 && priorityIndex < reordered.length) {
+      const priorityBullet = reordered[priorityIndex];
+      reordered.splice(priorityIndex, 1);
+      reordered.unshift(priorityBullet);
+    }
+    return reordered;
   };
 
   const resultContent = {
@@ -211,6 +255,18 @@ const BuyerReadinessCheck = () => {
       if (currentStep < 4) {
         setCurrentStep(currentStep + 1);
       } else {
+        // Calculate and persist readiness data before showing results
+        const { readiness_score, primary_priority } = calculateReadinessData();
+        updateSessionContext({ 
+          intent: 'buy',
+          readiness_score,
+          primary_priority,
+        });
+        logEvent('quiz_complete', { 
+          quiz_id: 'buyer_readiness',
+          readiness_score,
+          primary_priority,
+        });
         setCurrentStep(5); // Go to results
       }
     }, 300);
@@ -226,6 +282,17 @@ const BuyerReadinessCheck = () => {
   const selectedAnswer = answers.find((a) => a.questionIndex === currentStep - 1);
   const profile = getResultProfile();
   const result = resultContent[profile];
+  
+  
+  // Calculate readiness data for dynamic bullets
+  const { primary_priority } = calculateReadinessData();
+  const priorityToIndex: Record<string, number> = {
+    monthly_payment: 0,
+    neighborhoods: 1,
+    affordability: 2,
+    timing: 0,
+  };
+  const dynamicBullets = getDynamicBullets(result.bullets, priorityToIndex[primary_priority] || 0);
 
   if (showSelena) {
     return <SelenaHandoff answers={answers} questions={questions} onBack={() => setShowSelena(false)} />;
@@ -333,7 +400,7 @@ const BuyerReadinessCheck = () => {
               {t("Most helpful next steps for you:", "Los próximos pasos más útiles para ti:")}
             </p>
             <ul className="space-y-2">
-              {result.bullets.map((bullet, index) => (
+              {dynamicBullets.map((bullet, index) => (
                 <li key={index} className="flex items-start gap-2 text-sm text-cc-charcoal">
                   <CheckCircle className="w-4 h-4 text-cc-gold flex-shrink-0 mt-0.5" />
                   {bullet}

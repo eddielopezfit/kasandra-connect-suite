@@ -37,6 +37,9 @@ export interface SessionContext {
   quiz_completed?: boolean;
   quiz_result_path?: 'buying' | 'selling' | 'cash' | 'exploring';
   has_booked?: boolean;
+  // Buyer Readiness scoring (Intelligence Injection)
+  readiness_score?: number;
+  primary_priority?: string;
   // Ad Funnel bridge (Phase 2)
   ad_funnel_source?: 'seller_landing' | 'seller_quiz';
   ad_funnel_value_range?: string;

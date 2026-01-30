@@ -81,8 +81,12 @@ export type EventType =
   // Identity bridge events
   | 'google_auth_complete'
   | 'auth_lead_bridge_success'
+  | 'lead_id_bridged'
   // UI events
-  | 'ui_language_toggle';
+  | 'ui_language_toggle'
+  // Consultation intake events
+  | 'consultation_intake_submitted'
+  | 'native_form_submit';
 
 export interface EventPayload {
   [key: string]: unknown;
