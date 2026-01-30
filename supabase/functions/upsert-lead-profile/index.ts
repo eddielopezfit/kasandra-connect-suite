@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { normalizeIntent, createStructuredError } from "../_shared/normalizeLead.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -17,13 +18,16 @@ interface UpsertLeadInput {
   // Intent & property context
   intent?: string;
   property_address?: string;
+  existing_lead_id?: string;
 }
 
 interface UpsertLeadResponse {
-  success: boolean;
+  ok: boolean;
   lead_id?: string;
   is_new?: boolean;
   error?: string;
+  code?: string;
+  field?: string;
 }
 
 Deno.serve(async (req) => {
@@ -38,7 +42,7 @@ Deno.serve(async (req) => {
     // Validate email
     if (!input.email || typeof input.email !== "string") {
       return new Response(
-        JSON.stringify({ success: false, error: "Email is required" } as UpsertLeadResponse),
+        JSON.stringify(createStructuredError('VALIDATION', 'Email is required', 'email')),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -47,10 +51,13 @@ Deno.serve(async (req) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return new Response(
-        JSON.stringify({ success: false, error: "Invalid email format" } as UpsertLeadResponse),
+        JSON.stringify(createStructuredError('VALIDATION', 'Invalid email format', 'email')),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Normalize intent using shared helper
+    const normalizedIntent = normalizeIntent(input.intent);
 
     // Initialize Supabase with service role (required for bypassing RLS)
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -59,7 +66,7 @@ Deno.serve(async (req) => {
     if (!supabaseUrl || !supabaseServiceKey) {
       console.error("Missing Supabase environment variables");
       return new Response(
-        JSON.stringify({ success: false, error: "Server configuration error" } as UpsertLeadResponse),
+        JSON.stringify(createStructuredError('SERVER_ERROR', 'Server configuration error')),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -69,14 +76,14 @@ Deno.serve(async (req) => {
     // Check if lead exists
     const { data: existingLead, error: selectError } = await supabase
       .from("lead_profiles")
-      .select("id, phone, name, language")
+      .select("id, phone, name, language, intent")
       .eq("email", email)
       .maybeSingle();
 
     if (selectError) {
       console.error("Error checking existing lead:", selectError);
       return new Response(
-        JSON.stringify({ success: false, error: "Database query failed" } as UpsertLeadResponse),
+        JSON.stringify(createStructuredError('SERVER_ERROR', 'Database query failed')),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -104,6 +111,10 @@ Deno.serve(async (req) => {
       if (!existingLead.language && input.language) {
         updateData.language = input.language;
       }
+      // Only update intent if current is null and new value provided
+      if (!existingLead.intent && normalizedIntent.canonical) {
+        updateData.intent = normalizedIntent.canonical;
+      }
 
       const { error: updateError } = await supabase
         .from("lead_profiles")
@@ -113,7 +124,7 @@ Deno.serve(async (req) => {
       if (updateError) {
         console.error("Error updating lead:", updateError);
         return new Response(
-          JSON.stringify({ success: false, error: "Failed to update lead" } as UpsertLeadResponse),
+          JSON.stringify(createStructuredError('DB_CONSTRAINT', `Failed to update lead: ${updateError.message}`, updateError.message?.includes('intent') ? 'intent' : undefined)),
           { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -121,12 +132,13 @@ Deno.serve(async (req) => {
       leadId = existingLead.id;
       isNew = false;
     } else {
-      // INSERT new lead
+      // INSERT new lead with CANONICAL intent
       const insertData = {
         email,
         phone: input.phone?.trim() || null,
         name: input.name?.trim() || null,
         language: input.language || "en",
+        intent: normalizedIntent.canonical,
         source: input.source || null,
         session_id: input.session_id || null,
         utm_source: input.utm_source || null,
@@ -142,7 +154,7 @@ Deno.serve(async (req) => {
       if (insertError) {
         console.error("Error inserting lead:", insertError);
         return new Response(
-          JSON.stringify({ success: false, error: "Failed to create lead" } as UpsertLeadResponse),
+          JSON.stringify(createStructuredError('DB_CONSTRAINT', `Failed to create lead: ${insertError.message}`, insertError.message?.includes('intent') ? 'intent' : undefined)),
           { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -152,13 +164,13 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ success: true, lead_id: leadId, is_new: isNew } as UpsertLeadResponse),
+      JSON.stringify({ ok: true, lead_id: leadId, is_new: isNew } as UpsertLeadResponse),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("Unexpected error in upsert-lead-profile:", error);
     return new Response(
-      JSON.stringify({ success: false, error: "Internal server error" } as UpsertLeadResponse),
+      JSON.stringify(createStructuredError('SERVER_ERROR', 'Internal server error')),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
