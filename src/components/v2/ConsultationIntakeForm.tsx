@@ -247,8 +247,8 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
         throw new Error(error.message || "Submission failed");
       }
 
-      if (!response?.success) {
-        throw new Error(response?.error || "Submission failed");
+      if (!response?.ok) {
+        throw new Error(response?.message || "Submission failed");
       }
 
       // Bridge lead_id to V2 ecosystem and store contact info
