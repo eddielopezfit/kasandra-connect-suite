@@ -8,6 +8,12 @@
 export type GuideStatus = 'live' | 'draft' | 'coming_soon';
 export type GuideFunnelStage = 'tofu' | 'mofu' | 'bofu';
 
+// Strict category type - used for CTA routing and authority messaging
+export type GuideCategory = 'buying' | 'selling' | 'valuation' | 'cash' | 'stories';
+
+// Authority theme for decision-compression messaging
+export type AuthorityTheme = 'buyer_strategy' | 'seller_clarity' | 'cash_structure' | 'valuation_insight' | 'story_empathy';
+
 export interface GuideRegistryEntry {
   id: string;
   path: string;
@@ -15,10 +21,15 @@ export interface GuideRegistryEntry {
   titleEs: string;
   labelEn: string; // Short label for action buttons
   labelEs: string;
-  category: 'buying' | 'selling' | 'valuation' | 'stories';
+  category: GuideCategory;
   status: GuideStatus;
   funnelStage: GuideFunnelStage;
   keywords: string[];
+  // Authority metadata for decision-compression guides
+  authorityTheme?: AuthorityTheme;
+  isCashGuide?: boolean;
+  authorityBridge?: { en: string; es: string };
+  marketInsight?: { en: string; es: string };
 }
 
 export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
@@ -34,6 +45,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['first', 'new', 'never', 'bought', 'primero', 'nuevo', 'nunca', 'comprado', 'beginner', 'start'],
+    authorityTheme: 'buyer_strategy',
+    isCashGuide: false,
   },
   
   // === SELLER GUIDES ===
@@ -48,6 +61,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['sell', 'selling', 'list', 'listing', 'vender', 'listar', 'timeline', 'process', 'steps', 'how long'],
+    authorityTheme: 'seller_clarity',
+    isCashGuide: false,
   },
   
   // === VALUATION GUIDES ===
@@ -62,6 +77,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['value', 'valuation', 'worth', 'price', 'cma', 'valor', 'precio', 'cuánto'],
+    authorityTheme: 'valuation_insight',
+    isCashGuide: false,
   },
   {
     id: 'cash-offer-guide',
@@ -70,10 +87,20 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     titleEs: 'Ofertas en Efectivo Explicadas: Lo Que Los Propietarios Deben Saber',
     labelEn: 'Cash Offer Guide',
     labelEs: 'Guía de Ofertas en Efectivo',
-    category: 'valuation',
+    category: 'cash',
     status: 'live',
     funnelStage: 'mofu',
     keywords: ['cash', 'quick', 'fast', 'as-is', 'efectivo', 'rápido', 'investor', 'inversionista'],
+    authorityTheme: 'cash_structure',
+    isCashGuide: true,
+    authorityBridge: {
+      en: "Cash offers seem simple—but they're not. The difference between a good outcome and a costly mistake often comes down to who's evaluating the offer, how it's structured, and what alternatives you're not seeing. This is exactly the kind of decision Kasandra navigates for homeowners every week.",
+      es: "Las ofertas en efectivo parecen simples—pero no lo son. La diferencia entre un buen resultado y un error costoso a menudo depende de quién evalúa la oferta, cómo está estructurada, y qué alternativas no está viendo. Este es exactamente el tipo de decisión que Kasandra navega para propietarios cada semana.",
+    },
+    marketInsight: {
+      en: "In Tucson, cash buyer activity varies significantly by neighborhood and season. An offer that looks competitive in July may be low in October. Local knowledge isn't optional—it's the difference between accepting an offer that works for you and settling for one that works for the buyer.",
+      es: "En Tucson, la actividad de compradores en efectivo varía significativamente por vecindario y temporada. Una oferta que parece competitiva en julio puede ser baja en octubre. El conocimiento local no es opcional—es la diferencia entre aceptar una oferta que funciona para usted y conformarse con una que funciona para el comprador.",
+    },
   },
   
   // === CLIENT STORIES ===
@@ -88,6 +115,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['story', 'client', 'first', 'historia', 'cliente', 'primero'],
+    authorityTheme: 'story_empathy',
+    isCashGuide: false,
   },
   {
     id: 'budget-buyer-story',
@@ -100,6 +129,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['budget', 'affordable', 'presupuesto', 'asequible', 'story', 'historia'],
+    authorityTheme: 'story_empathy',
+    isCashGuide: false,
   },
   {
     id: 'seller-stressful-market-story',
@@ -112,6 +143,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['seller', 'stress', 'market', 'vendedor', 'estrés', 'mercado', 'story', 'historia'],
+    authorityTheme: 'story_empathy',
+    isCashGuide: false,
   },
   {
     id: 'spanish-speaking-client-story',
@@ -124,6 +157,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['spanish', 'español', 'bilingual', 'bilingüe', 'story', 'historia', 'language', 'idioma'],
+    authorityTheme: 'story_empathy',
+    isCashGuide: false,
   },
 ];
 
