@@ -85,7 +85,10 @@ export function useSessionPrePopulation(): PrePopulationData {
     
     // Pre-populate from session context
     if (session) {
-      data.preferredLanguage = session.language;
+      // NOTE: Language is NOT pre-populated from session.
+      // The form uses the current LanguageContext as default to respect the user's
+      // active language toggle choice, preventing stale session language overwrites.
+      // See: Consultation Intake Form Language Data Contract Audit
       
       if (session.intent) {
         data.intent = mapIntent(session.intent);
