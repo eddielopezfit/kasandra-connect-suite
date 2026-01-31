@@ -1,316 +1,362 @@
 
-# Native Calendar Integration & Success State Finalization
-## Embedding the Calendar Directly and Syncing with Selena
+
+# Consultation Intake Form + Webhook Language Data Contract Audit
+
+## Audit Summary
+
+After a comprehensive code review, I have traced the language data flow from the Lovable Native Form through to the GoHighLevel webhook payload.
 
 ---
 
-## SUMMARY
+## STEP 1: Lovable Form Field Audit
 
-This plan finalizes the `/v2/book` success journey by:
-1. Replacing the two-step reveal with an instant calendar embed on form success
-2. Passing user data (name, email) to the calendar iframe via URL parameters
-3. Keeping the "Get in Touch" and "What to Expect" sections visible
-4. Updating the header to "You're Almost There! Select a Time Below."
-5. Triggering a Selena confirmation message when the calendar state loads
+### Findings - CORRECT
 
----
+**File:** `src/components/v2/ConsultationIntakeForm.tsx`
 
-## ARCHITECTURE OVERVIEW
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                     V2Book Page                              │
-├─────────────────────────┬───────────────────────────────────┤
-│  Contact Info Column    │   Form / Calendar Column          │
-│  ├─ Get in Touch        │   ├─ [isSuccess === false]        │
-│  ├─ Phone, Email        │   │   └─ ConsultationIntakeForm   │
-│  └─ What to Expect      │   └─ [isSuccess === true]         │
-│                         │       ├─ Success Header           │
-│  (ALWAYS VISIBLE)       │       └─ GHLCalendarEmbed         │
-│                         │           └─ iframe with params   │
-└─────────────────────────┴───────────────────────────────────┘
+**Form Schema (Lines 43-45):**
+```typescript
+preferredLanguage: z.enum(["en", "es"], {
+  required_error: t("Please select a language", "Por favor seleccione un idioma"),
+}),
 ```
 
+**Language Options (Lines 201-204):**
+```typescript
+const languageOptions = [
+  { value: "en", labelEn: "English", labelEs: "Inglés" },
+  { value: "es", labelEn: "Español", labelEs: "Español" },
+];
+```
+
+**Verdict:** The form field is correctly configured:
+- Internal key: `preferredLanguage`
+- Spanish option value: `"es"` (canonical)
+- English option value: `"en"` (canonical)
+- Display labels are localized but values are canonical codes
+
 ---
 
-## TASK 1: Create GHLCalendarEmbed Component with Data Pass-Through
+## STEP 2: Webhook Payload Structure Audit
 
-### File: `src/components/v2/GHLCalendarEmbed.tsx` (NEW)
+### Findings - CORRECT
 
-A dedicated component that:
-- Accepts `name` and `email` props
-- Constructs the calendar URL with query parameters
-- Handles responsive sizing
+**File:** `supabase/functions/submit-consultation-intake/index.ts`
 
+**Form Submission (Lines 228-244):**
 ```typescript
-import { useEffect } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
+const { data: response, error } = await supabase.functions.invoke("submit-consultation-intake", {
+  body: {
+    // ...
+    language: data.preferredLanguage,  // ← Sends "es" or "en"
+    // ...
+  },
+});
+```
 
-interface GHLCalendarEmbedProps {
-  name?: string;
-  email?: string;
-  phone?: string;
-  className?: string;
-}
-
-const GHLCalendarEmbed = ({ name, email, phone, className = "" }: GHLCalendarEmbedProps) => {
-  const { t } = useLanguage();
+**Webhook Payload (Lines 302-369):**
+```typescript
+const ghlPayload = {
+  // Top-level (easy GHL mapping)
+  language: input.language,  // ← "es" or "en"
+  tags: allTags,             // ← Contains language tag
   
-  useEffect(() => {
-    // Load the GoHighLevel form embed script
-    const existingScript = document.querySelector('script[src="https://link.msgsndr.com/js/form_embed.js"]');
-    if (!existingScript) {
-      const script = document.createElement("script");
-      script.src = "https://link.msgsndr.com/js/form_embed.js";
-      script.async = true;
-      document.body.appendChild(script);
-    }
-  }, []);
-
-  // Build calendar URL with pre-filled data
-  const baseUrl = "https://api.leadconnectorhq.com/widget/booking/CY3PNu8yhtEuNMWH5e1x";
-  const params = new URLSearchParams();
-  
-  if (name) params.append("name", name);
-  if (email) params.append("email", email);
-  if (phone) params.append("phone", phone);
-  
-  const calendarUrl = params.toString() 
-    ? `${baseUrl}?${params.toString()}` 
-    : baseUrl;
-
-  return (
-    <div className={`w-full ${className}`}>
-      <iframe
-        src={calendarUrl}
-        style={{ 
-          width: "100%", 
-          height: "700px",
-          minHeight: "650px",
-          border: "none", 
-          borderRadius: "8px",
-        }}
-        id="ghl-calendar-embed"
-        title={t("Schedule a Consultation", "Agendar una Consulta")}
-      />
-    </div>
-  );
+  // Custom fields (detailed)
+  customField: {
+    language: input.language,  // ← "es" or "en" (DUPLICATED)
+    // ...
+  },
 };
-
-export default GHLCalendarEmbed;
 ```
+
+**Language appears in 3 places:**
+
+| Location | Field | Expected Value |
+|----------|-------|----------------|
+| `payload.language` (top-level) | `language` | `"es"` or `"en"` |
+| `payload.customField.language` | `language` | `"es"` or `"en"` |
+| `payload.tags[]` | Array item | `"spanish_speaker"` or `"english_speaker"` |
+
+**Verdict:** The language value is correctly sent as `"es"` (not `"Español"` or localized text).
 
 ---
 
-## TASK 2: Refactor ConsultationIntakeForm Success State
+## STEP 3: Source of Truth Declaration
 
-### File: `src/components/v2/ConsultationIntakeForm.tsx`
+### CURRENT STATE
 
-Remove the intermediate "Want to schedule right now?" button and immediately show the calendar with the new header.
+The webhook sends language in **3 places**:
 
-#### Key Changes:
+1. `payload.language` (top-level) = `"es"` or `"en"`
+2. `payload.customField.language` = `"es"` or `"en"`
+3. `payload.tags[]` = `"spanish_speaker"` or `"english_speaker"`
 
-1. **Store submitted name in state** (already storing email)
-2. **Remove `showCalendar` state** - calendar shows immediately on success
-3. **Update header** to "You're Almost There!"
-4. **Pass name and email to calendar** via the new component
-5. **Dispatch Selena proactive message** on success
+### DECLARATION
 
-```typescript
-// New state for submitted name
-const [submittedName, setSubmittedName] = useState("");
+**`payload.language` (top-level) is the authoritative source of truth.**
 
-// In onSubmit, after success:
-setSubmittedName(data.name);
-setSubmittedEmail(data.email);
-setIsSuccess(true);
+The GHL workflow WF-03 MUST evaluate:
 
-// Dispatch Selena confirmation message
-window.dispatchEvent(new CustomEvent('selena-proactive-message', {
-  detail: { 
-    message: language === 'es' 
-      ? `¡Excelente trabajo, ${data.name.split(' ')[0]}! He enviado tus datos a Kasandra. Por favor selecciona un horario en el calendario que te funcione.`
-      : `Great job, ${data.name.split(' ')[0]}! I've sent your details to Kasandra. Please pick a time that works for you on the calendar provided.`
-  }
-}));
+```
+IF payload.language == "es"
+  → Spanish path
+ELSE
+  → English path
 ```
 
-#### Simplified Success State:
+**Tags MUST NOT be used to determine language routing.**  
+Tags are derivative and should only be applied AFTER language routing is resolved.
+
+---
+
+## STEP 4: Potential Overwrite Analysis
+
+### Form Default Value (Line 144)
 
 ```typescript
-if (isSuccess) {
-  return (
-    <div className="py-6 px-4 sm:py-8 sm:px-6">
-      {/* Confirmation Header */}
-      <div className="text-center mb-6">
-        <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <CheckCircle2 className="w-7 h-7 text-green-600" />
-        </div>
-        <h3 className="font-serif text-2xl font-bold text-cc-navy mb-2">
-          {t("You're Almost There!", "¡Ya Casi Está!")}
-        </h3>
-        <p className="text-cc-charcoal text-base">
-          {t(
-            "Select a time below to complete your booking.",
-            "Seleccione un horario abajo para completar su reservación."
-          )}
-        </p>
-        <p className="text-sm text-cc-slate mt-1">
-          {t(
-            `Confirmation sent to ${submittedEmail}`,
-            `Confirmación enviada a ${submittedEmail}`
-          )}
-        </p>
-      </div>
+const form = useForm<FormData>({
+  defaultValues: {
+    preferredLanguage: language as "en" | "es",  // ← From LanguageContext
+    // ...
+  },
+});
+```
 
-      {/* Calendar Embed - Immediate */}
-      <GHLCalendarEmbed 
-        name={submittedName}
-        email={submittedEmail}
-      />
-    </div>
-  );
+This sets the default based on the global LanguageContext (the site's current language toggle).
+
+### Pre-Population Logic (Lines 156-167)
+
+```typescript
+useEffect(() => {
+  if (prePopData.hasPrePopulatedData) {
+    if (prePopData.preferredLanguage) form.setValue('preferredLanguage', prePopData.preferredLanguage);
+    // ...
+  }
+}, [prePopData, form]);
+```
+
+**Trace to session context (useSessionPrePopulation.ts, Line 88):**
+```typescript
+data.preferredLanguage = session.language;
+```
+
+**Trace to session initialization (selenaSession.ts, Line 101-133):**
+```typescript
+export function initSessionContext(language: 'en' | 'es' = 'en'): SessionContext {
+  // ...
+  const context: SessionContext = {
+    language,  // ← From parameter
+    // ...
+  };
+  // ...
 }
 ```
 
----
+### FINDING - POTENTIAL OVERWRITE SCENARIO
 
-## TASK 3: Add Selena Booking Confirmation Event Listener
+If a user:
+1. Visits the site in English (`language: 'en'` in session)
+2. Toggles to Spanish via the language toggle
+3. Navigates to `/v2/book`
 
-### File: `src/contexts/SelenaChatContext.tsx`
+**The form may pre-populate with `"en"` from the stale session context instead of `"es"` from the current LanguageContext.**
 
-Add a new custom event listener for booking confirmation messages that doesn't use the default loss aversion suggested replies:
+However, the form's defaultValue (Line 144) uses the current LanguageContext, and the pre-population useEffect runs after — meaning it could overwrite the correct value with a stale one.
 
-```typescript
-// Listen for booking confirmation events
-useEffect(() => {
-  const handleBookingConfirmation = (event: Event) => {
-    const customEvent = event as CustomEvent<{ message: string }>;
-    const confirmMsg: ChatMessage = {
-      id: generateMessageId(),
-      role: 'assistant',
-      content: customEvent.detail.message,
-      timestamp: new Date().toISOString(),
-      suggestedReplies: [
-        t("What happens after I book?", "¿Qué pasa después de reservar?"),
-        t("Can I reschedule if needed?", "¿Puedo reprogramar si es necesario?"),
-        t("Thanks, Selena!", "¡Gracias, Selena!"),
-      ],
-    };
-    setMessages(prev => {
-      const updated = [...prev, confirmMsg];
-      saveHistory(updated);
-      return updated;
-    });
-    logEvent('selena_booking_confirmation', { route: location.pathname });
-  };
-  
-  window.addEventListener('selena-booking-confirmation', handleBookingConfirmation);
-  return () => window.removeEventListener('selena-booking-confirmation', handleBookingConfirmation);
-}, [t, location.pathname]);
+### RECOMMENDED FIX
+
+In `useSessionPrePopulation.ts`, the language pre-population should respect the current LanguageContext, not the session's stored language:
+
+```diff
+// Pre-populate from session context
+if (session) {
+-  data.preferredLanguage = session.language;
++  // DO NOT pre-populate language from session
++  // Let the form use the current LanguageContext as default
++  // data.preferredLanguage = session.language;
 ```
 
-#### Update Form to Use New Event
+**Rationale:** The user's current language toggle choice should take precedence over a potentially stale session language.
 
-In `ConsultationIntakeForm.tsx`, dispatch to the new event:
+---
 
-```typescript
-window.dispatchEvent(new CustomEvent('selena-booking-confirmation', {
-  detail: { 
-    message: language === 'es' 
-      ? `¡Excelente trabajo, ${data.name.split(' ')[0]}! He enviado tus datos a Kasandra. Por favor selecciona un horario en el calendario.`
-      : `Great job, ${data.name.split(' ')[0]}! I've sent your details to Kasandra. Please pick a time that works for you on the calendar.`
+## STEP 5: GHL Workflow Condition Alignment
+
+### REQUIRED CONDITION LOGIC
+
+The GHL workflow WF-03 must evaluate language using the webhook payload's top-level `language` field:
+
+```
+IF {{trigger.language}} == "es"
+  → Run Spanish branch
+ELSE
+  → Run English branch
+```
+
+### FORBIDDEN PATTERNS
+
+- Checking `{{contact.tags}}` contains "spanish"
+- Checking `{{trigger.customField.language}}` (redundant, use top-level)
+- Checking localized display labels like "Español"
+
+### VERIFICATION NEEDED (GHL SIDE)
+
+In GHL Workflow WF-03, confirm:
+
+1. The condition step uses `{{trigger.language}}` (not a contact field or tag)
+2. The comparison is exactly: `== "es"`
+3. No prior workflow step sets a `selena_language_raw` contact field before the condition runs
+4. The language tag (`spanish_speaker`) is applied AFTER the routing decision
+
+---
+
+## STEP 6: Field Mapping Verification
+
+### Webhook to GHL Field Mapping
+
+| Webhook Field | GHL Custom Field | Expected |
+|---------------|------------------|----------|
+| `payload.language` | Should map to `language` in trigger | `"es"` or `"en"` |
+| `payload.customField.language` | Should map to `selena_language` (if used) | `"es"` or `"en"` |
+
+### NO TRANSFORMATION ALLOWED
+
+The language value must be passed through without transformation:
+- No defaulting to English if empty
+- No mapping `"es"` to `"spanish"` or other variants
+- No conditional fallback logic
+
+---
+
+## STEP 7: Validation Test Plan
+
+### Test Matrix
+
+| Test | Form Selection | Expected `payload.language` | Expected GHL Branch | Expected Tags |
+|------|----------------|----------------------------|---------------------|---------------|
+| 1 | Spanish (Español) | `"es"` | Spanish path | `spanish_speaker` |
+| 2 | English | `"en"` | English path | `english_speaker` |
+| 3 | Spanish + Repeat | `"es"` | Spanish (same lead) | `spanish_speaker` |
+
+### Test 1: Spanish Form Submission
+
+**Steps:**
+1. Clear localStorage (fresh session)
+2. Toggle site to Spanish
+3. Navigate to `/v2/book`
+4. Fill form with Spanish selected in "Idioma Preferido"
+5. Submit
+
+**Expected Webhook Payload:**
+```json
+{
+  "language": "es",
+  "tags": ["Consultation Intake", "consultation_intake", "spanish_speaker", ...],
+  "customField": {
+    "language": "es",
+    ...
   }
-}));
+}
 ```
 
----
+**Expected GHL Outcome:**
+- Workflow condition `{{trigger.language}} == "es"` → TRUE
+- Spanish branch executes
+- Contact tagged with `spanish_speaker`
 
-## TASK 4: Cleanup - Remove Unused GHLCalendarWidget
+### Test 2: English Form Submission
 
-### File: `src/components/v2/ConsultationIntakeForm.tsx`
+**Steps:**
+1. Clear localStorage
+2. Toggle site to English
+3. Navigate to `/v2/book`
+4. Fill form with English selected
+5. Submit
 
-Remove the inline `GHLCalendarWidget` component (lines 124-151) since we're replacing it with the new `GHLCalendarEmbed` component.
-
-Also remove the `showCalendar` state as it's no longer needed.
-
----
-
-## FILE CHANGES SUMMARY
-
-| File | Action | Description |
-|------|--------|-------------|
-| `src/components/v2/GHLCalendarEmbed.tsx` | CREATE | New calendar embed with data pass-through |
-| `src/components/v2/ConsultationIntakeForm.tsx` | MODIFY | Simplify success state, remove showCalendar, add proactive message |
-| `src/contexts/SelenaChatContext.tsx` | MODIFY | Add `selena-booking-confirmation` event listener |
-| `src/lib/analytics/logEvent.ts` | MODIFY | Add `selena_booking_confirmation` event type |
-
----
-
-## DATA FLOW
-
-```text
-1. User fills ConsultationIntakeForm
-2. onSubmit → Edge function → success
-3. Store submittedName, submittedEmail in state
-4. Dispatch 'selena-booking-confirmation' event
-5. isSuccess = true → Render GHLCalendarEmbed
-6. GHLCalendarEmbed builds URL: 
-   ?name=John%20Doe&email=john@email.com
-7. Calendar iframe loads with pre-filled data
-8. Selena chat shows confirmation message (if open)
+**Expected Webhook Payload:**
+```json
+{
+  "language": "en",
+  "tags": ["Consultation Intake", "consultation_intake", "english_speaker", ...],
+  "customField": {
+    "language": "en",
+    ...
+  }
+}
 ```
 
----
+**Expected GHL Outcome:**
+- Workflow condition `{{trigger.language}} == "es"` → FALSE
+- English branch executes
+- Contact tagged with `english_speaker`
 
-## UI CONTINUITY
+### Test 3: Repeat Submission (Same Email)
 
-The left column ("Get in Touch" + "What to Expect") remains unchanged in V2Book.tsx. Only the right column content changes from form → calendar.
+**Steps:**
+1. Use Test 1 email
+2. Submit again with Spanish selected
+3. Verify upsert preserves language
 
-### Before Success:
-- Left: Contact info + What to Expect
-- Right: ConsultationIntakeForm
-
-### After Success:
-- Left: Contact info + What to Expect (unchanged)
-- Right: Success header + GHLCalendarEmbed
-
----
-
-## VERIFICATION TESTS
-
-### Test 1: Form Submission & Calendar Load
-1. Navigate to `/v2/book`
-2. Fill out the native consultation form
-3. Submit successfully
-4. **Verify**: Green checkmark + "You're Almost There!" header appears immediately
-5. **Verify**: Calendar iframe loads below the confirmation
-6. **Verify**: "Get in Touch" and "What to Expect" sections remain visible on the left
-
-### Test 2: Data Pre-Fill
-1. Submit form with Name: "John Doe", Email: "john@example.com"
-2. **Verify**: Calendar iframe URL includes `?name=John%20Doe&email=john@example.com`
-3. **Verify**: Inside the GHL calendar, user should NOT need to re-enter name/email
-
-### Test 3: Selena Confirmation
-1. Open Selena Chat drawer
-2. Submit the consultation form
-3. **Verify**: Selena chat shows: "Great job, [First Name]! I've sent your details to Kasandra. Please pick a time that works for you on the calendar."
-4. **Verify**: Suggested replies: "What happens after I book?", "Can I reschedule if needed?", "Thanks, Selena!"
-
-### Test 4: Mobile Responsiveness
-1. Open `/v2/book` on mobile (375px width)
-2. Submit the form
-3. **Verify**: Calendar iframe is responsive and fills the container width
-4. **Verify**: No horizontal scroll on the page
+**Expected:**
+- Lead updated (not duplicated)
+- Language remains `"es"`
+- Tags merged, not replaced
 
 ---
 
-## SUCCESS CRITERIA
+## Final Diagnosis
 
-1. Form submission instantly shows calendar (no intermediate button)
-2. Calendar URL includes user's name and email as query parameters
-3. Left column (contact info, what to expect) remains visible
-4. Header changes to "You're Almost There! Select a Time Below."
-5. Selena shows personalized confirmation message with first name
-6. Mobile experience is smooth with no layout breaks
+### Lovable Form: CORRECTLY BUILT
+
+The Consultation Intake Form sends canonical language values (`"es"` / `"en"`) correctly.
+
+### Edge Function Webhook: CORRECTLY BUILT
+
+The `submit-consultation-intake` edge function sends `language` at both top-level and in `customField` with correct values.
+
+### Likely Root Cause: GHL Workflow Condition
+
+The issue is most likely in the GHL workflow WF-03:
+
+1. **The condition may be checking the wrong field** (e.g., a contact field instead of `{{trigger.language}}`)
+2. **A prior step may be setting `selena_language_raw`** before the condition runs
+3. **The condition may be using wrong comparison** (e.g., checking for `"spanish"` instead of `"es"`)
+
+---
+
+## Required Changes
+
+### Code Changes: 1 Optional Fix
+
+**File:** `src/hooks/useSessionPrePopulation.ts`
+
+**Change:** Remove language pre-population from session to prevent stale overwrites
+
+```diff
+// Line 87-88
+if (session) {
+-  data.preferredLanguage = session.language;
++  // Language is NOT pre-populated from session
++  // Form uses current LanguageContext as default
+```
+
+**Impact:** Prevents edge case where stale session language overwrites current toggle choice.
+
+### GHL Workflow Changes: Required
+
+**Workflow:** WF-03 — Selena | Intake — Website/Webhook v2
+
+1. **Verify condition uses:** `{{trigger.language}} == "es"`
+2. **Remove any prior step** that sets language-related contact fields before the condition
+3. **Ensure language tags are applied AFTER** the routing decision, not before
+
+---
+
+## Declaration
+
+Once the GHL workflow condition is verified to use `{{trigger.language}} == "es"`:
+
+**"Spanish submissions will no longer resolve as English."**
+
+The Lovable Native Form and webhook are correctly built. The resolution depends on aligning the GHL workflow condition to use the canonical `"es"` value from `payload.language`.
+
