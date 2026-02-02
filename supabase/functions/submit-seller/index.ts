@@ -8,12 +8,15 @@ const corsHeaders = {
 interface SellerLeadPayload {
   name: string;
   email: string;
+  propertyAddress?: string;
   situation?: string;
   condition?: string;
   timeline?: string;
   estimatedValue?: string;
   calculatedCashOffer?: number;
   calculatedListingNet?: number;
+  sessionId?: string;
+  language?: string;
 }
 
 Deno.serve(async (req) => {
@@ -29,7 +32,7 @@ Deno.serve(async (req) => {
     if (!payload.name || !payload.email) {
       console.error("Validation failed: Missing name or email");
       return new Response(
-        JSON.stringify({ error: "Name and email are required" }),
+        JSON.stringify({ ok: false, error: "Name and email are required" }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -39,7 +42,7 @@ Deno.serve(async (req) => {
     if (!emailRegex.test(payload.email)) {
       console.error("Validation failed: Invalid email format");
       return new Response(
-        JSON.stringify({ error: "Invalid email format" }),
+        JSON.stringify({ ok: false, error: "Invalid email format" }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -51,6 +54,7 @@ Deno.serve(async (req) => {
     const sanitizedPayload = {
       name: payload.name.trim().slice(0, 100),
       email: normalizedEmail.slice(0, 255),
+      property_address: payload.propertyAddress?.trim().slice(0, 200) || null,
       situation: payload.situation?.trim().slice(0, 50) || null,
       condition: payload.condition?.trim().slice(0, 50) || null,
       timeline: payload.timeline?.trim().slice(0, 50) || null,
@@ -60,9 +64,10 @@ Deno.serve(async (req) => {
       source: 'seller_funnel'
     };
 
-    console.log("Processing seller lead submission:", { 
+    console.log("[submit-seller] Processing seller lead:", { 
       email: sanitizedPayload.email,
-      situation: sanitizedPayload.situation 
+      situation: sanitizedPayload.situation,
+      hasAddress: !!sanitizedPayload.property_address,
     });
 
     // Initialize Supabase client
@@ -84,7 +89,7 @@ Deno.serve(async (req) => {
     if (existing) {
       // Update existing record - merge new data (preserve non-null existing values)
       isNew = false;
-      console.log("Updating existing seller lead:", existing.id);
+      console.log("[submit-seller] Updating existing seller lead:", existing.id);
       
       const { data, error: updateError } = await supabase
         .from('seller_leads')
@@ -102,9 +107,9 @@ Deno.serve(async (req) => {
         .single();
 
       if (updateError) {
-        console.error("Database update error:", updateError);
+        console.error("[submit-seller] Database update error:", updateError);
         return new Response(
-          JSON.stringify({ error: "Failed to update lead" }),
+          JSON.stringify({ ok: false, error: "Failed to update lead" }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -118,16 +123,16 @@ Deno.serve(async (req) => {
         .single();
 
       if (insertError) {
-        console.error("Database insert error:", insertError);
+        console.error("[submit-seller] Database insert error:", insertError);
         return new Response(
-          JSON.stringify({ error: "Failed to save lead" }),
+          JSON.stringify({ ok: false, error: "Failed to save lead" }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       leadData = data;
     }
 
-    console.log("Lead saved to database:", { id: leadData.id, isNew });
+    console.log("[submit-seller] Lead saved to database:", { id: leadData.id, isNew });
 
     // POST to GoHighLevel webhook
     const ghlWebhookUrl = Deno.env.get('GHL_WEBHOOK_URL');
@@ -181,27 +186,44 @@ Deno.serve(async (req) => {
           ...situationTags,
           conditionTag,
           timelineTag,
+          payload.language === 'es' ? 'spanish_speaker' : 'english_speaker',
         ].filter(Boolean) as string[];
 
+        // STANDARDIZED GHL PAYLOAD with selena_* prefixed keys at top level
         const ghlPayload = {
+          // Standard contact fields
           email: sanitizedPayload.email,
           name: sanitizedPayload.name,
           firstName,
           lastName,
           tags: allTags,
+          
+          // STANDARDIZED selena_* top-level keys for GHL workflow mapping
+          selena_lead_id: leadData.id,
+          selena_session_id: payload.sessionId || null,
+          selena_intent_canonical: 'sell',
+          selena_language_raw: payload.language || 'en',
+          selena_timeline_raw: sanitizedPayload.timeline || null,
+          selena_budget_raw: sanitizedPayload.estimated_value || null,
+          selena_target_neighborhoods: null, // N/A for sellers
+          selena_property_address: sanitizedPayload.property_address || null,
+          selena_is_pre_approved: 'No', // N/A for sellers
+          
+          // Keep customField for rich context / backward compatibility
           customField: {
             lead_id: leadData.id,
             situation: sanitizedPayload.situation,
             condition: sanitizedPayload.condition,
             timeline: sanitizedPayload.timeline,
             estimated_value: sanitizedPayload.estimated_value,
+            property_address: sanitizedPayload.property_address,
             cash_offer: sanitizedPayload.calculated_cash_offer,
             listing_net: sanitizedPayload.calculated_listing_net,
           },
           source: "Seller Funnel - Tucson Inherited Homes"
         };
 
-        console.log("Sending to GHL webhook...");
+        console.log("[submit-seller] Sending to GHL webhook with standardized payload...");
         
         const ghlResponse = await fetch(ghlWebhookUrl, {
           method: 'POST',
@@ -212,7 +234,7 @@ Deno.serve(async (req) => {
         });
 
         if (!ghlResponse.ok) {
-          console.error("GHL webhook failed:", ghlResponse.status);
+          console.error("[submit-seller] GHL webhook failed:", ghlResponse.status);
           
           // Log failure to event_log for monitoring
           await supabase.from('event_log').insert({
@@ -228,10 +250,10 @@ Deno.serve(async (req) => {
           });
         } else {
           ghlSynced = true;
-          console.log("GHL webhook success");
+          console.log("[submit-seller] GHL webhook success");
         }
       } catch (ghlError) {
-        console.error("GHL webhook error:", ghlError);
+        console.error("[submit-seller] GHL webhook error:", ghlError);
         
         // Log exception to event_log
         await supabase.from('event_log').insert({
@@ -247,14 +269,14 @@ Deno.serve(async (req) => {
         });
       }
     } else {
-      console.warn("GHL_WEBHOOK_URL not configured");
+      console.warn("[submit-seller] GHL_WEBHOOK_URL not configured");
     }
 
     return new Response(
       JSON.stringify({ 
-        success: true, 
+        ok: true, 
         message: "Lead submitted successfully",
-        leadId: leadData.id,
+        lead_id: leadData.id,
         is_new: isNew,
         ghl_synced: ghlSynced
       }),
@@ -262,9 +284,9 @@ Deno.serve(async (req) => {
     );
 
   } catch (error) {
-    console.error("Unexpected error:", error);
+    console.error("[submit-seller] Unexpected error:", error);
     return new Response(
-      JSON.stringify({ error: "Internal server error" }),
+      JSON.stringify({ ok: false, error: "Internal server error" }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

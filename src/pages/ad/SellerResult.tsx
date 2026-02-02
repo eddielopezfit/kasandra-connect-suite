@@ -62,6 +62,7 @@ const SellerResult = () => {
     condition: searchParams.get("condition") || "",
     timeline: searchParams.get("timeline") || "",
     value: searchParams.get("value") || "200-350k",
+    address: searchParams.get("address") || "",
   };
 
   // Calculate net proceeds
@@ -133,16 +134,23 @@ const SellerResult = () => {
     setIsSubmitting(true);
 
     try {
+      // Get session context for GHL sync
+      const sessionId = localStorage.getItem('selena_session_id') || undefined;
+      const language = localStorage.getItem('selena_language') || 'en';
+      
       const { data, error } = await supabase.functions.invoke('submit-seller', {
         body: {
           name: name.trim(),
           email: email.trim(),
+          propertyAddress: quizAnswers.address,
           situation: quizAnswers.situation,
           condition: quizAnswers.condition,
           timeline: quizAnswers.timeline,
           estimatedValue: quizAnswers.value,
           calculatedCashOffer: calculations.cashOffer,
           calculatedListingNet: calculations.listingNet,
+          sessionId,
+          language,
         },
       });
 

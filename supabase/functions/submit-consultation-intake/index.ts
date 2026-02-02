@@ -303,14 +303,26 @@ Deno.serve(async (req) => {
         };
 
         const ghlPayload = {
-          // Top-level fields for easy GHL mapping
+          // Standard contact fields
           email,
           name: input.name.trim(),
           firstName,
           lastName,
           phone: input.phone.trim(),
           tags: allTags,
-          // Top-level required fields per spec
+          
+          // STANDARDIZED selena_* top-level keys for GHL workflow mapping
+          selena_lead_id: leadId,
+          selena_session_id: input.session_id || null,
+          selena_intent_canonical: normalizedIntent.canonical,
+          selena_language_raw: input.language,
+          selena_timeline_raw: normalizedTimeline.raw,
+          selena_budget_raw: input.price_range || null,
+          selena_target_neighborhoods: input.target_neighborhoods || null,
+          selena_property_address: input.property_address || null,
+          selena_is_pre_approved: input.pre_approved === 'yes' ? 'Yes' : 'No',
+          
+          // Legacy top-level fields for backward compatibility
           intent_canonical: normalizedIntent.canonical,
           intent_raw: normalizedIntent.raw,
           timeline_canonical: normalizedTimeline.canonical,
@@ -320,11 +332,11 @@ Deno.serve(async (req) => {
           language: input.language,
           page_path: input.page_path || "/v2/book",
           session_id: input.session_id || null,
-          // NEW: Top-level fields for GHL workflow SMS/email personalization
           property_address: input.property_address || null,
           target_neighborhoods: input.target_neighborhoods || null,
           pre_approved: input.pre_approved || null,
-          // Custom fields for GHL workflow
+          
+          // Custom fields for GHL workflow (backward compatibility)
           customField: {
             // Core fields - send BOTH canonical and raw
             lead_id: leadId,
@@ -333,9 +345,9 @@ Deno.serve(async (req) => {
             intent_raw: normalizedIntent.raw,
             timeline_canonical: normalizedTimeline.canonical,
             timeline_raw: normalizedTimeline.raw,
-            // NEW: Property address for seller SMS personalization
+            // Property address for seller SMS personalization
             property_address: input.property_address || null,
-            // NEW: Target neighborhoods for buyer nurture emails
+            // Target neighborhoods for buyer nurture emails
             target_neighborhoods: input.target_neighborhoods || null,
             price_range: input.price_range || null,
             pre_approved: input.pre_approved || null,
@@ -377,7 +389,7 @@ Deno.serve(async (req) => {
             intent_dual: normalizedIntent.raw === 'buy_and_sell',
             pipeline_stage: getPipelineStage(normalizedIntent.canonical),
             last_declared_goal: getGoalLabel(normalizedIntent.raw, input.language),
-            // NEW: Pre-approval flag for finance-ready routing
+            // Pre-approval flag for finance-ready routing
             is_pre_approved: input.pre_approved === 'yes',
           },
         };
