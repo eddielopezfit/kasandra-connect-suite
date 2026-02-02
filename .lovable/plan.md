@@ -1,362 +1,263 @@
 
+# GHL Integration Finalization Plan
 
-# Consultation Intake Form + Webhook Language Data Contract Audit
-
-## Audit Summary
-
-After a comprehensive code review, I have traced the language data flow from the Lovable Native Form through to the GoHighLevel webhook payload.
+## Summary
+This plan implements three critical updates to ensure the website correctly maps form data to GoHighLevel (GHL) custom fields: adding Property Address capture to the Seller funnel, standardizing webhook payloads with `selena_*` prefixed keys, and implementing an access gate on the Private Cash Review page.
 
 ---
 
-## STEP 1: Lovable Form Field Audit
+## Task 1: Add Property Address to Seller Quiz/Result Flow
 
-### Findings - CORRECT
+### Current State
+- The `SellerQuiz.tsx` captures: situation, condition, timeline, and value
+- The `SellerResult.tsx` captures: name and email (for unlock)
+- **Gap**: No property address field exists in this flow
 
-**File:** `src/components/v2/ConsultationIntakeForm.tsx`
+### Changes Required
 
-**Form Schema (Lines 43-45):**
-```typescript
-preferredLanguage: z.enum(["en", "es"], {
-  required_error: t("Please select a language", "Por favor seleccione un idioma"),
-}),
+**1.1 Add Address Step to SellerQuiz.tsx**
+Insert a new quiz step (step 5) after "value" that captures the property address as a text input field:
+
+```text
+Step 5: "What's the property address?"
+- Text input field for address
+- Optional autocomplete suggestion (Tucson area hint)
+- Skip option: "I'd rather not share yet"
 ```
 
-**Language Options (Lines 201-204):**
-```typescript
-const languageOptions = [
-  { value: "en", labelEn: "English", labelEs: "Inglés" },
-  { value: "es", labelEn: "Español", labelEs: "Español" },
-];
-```
+**1.2 Pass Address to SellerResult.tsx**
+Update the navigation from quiz to result to include `address` in URL params:
+- Add `address: newAnswers.address || ''` to the URLSearchParams
 
-**Verdict:** The form field is correctly configured:
-- Internal key: `preferredLanguage`
-- Spanish option value: `"es"` (canonical)
-- English option value: `"en"` (canonical)
-- Display labels are localized but values are canonical codes
+**1.3 Update SellerResult.tsx to Send Address**
+Modify the form submission to include `propertyAddress` in the edge function payload.
 
 ---
 
-## STEP 2: Webhook Payload Structure Audit
+## Task 2: Standardize Webhook Payloads for GHL
 
-### Findings - CORRECT
+### Target Payload Structure
+Both edge functions must send these **top-level** keys (not nested):
 
-**File:** `supabase/functions/submit-consultation-intake/index.ts`
+| Key | Source |
+|-----|--------|
+| `selena_lead_id` | Database-generated lead ID |
+| `selena_session_id` | From localStorage/input |
+| `selena_intent_canonical` | Normalized intent (buy/sell/cash/dual/explore) |
+| `selena_language_raw` | en/es |
+| `selena_timeline_raw` | Raw timeline value |
+| `selena_budget_raw` | Price range value |
+| `selena_target_neighborhoods` | Target areas for buyers |
+| `selena_property_address` | Property address for sellers |
+| `selena_is_pre_approved` | "Yes" or "No" string |
 
-**Form Submission (Lines 228-244):**
-```typescript
-const { data: response, error } = await supabase.functions.invoke("submit-consultation-intake", {
-  body: {
-    // ...
-    language: data.preferredLanguage,  // ← Sends "es" or "en"
-    // ...
-  },
-});
-```
+### 2.1 Update `submit-consultation-intake/index.ts`
 
-**Webhook Payload (Lines 302-369):**
+**Interface Update:**
+- Add `session_id` to input interface (already exists)
+
+**GHL Payload Restructure:**
+Replace current top-level keys with `selena_` prefixed versions:
+
 ```typescript
 const ghlPayload = {
-  // Top-level (easy GHL mapping)
-  language: input.language,  // ← "es" or "en"
-  tags: allTags,             // ← Contains language tag
+  // Standard contact fields
+  email,
+  name: input.name.trim(),
+  firstName,
+  lastName,
+  phone: input.phone.trim(),
+  tags: allTags,
   
-  // Custom fields (detailed)
-  customField: {
-    language: input.language,  // ← "es" or "en" (DUPLICATED)
-    // ...
-  },
+  // STANDARDIZED selena_* top-level keys for GHL workflow
+  selena_lead_id: leadId,
+  selena_session_id: input.session_id || null,
+  selena_intent_canonical: normalizedIntent.canonical,
+  selena_language_raw: input.language,
+  selena_timeline_raw: normalizedTimeline.raw,
+  selena_budget_raw: input.price_range || null,
+  selena_target_neighborhoods: input.target_neighborhoods || null,
+  selena_property_address: input.property_address || null,
+  selena_is_pre_approved: input.pre_approved === 'yes' ? 'Yes' : 'No',
+  
+  // Keep customField for backward compatibility
+  customField: { ... }
 };
 ```
 
-**Language appears in 3 places:**
+### 2.2 Update `submit-seller/index.ts`
 
-| Location | Field | Expected Value |
-|----------|-------|----------------|
-| `payload.language` (top-level) | `language` | `"es"` or `"en"` |
-| `payload.customField.language` | `language` | `"es"` or `"en"` |
-| `payload.tags[]` | Array item | `"spanish_speaker"` or `"english_speaker"` |
-
-**Verdict:** The language value is correctly sent as `"es"` (not `"Español"` or localized text).
-
----
-
-## STEP 3: Source of Truth Declaration
-
-### CURRENT STATE
-
-The webhook sends language in **3 places**:
-
-1. `payload.language` (top-level) = `"es"` or `"en"`
-2. `payload.customField.language` = `"es"` or `"en"`
-3. `payload.tags[]` = `"spanish_speaker"` or `"english_speaker"`
-
-### DECLARATION
-
-**`payload.language` (top-level) is the authoritative source of truth.**
-
-The GHL workflow WF-03 MUST evaluate:
-
-```
-IF payload.language == "es"
-  → Spanish path
-ELSE
-  → English path
-```
-
-**Tags MUST NOT be used to determine language routing.**  
-Tags are derivative and should only be applied AFTER language routing is resolved.
-
----
-
-## STEP 4: Potential Overwrite Analysis
-
-### Form Default Value (Line 144)
-
+**Interface Update:**
 ```typescript
-const form = useForm<FormData>({
-  defaultValues: {
-    preferredLanguage: language as "en" | "es",  // ← From LanguageContext
-    // ...
+interface SellerLeadPayload {
+  name: string;
+  email: string;
+  propertyAddress?: string;  // NEW
+  situation?: string;
+  condition?: string;
+  timeline?: string;
+  estimatedValue?: string;
+  calculatedCashOffer?: number;
+  calculatedListingNet?: number;
+  sessionId?: string;        // NEW
+  language?: string;         // NEW (default 'en')
+}
+```
+
+**GHL Payload Restructure:**
+```typescript
+const ghlPayload = {
+  // Standard contact fields
+  email: sanitizedPayload.email,
+  name: sanitizedPayload.name,
+  firstName,
+  lastName,
+  tags: allTags,
+  
+  // STANDARDIZED selena_* top-level keys for GHL workflow
+  selena_lead_id: leadData.id,
+  selena_session_id: payload.sessionId || null,
+  selena_intent_canonical: 'sell',
+  selena_language_raw: payload.language || 'en',
+  selena_timeline_raw: sanitizedPayload.timeline || null,
+  selena_budget_raw: sanitizedPayload.estimated_value || null,
+  selena_target_neighborhoods: null, // N/A for sellers
+  selena_property_address: sanitizedPayload.property_address || null,
+  selena_is_pre_approved: 'No', // N/A for sellers
+  
+  // Keep customField for rich context
+  customField: {
+    lead_id: leadData.id,
+    situation: sanitizedPayload.situation,
+    condition: sanitizedPayload.condition,
+    timeline: sanitizedPayload.timeline,
+    estimated_value: sanitizedPayload.estimated_value,
+    property_address: sanitizedPayload.property_address,
+    cash_offer: sanitizedPayload.calculated_cash_offer,
+    listing_net: sanitizedPayload.calculated_listing_net,
   },
-});
+  source: "Seller Funnel - Tucson Inherited Homes"
+};
 ```
 
-This sets the default based on the global LanguageContext (the site's current language toggle).
+---
 
-### Pre-Population Logic (Lines 156-167)
+## Task 3: Implement Access Gate on V2PrivateCashReview
 
+### Current State
+- Page checks for `selena_lead_id` in localStorage
+- Shows personalized hero for returning leads
+- **Gap**: No actual restriction for anonymous visitors
+
+### Changes Required
+
+**3.1 Create Phone Verification Component**
+New component: `src/components/v2/PhoneVerificationGate.tsx`
+
+Features:
+- Phone number input with validation
+- Submit button to verify access
+- Calls edge function to lookup lead by phone
+- On success: stores `selena_lead_id` in localStorage and reveals content
+
+**3.2 Update V2PrivateCashReview.tsx**
+
+Add state machine:
 ```typescript
+type GateState = 'checking' | 'locked' | 'unlocked';
+
+const [gateState, setGateState] = useState<GateState>('checking');
+
 useEffect(() => {
-  if (prePopData.hasPrePopulatedData) {
-    if (prePopData.preferredLanguage) form.setValue('preferredLanguage', prePopData.preferredLanguage);
-    // ...
+  const leadId = getLeadId();
+  if (leadId) {
+    setGateState('unlocked');
+  } else {
+    setGateState('locked');
   }
-}, [prePopData, form]);
+}, []);
 ```
 
-**Trace to session context (useSessionPrePopulation.ts, Line 88):**
-```typescript
-data.preferredLanguage = session.language;
-```
+Render logic:
+- If `gateState === 'checking'`: Show loading skeleton
+- If `gateState === 'locked'`: Show `PhoneVerificationGate` component
+- If `gateState === 'unlocked'`: Show full `PrivateCashReviewContent`
 
-**Trace to session initialization (selenaSession.ts, Line 101-133):**
-```typescript
-export function initSessionContext(language: 'en' | 'es' = 'en'): SessionContext {
-  // ...
-  const context: SessionContext = {
-    language,  // ← From parameter
-    // ...
-  };
-  // ...
-}
-```
+**3.3 Create Edge Function for Phone Lookup**
+New function: `supabase/functions/verify-lead-phone/index.ts`
 
-### FINDING - POTENTIAL OVERWRITE SCENARIO
-
-If a user:
-1. Visits the site in English (`language: 'en'` in session)
-2. Toggles to Spanish via the language toggle
-3. Navigates to `/v2/book`
-
-**The form may pre-populate with `"en"` from the stale session context instead of `"es"` from the current LanguageContext.**
-
-However, the form's defaultValue (Line 144) uses the current LanguageContext, and the pre-population useEffect runs after — meaning it could overwrite the correct value with a stale one.
-
-### RECOMMENDED FIX
-
-In `useSessionPrePopulation.ts`, the language pre-population should respect the current LanguageContext, not the session's stored language:
-
-```diff
-// Pre-populate from session context
-if (session) {
--  data.preferredLanguage = session.language;
-+  // DO NOT pre-populate language from session
-+  // Let the form use the current LanguageContext as default
-+  // data.preferredLanguage = session.language;
-```
-
-**Rationale:** The user's current language toggle choice should take precedence over a potentially stale session language.
+Logic:
+1. Accept phone number
+2. Query `lead_profiles` table for matching phone
+3. If found: Return `{ ok: true, lead_id: '...' }`
+4. If not found: Return `{ ok: false, error: 'No record found' }`
 
 ---
 
-## STEP 5: GHL Workflow Condition Alignment
+## Technical Details
 
-### REQUIRED CONDITION LOGIC
+### Files to Modify
 
-The GHL workflow WF-03 must evaluate language using the webhook payload's top-level `language` field:
+| File | Changes |
+|------|---------|
+| `src/pages/ad/SellerQuiz.tsx` | Add address step (step 5) |
+| `src/pages/ad/SellerResult.tsx` | Read address from URL, pass to edge function |
+| `supabase/functions/submit-seller/index.ts` | Add property_address, standardize GHL payload |
+| `supabase/functions/submit-consultation-intake/index.ts` | Standardize GHL payload with selena_* prefix |
+| `src/pages/v2/V2PrivateCashReview.tsx` | Implement gate state machine |
 
-```
-IF {{trigger.language}} == "es"
-  → Run Spanish branch
-ELSE
-  → Run English branch
-```
+### Files to Create
 
-### FORBIDDEN PATTERNS
+| File | Purpose |
+|------|---------|
+| `src/components/v2/PhoneVerificationGate.tsx` | Phone input gate component |
+| `supabase/functions/verify-lead-phone/index.ts` | Phone lookup edge function |
 
-- Checking `{{contact.tags}}` contains "spanish"
-- Checking `{{trigger.customField.language}}` (redundant, use top-level)
-- Checking localized display labels like "Español"
+### Database Impact
+- No schema changes required
+- Uses existing `lead_profiles` table with `phone` column for verification
 
-### VERIFICATION NEEDED (GHL SIDE)
+### GHL Custom Field Mapping Reference
+After implementation, the GHL workflow can map these webhook keys directly:
 
-In GHL Workflow WF-03, confirm:
-
-1. The condition step uses `{{trigger.language}}` (not a contact field or tag)
-2. The comparison is exactly: `== "es"`
-3. No prior workflow step sets a `selena_language_raw` contact field before the condition runs
-4. The language tag (`spanish_speaker`) is applied AFTER the routing decision
-
----
-
-## STEP 6: Field Mapping Verification
-
-### Webhook to GHL Field Mapping
-
-| Webhook Field | GHL Custom Field | Expected |
-|---------------|------------------|----------|
-| `payload.language` | Should map to `language` in trigger | `"es"` or `"en"` |
-| `payload.customField.language` | Should map to `selena_language` (if used) | `"es"` or `"en"` |
-
-### NO TRANSFORMATION ALLOWED
-
-The language value must be passed through without transformation:
-- No defaulting to English if empty
-- No mapping `"es"` to `"spanish"` or other variants
-- No conditional fallback logic
+| GHL Custom Field | Webhook Key |
+|------------------|-------------|
+| `selena_lead_id` | `{{inboundWebhookRequest.selena_lead_id}}` |
+| `selena_session_id` | `{{inboundWebhookRequest.selena_session_id}}` |
+| `selena_intent_canonical` | `{{inboundWebhookRequest.selena_intent_canonical}}` |
+| `selena_language_raw` | `{{inboundWebhookRequest.selena_language_raw}}` |
+| `selena_timeline_raw` | `{{inboundWebhookRequest.selena_timeline_raw}}` |
+| `selena_budget_raw` | `{{inboundWebhookRequest.selena_budget_raw}}` |
+| `selena_target_neighborhoods` | `{{inboundWebhookRequest.selena_target_neighborhoods}}` |
+| `selena_property_address` | `{{inboundWebhookRequest.selena_property_address}}` |
+| `selena_is_pre_approved` | `{{inboundWebhookRequest.selena_is_pre_approved}}` |
 
 ---
 
-## STEP 7: Validation Test Plan
+## Testing Checklist
 
-### Test Matrix
+1. **Seller Quiz Flow**
+   - Complete quiz with all steps including address
+   - Verify address appears in URL params on result page
+   - Submit lead capture form and verify GHL receives `selena_property_address`
 
-| Test | Form Selection | Expected `payload.language` | Expected GHL Branch | Expected Tags |
-|------|----------------|----------------------------|---------------------|---------------|
-| 1 | Spanish (Español) | `"es"` | Spanish path | `spanish_speaker` |
-| 2 | English | `"en"` | English path | `english_speaker` |
-| 3 | Spanish + Repeat | `"es"` | Spanish (same lead) | `spanish_speaker` |
+2. **Consultation Intake Flow**
+   - Submit form with cash_offer intent
+   - Verify all `selena_*` keys appear at top level in edge function logs
+   - Confirm GHL workflow can read values directly
 
-### Test 1: Spanish Form Submission
-
-**Steps:**
-1. Clear localStorage (fresh session)
-2. Toggle site to Spanish
-3. Navigate to `/v2/book`
-4. Fill form with Spanish selected in "Idioma Preferido"
-5. Submit
-
-**Expected Webhook Payload:**
-```json
-{
-  "language": "es",
-  "tags": ["Consultation Intake", "consultation_intake", "spanish_speaker", ...],
-  "customField": {
-    "language": "es",
-    ...
-  }
-}
-```
-
-**Expected GHL Outcome:**
-- Workflow condition `{{trigger.language}} == "es"` → TRUE
-- Spanish branch executes
-- Contact tagged with `spanish_speaker`
-
-### Test 2: English Form Submission
-
-**Steps:**
-1. Clear localStorage
-2. Toggle site to English
-3. Navigate to `/v2/book`
-4. Fill form with English selected
-5. Submit
-
-**Expected Webhook Payload:**
-```json
-{
-  "language": "en",
-  "tags": ["Consultation Intake", "consultation_intake", "english_speaker", ...],
-  "customField": {
-    "language": "en",
-    ...
-  }
-}
-```
-
-**Expected GHL Outcome:**
-- Workflow condition `{{trigger.language}} == "es"` → FALSE
-- English branch executes
-- Contact tagged with `english_speaker`
-
-### Test 3: Repeat Submission (Same Email)
-
-**Steps:**
-1. Use Test 1 email
-2. Submit again with Spanish selected
-3. Verify upsert preserves language
-
-**Expected:**
-- Lead updated (not duplicated)
-- Language remains `"es"`
-- Tags merged, not replaced
+3. **Private Cash Review Gate**
+   - Visit page without `selena_lead_id` in localStorage
+   - Verify "Restricted Access" state appears
+   - Enter valid phone number and verify unlock
+   - Refresh page and verify content remains accessible
 
 ---
 
-## Final Diagnosis
-
-### Lovable Form: CORRECTLY BUILT
-
-The Consultation Intake Form sends canonical language values (`"es"` / `"en"`) correctly.
-
-### Edge Function Webhook: CORRECTLY BUILT
-
-The `submit-consultation-intake` edge function sends `language` at both top-level and in `customField` with correct values.
-
-### Likely Root Cause: GHL Workflow Condition
-
-The issue is most likely in the GHL workflow WF-03:
-
-1. **The condition may be checking the wrong field** (e.g., a contact field instead of `{{trigger.language}}`)
-2. **A prior step may be setting `selena_language_raw`** before the condition runs
-3. **The condition may be using wrong comparison** (e.g., checking for `"spanish"` instead of `"es"`)
-
----
-
-## Required Changes
-
-### Code Changes: 1 Optional Fix
-
-**File:** `src/hooks/useSessionPrePopulation.ts`
-
-**Change:** Remove language pre-population from session to prevent stale overwrites
-
-```diff
-// Line 87-88
-if (session) {
--  data.preferredLanguage = session.language;
-+  // Language is NOT pre-populated from session
-+  // Form uses current LanguageContext as default
-```
-
-**Impact:** Prevents edge case where stale session language overwrites current toggle choice.
-
-### GHL Workflow Changes: Required
-
-**Workflow:** WF-03 — Selena | Intake — Website/Webhook v2
-
-1. **Verify condition uses:** `{{trigger.language}} == "es"`
-2. **Remove any prior step** that sets language-related contact fields before the condition
-3. **Ensure language tags are applied AFTER** the routing decision, not before
-
----
-
-## Declaration
-
-Once the GHL workflow condition is verified to use `{{trigger.language}} == "es"`:
-
-**"Spanish submissions will no longer resolve as English."**
-
-The Lovable Native Form and webhook are correctly built. The resolution depends on aligning the GHL workflow condition to use the canonical `"es"` value from `payload.language`.
-
+## Rollout Sequence
+1. Deploy edge function updates (submit-seller, submit-consultation-intake)
+2. Deploy verify-lead-phone edge function
+3. Update SellerQuiz with address step
+4. Update SellerResult to pass address
+5. Update V2PrivateCashReview with gate logic
+6. Test end-to-end across all funnels
