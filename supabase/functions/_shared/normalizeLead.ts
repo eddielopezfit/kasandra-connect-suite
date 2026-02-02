@@ -1,4 +1,29 @@
 /**
+ * Intent normalization map - includes new buy_and_sell and browsing intents
+ */
+const INTENT_MAP: Record<string, { canonical: string; raw: string }> = {
+  // Buyer intents
+  buyer: { canonical: 'buy', raw: 'buyer' },
+  buy: { canonical: 'buy', raw: 'buyer' },
+  buying: { canonical: 'buy', raw: 'buyer' },
+  // Seller intents
+  seller: { canonical: 'sell', raw: 'seller' },
+  sell: { canonical: 'sell', raw: 'seller' },
+  selling: { canonical: 'sell', raw: 'seller' },
+  // Cash offer intents
+  cash_offer: { canonical: 'cash', raw: 'cash_offer' },
+  cash: { canonical: 'cash', raw: 'cash_offer' },
+  // Dual intent (VIP)
+  buy_and_sell: { canonical: 'dual', raw: 'buy_and_sell' },
+  dual: { canonical: 'dual', raw: 'buy_and_sell' },
+  // Nurture/browsing intents
+  browsing: { canonical: 'explore', raw: 'browsing' },
+  unknown: { canonical: 'explore', raw: 'browsing' },
+  exploring: { canonical: 'explore', raw: 'browsing' },
+  explore: { canonical: 'explore', raw: 'browsing' },
+};
+
+/**
  * Centralized lead value normalization for database constraints
  * Used by submit-consultation-intake and upsert-lead-profile
  * 
@@ -6,7 +31,7 @@
  */
 
 export interface NormalizedIntent {
-  canonical: 'buy' | 'sell' | 'cash' | 'explore' | null;
+  canonical: 'buy' | 'sell' | 'cash' | 'dual' | 'explore' | null;
   raw: string | null;
 }
 
@@ -22,7 +47,8 @@ export interface NormalizedTimeline {
  * - buyer / buy → buy
  * - seller / sell → sell  
  * - cash_offer / cash → cash
- * - exploring / explore → explore
+ * - buy_and_sell / dual → dual
+ * - browsing / exploring / explore / unknown → explore
  * - anything else → null
  */
 export function normalizeIntent(raw: string | undefined | null): NormalizedIntent {
@@ -30,13 +56,19 @@ export function normalizeIntent(raw: string | undefined | null): NormalizedInten
     return { canonical: null, raw: null };
   }
 
-  const intentMap: Record<string, 'buy' | 'sell' | 'cash' | 'explore'> = {
+  const intentMap: Record<string, 'buy' | 'sell' | 'cash' | 'dual' | 'explore'> = {
     buyer: 'buy',
     buy: 'buy',
+    buying: 'buy',
     seller: 'sell',
     sell: 'sell',
+    selling: 'sell',
     cash_offer: 'cash',
     cash: 'cash',
+    buy_and_sell: 'dual',
+    dual: 'dual',
+    browsing: 'explore',
+    unknown: 'explore',
     exploring: 'explore',
     explore: 'explore',
   };

@@ -13,6 +13,9 @@ interface ConsultationIntakeInput {
   language: string;
   intent: string;
   timeline: string;
+  // New fields for GHL workflow routing
+  property_address?: string;
+  target_neighborhoods?: string;
   price_range?: string;
   pre_approved?: string;
   notes?: string;
@@ -317,6 +320,10 @@ Deno.serve(async (req) => {
           language: input.language,
           page_path: input.page_path || "/v2/book",
           session_id: input.session_id || null,
+          // NEW: Top-level fields for GHL workflow SMS/email personalization
+          property_address: input.property_address || null,
+          target_neighborhoods: input.target_neighborhoods || null,
+          pre_approved: input.pre_approved || null,
           // Custom fields for GHL workflow
           customField: {
             // Core fields - send BOTH canonical and raw
@@ -326,6 +333,10 @@ Deno.serve(async (req) => {
             intent_raw: normalizedIntent.raw,
             timeline_canonical: normalizedTimeline.canonical,
             timeline_raw: normalizedTimeline.raw,
+            // NEW: Property address for seller SMS personalization
+            property_address: input.property_address || null,
+            // NEW: Target neighborhoods for buyer nurture emails
+            target_neighborhoods: input.target_neighborhoods || null,
             price_range: input.price_range || null,
             pre_approved: input.pre_approved || null,
             notes: input.notes || null,
@@ -360,11 +371,14 @@ Deno.serve(async (req) => {
             guide_id: input.guide_id || null,
             guide_title: input.guide_title || null,
             // Semantic intent fields for pipeline routing (using CANONICAL)
-            intent_seller: normalizedIntent.canonical === 'sell' || normalizedIntent.canonical === 'cash',
-            intent_buyer: normalizedIntent.canonical === 'buy',
+            intent_seller: normalizedIntent.canonical === 'sell' || normalizedIntent.canonical === 'cash' || normalizedIntent.raw === 'buy_and_sell',
+            intent_buyer: normalizedIntent.canonical === 'buy' || normalizedIntent.raw === 'buy_and_sell',
             intent_cash: normalizedIntent.canonical === 'cash',
+            intent_dual: normalizedIntent.raw === 'buy_and_sell',
             pipeline_stage: getPipelineStage(normalizedIntent.canonical),
             last_declared_goal: getGoalLabel(normalizedIntent.raw, input.language),
+            // NEW: Pre-approval flag for finance-ready routing
+            is_pre_approved: input.pre_approved === 'yes',
           },
         };
 

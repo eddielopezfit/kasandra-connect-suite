@@ -34,6 +34,10 @@ import { useSessionPrePopulation, getFullSessionDossier } from "@/hooks/useSessi
 import { bridgeLeadIdToV2, setStoredUserName, setStoredEmail, setStoredPhone } from "@/lib/analytics/bridgeLeadIdToV2";
 import GHLCalendarEmbed from "./GHLCalendarEmbed";
 
+// Intents that require property address
+const SELLER_INTENTS = ["cash_offer", "seller", "buy_and_sell"];
+const BUYER_INTENTS = ["buyer", "buy_and_sell"];
+
 // Form schema with conditional validation messages
 const createFormSchema = (t: (en: string, es: string) => string) =>
   z.object({
@@ -45,8 +49,13 @@ const createFormSchema = (t: (en: string, es: string) => string) =>
     }),
     intent: z.string().min(1, t("Please select an option", "Por favor seleccione una opción")),
     timeline: z.string().min(1, t("Please select a timeline", "Por favor seleccione un plazo")),
-    priceRange: z.string().optional(),
+    // Conditional: Required for seller intents
+    propertyAddress: z.string().optional(),
+    // Conditional: Required for buyer intents
     preApproved: z.string().optional(),
+    // Optional: For buyer flow nurturing
+    targetNeighborhoods: z.string().optional(),
+    priceRange: z.string().optional(),
     notes: z.string().optional(),
     consentCommunications: z.literal(true, {
       errorMap: () => ({ message: t("You must consent to receive communications", "Debe dar su consentimiento para recibir comunicaciones") }),
@@ -54,7 +63,31 @@ const createFormSchema = (t: (en: string, es: string) => string) =>
     consentAI: z.literal(true, {
       errorMap: () => ({ message: t("You must acknowledge the AI disclosure", "Debe reconocer la divulgación de IA") }),
     }),
-  });
+  }).refine(
+    (data) => {
+      // Property address required for seller intents
+      if (SELLER_INTENTS.includes(data.intent)) {
+        return data.propertyAddress && data.propertyAddress.trim().length >= 5;
+      }
+      return true;
+    },
+    {
+      message: t("Property address is required", "La dirección de la propiedad es requerida"),
+      path: ["propertyAddress"],
+    }
+  ).refine(
+    (data) => {
+      // Pre-approved required for buyer intents
+      if (BUYER_INTENTS.includes(data.intent)) {
+        return data.preApproved && data.preApproved.length > 0;
+      }
+      return true;
+    },
+    {
+      message: t("Please indicate your pre-approval status", "Por favor indique su estado de pre-aprobación"),
+      path: ["preApproved"],
+    }
+  );
 
 type FormData = z.infer<ReturnType<typeof createFormSchema>>;
 
@@ -144,6 +177,8 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
       preferredLanguage: language as "en" | "es",
       intent: "",
       timeline: "",
+      propertyAddress: "",
+      targetNeighborhoods: "",
       priceRange: "",
       preApproved: "",
       notes: "",
@@ -166,13 +201,17 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
     }
   }, [prePopData, form]);
 
-  // Intent options per requirements
+  // Intent options per requirements - matches GHL workflow lanes
   const intentOptions = [
     { value: "buyer", labelEn: "Buy a home", labelEs: "Comprar una casa" },
     { value: "seller", labelEn: "Sell a home", labelEs: "Vender una casa" },
-    { value: "cash_offer", labelEn: "Explore a cash offer", labelEs: "Explorar una oferta en efectivo" },
-    { value: "unknown", labelEn: "Not sure yet", labelEs: "Aún no estoy seguro/a" },
+    { value: "cash_offer", labelEn: "Get a cash offer", labelEs: "Obtener una oferta en efectivo" },
+    { value: "buy_and_sell", labelEn: "Buy & Sell (Trade Up/Down)", labelEs: "Comprar y Vender (Cambiar de casa)" },
+    { value: "browsing", labelEn: "Just browsing", labelEs: "Solo explorando" },
   ];
+
+  // Watch intent for conditional fields
+  const watchedIntent = form.watch("intent");
 
   // Timeline options per requirements
   const timelineOptions = [
@@ -233,6 +272,8 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
           language: data.preferredLanguage,
           intent: data.intent,
           timeline: data.timeline,
+          property_address: data.propertyAddress?.trim() || null,
+          target_neighborhoods: data.targetNeighborhoods?.trim() || null,
           price_range: data.priceRange || null,
           pre_approved: data.preApproved || null,
           notes: data.notes?.trim() || null,
@@ -513,6 +554,52 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
           )}
         />
 
+        {/* Conditional: Property Address (Required for Seller Intents) */}
+        {SELLER_INTENTS.includes(watchedIntent) && (
+          <FormField
+            control={form.control}
+            name="propertyAddress"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-cc-navy font-medium text-base">
+                  {t("Property Address", "Dirección de la Propiedad")} <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder={t("123 Main St, Tucson, AZ 85701", "123 Calle Principal, Tucson, AZ 85701")}
+                    className="border-cc-sand-dark/50 focus:border-cc-gold h-12 text-base"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        {/* Conditional: Target Neighborhoods (Optional for Buyer Intents) */}
+        {BUYER_INTENTS.includes(watchedIntent) && (
+          <FormField
+            control={form.control}
+            name="targetNeighborhoods"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-cc-navy font-medium text-base">
+                  {t("Target Neighborhoods/Areas", "Vecindarios/Áreas de Interés")} <span className="text-cc-slate text-sm">({t("Optional", "Opcional")})</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder={t("e.g., Catalina Foothills, Oro Valley", "ej., Catalina Foothills, Oro Valley")}
+                    className="border-cc-sand-dark/50 focus:border-cc-gold h-12 text-base"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
         {/* Price Range (Optional) */}
         <FormField
           control={form.control}
@@ -541,33 +628,35 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
           )}
         />
 
-        {/* Pre-Approved (Optional) */}
-        <FormField
-          control={form.control}
-          name="preApproved"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-cc-navy font-medium text-base">
-                {t("Pre-Approved?", "¿Pre-Aprobado?")} <span className="text-cc-slate text-sm">({t("Optional", "Opcional")})</span>
-              </FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger className="border-cc-sand-dark/50 focus:border-cc-gold bg-white h-12 text-base">
-                    <SelectValue placeholder={t("Select option", "Seleccione opción")} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent className="bg-white z-50">
-                  {preApprovedOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value} className="text-base py-3">
-                      {language === "en" ? option.labelEn : option.labelEs}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Pre-Approved (Required for Buyer Intents) */}
+        {BUYER_INTENTS.includes(watchedIntent) && (
+          <FormField
+            control={form.control}
+            name="preApproved"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-cc-navy font-medium text-base">
+                  {t("Are you pre-approved?", "¿Está pre-aprobado/a?")} <span className="text-red-500">*</span>
+                </FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="border-cc-sand-dark/50 focus:border-cc-gold bg-white h-12 text-base">
+                      <SelectValue placeholder={t("Select option", "Seleccione opción")} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="bg-white z-50">
+                    {preApprovedOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value} className="text-base py-3">
+                        {language === "en" ? option.labelEn : option.labelEs}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         {/* Notes (Optional) */}
         <FormField
