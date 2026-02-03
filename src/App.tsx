@@ -19,6 +19,7 @@ import V2Book from "./pages/v2/V2Book";
 import V2BuyerReadiness from "./pages/v2/V2BuyerReadiness";
 import V2HomePathQuiz from "./pages/v2/V2HomePathQuiz";
 import V2PrivateCashReview from "./pages/v2/V2PrivateCashReview";
+import V2ThankYou from "./pages/v2/V2ThankYou";
 // Ad Funnel Pages
 import SellerLanding from "./pages/ad/SellerLanding";
 import SellerQuiz from "./pages/ad/SellerQuiz";
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/v2/buyer-readiness" element={<V2BuyerReadiness />} />
             <Route path="/v2/quiz" element={<V2HomePathQuiz />} />
             <Route path="/v2/private-cash-review" element={<V2PrivateCashReview />} />
+            <Route path="/v2/thank-you" element={<V2ThankYou />} />
 
             {/* Ad Funnel Routes (Isolated) */}
             <Route path="/ad/seller" element={<SellerLanding />} />
