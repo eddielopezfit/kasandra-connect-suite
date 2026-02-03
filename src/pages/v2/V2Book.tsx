@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
-import ConsultationIntakeForm from "@/components/v2/ConsultationIntakeForm";
+import GHLBookingCalendar from "@/components/v2/GHLBookingCalendar";
 import { funnelTestimonials } from "@/data/testimonials";
 import { Calendar, Phone, Mail, Clock, Quote } from "lucide-react";
 import { updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
@@ -106,101 +106,98 @@ const V2BookContent = () => {
         </div>
       </section>
 
-      {/* Form Section */}
-      <section className="py-16 lg:py-20 bg-cc-ivory w-full max-w-full overflow-hidden">
+      {/* Calendar Booking Section - Primary CTA */}
+      <section className="py-8 md:py-12 lg:py-16 bg-cc-ivory w-full max-w-full overflow-hidden">
         <div className="container mx-auto px-4 w-full max-w-full">
-          <div className="grid md:grid-cols-2 gap-6 lg:gap-12 max-w-5xl mx-auto">
-            {/* Contact Info */}
-            <div className="bg-white rounded-2xl p-8 shadow-elevated border border-cc-sand-dark/30">
-              <h2 className="font-serif text-2xl font-bold text-cc-navy mb-6">
-                {t("Get in Touch", "Póngase en Contacto")}
+          <div className="max-w-4xl mx-auto">
+            {/* Calendar Embed */}
+            <div 
+              className="bg-white rounded-2xl shadow-elevated border border-cc-sand-dark/30 overflow-hidden w-full"
+              style={{
+                // Responsive min-height for calendar container
+                minHeight: "auto",
+              }}
+            >
+              <GHLBookingCalendar />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Info Section */}
+      <section className="py-12 lg:py-16 bg-white w-full max-w-full overflow-hidden">
+        <div className="container mx-auto px-4 w-full max-w-full">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="font-serif text-2xl font-bold text-cc-navy mb-4">
+                {t("Prefer to Reach Out Directly?", "¿Prefiere Comunicarse Directamente?")}
               </h2>
-              <p className="text-cc-charcoal mb-8">
+              <p className="text-cc-charcoal">
                 {t(
-                  "Prefer to reach out directly? I'm here to help and happy to answer any questions you have.",
-                  "¿Prefiere comunicarse directamente? Estoy aquí para ayudar y feliz de responder cualquier pregunta que tenga."
+                  "I'm here to help and happy to answer any questions you have.",
+                  "Estoy aquí para ayudar y feliz de responder cualquier pregunta que tenga."
                 )}
               </p>
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-5 h-5 text-cc-gold" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-cc-navy">{t("Phone", "Teléfono")}</h4>
-                    <a href="tel:520-349-3248" className="text-cc-charcoal hover:text-cc-gold transition-colors">
-                      520-349-3248
-                    </a>
-                  </div>
+            </div>
+            
+            <div className="grid sm:grid-cols-3 gap-6">
+              <div className="flex flex-col items-center text-center p-4">
+                <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center mb-3">
+                  <Phone className="w-5 h-5 text-cc-gold" />
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5 text-cc-gold" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-cc-navy">Email</h4>
-                    <a href="mailto:kasandra@prietorealestategroup.com" className="text-cc-charcoal hover:text-cc-gold transition-colors">
-                      kasandra@prietorealestategroup.com
-                    </a>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-5 h-5 text-cc-gold" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-cc-navy">{t("Availability", "Disponibilidad")}</h4>
-                    <p className="text-cc-charcoal">
-                      {t("Monday - Saturday, 9 AM - 6 PM", "Lunes - Sábado, 9 AM - 6 PM")}
-                    </p>
-                    <p className="text-sm text-cc-slate mt-1">
-                      {t("Selena AI available 24/7", "Selena IA disponible 24/7")}
-                    </p>
-                  </div>
-                </div>
+                <h4 className="font-semibold text-cc-navy mb-1">{t("Phone", "Teléfono")}</h4>
+                <a href="tel:520-349-3248" className="text-cc-charcoal hover:text-cc-gold transition-colors text-sm">
+                  520-349-3248
+                </a>
               </div>
-
-              {/* What to Expect */}
-              <div className="mt-8 bg-cc-sand rounded-xl p-6 border border-cc-sand-dark/30">
-                <h3 className="font-serif text-lg font-bold text-cc-navy mb-4">
-                  {t("What to Expect", "Qué Esperar")}
-                </h3>
-                <ul className="space-y-3 text-sm text-cc-charcoal">
-                  <li className="flex items-start gap-2">
-                    <span className="text-cc-gold font-bold">•</span>
-                    {t("A friendly, no-pressure conversation", "Una conversación amigable, sin presión")}
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-cc-gold font-bold">•</span>
-                    {t("Understanding of your goals and timeline", "Comprensión de sus metas y cronograma")}
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-cc-gold font-bold">•</span>
-                    {t("Clear explanation of the process", "Explicación clara del proceso")}
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-cc-gold font-bold">•</span>
-                    {t("Answers to all your questions", "Respuestas a todas sus preguntas")}
-                  </li>
-                </ul>
+              
+              <div className="flex flex-col items-center text-center p-4">
+                <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center mb-3">
+                  <Mail className="w-5 h-5 text-cc-gold" />
+                </div>
+                <h4 className="font-semibold text-cc-navy mb-1">Email</h4>
+                <a href="mailto:kasandra@prietorealestategroup.com" className="text-cc-charcoal hover:text-cc-gold transition-colors text-sm break-all">
+                  kasandra@prietorealestategroup.com
+                </a>
+              </div>
+              
+              <div className="flex flex-col items-center text-center p-4">
+                <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center mb-3">
+                  <Clock className="w-5 h-5 text-cc-gold" />
+                </div>
+                <h4 className="font-semibold text-cc-navy mb-1">{t("Availability", "Disponibilidad")}</h4>
+                <p className="text-cc-charcoal text-sm">
+                  {t("Mon - Sat, 9 AM - 6 PM", "Lun - Sáb, 9 AM - 6 PM")}
+                </p>
+                <p className="text-xs text-cc-slate mt-1">
+                  {t("Selena AI 24/7", "Selena IA 24/7")}
+                </p>
               </div>
             </div>
 
-            {/* Native Consultation Intake Form */}
-            <div className="bg-white rounded-2xl shadow-elevated border border-cc-sand-dark/30 overflow-hidden w-full max-w-full">
-              <div className="p-4 sm:p-6 pb-0">
-                <h3 className="font-serif text-lg sm:text-xl font-bold text-cc-navy mb-2 text-center">
-                  {t("Consultation Intake Form", "Formulario de Consulta")}
-                </h3>
-                <p className="text-xs sm:text-sm text-cc-charcoal text-center mb-4">
-                  {t(
-                    "Complete this form to request your free consultation.",
-                    "Complete este formulario para solicitar su consulta gratuita."
-                  )}
-                </p>
-              </div>
-              
-              <ConsultationIntakeForm onSuccess={handleFormSuccess} />
+            {/* What to Expect */}
+            <div className="mt-8 bg-cc-sand rounded-xl p-6 border border-cc-sand-dark/30">
+              <h3 className="font-serif text-lg font-bold text-cc-navy mb-4 text-center">
+                {t("What to Expect", "Qué Esperar")}
+              </h3>
+              <ul className="grid sm:grid-cols-2 gap-3 text-sm text-cc-charcoal">
+                <li className="flex items-start gap-2">
+                  <span className="text-cc-gold font-bold">•</span>
+                  {t("A friendly, no-pressure conversation", "Una conversación amigable, sin presión")}
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-cc-gold font-bold">•</span>
+                  {t("Understanding of your goals and timeline", "Comprensión de sus metas y cronograma")}
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-cc-gold font-bold">•</span>
+                  {t("Clear explanation of the process", "Explicación clara del proceso")}
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-cc-gold font-bold">•</span>
+                  {t("Answers to all your questions", "Respuestas a todas sus preguntas")}
+                </li>
+              </ul>
             </div>
           </div>
         </div>
