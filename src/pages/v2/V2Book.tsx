@@ -1,19 +1,45 @@
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
-import GHLBookingCalendar from "@/components/v2/GHLBookingCalendar";
+import ConsultationIntakeForm from "@/components/v2/ConsultationIntakeForm";
+import { IntentHeader } from "@/components/v2/booking";
 import { funnelTestimonials } from "@/data/testimonials";
 import { Calendar, Phone, Mail, Clock, Quote } from "lucide-react";
 import { updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 
+type IntentCanonical = 'cash' | 'sell' | 'buy' | 'dual' | 'explore' | null;
+
+/**
+ * Map URL intent param to canonical intent
+ */
+const mapIntentParam = (param: string | null): IntentCanonical => {
+  if (!param) return null;
+  const map: Record<string, IntentCanonical> = {
+    buyer: 'buy',
+    buy: 'buy',
+    seller: 'sell',
+    sell: 'sell',
+    cash: 'cash',
+    cash_offer: 'cash',
+    dual: 'dual',
+    buy_and_sell: 'dual',
+    general: null,
+    explore: 'explore',
+  };
+  return map[param.toLowerCase()] || null;
+};
+
 const V2BookContent = () => {
   const { t, language } = useLanguage();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const intent = searchParams.get("intent") || "general"; // buyer, seller, or general
   
-  // Get session context for ad funnel detection
+  // Get intent from URL or session
+  const urlIntent = searchParams.get("intent");
   const session = getSessionContext();
+  const canonicalIntent = mapIntentParam(urlIntent) || (session?.intent as IntentCanonical) || null;
   
   // Detect if user came from ad funnel with net sheet data
   const isAdFunnelVisitor = session?.ad_funnel_source && session?.intent === 'cash_offer';
@@ -36,23 +62,10 @@ const V2BookContent = () => {
     }
     return t("Book a Consultation", "Agendar una Cita");
   };
-  
-  // Dynamic subheadline for ad funnel visitors
-  const getSubheadline = () => {
-    if (isAdFunnelVisitor) {
-      return t(
-        "Kasandra will personally walk you through your options and answer any questions.",
-        "Kasandra le explicará personalmente sus opciones y responderá todas sus preguntas."
-      );
-    }
-    return t(
-      "Ready to discuss your real estate goals? Schedule a free, no-obligation consultation with me.",
-      "¿Listo para discutir sus metas de bienes raíces? Agende una consulta gratuita, sin obligación, conmigo."
-    );
-  };
 
   // Get the appropriate testimonial based on intent
-  const testimonialData = funnelTestimonials[intent as keyof typeof funnelTestimonials] || funnelTestimonials.general;
+  const testimonialKey = canonicalIntent === 'buy' ? 'buyer' : canonicalIntent === 'sell' ? 'seller' : 'general';
+  const testimonialData = funnelTestimonials[testimonialKey as keyof typeof funnelTestimonials] || funnelTestimonials.general;
   const currentTestimonial = {
     quote: testimonialData.content[language],
     attribution: testimonialData.role[language],
@@ -66,7 +79,7 @@ const V2BookContent = () => {
     updateSessionContext({ has_booked: true });
     logEvent('consultation_booked', { 
       lead_id: leadId,
-      intent: searchParams.get("intent") || "general" 
+      intent: canonicalIntent || "general" 
     });
     
     // Persist journey action for cognitive stage calculation
@@ -75,21 +88,22 @@ const V2BookContent = () => {
       actions.push('book');
       localStorage.setItem('cc_journey_actions', JSON.stringify(actions));
     }
+    
+    // Redirect to thank you page with context
+    const userName = localStorage.getItem('cc_user_name') || '';
+    navigate(`/v2/thank-you?intent=${canonicalIntent || 'explore'}&name=${encodeURIComponent(userName)}`);
   };
 
   return (
     <>
       {/* Hero */}
-      <section className="bg-cc-navy pt-32 pb-16 w-full max-w-full overflow-hidden">
+      <section className="bg-cc-navy pt-32 pb-12 w-full max-w-full overflow-hidden">
         <div className="container mx-auto px-4 w-full max-w-full">
           <div className="max-w-3xl mx-auto text-center">
             <Calendar className="w-12 h-12 text-cc-gold mx-auto mb-6" />
             <h1 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
               {getHeadline()}
             </h1>
-            <p className="text-lg text-white/90 mb-8">
-              {getSubheadline()}
-            </p>
             
             {/* Funnel-Aligned Testimonial */}
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-xl mx-auto">
@@ -106,19 +120,20 @@ const V2BookContent = () => {
         </div>
       </section>
 
-      {/* Calendar Booking Section - Primary CTA */}
+      {/* Booking Form Section */}
       <section className="py-8 md:py-12 lg:py-16 bg-cc-ivory w-full max-w-full overflow-hidden">
         <div className="container mx-auto px-4 w-full max-w-full">
-          <div className="max-w-4xl mx-auto">
-            {/* Calendar Embed */}
+          <div className="max-w-2xl mx-auto">
+            {/* Intent-Based Header */}
+            <div className="mb-8">
+              <IntentHeader intent={canonicalIntent} />
+            </div>
+            
+            {/* Native Form */}
             <div 
               className="bg-white rounded-2xl shadow-elevated border border-cc-sand-dark/30 overflow-hidden w-full"
-              style={{
-                // Responsive min-height for calendar container
-                minHeight: "auto",
-              }}
             >
-              <GHLBookingCalendar />
+              <ConsultationIntakeForm onSuccess={handleFormSuccess} />
             </div>
           </div>
         </div>

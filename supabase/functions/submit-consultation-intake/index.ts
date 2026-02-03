@@ -51,6 +51,7 @@ interface ConsultationIntakeResponse {
   lead_id?: string;
   is_new?: boolean;
   ghl_synced?: boolean;
+  priority_handoff_triggered?: boolean;
   error?: string;
   code?: string;
   field?: string;
@@ -207,9 +208,90 @@ Deno.serve(async (req) => {
       isNew = true;
     }
 
+    // =====================================================
+    // PRIORITY HANDOFF TRIGGER
+    // If timeline === 'asap' AND intent === 'cash', trigger immediate alert
+    // =====================================================
+    let priorityHandoffTriggered = false;
+    const isUrgentCashLead = 
+      (normalizedTimeline.canonical === 'asap' || normalizedTimeline.raw === 'immediately') && 
+      (normalizedIntent.canonical === 'cash' || normalizedIntent.raw === 'cash_offer');
+    
+    if (isUrgentCashLead) {
+      console.log("[submit-consultation-intake] PRIORITY HANDOFF: Urgent cash lead detected");
+      
+      try {
+        // Create handoff record
+        const handoffSummary = `
+**Urgent Cash Offer Request**
+
+- **Name:** ${input.name}
+- **Phone:** ${input.phone}
+- **Email:** ${email}
+- **Language:** ${input.language === 'es' ? 'Spanish' : 'English'}
+- **Timeline:** Immediate (ASAP)
+- **Property Address:** ${input.property_address || 'Not provided'}
+- **Situation:** ${input.situation || 'Not specified'}
+- **Condition:** ${input.condition || 'Not specified'}
+${input.notes ? `- **Notes:** ${input.notes}` : ''}
+
+**Source:** Consultation Intake Form
+**Priority:** HOT - Immediate Follow-up Required
+        `.trim();
+
+        const { data: handoffData, error: handoffError } = await supabase
+          .from("lead_handoffs")
+          .insert({
+            lead_id: leadId,
+            channel: 'call',
+            priority: 'hot',
+            status: 'pending',
+            summary_md: handoffSummary,
+            reason: 'Urgent cash offer request with immediate timeline',
+            recommended_next_step: 'Call within 15 minutes to discuss cash offer',
+            booking_url: `/v2/book?lead_id=${leadId}&priority=hot`,
+            convo_summary_json: {
+              intent: normalizedIntent.canonical,
+              timeline: normalizedTimeline.canonical,
+              property_address: input.property_address,
+              situation: input.situation,
+              condition: input.condition,
+            },
+          })
+          .select("id")
+          .single();
+
+        if (handoffError) {
+          console.error("[submit-consultation-intake] Failed to create handoff:", handoffError);
+        } else if (handoffData) {
+          // Trigger notify-handoff function
+          console.log("[submit-consultation-intake] Created handoff, triggering notification:", handoffData.id);
+          
+          // Fire and forget - don't await to avoid blocking response
+          fetch(`${supabaseUrl}/functions/v1/notify-handoff`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${supabaseServiceKey}`,
+            },
+            body: JSON.stringify({
+              lead_id: leadId,
+              handoff_id: handoffData.id,
+            }),
+          }).catch(err => {
+            console.error("[submit-consultation-intake] notify-handoff call failed:", err);
+          });
+          
+          priorityHandoffTriggered = true;
+        }
+      } catch (handoffErr) {
+        console.error("[submit-consultation-intake] Priority handoff error:", handoffErr);
+        // Don't fail the main request if handoff fails
+      }
+    }
+
     // Sync to GoHighLevel
     let ghlSynced = false;
-    const ghlWebhookUrl = Deno.env.get("GHL_WEBHOOK_URL");
 
     if (ghlWebhookUrl) {
       try {
@@ -270,6 +352,7 @@ Deno.serve(async (req) => {
           timelineTag,
           input.quiz_completed ? "quiz_completed" : null,
           input.has_viewed_report ? "viewed_report" : null,
+          priorityHandoffTriggered ? "priority_hot" : null,
         ].filter(Boolean) as string[];
 
         // Pipeline stage helper using CANONICAL intent
@@ -281,6 +364,8 @@ Deno.serve(async (req) => {
               return 'Cash Offer Lead';
             case 'buy':
               return 'Buyer Lead';
+            case 'dual':
+              return 'Dual Lead (Buy & Sell)';
             default:
               return 'Exploring';
           }
@@ -295,6 +380,8 @@ Deno.serve(async (req) => {
             buy: { en: 'Looking to buy', es: 'Buscando comprar' },
             cash_offer: { en: 'Interested in cash offer', es: 'Interesado en oferta en efectivo' },
             cash: { en: 'Interested in cash offer', es: 'Interesado en oferta en efectivo' },
+            buy_and_sell: { en: 'Buy and sell simultaneously', es: 'Comprar y vender simultáneamente' },
+            dual: { en: 'Buy and sell simultaneously', es: 'Comprar y vender simultáneamente' },
             exploring: { en: 'Just exploring', es: 'Solo explorando' },
             explore: { en: 'Just exploring', es: 'Solo explorando' },
           };
@@ -321,6 +408,8 @@ Deno.serve(async (req) => {
           selena_target_neighborhoods: input.target_neighborhoods || null,
           selena_property_address: input.property_address || null,
           selena_is_pre_approved: input.pre_approved === 'yes' ? 'Yes' : 'No',
+          selena_motivation_raw: input.notes || null,
+          selena_priority_handoff: priorityHandoffTriggered ? 'hot' : null,
           
           // Legacy top-level fields for backward compatibility
           intent_canonical: normalizedIntent.canonical,
@@ -386,11 +475,13 @@ Deno.serve(async (req) => {
             intent_seller: normalizedIntent.canonical === 'sell' || normalizedIntent.canonical === 'cash' || normalizedIntent.raw === 'buy_and_sell',
             intent_buyer: normalizedIntent.canonical === 'buy' || normalizedIntent.raw === 'buy_and_sell',
             intent_cash: normalizedIntent.canonical === 'cash',
-            intent_dual: normalizedIntent.raw === 'buy_and_sell',
+            intent_dual: normalizedIntent.raw === 'buy_and_sell' || normalizedIntent.canonical === 'dual',
             pipeline_stage: getPipelineStage(normalizedIntent.canonical),
             last_declared_goal: getGoalLabel(normalizedIntent.raw, input.language),
             // Pre-approval flag for finance-ready routing
             is_pre_approved: input.pre_approved === 'yes',
+            // Priority handoff indicator
+            priority_handoff: priorityHandoffTriggered,
           },
         };
 
@@ -400,14 +491,10 @@ Deno.serve(async (req) => {
           body: JSON.stringify(ghlPayload),
         });
 
-        const ghlEndTime = Date.now();
-        const ghlDuration = ghlEndTime - Date.now() + (ghlEndTime - ghlEndTime); // Calculate after fetch
-        
         if (ghlResponse.ok) {
           ghlSynced = true;
           console.log("[submit-consultation-intake] GHL webhook success:", {
             status: ghlResponse.status,
-            durationMs: Date.now() - ghlEndTime + 1, // Approx timing
           });
         } else {
           console.error("[submit-consultation-intake] GHL webhook failed:", {
@@ -454,6 +541,7 @@ Deno.serve(async (req) => {
         lead_id: leadId,
         is_new: isNew,
         ghl_synced: ghlSynced,
+        priority_handoff_triggered: priorityHandoffTriggered,
       } as ConsultationIntakeResponse),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
