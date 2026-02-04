@@ -19,12 +19,15 @@ interface UpsertLeadInput {
   intent?: string;
   property_address?: string;
   existing_lead_id?: string;
+  // Page context for GHL sync
+  page_path?: string;
 }
 
 interface UpsertLeadResponse {
   ok: boolean;
   lead_id?: string;
   is_new?: boolean;
+  ghl_synced?: boolean;
   error?: string;
   code?: string;
   field?: string;
@@ -35,6 +38,13 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Integration status logging (boolean only - never log actual secrets)
+  const ghlWebhookUrl = Deno.env.get("GHL_WEBHOOK_URL");
+  console.log("[upsert-lead-profile] Integration status:", {
+    hasGhlWebhookUrl: !!ghlWebhookUrl && ghlWebhookUrl.length > 10,
+    timestamp: new Date().toISOString(),
+  });
 
   try {
     const input: UpsertLeadInput = await req.json();
@@ -163,8 +173,110 @@ Deno.serve(async (req) => {
       isNew = true;
     }
 
+    // =====================================================
+    // GHL WEBHOOK SYNC (CM-002 - GAP-02 Remediation)
+    // Sync lead to GoHighLevel for CRM continuity
+    // =====================================================
+    let ghlSynced = false;
+
+    if (ghlWebhookUrl) {
+      try {
+        // Split name for GHL (if available)
+        const nameParts = (input.name?.trim() || "").split(" ");
+        const firstName = nameParts[0] || input.name?.trim() || "";
+        const lastName = nameParts.slice(1).join(" ") || "";
+
+        // Build minimal tags for lead capture
+        const tags = [
+          "Lead Capture Modal",
+          "selena_identity_gate",
+          input.language === "es" ? "spanish_speaker" : "english_speaker",
+          input.source ? `source_${input.source}` : "source_lead_capture_modal",
+          normalizedIntent.canonical ? `intent_${normalizedIntent.canonical}` : null,
+          isNew ? "new_lead" : "returning_lead",
+        ].filter(Boolean) as string[];
+
+        const ghlPayload = {
+          // Standard contact fields
+          email,
+          name: input.name?.trim() || null,
+          firstName,
+          lastName,
+          phone: input.phone?.trim() || null,
+          tags,
+          
+          // STANDARDIZED selena_* top-level keys for GHL workflow mapping
+          selena_lead_id: leadId,
+          selena_session_id: input.session_id || null,
+          selena_intent_canonical: normalizedIntent.canonical,
+          selena_language_raw: input.language || "en",
+          selena_source: input.source || "lead_capture_modal",
+          
+          // Legacy compatibility fields
+          lead_id: leadId,
+          session_id: input.session_id || null,
+          source: input.source || "lead_capture_modal",
+          page_path: input.page_path || "/",
+          language: input.language || "en",
+          intent_canonical: normalizedIntent.canonical,
+          intent_raw: normalizedIntent.raw,
+          is_new_lead: isNew,
+          
+          // Attribution
+          utm_source: input.utm_source || null,
+          utm_campaign: input.utm_campaign || null,
+          
+          // Custom fields for GHL workflow
+          customField: {
+            lead_id: leadId,
+            session_id: input.session_id || null,
+            language: input.language || "en",
+            intent_canonical: normalizedIntent.canonical,
+            source: input.source || "lead_capture_modal",
+            page_path: input.page_path || "/",
+            is_new_lead: isNew,
+          },
+        };
+
+        console.log("[upsert-lead-profile] Sending GHL webhook:", {
+          leadId,
+          isNew,
+          source: input.source,
+          hasIntent: !!normalizedIntent.canonical,
+        });
+
+        const ghlResponse = await fetch(ghlWebhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(ghlPayload),
+        });
+
+        if (ghlResponse.ok) {
+          ghlSynced = true;
+          console.log("[upsert-lead-profile] GHL sync successful for lead:", leadId);
+
+          // Update ghl_synced_at timestamp
+          await supabase
+            .from("lead_profiles")
+            .update({ ghl_synced_at: new Date().toISOString() })
+            .eq("id", leadId);
+        } else {
+          const errorText = await ghlResponse.text();
+          console.error("[upsert-lead-profile] GHL webhook failed:", {
+            status: ghlResponse.status,
+            error: errorText,
+          });
+        }
+      } catch (ghlError) {
+        console.error("[upsert-lead-profile] GHL sync error:", ghlError);
+        // Don't fail the main request if GHL sync fails
+      }
+    } else {
+      console.log("[upsert-lead-profile] GHL_WEBHOOK_URL not configured, skipping sync");
+    }
+
     return new Response(
-      JSON.stringify({ ok: true, lead_id: leadId, is_new: isNew } as UpsertLeadResponse),
+      JSON.stringify({ ok: true, lead_id: leadId, is_new: isNew, ghl_synced: ghlSynced } as UpsertLeadResponse),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
