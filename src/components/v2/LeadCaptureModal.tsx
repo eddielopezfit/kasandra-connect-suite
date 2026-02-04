@@ -107,8 +107,10 @@ const LeadCaptureModal = ({
           language,
           session_id: context?.session_id,
           source,
+          page_path: window.location.pathname,
           utm_source: context?.utm_source,
           utm_campaign: context?.utm_campaign,
+          intent: context?.intent || null,
         },
       });
 
@@ -119,8 +121,9 @@ const LeadCaptureModal = ({
         return;
       }
 
-      if (!data?.success) {
-        setError(data?.error || t("Failed to save your info", "No se pudo guardar tu información"));
+      // Edge function returns { ok: true, lead_id, is_new, ghl_synced }
+      if (!data?.ok) {
+        setError(data?.message || t("Failed to save your info", "No se pudo guardar tu información"));
         setIsLoading(false);
         return;
       }
