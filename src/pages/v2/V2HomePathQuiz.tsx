@@ -5,6 +5,33 @@ import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight, Check, MessageCircle, Phone, BookOpen } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { getFullSessionDossier } from "@/hooks/useSessionPrePopulation";
+import { toast } from "@/hooks/use-toast";
+
+/**
+ * Map quiz intent answerIndex to canonical values for edge function
+ */
+function mapQuizIntentToCanonical(answerIndex: number): string {
+  switch (answerIndex) {
+    case 0: return "buy";
+    case 1: return "sell";
+    case 2: return "cash_offer";
+    default: return "explore";
+  }
+}
+
+/**
+ * Map quiz timeline answerIndex to canonical values for edge function
+ */
+function mapQuizTimelineToCanonical(answerIndex: number): string {
+  switch (answerIndex) {
+    case 0: return "asap";
+    case 1: return "60_90";
+    case 2: return "exploring";
+    default: return "exploring";
+  }
+}
 
 interface QuizAnswer {
   questionIndex: number;
@@ -20,7 +47,7 @@ interface ContactInfo {
 type ResultPath = "buying" | "selling" | "cash" | "exploring";
 
 const V2HomePathQuiz = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [contactInfo, setContactInfo] = useState<ContactInfo>({
@@ -244,10 +271,114 @@ const V2HomePathQuiz = () => {
     }
   };
 
-  const handleSubmit = () => {
-    // Here you would send the data to your backend/CRM
-    console.log("Quiz completed:", { answers, contactInfo });
-    setIsComplete(true);
+  const handleSubmit = async () => {
+    // Validate phone is present (required by submit-consultation-intake)
+    if (!contactInfo.phone.trim() || contactInfo.phone.trim().length < 10) {
+      toast({
+        title: t("Phone required", "Teléfono requerido"),
+        description: t(
+          "Please enter a valid phone number to continue.",
+          "Por favor ingrese un número de teléfono válido para continuar."
+        ),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Ensure session ID exists
+    let sessionId = localStorage.getItem("selena_session_id");
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      localStorage.setItem("selena_session_id", sessionId);
+    }
+
+    // Get session dossier for UTMs and attribution
+    const sessionDossier = getFullSessionDossier();
+
+    // Map quiz answers to canonical values
+    const intentAnswer = answers.find(a => a.questionIndex === 0)?.answerIndex ?? 3;
+    const timelineAnswer = answers.find(a => a.questionIndex === 1)?.answerIndex ?? 3;
+    const experienceAnswer = answers.find(a => a.questionIndex === 2)?.answerIndex ?? -1;
+    const frictionAnswer = answers.find(a => a.questionIndex === 3)?.answerIndex ?? -1;
+    const contactPrefAnswer = answers.find(a => a.questionIndex === 4)?.answerIndex ?? -1;
+
+    // Build structured notes from non-mapped quiz answers
+    const notes = `path_quiz: experience=${experienceAnswer}; friction=${frictionAnswer}; contact_pref=${contactPrefAnswer}`;
+
+    // Build payload for submit-consultation-intake
+    const payload = {
+      name: contactInfo.name.trim(),
+      email: contactInfo.email.trim().toLowerCase(),
+      phone: contactInfo.phone.trim(),
+      language,
+      intent: mapQuizIntentToCanonical(intentAnswer),
+      timeline: mapQuizTimelineToCanonical(timelineAnswer),
+      session_id: sessionId,
+      source: "path_quiz",
+      page_path: "/v2/quiz",
+      quiz_completed: true,
+      quiz_result_path: getResultPath(),
+      notes,
+      ...sessionDossier,
+    };
+
+    try {
+      const { data: response, error } = await supabase.functions.invoke(
+        "submit-consultation-intake",
+        { body: payload }
+      );
+
+      if (error) {
+        console.error("[V2HomePathQuiz] Edge function error:", error);
+        toast({
+          title: t("Something went wrong", "Algo salió mal"),
+          description: t(
+            "Something went wrong saving your quiz. Please try again.",
+            "Algo salió mal al guardar su cuestionario. Por favor intente de nuevo."
+          ),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!response?.ok) {
+        console.error("[V2HomePathQuiz] Submission failed:", response);
+        toast({
+          title: t("Submission failed", "Error al enviar"),
+          description: response?.message || t(
+            "Something went wrong saving your quiz. Please try again.",
+            "Algo salió mal al guardar su cuestionario. Por favor intente de nuevo."
+          ),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Store lead ID for cross-session continuity
+      if (response.lead_id) {
+        localStorage.setItem("selena_lead_id", response.lead_id);
+      }
+
+      toast({
+        title: t("Quiz saved!", "¡Cuestionario guardado!"),
+        description: t(
+          "Your answers have been saved. Let's find your next steps.",
+          "Sus respuestas han sido guardadas. Encontremos sus próximos pasos."
+        ),
+      });
+
+      setIsComplete(true);
+    } catch (err) {
+      console.error("[V2HomePathQuiz] Unexpected error:", err);
+      toast({
+        title: t("Something went wrong", "Algo salió mal"),
+        description: t(
+          "Something went wrong saving your quiz. Please try again.",
+          "Algo salió mal al guardar su cuestionario. Por favor intente de nuevo."
+        ),
+        variant: "destructive",
+      });
+    }
   };
 
   const isContactValid = () => {
