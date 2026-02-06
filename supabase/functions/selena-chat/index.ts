@@ -35,18 +35,20 @@ interface ChatRequest {
 
 // ============= CANONICAL VALUES =============
 // Canonical intent values: buy | sell | cash | dual | explore
-// Canonical timeline values: asap | 30_days | 60_90 | exploring
+// Canonical timeline values: asap | 30_days | 60_90
 
 /**
  * Normalizes detected intent to canonical values
+ * Returns null for invalid/unknown values
  */
-function normalizeIntent(raw: string): string {
-  switch (raw) {
-    case 'cash_offer': return 'cash';
-    case 'exploring': return 'explore';
-    case 'ready': return null as unknown as string; // 'ready' is urgency, not intent
-    default: return raw;
-  }
+function normalizeIntent(raw: string): "buy" | "sell" | "cash" | "dual" | "explore" | null {
+  if (!raw) return null;
+  const v = raw.toLowerCase().trim();
+  if (v === "cash_offer") return "cash";
+  if (v === "exploring") return "explore";
+  if (v === "ready") return null; // 'ready' is urgency/timeline, not intent
+  if (v === "buy" || v === "sell" || v === "cash" || v === "dual" || v === "explore") return v;
+  return null;
 }
 
 // ============= PROTOCOL HELPERS =============
@@ -61,13 +63,15 @@ function applyTags(existingTags: string[] = [], newTags: string[] = []): string[
 
 /**
  * Detects timeline/urgency from message
+ * Returns canonical timeline values only: asap | 30_days | 60_90 | null
+ * NOTE: "exploring" is NOT a valid timeline - return null for exploratory language
  */
-function detectTimeline(message: string): string | null {
+function detectTimeline(message: string): "asap" | "30_days" | "60_90" | null {
   const lower = message.toLowerCase();
-  if (/asap|now|today|pronto|ahora|hoy|inmediata/.test(lower)) return "asap";
+  if (/asap|now|today|pronto|ahora|hoy|inmediata|urgent/.test(lower)) return "asap";
   if (/month|30\s*days|mes|30\s*dias/.test(lower)) return "30_days";
-  if (/60|90|3\s*months|6\s*months/.test(lower)) return "60_90";
-  if (/exploring|curious|looking|just\s*see|not\s*sure|no\s*se|pensando/.test(lower)) return "exploring";
+  if (/60|90|3\s*months|6\s*months|1_3_months/.test(lower)) return "60_90";
+  // Exploratory language = no timeline commitment, return null
   return null;
 }
 
@@ -162,14 +166,21 @@ function detectIntent(message: string, route: string): string[] {
   const lower = message.toLowerCase();
   const intents: string[] = [];
   
-  if (/buy|comprar|purchase|busco casa|looking for a home/.test(lower)) intents.push("buy");
-  if (/sell|vender|selling|list|listar/.test(lower)) intents.push("sell");
-  if (/cash|efectivo|quick sale|rápido|urgent|herencia|inherited/.test(lower)) intents.push("cash");
-  if (/exploring|curious|thinking|quizás|no sé|just looking/.test(lower)) intents.push("explore");
-  if (route.includes("cash-offer") || route.includes("seller")) intents.push("sell");
+  // Check for dual intent FIRST (buy + sell combination)
+  if (/buy.*sell|sell.*buy|comprar.*vender|vender.*comprar|buy\s*first|sell\s*first/.test(lower)) {
+    intents.push("dual");
+  } else {
+    // Single intent detection
+    if (/buy|comprar|purchase|busco casa|looking for a home/.test(lower)) intents.push("buy");
+    if (/sell|vender|selling|list|listar/.test(lower)) intents.push("sell");
+    if (/cash|efectivo|quick sale|rápido|urgent|herencia|inherited/.test(lower)) intents.push("cash");
+    if (/exploring|curious|thinking|quizás|no sé|just looking/.test(lower)) intents.push("explore");
+    if (route.includes("cash-offer") || route.includes("seller")) intents.push("sell");
+  }
   
-  // Normalize and dedupe
-  return intents.length > 0 ? [...new Set(intents.map(normalizeIntent).filter(Boolean))] : ["explore"];
+  // Normalize and dedupe, filter out nulls
+  const normalized = intents.map(normalizeIntent).filter((i): i is string => i !== null);
+  return normalized.length > 0 ? [...new Set(normalized)] : ["explore"];
 }
 
 // ============= SIMILARITY MATCHING =============
