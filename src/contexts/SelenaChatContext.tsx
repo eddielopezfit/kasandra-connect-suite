@@ -3,7 +3,7 @@
  * Manages chat state across the app with lead identity awareness
  */
 
-import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { 
@@ -189,6 +189,12 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
   const { language, t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
+  
+  // Ref to always have current language in async callbacks (prevents stale closures)
+  const languageRef = useRef(language);
+  useEffect(() => {
+    languageRef.current = language;
+  }, [language]);
 
   const closeReport = useCallback(() => {
     setReport(prev => ({ ...prev, isOpen: false }));
@@ -402,7 +408,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
             context: {
               session_id: context?.session_id || '',
               route: location.pathname,
-              language,
+              language: languageRef.current, // Use ref to always get current language
               utm_source: context?.utm_source,
               utm_campaign: context?.utm_campaign,
               intent: context?.intent,
@@ -480,7 +486,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, isLoading, language, location.pathname, t]);
+  }, [messages, isLoading, location.pathname, t, leadId]); // languageRef.current always current, no dep needed
 
   const generateReport = useCallback(async (action: ChatAction) => {
     if (!action.reportType || !leadId) {

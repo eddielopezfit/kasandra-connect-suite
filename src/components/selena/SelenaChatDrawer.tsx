@@ -179,7 +179,7 @@ export function SelenaChatDrawer() {
 
   const HeaderControls = ({ showMinimize = false }: { showMinimize?: boolean }) => (
     <div className="flex items-center gap-2">
-      {/* Language Toggle Button - Global toggle */}
+      {/* Language Toggle Button - Shows CURRENT language, click to switch */}
       <button
         onClick={handleLanguageToggle}
         className={cn(
@@ -187,10 +187,11 @@ export function SelenaChatDrawer() {
           "bg-muted hover:bg-muted/80 text-foreground",
           "transition-colors duration-200"
         )}
-        aria-label={t('Switch to Spanish', 'Cambiar a Inglés')}
+        aria-label={language === 'en' ? 'Switch to Spanish' : 'Cambiar a Inglés'}
       >
         <Globe className="w-3.5 h-3.5" />
-        <span>{language === 'en' ? 'ES' : 'EN'}</span>
+        {/* Show current language as the button label */}
+        <span className="uppercase">{language}</span>
       </button>
       
       {/* Minimize Button (Desktop only) */}
