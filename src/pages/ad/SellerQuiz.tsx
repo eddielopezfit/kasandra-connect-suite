@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, MapPin, ArrowRight } from "lucide-react";
 import { initAdFunnelSession } from "@/lib/analytics/initAdFunnelSession";
-import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { updateSessionContext } from "@/lib/analytics/selenaSession";
 
 // Value ranges for calculator
 const VALUE_RANGES: Record<string, number> = {
@@ -96,11 +96,11 @@ const SellerQuiz = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [addressInput, setAddressInput] = useState("");
 
-  // Initialize session on mount and mark as quiz entry (guarded write)
+  // Initialize session on mount and mark as quiz entry
+  // ad_funnel_source is last-touch (reflects current entry point for attribution)
   useEffect(() => {
     initAdFunnelSession();
-    // Use guarded write to prevent overwriting if user loops back
-    setFieldIfEmpty('ad_funnel_source', 'seller_quiz');
+    updateSessionContext({ ad_funnel_source: 'seller_quiz' });
   }, []);
 
   const progress = ((currentStep + 1) / quizSteps.length) * 100;
