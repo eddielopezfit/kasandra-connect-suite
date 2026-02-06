@@ -204,6 +204,20 @@ export function updateSessionContext(updates: Partial<SessionContext>): SessionC
 }
 
 /**
+ * Set intent only if not already declared (prevents silent overwrite)
+ * Priority: Quiz/URL intent > Page-based auto-set
+ */
+export function setIntentIfEmpty(intent: SessionContext['intent']): boolean {
+  const current = getSessionContext();
+  if (current?.intent) {
+    // Intent already exists, do not overwrite
+    return false;
+  }
+  updateSessionContext({ intent });
+  return true;
+}
+
+/**
  * Clear session data (for testing/reset)
  */
 export function clearSession(): void {

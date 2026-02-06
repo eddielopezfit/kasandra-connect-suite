@@ -6,16 +6,16 @@ import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle } from "lucide-react";
-import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { setIntentIfEmpty } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 
 const V2SellContent = () => {
   const { t } = useLanguage();
 
-  // Auto-set intent when entering Seller Decision Room
+  // Auto-set intent only if not already declared (prevents overwriting quiz/URL intent)
   useEffect(() => {
-    updateSessionContext({ intent: 'sell' });
+    setIntentIfEmpty('sell');
   }, []);
 
   // Handle CTA clicks with tracking
