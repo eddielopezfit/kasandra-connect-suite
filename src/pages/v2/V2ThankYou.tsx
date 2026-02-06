@@ -230,12 +230,15 @@ const V2ThankYouContent = () => {
               ),
             },
           ],
-          cta: {
-            label: t('Learn: Simultaneous Buy & Sell', 'Aprender: Compra y Venta Simultánea'),
-            href: '/v2/guides/buy-and-sell',
-            icon: FileText,
+          cta: null, // No broken guide link - direct to consultation
+          resource: {
+            title: t('Selling for Top Dollar Guide', 'Guía para Vender al Mejor Precio'),
+            description: t(
+              'Helpful strategies for your selling side of the equation.',
+              'Estrategias útiles para el lado de venta de la ecuación.'
+            ),
+            href: '/v2/guides/selling-for-top-dollar',
           },
-          resource: null,
         };
       
       default:
