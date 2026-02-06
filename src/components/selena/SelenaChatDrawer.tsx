@@ -75,6 +75,7 @@ export function SelenaChatDrawer() {
     closeLeadCapture,
     onLeadCaptured,
     leadId,
+    hasReports,
   } = useSelenaChat();
   const { t, language, setLanguage } = useLanguage();
   const [input, setInput] = useState('');
@@ -301,6 +302,7 @@ export function SelenaChatDrawer() {
         onActionClick={handleActionClick}
         language={language}
         leadId={leadId}
+        hasReports={hasReports}
         closeDrawer={closeChat}
         currentIntent={journeyContext.intent}
       />
