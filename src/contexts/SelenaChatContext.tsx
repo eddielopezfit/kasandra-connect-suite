@@ -9,7 +9,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { 
   getSessionContext, 
   initSessionContext, 
-  updateSessionContext 
+  updateSessionContext,
+  setFieldIfEmpty 
 } from '@/lib/analytics/selenaSession';
 import {
   logSelenaOpen,
@@ -423,9 +424,14 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       }
       
       // Sync detected intent to SessionContext (Intent-Aware Filtering)
+      // Use write-once to respect user-declared intent from quiz/URL
       if (data.detected_intent) {
-        updateSessionContext({ intent: data.detected_intent });
-        console.log('[Selena] Intent synced to SessionContext:', data.detected_intent);
+        const applied = setFieldIfEmpty('intent', data.detected_intent);
+        if (applied) {
+          console.log('[Selena] Intent set to SessionContext:', data.detected_intent);
+        } else {
+          console.log('[Selena] Intent detection skipped (already declared):', data.detected_intent);
+        }
       }
       
       const assistantMessage: ChatMessage = {

@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { trackJourneyAction } from "@/lib/guides/personalization";
-import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Calculator, Sparkles } from "lucide-react";
 
@@ -85,8 +85,10 @@ const TucsonAlphaCalculator = () => {
     setCalculatorResult(calculationResults.recommendation);
 
     // Update session memory (Task 6)
+    // Intent uses write-once to preserve user-declared intent (from quiz/URL)
+    setFieldIfEmpty('intent', 'cash');
+    // Tool usage fields are definitive events - always overwrite
     updateSessionContext({
-      intent: 'cash',
       tool_used: 'tucson_alpha_calculator',
       last_tool_result: calculationResults.recommendation,
     });

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, CheckCircle, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import SelenaHandoff from "./SelenaHandoff";
-import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import GuideSuggestionCard from "@/components/v2/shared/GuideSuggestionCard";
@@ -260,8 +260,10 @@ const BuyerReadinessCheck = () => {
       } else {
         // Calculate and persist readiness data before showing results
         const { readiness_score, primary_priority } = calculateReadinessData();
+        // Intent uses write-once to preserve user-declared intent (from URL/prior declaration)
+        setFieldIfEmpty('intent', 'buy');
+        // Quiz result fields are definitive tool outputs - always update
         updateSessionContext({ 
-          intent: 'buy',
           readiness_score,
           primary_priority,
         });
