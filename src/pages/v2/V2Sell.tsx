@@ -46,13 +46,23 @@ const V2SellContent = () => {
                 "Vender su casa es una decisión significativa. Le guiaré con precios basados en el mercado, apoyo de divulgación completa, y un enfoque en protección."
               )}
             </p>
-            <Button 
-              asChild 
-              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
-              onClick={() => handleCTAClick('hero_market_analysis', '/v2/book')}
-            >
-              <Link to="/v2/book">{t("Get a Market Analysis", "Obtener Análisis de Mercado")}</Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button 
+                asChild 
+                className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
+                onClick={() => handleCTAClick('hero_cash_comparison', '/v2/cash-offer-options')}
+              >
+                <Link to="/v2/cash-offer-options">{t("Compare Your Options", "Compare Sus Opciones")}</Link>
+              </Button>
+              <Button 
+                asChild 
+                variant="outline" 
+                className="border-white/30 text-white hover:bg-white/10 rounded-full px-6 sm:px-8 text-sm sm:text-base"
+                onClick={() => handleCTAClick('hero_selling_guide', '/v2/guides/selling-for-top-dollar')}
+              >
+                <Link to="/v2/guides/selling-for-top-dollar">{t("Read Our Seller Guide", "Lea Nuestra Guía")}</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
