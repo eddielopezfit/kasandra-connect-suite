@@ -42,7 +42,7 @@ const V2BookContent = () => {
   const canonicalIntent = mapIntentParam(urlIntent) || (session?.intent as IntentCanonical) || null;
   
   // Detect if user came from ad funnel with net sheet data
-  const isAdFunnelVisitor = session?.ad_funnel_source && session?.intent === 'cash_offer';
+  const isAdFunnelVisitor = session?.ad_funnel_source && session?.intent === 'cash';
   
   // Get stored difference from localStorage (set by SellerResult.tsx)
   const storedDifference = typeof window !== 'undefined' 

@@ -43,7 +43,7 @@ function computeJourneyStep(context: SessionContext | null): number {
   let step = 1;
   
   // For sellers
-  if (context.intent === 'sell' || context.intent === 'cash_offer') {
+  if (context.intent === 'sell' || context.intent === 'cash') {
     if (context.tool_used) step = 2; // Used calculator
     if (context.has_viewed_report) step = 3; // Viewed report
     if (context.has_booked) step = 4; // Booked consultation
