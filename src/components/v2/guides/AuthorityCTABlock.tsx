@@ -14,9 +14,11 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { logEvent } from '@/lib/analytics/logEvent';
+import { logCTAClick, CTA_NAMES } from '@/lib/analytics/ctaDefaults';
 import type { GuideCategory } from '@/lib/guides/guideRegistry';
-import { Calendar, Home, DollarSign, BookOpen } from 'lucide-react';
+import { DollarSign, MessageCircle } from 'lucide-react';
 
 interface AuthorityCTABlockProps {
   category: GuideCategory;
@@ -57,41 +59,49 @@ const DEFAULT_CASH_MARKET_INSIGHT = {
 };
 
 // CTA configuration by category
+// Note: 'buying', 'selling', 'valuation', 'stories' route through Selena (selena_chat)
+// Only 'cash' goes directly to /v2/cash-offer-options decision room
 const CTA_CONFIG: Record<GuideCategory, { 
   link: string; 
   labelEn: string; 
   labelEs: string; 
-  icon: typeof Calendar;
+  icon: typeof MessageCircle;
+  routeThruSelena: boolean;
 }> = {
   buying: {
-    link: '/v2/book',
+    link: 'selena_chat',
     labelEn: 'Book Your Buyer Strategy Session',
     labelEs: 'Reserve Su Sesión de Estrategia para Comprador',
-    icon: Calendar,
+    icon: MessageCircle,
+    routeThruSelena: true,
   },
   selling: {
-    link: '/v2/book',
+    link: 'selena_chat',
     labelEn: 'Request a Home Value Review',
     labelEs: 'Solicitar Revisión de Valor de Vivienda',
-    icon: Home,
+    icon: MessageCircle,
+    routeThruSelena: true,
   },
   valuation: {
-    link: '/v2/book',
+    link: 'selena_chat',
     labelEn: 'Request a Home Value Review',
     labelEs: 'Solicitar Revisión de Valor de Vivienda',
-    icon: Home,
+    icon: MessageCircle,
+    routeThruSelena: true,
   },
   cash: {
     link: '/v2/cash-offer-options',
     labelEn: 'Schedule Your Private Cash Review',
     labelEs: 'Programe Su Revisión Privada de Efectivo',
     icon: DollarSign,
+    routeThruSelena: false,
   },
   stories: {
-    link: '/v2/book',
+    link: 'selena_chat',
     labelEn: 'Explore Your Options with Kasandra',
     labelEs: 'Explore Sus Opciones con Kasandra',
-    icon: BookOpen,
+    icon: MessageCircle,
+    routeThruSelena: true,
   },
 };
 
@@ -109,6 +119,7 @@ const AuthorityCTABlock = ({
   marketInsight,
 }: AuthorityCTABlockProps) => {
   const { t } = useLanguage();
+  const { openChat } = useSelenaChat();
   
   // Resolve authority bridge (use override or default)
   const bridge = authorityBridge ?? DEFAULT_AUTHORITY_BRIDGE[category];
@@ -137,6 +148,17 @@ const AuthorityCTABlock = ({
       guide_title: guideTitle,
       destination: cta.link,
     });
+    
+    // Route through Selena for non-cash categories
+    if (cta.routeThruSelena) {
+      logCTAClick({
+        cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
+        destination: 'selena_chat',
+        page_path: window.location.pathname,
+        intent: category === 'buying' ? 'buy' : 'sell',
+      });
+      openChat();
+    }
   };
 
   return (
@@ -155,21 +177,32 @@ const AuthorityCTABlock = ({
             </p>
           )}
           
-          {/* Single Primary CTA */}
-          <Button 
-            asChild 
-            size="lg" 
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full"
-            onClick={handleCTAClick}
-          >
-            <Link 
-              to={cta.link} 
-              className="inline-flex items-center gap-2 sm:gap-3 flex-wrap justify-center"
+          {/* Single Primary CTA - Selena routing for most, direct link for cash */}
+          {cta.routeThruSelena ? (
+            <Button 
+              size="lg" 
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full"
+              onClick={handleCTAClick}
             >
-              <Icon className="w-5 h-5 flex-shrink-0" />
+              <Icon className="w-5 h-5 flex-shrink-0 mr-2 sm:mr-3" />
               <span className="text-center">{t(cta.labelEn, cta.labelEs)}</span>
-            </Link>
-          </Button>
+            </Button>
+          ) : (
+            <Button 
+              asChild 
+              size="lg" 
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full"
+              onClick={handleCTAClick}
+            >
+              <Link 
+                to={cta.link} 
+                className="inline-flex items-center gap-2 sm:gap-3 flex-wrap justify-center"
+              >
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                <span className="text-center">{t(cta.labelEn, cta.labelEs)}</span>
+              </Link>
+            </Button>
+          )}
           
           {/* Subtext */}
           <p className="text-white/50 text-sm mt-4">

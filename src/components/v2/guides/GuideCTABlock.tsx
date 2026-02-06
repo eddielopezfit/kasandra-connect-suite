@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Calendar, Home, DollarSign, BookOpen } from "lucide-react";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
+import { DollarSign, BookOpen, MessageCircle } from "lucide-react";
 
 interface GuideCTABlockProps {
   category: string;
@@ -9,7 +11,7 @@ interface GuideCTABlockProps {
 
 // Category-specific CTA routing - ONE primary CTA per category
 const getCTAConfig = (category: string) => {
-  // Buyer-focused categories
+  // Buyer-focused categories -> direct to buyer readiness tool
   if (category.includes("Buying") || category === "Financial Guidance") {
     return {
       link: "/v2/buyer-readiness",
@@ -18,22 +20,26 @@ const getCTAConfig = (category: string) => {
       subtextEn: "A quick self-assessment to understand where you stand",
       subtextEs: "Una autoevaluación rápida para entender dónde está",
       icon: BookOpen,
+      routeThruSelena: false,
+      intent: 'buy' as const,
     };
   }
   
-  // Seller-focused categories (including Valuation)
+  // Seller-focused categories (including Valuation) -> route through Selena
   if (category.includes("Selling") || category.includes("Valuation")) {
     return {
-      link: "/v2/book",
+      link: "selena_chat",
       textEn: "Request a Home Value Review",
       textEs: "Solicitar Revisión de Valor",
       subtextEn: "Understand what your home might be worth today",
       subtextEs: "Entienda cuánto podría valer su casa hoy",
-      icon: Home,
+      icon: MessageCircle,
+      routeThruSelena: true,
+      intent: 'sell' as const,
     };
   }
   
-  // Cash offer category
+  // Cash offer category -> direct to cash decision room
   if (category.includes("Cash")) {
     return {
       link: "/v2/cash-offer-options",
@@ -42,6 +48,8 @@ const getCTAConfig = (category: string) => {
       subtextEn: "See if a cash offer makes sense for your situation",
       subtextEs: "Vea si una oferta en efectivo tiene sentido para su situación",
       icon: DollarSign,
+      routeThruSelena: false,
+      intent: 'cash' as const,
     };
   }
   
@@ -53,12 +61,27 @@ const getCTAConfig = (category: string) => {
     subtextEn: "Continue learning at your own pace",
     subtextEs: "Continúe aprendiendo a su propio ritmo",
     icon: BookOpen,
+    routeThruSelena: false,
+    intent: 'exploring' as const,
   };
 };
 
 const GuideCTABlock = ({ category }: GuideCTABlockProps) => {
   const { t } = useLanguage();
+  const { openChat } = useSelenaChat();
   const config = getCTAConfig(category);
+
+  const handleClick = () => {
+    if (config.routeThruSelena) {
+      logCTAClick({
+        cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
+        destination: 'selena_chat',
+        page_path: window.location.pathname,
+        intent: config.intent,
+      });
+      openChat();
+    }
+  };
 
   return (
     <section className="bg-cc-navy py-16">
@@ -74,17 +97,28 @@ const GuideCTABlock = ({ category }: GuideCTABlockProps) => {
             )}
           </p>
           
-          {/* Single Primary CTA */}
-          <Button 
-            asChild 
-            size="lg" 
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full"
-          >
-            <Link to={config.link} className="inline-flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
-              <config.icon className="w-5 h-5 flex-shrink-0" />
+          {/* Single Primary CTA - Selena routing for seller categories */}
+          {config.routeThruSelena ? (
+            <Button 
+              size="lg" 
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full"
+              onClick={handleClick}
+            >
+              <config.icon className="w-5 h-5 flex-shrink-0 mr-2 sm:mr-3" />
               <span className="text-center">{t(config.textEn, config.textEs)}</span>
-            </Link>
-          </Button>
+            </Button>
+          ) : (
+            <Button 
+              asChild 
+              size="lg" 
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full"
+            >
+              <Link to={config.link} className="inline-flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+                <config.icon className="w-5 h-5 flex-shrink-0" />
+                <span className="text-center">{t(config.textEn, config.textEs)}</span>
+              </Link>
+            </Button>
+          )}
           
           {/* Subtext */}
           <p className="text-white/50 text-sm mt-4">

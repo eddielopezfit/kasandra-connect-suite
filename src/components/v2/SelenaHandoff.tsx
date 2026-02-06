@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Send, Calendar, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, Send, Calendar, Sparkles, MessageCircle } from "lucide-react";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 
 interface Answer {
   questionIndex: number;
@@ -22,6 +23,7 @@ interface SelenaHandoffProps {
 
 const SelenaHandoff = ({ answers, questions, onBack }: SelenaHandoffProps) => {
   const { t, language } = useLanguage();
+  const { openChat } = useSelenaChat();
   const [currentFollowUp, setCurrentFollowUp] = useState(0);
   const [followUpAnswers, setFollowUpAnswers] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -206,13 +208,19 @@ const SelenaHandoff = ({ answers, questions, onBack }: SelenaHandoffProps) => {
           </div>
 
           <Button
-            asChild
+            onClick={() => {
+              logCTAClick({
+                cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
+                destination: 'selena_chat',
+                page_path: '/v2/buyer-readiness',
+                intent: 'buy',
+              });
+              openChat();
+            }}
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
           >
-            <Link to="/v2/book">
-              <Calendar className="w-4 h-4 mr-2" />
-              {t("Schedule Your Consultation", "Agenda Tu Consulta")}
-            </Link>
+            <MessageCircle className="w-4 h-4 mr-2" />
+            {t("Continue with Selena", "Continuar con Selena")}
           </Button>
           
           <p className="text-xs text-cc-slate mt-4">

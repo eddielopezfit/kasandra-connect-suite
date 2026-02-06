@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Lock, Phone, ArrowRight, Loader2 } from "lucide-react";
+import { Lock, Phone, ArrowRight, Loader2, MessageCircle } from "lucide-react";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -14,6 +16,7 @@ interface PhoneVerificationGateProps {
 
 const PhoneVerificationGate = ({ onVerified }: PhoneVerificationGateProps) => {
   const { t } = useLanguage();
+  const { openChat } = useSelenaChat();
   const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -158,12 +161,21 @@ const PhoneVerificationGate = ({ onVerified }: PhoneVerificationGateProps) => {
                 "¿Aún no ha enviado su información?"
               )}
             </p>
-            <a 
-              href="/v2/book" 
-              className="text-sm text-primary hover:underline font-medium"
+            <button 
+              onClick={() => {
+                logCTAClick({
+                  cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
+                  destination: 'selena_chat',
+                  page_path: window.location.pathname,
+                  intent: 'exploring',
+                });
+                openChat();
+              }}
+              className="text-sm text-primary hover:underline font-medium inline-flex items-center gap-1"
             >
+              <MessageCircle className="w-3.5 h-3.5" />
               {t("Start a consultation →", "Iniciar una consulta →")}
-            </a>
+            </button>
           </div>
         </CardContent>
       </Card>
