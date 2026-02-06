@@ -1,263 +1,241 @@
 
-# GHL Integration Finalization Plan
 
-## Summary
-This plan implements three critical updates to ensure the website correctly maps form data to GoHighLevel (GHL) custom fields: adding Property Address capture to the Seller funnel, standardizing webhook payloads with `selena_*` prefixed keys, and implementing an access gate on the Private Cash Review page.
+# Selena Digital Concierge Communication Audit
+## Complete Documentation of Patterns, Misalignments & Recommendations
 
 ---
 
-## Task 1: Add Property Address to Seller Quiz/Result Flow
+## 1. Executive Summary
 
-### Current State
-- The `SellerQuiz.tsx` captures: situation, condition, timeline, and value
-- The `SellerResult.tsx` captures: name and email (for unlock)
-- **Gap**: No property address field exists in this flow
+This audit documents Selena's communication patterns, CTA exposure, and escalation behavior against the **"Digital Concierge / Earned Access"** philosophy.
 
-### Changes Required
+### Core Finding
+**Selena's voice and persona are correctly calibrated, but her structural behavior creates a "High-Pressure Sales Bot" experience that conflicts with the "Calm Concierge" design intent.**
 
-**1.1 Add Address Step to SellerQuiz.tsx**
-Insert a new quiz step (step 5) after "value" that captures the property address as a text input field:
+---
+
+## 2. Communication Intent Analysis
+
+### What Selena is Currently Trying to Do
+
+| Dimension | Observed Behavior | Alignment |
+|-----------|-------------------|-----------|
+| **Educate** | Guides users to relevant resources, provides guide-aware greetings | ✅ Aligned |
+| **Qualify** | Demands property address immediately upon sell intent declaration | ⚠️ Premature |
+| **Reassure** | "No pressure" language in system prompts | ✅ Aligned |
+| **Push Booking** | Every AI response includes a hardcoded "Schedule with Kasandra" CTA | ❌ Misaligned |
+
+### Evidence: Hardcoded Booking CTA
+
+**Location:** `supabase/functions/selena-chat/index.ts` (Lines 385-391)
 
 ```text
-Step 5: "What's the property address?"
-- Text input field for address
-- Optional autocomplete suggestion (Tucson area hint)
-- Skip option: "I'd rather not share yet"
-```
-
-**1.2 Pass Address to SellerResult.tsx**
-Update the navigation from quiz to result to include `address` in URL params:
-- Add `address: newAnswers.address || ''` to the URLSearchParams
-
-**1.3 Update SellerResult.tsx to Send Address**
-Modify the form submission to include `propertyAddress` in the edge function payload.
-
----
-
-## Task 2: Standardize Webhook Payloads for GHL
-
-### Target Payload Structure
-Both edge functions must send these **top-level** keys (not nested):
-
-| Key | Source |
-|-----|--------|
-| `selena_lead_id` | Database-generated lead ID |
-| `selena_session_id` | From localStorage/input |
-| `selena_intent_canonical` | Normalized intent (buy/sell/cash/dual/explore) |
-| `selena_language_raw` | en/es |
-| `selena_timeline_raw` | Raw timeline value |
-| `selena_budget_raw` | Price range value |
-| `selena_target_neighborhoods` | Target areas for buyers |
-| `selena_property_address` | Property address for sellers |
-| `selena_is_pre_approved` | "Yes" or "No" string |
-
-### 2.1 Update `submit-consultation-intake/index.ts`
-
-**Interface Update:**
-- Add `session_id` to input interface (already exists)
-
-**GHL Payload Restructure:**
-Replace current top-level keys with `selena_` prefixed versions:
-
-```typescript
-const ghlPayload = {
-  // Standard contact fields
-  email,
-  name: input.name.trim(),
-  firstName,
-  lastName,
-  phone: input.phone.trim(),
-  tags: allTags,
-  
-  // STANDARDIZED selena_* top-level keys for GHL workflow
-  selena_lead_id: leadId,
-  selena_session_id: input.session_id || null,
-  selena_intent_canonical: normalizedIntent.canonical,
-  selena_language_raw: input.language,
-  selena_timeline_raw: normalizedTimeline.raw,
-  selena_budget_raw: input.price_range || null,
-  selena_target_neighborhoods: input.target_neighborhoods || null,
-  selena_property_address: input.property_address || null,
-  selena_is_pre_approved: input.pre_approved === 'yes' ? 'Yes' : 'No',
-  
-  // Keep customField for backward compatibility
-  customField: { ... }
-};
-```
-
-### 2.2 Update `submit-seller/index.ts`
-
-**Interface Update:**
-```typescript
-interface SellerLeadPayload {
-  name: string;
-  email: string;
-  propertyAddress?: string;  // NEW
-  situation?: string;
-  condition?: string;
-  timeline?: string;
-  estimatedValue?: string;
-  calculatedCashOffer?: number;
-  calculatedListingNet?: number;
-  sessionId?: string;        // NEW
-  language?: string;         // NEW (default 'en')
-}
-```
-
-**GHL Payload Restructure:**
-```typescript
-const ghlPayload = {
-  // Standard contact fields
-  email: sanitizedPayload.email,
-  name: sanitizedPayload.name,
-  firstName,
-  lastName,
-  tags: allTags,
-  
-  // STANDARDIZED selena_* top-level keys for GHL workflow
-  selena_lead_id: leadData.id,
-  selena_session_id: payload.sessionId || null,
-  selena_intent_canonical: 'sell',
-  selena_language_raw: payload.language || 'en',
-  selena_timeline_raw: sanitizedPayload.timeline || null,
-  selena_budget_raw: sanitizedPayload.estimated_value || null,
-  selena_target_neighborhoods: null, // N/A for sellers
-  selena_property_address: sanitizedPayload.property_address || null,
-  selena_is_pre_approved: 'No', // N/A for sellers
-  
-  // Keep customField for rich context
-  customField: {
-    lead_id: leadData.id,
-    situation: sanitizedPayload.situation,
-    condition: sanitizedPayload.condition,
-    timeline: sanitizedPayload.timeline,
-    estimated_value: sanitizedPayload.estimated_value,
-    property_address: sanitizedPayload.property_address,
-    cash_offer: sanitizedPayload.calculated_cash_offer,
-    listing_net: sanitizedPayload.calculated_listing_net,
+actions: [
+  {
+    label: "Schedule with Kasandra" / "Agenda con Kasandra",
+    href: "/v2/book",
+    eventType: "book_click",
   },
-  source: "Seller Funnel - Tucson Inherited Homes"
-};
+]
 ```
 
----
-
-## Task 3: Implement Access Gate on V2PrivateCashReview
-
-### Current State
-- Page checks for `selena_lead_id` in localStorage
-- Shows personalized hero for returning leads
-- **Gap**: No actual restriction for anonymous visitors
-
-### Changes Required
-
-**3.1 Create Phone Verification Component**
-New component: `src/components/v2/PhoneVerificationGate.tsx`
-
-Features:
-- Phone number input with validation
-- Submit button to verify access
-- Calls edge function to lookup lead by phone
-- On success: stores `selena_lead_id` in localStorage and reveals content
-
-**3.2 Update V2PrivateCashReview.tsx**
-
-Add state machine:
-```typescript
-type GateState = 'checking' | 'locked' | 'unlocked';
-
-const [gateState, setGateState] = useState<GateState>('checking');
-
-useEffect(() => {
-  const leadId = getLeadId();
-  if (leadId) {
-    setGateState('unlocked');
-  } else {
-    setGateState('locked');
-  }
-}, []);
-```
-
-Render logic:
-- If `gateState === 'checking'`: Show loading skeleton
-- If `gateState === 'locked'`: Show `PhoneVerificationGate` component
-- If `gateState === 'unlocked'`: Show full `PrivateCashReviewContent`
-
-**3.3 Create Edge Function for Phone Lookup**
-New function: `supabase/functions/verify-lead-phone/index.ts`
-
-Logic:
-1. Accept phone number
-2. Query `lead_profiles` table for matching phone
-3. If found: Return `{ ok: true, lead_id: '...' }`
-4. If not found: Return `{ ok: false, error: 'No record found' }`
+**Impact:** Even a user's first message ("Hi, just exploring") triggers a booking button. This violates the "earned access" model.
 
 ---
 
-## Technical Details
+## 3. Commitment Ladder Analysis
 
-### Files to Modify
+### Current Micro-Commitments (In Order)
 
-| File | Changes |
-|------|---------|
-| `src/pages/ad/SellerQuiz.tsx` | Add address step (step 5) |
-| `src/pages/ad/SellerResult.tsx` | Read address from URL, pass to edge function |
-| `supabase/functions/submit-seller/index.ts` | Add property_address, standardize GHL payload |
-| `supabase/functions/submit-consultation-intake/index.ts` | Standardize GHL payload with selena_* prefix |
-| `src/pages/v2/V2PrivateCashReview.tsx` | Implement gate state machine |
+| Step | Micro-Commitment | Trigger | Assessment |
+|------|------------------|---------|------------|
+| 1 | Open Selena chat | User clicks FAB | ✅ Appropriate |
+| 2 | Declare intent (Buy/Sell/Explore) | First suggested reply | ✅ Appropriate |
+| 3 | **Property Address Request** | Immediately after sell intent | ❌ Too Early |
+| 4 | Booking CTA exposure | Every single message | ❌ Too Frequent |
+| 5 | Priority Call Modal | User requests or high-intent signal | ⚠️ Conditional |
+| 6 | Lead capture (email) | Before report access or booking | ✅ Appropriate |
 
-### Files to Create
+### Misalignments Identified
 
-| File | Purpose |
-|------|---------|
-| `src/components/v2/PhoneVerificationGate.tsx` | Phone input gate component |
-| `supabase/functions/verify-lead-phone/index.ts` | Phone lookup edge function |
+**A. Premature Address Collection**
+- Location: `selena-chat/index.ts` Lines 353-359
+- Behavior: System prompt forces AI to ask for property address immediately after user says "I'm thinking about selling"
+- Problem: Requests PII before providing any value
 
-### Database Impact
-- No schema changes required
-- Uses existing `lead_profiles` table with `phone` column for verification
-
-### GHL Custom Field Mapping Reference
-After implementation, the GHL workflow can map these webhook keys directly:
-
-| GHL Custom Field | Webhook Key |
-|------------------|-------------|
-| `selena_lead_id` | `{{inboundWebhookRequest.selena_lead_id}}` |
-| `selena_session_id` | `{{inboundWebhookRequest.selena_session_id}}` |
-| `selena_intent_canonical` | `{{inboundWebhookRequest.selena_intent_canonical}}` |
-| `selena_language_raw` | `{{inboundWebhookRequest.selena_language_raw}}` |
-| `selena_timeline_raw` | `{{inboundWebhookRequest.selena_timeline_raw}}` |
-| `selena_budget_raw` | `{{inboundWebhookRequest.selena_budget_raw}}` |
-| `selena_target_neighborhoods` | `{{inboundWebhookRequest.selena_target_neighborhoods}}` |
-| `selena_property_address` | `{{inboundWebhookRequest.selena_property_address}}` |
-| `selena_is_pre_approved` | `{{inboundWebhookRequest.selena_is_pre_approved}}` |
+**B. SelenaHandoff Forces 3 Sequential Questions**
+- Location: `SelenaHandoff.tsx` Lines 32-63
+- Questions: Timeline → Neighborhoods → Discussion Topics
+- Problem: No skip option; feels like form-filling, not conversation
 
 ---
 
-## Testing Checklist
+## 4. Authority Positioning Analysis
 
-1. **Seller Quiz Flow**
-   - Complete quiz with all steps including address
-   - Verify address appears in URL params on result page
-   - Submit lead capture form and verify GHL receives `selena_property_address`
+### How Kasandra is Currently Positioned
 
-2. **Consultation Intake Flow**
-   - Submit form with cash_offer intent
-   - Verify all `selena_*` keys appear at top level in edge function logs
-   - Confirm GHL workflow can read values directly
+| Context | Positioning | Assessment |
+|---------|-------------|------------|
+| System Prompts | "Kasandra will personally reach out" | ✅ Solo Expert |
+| Cognitive Stage 5-6 | "Kasandra is here to guide you personally" | ✅ Premium Access |
+| Error Fallbacks | "You can book a free consultation anytime!" | ⚠️ Dilutes scarcity |
+| Calculator Results | "schedule a free consultation with Kasandra" | ⚠️ Transactional |
+| AuthorityCTABlock | "Strategy Session" (no "free") | ✅ High authority |
 
-3. **Private Cash Review Gate**
-   - Visit page without `selena_lead_id` in localStorage
-   - Verify "Restricted Access" state appears
-   - Enter valid phone number and verify unlock
-   - Refresh page and verify content remains accessible
+### Language Inconsistency Map
+
+| Component | Language Used | Authority Level |
+|-----------|---------------|-----------------|
+| Guide CTAs | "Strategy Session", "Review" | High |
+| Calculator Results | "Free Consultation" | Low |
+| Fallback Messages | "Free consultation anytime!" | Low |
+| Ad Funnels | "100% free" | Intentionally Low |
+
+**Impact:** Split messaging creates cognitive dissonance between educational content (high authority) and conversion paths (transactional).
 
 ---
 
-## Rollout Sequence
-1. Deploy edge function updates (submit-seller, submit-consultation-intake)
-2. Deploy verify-lead-phone edge function
-3. Update SellerQuiz with address step
-4. Update SellerResult to pass address
-5. Update V2PrivateCashReview with gate logic
-6. Test end-to-end across all funnels
+## 5. CTA Behavior Audit
+
+### When "Schedule with Kasandra" Appears
+
+| Trigger | Appropriate? | Notes |
+|---------|--------------|-------|
+| Every AI response | ❌ No | Hardcoded in edge function |
+| After quiz completion | ✅ Yes | Earned through engagement |
+| After calculator use | ✅ Yes | Tool completion = commitment |
+| On guide completion | ✅ Yes | AuthorityCTABlock respects this |
+| Cognitive Stage 5+ | ✅ Yes | Progression-based (but bypassed) |
+| Error/Fallback | ⚠️ Acceptable | But poorly framed |
+
+### CTA Overexposure Problem
+
+**Current State:**
+- User sends 5 messages → sees 5 booking CTAs
+- No threshold required to reveal booking
+- Contradicts Cognitive Stage model (which gates booking to Stages 5-6)
+
+**Cognitive Stage Model (Correctly Designed):**
+- Stage 5 (Deciding): intent declared + 4+ guides read
+- Stage 6 (Confident): booking clicked
+- Only these stages should show "Book a Consultation"
+
+**But:** The edge function bypasses this by returning booking CTA unconditionally.
+
+---
+
+## 6. "Lovable Hub" Alignment Assessment
+
+### Where Selena Aligns with Digital Concierge Philosophy
+
+| Behavior | Implementation | Status |
+|----------|----------------|--------|
+| Guide-aware greetings | Detects `last_guide_id` and personalizes | ✅ |
+| Intent-aware suggested replies | Filters by user intent | ✅ |
+| Session continuity | LocalStorage persistence | ✅ |
+| Progressive profiling | Only updates null DB fields | ✅ |
+| Language governance | Single source of truth | ✅ |
+
+### Where Selena Conflicts with Hub Intent
+
+| Behavior | Problem |
+|----------|---------|
+| Omnipresent booking CTA | Feels like sales bot, not concierge |
+| Immediate address demand | Qualifies before educating |
+| Fallback to "free consultation" | Dilutes authority positioning |
+| SelenaHandoff question sequence | Feels like form, not conversation |
+
+---
+
+## 7. Complete Misalignment Registry
+
+### Critical Issues (Must Fix)
+
+| Issue | Location | Severity |
+|-------|----------|----------|
+| Hardcoded Booking CTA | `selena-chat/index.ts:385-391` | 🔴 Critical |
+| Premature Address Request | `selena-chat/index.ts:353-359` | 🟠 High |
+
+### Moderate Issues (Should Fix)
+
+| Issue | Location | Severity |
+|-------|----------|----------|
+| "Free consultation" Fallback | `SelenaChatContext.tsx:462-463` | 🟡 Medium |
+| "Free" in CalculatorResults | `CalculatorResults.tsx:241-242` | 🟡 Medium |
+| "Free" in CalculatorNextSteps | `CalculatorNextSteps.tsx:140` | 🟡 Medium |
+| Forced Question Sequence | `SelenaHandoff.tsx:32-63` | 🟡 Medium |
+
+### Full "Free Consultation" Occurrence List
+
+| File | Line | Context |
+|------|------|---------|
+| `CalculatorNextSteps.tsx` | 140 | "Book a Free Consultation" |
+| `CalculatorResults.tsx` | 241-242 | "schedule a free consultation" |
+| `V2CashOfferOptions.tsx` | 235 | "Free Cash Offer Review" |
+| `SelenaChatContext.tsx` | 462-463 | Error fallback |
+| `V2GuideDetail.tsx` | 148, 205, 424 | Spanish guide content |
+| `IntentHeader.tsx` | 69-70 | Booking page header |
+| `SellerLanding.tsx` | 21, 44, 67 | Ad funnel (intentional) |
+
+---
+
+## 8. Diagnostic Recommendations
+
+### Should Selena...
+
+| Behavior | Recommendation | Rationale |
+|----------|----------------|-----------|
+| Slow down | ✅ Yes | Delay booking CTA until engagement threshold |
+| Ask fewer questions | ✅ Yes | Make SelenaHandoff questions optional |
+| Ask better questions | ✅ Yes | Prioritize value over data capture |
+| Delay booking CTAs | ✅ Yes (Critical) | Remove hardcoded CTA; make conditional |
+| Reframe booking language | ✅ Yes | Replace "Schedule" with "Review Strategy" |
+
+### Specific Behavioral Fixes Required
+
+1. **Make booking CTA conditional** in edge function
+   - Only include if user meets engagement threshold
+   - Respect Cognitive Stage model
+
+2. **Defer address collection**
+   - Move to after calculator use or guide completion
+   - Provide value first, then request PII
+
+3. **Eliminate "free consultation" language**
+   - Replace with "Strategy Session" or "Review"
+   - Maintain authority framing
+
+4. **Add skip options to SelenaHandoff**
+   - Make follow-up questions optional
+   - Allow "I'll share this later" escape
+
+5. **Unify CTA language**
+   - Standard: "Review Strategy with Kasandra"
+   - Never: "Free", "Anytime", "Book now"
+
+---
+
+## 9. Conclusion
+
+**Selena's personality is correct. Her behavior is not.**
+
+The system prompt establishes a calm, high-trust concierge voice, but the structural implementation creates a fundamentally different experience:
+
+- Hardcoded CTAs bypass the earned-access model
+- Premature qualification violates the education-first promise
+- Transactional language ("free") undermines premium positioning
+
+**The gap between design intent and implementation creates user friction that undermines the "earned commitment" philosophy.**
+
+---
+
+## Next Steps
+
+This audit is diagnostic only. No code changes were made.
+
+If approved, remediation would involve:
+1. Refactoring edge function to make booking CTA conditional
+2. Updating fallback messaging to maintain authority
+3. Adding skip options to SelenaHandoff
+4. Standardizing CTA language across all surfaces
+
