@@ -86,7 +86,7 @@ const TucsonAlphaCalculator = () => {
 
     // Update session memory (Task 6)
     updateSessionContext({
-      intent: 'cash_offer',
+      intent: 'cash',
       tool_used: 'tucson_alpha_calculator',
       last_tool_result: calculationResults.recommendation,
     });

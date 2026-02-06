@@ -21,7 +21,7 @@ export interface SessionContext {
   landing_path?: string;
   created_at: string;
   last_seen_at: string;
-  intent?: 'cash_offer' | 'sell' | 'buy' | 'investor' | 'explore';
+  intent?: 'cash' | 'sell' | 'buy' | 'investor' | 'explore';
   timeline?: 'asap' | '30_days' | '60_90' | 'exploring';
   situation?: 'inherited' | 'divorce' | 'tired_landlord' | 'upgrading' | 'relocating' | 'other';
   condition?: 'move_in_ready' | 'minor_repairs' | 'distressed' | 'unknown';

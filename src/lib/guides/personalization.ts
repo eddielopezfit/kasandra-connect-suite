@@ -145,9 +145,8 @@ export function setIntent(intent: Intent): void {
   if (typeof window === 'undefined' || !intent) return;
   try {
     localStorage.setItem(INTENT_KEY, intent);
-    // Map to session context format
-    const contextIntent = intent === 'cash' ? 'cash_offer' : intent;
-    updateSessionContext({ intent: contextIntent as 'buy' | 'sell' | 'cash_offer' | 'explore' });
+    // Intent values are now canonical - 'cash' is used directly
+    updateSessionContext({ intent: intent as 'buy' | 'sell' | 'cash' | 'explore' });
   } catch (e) {
     console.warn('[Guides] Failed to set intent:', e);
   }

@@ -66,7 +66,7 @@ export function bridgeQuizResultsToV2(quizAnswers: {
   };
 
   updateSessionContext({
-    intent: 'cash_offer',
+    intent: 'cash', // Normalized to canonical V2 intent value
     timeline: quizAnswers.timeline ? timelineMap[quizAnswers.timeline] : undefined,
     situation: quizAnswers.situation ? situationMap[quizAnswers.situation] : undefined,
     condition: quizAnswers.condition ? conditionMap[quizAnswers.condition] : undefined,
