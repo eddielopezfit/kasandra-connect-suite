@@ -93,6 +93,19 @@ export function SelenaDrawerBottomSection({
 
       <form onSubmit={handleSubmit} className="border-t border-border p-4 bg-background">
         <div className="flex gap-2">
+          {/* 
+            ⚠️ REGRESSION TRIPWIRE - DO NOT MODIFY WITHOUT READING ⚠️
+            
+            This input MUST remain UNCONTROLLED to prevent the "one letter at a time" typing bug.
+            
+            NEVER:
+            - Add value={...} prop (makes it controlled, breaks on remount)
+            - Add key={...} prop (forces remount on each keystroke)
+            - Wrap parent components in key={language/route/messages/activeTab}
+            
+            The ref={inputEl} pattern reads value on submit, bypassing React state churn.
+            See: .lovable/plan.md for full context on this fix.
+          */}
           <input
             ref={inputEl}
             type="text"
