@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, CheckCircle, MessageCircle } from "lucide-react";
@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import SelenaHandoff from "./SelenaHandoff";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
+import GuideSuggestionCard from "@/components/v2/shared/GuideSuggestionCard";
 
 interface Answer {
   questionIndex: number;
@@ -17,6 +18,7 @@ const BuyerReadinessCheck = () => {
   const [currentStep, setCurrentStep] = useState(0); // 0 = intro, 1-4 = questions, 5 = results, 6 = selena
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [showSelena, setShowSelena] = useState(false);
+  const hasLoggedToolStart = useRef(false);
 
   const questions = [
     {
@@ -267,6 +269,14 @@ const BuyerReadinessCheck = () => {
           readiness_score,
           primary_priority,
         });
+        // Emit tool_completed event
+        logEvent('tool_completed', {
+          tool_id: 'buyer_readiness',
+          page_path: '/v2/buyer-readiness',
+          intent: 'buy',
+          readiness_score,
+          primary_priority,
+        });
         setCurrentStep(5); // Go to results
       }
     }, 300);
@@ -333,7 +343,17 @@ const BuyerReadinessCheck = () => {
             {t("Takes about 1 minute • No email required", "Toma aproximadamente 1 minuto • No se requiere correo")}
           </p>
           <Button
-            onClick={() => setCurrentStep(1)}
+            onClick={() => {
+              // Emit tool_started event (once per session)
+              if (!hasLoggedToolStart.current) {
+                logEvent('tool_started', {
+                  tool_id: 'buyer_readiness',
+                  page_path: '/v2/buyer-readiness',
+                });
+                hasLoggedToolStart.current = true;
+              }
+              setCurrentStep(1);
+            }}
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
           >
             {t("Start Quick Check", "Comenzar Evaluación")}
@@ -417,6 +437,20 @@ const BuyerReadinessCheck = () => {
             </p>
           </div>
 
+          {/* Recommended Reading - First-Time Buyer Guide for early/guided profiles */}
+          {(profile === "early" || profile === "active-guided") && (
+            <div className="mb-6 max-w-lg mx-auto">
+              <GuideSuggestionCard
+                guideId="first-time-buyer-guide"
+                titleEn="First-Time Buyer's Complete Guide"
+                titleEs="Guía Completa para Compradores de Primera Vivienda"
+                descriptionEn="Clear steps from pre-approval to closing day—at your own pace."
+                descriptionEs="Pasos claros desde la pre-aprobación hasta el día de cierre—a tu ritmo."
+                ctaSource="buyer_readiness_results"
+              />
+            </div>
+          )}
+
           {/* Choice-based next step */}
           <div className="space-y-4 max-w-lg mx-auto">
             <p className="text-center text-sm text-cc-slate mb-4">
@@ -425,7 +459,15 @@ const BuyerReadinessCheck = () => {
 
             {/* Option A: Talk with Selena AI */}
             <button
-              onClick={() => setShowSelena(true)}
+              onClick={() => {
+                logEvent('cta_click', {
+                  cta_name: 'chat_with_selena',
+                  destination: 'selena_handoff',
+                  page_path: '/v2/buyer-readiness',
+                  intent: 'buy',
+                });
+                setShowSelena(true);
+              }}
               className="w-full p-4 sm:p-5 text-left rounded-xl border-2 border-cc-gold bg-cc-gold/5 hover:bg-cc-gold/10 transition-all group"
             >
               <div className="flex items-start gap-3 sm:gap-4">
@@ -450,6 +492,14 @@ const BuyerReadinessCheck = () => {
               {/* Option B: Schedule with Kasandra */}
               <Link
                 to="/v2/book"
+                onClick={() => {
+                  logEvent('cta_click', {
+                    cta_name: 'talk_with_kasandra',
+                    destination: '/v2/book',
+                    page_path: '/v2/buyer-readiness',
+                    intent: 'buy',
+                  });
+                }}
                 className="p-4 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group block"
               >
                 <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
@@ -463,6 +513,14 @@ const BuyerReadinessCheck = () => {
               {/* Option C: Continue exploring */}
               <Link
                 to="/v2/guides"
+                onClick={() => {
+                  logEvent('cta_click', {
+                    cta_name: 'continue_exploring',
+                    destination: '/v2/guides',
+                    page_path: '/v2/buyer-readiness',
+                    intent: 'buy',
+                  });
+                }}
                 className="p-4 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group block"
               >
                 <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">

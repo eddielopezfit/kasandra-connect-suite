@@ -7,6 +7,8 @@ import TestimonialCard from "@/components/v2/TestimonialCard";
 import { buyerTestimonials } from "@/data/testimonials";
 import { Home, Search, DollarSign, FileCheck, CheckCircle, ArrowRight } from "lucide-react";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { logEvent } from "@/lib/analytics/logEvent";
+import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 
 const V2BuyContent = () => {
   const { t } = useLanguage();
@@ -15,6 +17,16 @@ const V2BuyContent = () => {
   useEffect(() => {
     updateSessionContext({ intent: 'buy' });
   }, []);
+
+  // Handle CTA clicks with tracking
+  const handleCTAClick = (ctaName: string, destination: string) => {
+    logEvent('cta_click', {
+      cta_name: ctaName,
+      destination,
+      page_path: '/v2/buy',
+      intent: 'buy',
+    });
+  };
 
   const steps = [
     {
@@ -70,10 +82,19 @@ const V2BuyContent = () => {
               )}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base">
+              <Button 
+                asChild 
+                className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
+                onClick={() => handleCTAClick('hero_start_search', '/v2/book')}
+              >
                 <Link to="/v2/book">{t("Start Your Search", "Comience Su Búsqueda")}</Link>
               </Button>
-              <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-full px-6 sm:px-8 text-sm sm:text-base">
+              <Button 
+                asChild 
+                variant="outline" 
+                className="border-white/30 text-white hover:bg-white/10 rounded-full px-6 sm:px-8 text-sm sm:text-base"
+                onClick={() => handleCTAClick('hero_readiness_check', '/v2/buyer-readiness')}
+              >
                 <Link to="/v2/buyer-readiness">{t("Take Readiness Check", "Evalúe Su Preparación")}</Link>
               </Button>
             </div>
@@ -132,10 +153,10 @@ const V2BuyContent = () => {
         </div>
       </section>
 
-      {/* Benefits */}
+      {/* Benefits + Featured Guide */}
       <section className="py-16 lg:py-20 bg-cc-sand">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
             <div className="bg-white rounded-2xl p-8 shadow-soft border border-cc-sand-dark/30">
               <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
                 {t("Why Work With Me?", "¿Por Qué Trabajar Conmigo?")}
@@ -191,19 +212,39 @@ const V2BuyContent = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-8 rounded-2xl shadow-elevated border border-cc-sand-dark/30">
-              <h3 className="font-serif text-xl font-bold text-cc-navy mb-4">
-                {t("Ready to Start?", "¿Listo para Comenzar?")}
-              </h3>
-              <p className="text-cc-charcoal mb-6">
-                {t(
-                  "Let's discuss your home buying goals and create a plan that works for you.",
-                  "Hablemos sobre sus metas de compra de casa y creemos un plan que funcione para usted."
-                )}
-              </p>
-              <Button asChild className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold">
-                <Link to="/v2/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
-              </Button>
+            
+            <div className="space-y-6">
+              {/* Featured Guide: Understanding Home Valuation */}
+              <FeaturedGuideCard
+                guideId="understanding-home-valuation"
+                titleEn="Understanding Your Home's True Value"
+                titleEs="Entendiendo el Verdadero Valor de Su Casa"
+                descriptionEn="Learn what factors affect home values before your search—knowledge that helps you spot good deals and negotiate with confidence."
+                descriptionEs="Aprenda qué factores afectan los valores de las casas antes de su búsqueda—conocimiento que le ayuda a identificar buenas ofertas y negociar con confianza."
+                readTimeEn="6 min read"
+                readTimeEs="6 min de lectura"
+                ctaSource="v2_buy_featured"
+              />
+              
+              {/* Ready to Start CTA */}
+              <div className="bg-white p-8 rounded-2xl shadow-elevated border border-cc-sand-dark/30">
+                <h3 className="font-serif text-xl font-bold text-cc-navy mb-4">
+                  {t("Ready to Start?", "¿Listo para Comenzar?")}
+                </h3>
+                <p className="text-cc-charcoal mb-6">
+                  {t(
+                    "Let's discuss your home buying goals and create a plan that works for you.",
+                    "Hablemos sobre sus metas de compra de casa y creemos un plan que funcione para usted."
+                  )}
+                </p>
+                <Button 
+                  asChild 
+                  className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold"
+                  onClick={() => handleCTAClick('ready_to_start_book', '/v2/book')}
+                >
+                  <Link to="/v2/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

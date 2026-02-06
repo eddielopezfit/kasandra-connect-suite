@@ -1,25 +1,73 @@
 /**
  * CalculatorNextSteps - CTA fork after seeing results
  * Routes to Private Cash Review, Selena chat, or booking
+ * Includes contextual guide suggestions based on recommendation
  */
 
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MessageCircle, Calendar, FileText } from "lucide-react";
+import { logEvent } from "@/lib/analytics/logEvent";
+import GuideSuggestionCard from "@/components/v2/shared/GuideSuggestionCard";
+
+type CalculatorRecommendation = 'cash' | 'traditional' | 'consult' | 'cash_advantage' | 'listing_advantage';
 
 interface CalculatorNextStepsProps {
   onAskSelena: () => void;
   onSaveResults?: () => void;
   showSaveResults?: boolean;
+  recommendation?: CalculatorRecommendation;
 }
 
 const CalculatorNextSteps = ({
   onAskSelena,
   onSaveResults,
   showSaveResults = false,
+  recommendation,
 }: CalculatorNextStepsProps) => {
   const { t } = useLanguage();
+
+  const handleCTAClick = (ctaName: string, destination: string) => {
+    logEvent('cta_click', {
+      cta_name: ctaName,
+      destination,
+      page_path: window.location.pathname,
+      intent: 'cash_offer',
+      recommendation,
+    });
+  };
+
+  // Get contextual guide based on recommendation
+  const getGuideContent = () => {
+    if (recommendation === 'cash_advantage') {
+      return {
+        guideId: 'cash-offer-guide',
+        titleEn: 'How Cash Offers Work',
+        titleEs: 'Cómo Funcionan las Ofertas en Efectivo',
+        descriptionEn: 'Understand the process, timeline, and what to expect.',
+        descriptionEs: 'Entienda el proceso, cronograma, y qué esperar.',
+      };
+    } else if (recommendation === 'listing_advantage') {
+      return {
+        guideId: 'selling-for-top-dollar',
+        titleEn: 'Selling for Top Dollar',
+        titleEs: 'Vender al Mejor Precio',
+        descriptionEn: 'Strategies to maximize your traditional sale.',
+        descriptionEs: 'Estrategias para maximizar su venta tradicional.',
+      };
+    } else {
+      return {
+        guideId: 'understanding-home-valuation',
+        titleEn: 'Understanding Home Valuation',
+        titleEs: 'Entendiendo la Valuación de Su Casa',
+        descriptionEn: 'Learn what factors affect your home\'s value.',
+        descriptionEs: 'Aprenda qué factores afectan el valor de su casa.',
+      };
+    }
+  };
+
+  const guideContent = getGuideContent();
 
   return (
     <div className="space-y-4 animate-fade-in">
@@ -31,7 +79,11 @@ const CalculatorNextSteps = ({
       </p>
 
       {/* Primary CTA: Private Cash Review */}
-      <Link to="/v2/private-cash-review" className="block">
+      <Link 
+        to="/v2/private-cash-review" 
+        className="block"
+        onClick={() => handleCTAClick('private_cash_review', '/v2/private-cash-review')}
+      >
         <Button
           className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-xl py-6 text-base shadow-gold group"
         >
@@ -49,7 +101,10 @@ const CalculatorNextSteps = ({
 
       {/* Secondary CTA: Ask Selena */}
       <button
-        onClick={onAskSelena}
+        onClick={() => {
+          handleCTAClick('ask_selena', 'selena_chat');
+          onAskSelena();
+        }}
         className="w-full p-4 text-left rounded-xl border-2 border-cc-gold/50 bg-white hover:border-cc-gold hover:bg-cc-gold/5 transition-all group"
       >
         <div className="flex items-center gap-3">
@@ -69,7 +124,11 @@ const CalculatorNextSteps = ({
       </button>
 
       {/* Tertiary CTA: Book Consultation */}
-      <Link to="/v2/book" className="block">
+      <Link 
+        to="/v2/book" 
+        className="block"
+        onClick={() => handleCTAClick('book_consultation', '/v2/book')}
+      >
         <button
           className="w-full p-4 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
         >
@@ -90,10 +149,29 @@ const CalculatorNextSteps = ({
         </button>
       </Link>
 
+      {/* Contextual Guide Suggestion */}
+      <div className="pt-4 border-t border-cc-sand-dark/30">
+        <p className="text-xs text-cc-slate mb-3 text-center">
+          {t("Want to learn more?", "¿Quiere saber más?")}
+        </p>
+        <GuideSuggestionCard
+          guideId={guideContent.guideId}
+          titleEn={guideContent.titleEn}
+          titleEs={guideContent.titleEs}
+          descriptionEn={guideContent.descriptionEn}
+          descriptionEs={guideContent.descriptionEs}
+          ctaSource="calculator_results"
+          variant="compact"
+        />
+      </div>
+
       {/* Optional: Save Results */}
       {showSaveResults && onSaveResults && (
         <button
-          onClick={onSaveResults}
+          onClick={() => {
+            handleCTAClick('save_results', 'save_results');
+            onSaveResults();
+          }}
           className="w-full text-center text-sm text-cc-gold hover:text-cc-gold-dark underline underline-offset-2"
         >
           {t("Save my results for later", "Guardar mis resultados para después")}

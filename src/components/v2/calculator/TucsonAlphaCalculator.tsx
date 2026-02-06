@@ -71,6 +71,13 @@ const TucsonAlphaCalculator = () => {
       recommendation: calculationResults.recommendation,
     });
 
+    // Emit tool_completed event
+    logEvent('tool_completed', {
+      tool_id: 'tucson_alpha_calculator',
+      page_path: '/v2/cash-offer-options',
+      recommendation: calculationResults.recommendation,
+    });
+
     // Track journey action
     trackJourneyAction('calculator');
 
@@ -108,9 +115,13 @@ const TucsonAlphaCalculator = () => {
     }
   }, [currentStep]);
 
-  // Handle start
+  // Handle start - emit tool_started
   const handleStart = useCallback(() => {
     setCurrentStep(1);
+    logEvent('tool_started', { 
+      tool_id: 'tucson_alpha_calculator',
+      page_path: '/v2/cash-offer-options',
+    });
     logEvent('calculator_open', { source: 'cash_offer_options' });
   }, []);
 
@@ -259,6 +270,7 @@ const TucsonAlphaCalculator = () => {
               <CalculatorNextSteps
                 onAskSelena={handleAskSelena}
                 showSaveResults={!!leadId}
+                recommendation={results?.recommendation === 'cash' ? 'cash_advantage' : results?.recommendation === 'traditional' ? 'listing_advantage' : 'consult'}
               />
             </div>
           )}
