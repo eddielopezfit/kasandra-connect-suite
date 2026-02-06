@@ -85,17 +85,17 @@ const V2BuyContent = () => {
               <Button 
                 asChild 
                 className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
-                onClick={() => handleCTAClick('hero_start_search', '/v2/book')}
+                onClick={() => handleCTAClick('hero_buyer_readiness', '/v2/buyer-readiness')}
               >
-                <Link to="/v2/book">{t("Start Your Search", "Comience Su Búsqueda")}</Link>
+                <Link to="/v2/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
               </Button>
               <Button 
                 asChild 
                 variant="outline" 
                 className="border-white/30 text-white hover:bg-white/10 rounded-full px-6 sm:px-8 text-sm sm:text-base"
-                onClick={() => handleCTAClick('hero_readiness_check', '/v2/buyer-readiness')}
+                onClick={() => handleCTAClick('hero_valuation_guide', '/v2/guides/understanding-home-valuation')}
               >
-                <Link to="/v2/buyer-readiness">{t("Take Readiness Check", "Evalúe Su Preparación")}</Link>
+                <Link to="/v2/guides/understanding-home-valuation">{t("Understand Home Values", "Entienda los Valores")}</Link>
               </Button>
             </div>
           </div>
