@@ -6,16 +6,16 @@ import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { buyerTestimonials } from "@/data/testimonials";
 import { Home, Search, DollarSign, FileCheck, CheckCircle, ArrowRight } from "lucide-react";
-import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { setIntentIfEmpty } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 
 const V2BuyContent = () => {
   const { t } = useLanguage();
 
-  // Auto-set intent when entering Buyer Decision Room
+  // Auto-set intent only if not already declared (prevents overwriting quiz/URL intent)
   useEffect(() => {
-    updateSessionContext({ intent: 'buy' });
+    setIntentIfEmpty('buy');
   }, []);
 
   // Handle CTA clicks with tracking
