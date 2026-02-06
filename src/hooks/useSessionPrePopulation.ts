@@ -125,6 +125,11 @@ export function useSessionPrePopulation(): PrePopulationData {
 /**
  * Get the full session dossier for edge function submission
  * Filters out undefined values to prevent edge function issues
+ * 
+ * IMPORTANT: This dossier is used by submit-consultation-intake and must include:
+ * - Buyer Readiness outputs (readiness_score, primary_priority)
+ * - Tool usage signals (tool_used, last_tool_result)
+ * - All decision room engagement signals
  */
 export function getFullSessionDossier(): Record<string, unknown> {
   const session = getSessionContext();
@@ -133,7 +138,7 @@ export function getFullSessionDossier(): Record<string, unknown> {
     return {};
   }
   
-  // Build fields object
+  // Build fields object - comprehensive session capture
   const fields: Record<string, unknown> = {
     // Session identity
     session_id: session.session_id,
@@ -151,6 +156,10 @@ export function getFullSessionDossier(): Record<string, unknown> {
     tool_used: session.tool_used,
     last_tool_result: session.last_tool_result,
     
+    // Buyer Readiness outputs (Intelligence Injection)
+    readiness_score: session.readiness_score,
+    primary_priority: session.primary_priority,
+    
     // Quiz completion
     quiz_completed: session.quiz_completed || false,
     quiz_result_path: session.quiz_result_path,
@@ -160,11 +169,17 @@ export function getFullSessionDossier(): Record<string, unknown> {
     last_report_id: session.last_report_id,
     has_booked: session.has_booked || false,
     
+    // Last viewed content
+    last_page: session.last_page,
+    last_guide_id: session.last_guide_id,
+    last_quiz_id: session.last_quiz_id,
+    
     // Attribution
     utm_source: session.utm_source,
     utm_campaign: session.utm_campaign,
     utm_medium: session.utm_medium,
     utm_content: session.utm_content,
+    utm_term: session.utm_term,
     referrer: session.referrer,
     
     // Ad funnel bridge
