@@ -239,7 +239,8 @@ function isSimilar(str1: string, str2: string, threshold = 0.8): boolean {
 const BOOKING_KEYWORDS = /book|schedule|call|talk|meet|appointment|consulta|cita|llamar|hablar|agendar/i;
 
 // Phrases: implicit booking suggestions (stricter filter for earned access)
-const BOOKING_PHRASES = /(talk to kasandra|priority call|strategy call|consultation|consult|call|kasandra|review strategy|revisar estrategia)/i;
+// NOTE: "kasandra" removed to avoid over-filtering educational mentions of the agent
+const BOOKING_PHRASES = /(talk to kasandra|priority call|strategy call|consultation|consult|review strategy|revisar estrategia)/i;
 
 /**
  * Checks if user explicitly asked to book/call
