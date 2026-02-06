@@ -9,6 +9,9 @@ import {
   updateSessionContext,
 } from './selenaSession';
 
+// Re-export from canonical source to avoid duplicate implementations
+export { bridgeLeadIdToV2, setStoredUserName, setStoredEmail, setStoredPhone } from './bridgeLeadIdToV2';
+
 /**
  * Initialize session for ad funnel visitors
  * Captures UTMs and sets ad funnel source
@@ -70,16 +73,4 @@ export function bridgeQuizResultsToV2(quizAnswers: {
     quiz_completed: true,
     ad_funnel_value_range: quizAnswers.value,
   });
-}
-
-/**
- * Bridge lead_id from ad funnel to V2 session
- * Stores in localStorage for continuity across page navigations
- */
-export function bridgeLeadIdToV2(leadId: string): void {
-  // Store lead_id in localStorage for V2 pickup
-  localStorage.setItem('selena_lead_id', leadId);
-  
-  // Log the bridge event
-  console.log('[AdFunnel] Lead ID bridged to V2:', leadId);
 }

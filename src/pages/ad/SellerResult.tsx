@@ -8,7 +8,7 @@ import { Lock, ArrowRight, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, LabelList } from "recharts";
-import { bridgeQuizResultsToV2, bridgeLeadIdToV2 } from "@/lib/analytics/initAdFunnelSession";
+import { bridgeQuizResultsToV2, bridgeLeadIdToV2, setStoredUserName, setStoredEmail } from "@/lib/analytics/initAdFunnelSession";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 
 // Value ranges - midpoints for calculation
@@ -167,7 +167,10 @@ const SellerResultContent = () => {
 
       // Bridge lead_id for V2 continuity (if returned from edge function)
       if (data?.lead_id) {
-        bridgeLeadIdToV2(data.lead_id);
+        bridgeLeadIdToV2(data.lead_id, 'seller_funnel');
+        // Store contact info for personalization and gate bypass
+        setStoredUserName(name.trim());
+        setStoredEmail(email.trim());
       }
 
       // Unlock the report
