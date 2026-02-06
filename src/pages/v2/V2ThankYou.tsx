@@ -4,9 +4,11 @@ import V2Layout from "@/components/v2/V2Layout";
 import { CheckCircle2, Clock, FileText, Home, Phone, ArrowRight, Play, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
-import { logEvent } from "@/lib/analytics/logEvent";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 
 type IntentType = 'cash' | 'sell' | 'buy' | 'dual' | 'explore';
+
+const PAGE_PATH = '/v2/thank-you';
 
 const V2ThankYouContent = () => {
   const { t } = useLanguage();
@@ -19,20 +21,20 @@ const V2ThankYouContent = () => {
   
   // Handle CTA clicks with tracking
   const handleCTAClick = (ctaName: string, destination: string) => {
-    logEvent('cta_click', {
+    logCTAClick({
       cta_name: ctaName,
       destination,
-      page_path: '/v2/thank-you',
+      page_path: PAGE_PATH,
       intent,
     });
   };
 
   // Handle Selena prompt click
   const handleSelenaClick = () => {
-    logEvent('cta_click', {
-      cta_name: 'thank_you_selena_prompt',
+    logCTAClick({
+      cta_name: CTA_NAMES.THANK_YOU_SELENA_PROMPT,
       destination: 'selena_chat',
-      page_path: '/v2/thank-you',
+      page_path: PAGE_PATH,
       intent,
     });
     openChat();
@@ -345,7 +347,7 @@ const V2ThankYouContent = () => {
                   asChild
                   size="lg"
                   className="bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold px-8 py-6 text-lg"
-                  onClick={() => handleCTAClick(`thank_you_primary_${intent}`, content.cta!.href)}
+                  onClick={() => handleCTAClick(`${CTA_NAMES.THANK_YOU_PRIMARY}_${intent}`, content.cta!.href)}
                 >
                   <Link to={content.cta.href}>
                     <content.cta.icon className="w-5 h-5 mr-2" />
@@ -371,7 +373,7 @@ const V2ThankYouContent = () => {
                     asChild
                     variant="outline"
                     className="flex-shrink-0 border-cc-gold text-cc-navy hover:bg-cc-gold/10"
-                    onClick={() => handleCTAClick(`thank_you_resource_${intent}`, content.resource!.href)}
+                    onClick={() => handleCTAClick(`${CTA_NAMES.THANK_YOU_RESOURCE}_${intent}`, content.resource!.href)}
                   >
                     <Link to={content.resource.href}>
                       {t('Read', 'Leer')}
@@ -427,7 +429,7 @@ const V2ThankYouContent = () => {
           <a 
             href="tel:520-349-3248" 
             className="text-cc-gold font-semibold text-lg hover:underline"
-            onClick={() => handleCTAClick('thank_you_phone', 'tel:520-349-3248')}
+            onClick={() => handleCTAClick(CTA_NAMES.THANK_YOU_PHONE, 'tel:520-349-3248')}
           >
             520-349-3248
           </a>
