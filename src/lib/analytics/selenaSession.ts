@@ -9,6 +9,39 @@ const CONTEXT_KEY = 'selena_context_v2';
 export type ToolUsed = 'tucson_alpha_calculator' | 'buyer_readiness' | 'report';
 export type CalculatorAdvantage = 'cash' | 'traditional' | 'consult';
 
+/**
+ * Canonical Intent type
+ * 'cash' is the only valid value for cash offers (legacy 'cash_offer' is normalized)
+ */
+export type Intent = 'buy' | 'sell' | 'cash' | 'investor' | 'explore' | 'dual';
+
+/**
+ * Normalize intent value to canonical form
+ * Handles legacy 'cash_offer' → 'cash' mapping
+ * Returns undefined for invalid/unknown values
+ */
+export function normalizeIntent(raw?: string | null): Intent | undefined {
+  if (!raw) return undefined;
+  
+  const normalized = raw.toLowerCase().trim();
+  
+  // Legacy mapping: cash_offer → cash
+  if (normalized === 'cash_offer') return 'cash';
+  
+  // Valid canonical intents
+  const validIntents: Intent[] = ['buy', 'sell', 'cash', 'investor', 'explore', 'dual'];
+  if (validIntents.includes(normalized as Intent)) {
+    return normalized as Intent;
+  }
+  
+  // Additional legacy mappings for form values
+  if (normalized === 'buyer') return 'buy';
+  if (normalized === 'seller') return 'sell';
+  if (normalized === 'browsing' || normalized === 'exploring') return 'explore';
+  
+  return undefined;
+}
+
 export interface SessionContext {
   session_id: string;
   language: 'en' | 'es';
@@ -21,7 +54,7 @@ export interface SessionContext {
   landing_path?: string;
   created_at: string;
   last_seen_at: string;
-  intent?: 'cash' | 'sell' | 'buy' | 'investor' | 'explore';
+  intent?: Intent;
   timeline?: 'asap' | '30_days' | '60_90' | 'exploring';
   situation?: 'inherited' | 'divorce' | 'tired_landlord' | 'upgrading' | 'relocating' | 'other';
   condition?: 'move_in_ready' | 'minor_repairs' | 'distressed' | 'unknown';
@@ -164,6 +197,7 @@ export function initSessionContext(language: 'en' | 'es' = 'en'): SessionContext
 
 /**
  * Get the current session context
+ * Normalizes intent on read to handle legacy 'cash_offer' values
  */
 export function getSessionContext(): SessionContext | null {
   if (typeof window === 'undefined') return null;
@@ -171,7 +205,12 @@ export function getSessionContext(): SessionContext | null {
   try {
     const stored = localStorage.getItem(CONTEXT_KEY);
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Normalize intent on read (handles legacy 'cash_offer' stored values)
+      if (parsed.intent) {
+        parsed.intent = normalizeIntent(parsed.intent);
+      }
+      return parsed;
     }
   } catch (e) {
     console.warn('[Selena] Failed to read context:', e);
@@ -181,6 +220,7 @@ export function getSessionContext(): SessionContext | null {
 
 /**
  * Update session context with partial data
+ * Normalizes intent on write to ensure canonical values are stored
  */
 export function updateSessionContext(updates: Partial<SessionContext>): SessionContext | null {
   if (typeof window === 'undefined') return null;
@@ -188,9 +228,15 @@ export function updateSessionContext(updates: Partial<SessionContext>): SessionC
   const current = getSessionContext();
   if (!current) return null;
   
+  // Normalize intent if provided
+  const normalizedUpdates = { ...updates };
+  if (updates.intent) {
+    normalizedUpdates.intent = normalizeIntent(updates.intent as string);
+  }
+  
   const updated: SessionContext = {
     ...current,
-    ...updates,
+    ...normalizedUpdates,
     last_seen_at: new Date().toISOString(),
   };
   

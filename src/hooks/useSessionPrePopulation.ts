@@ -32,7 +32,7 @@ function mapIntent(sessionIntent?: string): string | undefined {
   const intentMap: Record<string, string> = {
     buy: 'buyer',
     sell: 'seller',
-    cash_offer: 'cash_offer',
+    cash: 'cash', // Form uses canonical value now
     investor: 'unknown',
     explore: 'unknown',
   };

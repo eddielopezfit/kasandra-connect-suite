@@ -9,7 +9,7 @@ import { Compass, BookOpen, LayoutList, Phone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export type ConciergeTab = 'start' | 'guides' | 'options' | 'talk';
-export type JourneyIntent = 'sell' | 'buy' | 'cash_offer' | 'exploring';
+export type JourneyIntent = 'sell' | 'buy' | 'cash' | 'exploring';
 
 interface ConciergeTabBarProps {
   activeTab: ConciergeTab | null;
@@ -63,7 +63,7 @@ const STEP_LABELS: Record<string, { en: string; es: string }[]> = {
     { en: 'Step 3: Tour', es: 'Paso 3: Recorrer' },
     { en: 'Step 4: Offer', es: 'Paso 4: Oferta' },
   ],
-  cash_offer: [
+  cash: [
     { en: 'Step 1: Estimate', es: 'Paso 1: Estimar' },
     { en: 'Step 2: Compare', es: 'Paso 2: Comparar' },
     { en: 'Step 3: Review', es: 'Paso 3: Revisar' },
