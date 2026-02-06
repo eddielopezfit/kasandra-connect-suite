@@ -8,7 +8,7 @@ import TestimonialCard from "@/components/v2/TestimonialCard";
 import { buyerTestimonials } from "@/data/testimonials";
 import { Home, Search, DollarSign, FileCheck, CheckCircle, MessageCircle } from "lucide-react";
 import { setIntentIfEmpty } from "@/lib/analytics/selenaSession";
-import { logCTAClick } from "@/lib/analytics/ctaDefaults";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 
 const PAGE_PATH = '/v2/buy';
@@ -23,14 +23,14 @@ const V2BuyContent = () => {
     setIntentIfEmpty('buy');
   }, []);
 
-  // Handle CTA clicks with tracking
+  // Handle CTA clicks with tracking (uses constants from CTA_NAMES)
   const handleCTAClick = (cta_name: string, destination: string) => {
     logCTAClick({ cta_name, destination, page_path: PAGE_PATH, intent: PAGE_INTENT });
   };
 
   // Handle Selena routing CTA
   const handleSelenaRoute = () => {
-    handleCTAClick('cta_selena_route_call', 'selena_chat');
+    handleCTAClick(CTA_NAMES.SELENA_ROUTE_CALL, 'selena_chat');
     openChat();
   };
 
@@ -91,7 +91,7 @@ const V2BuyContent = () => {
               <Button 
                 asChild 
                 className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
-                onClick={() => handleCTAClick('hero_buyer_readiness', '/v2/buyer-readiness')}
+                onClick={() => handleCTAClick(CTA_NAMES.HERO_BUYER_READINESS, '/v2/buyer-readiness')}
               >
                 <Link to="/v2/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
               </Button>
@@ -99,7 +99,7 @@ const V2BuyContent = () => {
                 asChild 
                 variant="outline" 
                 className="border-white/30 text-white hover:bg-white/10 rounded-full px-6 sm:px-8 text-sm sm:text-base"
-                onClick={() => handleCTAClick('hero_valuation_guide', '/v2/guides/understanding-home-valuation')}
+                onClick={() => handleCTAClick(CTA_NAMES.HERO_VALUATION_GUIDE, '/v2/guides/understanding-home-valuation')}
               >
                 <Link to="/v2/guides/understanding-home-valuation">{t("Understand Home Values", "Entienda los Valores")}</Link>
               </Button>
@@ -246,7 +246,7 @@ const V2BuyContent = () => {
                 <Button 
                   asChild 
                   className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold"
-                  onClick={() => handleCTAClick('ready_to_start_readiness', '/v2/buyer-readiness')}
+                  onClick={() => handleCTAClick(CTA_NAMES.READY_TO_START_READINESS, '/v2/buyer-readiness')}
                 >
                   <Link to="/v2/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
                 </Button>
