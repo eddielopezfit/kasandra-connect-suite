@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
-import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, MessageCircle } from "lucide-react";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 
 const V2CashOfferOptionsContent = () => {
   const { t } = useLanguage();
+  const { openChat } = useSelenaChat();
 
   return (
     <>
@@ -244,8 +247,15 @@ const V2CashOfferOptionsContent = () => {
                 "Este es un servicio educativo para ayudarle a entender sus opciones. Para consejos legales o fiscales específicos, por favor consulte profesionales calificados."
               )}
             </p>
-            <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
-              <Link to="/v2/book">{t("Request a Review", "Solicitar una Revisión")}</Link>
+            <Button 
+              onClick={() => {
+                logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2/cash-offer-options', intent: 'cash' });
+                openChat();
+              }}
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
+            >
+              <MessageCircle className="w-5 h-5 mr-2" />
+              {t("Request a Review", "Solicitar una Revisión")}
             </Button>
           </div>
         </div>

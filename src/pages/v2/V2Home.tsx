@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TrustBar from "@/components/v2/TrustBar";
 import TestimonialCard from "@/components/v2/TestimonialCard";
@@ -29,9 +30,11 @@ import {
 import heroImage from "@/assets/hero-bg.jpg";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
+  const { openChat } = useSelenaChat();
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
   
@@ -86,8 +89,15 @@ const V2HomeContent = () => {
               )}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animation-delay-600">
-              <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-8 py-6 text-lg shadow-gold">
-                <Link to="/v2/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
+              <Button 
+                onClick={() => {
+                  logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2', intent: 'explore' });
+                  openChat();
+                }}
+                className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-8 py-6 text-lg shadow-gold"
+              >
+                <MessageCircle className="w-5 h-5 mr-2" />
+                {t("Book a Consultation", "Agendar una Cita")}
               </Button>
               <Button
                 asChild
@@ -637,8 +647,15 @@ const V2HomeContent = () => {
               "Ya sea que esté comprando su primera casa, vendiendo una propiedad, o explorando sus opciones, estoy aquí para ayudarle en cada paso del camino."
             )}
           </p>
-          <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-10 py-6 text-lg shadow-gold">
-            <Link to="/v2/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
+          <Button 
+            onClick={() => {
+              logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2', intent: 'explore' });
+              openChat();
+            }}
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-10 py-6 text-lg shadow-gold"
+          >
+            <MessageCircle className="w-5 h-5 mr-2" />
+            {t("Book a Consultation", "Agendar una Cita")}
           </Button>
         </div>
       </section>
