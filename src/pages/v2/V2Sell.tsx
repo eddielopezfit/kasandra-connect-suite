@@ -8,8 +8,11 @@ import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle } from "lucide-react";
 import { setIntentIfEmpty } from "@/lib/analytics/selenaSession";
-import { logEvent } from "@/lib/analytics/logEvent";
+import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
+
+const PAGE_PATH = '/v2/sell';
+const PAGE_INTENT = 'sell' as const;
 
 const V2SellContent = () => {
   const { t } = useLanguage();
@@ -21,13 +24,8 @@ const V2SellContent = () => {
   }, []);
 
   // Handle CTA clicks with tracking
-  const handleCTAClick = (ctaName: string, destination: string) => {
-    logEvent('cta_click', {
-      cta_name: ctaName,
-      destination,
-      page_path: '/v2/sell',
-      intent: 'sell',
-    });
+  const handleCTAClick = (cta_name: string, destination: string) => {
+    logCTAClick({ cta_name, destination, page_path: PAGE_PATH, intent: PAGE_INTENT });
   };
 
   // Handle Selena routing CTA
