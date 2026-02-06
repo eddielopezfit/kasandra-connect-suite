@@ -225,9 +225,9 @@ const V2SellContent = () => {
                 <Button 
                   asChild 
                   className="w-full bg-cc-navy hover:bg-cc-navy-dark text-white rounded-full"
-                  onClick={() => handleCTAClick('traditional_listing', '/v2/book')}
+                  onClick={() => handleCTAClick('traditional_listing_guide', '/v2/guides/selling-for-top-dollar')}
                 >
-                  <Link to="/v2/book">{t("Discuss Traditional Sale", "Discutir Venta Tradicional")}</Link>
+                  <Link to="/v2/guides/selling-for-top-dollar">{t("Learn Traditional Sale Strategy", "Conozca la Estrategia de Venta")}</Link>
                 </Button>
               </div>
               <div className="bg-white p-8 rounded-xl border border-cc-sand-dark/50">

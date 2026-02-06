@@ -240,9 +240,9 @@ const V2BuyContent = () => {
                 <Button 
                   asChild 
                   className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold"
-                  onClick={() => handleCTAClick('ready_to_start_book', '/v2/book')}
+                  onClick={() => handleCTAClick('ready_to_start_readiness', '/v2/buyer-readiness')}
                 >
-                  <Link to="/v2/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
+                  <Link to="/v2/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
                 </Button>
               </div>
             </div>
