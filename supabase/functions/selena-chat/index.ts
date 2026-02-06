@@ -38,10 +38,34 @@ interface ChatRequest {
 // Canonical timeline values: asap | 30_days | 60_90
 
 /**
+ * Priority order for intent routing: cash > dual > sell > buy > explore
+ * Ensures deterministic primary intent selection
+ */
+const INTENT_PRIORITY: Record<string, number> = {
+  cash: 1,
+  dual: 2,
+  sell: 3,
+  buy: 4,
+  explore: 5,
+};
+
+type CanonicalIntent = "buy" | "sell" | "cash" | "dual" | "explore";
+
+/**
+ * Picks the highest-priority intent from detected intents
+ */
+function pickPrimaryIntent(intents: string[]): CanonicalIntent {
+  const sorted = [...new Set(intents)].sort(
+    (a, b) => (INTENT_PRIORITY[a] ?? 99) - (INTENT_PRIORITY[b] ?? 99)
+  );
+  return (sorted[0] as CanonicalIntent) || "explore";
+}
+
+/**
  * Normalizes detected intent to canonical values
  * Returns null for invalid/unknown values
  */
-function normalizeIntent(raw: string): "buy" | "sell" | "cash" | "dual" | "explore" | null {
+function normalizeIntent(raw: string): CanonicalIntent | null {
   if (!raw) return null;
   const v = raw.toLowerCase().trim();
   if (v === "cash_offer") return "cash";
@@ -409,11 +433,11 @@ serve(async (req) => {
     const language = context.language || "en";
     let leadId = context.lead_id;
 
-    const intents = detectIntent(message, context.route);
+    const detectedIntents = detectIntent(message, context.route);
     const timeline = detectTimeline(message);
 
-    // Primary intent (canonical)
-    const primaryIntent = intents.includes("cash") ? "cash" : intents[0];
+    // Primary intent (canonical) - uses priority order: cash > dual > sell > buy > explore
+    const primaryIntent = pickPrimaryIntent(detectedIntents);
 
     // Determine effective intent (detected now OR previously stored)
     const effectiveIntent = primaryIntent !== 'explore' ? primaryIntent : (context.intent || 'explore');
