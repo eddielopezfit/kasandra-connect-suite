@@ -6,10 +6,13 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { buyerTestimonials } from "@/data/testimonials";
-import { Home, Search, DollarSign, FileCheck, CheckCircle, ArrowRight, MessageCircle } from "lucide-react";
+import { Home, Search, DollarSign, FileCheck, CheckCircle, MessageCircle } from "lucide-react";
 import { setIntentIfEmpty } from "@/lib/analytics/selenaSession";
-import { logEvent } from "@/lib/analytics/logEvent";
+import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
+
+const PAGE_PATH = '/v2/buy';
+const PAGE_INTENT = 'buy' as const;
 
 const V2BuyContent = () => {
   const { t } = useLanguage();
@@ -21,13 +24,8 @@ const V2BuyContent = () => {
   }, []);
 
   // Handle CTA clicks with tracking
-  const handleCTAClick = (ctaName: string, destination: string) => {
-    logEvent('cta_click', {
-      cta_name: ctaName,
-      destination,
-      page_path: '/v2/buy',
-      intent: 'buy',
-    });
+  const handleCTAClick = (cta_name: string, destination: string) => {
+    logCTAClick({ cta_name, destination, page_path: PAGE_PATH, intent: PAGE_INTENT });
   };
 
   // Handle Selena routing CTA
