@@ -1,3 +1,35 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * SELENA CHAT - AI Concierge Edge Function
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * 
+ * CONTRACT (v1 - LOCKED 2026-02-06):
+ * 
+ * CANONICAL INTENTS: buy | sell | cash | dual | explore
+ * CANONICAL TIMELINES: asap | 30_days | 60_90
+ * 
+ * INTENT PRIORITY ORDER: cash > dual > sell > buy > explore
+ *   - When multiple intents are detected, the highest priority wins as primaryIntent
+ * 
+ * EARNED ACCESS GATE:
+ *   Booking CTAs (actions array) are ONLY shown when user has "earned" access:
+ *   
+ *   1. EXPLICIT ASK: User message contains booking keywords (book, schedule, call, etc.)
+ *   2. TOOL COMPLETION: context.tool_used OR context.last_tool_result OR context.quiz_completed
+ *   3. EMAIL PROVIDED: extractedEmail from message (commitment signal)
+ *   4. ENGAGED TURNS: 2+ user turns AND intent is NOT "explore"
+ *   
+ *   If none of these are true → actions: [] (no CTA shown)
+ * 
+ * SUGGESTION FILTERING:
+ *   When booking is NOT earned, suggestedReplies containing booking keywords/phrases
+ *   are automatically stripped to prevent premature sales pressure.
+ * 
+ * CTA LABEL: "Review Strategy with Kasandra" (never "Free Consultation")
+ * 
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
