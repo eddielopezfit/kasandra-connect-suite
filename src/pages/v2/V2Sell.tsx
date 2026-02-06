@@ -7,7 +7,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle } from "lucide-react";
-import { setIntentIfEmpty } from "@/lib/analytics/selenaSession";
+import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 
@@ -20,7 +20,7 @@ const V2SellContent = () => {
 
   // Auto-set intent only if not already declared (prevents overwriting quiz/URL intent)
   useEffect(() => {
-    setIntentIfEmpty('sell');
+    setFieldIfEmpty('intent', 'sell');
   }, []);
 
   // Handle CTA clicks with tracking (uses constants from CTA_NAMES)

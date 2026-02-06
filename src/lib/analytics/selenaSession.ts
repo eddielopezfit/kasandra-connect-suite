@@ -250,17 +250,106 @@ export function updateSessionContext(updates: Partial<SessionContext>): SessionC
 }
 
 /**
- * Set intent only if not already declared (prevents silent overwrite)
- * Priority: Quiz/URL intent > Page-based auto-set
+ * Check if a value is "empty" for session context purposes
+ * Empty = null | undefined | '' | []
+ * NOT empty = 0 (valid number), false (valid boolean), any truthy value
  */
-export function setIntentIfEmpty(intent: SessionContext['intent']): boolean {
+function isEmptyValue(value: unknown): boolean {
+  if (value === null || value === undefined) return true;
+  if (value === '') return true;
+  if (Array.isArray(value) && value.length === 0) return true;
+  // 0 and false are valid values, NOT empty
+  return false;
+}
+
+/**
+ * Set a session context field only if it's currently empty
+ * Prevents mount-time auto-writes from overwriting user-declared values
+ * 
+ * @param key - The SessionContext field to set
+ * @param value - The value to set if field is empty
+ * @returns true if the field was set, false if it was skipped
+ */
+export function setFieldIfEmpty<K extends keyof SessionContext>(
+  key: K,
+  value: SessionContext[K]
+): boolean {
   const current = getSessionContext();
-  if (current?.intent) {
-    // Intent already exists, do not overwrite
+  if (!current) return false;
+  
+  const currentValue = current[key];
+  if (!isEmptyValue(currentValue)) {
+    // Field already has a value, do not overwrite
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[Selena] setFieldIfEmpty: skipped "${String(key)}" (already set to "${currentValue}")`);
+    }
     return false;
   }
-  updateSessionContext({ intent });
+  
+  updateSessionContext({ [key]: value } as Partial<SessionContext>);
+  
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[Selena] setFieldIfEmpty: applied "${String(key)}" = "${value}"`);
+  }
   return true;
+}
+
+/**
+ * Set multiple session context fields, but only those that are currently empty
+ * Uses a single updateSessionContext call for efficiency
+ * 
+ * @param updates - Partial SessionContext with fields to potentially set
+ * @returns Object with arrays of applied and skipped field keys
+ */
+export function setFieldsIfEmpty(
+  updates: Partial<SessionContext>
+): { applied: (keyof SessionContext)[]; skipped: (keyof SessionContext)[] } {
+  const current = getSessionContext();
+  const result = {
+    applied: [] as (keyof SessionContext)[],
+    skipped: [] as (keyof SessionContext)[],
+  };
+  
+  if (!current) return result;
+  
+  const toApply: Partial<SessionContext> = {};
+  
+  for (const key of Object.keys(updates) as (keyof SessionContext)[]) {
+    const currentValue = current[key];
+    const newValue = updates[key];
+    
+    if (isEmptyValue(currentValue)) {
+      // Field is empty, apply the update
+      (toApply as Record<string, unknown>)[key] = newValue;
+      result.applied.push(key);
+    } else {
+      // Field already has a value, skip
+      result.skipped.push(key);
+    }
+  }
+  
+  // Apply all updates in one call
+  if (Object.keys(toApply).length > 0) {
+    updateSessionContext(toApply);
+  }
+  
+  if (process.env.NODE_ENV === 'development' && (result.applied.length > 0 || result.skipped.length > 0)) {
+    console.log('[Selena] setFieldsIfEmpty:', {
+      applied: result.applied,
+      skipped: result.skipped,
+    });
+  }
+  
+  return result;
+}
+
+/**
+ * Set intent only if not already declared (prevents silent overwrite)
+ * Priority: Quiz/URL intent > Page-based auto-set
+ * @deprecated Use setFieldIfEmpty('intent', value) instead
+ */
+export function setIntentIfEmpty(intent: SessionContext['intent']): boolean {
+  return setFieldIfEmpty('intent', intent);
 }
 
 /**
