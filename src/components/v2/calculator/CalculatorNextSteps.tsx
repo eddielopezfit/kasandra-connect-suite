@@ -33,7 +33,7 @@ const CalculatorNextSteps = ({
       cta_name: ctaName,
       destination,
       page_path: window.location.pathname,
-      intent: 'cash_offer',
+      intent: 'cash', // Normalized intent value
       recommendation,
     });
   };
