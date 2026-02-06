@@ -6,7 +6,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Send, Sparkles, FileText, Loader2, Globe, Minus, MessageCircle, RotateCcw } from 'lucide-react';
+import { Sparkles, FileText, Loader2, MessageCircle } from 'lucide-react';
 import { useSelenaChat, ChatMessage, ChatAction } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { logEvent } from '@/lib/analytics/logEvent';
@@ -25,13 +25,15 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
+
 import { ReportViewer } from '@/components/v2/ReportViewer';
 import LeadCaptureModal from '@/components/v2/LeadCaptureModal';
 import { PriorityCallModal } from './PriorityCallModal';
-import { ConciergeTabBar, ConciergeTab, JourneyIntent } from './ConciergeTabBar';
-import { ConciergeTabPanels } from './ConciergeTabPanels';
+import { ConciergeTab, JourneyIntent } from './ConciergeTabBar';
+import { SelenaDrawerHeaderControls } from './drawer/SelenaDrawerHeaderControls';
+import { SelenaDrawerMessagesArea } from './drawer/SelenaDrawerMessagesArea';
+import { SelenaDrawerSuggestedRepliesChips } from './drawer/SelenaDrawerSuggestedRepliesChips';
+import { SelenaDrawerBottomSection } from './drawer/SelenaDrawerBottomSection';
 
 /**
  * Compute journey step based on session context
@@ -178,205 +180,52 @@ export function SelenaChatDrawer() {
 
   // ========== SHARED CONTENT COMPONENTS ==========
 
-  const HeaderControls = ({ showMinimize = false }: { showMinimize?: boolean }) => (
-    <div className="flex items-center gap-2">
-      {/* New Chat Button */}
-      {messages.length > 1 && (
-        <button
-          onClick={clearHistory}
-          className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium",
-            "bg-muted hover:bg-muted/80 text-foreground",
-            "transition-colors duration-200"
-          )}
-          aria-label={t('New chat', 'Nuevo chat')}
-          title={t('Start new chat', 'Iniciar nuevo chat')}
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>{t('New', 'Nuevo')}</span>
-        </button>
-      )}
-      
-      {/* Language Toggle Button - Shows CURRENT language, click to switch */}
-      <button
-        onClick={handleLanguageToggle}
-        className={cn(
-          "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium",
-          "bg-muted hover:bg-muted/80 text-foreground",
-          "transition-colors duration-200"
-        )}
-        aria-label={language === 'en' ? 'Switch to Spanish' : 'Cambiar a Inglés'}
-      >
-        <Globe className="w-3.5 h-3.5" />
-        {/* Show current language as the button label */}
-        <span className="uppercase">{language}</span>
-      </button>
-      
-      {/* Minimize Button (Desktop only) */}
-      {showMinimize && (
-        <button
-          onClick={handleMinimize}
-          className="p-1.5 rounded-full hover:bg-muted transition-colors"
-          aria-label={t('Minimize', 'Minimizar')}
-        >
-          <Minus className="w-4 h-4" />
-        </button>
-      )}
-    </div>
-  );
-
   const MessagesArea = () => (
-    <ScrollArea 
-      className="flex-1 p-4" 
-      ref={scrollRef}
-      onClick={handleMessagesAreaClick}
-    >
-      <div className="space-y-4 pb-2">
-        {messages.map((message) => (
-          <MessageBubble
-            key={message.id}
-            message={message}
-            onActionClick={handleActionClick}
-          />
-        ))}
-        
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3 max-w-[85%]">
-              <div className="flex gap-1">
-                <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <span className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Bottom anchor for reliable scroll positioning */}
-        <div ref={bottomRef} />
-      </div>
-    </ScrollArea>
+    <SelenaDrawerMessagesArea
+      messages={messages}
+      isLoading={isLoading}
+      onActionClick={handleActionClick}
+      onMessagesAreaClick={handleMessagesAreaClick}
+      scrollRef={scrollRef}
+      bottomRef={bottomRef}
+    />
   );
 
-  const SuggestedRepliesChips = () => {
-    if (!suggestedReplies || suggestedReplies.length === 0 || isLoading || activeTab) {
-      return null;
-    }
-    
-    // Get the last user message for client-side deduplication (safety net)
-    const lastUserMessage = [...messages]
-      .reverse()
-      .find(m => m.role === 'user')?.content?.toLowerCase().trim();
-    
-    // Filter out any pill that matches (or is very similar to) the last user message
-    const filteredReplies = suggestedReplies.filter(reply => {
-      if (!lastUserMessage) return true;
-      const normalized = reply.toLowerCase().trim();
-      // Exact match check
-      if (normalized === lastUserMessage) return false;
-      // Fuzzy match: check if 70%+ of words overlap
-      const replyWords = new Set(normalized.split(/\s+/).filter(w => w.length > 2));
-      const userWords = new Set(lastUserMessage.split(/\s+/).filter(w => w.length > 2));
-      if (replyWords.size === 0 || userWords.size === 0) return true;
-      const intersection = [...replyWords].filter(w => userWords.has(w)).length;
-      const union = new Set([...replyWords, ...userWords]).size;
-      if (union > 0 && (intersection / union) >= 0.7) return false;
-      return true;
-    });
-    
-    if (filteredReplies.length === 0) return null;
-    
-    return (
-      <div className="border-t border-border px-4 py-2.5 shrink-0 bg-background/95 backdrop-blur-sm">
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide max-w-full">
-          {filteredReplies.map((reply, index) => (
-            <button
-              key={index}
-              onClick={() => handleSuggestedReplyClick(reply)}
-              className={cn(
-                "shrink-0 text-xs font-medium px-3 py-2 rounded-full",
-                "bg-cc-sand text-cc-navy border border-cc-navy/20",
-                "hover:bg-cc-navy hover:text-white",
-                "active:scale-95",
-                "transition-all duration-200",
-                "whitespace-nowrap",
-                "max-w-[200px] truncate"
-              )}
-            >
-              {reply}
-            </button>
-          ))}
-        </div>
-      </div>
-    );
-  };
+  const SuggestedRepliesChips = () => (
+    <SelenaDrawerSuggestedRepliesChips
+      suggestedReplies={suggestedReplies}
+      isLoading={isLoading}
+      activeTab={activeTab}
+      messages={messages}
+      onSuggestedReplyClick={handleSuggestedReplyClick}
+    />
+  );
 
   const BottomSection = () => (
-    <div 
-      className="shrink-0 relative bg-background"
-      style={{ paddingBottom: isMobile ? 'env(safe-area-inset-bottom, 0px)' : undefined }}
-    >
-      {/* Tab Panels (slide up above tabs) */}
-      <ConciergeTabPanels
-        activeTab={activeTab}
-        onClose={handleCloseTabPanel}
-        onSendMessage={handleSuggestedReplyClick}
-        onActionClick={handleActionClick}
-        language={language}
-        leadId={leadId}
-        hasReports={hasReports}
-        closeDrawer={closeChat}
-        currentIntent={journeyContext.intent}
-      />
-
-      {/* Concierge Tab Bar with Journey Progress */}
-      <ConciergeTabBar
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-        language={language}
-        currentIntent={journeyContext.intent}
-        journeyStep={journeyContext.step}
-      />
-
-      {/* Input Area */}
-      <form 
-        onSubmit={handleSubmit}
-        className="border-t border-border p-4 bg-background"
-      >
-        <div className="flex gap-2">
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={t('Type your message...', 'Escribe tu mensaje...')}
-            className={cn(
-              "flex-1 min-w-0 px-4 py-2 rounded-full",
-              "bg-muted border-0",
-              "text-foreground placeholder:text-muted-foreground",
-              "focus:outline-none focus:ring-2 focus:ring-primary/50",
-              "text-base" // Prevent zoom on iOS
-            )}
-            disabled={isLoading}
-          />
-          <Button
-            type="submit"
-            size="icon"
-            disabled={!input.trim() || isLoading}
-            className="rounded-full w-10 h-10 shrink-0"
-          >
-            <Send className="w-4 h-4" />
-          </Button>
-        </div>
-        
-        <p className="text-xs text-muted-foreground text-center mt-2">
-          {t(
-            'Selena is an AI assistant. All advice is reviewed by Kasandra Prieto, licensed Realtor®.',
-            'Selena es una asistente de IA. Todo consejo es revisado por Kasandra Prieto, Realtor® licenciada.'
-          )}
-        </p>
-      </form>
-    </div>
+    <SelenaDrawerBottomSection
+      activeTab={activeTab}
+      onCloseTabPanel={handleCloseTabPanel}
+      onTabChange={handleTabChange}
+      onSuggestedReplyClick={handleSuggestedReplyClick}
+      onActionClick={handleActionClick}
+      language={language}
+      leadId={leadId}
+      hasReports={hasReports}
+      closeDrawer={closeChat}
+      currentIntent={journeyContext.intent}
+      journeyStep={journeyContext.step}
+      isMobile={isMobile}
+      input={input}
+      setInput={setInput}
+      inputRef={inputRef}
+      onSubmit={handleSubmit}
+      isLoading={isLoading}
+      placeholder={t('Type your message...', 'Escribe tu mensaje...')}
+      disclaimer={t(
+        'Selena is an AI assistant. All advice is reviewed by Kasandra Prieto, licensed Realtor®.',
+        'Selena es una asistente de IA. Todo consejo es revisado por Kasandra Prieto, Realtor® licenciada.'
+      )}
+    />
   );
 
   // ========== MINIMIZED STATE (Desktop only) ==========
@@ -456,7 +305,15 @@ export function SelenaChatDrawer() {
                   </span>
                 </DrawerTitle>
                 
-                <HeaderControls showMinimize={false} />
+                <SelenaDrawerHeaderControls
+                  showMinimize={false}
+                  messagesLength={messages.length}
+                  onClearHistory={clearHistory}
+                  language={language}
+                  onToggleLanguage={handleLanguageToggle}
+                  onMinimize={handleMinimize}
+                  t={t}
+                />
               </div>
             </DrawerHeader>
 
@@ -540,7 +397,15 @@ export function SelenaChatDrawer() {
                 </span>
               </SheetTitle>
               
-              <HeaderControls showMinimize={true} />
+              <SelenaDrawerHeaderControls
+                showMinimize={true}
+                messagesLength={messages.length}
+                onClearHistory={clearHistory}
+                language={language}
+                onToggleLanguage={handleLanguageToggle}
+                onMinimize={handleMinimize}
+                t={t}
+              />
             </div>
           </SheetHeader>
 
@@ -606,46 +471,3 @@ export function SelenaChatDrawer() {
   );
 }
 
-interface MessageBubbleProps {
-  message: ChatMessage;
-  onActionClick: (action: ChatAction) => void;
-}
-
-function MessageBubble({ message, onActionClick }: MessageBubbleProps) {
-  const isUser = message.role === 'user';
-  
-  return (
-    <div className={cn('flex', isUser ? 'justify-end' : 'justify-start')}>
-      <div
-        className={cn(
-          'max-w-[85%] rounded-2xl px-4 py-3',
-          isUser
-            ? 'bg-primary text-primary-foreground rounded-br-md'
-            : 'bg-muted text-foreground rounded-bl-md'
-        )}
-      >
-        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-        
-        {/* Action Buttons */}
-        {message.actions && message.actions.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-3">
-            {message.actions.map((action, index) => (
-              <button
-                key={index}
-                onClick={() => onActionClick(action)}
-                className={cn(
-                  "text-xs font-medium px-3 py-1.5 rounded-full",
-                  "bg-background/20 hover:bg-background/30",
-                  "transition-colors duration-200",
-                  "border border-current/20"
-                )}
-              >
-                {action.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
