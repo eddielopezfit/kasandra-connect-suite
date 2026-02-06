@@ -16,7 +16,7 @@ function mapQuizIntentToCanonical(answerIndex: number): string {
   switch (answerIndex) {
     case 0: return "buy";
     case 1: return "sell";
-    case 2: return "cash_offer";
+    case 2: return "cash"; // Canonical value (not 'cash_offer')
     default: return "explore";
   }
 }

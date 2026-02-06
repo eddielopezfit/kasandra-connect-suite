@@ -34,8 +34,8 @@ import { useSessionPrePopulation, getFullSessionDossier } from "@/hooks/useSessi
 import { bridgeLeadIdToV2, setStoredUserName, setStoredEmail, setStoredPhone } from "@/lib/analytics/bridgeLeadIdToV2";
 import GHLCalendarEmbed from "./GHLCalendarEmbed";
 
-// Intents that require property address
-const SELLER_INTENTS = ["cash_offer", "seller", "buy_and_sell"];
+// Intents that require property address (form values, normalized on submit)
+const SELLER_INTENTS = ["cash", "cash_offer", "seller", "buy_and_sell"];
 const BUYER_INTENTS = ["buyer", "buy_and_sell"];
 
 // Form schema with conditional validation messages
@@ -205,7 +205,7 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
   const intentOptions = [
     { value: "buyer", labelEn: "Buy a home", labelEs: "Comprar una casa" },
     { value: "seller", labelEn: "Sell a home", labelEs: "Vender una casa" },
-    { value: "cash_offer", labelEn: "Get a cash offer", labelEs: "Obtener una oferta en efectivo" },
+    { value: "cash", labelEn: "Get a cash offer", labelEs: "Obtener una oferta en efectivo" },
     { value: "buy_and_sell", labelEn: "Buy & Sell (Trade Up/Down)", labelEs: "Comprar y Vender (Cambiar de casa)" },
     { value: "browsing", labelEn: "Just browsing", labelEs: "Solo explorando" },
   ];

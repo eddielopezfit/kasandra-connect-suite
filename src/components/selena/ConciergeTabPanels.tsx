@@ -291,7 +291,7 @@ function MyOptionsPanel({
 
   // Intent-based filtering and ordering
   const isBuyer = currentIntent === 'buy';
-  const isSeller = currentIntent === 'sell' || currentIntent === 'cash_offer';
+  const isSeller = currentIntent === 'sell' || currentIntent === 'cash';
 
   return (
     <>

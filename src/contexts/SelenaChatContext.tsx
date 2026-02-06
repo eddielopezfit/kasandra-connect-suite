@@ -822,7 +822,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       if (msg.role === 'user') {
         const lower = content.toLowerCase();
         if (lower.includes('cash') || lower.includes('offer')) {
-          summaryJson.intent = 'cash_offer';
+          summaryJson.intent = 'cash'; // Canonical value
         }
         if (lower.includes('sell') || lower.includes('selling')) {
           summaryJson.intent = summaryJson.intent || 'sell';

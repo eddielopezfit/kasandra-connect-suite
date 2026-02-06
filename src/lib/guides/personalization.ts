@@ -118,7 +118,7 @@ export function getIntent(): Intent {
     const intentMap: Record<string, Intent> = {
       buy: 'buy',
       sell: 'sell',
-      cash_offer: 'cash',
+      cash: 'cash', // Canonical value (session context already normalized)
       explore: 'explore',
       investor: 'explore',
     };
