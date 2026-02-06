@@ -2,16 +2,18 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { buyerTestimonials } from "@/data/testimonials";
-import { Home, Search, DollarSign, FileCheck, CheckCircle, ArrowRight } from "lucide-react";
+import { Home, Search, DollarSign, FileCheck, CheckCircle, ArrowRight, MessageCircle } from "lucide-react";
 import { setIntentIfEmpty } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 
 const V2BuyContent = () => {
   const { t } = useLanguage();
+  const { openChat } = useSelenaChat();
 
   // Auto-set intent only if not already declared (prevents overwriting quiz/URL intent)
   useEffect(() => {
@@ -26,6 +28,12 @@ const V2BuyContent = () => {
       page_path: '/v2/buy',
       intent: 'buy',
     });
+  };
+
+  // Handle Selena routing CTA
+  const handleSelenaRoute = () => {
+    handleCTAClick('cta_selena_route_call', 'selena_chat');
+    openChat();
   };
 
   const steps = [
@@ -247,6 +255,34 @@ const V2BuyContent = () => {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="py-16 lg:py-20 bg-cc-navy">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6 text-white">
+            {t("Ready to Get Started?", "¿Listo para Comenzar?")}
+          </h2>
+          <p className="text-white/80 max-w-2xl mx-auto mb-8">
+            {t(
+              "Let's discuss your home buying goals and create a plan that works for you.",
+              "Hablemos sobre sus metas de compra de casa y creemos un plan que funcione para usted."
+            )}
+          </p>
+          <Button 
+            onClick={handleSelenaRoute}
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-10 py-6 text-lg shadow-gold"
+          >
+            <MessageCircle className="w-5 h-5 mr-2" />
+            {t("Ask Selena to Help Me Get Started", "Pídale a Selena que me Ayude a Empezar")}
+          </Button>
+          <p className="text-white/60 text-sm mt-4 max-w-md mx-auto">
+            {t(
+              "Selena will ask a few quick questions so Kasandra is prepared.",
+              "Selena hará unas preguntas rápidas para que Kasandra esté preparada."
+            )}
+          </p>
         </div>
       </section>
     </>

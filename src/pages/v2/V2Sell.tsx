@@ -2,16 +2,18 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
-import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle } from "lucide-react";
+import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle } from "lucide-react";
 import { setIntentIfEmpty } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 
 const V2SellContent = () => {
   const { t } = useLanguage();
+  const { openChat } = useSelenaChat();
 
   // Auto-set intent only if not already declared (prevents overwriting quiz/URL intent)
   useEffect(() => {
@@ -26,6 +28,12 @@ const V2SellContent = () => {
       page_path: '/v2/sell',
       intent: 'sell',
     });
+  };
+
+  // Handle Selena routing CTA
+  const handleSelenaRoute = () => {
+    handleCTAClick('cta_selena_route_call', 'selena_chat');
+    openChat();
   };
 
   return (
@@ -275,12 +283,18 @@ const V2SellContent = () => {
             )}
           </p>
           <Button 
-            asChild 
+            onClick={handleSelenaRoute}
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-10 py-6 text-lg shadow-gold"
-            onClick={() => handleCTAClick('cta_book_consultation', '/v2/book')}
           >
-            <Link to="/v2/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
+            <MessageCircle className="w-5 h-5 mr-2" />
+            {t("Ask Selena to Set Up My Call", "Pídale a Selena que Programe Mi Llamada")}
           </Button>
+          <p className="text-white/60 text-sm mt-4 max-w-md mx-auto">
+            {t(
+              "Selena will ask a few quick questions so Kasandra is prepared.",
+              "Selena hará unas preguntas rápidas para que Kasandra esté preparada."
+            )}
+          </p>
         </div>
       </section>
     </>
