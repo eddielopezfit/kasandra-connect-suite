@@ -68,9 +68,10 @@ function applyTags(existingTags: string[] = [], newTags: string[] = []): string[
  */
 function detectTimeline(message: string): "asap" | "30_days" | "60_90" | null {
   const lower = message.toLowerCase();
-  if (/asap|now|today|pronto|ahora|hoy|inmediata|urgent/.test(lower)) return "asap";
-  if (/month|30\s*days|mes|30\s*dias/.test(lower)) return "30_days";
-  if (/60|90|3\s*months|6\s*months|1_3_months/.test(lower)) return "60_90";
+  if (/\b(asap|now|today|pronto|ahora|hoy|inmediata|urgent)\b/.test(lower)) return "asap";
+  if (/\b(month|30\s*days|mes|30\s*dias)\b/.test(lower)) return "30_days";
+  // Word boundaries to avoid matching "60" in prices/zip codes like "$600,000" or "85760"
+  if (/\b(60|90)\b|\b(3|6)\s*months?\b|\b1[-_]?3\s*months?\b/.test(lower)) return "60_90";
   // Exploratory language = no timeline commitment, return null
   return null;
 }
@@ -166,20 +167,29 @@ function detectIntent(message: string, route: string): string[] {
   const lower = message.toLowerCase();
   const intents: string[] = [];
   
-  // Check for dual intent FIRST (buy + sell combination)
+  // Check for dual intent (buy + sell combination) - but don't suppress other intents
   if (/buy.*sell|sell.*buy|comprar.*vender|vender.*comprar|buy\s*first|sell\s*first/.test(lower)) {
     intents.push("dual");
-  } else {
-    // Single intent detection
+  }
+  
+  // Always detect cash (even with dual - "sell and buy quickly" + inherited = dual + cash)
+  if (/cash|efectivo|quick sale|herencia|inherited/.test(lower)) {
+    intents.push("cash");
+  }
+  
+  // Single intent detection (only if no dual detected)
+  if (!intents.includes("dual")) {
     if (/buy|comprar|purchase|busco casa|looking for a home/.test(lower)) intents.push("buy");
     if (/sell|vender|selling|list|listar/.test(lower)) intents.push("sell");
-    if (/cash|efectivo|quick sale|rápido|urgent|herencia|inherited/.test(lower)) intents.push("cash");
     if (/exploring|curious|thinking|quizás|no sé|just looking/.test(lower)) intents.push("explore");
     if (route.includes("cash-offer") || route.includes("seller")) intents.push("sell");
   }
   
   // Normalize and dedupe, filter out nulls
   const normalized = intents.map(normalizeIntent).filter((i): i is string => i !== null);
+  
+  // Priority order for primaryIntent: cash > dual > sell > buy > explore
+  // This ensures Router decisions are consistent
   return normalized.length > 0 ? [...new Set(normalized)] : ["explore"];
 }
 
@@ -219,12 +229,13 @@ function userTurnCount(history: Array<{ role: string }>): number {
 
 /**
  * Determines if the user has earned access to booking CTA
- * Based on: explicit ask, tool completion, or 2+ user turns
+ * Based on: explicit ask, tool completion, email provided, or 2+ user turns
  */
 function hasEarnedBookingAccess(
   context: ChatRequest["context"], 
   history: Array<{ role: string }>,
-  message: string
+  message: string,
+  extractedEmail?: string | null
 ): boolean {
   // 1. User explicitly asked to book/call
   if (userAskedToBook(message)) return true;
@@ -234,7 +245,11 @@ function hasEarnedBookingAccess(
   if (context.last_tool_result) return true;
   if (context.quiz_completed) return true;
   
-  // 3. Earned after 2 user turns (means they engaged meaningfully)
+  // 3. Email provided = commitment signal (soft gate)
+  if (extractedEmail) return true;
+  if (context.email) return true;
+  
+  // 4. Earned after 2 user turns (means they engaged meaningfully)
   if (userTurnCount(history) >= 2) return true;
   
   return false;
@@ -432,8 +447,8 @@ serve(async (req) => {
     const data = await response.json();
     const reply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
 
-    // Check if booking access is earned
-    const hasEarned = hasEarnedBookingAccess(context, history, message);
+    // Check if booking access is earned (email = commitment signal)
+    const hasEarned = hasEarnedBookingAccess(context, history, message, extractedEmail);
 
     // Get intent-aware suggested replies, then filter for earned access
     let suggestedReplies = getSuggestedReplies(effectiveIntent, language, message);
