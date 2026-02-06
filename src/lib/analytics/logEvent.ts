@@ -101,7 +101,13 @@ export type EventType =
   // Decision-Compression Guide System
   | 'guide_authority_cta_view'
   | 'guide_authority_cta_click'
-  | 'selena_guide_handoff_click';
+  | 'selena_guide_handoff_click'
+  // Tool lifecycle events (Sprint Opus 4.6)
+  | 'tool_started'
+  | 'tool_completed'
+  // Booking lifecycle events (Sprint Opus 4.6)
+  | 'booking_started'
+  | 'booking_submitted';
 
 export interface EventPayload {
   [key: string]: unknown;

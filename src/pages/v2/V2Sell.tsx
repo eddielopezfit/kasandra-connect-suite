@@ -7,6 +7,8 @@ import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle } from "lucide-react";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { logEvent } from "@/lib/analytics/logEvent";
+import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 
 const V2SellContent = () => {
   const { t } = useLanguage();
@@ -15,6 +17,16 @@ const V2SellContent = () => {
   useEffect(() => {
     updateSessionContext({ intent: 'sell' });
   }, []);
+
+  // Handle CTA clicks with tracking
+  const handleCTAClick = (ctaName: string, destination: string) => {
+    logEvent('cta_click', {
+      cta_name: ctaName,
+      destination,
+      page_path: '/v2/sell',
+      intent: 'sell',
+    });
+  };
 
   return (
     <>
@@ -34,7 +46,11 @@ const V2SellContent = () => {
                 "Vender su casa es una decisión significativa. Le guiaré con precios basados en el mercado, apoyo de divulgación completa, y un enfoque en protección."
               )}
             </p>
-            <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
+            <Button 
+              asChild 
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
+              onClick={() => handleCTAClick('hero_market_analysis', '/v2/book')}
+            >
               <Link to="/v2/book">{t("Get a Market Analysis", "Obtener Análisis de Mercado")}</Link>
             </Button>
           </div>
@@ -113,12 +129,30 @@ const V2SellContent = () => {
         </div>
       </section>
 
-      {/* Seller Testimonials */}
+      {/* Featured Guide: Selling for Top Dollar */}
       <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <FeaturedGuideCard
+              guideId="selling-for-top-dollar"
+              titleEn="Selling Your Home for Top Dollar"
+              titleEs="Vender Su Casa al Mejor Precio"
+              descriptionEn="A comprehensive guide to maximizing your home's value—from preparation to pricing strategy to closing."
+              descriptionEs="Una guía completa para maximizar el valor de su casa—desde la preparación hasta la estrategia de precios hasta el cierre."
+              readTimeEn="8 min read"
+              readTimeEs="8 min de lectura"
+              ctaSource="v2_sell_featured"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Seller Testimonials */}
+      <section className="py-12 bg-cc-sand">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto space-y-6">
             {/* Primary Testimonial */}
-            <div className="bg-cc-sand rounded-2xl p-2 border border-cc-sand-dark/30">
+            <div className="bg-white rounded-2xl p-2 border border-cc-sand-dark/30">
               <TestimonialCard testimonial={sellerTestimonials[0]} variant="primary" />
             </div>
             
@@ -129,9 +163,9 @@ const V2SellContent = () => {
       </section>
 
       {/* Important Note */}
-      <section className="py-12 bg-cc-sand">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="bg-white rounded-xl p-8 shadow-soft max-w-3xl mx-auto border border-cc-sand-dark/30">
+          <div className="bg-cc-ivory rounded-xl p-8 shadow-soft max-w-3xl mx-auto border border-cc-sand-dark/30">
             <div className="flex items-start gap-4">
               <AlertCircle className="w-8 h-8 text-cc-gold flex-shrink-0" />
               <div>
@@ -178,7 +212,11 @@ const V2SellContent = () => {
                     <span className="text-sm text-cc-charcoal">{t("Professional marketing and showings", "Marketing profesional y visitas")}</span>
                   </li>
                 </ul>
-                <Button asChild className="w-full bg-cc-navy hover:bg-cc-navy-dark text-white rounded-full">
+                <Button 
+                  asChild 
+                  className="w-full bg-cc-navy hover:bg-cc-navy-dark text-white rounded-full"
+                  onClick={() => handleCTAClick('traditional_listing', '/v2/book')}
+                >
                   <Link to="/v2/book">{t("Discuss Traditional Sale", "Discutir Venta Tradicional")}</Link>
                 </Button>
               </div>
@@ -200,7 +238,12 @@ const V2SellContent = () => {
                     <span className="text-sm text-cc-charcoal">{t("Certainty over maximum price", "Certeza sobre precio máximo")}</span>
                   </li>
                 </ul>
-                <Button asChild variant="outline" className="w-full border-cc-gold text-cc-gold hover:bg-cc-gold hover:text-cc-navy rounded-full">
+                <Button 
+                  asChild 
+                  variant="outline" 
+                  className="w-full border-cc-gold text-cc-gold hover:bg-cc-gold hover:text-cc-navy rounded-full"
+                  onClick={() => handleCTAClick('cash_offer_options', '/v2/cash-offer-options')}
+                >
                   <Link to="/v2/cash-offer-options">{t("Explore Cash Options", "Explorar Opciones en Efectivo")}</Link>
                 </Button>
               </div>
@@ -221,7 +264,11 @@ const V2SellContent = () => {
               "Hablemos sobre su casa y creemos una estrategia de venta que funcione para su situación."
             )}
           </p>
-          <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-10 py-6 text-lg shadow-gold">
+          <Button 
+            asChild 
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-10 py-6 text-lg shadow-gold"
+            onClick={() => handleCTAClick('cta_book_consultation', '/v2/book')}
+          >
             <Link to="/v2/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
           </Button>
         </div>

@@ -1,18 +1,42 @@
 import { useSearchParams, Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
-import { CheckCircle2, Clock, FileText, Home, Phone, ArrowRight, Play } from "lucide-react";
+import { CheckCircle2, Clock, FileText, Home, Phone, ArrowRight, Play, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
+import { logEvent } from "@/lib/analytics/logEvent";
 
 type IntentType = 'cash' | 'sell' | 'buy' | 'dual' | 'explore';
 
 const V2ThankYouContent = () => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
+  const { openChat } = useSelenaChat();
   
   const intent = (searchParams.get("intent") || "explore") as IntentType;
   const slotTime = searchParams.get("slot_time") || null;
   const leadName = searchParams.get("name")?.split(" ")[0] || "";
+  
+  // Handle CTA clicks with tracking
+  const handleCTAClick = (ctaName: string, destination: string) => {
+    logEvent('cta_click', {
+      cta_name: ctaName,
+      destination,
+      page_path: '/v2/thank-you',
+      intent,
+    });
+  };
+
+  // Handle Selena prompt click
+  const handleSelenaClick = () => {
+    logEvent('cta_click', {
+      cta_name: 'thank_you_selena_prompt',
+      destination: 'selena_chat',
+      page_path: '/v2/thank-you',
+      intent,
+    });
+    openChat();
+  };
   
   // Intent-specific content using formal Spanish
   const getIntentContent = () => {
@@ -64,7 +88,7 @@ const V2ThankYouContent = () => {
               'Learn how cash offers work and what to expect.',
               'Aprenda cómo funcionan las ofertas en efectivo y qué esperar.'
             ),
-            href: '/v2/guides/cash-offer-explained',
+            href: '/v2/guides/cash-offer-guide',
           },
         };
       
@@ -115,7 +139,7 @@ const V2ThankYouContent = () => {
               'Step-by-step guide for first-time homebuyers.',
               'Guía paso a paso para compradores de vivienda por primera vez.'
             ),
-            href: '/v2/guides/first-time-buyer',
+            href: '/v2/guides/first-time-buyer-guide',
           },
         };
       
@@ -160,7 +184,14 @@ const V2ThankYouContent = () => {
             href: '/v2/cash-offer-options',
             icon: FileText,
           },
-          resource: null,
+          resource: {
+            title: t('Selling for Top Dollar Guide', 'Guía para Vender al Mejor Precio'),
+            description: t(
+              'Learn strategies to maximize your home\'s value.',
+              'Aprenda estrategias para maximizar el valor de su casa.'
+            ),
+            href: '/v2/guides/selling-for-top-dollar',
+          },
         };
       
       case 'dual':
@@ -236,7 +267,14 @@ const V2ThankYouContent = () => {
             },
           ],
           cta: null,
-          resource: null,
+          resource: {
+            title: t('First-Time Buyer Guide', 'Guía para Compradores Primerizos'),
+            description: t(
+              'Helpful information for anyone exploring the market.',
+              'Información útil para cualquier persona explorando el mercado.'
+            ),
+            href: '/v2/guides/first-time-buyer-guide',
+          },
         };
     }
   };
@@ -304,6 +342,7 @@ const V2ThankYouContent = () => {
                   asChild
                   size="lg"
                   className="bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold px-8 py-6 text-lg"
+                  onClick={() => handleCTAClick(`thank_you_primary_${intent}`, content.cta!.href)}
                 >
                   <Link to={content.cta.href}>
                     <content.cta.icon className="w-5 h-5 mr-2" />
@@ -329,6 +368,7 @@ const V2ThankYouContent = () => {
                     asChild
                     variant="outline"
                     className="flex-shrink-0 border-cc-gold text-cc-navy hover:bg-cc-gold/10"
+                    onClick={() => handleCTAClick(`thank_you_resource_${intent}`, content.resource!.href)}
                   >
                     <Link to={content.resource.href}>
                       {t('Read', 'Leer')}
@@ -341,9 +381,39 @@ const V2ThankYouContent = () => {
           </div>
         </div>
       </section>
+
+      {/* Selena Prompt - Soft, no-pressure */}
+      <section className="py-10 bg-white border-t border-b border-cc-sand-dark/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <button
+              onClick={handleSelenaClick}
+              className="w-full p-5 rounded-xl bg-cc-sand hover:bg-cc-sand-dark/30 border border-cc-sand-dark/30 transition-all group text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-cc-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <MessageCircle className="w-6 h-6 text-cc-gold" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-cc-navy mb-1">
+                    {t("While you wait, I can help", "Mientras espera, puedo ayudarle")}
+                  </h4>
+                  <p className="text-sm text-cc-charcoal">
+                    {t(
+                      "Have questions before your call? I'm Selena, and I'm here to help you feel prepared.",
+                      "¿Tiene preguntas antes de su llamada? Soy Selena, y estoy aquí para ayudarle a sentirse preparado/a."
+                    )}
+                  </p>
+                </div>
+                <ArrowRight className="w-5 h-5 text-cc-slate group-hover:text-cc-navy transition-colors flex-shrink-0" />
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
       
       {/* Contact Backup */}
-      <section className="py-10 bg-white border-t border-cc-sand-dark/20">
+      <section className="py-10 bg-cc-ivory">
         <div className="container mx-auto px-4 text-center">
           <p className="text-cc-charcoal mb-2">
             {t(
@@ -354,6 +424,7 @@ const V2ThankYouContent = () => {
           <a 
             href="tel:520-349-3248" 
             className="text-cc-gold font-semibold text-lg hover:underline"
+            onClick={() => handleCTAClick('thank_you_phone', 'tel:520-349-3248')}
           >
             520-349-3248
           </a>
