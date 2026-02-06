@@ -25,11 +25,28 @@ interface ChatRequest {
     last_guide_id?: string;
     lastEvents?: string[];
     lead_id?: string;
-    message_count?: number; // Track engagement for conditional CTA
-    has_used_tool?: boolean; // Calculator/quiz completion
-    cognitive_stage?: number; // 1-6 progression
+    // Stable fields that exist in SessionContext
+    tool_used?: string;
+    last_tool_result?: string;
+    quiz_completed?: boolean;
   };
   history?: ChatMessage[];
+}
+
+// ============= CANONICAL VALUES =============
+// Canonical intent values: buy | sell | cash | dual | explore
+// Canonical timeline values: asap | 30_days | 60_90 | exploring
+
+/**
+ * Normalizes detected intent to canonical values
+ */
+function normalizeIntent(raw: string): string {
+  switch (raw) {
+    case 'cash_offer': return 'cash';
+    case 'exploring': return 'explore';
+    case 'ready': return null as unknown as string; // 'ready' is urgency, not intent
+    default: return raw;
+  }
 }
 
 // ============= PROTOCOL HELPERS =============
@@ -49,8 +66,8 @@ function detectTimeline(message: string): string | null {
   const lower = message.toLowerCase();
   if (/asap|now|today|pronto|ahora|hoy|inmediata/.test(lower)) return "asap";
   if (/month|30\s*days|mes|30\s*dias/.test(lower)) return "30_days";
-  if (/60|90|3\s*months|6\s*months/.test(lower)) return "60_90_days";
-  if (/exploring|curious|looking|just\s*see|not\s*sure|no\s*se|pensando/.test(lower)) return "not_sure";
+  if (/60|90|3\s*months|6\s*months/.test(lower)) return "60_90";
+  if (/exploring|curious|looking|just\s*see|not\s*sure|no\s*se|pensando/.test(lower)) return "exploring";
   return null;
 }
 
@@ -109,7 +126,7 @@ async function upsertLeadProfile(
         tags: applyTags((existingLead.tags as string[]) || [], protocolTags),
       };
 
-      // Only update intent/timeline if currently NULL (Safe Migration Rule)
+      // WRITE-ONCE RULE: Only update intent/timeline if currently NULL
       if (!existingLead.intent && detectedIntent) updateData.intent = detectedIntent;
       if (!existingLead.timeline && detectedTimeline) updateData.timeline = detectedTimeline;
       if (!existingLead.language) updateData.language = context.language;
@@ -144,20 +161,18 @@ async function upsertLeadProfile(
 function detectIntent(message: string, route: string): string[] {
   const lower = message.toLowerCase();
   const intents: string[] = [];
-  if (/buy|comprar|purchase|busco|casa|home/.test(lower)) intents.push("buy");
+  
+  if (/buy|comprar|purchase|busco casa|looking for a home/.test(lower)) intents.push("buy");
   if (/sell|vender|selling|list|listar/.test(lower)) intents.push("sell");
-  if (/cash|efectivo|quick|rápido|urgent|herencia|inherited/.test(lower)) intents.push("cash");
-  if (/ready|listo|now|ahora|asap/.test(lower)) intents.push("ready");
-  if (/exploring|curious|thinking|quizás|no sé/.test(lower)) intents.push("exploring");
+  if (/cash|efectivo|quick sale|rápido|urgent|herencia|inherited/.test(lower)) intents.push("cash");
+  if (/exploring|curious|thinking|quizás|no sé|just looking/.test(lower)) intents.push("explore");
   if (route.includes("cash-offer") || route.includes("seller")) intents.push("sell");
-  return intents.length > 0 ? intents : ["exploring"];
+  
+  // Normalize and dedupe
+  return intents.length > 0 ? [...new Set(intents.map(normalizeIntent).filter(Boolean))] : ["explore"];
 }
 
 // ============= SIMILARITY MATCHING =============
-/**
- * Fuzzy match check - returns true if strings have significant word overlap
- * Uses Jaccard similarity on word sets
- */
 function isSimilar(str1: string, str2: string, threshold = 0.8): boolean {
   const s1 = str1.toLowerCase().trim();
   const s2 = str2.toLowerCase().trim();
@@ -165,7 +180,6 @@ function isSimilar(str1: string, str2: string, threshold = 0.8): boolean {
   if (s1 === s2) return true;
   if (s1.length === 0 || s2.length === 0) return false;
   
-  // Word overlap check for performance
   const words1 = new Set(s1.split(/\s+/).filter(w => w.length > 2));
   const words2 = new Set(s2.split(/\s+/).filter(w => w.length > 2));
   const intersection = [...words1].filter(w => words2.has(w)).length;
@@ -175,41 +189,85 @@ function isSimilar(str1: string, str2: string, threshold = 0.8): boolean {
   return (intersection / union) >= threshold;
 }
 
-// ============= PROGRESSION MAP =============
+// ============= BOOKING KEYWORDS =============
+const BOOKING_KEYWORDS = /book|schedule|call|talk|meet|appointment|consulta|cita|llamar|hablar|agendar/i;
+
 /**
- * Maps user selection to next-best-step suggestions
- * When user clicks a pill, we show the logical next action instead of repeating
+ * Checks if user explicitly asked to book/call
  */
+function userAskedToBook(message: string): boolean {
+  return BOOKING_KEYWORDS.test(message);
+}
+
+/**
+ * Count user turns only (not total messages)
+ */
+function userTurnCount(history: Array<{ role: string }>): number {
+  return history.filter(m => m.role === 'user').length;
+}
+
+/**
+ * Determines if the user has earned access to booking CTA
+ * Based on: explicit ask, tool completion, or 2+ user turns
+ */
+function hasEarnedBookingAccess(
+  context: ChatRequest["context"], 
+  history: Array<{ role: string }>,
+  message: string
+): boolean {
+  // 1. User explicitly asked to book/call
+  if (userAskedToBook(message)) return true;
+  
+  // 2. Tool completion flags (stable fields from SessionContext)
+  if (context.tool_used) return true;
+  if (context.last_tool_result) return true;
+  if (context.quiz_completed) return true;
+  
+  // 3. Earned after 2 user turns (means they engaged meaningfully)
+  if (userTurnCount(history) >= 2) return true;
+  
+  return false;
+}
+
+/**
+ * Filters suggestions to remove booking-related language if not earned
+ */
+function filterSuggestionsForEarnedAccess(suggestions: string[], hasEarned: boolean): string[] {
+  if (hasEarned) return suggestions;
+  
+  // Strip any suggestion containing booking keywords
+  return suggestions.filter(s => !BOOKING_KEYWORDS.test(s));
+}
+
+// ============= PROGRESSION MAP =============
+// Maps user selection to next-best-step suggestions
+// Now cleaned of premature booking language for early stages
 const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
   // Buyer path progressions
-  'schedule a tour': {
-    en: ["What should I prepare?", "View buyer guide", "Talk to Kasandra now"],
-    es: ["¿Qué debo preparar?", "Ver guía del comprador", "Hablar con Kasandra ahora"]
-  },
   'take readiness check': {
     en: ["How long does it take?", "Start now", "What does this check?"],
     es: ["¿Cuánto tiempo toma?", "Comenzar ahora", "¿Qué verifica este análisis?"]
   },
   'view first-time buyer guide': {
-    en: ["Schedule a tour", "Ask about financing", "Check my readiness"],
-    es: ["Programar un recorrido", "Preguntar sobre financiamiento", "Verificar mi preparación"]
+    en: ["What should I prepare?", "Ask about financing", "Check my readiness"],
+    es: ["¿Qué debo preparar?", "Preguntar sobre financiamiento", "Verificar mi preparación"]
   },
   // Seller path progressions
   "what's my home worth": {
-    en: ["Get a detailed estimate", "Compare cash vs. listing", "Schedule a walkthrough"],
-    es: ["Obtener estimación detallada", "Comparar efectivo vs. listado", "Agendar una visita"]
+    en: ["Get a detailed estimate", "Compare cash vs. listing", "What factors affect value?"],
+    es: ["Obtener estimación detallada", "Comparar efectivo vs. listado", "¿Qué factores afectan el valor?"]
   },
   'compare cash vs. traditional': {
-    en: ["Request my net sheet", "Talk to Kasandra", "See cash timeline"],
-    es: ["Solicitar mi análisis", "Hablar con Kasandra", "Ver línea de tiempo en efectivo"]
+    en: ["Request my net sheet", "See cash timeline", "What are the trade-offs?"],
+    es: ["Solicitar mi análisis", "Ver línea de tiempo en efectivo", "¿Cuáles son las ventajas?"]
   },
   'request a net sheet': {
-    en: ["Review my estimate", "Schedule a consultation", "Ask a question"],
-    es: ["Revisar mi estimación", "Agendar una consulta", "Hacer una pregunta"]
+    en: ["Review my estimate", "What costs are included?", "Ask a question"],
+    es: ["Revisar mi estimación", "¿Qué costos están incluidos?", "Hacer una pregunta"]
   },
   'request a cash offer': {
-    en: ["How fast can I close?", "What's the process?", "Talk to Kasandra"],
-    es: ["¿Qué tan rápido puedo cerrar?", "¿Cuál es el proceso?", "Hablar con Kasandra"]
+    en: ["How fast can I close?", "What's the process?", "Any hidden fees?"],
+    es: ["¿Qué tan rápido puedo cerrar?", "¿Cuál es el proceso?", "¿Hay costos ocultos?"]
   },
   // First intent declarations
   "i'm thinking about selling": {
@@ -217,8 +275,8 @@ const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
     es: ["¿Cuánto vale mi casa?", "Comparar efectivo vs. tradicional", "Solicitar análisis de ganancias"]
   },
   "i'm looking to buy": {
-    en: ["Take readiness check", "View first-time buyer guide", "Schedule a tour"],
-    es: ["Tomar evaluación de preparación", "Ver guía para compradores", "Programar un recorrido"]
+    en: ["Take readiness check", "View first-time buyer guide", "What should I prepare?"],
+    es: ["Tomar evaluación de preparación", "Ver guía para compradores", "¿Qué debo preparar?"]
   },
   'just exploring': {
     en: ["Tell me about selling", "Tell me about buying", "What are my options?"],
@@ -227,14 +285,8 @@ const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
 };
 
 // ============= INTENT-AWARE SUGGESTION FILTERING =============
-type IntentKey = 'sell' | 'cash_offer' | 'buy' | 'exploring';
+type IntentKey = 'sell' | 'cash' | 'buy' | 'explore';
 
-/**
- * Progressive suggested replies with deduplication
- * @param intent - Current user intent (sell, buy, exploring, etc.)
- * @param language - 'en' or 'es'
- * @param lastUserMessage - The user's most recent message (for deduplication + progression)
- */
 function getSuggestedReplies(
   intent: string | undefined, 
   language: 'en' | 'es',
@@ -257,24 +309,25 @@ function getSuggestedReplies(
       en: ["What's my home worth?", "Compare cash vs. traditional", "Request a net sheet"],
       es: ["¿Cuánto vale mi casa?", "Comparar efectivo vs. tradicional", "Solicitar análisis de ganancias"]
     },
-    cash_offer: {
+    cash: {
       en: ["What's my home worth?", "How fast can I close?", "Request a cash offer"],
       es: ["¿Cuánto vale mi casa?", "¿Qué tan rápido puedo cerrar?", "Solicitar oferta en efectivo"]
     },
     buy: {
-      en: ["Take readiness check", "View first-time buyer guide", "Schedule a tour"],
-      es: ["Tomar evaluación de preparación", "Ver guía para compradores", "Programar un recorrido"]
+      en: ["Take readiness check", "View first-time buyer guide", "What should I prepare?"],
+      es: ["Tomar evaluación de preparación", "Ver guía para compradores", "¿Qué debo preparar?"]
     },
-    exploring: {
+    explore: {
       en: ["I'm thinking about selling", "I'm looking to buy", "What are my options?"],
       es: ["Estoy pensando en vender", "Estoy buscando comprar", "¿Cuáles son mis opciones?"]
     }
   };
   
-  const intentKey: IntentKey = intent === 'cash_offer' ? 'cash_offer'
+  // Normalize intent to canonical key
+  const intentKey: IntentKey = intent === 'cash' ? 'cash'
                              : intent === 'sell' ? 'sell'
                              : intent === 'buy' ? 'buy'
-                             : 'exploring';
+                             : 'explore';
   
   let suggestions = [...staticReplies[intentKey][language]];
   
@@ -286,30 +339,7 @@ function getSuggestedReplies(
   return suggestions;
 }
 
-// ============= EARNED ACCESS THRESHOLD =============
-/**
- * Determines if the user has earned access to booking CTA
- * Based on engagement threshold (message count, tool usage, or cognitive stage)
- */
-function hasEarnedBookingAccess(context: ChatRequest["context"], historyLength: number): boolean {
-  // Tool completion = earned access
-  if (context.has_used_tool) return true;
-  
-  // Cognitive stage 5+ = earned access
-  if (context.cognitive_stage && context.cognitive_stage >= 5) return true;
-  
-  // 3+ conversation turns = earned access
-  const messageCount = context.message_count || historyLength;
-  if (messageCount >= 3) return true;
-  
-  // Explicit high-intent signals (ASAP timeline, ready intent)
-  if (context.intent === 'ready') return true;
-  
-  return false;
-}
-
 // ============= SYSTEM PROMPTS (HARDENED) =============
-// Removed premature address collection directive - deferred to after value delivery
 const SYSTEM_PROMPT_EN = `You are Selena, Kasandra Prieto's digital real estate concierge. 
 Kasandra is a high-touch solo practitioner in Tucson. 
 
@@ -356,13 +386,13 @@ serve(async (req) => {
     const intents = detectIntent(message, context.route);
     const timeline = detectTimeline(message);
 
-    // Deduplicate intent for DB (primary only)
-    const primaryIntent = intents.includes("cash") ? "cash_offer" : intents[0];
+    // Primary intent (canonical)
+    const primaryIntent = intents.includes("cash") ? "cash" : intents[0];
 
-    // Determine the effective intent (detected now OR previously stored in context)
-    const effectiveIntent = primaryIntent !== 'exploring' ? primaryIntent : (context.intent || 'exploring');
+    // Determine effective intent (detected now OR previously stored)
+    const effectiveIntent = primaryIntent !== 'explore' ? primaryIntent : (context.intent || 'explore');
 
-    // Identity Upgrade & Persistence
+    // Identity Upgrade & Persistence (only on email capture)
     const extractedEmail = extractEmail(message);
     if (extractedEmail) {
       const upsert = await upsertLeadProfile(extractedEmail, context, primaryIntent, timeline || undefined);
@@ -370,16 +400,11 @@ serve(async (req) => {
         leadId = upsert.lead_id;
         await logDataCapture(context.session_id, "selena_data_email_captured", { lead_id: leadId });
       }
-    } else if (leadId && (primaryIntent || timeline)) {
-      // Background update if lead already known
-      const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-      const updateObj: Record<string, unknown> = {};
-      if (primaryIntent) updateObj.intent = primaryIntent;
-      if (timeline) updateObj.timeline = timeline;
-      await supabase.from("lead_profiles").update(updateObj).eq("id", leadId);
     }
+    // NOTE: Removed unsafe background update that overwrote intent/timeline
+    // Lead profile updates only happen via upsertLeadProfile with write-once guards
 
-    // Build system prompt (no premature address collection)
+    // Build system prompt
     const systemPrompt = language === "es" ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN;
     
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -396,18 +421,18 @@ serve(async (req) => {
     const data = await response.json();
     const reply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
 
-    // Get intent-aware suggested replies with deduplication
-    const suggestedReplies = getSuggestedReplies(effectiveIntent, language, message);
+    // Check if booking access is earned
+    const hasEarned = hasEarnedBookingAccess(context, history, message);
 
-    // CONDITIONAL CTA: Only show booking if user has earned access
-    const showBookingCTA = hasEarnedBookingAccess(context, history.length);
-    
+    // Get intent-aware suggested replies, then filter for earned access
+    let suggestedReplies = getSuggestedReplies(effectiveIntent, language, message);
+    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned);
+
     // Build actions array conditionally
     const actions: Array<{ label: string; href: string; eventType: string }> = [];
     
-    if (showBookingCTA) {
+    if (hasEarned) {
       actions.push({
-        // Use "Review Strategy" instead of "Schedule" for authority framing
         label: language === "es" ? "Revisar Estrategia con Kasandra" : "Review Strategy with Kasandra",
         href: "/v2/book",
         eventType: "book_click",
@@ -416,23 +441,27 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({
+        ok: true,
         reply,
         suggestedReplies,
         actions,
         language,
         lead_id: leadId,
-        // Return detected intent so frontend can update SessionContext
-        detected_intent: primaryIntent !== 'exploring' ? primaryIntent : null,
-        // Signal to frontend whether booking CTA was shown
-        booking_cta_shown: showBookingCTA,
+        // Return CANONICAL detected intent only
+        detected_intent: primaryIntent !== 'explore' ? primaryIntent : null,
+        booking_cta_shown: hasEarned,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (error) {
     console.error("Error", error);
-    return new Response(JSON.stringify({ reply: "I'm having a moment - please try again." }), {
-      status: 500,
-      headers: corsHeaders,
-    });
+    return new Response(
+      JSON.stringify({ 
+        ok: false, 
+        reply: "I'm having a moment - please try again.",
+        message: "Internal server error",
+      }), 
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
 });
