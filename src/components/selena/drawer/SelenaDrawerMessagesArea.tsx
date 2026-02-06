@@ -18,6 +18,9 @@ export function SelenaDrawerMessagesArea({
   bottomRef: React.RefObject<HTMLDivElement>;
 }) {
   return (
+    // ⚠️ SCROLL STABILITY: This ScrollArea MUST persist across renders.
+    // NEVER wrap in conditional rendering or add key={...} that changes during chat.
+    // The bottomRef at the end anchors scroll position after new messages.
     <ScrollArea
       className="flex-1 p-4"
       ref={scrollRef}
