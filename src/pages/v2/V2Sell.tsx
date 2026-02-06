@@ -8,7 +8,7 @@ import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle } from "lucide-react";
 import { setIntentIfEmpty } from "@/lib/analytics/selenaSession";
-import { logCTAClick } from "@/lib/analytics/ctaDefaults";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 
 const PAGE_PATH = '/v2/sell';
@@ -23,14 +23,14 @@ const V2SellContent = () => {
     setIntentIfEmpty('sell');
   }, []);
 
-  // Handle CTA clicks with tracking
+  // Handle CTA clicks with tracking (uses constants from CTA_NAMES)
   const handleCTAClick = (cta_name: string, destination: string) => {
     logCTAClick({ cta_name, destination, page_path: PAGE_PATH, intent: PAGE_INTENT });
   };
 
   // Handle Selena routing CTA
   const handleSelenaRoute = () => {
-    handleCTAClick('cta_selena_route_call', 'selena_chat');
+    handleCTAClick(CTA_NAMES.SELENA_ROUTE_CALL, 'selena_chat');
     openChat();
   };
 
@@ -56,7 +56,7 @@ const V2SellContent = () => {
               <Button 
                 asChild 
                 className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
-                onClick={() => handleCTAClick('hero_cash_comparison', '/v2/cash-offer-options')}
+                onClick={() => handleCTAClick(CTA_NAMES.HERO_CASH_COMPARISON, '/v2/cash-offer-options')}
               >
                 <Link to="/v2/cash-offer-options">{t("Compare Your Options", "Compare Sus Opciones")}</Link>
               </Button>
@@ -64,7 +64,7 @@ const V2SellContent = () => {
                 asChild 
                 variant="outline" 
                 className="border-white/30 text-white hover:bg-white/10 rounded-full px-6 sm:px-8 text-sm sm:text-base"
-                onClick={() => handleCTAClick('hero_selling_guide', '/v2/guides/selling-for-top-dollar')}
+                onClick={() => handleCTAClick(CTA_NAMES.HERO_SELLING_GUIDE, '/v2/guides/selling-for-top-dollar')}
               >
                 <Link to="/v2/guides/selling-for-top-dollar">{t("Read Our Seller Guide", "Lea Nuestra Guía")}</Link>
               </Button>
@@ -231,7 +231,7 @@ const V2SellContent = () => {
                 <Button 
                   asChild 
                   className="w-full bg-cc-navy hover:bg-cc-navy-dark text-white rounded-full"
-                  onClick={() => handleCTAClick('traditional_listing_guide', '/v2/guides/selling-for-top-dollar')}
+                  onClick={() => handleCTAClick(CTA_NAMES.TRADITIONAL_LISTING_GUIDE, '/v2/guides/selling-for-top-dollar')}
                 >
                   <Link to="/v2/guides/selling-for-top-dollar">{t("Learn Traditional Sale Strategy", "Conozca la Estrategia de Venta")}</Link>
                 </Button>
@@ -258,7 +258,7 @@ const V2SellContent = () => {
                   asChild 
                   variant="outline" 
                   className="w-full border-cc-gold text-cc-gold hover:bg-cc-gold hover:text-cc-navy rounded-full"
-                  onClick={() => handleCTAClick('cash_offer_options', '/v2/cash-offer-options')}
+                  onClick={() => handleCTAClick(CTA_NAMES.CASH_OFFER_OPTIONS, '/v2/cash-offer-options')}
                 >
                   <Link to="/v2/cash-offer-options">{t("Explore Cash Options", "Explorar Opciones en Efectivo")}</Link>
                 </Button>
