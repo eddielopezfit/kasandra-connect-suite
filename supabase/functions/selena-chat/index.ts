@@ -234,8 +234,12 @@ function isSimilar(str1: string, str2: string, threshold = 0.8): boolean {
   return (intersection / union) >= threshold;
 }
 
-// ============= BOOKING KEYWORDS =============
+// ============= BOOKING GATE PATTERNS =============
+// Keywords: explicit booking actions
 const BOOKING_KEYWORDS = /book|schedule|call|talk|meet|appointment|consulta|cita|llamar|hablar|agendar/i;
+
+// Phrases: implicit booking suggestions (stricter filter for earned access)
+const BOOKING_PHRASES = /(talk to kasandra|priority call|strategy call|consultation|consult|call|kasandra|review strategy|revisar estrategia)/i;
 
 /**
  * Checks if user explicitly asked to book/call
@@ -253,7 +257,9 @@ function userTurnCount(history: Array<{ role: string }>): number {
 
 /**
  * Determines if the user has earned access to booking CTA
- * Based on: explicit ask, tool completion, email provided, or 2+ user turns
+ * Based on: explicit ask, tool completion, email provided, or 2+ engaged user turns
+ * 
+ * NOTE: "2 user turns" only unlocks if intent is NOT explore (keeps explorers in education mode)
  */
 function hasEarnedBookingAccess(
   context: ChatRequest["context"], 
@@ -261,7 +267,7 @@ function hasEarnedBookingAccess(
   message: string,
   extractedEmail?: string | null
 ): boolean {
-  // 1. User explicitly asked to book/call
+  // 1. User explicitly asked to book/call → immediate unlock
   if (userAskedToBook(message)) return true;
   
   // 2. Tool completion flags (stable fields from SessionContext)
@@ -271,22 +277,26 @@ function hasEarnedBookingAccess(
   
   // 3. Email provided = commitment signal (soft gate)
   if (extractedEmail) return true;
-  if (context.email) return true;
   
-  // 4. Earned after 2 user turns (means they engaged meaningfully)
-  if (userTurnCount(history) >= 2) return true;
+  // 4. Earned after 2 user turns ONLY if intent is declared (not explore)
+  // This keeps "explorers" in education mode longer → increases perceived premium
+  const hasIntent = context.intent && context.intent !== 'explore';
+  if (userTurnCount(history) >= 2 && hasIntent) return true;
   
   return false;
 }
 
 /**
  * Filters suggestions to remove booking-related language if not earned
+ * Uses both explicit keywords AND implicit booking phrases for stricter gating
  */
 function filterSuggestionsForEarnedAccess(suggestions: string[], hasEarned: boolean): string[] {
   if (hasEarned) return suggestions;
   
-  // Strip any suggestion containing booking keywords
-  return suggestions.filter(s => !BOOKING_KEYWORDS.test(s));
+  // Strip any suggestion containing booking keywords OR booking phrases
+  return suggestions.filter(s => 
+    !BOOKING_KEYWORDS.test(s) && !BOOKING_PHRASES.test(s)
+  );
 }
 
 // ============= PROGRESSION MAP =============
