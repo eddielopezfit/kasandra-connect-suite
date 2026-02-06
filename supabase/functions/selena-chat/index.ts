@@ -25,6 +25,9 @@ interface ChatRequest {
     last_guide_id?: string;
     lastEvents?: string[];
     lead_id?: string;
+    message_count?: number; // Track engagement for conditional CTA
+    has_used_tool?: boolean; // Calculator/quiz completion
+    cognitive_stage?: number; // 1-6 progression
   };
   history?: ChatMessage[];
 }
@@ -283,7 +286,30 @@ function getSuggestedReplies(
   return suggestions;
 }
 
+// ============= EARNED ACCESS THRESHOLD =============
+/**
+ * Determines if the user has earned access to booking CTA
+ * Based on engagement threshold (message count, tool usage, or cognitive stage)
+ */
+function hasEarnedBookingAccess(context: ChatRequest["context"], historyLength: number): boolean {
+  // Tool completion = earned access
+  if (context.has_used_tool) return true;
+  
+  // Cognitive stage 5+ = earned access
+  if (context.cognitive_stage && context.cognitive_stage >= 5) return true;
+  
+  // 3+ conversation turns = earned access
+  const messageCount = context.message_count || historyLength;
+  if (messageCount >= 3) return true;
+  
+  // Explicit high-intent signals (ASAP timeline, ready intent)
+  if (context.intent === 'ready') return true;
+  
+  return false;
+}
+
 // ============= SYSTEM PROMPTS (HARDENED) =============
+// Removed premature address collection directive - deferred to after value delivery
 const SYSTEM_PROMPT_EN = `You are Selena, Kasandra Prieto's digital real estate concierge. 
 Kasandra is a high-touch solo practitioner in Tucson. 
 
@@ -292,7 +318,12 @@ VOICE RULES:
 - ALWAYS say "Kasandra will personally reach out" or "Kasandra will guide you personally".
 - Keep responses to 2-3 sentences.
 - Be calm, professional, and supportive. No pressure. 
-- Mirror the user's language. 
+- Mirror the user's language.
+
+CONCIERGE PHILOSOPHY:
+- Educate before qualifying. Offer value (guides, calculators, insights) before asking for personal details.
+- Never push booking. Let the user signal readiness.
+- If the user seems interested in selling, suggest exploring their options (calculator, guides) before asking for property address.
 
 When a user provides their email or exhibits high intent, reassure them that Kasandra herself will review their details.`;
 
@@ -305,6 +336,11 @@ REGLAS DE VOZ:
 - DIGA SIEMPRE "Kasandra se comunicará personalmente con usted" o "Kasandra le guiará personalmente".
 - Mantenga las respuestas a 2-3 oraciones.
 - Sea profesional, calmada y brinde apoyo sin presión.
+
+FILOSOFÍA DE CONCIERGE:
+- Educar antes de calificar. Ofrezca valor (guías, calculadoras, información) antes de solicitar datos personales.
+- Nunca presione para agendar. Deje que el usuario señale su disposición.
+- Si el usuario parece interesado en vender, sugiera explorar sus opciones antes de pedir la dirección de la propiedad.
 
 Cuando el cliente proporcione su correo o muestre gran interés, asegúrele que la misma Kasandra revisará sus detalles.`;
 
@@ -326,11 +362,6 @@ serve(async (req) => {
     // Determine the effective intent (detected now OR previously stored in context)
     const effectiveIntent = primaryIntent !== 'exploring' ? primaryIntent : (context.intent || 'exploring');
 
-    // Check if this is the FIRST sell declaration (for address collection)
-    const isFirstSellDeclaration = 
-      (intents.includes('sell') || intents.includes('cash')) && 
-      !context.intent; // No prior intent stored in session
-
     // Identity Upgrade & Persistence
     const extractedEmail = extractEmail(message);
     if (extractedEmail) {
@@ -348,17 +379,8 @@ serve(async (req) => {
       await supabase.from("lead_profiles").update(updateObj).eq("id", leadId);
     }
 
-    // Build system prompt with optional address collection directive
-    let additionalInstruction = '';
-    if (isFirstSellDeclaration) {
-      additionalInstruction = language === 'es'
-        ? `\n\nEl usuario acaba de indicar que quiere vender. Tu respuesta DEBE terminar preguntando la dirección de la propiedad.
-Ejemplo: "¡Ese es un paso emocionante! Para darle el análisis de mercado más preciso, ¿cuál es la dirección de la propiedad que está pensando en vender?"`
-        : `\n\nThe user just indicated they want to sell. Your response MUST end with asking for the property address.
-Example: "That's an exciting next step! To give you the most accurate market analysis, what is the address of the property you're thinking about selling?"`;
-    }
-
-    const systemPrompt = (language === "es" ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN) + additionalInstruction;
+    // Build system prompt (no premature address collection)
+    const systemPrompt = language === "es" ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN;
     
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -374,25 +396,35 @@ Example: "That's an exciting next step! To give you the most accurate market ana
     const data = await response.json();
     const reply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
 
-    // Get intent-aware suggested replies
     // Get intent-aware suggested replies with deduplication
     const suggestedReplies = getSuggestedReplies(effectiveIntent, language, message);
+
+    // CONDITIONAL CTA: Only show booking if user has earned access
+    const showBookingCTA = hasEarnedBookingAccess(context, history.length);
+    
+    // Build actions array conditionally
+    const actions: Array<{ label: string; href: string; eventType: string }> = [];
+    
+    if (showBookingCTA) {
+      actions.push({
+        // Use "Review Strategy" instead of "Schedule" for authority framing
+        label: language === "es" ? "Revisar Estrategia con Kasandra" : "Review Strategy with Kasandra",
+        href: "/v2/book",
+        eventType: "book_click",
+      });
+    }
 
     return new Response(
       JSON.stringify({
         reply,
         suggestedReplies,
-        actions: [
-          {
-            label: language === "es" ? "Agenda con Kasandra" : "Schedule with Kasandra",
-            href: "/v2/book",
-            eventType: "book_click",
-          },
-        ],
+        actions,
         language,
         lead_id: leadId,
         // Return detected intent so frontend can update SessionContext
         detected_intent: primaryIntent !== 'exploring' ? primaryIntent : null,
+        // Signal to frontend whether booking CTA was shown
+        booking_cta_shown: showBookingCTA,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
