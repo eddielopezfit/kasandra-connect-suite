@@ -1,7 +1,7 @@
 # Selena Digital Concierge Communication Audit
 ## Complete Documentation of Patterns, Misalignments & Recommendations
 
-**Status: ✅ REMEDIATION COMPLETE**
+**Status: ✅ REMEDIATION COMPLETE (v2 - Safe Gate)**
 *Implemented: 2026-02-06*
 
 ---
@@ -17,49 +17,96 @@ This audit documented Selena's communication patterns, CTA exposure, and escalat
 
 ---
 
-## 2. Remediation Summary
+## 2. Remediation Summary (v2 - Corrected)
 
-### ✅ Critical Issues - FIXED
+### ✅ Phase 1: Conditional Booking CTA - FIXED
 
-| Issue | Fix Applied |
-|-------|-------------|
-| **Hardcoded Booking CTA** | Now conditional: requires 3+ messages, tool usage, or Stage 5+ |
-| **Premature Address Request** | Removed from system prompt; Selena educates before qualifying |
+**Safe Gate Criteria:**
+| Trigger | Implementation |
+|---------|----------------|
+| User explicitly asks to book | `userAskedToBook(message)` regex |
+| Tool completed | `context.tool_used`, `context.last_tool_result`, `context.quiz_completed` |
+| 2+ user turns | `userTurnCount(history) >= 2` |
 
-### ✅ Moderate Issues - FIXED
+**Key Corrections:**
+- ❌ Removed invented fields: `has_used_tool`, `message_count`, `cognitive_stage`
+- ❌ Removed naive `history.length >= 3` (was counting both roles)
+- ✅ Now counts USER turns only via `userTurnCount()`
 
-| Issue | Fix Applied |
-|-------|-------------|
-| "Free consultation" Fallback | Changed to educational suggested replies (no booking push) |
-| "Free" in CalculatorResults | Changed to "review your strategy with Kasandra" |
-| "Free" in CalculatorNextSteps | Changed to "Review Strategy with Kasandra" |
-| Forced Question Sequence | Added "I'll share later" skip option |
+### ✅ Phase 2: Defer Address Collection - FIXED
 
-### ✅ Language Standardization - COMPLETE
+- Removed `isFirstSellDeclaration` logic from system prompt
+- Selena educates before qualifying (no premature address request)
 
+### ✅ Phase 3: SelenaHandoff Skip Option - APPROVED
+
+- Added "I'll share later / Lo comparto después" escape path
+- Users can skip qualification questions
+
+### ✅ Phase 4: Language Normalization - FIXED
+
+**Canonical Intent Values:**
+| Raw Detection | Normalized |
+|---------------|------------|
+| `cash_offer` | `cash` |
+| `exploring` | `explore` |
+| `ready` | (removed - timeline, not intent) |
+
+**Canonical Timeline Values:**
+| Raw Detection | Normalized |
+|---------------|------------|
+| `60_90_days` | `60_90` |
+
+**CTA Language:**
 | Before | After |
 |--------|-------|
-| "Free Consultation" | "Strategy Session" |
-| "Book a Free Consultation" | "Review Strategy with Kasandra" |
-| "consulta gratuita" | "sesión de estrategia" |
-| "revisión gratuita" | "revisión complementaria" |
+| "Free Consultation" | "Review Strategy with Kasandra" |
+| "consulta gratuita" | "Revisar Estrategia con Kasandra" |
 
 ---
 
-## 3. Technical Changes Made
+## 3. Technical Implementation
 
 ### Edge Function (`selena-chat/index.ts`)
 
-1. **New `hasEarnedBookingAccess()` function**
-   - Returns `true` only if: tool completed, Stage 5+, or 3+ messages
-   - Booking CTA omitted until threshold met
+**New Helper Functions:**
+```typescript
+function userAskedToBook(message: string): boolean {
+  return /(book|schedule|call|talk|meet|appointment|consulta|cita|llamar|hablar|agendar)/i.test(message);
+}
 
-2. **Removed premature address collection**
-   - Deleted `isFirstSellDeclaration` logic
-   - System prompt now emphasizes "educate before qualify"
+function userTurnCount(history: Array<{ role: string }>): number {
+  return history.filter(m => m.role === 'user').length;
+}
 
-3. **Updated CTA language**
-   - "Schedule with Kasandra" → "Review Strategy with Kasandra"
+function hasEarnedBookingAccess(context, history, message): boolean {
+  if (userAskedToBook(message)) return true;
+  if (context.tool_used || context.last_tool_result || context.quiz_completed) return true;
+  if (userTurnCount(history) >= 2) return true;
+  return false;
+}
+
+function filterSuggestionsForEarnedAccess(suggestions, hasEarned): string[] {
+  if (hasEarned) return suggestions;
+  return suggestions.filter(s => !BOOKING_KEYWORDS.test(s));
+}
+```
+
+**Intent Normalization:**
+```typescript
+function normalizeIntent(raw: string): string {
+  switch (raw) {
+    case 'cash_offer': return 'cash';
+    case 'exploring': return 'explore';
+    case 'ready': return null; // Timeline, not intent
+    default: return raw;
+  }
+}
+```
+
+**Write-Once Guard:**
+- Background update of `lead_profiles` intent/timeline REMOVED
+- Only `upsertLeadProfile()` can write, with null-check guards
 
 ### Frontend Components
 
@@ -77,53 +124,51 @@ This audit documented Selena's communication patterns, CTA exposure, and escalat
 
 ## 4. Behavioral Model Post-Remediation
 
-### New Commitment Ladder
+### Earned Access Commitment Ladder
 
 | Step | Micro-Commitment | CTA Shown? |
 |------|------------------|------------|
 | 1 | Open Selena chat | ❌ No CTA |
 | 2 | Declare intent (Buy/Sell/Explore) | ❌ No CTA |
-| 3 | Ask 1-2 follow-up questions | ❌ No CTA |
-| 4 | Use tool OR send 3+ messages | ✅ CTA appears |
-| 5 | Lead capture (email for report) | ✅ CTA available |
-| 6 | Book consultation | ✅ Completion |
+| 3 | Second message (2 user turns) | ✅ CTA appears |
+| 4 | OR: Use calculator/quiz | ✅ CTA appears |
+| 5 | OR: Explicitly ask to book | ✅ CTA appears |
 
-### Authority Language Consistency
+### Suggestion Filtering
 
-All surfaces now use:
-- **English:** "Strategy Session", "Review Strategy", "Complimentary Review"
-- **Spanish:** "Sesión de Estrategia", "Revisar Estrategia", "Revisión Complementaria"
-
-**Prohibited terms (outside ad funnels):**
-- "Free consultation"
-- "Book now"
-- "Anytime"
-- "consulta gratuita"
+When booking is NOT earned:
+- Suggestions containing `book|schedule|call|talk|meet|appointment|consulta|cita|llamar|hablar` are STRIPPED
 
 ---
 
 ## 5. Verification Checklist
 
-- [x] Edge function deployed with conditional CTA logic
-- [x] Fallback messages don't push booking
-- [x] Calculator components use authority language
+- [x] Edge function uses canonical intent values only
+- [x] No invented context fields
+- [x] User turn count (not total messages)
+- [x] Write-once guard on lead_profiles
+- [x] Suggestion filtering for early-stage users
+- [x] API response includes `ok: boolean` per standard
 - [x] SelenaHandoff has skip option
-- [x] All "free consultation" instances replaced (except ad funnels)
-- [x] Spanish translations consistent ("complementaria" not "gratuita")
+- [x] Spanish uses formal "Usted" consistently
 
 ---
 
-## 6. Future Considerations
+## 6. Response Contract
 
-### Not Yet Addressed (Out of Scope)
-- Guide completion tracking for CTA gating
-- Cognitive stage integration with edge function
-- Real-time tool usage signaling to chat context
-
-### Intentionally Preserved
-- Ad funnel pages (`SellerLanding.tsx`) retain "100% free" language for paid traffic conversion
-- Booking page (`V2Book.tsx`, `IntentHeader.tsx`) can mention "no obligation" since user has already earned access
+```typescript
+{
+  ok: boolean;           // API response standard
+  reply: string;
+  suggestedReplies: string[];
+  actions: Array<{ label: string; href: string; eventType: string }>;
+  language: 'en' | 'es';
+  lead_id?: string;
+  detected_intent?: 'buy' | 'sell' | 'cash' | 'dual' | null;  // Canonical only
+  booking_cta_shown: boolean;
+}
+```
 
 ---
 
-*Audit completed. Selena now behaves as a Digital Concierge, not a Sales Bot.*
+*Audit completed. Selena now behaves as a Digital Concierge with safe engagement gates.*
