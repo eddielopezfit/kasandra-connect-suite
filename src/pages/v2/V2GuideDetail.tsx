@@ -145,7 +145,7 @@ const guideContent: Record<string, GuideData> = {
         heading: "Your Next Step",
         headingEs: "Su Próximo Paso",
         content: "If you'd like to understand what your home might be worth in today's market, you can request a complimentary home value review.\n\nThis is simply a starting point—information to help you decide, with no obligation attached.",
-        contentEs: "Si le gustaría entender cuánto podría valer su casa en el mercado actual, puede solicitar una revisión de valor de vivienda gratuita.\n\nEsto es simplemente un punto de partida—información para ayudarle a decidir, sin ninguna obligación adjunta.",
+        contentEs: "Si le gustaría entender cuánto podría valer su casa en el mercado actual, puede solicitar una revisión de valor de vivienda complementaria.\n\nEsto es simplemente un punto de partida—información para ayudarle a decidir, sin ninguna obligación adjunta.",
       },
     ],
   },
@@ -202,7 +202,7 @@ const guideContent: Record<string, GuideData> = {
         heading: "Your Next Step",
         headingEs: "Su Próximo Paso",
         content: "If you'd like to know what your home might be worth, you can request a complimentary home value review. No obligation—just information to help you plan.",
-        contentEs: "Si le gustaría saber cuánto podría valer su casa, puede solicitar una revisión de valor de vivienda gratuita. Sin obligación—solo información para ayudarle a planificar.",
+        contentEs: "Si le gustaría saber cuánto podría valer su casa, puede solicitar una revisión de valor de vivienda complementaria. Sin obligación—solo información para ayudarle a planificar.",
       },
     ],
   },
@@ -420,8 +420,8 @@ const fallbackContent: GuideData = {
     {
       heading: "Need Personalized Guidance?",
       headingEs: "¿Necesita Orientación Personalizada?",
-      content: "If you have a specific question about your situation, you can chat with Selena—our digital concierge—anytime. She's here to help you understand your options without any pressure.\n\nWhen you're ready for a deeper conversation, Kasandra is available for a complimentary consultation.",
-      contentEs: "Si tiene una pregunta específica sobre su situación, puede chatear con Selena—nuestra concierge digital—en cualquier momento. Ella está aquí para ayudarle a entender sus opciones sin ninguna presión.\n\nCuando esté listo para una conversación más profunda, Kasandra está disponible para una consulta gratuita.",
+      content: "If you have a specific question about your situation, you can chat with Selena—our digital concierge—anytime. She's here to help you understand your options without any pressure.\n\nWhen you're ready for a deeper conversation, Kasandra is available for a strategy session.",
+      contentEs: "Si tiene una pregunta específica sobre su situación, puede chatear con Selena—nuestra concierge digital—en cualquier momento. Ella está aquí para ayudarle a entender sus opciones sin ninguna presión.\n\nCuando esté listo para una conversación más profunda, Kasandra está disponible para una sesión de estrategia.",
     },
   ],
 };

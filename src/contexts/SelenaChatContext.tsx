@@ -459,12 +459,14 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         id: generateMessageId(),
         role: 'assistant',
         content: t(
-          "I'm having a moment - let me connect you with Kasandra directly. You can book a free consultation anytime!",
-          "Estoy teniendo un momento - déjame conectarte con Kasandra directamente. ¡Puedes agendar una consulta gratis cuando quieras!"
+          "I'm having a moment - but don't worry, I'm still here to help. What would you like to explore?",
+          "Estoy teniendo un momento - pero no te preocupes, sigo aquí para ayudarte. ¿Qué te gustaría explorar?"
         ),
         timestamp: new Date().toISOString(),
-        actions: [
-          { label: t('When you\'re ready, schedule a call', 'Cuando estés listo/a, agenda una llamada'), href: '/v2/book', eventType: 'book_click' },
+        suggestedReplies: [
+          t("I'm thinking about selling", "Estoy pensando en vender"),
+          t("I'm looking to buy", "Estoy buscando comprar"),
+          t("Just exploring for now", "Solo estoy explorando"),
         ],
       };
       

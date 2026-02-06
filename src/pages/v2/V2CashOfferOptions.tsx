@@ -232,7 +232,7 @@ const V2CashOfferOptionsContent = () => {
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
-            {t("Free Cash Offer Review", "Revisión Gratuita de Oferta en Efectivo")}
+            {t("Complimentary Cash Offer Review", "Revisión Complementaria de Oferta en Efectivo")}
           </h2>
           <p className="text-cc-charcoal max-w-2xl mx-auto mb-8">
             {t(

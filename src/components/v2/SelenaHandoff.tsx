@@ -169,12 +169,24 @@ const SelenaHandoff = ({ answers, questions, onBack }: SelenaHandoffProps) => {
                 <Send className="w-4 h-4" />
               </Button>
             </div>
-            <p className="text-xs text-cc-slate mt-2 text-center">
-              {t(
-                `Question ${currentFollowUp + 1} of ${followUpQuestions.length}`,
-                `Pregunta ${currentFollowUp + 1} de ${followUpQuestions.length}`
-              )}
-            </p>
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-xs text-cc-slate">
+                {t(
+                  `Question ${currentFollowUp + 1} of ${followUpQuestions.length}`,
+                  `Pregunta ${currentFollowUp + 1} de ${followUpQuestions.length}`
+                )}
+              </p>
+              {/* Skip option - concierge philosophy: don't force qualification */}
+              <button
+                onClick={() => {
+                  // Skip to completion with current answers
+                  setIsComplete(true);
+                }}
+                className="text-xs text-cc-slate hover:text-cc-navy underline underline-offset-2 transition-colors"
+              >
+                {t("I'll share later", "Lo comparto después")}
+              </button>
+            </div>
           </div>
         </>
       ) : (

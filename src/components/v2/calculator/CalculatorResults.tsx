@@ -238,8 +238,8 @@ const CalculatorResults = ({ results }: CalculatorResultsProps) => {
       <div className="bg-cc-sand rounded-lg p-4 border border-cc-sand-dark/30">
         <p className="text-xs text-cc-slate text-center">
           {t(
-            "These are estimates based on Tucson market averages. Actual results will vary based on your specific property, condition, location, and market conditions. For a personalized analysis, schedule a free consultation with Kasandra.",
-            "Estos son estimados basados en promedios del mercado de Tucson. Los resultados reales variarán según tu propiedad específica, condición, ubicación y condiciones del mercado. Para un análisis personalizado, agenda una consulta gratuita con Kasandra."
+            "These are estimates based on Tucson market averages. Actual results will vary based on your specific property, condition, location, and market conditions. For a personalized analysis, review your strategy with Kasandra.",
+            "Estos son estimados basados en promedios del mercado de Tucson. Los resultados reales variarán según tu propiedad específica, condición, ubicación y condiciones del mercado. Para un análisis personalizado, revise su estrategia con Kasandra."
           )}
         </p>
       </div>

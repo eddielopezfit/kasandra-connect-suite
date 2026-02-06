@@ -123,7 +123,7 @@ const CalculatorNextSteps = ({
         </div>
       </button>
 
-      {/* Tertiary CTA: Book Consultation → Routes through Selena */}
+      {/* Tertiary CTA: Strategy Review → Routes through Selena */}
       <button
         onClick={() => {
           handleCTAClick(CTA_NAMES.TOOL_BOOK_CONSULTATION, 'selena_chat');
@@ -137,10 +137,10 @@ const CalculatorNextSteps = ({
           </div>
           <div className="flex-1">
             <h4 className="font-semibold text-cc-navy text-sm">
-              {t("Book a Free Consultation", "Agendar una Consulta Gratuita")}
+              {t("Review Strategy with Kasandra", "Revisar Estrategia con Kasandra")}
             </h4>
             <p className="text-xs text-cc-slate mt-0.5">
-              {t("Talk directly with Kasandra", "Habla directamente con Kasandra")}
+              {t("Get personalized guidance", "Obtén orientación personalizada")}
             </p>
           </div>
           <ArrowRight className="w-4 h-4 text-cc-slate opacity-0 group-hover:opacity-100 transition-opacity" />

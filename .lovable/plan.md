@@ -1,241 +1,129 @@
-
-
 # Selena Digital Concierge Communication Audit
 ## Complete Documentation of Patterns, Misalignments & Recommendations
+
+**Status: ✅ REMEDIATION COMPLETE**
+*Implemented: 2026-02-06*
 
 ---
 
 ## 1. Executive Summary
 
-This audit documents Selena's communication patterns, CTA exposure, and escalation behavior against the **"Digital Concierge / Earned Access"** philosophy.
+This audit documented Selena's communication patterns, CTA exposure, and escalation behavior against the **"Digital Concierge / Earned Access"** philosophy.
 
-### Core Finding
-**Selena's voice and persona are correctly calibrated, but her structural behavior creates a "High-Pressure Sales Bot" experience that conflicts with the "Calm Concierge" design intent.**
+### Core Finding (RESOLVED)
+~~Selena's voice and persona are correctly calibrated, but her structural behavior creates a "High-Pressure Sales Bot" experience that conflicts with the "Calm Concierge" design intent.~~
 
----
-
-## 2. Communication Intent Analysis
-
-### What Selena is Currently Trying to Do
-
-| Dimension | Observed Behavior | Alignment |
-|-----------|-------------------|-----------|
-| **Educate** | Guides users to relevant resources, provides guide-aware greetings | ✅ Aligned |
-| **Qualify** | Demands property address immediately upon sell intent declaration | ⚠️ Premature |
-| **Reassure** | "No pressure" language in system prompts | ✅ Aligned |
-| **Push Booking** | Every AI response includes a hardcoded "Schedule with Kasandra" CTA | ❌ Misaligned |
-
-### Evidence: Hardcoded Booking CTA
-
-**Location:** `supabase/functions/selena-chat/index.ts` (Lines 385-391)
-
-```text
-actions: [
-  {
-    label: "Schedule with Kasandra" / "Agenda con Kasandra",
-    href: "/v2/book",
-    eventType: "book_click",
-  },
-]
-```
-
-**Impact:** Even a user's first message ("Hi, just exploring") triggers a booking button. This violates the "earned access" model.
+**Post-Remediation:** Selena now follows the "Earned Access" model with conditional CTAs, deferred qualification, and consistent authority language.
 
 ---
 
-## 3. Commitment Ladder Analysis
+## 2. Remediation Summary
 
-### Current Micro-Commitments (In Order)
+### ✅ Critical Issues - FIXED
 
-| Step | Micro-Commitment | Trigger | Assessment |
-|------|------------------|---------|------------|
-| 1 | Open Selena chat | User clicks FAB | ✅ Appropriate |
-| 2 | Declare intent (Buy/Sell/Explore) | First suggested reply | ✅ Appropriate |
-| 3 | **Property Address Request** | Immediately after sell intent | ❌ Too Early |
-| 4 | Booking CTA exposure | Every single message | ❌ Too Frequent |
-| 5 | Priority Call Modal | User requests or high-intent signal | ⚠️ Conditional |
-| 6 | Lead capture (email) | Before report access or booking | ✅ Appropriate |
+| Issue | Fix Applied |
+|-------|-------------|
+| **Hardcoded Booking CTA** | Now conditional: requires 3+ messages, tool usage, or Stage 5+ |
+| **Premature Address Request** | Removed from system prompt; Selena educates before qualifying |
 
-### Misalignments Identified
+### ✅ Moderate Issues - FIXED
 
-**A. Premature Address Collection**
-- Location: `selena-chat/index.ts` Lines 353-359
-- Behavior: System prompt forces AI to ask for property address immediately after user says "I'm thinking about selling"
-- Problem: Requests PII before providing any value
+| Issue | Fix Applied |
+|-------|-------------|
+| "Free consultation" Fallback | Changed to educational suggested replies (no booking push) |
+| "Free" in CalculatorResults | Changed to "review your strategy with Kasandra" |
+| "Free" in CalculatorNextSteps | Changed to "Review Strategy with Kasandra" |
+| Forced Question Sequence | Added "I'll share later" skip option |
 
-**B. SelenaHandoff Forces 3 Sequential Questions**
-- Location: `SelenaHandoff.tsx` Lines 32-63
-- Questions: Timeline → Neighborhoods → Discussion Topics
-- Problem: No skip option; feels like form-filling, not conversation
+### ✅ Language Standardization - COMPLETE
 
----
-
-## 4. Authority Positioning Analysis
-
-### How Kasandra is Currently Positioned
-
-| Context | Positioning | Assessment |
-|---------|-------------|------------|
-| System Prompts | "Kasandra will personally reach out" | ✅ Solo Expert |
-| Cognitive Stage 5-6 | "Kasandra is here to guide you personally" | ✅ Premium Access |
-| Error Fallbacks | "You can book a free consultation anytime!" | ⚠️ Dilutes scarcity |
-| Calculator Results | "schedule a free consultation with Kasandra" | ⚠️ Transactional |
-| AuthorityCTABlock | "Strategy Session" (no "free") | ✅ High authority |
-
-### Language Inconsistency Map
-
-| Component | Language Used | Authority Level |
-|-----------|---------------|-----------------|
-| Guide CTAs | "Strategy Session", "Review" | High |
-| Calculator Results | "Free Consultation" | Low |
-| Fallback Messages | "Free consultation anytime!" | Low |
-| Ad Funnels | "100% free" | Intentionally Low |
-
-**Impact:** Split messaging creates cognitive dissonance between educational content (high authority) and conversion paths (transactional).
+| Before | After |
+|--------|-------|
+| "Free Consultation" | "Strategy Session" |
+| "Book a Free Consultation" | "Review Strategy with Kasandra" |
+| "consulta gratuita" | "sesión de estrategia" |
+| "revisión gratuita" | "revisión complementaria" |
 
 ---
 
-## 5. CTA Behavior Audit
+## 3. Technical Changes Made
 
-### When "Schedule with Kasandra" Appears
+### Edge Function (`selena-chat/index.ts`)
 
-| Trigger | Appropriate? | Notes |
-|---------|--------------|-------|
-| Every AI response | ❌ No | Hardcoded in edge function |
-| After quiz completion | ✅ Yes | Earned through engagement |
-| After calculator use | ✅ Yes | Tool completion = commitment |
-| On guide completion | ✅ Yes | AuthorityCTABlock respects this |
-| Cognitive Stage 5+ | ✅ Yes | Progression-based (but bypassed) |
-| Error/Fallback | ⚠️ Acceptable | But poorly framed |
+1. **New `hasEarnedBookingAccess()` function**
+   - Returns `true` only if: tool completed, Stage 5+, or 3+ messages
+   - Booking CTA omitted until threshold met
 
-### CTA Overexposure Problem
+2. **Removed premature address collection**
+   - Deleted `isFirstSellDeclaration` logic
+   - System prompt now emphasizes "educate before qualify"
 
-**Current State:**
-- User sends 5 messages → sees 5 booking CTAs
-- No threshold required to reveal booking
-- Contradicts Cognitive Stage model (which gates booking to Stages 5-6)
+3. **Updated CTA language**
+   - "Schedule with Kasandra" → "Review Strategy with Kasandra"
 
-**Cognitive Stage Model (Correctly Designed):**
-- Stage 5 (Deciding): intent declared + 4+ guides read
-- Stage 6 (Confident): booking clicked
-- Only these stages should show "Book a Consultation"
+### Frontend Components
 
-**But:** The edge function bypasses this by returning booking CTA unconditionally.
-
----
-
-## 6. "Lovable Hub" Alignment Assessment
-
-### Where Selena Aligns with Digital Concierge Philosophy
-
-| Behavior | Implementation | Status |
-|----------|----------------|--------|
-| Guide-aware greetings | Detects `last_guide_id` and personalizes | ✅ |
-| Intent-aware suggested replies | Filters by user intent | ✅ |
-| Session continuity | LocalStorage persistence | ✅ |
-| Progressive profiling | Only updates null DB fields | ✅ |
-| Language governance | Single source of truth | ✅ |
-
-### Where Selena Conflicts with Hub Intent
-
-| Behavior | Problem |
-|----------|---------|
-| Omnipresent booking CTA | Feels like sales bot, not concierge |
-| Immediate address demand | Qualifies before educating |
-| Fallback to "free consultation" | Dilutes authority positioning |
-| SelenaHandoff question sequence | Feels like form, not conversation |
+| File | Change |
+|------|--------|
+| `SelenaChatContext.tsx` | Fallback error no longer pushes booking |
+| `CalculatorResults.tsx` | "free consultation" → "review your strategy" |
+| `CalculatorNextSteps.tsx` | "Book a Free Consultation" → "Review Strategy" |
+| `SelenaHandoff.tsx` | Added skip option: "I'll share later" |
+| `IntentHeader.tsx` | "free, no-obligation" → "personalized strategy session" |
+| `V2CashOfferOptions.tsx` | "Free Cash Offer Review" → "Complimentary" |
+| `V2GuideDetail.tsx` | Standardized Spanish translations |
 
 ---
 
-## 7. Complete Misalignment Registry
+## 4. Behavioral Model Post-Remediation
 
-### Critical Issues (Must Fix)
+### New Commitment Ladder
 
-| Issue | Location | Severity |
-|-------|----------|----------|
-| Hardcoded Booking CTA | `selena-chat/index.ts:385-391` | 🔴 Critical |
-| Premature Address Request | `selena-chat/index.ts:353-359` | 🟠 High |
+| Step | Micro-Commitment | CTA Shown? |
+|------|------------------|------------|
+| 1 | Open Selena chat | ❌ No CTA |
+| 2 | Declare intent (Buy/Sell/Explore) | ❌ No CTA |
+| 3 | Ask 1-2 follow-up questions | ❌ No CTA |
+| 4 | Use tool OR send 3+ messages | ✅ CTA appears |
+| 5 | Lead capture (email for report) | ✅ CTA available |
+| 6 | Book consultation | ✅ Completion |
 
-### Moderate Issues (Should Fix)
+### Authority Language Consistency
 
-| Issue | Location | Severity |
-|-------|----------|----------|
-| "Free consultation" Fallback | `SelenaChatContext.tsx:462-463` | 🟡 Medium |
-| "Free" in CalculatorResults | `CalculatorResults.tsx:241-242` | 🟡 Medium |
-| "Free" in CalculatorNextSteps | `CalculatorNextSteps.tsx:140` | 🟡 Medium |
-| Forced Question Sequence | `SelenaHandoff.tsx:32-63` | 🟡 Medium |
+All surfaces now use:
+- **English:** "Strategy Session", "Review Strategy", "Complimentary Review"
+- **Spanish:** "Sesión de Estrategia", "Revisar Estrategia", "Revisión Complementaria"
 
-### Full "Free Consultation" Occurrence List
-
-| File | Line | Context |
-|------|------|---------|
-| `CalculatorNextSteps.tsx` | 140 | "Book a Free Consultation" |
-| `CalculatorResults.tsx` | 241-242 | "schedule a free consultation" |
-| `V2CashOfferOptions.tsx` | 235 | "Free Cash Offer Review" |
-| `SelenaChatContext.tsx` | 462-463 | Error fallback |
-| `V2GuideDetail.tsx` | 148, 205, 424 | Spanish guide content |
-| `IntentHeader.tsx` | 69-70 | Booking page header |
-| `SellerLanding.tsx` | 21, 44, 67 | Ad funnel (intentional) |
+**Prohibited terms (outside ad funnels):**
+- "Free consultation"
+- "Book now"
+- "Anytime"
+- "consulta gratuita"
 
 ---
 
-## 8. Diagnostic Recommendations
+## 5. Verification Checklist
 
-### Should Selena...
-
-| Behavior | Recommendation | Rationale |
-|----------|----------------|-----------|
-| Slow down | ✅ Yes | Delay booking CTA until engagement threshold |
-| Ask fewer questions | ✅ Yes | Make SelenaHandoff questions optional |
-| Ask better questions | ✅ Yes | Prioritize value over data capture |
-| Delay booking CTAs | ✅ Yes (Critical) | Remove hardcoded CTA; make conditional |
-| Reframe booking language | ✅ Yes | Replace "Schedule" with "Review Strategy" |
-
-### Specific Behavioral Fixes Required
-
-1. **Make booking CTA conditional** in edge function
-   - Only include if user meets engagement threshold
-   - Respect Cognitive Stage model
-
-2. **Defer address collection**
-   - Move to after calculator use or guide completion
-   - Provide value first, then request PII
-
-3. **Eliminate "free consultation" language**
-   - Replace with "Strategy Session" or "Review"
-   - Maintain authority framing
-
-4. **Add skip options to SelenaHandoff**
-   - Make follow-up questions optional
-   - Allow "I'll share this later" escape
-
-5. **Unify CTA language**
-   - Standard: "Review Strategy with Kasandra"
-   - Never: "Free", "Anytime", "Book now"
+- [x] Edge function deployed with conditional CTA logic
+- [x] Fallback messages don't push booking
+- [x] Calculator components use authority language
+- [x] SelenaHandoff has skip option
+- [x] All "free consultation" instances replaced (except ad funnels)
+- [x] Spanish translations consistent ("complementaria" not "gratuita")
 
 ---
 
-## 9. Conclusion
+## 6. Future Considerations
 
-**Selena's personality is correct. Her behavior is not.**
+### Not Yet Addressed (Out of Scope)
+- Guide completion tracking for CTA gating
+- Cognitive stage integration with edge function
+- Real-time tool usage signaling to chat context
 
-The system prompt establishes a calm, high-trust concierge voice, but the structural implementation creates a fundamentally different experience:
-
-- Hardcoded CTAs bypass the earned-access model
-- Premature qualification violates the education-first promise
-- Transactional language ("free") undermines premium positioning
-
-**The gap between design intent and implementation creates user friction that undermines the "earned commitment" philosophy.**
+### Intentionally Preserved
+- Ad funnel pages (`SellerLanding.tsx`) retain "100% free" language for paid traffic conversion
+- Booking page (`V2Book.tsx`, `IntentHeader.tsx`) can mention "no obligation" since user has already earned access
 
 ---
 
-## Next Steps
-
-This audit is diagnostic only. No code changes were made.
-
-If approved, remediation would involve:
-1. Refactoring edge function to make booking CTA conditional
-2. Updating fallback messaging to maintain authority
-3. Adding skip options to SelenaHandoff
-4. Standardizing CTA language across all surfaces
-
+*Audit completed. Selena now behaves as a Digital Concierge, not a Sales Bot.*

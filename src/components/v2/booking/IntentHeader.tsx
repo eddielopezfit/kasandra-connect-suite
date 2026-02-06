@@ -66,8 +66,8 @@ const IntentHeader = ({ intent }: IntentHeaderProps) => {
           icon: Calendar,
           title: t('Book a Consultation', 'Agendar una Cita'),
           subtitle: t(
-            'Ready to discuss your real estate goals? Schedule a free, no-obligation consultation with me.',
-            '¿Listo para discutir sus metas de bienes raíces? Agende una consulta gratuita, sin obligación, conmigo.'
+            'Ready to discuss your real estate goals? Schedule a personalized strategy session with me.',
+            '¿Listo para discutir sus metas de bienes raíces? Agende una sesión de estrategia personalizada conmigo.'
           ),
           accent: 'text-cc-gold',
           bgAccent: 'bg-cc-sand',
