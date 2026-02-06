@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import SelenaHandoff from "./SelenaHandoff";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import GuideSuggestionCard from "@/components/v2/shared/GuideSuggestionCard";
 
 interface Answer {
@@ -460,8 +461,8 @@ const BuyerReadinessCheck = () => {
             {/* Option A: Talk with Selena AI */}
             <button
               onClick={() => {
-                logEvent('cta_click', {
-                  cta_name: 'chat_with_selena',
+                logCTAClick({
+                  cta_name: CTA_NAMES.RESULT_CHAT_SELENA,
                   destination: 'selena_handoff',
                   page_path: '/v2/buyer-readiness',
                   intent: 'buy',
@@ -493,8 +494,8 @@ const BuyerReadinessCheck = () => {
               <Link
                 to="/v2/book"
                 onClick={() => {
-                  logEvent('cta_click', {
-                    cta_name: 'talk_with_kasandra',
+                  logCTAClick({
+                    cta_name: CTA_NAMES.RESULT_TALK_KASANDRA,
                     destination: '/v2/book',
                     page_path: '/v2/buyer-readiness',
                     intent: 'buy',
@@ -514,8 +515,8 @@ const BuyerReadinessCheck = () => {
               <Link
                 to="/v2/guides"
                 onClick={() => {
-                  logEvent('cta_click', {
-                    cta_name: 'continue_exploring',
+                  logCTAClick({
+                    cta_name: CTA_NAMES.RESULT_CONTINUE_EXPLORING,
                     destination: '/v2/guides',
                     page_path: '/v2/buyer-readiness',
                     intent: 'buy',

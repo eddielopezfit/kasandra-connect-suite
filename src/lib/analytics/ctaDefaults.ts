@@ -29,12 +29,21 @@ export const CTA_NAMES = {
   CASH_OFFER_OPTIONS: 'cash_offer_options',
   
   // Thank you page CTAs
-  THANK_YOU_GUIDES: 'thank_you_guides',
-  THANK_YOU_BOOK: 'thank_you_book',
+  THANK_YOU_PRIMARY: 'thank_you_primary',
+  THANK_YOU_RESOURCE: 'thank_you_resource',
+  THANK_YOU_SELENA_PROMPT: 'thank_you_selena_prompt',
+  THANK_YOU_PHONE: 'thank_you_phone',
   
-  // Tool CTAs
-  TOOL_CALCULATOR_START: 'tool_calculator_start',
-  TOOL_QUIZ_START: 'tool_quiz_start',
+  // Tool/Calculator CTAs
+  TOOL_PRIVATE_CASH_REVIEW: 'tool_private_cash_review',
+  TOOL_ASK_SELENA: 'tool_ask_selena',
+  TOOL_BOOK_CONSULTATION: 'tool_book_consultation',
+  TOOL_SAVE_RESULTS: 'tool_save_results',
+  
+  // Buyer Readiness Results CTAs
+  RESULT_CHAT_SELENA: 'cta_chat_with_selena',
+  RESULT_TALK_KASANDRA: 'cta_talk_with_kasandra',
+  RESULT_CONTINUE_EXPLORING: 'cta_continue_exploring',
 } as const;
 
 export type CTAName = typeof CTA_NAMES[keyof typeof CTA_NAMES];
@@ -48,13 +57,14 @@ const VALID_CTA_PREFIXES = [
   'thank_you_',
   'tool_',
   'cash_',
+  'result_',
 ] as const;
 
 interface CTAClickParams {
   cta_name: string;
   destination: string;
   page_path: string;
-  intent: Intent;
+  intent: Intent | string;
   [key: string]: unknown;
 }
 

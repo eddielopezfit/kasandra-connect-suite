@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MessageCircle, Calendar, FileText } from "lucide-react";
-import { logEvent } from "@/lib/analytics/logEvent";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import GuideSuggestionCard from "@/components/v2/shared/GuideSuggestionCard";
 
 type CalculatorRecommendation = 'cash' | 'traditional' | 'consult' | 'cash_advantage' | 'listing_advantage';
@@ -29,7 +29,7 @@ const CalculatorNextSteps = ({
   const { t } = useLanguage();
 
   const handleCTAClick = (ctaName: string, destination: string) => {
-    logEvent('cta_click', {
+    logCTAClick({
       cta_name: ctaName,
       destination,
       page_path: window.location.pathname,
@@ -82,7 +82,7 @@ const CalculatorNextSteps = ({
       <Link 
         to="/v2/private-cash-review" 
         className="block"
-        onClick={() => handleCTAClick('private_cash_review', '/v2/private-cash-review')}
+        onClick={() => handleCTAClick(CTA_NAMES.TOOL_PRIVATE_CASH_REVIEW, '/v2/private-cash-review')}
       >
         <Button
           className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-xl py-6 text-base shadow-gold group"
@@ -102,7 +102,7 @@ const CalculatorNextSteps = ({
       {/* Secondary CTA: Ask Selena */}
       <button
         onClick={() => {
-          handleCTAClick('ask_selena', 'selena_chat');
+          handleCTAClick(CTA_NAMES.TOOL_ASK_SELENA, 'selena_chat');
           onAskSelena();
         }}
         className="w-full p-4 text-left rounded-xl border-2 border-cc-gold/50 bg-white hover:border-cc-gold hover:bg-cc-gold/5 transition-all group"
@@ -127,7 +127,7 @@ const CalculatorNextSteps = ({
       <Link 
         to="/v2/book" 
         className="block"
-        onClick={() => handleCTAClick('book_consultation', '/v2/book')}
+        onClick={() => handleCTAClick(CTA_NAMES.TOOL_BOOK_CONSULTATION, '/v2/book')}
       >
         <button
           className="w-full p-4 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
@@ -169,7 +169,7 @@ const CalculatorNextSteps = ({
       {showSaveResults && onSaveResults && (
         <button
           onClick={() => {
-            handleCTAClick('save_results', 'save_results');
+            handleCTAClick(CTA_NAMES.TOOL_SAVE_RESULTS, 'save_results');
             onSaveResults();
           }}
           className="w-full text-center text-sm text-cc-gold hover:text-cc-gold-dark underline underline-offset-2"
