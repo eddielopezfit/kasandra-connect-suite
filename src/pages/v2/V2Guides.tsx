@@ -319,8 +319,8 @@ function GuidesContent() {
   const handleBookConsultation = useCallback(() => {
     logEvent('consultation_cta_clicked', { stage: stageId, source: 'progress_bar' });
     trackJourneyAction('book');
-    navigate('/v2/book');
-  }, [navigate, stageId]);
+    openChat(); // Route through Selena instead of direct navigation
+  }, [openChat, stageId]);
   
   const handleAskSelena = useCallback((prefillMessage?: string) => {
     logEvent('ask_selena_clicked', { 

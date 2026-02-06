@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, CheckCircle, MessageCircle } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle, MessageCircle, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import SelenaHandoff from "./SelenaHandoff";
 import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
@@ -16,6 +17,7 @@ interface Answer {
 
 const BuyerReadinessCheck = () => {
   const { t, language } = useLanguage();
+  const { openChat } = useSelenaChat();
   const [currentStep, setCurrentStep] = useState(0); // 0 = intro, 1-4 = questions, 5 = results, 6 = selena
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [showSelena, setShowSelena] = useState(false);
@@ -492,26 +494,31 @@ const BuyerReadinessCheck = () => {
             </button>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Option B: Schedule with Kasandra */}
-              <Link
-                to="/v2/book"
+              {/* Option B: Schedule with Kasandra → Routes through Selena */}
+              <button
                 onClick={() => {
                   logCTAClick({
                     cta_name: CTA_NAMES.RESULT_TALK_KASANDRA,
-                    destination: '/v2/book',
+                    destination: 'selena_chat',
                     page_path: '/v2/buyer-readiness',
                     intent: 'buy',
                   });
+                  openChat();
                 }}
-                className="p-4 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group block"
+                className="p-4 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
               >
-                <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
-                  {t("Talk with Kasandra", "Habla con Kasandra")}
-                </h4>
-                <p className="text-xs text-cc-slate mt-1">
-                  {t("Schedule a calm, no-pressure call.", "Agenda una llamada tranquila.")}
-                </p>
-              </Link>
+                <div className="flex items-start gap-3">
+                  <Phone className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
+                      {t("Talk with Kasandra", "Habla con Kasandra")}
+                    </h4>
+                    <p className="text-xs text-cc-slate mt-1">
+                      {t("Schedule a calm, no-pressure call.", "Agenda una llamada tranquila.")}
+                    </p>
+                  </div>
+                </div>
+              </button>
 
               {/* Option C: Continue exploring */}
               <Link

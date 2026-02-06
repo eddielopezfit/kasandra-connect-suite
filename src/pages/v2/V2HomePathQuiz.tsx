@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,6 +49,7 @@ type ResultPath = "buying" | "selling" | "cash" | "exploring";
 
 const V2HomePathQuiz = () => {
   const { t, language } = useLanguage();
+  const { openChat } = useSelenaChat();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [contactInfo, setContactInfo] = useState<ContactInfo>({
@@ -468,10 +470,10 @@ const V2HomePathQuiz = () => {
               </button>
 
               <div className="grid sm:grid-cols-2 gap-3">
-                {/* Option B: Talk with Kasandra */}
-                <Link
-                  to="/v2/book"
-                  className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group block"
+                {/* Option B: Talk with Kasandra → Routes through Selena */}
+                <button
+                  onClick={openChat}
+                  className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
@@ -486,7 +488,7 @@ const V2HomePathQuiz = () => {
                       </p>
                     </div>
                   </div>
-                </Link>
+                </button>
 
                 {/* Option C: Continue exploring */}
                 <Link

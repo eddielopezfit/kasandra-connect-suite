@@ -1,16 +1,18 @@
-import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
-import { Heart, Users, Award, HandHeart, Store } from "lucide-react";
+import { Heart, Users, Award, HandHeart, Store, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import arizonaDiaperBankLogo from "@/assets/arizona-diaper-bank-logo.jpg";
 import rumboAlExitoLogo from "@/assets/rumbo-al-exito-logo.jpg";
 import tucsonApplianceLogo from "@/assets/tucson-appliance-logo.jpg";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
 import GoogleSignInButton from "@/components/v2/GoogleSignInButton";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 
 const V2CommunityContent = () => {
   const { t } = useLanguage();
+  const { openChat } = useSelenaChat();
 
   return (
     <>
@@ -187,8 +189,15 @@ const V2CommunityContent = () => {
               "Cuando le ayudo a comprar o vender una casa, no solo estoy cerrando una transacción—estoy ayudando a construir la base para el futuro de su familia. Ese mismo compromiso con la familia y la comunidad impulsa todo lo que hago, tanto en bienes raíces como en mi trabajo voluntario."
             )}
           </p>
-          <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
-            <Link to="/v2/book">{t("Work With Me", "Trabaje Conmigo")}</Link>
+          <Button 
+            onClick={() => {
+              logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2/community', intent: 'explore' });
+              openChat();
+            }}
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
+          >
+            <MessageCircle className="w-5 h-5 mr-2" />
+            {t("Work With Me", "Trabaje Conmigo")}
           </Button>
           
           {/* Google Sign-In CTA */}

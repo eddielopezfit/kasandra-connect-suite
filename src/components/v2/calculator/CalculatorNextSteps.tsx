@@ -123,31 +123,29 @@ const CalculatorNextSteps = ({
         </div>
       </button>
 
-      {/* Tertiary CTA: Book Consultation */}
-      <Link 
-        to="/v2/book" 
-        className="block"
-        onClick={() => handleCTAClick(CTA_NAMES.TOOL_BOOK_CONSULTATION, '/v2/book')}
+      {/* Tertiary CTA: Book Consultation → Routes through Selena */}
+      <button
+        onClick={() => {
+          handleCTAClick(CTA_NAMES.TOOL_BOOK_CONSULTATION, 'selena_chat');
+          onAskSelena();
+        }}
+        className="w-full p-4 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
       >
-        <button
-          className="w-full p-4 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-cc-navy/10 rounded-full flex items-center justify-center flex-shrink-0">
-              <Calendar className="w-5 h-5 text-cc-navy" />
-            </div>
-            <div className="flex-1">
-              <h4 className="font-semibold text-cc-navy text-sm">
-                {t("Book a Free Consultation", "Agendar una Consulta Gratuita")}
-              </h4>
-              <p className="text-xs text-cc-slate mt-0.5">
-                {t("Talk directly with Kasandra", "Habla directamente con Kasandra")}
-              </p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-cc-slate opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-cc-navy/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Calendar className="w-5 h-5 text-cc-navy" />
           </div>
-        </button>
-      </Link>
+          <div className="flex-1">
+            <h4 className="font-semibold text-cc-navy text-sm">
+              {t("Book a Free Consultation", "Agendar una Consulta Gratuita")}
+            </h4>
+            <p className="text-xs text-cc-slate mt-0.5">
+              {t("Talk directly with Kasandra", "Habla directamente con Kasandra")}
+            </p>
+          </div>
+          <ArrowRight className="w-4 h-4 text-cc-slate opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+      </button>
 
       {/* Contextual Guide Suggestion */}
       <div className="pt-4 border-t border-cc-sand-dark/30">

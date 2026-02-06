@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import SellerFunnelLayout from "@/components/ad/SellerFunnelLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -373,28 +373,25 @@ const SellerResultContent = () => {
               We've sent a detailed breakdown to {email}. Kasandra will personally reach out shortly.
             </p>
             <Button
-              asChild
+              onClick={openChat}
               variant="outline"
               className="border-white/30 text-white hover:bg-white/10"
             >
-              <Link to="/v2/book">
-                Schedule a Call with Kasandra
-              </Link>
+              Schedule a Call with Kasandra
             </Button>
           </div>
         )}
 
-        {/* Alternative action */}
         {!isUnlocked && (
           <div className="text-center">
             <p className="text-white/50 text-sm">
               Prefer to talk to a human?{" "}
-              <Link 
-                to="/v2/book" 
+              <button 
+                onClick={openChat}
                 className="text-cc-gold hover:text-cc-gold/80 underline underline-offset-2"
               >
                 Schedule a call with Kasandra
-              </Link>
+              </button>
             </p>
           </div>
         )}

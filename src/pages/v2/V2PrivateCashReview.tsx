@@ -259,11 +259,13 @@ const PrivateCashReviewContent = () => {
                     "Agende una consulta privada con Kasandra para revisar sus opciones en persona."
                   )}
                 </p>
-                <Button asChild size="lg" className="rounded-full px-8">
-                  <a href="/v2/book?intent=cash_review">
-                    <Calendar className="w-5 h-5 mr-2" />
-                    {t("Schedule My Review", "Agendar Mi Revisión")}
-                  </a>
+                <Button 
+                  size="lg" 
+                  className="rounded-full px-8"
+                  onClick={openChat}
+                >
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  {t("Schedule My Review", "Agendar Mi Revisión")}
                 </Button>
               </CardContent>
             </Card>
