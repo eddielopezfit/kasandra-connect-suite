@@ -86,6 +86,7 @@ interface SelenaChatContextType {
   messages: ChatMessage[];
   isLoading: boolean;
   leadId: string | null;
+  hasReports: boolean; // Track if user has generated any reports
   report: ReportState;
   priorityCall: PriorityCallState;
   showLeadCapture: boolean;
@@ -177,6 +178,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const [pendingReportId, setPendingReportId] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<'report' | 'priority_call' | null>(null);
+  
+  // Track if user has generated any reports (for "View My Latest Report" visibility)
+  const [hasReports, setHasReports] = useState(false);
   
   // Calculator awareness state (Task 4)
   const [hasUsedCalculator, setHasUsedCalculator] = useState(false);
@@ -531,6 +535,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         reportId: data.report_id,
         reportType: action.reportType,
       });
+      
+      // Mark that user has generated at least one report
+      setHasReports(true);
 
       // Update the last message with report metadata
       setMessages(prev => {
@@ -565,17 +572,19 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
 
       setReport(prev => ({ ...prev, isGenerating: false }));
       
-      // Add error message to chat
+      // Add error message to chat - NO BOOKING CTA (Earned Access rule)
       const errorMessage: ChatMessage = {
         id: generateMessageId(),
         role: 'assistant',
         content: t(
-          "I couldn't generate your report right now. Let me connect you with Kasandra directly for a personalized analysis.",
-          "No pude generar tu reporte en este momento. Déjame conectarte con Kasandra directamente para un análisis personalizado."
+          "I couldn't generate your report right now. Let me try again, or I can help you explore your options another way.",
+          "No pude generar tu reporte en este momento. Déjame intentar de nuevo, o puedo ayudarte a explorar tus opciones de otra manera."
         ),
         timestamp: new Date().toISOString(),
-        actions: [
-          { label: t('When you\'re ready, schedule a call', 'Cuando estés listo/a, agenda una llamada'), href: '/v2/book', eventType: 'book_click' },
+        // No hardcoded booking actions - let Selena AI handle earned access gating
+        suggestedReplies: [
+          t("Try again", "Intentar de nuevo"),
+          t("What are my options?", "¿Cuáles son mis opciones?"),
         ],
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -973,6 +982,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         messages,
         isLoading,
         leadId,
+        hasReports,
         report,
         priorityCall,
         showLeadCapture,
