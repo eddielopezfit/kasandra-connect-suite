@@ -6,7 +6,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Send, Sparkles, FileText, Loader2, Globe, Minus, MessageCircle } from 'lucide-react';
+import { Send, Sparkles, FileText, Loader2, Globe, Minus, MessageCircle, RotateCcw } from 'lucide-react';
 import { useSelenaChat, ChatMessage, ChatAction } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { logEvent } from '@/lib/analytics/logEvent';
@@ -76,6 +76,7 @@ export function SelenaChatDrawer() {
     onLeadCaptured,
     leadId,
     hasReports,
+    clearHistory,
   } = useSelenaChat();
   const { t, language, setLanguage } = useLanguage();
   const [input, setInput] = useState('');
@@ -84,6 +85,7 @@ export function SelenaChatDrawer() {
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   
   // Compute journey context for tab bar
@@ -99,12 +101,11 @@ export function SelenaChatDrawer() {
   const lastMessage = messages[messages.length - 1];
   const suggestedReplies = lastMessage?.role === 'assistant' ? lastMessage.suggestedReplies : undefined;
 
-  // Scroll to bottom when messages change
+  // Scroll to bottom when messages change or loading state changes
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
+    // Use bottomRef for reliable scroll anchoring
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages.length, isLoading]);
 
   // Focus input when drawer opens
   useEffect(() => {
@@ -179,6 +180,23 @@ export function SelenaChatDrawer() {
 
   const HeaderControls = ({ showMinimize = false }: { showMinimize?: boolean }) => (
     <div className="flex items-center gap-2">
+      {/* New Chat Button */}
+      {messages.length > 1 && (
+        <button
+          onClick={clearHistory}
+          className={cn(
+            "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium",
+            "bg-muted hover:bg-muted/80 text-foreground",
+            "transition-colors duration-200"
+          )}
+          aria-label={t('New chat', 'Nuevo chat')}
+          title={t('Start new chat', 'Iniciar nuevo chat')}
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span>{t('New', 'Nuevo')}</span>
+        </button>
+      )}
+      
       {/* Language Toggle Button - Shows CURRENT language, click to switch */}
       <button
         onClick={handleLanguageToggle}
@@ -233,6 +251,9 @@ export function SelenaChatDrawer() {
             </div>
           </div>
         )}
+        
+        {/* Bottom anchor for reliable scroll positioning */}
+        <div ref={bottomRef} />
       </div>
     </ScrollArea>
   );

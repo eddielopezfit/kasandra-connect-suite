@@ -98,6 +98,7 @@ export type EventType =
   | 'selena_minimized'
   | 'selena_restored'
   | 'selena_booking_confirmation'
+  | 'selena_clear_history'
   // Decision-Compression Guide System
   | 'guide_authority_cta_view'
   | 'guide_authority_cta_click'

@@ -726,7 +726,27 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
   const clearHistory = useCallback(() => {
     setMessages([]);
     localStorage.removeItem(CHAT_HISTORY_KEY);
-  }, []);
+    // Generate fresh session for new conversation
+    updateSessionContext({ session_id: crypto.randomUUID() });
+    // Re-add greeting message
+    const greeting: ChatMessage = {
+      id: generateMessageId(),
+      role: 'assistant',
+      content: t(
+        "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
+        "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarte a explorar tus opciones con calma y sin presión.\n\n¿Estás pensando en comprar, vender, o solo explorar qué es posible?"
+      ),
+      timestamp: new Date().toISOString(),
+      suggestedReplies: [
+        t("I'm thinking about selling", "Estoy pensando en vender"),
+        t("I'm looking to buy", "Estoy buscando comprar"),
+        t("Just exploring for now", "Solo estoy explorando"),
+      ],
+    };
+    setMessages([greeting]);
+    saveHistory([greeting]);
+    logEvent('selena_clear_history', { route: location.pathname });
+  }, [t, location.pathname]);
 
   // Allow external components to set lead identity
   const setLeadIdentity = useCallback((newLeadId: string) => {
