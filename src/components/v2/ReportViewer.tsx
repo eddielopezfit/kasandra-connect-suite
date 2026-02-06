@@ -6,13 +6,12 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Calendar, Calculator, MessageCircle, X, Sparkles, RefreshCw } from 'lucide-react';
+import { FileText, Calculator, MessageCircle, X, Sparkles } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { logEvent } from '@/lib/analytics/logEvent';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
@@ -49,8 +48,7 @@ export function ReportViewer({
   const navigate = useNavigate();
   const { openChat, handleActionClick } = useSelenaChat();
   const { t } = useLanguage();
-  const { toast } = useToast();
-  const [retryAction, setRetryAction] = useState<(() => void) | null>(null);
+  const [_retryAction, _setRetryAction] = useState<(() => void) | null>(null);
 
   const isEmpty = reportType === 'empty' || (!markdown && !reportId);
 
@@ -74,8 +72,8 @@ export function ReportViewer({
 
     onOpenChange(false);
 
-    if (ctaType === 'ask_selena') {
-      // Open chat drawer instead of navigating
+    if (ctaType === 'ask_selena' || ctaType === 'book_call') {
+      // Route through Selena chat (Selena as Router policy)
       setTimeout(() => openChat(), 300);
     } else if (ctaType === 'generate_report') {
       // Trigger report generation
@@ -91,10 +89,10 @@ export function ReportViewer({
     }
   };
 
-  const handleRetry = () => {
-    if (retryAction) {
-      retryAction();
-      setRetryAction(null);
+  const _handleRetry = () => {
+    if (_retryAction) {
+      _retryAction();
+      _setRetryAction(null);
     }
   };
 
@@ -137,13 +135,13 @@ export function ReportViewer({
         </Button>
         
         <Button
-          onClick={() => handleCTAClick('book_call', '/v2/book')}
+          onClick={() => handleCTAClick('book_call', 'selena_chat')}
           variant="ghost"
           className="w-full text-cc-slate hover:text-cc-navy hover:bg-cc-sand"
           size="lg"
         >
-          <Calendar className="w-4 h-4 mr-2" />
-          {t('Book a Confidential Strategy Call', 'Agendar Llamada de Estrategia Confidencial')}
+          <MessageCircle className="w-4 h-4 mr-2" />
+          {t('Schedule a Call', 'Agendar una Llamada')}
         </Button>
         
         <Button
@@ -172,13 +170,13 @@ export function ReportViewer({
       {/* CTA Buttons - Calm, consistent tone */}
       <div className="border-t border-border bg-cc-sand/50 p-4 sm:p-6 shrink-0">
         <div className="flex flex-col gap-3">
-          <Button
-            onClick={() => handleCTAClick('book_call', '/v2/book')}
+        <Button
+            onClick={() => handleCTAClick('book_call', 'selena_chat')}
             className="w-full bg-cc-navy hover:bg-cc-navy-dark text-white"
             size="lg"
           >
-            <Calendar className="w-4 h-4 mr-2" />
-            {t('Book a Confidential Strategy Call', 'Agendar Llamada de Estrategia Confidencial')}
+            <MessageCircle className="w-4 h-4 mr-2" />
+            {t('Schedule a Call', 'Agendar una Llamada')}
           </Button>
           
           <Button
