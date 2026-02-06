@@ -62,7 +62,7 @@ const getCTAConfig = (category: string) => {
     subtextEs: "Continúe aprendiendo a su propio ritmo",
     icon: BookOpen,
     routeThruSelena: false,
-    intent: 'exploring' as const,
+    intent: 'explore' as const,
   };
 };
 

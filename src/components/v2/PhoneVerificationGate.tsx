@@ -167,7 +167,7 @@ const PhoneVerificationGate = ({ onVerified }: PhoneVerificationGateProps) => {
                   cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
                   destination: 'selena_chat',
                   page_path: window.location.pathname,
-                  intent: 'exploring',
+                  intent: 'explore',
                 });
                 openChat();
               }}
