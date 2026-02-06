@@ -3,12 +3,17 @@
  * Initializes session context for ad funnel visitors
  * and bridges data to V2 ecosystem for continuity
  * 
- * Uses write-once guards to prevent overwriting user-declared context
+ * HYBRID ATTRIBUTION MODEL:
+ * - First-touch (write-once): landing_path
+ * - Last-touch (overwrite): UTMs, referrer, ad_funnel_source
+ * 
+ * This enables accurate ad optimization for retargeting/multi-touch journeys
  */
 
 import { 
   initSessionContext, 
   updateSessionContext,
+  setFieldIfEmpty,
   setFieldsIfEmpty,
 } from './selenaSession';
 
@@ -18,7 +23,10 @@ export { bridgeLeadIdToV2, setStoredUserName, setStoredEmail, setStoredPhone } f
 /**
  * Initialize session for ad funnel visitors
  * Captures UTMs and sets ad funnel source
- * Uses guarded writes to prevent overwriting existing context
+ * 
+ * Attribution strategy:
+ * - landing_path: First-touch (preserved across sessions)
+ * - UTMs/referrer: Last-touch (updated on each visit for accurate ad attribution)
  */
 export function initAdFunnelSession(): void {
   // Initialize with English (ad funnel is English-only currently)
@@ -27,15 +35,20 @@ export function initAdFunnelSession(): void {
   // Capture UTMs from URL
   const params = new URLSearchParams(window.location.search);
   
-  // Use guarded writes for fields that should not overwrite existing user context
-  // landing_path and UTMs can be set directly as they're attribution data
-  setFieldsIfEmpty({
-    landing_path: window.location.pathname,
+  // First-touch: preserve initial landing page (write-once)
+  setFieldIfEmpty('landing_path', window.location.pathname);
+
+  // Last-touch: always update attribution when present
+  // This enables accurate ad optimization for retargeting/multi-touch journeys
+  updateSessionContext({
     utm_source: params.get('utm_source') || undefined,
     utm_medium: params.get('utm_medium') || undefined,
     utm_campaign: params.get('utm_campaign') || undefined,
-    ad_funnel_source: window.location.pathname.includes('seller') 
-      ? 'seller_landing' 
+    utm_content: params.get('utm_content') || undefined,
+    utm_term: params.get('utm_term') || undefined,
+    referrer: document.referrer || undefined,
+    ad_funnel_source: window.location.pathname.includes('seller')
+      ? 'seller_landing'
       : undefined,
   });
 }
