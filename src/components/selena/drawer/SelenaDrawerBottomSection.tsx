@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConciergeTabBar, type ConciergeTab, type JourneyIntent } from "@/components/selena/ConciergeTabBar";
 import { ConciergeTabPanels } from "@/components/selena/ConciergeTabPanels";
@@ -16,10 +17,7 @@ export function SelenaDrawerBottomSection({
   currentIntent,
   journeyStep,
   isMobile,
-  input,
-  setInput,
-  inputRef,
-  onSubmit,
+  onSubmitText,
   isLoading,
   placeholder,
   disclaimer,
@@ -36,14 +34,38 @@ export function SelenaDrawerBottomSection({
   currentIntent?: JourneyIntent;
   journeyStep?: number;
   isMobile: boolean;
-  input: string;
-  setInput: (next: string) => void;
-  inputRef: React.RefObject<HTMLInputElement>;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmitText: (text: string) => void;
   isLoading: boolean;
   placeholder: string;
   disclaimer: string;
 }) {
+  // UNCONTROLLED INPUT: Use ref to bypass React state churn that causes "one letter at a time" bug
+  const inputEl = useRef<HTMLInputElement | null>(null);
+  // Local state only for button disabled check (doesn't control input value)
+  const [hasText, setHasText] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = (inputEl.current?.value || "").trim();
+    if (!text || isLoading) return;
+
+    onSubmitText(text);
+
+    // Clear after send
+    if (inputEl.current) {
+      inputEl.current.value = "";
+      setHasText(false);
+    }
+  };
+
+  const handleInputChange = () => {
+    // Only track whether there's text for button state, don't control value
+    const hasValue = !!(inputEl.current?.value?.trim());
+    if (hasValue !== hasText) {
+      setHasText(hasValue);
+    }
+  };
+
   return (
     <div
       className="shrink-0 relative bg-background"
@@ -69,13 +91,12 @@ export function SelenaDrawerBottomSection({
         journeyStep={journeyStep}
       />
 
-      <form onSubmit={onSubmit} className="border-t border-border p-4 bg-background">
+      <form onSubmit={handleSubmit} className="border-t border-border p-4 bg-background">
         <div className="flex gap-2">
           <input
-            ref={inputRef}
+            ref={inputEl}
             type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleInputChange}
             placeholder={placeholder}
             className={cn(
               "flex-1 min-w-0 px-4 py-2 rounded-full",
@@ -85,14 +106,17 @@ export function SelenaDrawerBottomSection({
               "text-base"
             )}
             disabled={isLoading}
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck={false}
+            inputMode="text"
           />
           <Button
             type="submit"
             size="icon"
-            disabled={!input.trim() || isLoading}
+            disabled={!hasText || isLoading}
             className="rounded-full w-10 h-10 shrink-0"
           >
-            {/* icon is rendered by parent; keep button shape stable */}
             <span className="sr-only">Send</span>
             <svg
               viewBox="0 0 24 24"

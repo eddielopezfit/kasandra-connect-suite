@@ -81,12 +81,10 @@ export function SelenaChatDrawer() {
     clearHistory,
   } = useSelenaChat();
   const { t, language, setLanguage } = useLanguage();
-  const [input, setInput] = useState('');
   const [activeTab, setActiveTab] = useState<ConciergeTab | null>(null);
   const [isMinimized, setIsMinimized] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   
@@ -109,12 +107,6 @@ export function SelenaChatDrawer() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages.length, isLoading]);
 
-  // Focus input when drawer opens
-  useEffect(() => {
-    if (isOpen && !isMinimized && inputRef.current) {
-      setTimeout(() => inputRef.current?.focus(), 300);
-    }
-  }, [isOpen, isMinimized]);
 
   // Close tab panel when drawer closes
   useEffect(() => {
@@ -143,15 +135,12 @@ export function SelenaChatDrawer() {
     logEvent('selena_restored', { route: window.location.pathname });
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-    
-    const message = input;
-    setInput('');
+  // Handle submit from uncontrolled input
+  const handleSubmitText = useCallback(async (text: string) => {
+    if (!text.trim() || isLoading) return;
     setActiveTab(null); // Close any open panel
-    await sendMessage(message);
-  };
+    await sendMessage(text);
+  }, [isLoading, sendMessage]);
 
   const handleSuggestedReplyClick = (text: string) => {
     logEvent('suggested_reply_click', { text, route: window.location.pathname });
@@ -215,10 +204,7 @@ export function SelenaChatDrawer() {
       currentIntent={journeyContext.intent}
       journeyStep={journeyContext.step}
       isMobile={isMobile}
-      input={input}
-      setInput={setInput}
-      inputRef={inputRef}
-      onSubmit={handleSubmit}
+      onSubmitText={handleSubmitText}
       isLoading={isLoading}
       placeholder={t('Type your message...', 'Escribe tu mensaje...')}
       disclaimer={t(
