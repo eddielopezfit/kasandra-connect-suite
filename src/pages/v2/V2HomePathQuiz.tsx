@@ -47,7 +47,10 @@ interface ContactInfo {
 
 type ResultPath = "buying" | "selling" | "cash" | "exploring";
 
-const V2HomePathQuiz = () => {
+/**
+ * Inner component that uses Selena context (must be inside V2Layout)
+ */
+const V2HomePathQuizContent = () => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
   const [currentStep, setCurrentStep] = useState(0);
@@ -400,8 +403,7 @@ const V2HomePathQuiz = () => {
     const content = resultContent[path];
 
     return (
-      <V2Layout>
-        <section className="min-h-[80vh] flex items-center justify-center px-4 py-16">
+      <section className="min-h-[80vh] flex items-center justify-center px-4 py-16">
           <div className="max-w-2xl mx-auto space-y-8">
             <div className="text-center">
               <div className="w-20 h-20 mx-auto rounded-full bg-cc-gold/20 flex items-center justify-center mb-6">
@@ -520,13 +522,11 @@ const V2HomePathQuiz = () => {
             </p>
           </div>
         </section>
-      </V2Layout>
     );
   }
 
   return (
-    <V2Layout>
-      <section className="min-h-[80vh] flex items-center justify-center px-4 py-16">
+    <section className="min-h-[80vh] flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-xl mx-auto">
           {/* Progress indicator */}
           <div className="mb-8">
@@ -695,6 +695,16 @@ const V2HomePathQuiz = () => {
           )}
         </div>
       </section>
+  );
+};
+
+/**
+ * Wrapper component that provides V2Layout context before rendering content
+ */
+const V2HomePathQuiz = () => {
+  return (
+    <V2Layout>
+      <V2HomePathQuizContent />
     </V2Layout>
   );
 };
