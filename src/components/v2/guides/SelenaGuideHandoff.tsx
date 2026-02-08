@@ -53,7 +53,12 @@ const SelenaGuideHandoff = ({ guideId, category }: SelenaGuideHandoffProps) => {
       guide_id: guideId,
       category,
     });
-    openChat();
+    // Pass guide context for context-aware greeting
+    openChat({
+      source: 'guide_handoff',
+      guideId,
+      guideCategory: category,
+    });
   };
 
   return (
