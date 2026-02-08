@@ -1,174 +1,179 @@
 # Selena Digital Concierge Communication Audit
 ## Complete Documentation of Patterns, Misalignments & Recommendations
 
-**Status: ✅ REMEDIATION COMPLETE (v2 - Safe Gate)**
-*Implemented: 2026-02-06*
+**Status: ✅ GUIDES PAGE OPTIMIZATION COMPLETE (v3 - Decision Hub)**
+*Implemented: 2026-02-08*
 
 ---
 
 ## 1. Executive Summary
 
-This audit documented Selena's communication patterns, CTA exposure, and escalation behavior against the **"Digital Concierge / Earned Access"** philosophy.
+This document tracks the evolution of Selena's integration and the Guides Page optimization following the "Digital Concierge / Earned Access" philosophy.
 
-### Core Finding (RESOLVED)
-~~Selena's voice and persona are correctly calibrated, but her structural behavior creates a "High-Pressure Sales Bot" experience that conflicts with the "Calm Concierge" design intent.~~
-
-**Post-Remediation:** Selena now follows the "Earned Access" model with conditional CTAs, deferred qualification, and consistent authority language.
-
----
-
-## 2. Remediation Summary (v2 - Corrected)
-
-### ✅ Phase 1: Conditional Booking CTA - FIXED
-
-**Safe Gate Criteria:**
-| Trigger | Implementation |
-|---------|----------------|
-| User explicitly asks to book | `userAskedToBook(message)` regex |
-| Tool completed | `context.tool_used`, `context.last_tool_result`, `context.quiz_completed` |
-| 2+ user turns | `userTurnCount(history) >= 2` |
-
-**Key Corrections:**
-- ❌ Removed invented fields: `has_used_tool`, `message_count`, `cognitive_stage`
-- ❌ Removed naive `history.length >= 3` (was counting both roles)
-- ✅ Now counts USER turns only via `userTurnCount()`
-
-### ✅ Phase 2: Defer Address Collection - FIXED
-
-- Removed `isFirstSellDeclaration` logic from system prompt
-- Selena educates before qualifying (no premature address request)
-
-### ✅ Phase 3: SelenaHandoff Skip Option - APPROVED
-
-- Added "I'll share later / Lo comparto después" escape path
-- Users can skip qualification questions
-
-### ✅ Phase 4: Language Normalization - FIXED
-
-**Canonical Intent Values:**
-| Raw Detection | Normalized |
-|---------------|------------|
-| `cash_offer` | `cash` |
-| `exploring` | `explore` |
-| `ready` | (removed - timeline, not intent) |
-
-**Canonical Timeline Values:**
-| Raw Detection | Normalized |
-|---------------|------------|
-| `60_90_days` | `60_90` |
-
-**CTA Language:**
-| Before | After |
-|--------|-------|
-| "Free Consultation" | "Review Strategy with Kasandra" |
-| "consulta gratuita" | "Revisar Estrategia con Kasandra" |
+### Latest Implementation (v3)
+The Guides Page has been transformed from a content index into a **Concierge-Driven Decision Hub** with:
+- Color-coded category wayfinding
+- Consolidated Selena entry points (Hero + Post-Grid Footer)
+- Gated Summary CTA (3+ guides read)
+- Decision Path Labels on guide cards
+- Removed redundant CTA layers
 
 ---
 
-## 3. Technical Implementation
+## 2. Changes Implemented (v3 - Guides Page Optimization)
 
-### Edge Function (`selena-chat/index.ts`)
+### ✅ P0.1: Category Color System
 
-**New Helper Functions:**
-```typescript
-function userAskedToBook(message: string): boolean {
-  return /(book|schedule|call|talk|meet|appointment|consulta|cita|llamar|hablar|agendar)/i.test(message);
-}
+**New File**: `src/lib/guides/categoryColors.ts`
 
-function userTurnCount(history: Array<{ role: string }>): number {
-  return history.filter(m => m.role === 'user').length;
-}
+| Category | Color | Emotional Intent |
+|----------|-------|------------------|
+| Buying | Blue-600 | Trust, stability, safety |
+| Selling | Emerald-600 | Growth, progress, moving forward |
+| Valuation | Amber-600 | Insight, clarity, knowledge |
+| Cash | Amber-700 | Speed, certainty, resolution |
+| Financial | Navy | Security, planning, guidance |
+| Neighborhoods | Violet-600 | Discovery, lifestyle, belonging |
+| Stories | Rose-500 | Connection, empathy, warmth |
+| Tips | Slate-600 | Practical, helpful, universal |
 
-function hasEarnedBookingAccess(context, history, message): boolean {
-  if (userAskedToBook(message)) return true;
-  if (context.tool_used || context.last_tool_result || context.quiz_completed) return true;
-  if (userTurnCount(history) >= 2) return true;
-  return false;
-}
+**Applied To**:
+- Category filter chips (active = strong, inactive = subtle)
+- Guide card left-edge accent bar
+- Category pill badges
 
-function filterSuggestionsForEarnedAccess(suggestions, hasEarned): string[] {
-  if (hasEarned) return suggestions;
-  return suggestions.filter(s => !BOOKING_KEYWORDS.test(s));
-}
+### ✅ P0.2: Reduced Pre-Grid Layers
+
+Before the guide grid, the page now has max 2 layers:
+1. PersonalizedHero (with single Selena CTA)
+2. StartHereLane OR SituationLane OR RecommendedCarousel (conditional)
+
+**Removed**:
+- Standalone ContextualSelenaPrompt section
+- Idle prompt timeout logic
+
+### ✅ P0.3: Consolidated Selena Entry Points
+
+**Hero CTA**: "Start with Selena" → Navigation assistance for new visitors
+
+**Post-Grid Footer**: `SelenaSynthesisFooter.tsx`
+- Gated "Summarize what I've learned" (only if `guidesReadCount >= 3`)
+- Always-visible "Ask a question"
+- Position: After guide grid, before final CTA section
+
+**Removed from**:
+- CognitiveProgressBar (now pure context, no CTAs)
+- Mid-page standalone section
+
+### ✅ P0.4: CognitiveProgressBar Simplified
+
+**Before**: Progress bar + stage label + microcopy + 2 CTAs
+**After**: Compact horizontal row with progress dots + stage badge + affirmation
+
+**New Human-Centered Labels**:
+| Level | Before | After (EN) |
+|-------|--------|------------|
+| 2 | Exploring | Finding Your Way |
+| 3 | Understanding | Building Clarity |
+| 4 | Clarifying | Narrowing Down |
+| 5 | Deciding | Ready to Move Forward |
+
+**Affirmations Added**:
+- Level 2: "You're making progress. Take your time."
+- Level 3: "You're building a clear picture. That's the goal."
+- Level 4: "You know more than when you started. Trust that."
+- Level 5: "When you're ready, support is here. No rush."
+
+### ✅ P0.5: Decision Path Labels
+
+**New**: Each guide card shows a decision-context label.
+
+| Guide | Label |
+|-------|-------|
+| first-time-buyer-guide | Decision: Start Buying |
+| selling-for-top-dollar | Decision: Sell vs Wait |
+| cash-offer-guide | Decision: Speed vs Price |
+| tucson-neighborhood-guide | Decision: Where to Live |
+| (stories) | Story: [Category] Success |
+
+---
+
+## 3. Files Created/Modified
+
+### Created
+- `src/lib/guides/categoryColors.ts` - Color config + decision labels
+- `src/components/v2/guides/SelenaSynthesisFooter.tsx` - Post-grid Selena entry
+
+### Modified
+- `src/components/v2/guides/CognitiveProgressBar.tsx` - Removed CTAs, compacted
+- `src/components/v2/guides/index.ts` - Added SelenaSynthesisFooter export
+- `src/pages/v2/V2Guides.tsx` - Applied all P0 changes
+
+---
+
+## 4. Selena CTA Strategy (Final)
+
+| Location | CTA | When Shown | Behavior |
+|----------|-----|------------|----------|
+| Hero | "Start with Selena" | Always | Opens chat for navigation |
+| Post-Grid | "Summarize what I've learned" | `guidesRead >= 3` | Prefills summary request |
+| Post-Grid | "Ask a question" | Always | Opens chat empty |
+| Footer | "Book a Consultation" | Always | Routes through Selena |
+
+**Behavior Contract**:
+- Summary CTA: Selena references guides read, highlights key takeaways
+- Question CTA: Selena asks clarifying question, suggests relevant guide
+- Footer CTA: Selena pre-qualifies before offering booking
+
+---
+
+## 5. Visual Hierarchy (Final)
+
 ```
-
-**Intent Normalization:**
-```typescript
-function normalizeIntent(raw: string): string {
-  switch (raw) {
-    case 'cash_offer': return 'cash';
-    case 'exploring': return 'explore';
-    case 'ready': return null; // Timeline, not intent
-    default: return raw;
-  }
-}
-```
-
-**Write-Once Guard:**
-- Background update of `lead_profiles` intent/timeline REMOVED
-- Only `upsertLeadProfile()` can write, with null-check guards
-
-### Frontend Components
-
-| File | Change |
-|------|--------|
-| `SelenaChatContext.tsx` | Fallback error no longer pushes booking |
-| `CalculatorResults.tsx` | "free consultation" → "review your strategy" |
-| `CalculatorNextSteps.tsx` | "Book a Free Consultation" → "Review Strategy" |
-| `SelenaHandoff.tsx` | Added skip option: "I'll share later" |
-| `IntentHeader.tsx` | "free, no-obligation" → "personalized strategy session" |
-| `V2CashOfferOptions.tsx` | "Free Cash Offer Review" → "Complimentary" |
-| `V2GuideDetail.tsx` | Standardized Spanish translations |
-
----
-
-## 4. Behavioral Model Post-Remediation
-
-### Earned Access Commitment Ladder
-
-| Step | Micro-Commitment | CTA Shown? |
-|------|------------------|------------|
-| 1 | Open Selena chat | ❌ No CTA |
-| 2 | Declare intent (Buy/Sell/Explore) | ❌ No CTA |
-| 3 | Second message (2 user turns) | ✅ CTA appears |
-| 4 | OR: Use calculator/quiz | ✅ CTA appears |
-| 5 | OR: Explicitly ask to book | ✅ CTA appears |
-
-### Suggestion Filtering
-
-When booking is NOT earned:
-- Suggestions containing `book|schedule|call|talk|meet|appointment|consulta|cita|llamar|hablar` are STRIPPED
-
----
-
-## 5. Verification Checklist
-
-- [x] Edge function uses canonical intent values only
-- [x] No invented context fields
-- [x] User turn count (not total messages)
-- [x] Write-once guard on lead_profiles
-- [x] Suggestion filtering for early-stage users
-- [x] API response includes `ok: boolean` per standard
-- [x] SelenaHandoff has skip option
-- [x] Spanish uses formal "Usted" consistently
-
----
-
-## 6. Response Contract
-
-```typescript
-{
-  ok: boolean;           // API response standard
-  reply: string;
-  suggestedReplies: string[];
-  actions: Array<{ label: string; href: string; eventType: string }>;
-  language: 'en' | 'es';
-  lead_id?: string;
-  detected_intent?: 'buy' | 'sell' | 'cash' | 'dual' | null;  // Canonical only
-  booking_cta_shown: boolean;
-}
+┌──────────────────────────────────────────────────────────┐
+│ HERO: Personalized headline + "Start with Selena" CTA   │
+├──────────────────────────────────────────────────────────┤
+│ CONDITIONAL: StartHereLane | SituationLane | Carousel   │
+├──────────────────────────────────────────────────────────┤
+│ PROGRESS BAR: Compact dots + stage + affirmation        │
+├──────────────────────────────────────────────────────────┤
+│ STICKY NAV: Color-coded category chips                  │
+├──────────────────────────────────────────────────────────┤
+│ GUIDE GRID: Cards with color accent + decision labels   │
+├──────────────────────────────────────────────────────────┤
+│ SYNTHESIS FOOTER: Selena summary/question CTAs          │
+├──────────────────────────────────────────────────────────┤
+│ AUTHORITY FOOTER: Soft consultation CTA                 │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-*Audit completed. Selena now behaves as a Digital Concierge with safe engagement gates.*
+## 6. Previous Remediation (v2 - Still Active)
+
+### Earned Access Gate (Selena Chat)
+Booking CTAs in Selena chat remain gated:
+- User explicitly asks to book
+- Tool completed (calculator, quiz)
+- 2+ user turns with non-explore intent
+
+### Intent Normalization
+- `cash_offer` → `cash`
+- `exploring` → `explore`
+- Write-once guard on lead_profiles
+
+---
+
+## 7. Success Criteria
+
+| Metric | Target |
+|--------|--------|
+| Pre-grid scroll distance | < 1 screen |
+| Selena entry points | 2 (Hero + Footer) |
+| Guide click clarity | Color = category |
+| Summary CTA visibility | Only 3+ guides |
+| Booking pressure | Zero until footer |
+
+---
+
+*Audit completed. Guides Page now functions as a Decision Hub with concierge-first navigation.*

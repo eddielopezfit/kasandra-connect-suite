@@ -12,7 +12,7 @@ import {
   StartHereLane,
   SituationLane,
   CognitiveProgressBar,
-  ContextualSelenaPrompt,
+  SelenaSynthesisFooter,
 } from "@/components/v2/guides";
 import {
   getGuidesRead,
@@ -27,11 +27,13 @@ import {
   setIntent,
   type Guide,
 } from "@/lib/guides/personalization";
+import { getCategoryColor, getDecisionLabel } from "@/lib/guides/categoryColors";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { useCognitiveStage } from "@/hooks/useCognitiveStage";
 import { useRecommendationEngine } from "@/hooks/useRecommendationEngine";
 import type { StartHereIntent } from "@/components/v2/guides/StartHereLane";
 import type { Situation } from "@/components/v2/guides/SituationLane";
+import { cn } from "@/lib/utils";
 
 const categories = [
   { 
@@ -240,17 +242,16 @@ function GuidesContent() {
   const navigate = useNavigate();
   const { openChat, sendMessage } = useSelenaChat();
   const [activeCategory, setActiveCategory] = useState("all");
-  const [showIdlePrompt, setShowIdlePrompt] = useState(false);
   
   // Personalization state - refreshed on mount
   const [guidesRead, setGuidesReadState] = useState<string[]>([]);
   const [lastGuideId, setLastGuideIdState] = useState<string | null>(null);
   
   // Cognitive stage hook
-  const { stage, stageId, shouldShowProgressBar, guidesReadCount, isFirstVisit, intent } = useCognitiveStage();
+  const { stage, stageId, shouldShowProgressBar, guidesReadCount, isFirstVisit } = useCognitiveStage();
   
   // Recommendation engine
-  const { topRecommendations, hasEngaged } = useRecommendationEngine(guides);
+  const { hasEngaged } = useRecommendationEngine(guides);
   
   useEffect(() => {
     // Initialize personalization state
@@ -259,15 +260,6 @@ function GuidesContent() {
     
     // Log page view
     logEvent('guides_page_view', { returning: isReturningVisitor() });
-    
-    // Show idle prompt after 15 seconds if user hasn't clicked a guide
-    const timer = setTimeout(() => {
-      if (getGuidesRead().length === 0) {
-        setShowIdlePrompt(true);
-      }
-    }, 15000);
-    
-    return () => clearTimeout(timer);
   }, []);
   
   const isReturning = guidesRead.length > 0 || lastGuideId !== null;
@@ -306,7 +298,6 @@ function GuidesContent() {
   const handleGuideClick = useCallback((guideId: string) => {
     setLastGuideId(guideId);
     markGuideRead(guideId);
-    setShowIdlePrompt(false);
     logEvent('guide_opened', { guideId, source: 'grid' });
   }, []);
   
@@ -317,7 +308,7 @@ function GuidesContent() {
   }, [recommendedItems, handleGuideClick]);
   
   const handleBookConsultation = useCallback(() => {
-    logEvent('consultation_cta_clicked', { stage: stageId, source: 'progress_bar' });
+    logEvent('consultation_cta_clicked', { stage: stageId, source: 'footer' });
     trackJourneyAction('book');
     openChat(); // Route through Selena instead of direct navigation
   }, [openChat, stageId]);
@@ -370,15 +361,7 @@ function GuidesContent() {
     logEvent('situation_selected', { situation });
   }, []);
   
-  const handleProgressBarCta = useCallback(() => {
-    if (stage.ctaAction === 'book') {
-      handleBookConsultation();
-    } else if (stage.ctaAction === 'continue' && lastGuideId) {
-      navigate(`/v2/guides/${lastGuideId}`);
-    } else {
-      document.getElementById('guides-section')?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [stage.ctaAction, handleBookConsultation, lastGuideId, navigate]);
+  // Progress bar is now pure context - no CTA handler needed
   
   const handleRequestSummary = useCallback(() => {
     logEvent('personalized_summary_offered', { 
@@ -424,44 +407,31 @@ function GuidesContent() {
         />
       )}
       
-      {/* Layer 5: Cognitive Progress Bar - Hidden for first visit */}
+      {/* Layer 5: Cognitive Progress Bar - Compact context indicator, no CTAs */}
       <CognitiveProgressBar
         stage={stage}
         isVisible={shouldShowProgressBar}
-        onCtaClick={handleProgressBarCta}
-        onAskSelena={() => handleAskSelena()}
       />
-      
-      {/* Layer 6: Contextual Selena Prompt */}
-      <section className="bg-cc-ivory py-8">
-        <div className="container mx-auto px-4">
-          <ContextualSelenaPrompt
-            stageId={stageId}
-            guidesReadCount={guidesReadCount}
-            onAskSelena={handleAskSelena}
-            onRequestSummary={handleRequestSummary}
-            variant="floating"
-          />
-        </div>
-      </section>
 
-      {/* Category Filter */}
+      {/* Category Filter with Color-Coding */}
       <section id="guides-section" className="bg-cc-sand py-8 border-b border-cc-sand-dark sticky top-16 z-40 w-full max-w-full overflow-hidden">
         <div className="container mx-auto px-4 w-full max-w-full">
           <div className="flex gap-2 sm:gap-3 mb-3 overflow-x-auto pb-2 scrollbar-hide md:flex-wrap md:justify-center md:overflow-visible">
             {categories.map((category) => {
               const Icon = category.icon;
+              const colors = getCategoryColor(category.id);
+              const isActive = activeCategory === category.id;
+              
               return (
                 <button
                   key={category.id}
                   onClick={() => handleCategoryChange(category.id)}
-                  className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${
-                    activeCategory === category.id
-                      ? "bg-cc-navy text-white shadow-md"
-                      : "bg-white text-cc-charcoal hover:bg-cc-gold/10 hover:text-cc-gold border border-cc-sand-dark/50"
-                  }`}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 border",
+                    isActive ? colors.strong + " shadow-md" : colors.subtle
+                  )}
                 >
-                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <Icon className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4", isActive ? "" : colors.icon)} />
                   {t(category.label, category.labelEs)}
                 </button>
               );
@@ -479,22 +449,28 @@ function GuidesContent() {
         </div>
       </section>
 
-      {/* Guides Grid */}
+      {/* Guides Grid with Color-Coded Accents */}
       <section className="bg-cc-ivory py-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredGuides.map((guide) => {
               const gridBadge = getGridBadge(guide.id, guide.category);
+              const colors = getCategoryColor(guide.category);
+              const decisionLabel = getDecisionLabel(guide.id);
               
               return (
                 <Link
                   key={guide.id}
                   to={`/v2/guides/${guide.id}`}
                   onClick={() => handleGuideClick(guide.id)}
-                  className="group bg-white rounded-xl p-6 shadow-soft hover:shadow-elevated transition-all duration-300 border border-cc-sand-dark/50 hover:border-cc-gold/30"
+                  className={cn(
+                    "group bg-white rounded-xl p-6 shadow-soft hover:shadow-elevated transition-all duration-300 border border-cc-sand-dark/50 hover:border-cc-gold/30",
+                    colors.accent // Left-edge color accent
+                  )}
                 >
-                  <div className="flex items-center gap-2 mb-4 flex-wrap">
-                    <span className="px-3 py-1 bg-cc-navy/10 text-cc-navy rounded-full text-xs font-medium">
+                  <div className="flex items-center gap-2 mb-3 flex-wrap">
+                    {/* Category pill with subtle color */}
+                    <span className={cn("px-3 py-1 rounded-full text-xs font-medium border", colors.subtle)}>
                       {getCategoryLabel(guide.category)}
                     </span>
                     <span className="text-cc-slate text-xs">
@@ -509,6 +485,14 @@ function GuidesContent() {
                       <span className="w-2 h-2 rounded-full bg-emerald-400" title={t("Read", "Leído")} />
                     )}
                   </div>
+                  
+                  {/* Decision Path Label */}
+                  {decisionLabel && (
+                    <span className="text-xs text-cc-slate/70 font-medium mb-2 block">
+                      {t(decisionLabel.en, decisionLabel.es)}
+                    </span>
+                  )}
+                  
                   <h3 className="font-serif text-xl text-cc-charcoal mb-3 group-hover:text-cc-navy transition-colors">
                     {t(guide.title, guide.titleEs)}
                   </h3>
@@ -524,18 +508,14 @@ function GuidesContent() {
             })}
           </div>
           
-          {/* Idle Selena Prompt - shows after browsing with no clicks */}
-          {showIdlePrompt && (
-            <div className="mt-12 max-w-2xl mx-auto animate-fade-in">
-              <ContextualSelenaPrompt
-                stageId={stageId}
-                guidesReadCount={guidesReadCount}
-                onAskSelena={handleAskSelena}
-                onRequestSummary={handleRequestSummary}
-                variant="inline"
-              />
-            </div>
-          )}
+          {/* Post-Grid Selena Synthesis Footer */}
+          <div className="mt-12 max-w-3xl mx-auto">
+            <SelenaSynthesisFooter
+              guidesReadCount={guidesReadCount}
+              onAskSelena={handleAskSelena}
+              onRequestSummary={handleRequestSummary}
+            />
+          </div>
         </div>
       </section>
 
