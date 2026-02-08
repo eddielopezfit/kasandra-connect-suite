@@ -1,0 +1,292 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * SELENA ENTRY GREETINGS - Context-Aware First Messages
+ * ═══════════════════════════════════════════════════════════════════════════════
+ * 
+ * Different entry points produce different first sentences, even if the
+ * follow-up question is the same. This creates personalized onboarding
+ * based on where the user came from.
+ * 
+ * Priority order for greeting selection:
+ * 1. Calculator completion (highest context)
+ * 2. Guide handoff
+ * 3. Synthesis footer ("Summarize what I've learned")
+ * 4. Hero CTA
+ * 5. Floating button (default)
+ * 
+ * ═══════════════════════════════════════════════════════════════════════════════
+ */
+
+export type EntrySource = 
+  | 'calculator' 
+  | 'guide_handoff' 
+  | 'synthesis' 
+  | 'hero' 
+  | 'floating' 
+  | 'proactive'
+  | 'question';
+
+export interface EntryContext {
+  source: EntrySource;
+  // Calculator context
+  calculatorAdvantage?: 'cash' | 'traditional' | 'consult';
+  calculatorDifference?: number;
+  // Guide context
+  guideId?: string;
+  guideTitle?: string;
+  guideCategory?: string;
+  // Synthesis context
+  guidesReadCount?: number;
+  // General
+  language: 'en' | 'es';
+}
+
+interface GreetingResult {
+  content: string;
+  suggestedReplies: string[];
+}
+
+/**
+ * Generates context-aware greeting based on entry point
+ */
+export function generateEntryGreeting(context: EntryContext): GreetingResult {
+  const { source, language } = context;
+
+  switch (source) {
+    case 'calculator':
+      return generateCalculatorGreeting(context);
+    case 'guide_handoff':
+      return generateGuideHandoffGreeting(context);
+    case 'synthesis':
+      return generateSynthesisGreeting(context);
+    case 'hero':
+      return generateHeroGreeting(language);
+    case 'question':
+      return generateQuestionGreeting(language);
+    case 'proactive':
+      return generateProactiveGreeting(language);
+    case 'floating':
+    default:
+      return generateDefaultGreeting(language);
+  }
+}
+
+function generateCalculatorGreeting(context: EntryContext): GreetingResult {
+  const { calculatorAdvantage, calculatorDifference, language } = context;
+  const diff = calculatorDifference ? `$${calculatorDifference.toLocaleString()}` : '';
+
+  if (language === 'es') {
+    let content = 'Veo que ha completado el análisis.';
+    
+    if (calculatorAdvantage === 'cash') {
+      content = `Excelente trabajo con el análisis. El efectivo parece ser una buena opción para usted — velocidad y certeza sin los costos de preparación.`;
+    } else if (calculatorAdvantage === 'traditional') {
+      content = diff 
+        ? `Buen trabajo con los números. Parece que una venta tradicional podría darle ${diff} más — si tiene el tiempo para maximizar el valor.`
+        : `Buen trabajo con los números. Una venta tradicional podría darle más — si tiene el tiempo para maximizar el valor.`;
+    } else {
+      content = `Ha hecho un gran paso al analizar sus números. La diferencia es sutil — lo cual significa que la decisión correcta depende de su situación.`;
+    }
+
+    return {
+      content: content + `\n\n¿Le gustaría explorar lo que significa esto para usted?`,
+      suggestedReplies: [
+        "¿Qué opción es mejor para mí?",
+        "Revisar estrategia con Kasandra",
+        "Tengo más preguntas",
+      ],
+    };
+  }
+
+  // English
+  let content = 'I see you completed the analysis.';
+  
+  if (calculatorAdvantage === 'cash') {
+    content = `Nice work on the analysis. Cash looks like a strong option for you — speed and certainty without the prep costs.`;
+  } else if (calculatorAdvantage === 'traditional') {
+    content = diff 
+      ? `Great job on the numbers. It looks like a traditional sale could net you ${diff} more — if you have the time to maximize value.`
+      : `Great job on the numbers. A traditional sale could net you more — if you have the time to maximize value.`;
+  } else {
+    content = `You've taken a great step by running your numbers. The difference is subtle — which means the right choice depends on your situation.`;
+  }
+
+  return {
+    content: content + `\n\nWould you like to explore what this means for you?`,
+    suggestedReplies: [
+      "Which option is better for me?",
+      "Review strategy with Kasandra",
+      "I have more questions",
+    ],
+  };
+}
+
+function generateGuideHandoffGreeting(context: EntryContext): GreetingResult {
+  const { guideTitle, guideCategory, language } = context;
+
+  if (language === 'es') {
+    const title = guideTitle || 'esta guía';
+    let content = `Veo que está leyendo "${title}."`;
+    
+    if (guideCategory === 'buying') {
+      content += ` Es un excelente recurso para compradores. ¿Tiene alguna pregunta específica sobre el proceso de compra?`;
+    } else if (guideCategory === 'selling' || guideCategory === 'valuation') {
+      content += ` Gran paso para entender sus opciones de venta. ¿Le gustaría una lista personalizada basada en lo que ha leído?`;
+    } else {
+      content += ` ¿Hay algo específico que le gustaría explorar más?`;
+    }
+
+    return {
+      content,
+      suggestedReplies: [
+        "Sí, tengo una pregunta",
+        "¿Cuál es mi siguiente paso?",
+        "Solo estoy explorando",
+      ],
+    };
+  }
+
+  // English
+  const title = guideTitle || 'this guide';
+  let content = `I see you're reading "${title}."`;
+  
+  if (guideCategory === 'buying') {
+    content += ` It's a great resource for buyers. Do you have any specific questions about the buying process?`;
+  } else if (guideCategory === 'selling' || guideCategory === 'valuation') {
+    content += ` Great step toward understanding your selling options. Would you like a personalized checklist based on what you've read?`;
+  } else {
+    content += ` Is there anything specific you'd like to explore further?`;
+  }
+
+  return {
+    content,
+    suggestedReplies: [
+      "Yes, I have a question",
+      "What's my next step?",
+      "Just exploring for now",
+    ],
+  };
+}
+
+function generateSynthesisGreeting(context: EntryContext): GreetingResult {
+  const { guidesReadCount = 0, language } = context;
+
+  if (language === 'es') {
+    const content = guidesReadCount >= 3
+      ? `Ha leído ${guidesReadCount} guías — está construyendo una imagen clara de sus opciones. Permítame resumir los puntos clave que más importan para su situación.`
+      : `Ha estado explorando sus opciones. ¿Le gustaría que resuma lo que ha aprendido hasta ahora?`;
+
+    return {
+      content,
+      suggestedReplies: [
+        "Sí, resume lo que he aprendido",
+        "¿Cuál debería ser mi siguiente paso?",
+        "Tengo una pregunta específica",
+      ],
+    };
+  }
+
+  // English
+  const content = guidesReadCount >= 3
+    ? `You've read ${guidesReadCount} guides — you're building a clear picture of your options. Let me summarize the key points that matter most for your situation.`
+    : `You've been exploring your options. Would you like me to summarize what you've learned so far?`;
+
+  return {
+    content,
+    suggestedReplies: [
+      "Yes, summarize what I've learned",
+      "What should my next step be?",
+      "I have a specific question",
+    ],
+  };
+}
+
+function generateHeroGreeting(language: 'en' | 'es'): GreetingResult {
+  if (language === 'es') {
+    return {
+      content: `Hola, soy Selena — la guía digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión. Ya sea que esté pensando en comprar, vender, o simplemente entendiendo lo que es posible — estoy aquí para guiarle.\n\n¿Qué le trae por aquí hoy?`,
+      suggestedReplies: [
+        "Estoy pensando en vender",
+        "Estoy buscando comprar",
+        "Solo estoy explorando",
+      ],
+    };
+  }
+
+  return {
+    content: `Hello, I'm Selena — Kasandra's digital real estate guide.\n\nI'm here to help you explore your options calmly and without pressure. Whether you're thinking about buying, selling, or just understanding what's possible — I'm here to guide you.\n\nWhat brings you here today?`,
+    suggestedReplies: [
+      "I'm thinking about selling",
+      "I'm looking to buy",
+      "Just exploring for now",
+    ],
+  };
+}
+
+function generateQuestionGreeting(language: 'en' | 'es'): GreetingResult {
+  if (language === 'es') {
+    return {
+      content: `Estoy aquí para ayudarle. ¿Qué pregunta tiene en mente?`,
+      suggestedReplies: [
+        "¿Cuánto vale mi casa?",
+        "¿Cómo funciona el proceso?",
+        "¿Qué opciones tengo?",
+      ],
+    };
+  }
+
+  return {
+    content: `I'm here to help. What question do you have in mind?`,
+    suggestedReplies: [
+      "What's my home worth?",
+      "How does the process work?",
+      "What are my options?",
+    ],
+  };
+}
+
+function generateProactiveGreeting(language: 'en' | 'es'): GreetingResult {
+  // Proactive greetings are typically triggered by specific events
+  // This is a fallback if no specific context is provided
+  if (language === 'es') {
+    return {
+      content: `Noté que ha estado explorando sus opciones. ¿Hay algo en lo que pueda ayudarle?`,
+      suggestedReplies: [
+        "Sí, tengo una pregunta",
+        "¿Cuáles son mis opciones?",
+        "Solo estoy mirando",
+      ],
+    };
+  }
+
+  return {
+    content: `I noticed you've been exploring your options. Is there anything I can help you with?`,
+    suggestedReplies: [
+      "Yes, I have a question",
+      "What are my options?",
+      "Just browsing",
+    ],
+  };
+}
+
+function generateDefaultGreeting(language: 'en' | 'es'): GreetingResult {
+  if (language === 'es') {
+    return {
+      content: `Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?`,
+      suggestedReplies: [
+        "Estoy pensando en vender",
+        "Estoy buscando comprar",
+        "Solo estoy explorando",
+      ],
+    };
+  }
+
+  return {
+    content: `Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?`,
+    suggestedReplies: [
+      "I'm thinking about selling",
+      "I'm looking to buy",
+      "Just exploring for now",
+    ],
+  };
+}

@@ -1,15 +1,21 @@
 /**
  * ═══════════════════════════════════════════════════════════════════════════════
- * SELENA CHAT - AI Concierge Edge Function
+ * SELENA CHAT - AI Concierge Edge Function (Decision Certainty Engine)
  * ═══════════════════════════════════════════════════════════════════════════════
  * 
- * CONTRACT (v1 - LOCKED 2026-02-06):
+ * CONTRACT (v2 - UPDATED 2026-02-08):
  * 
  * CANONICAL INTENTS: buy | sell | cash | dual | explore
  * CANONICAL TIMELINES: asap | 30_days | 60_90
  * 
  * INTENT PRIORITY ORDER: cash > dual > sell > buy > explore
  *   - When multiple intents are detected, the highest priority wins as primaryIntent
+ * 
+ * 4-MODE ARCHITECTURE (Decision Certainty):
+ *   MODE 1: ORIENTATION - First contact, reduce anxiety, ONE question only
+ *   MODE 2: CLARITY BUILDING - Reference journey, suggest tools/guides
+ *   MODE 3: CONFIDENCE & SYNTHESIS - Reflect progress, position Kasandra subtly
+ *   MODE 4: HANDOFF - Booking as continuation of clarity (earned access)
  * 
  * EARNED ACCESS GATE:
  *   Booking CTAs (actions array) are ONLY shown when user has "earned" access:
@@ -21,9 +27,15 @@
  *   
  *   If none of these are true → actions: [] (no CTA shown)
  * 
- * SUGGESTION FILTERING:
- *   When booking is NOT earned, suggestedReplies containing booking keywords/phrases
- *   are automatically stripped to prevent premature sales pressure.
+ * REFLECTION SENTENCE FORMULA (Modes 2 & 3):
+ *   "From what you've explored so far — especially [guide/tool/action] — 
+ *    it sounds like you're trying to [goal]."
+ * 
+ * STALL RECOVERY (Mode 3.5):
+ *   After 5+ turns without forward motion, offer summary or exit option
+ * 
+ * POST-BOOKING IDENTITY REINFORCEMENT:
+ *   "You've already done the hard part — thinking this through carefully."
  * 
  * CTA LABEL: "Review Strategy with Kasandra" (never "Free Consultation")
  * 
@@ -32,6 +44,14 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { 
+  detectMode, 
+  getModeSuggestedReplies, 
+  MODE_INSTRUCTIONS_EN, 
+  MODE_INSTRUCTIONS_ES,
+  type ConversationMode,
+  type ConversationState,
+} from "./modeContext.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -55,12 +75,18 @@ interface ChatRequest {
     intent?: string;
     situation?: string;
     last_guide_id?: string;
+    last_guide_title?: string;
     lastEvents?: string[];
     lead_id?: string;
-    // Stable fields that exist in SessionContext
+    // Mode detection signals
     tool_used?: string;
     last_tool_result?: string;
     quiz_completed?: boolean;
+    guides_read?: number;
+    // Entry context
+    entry_source?: string;
+    calculator_advantage?: string;
+    calculator_difference?: number;
   };
   history?: ChatMessage[];
 }
@@ -432,7 +458,7 @@ function getSuggestedReplies(
   return suggestions;
 }
 
-// ============= SYSTEM PROMPTS (HARDENED) =============
+// ============= SYSTEM PROMPTS (HARDENED + MODE CONTEXT) =============
 const SYSTEM_PROMPT_EN = `You are Selena, Kasandra Prieto's digital real estate concierge. 
 Kasandra is a high-touch solo practitioner in Tucson. 
 
@@ -442,11 +468,21 @@ VOICE RULES:
 - Keep responses to 2-3 sentences.
 - Be calm, professional, and supportive. No pressure. 
 - Mirror the user's language.
+- NO exclamation points. NO emojis. No over-enthusiasm.
+- Never compare Kasandra to other agents — she is the only option.
 
 CONCIERGE PHILOSOPHY:
 - Educate before qualifying. Offer value (guides, calculators, insights) before asking for personal details.
 - Never push booking. Let the user signal readiness.
 - If the user seems interested in selling, suggest exploring their options (calculator, guides) before asking for property address.
+- One question at a time. Never overwhelm.
+
+KASANDRA FRAMING (Busy Professional):
+- "Kasandra personally handles every client — no handoffs."
+- "Her schedule fills up, but I can help you find a time."
+- "She'll review your situation before your call."
+
+${MODE_INSTRUCTIONS_EN}
 
 When a user provides their email or exhibits high intent, reassure them that Kasandra herself will review their details.`;
 
@@ -459,13 +495,60 @@ REGLAS DE VOZ:
 - DIGA SIEMPRE "Kasandra se comunicará personalmente con usted" o "Kasandra le guiará personalmente".
 - Mantenga las respuestas a 2-3 oraciones.
 - Sea profesional, calmada y brinde apoyo sin presión.
+- SIN signos de exclamación. SIN emojis. Sin exceso de entusiasmo.
+- Nunca compare a Kasandra con otros agentes — ella es la única opción.
 
 FILOSOFÍA DE CONCIERGE:
 - Educar antes de calificar. Ofrezca valor (guías, calculadoras, información) antes de solicitar datos personales.
 - Nunca presione para agendar. Deje que el usuario señale su disposición.
 - Si el usuario parece interesado en vender, sugiera explorar sus opciones antes de pedir la dirección de la propiedad.
+- Una pregunta a la vez. Nunca abrume.
+
+ENCUADRE DE KASANDRA (Profesional Ocupada):
+- "Kasandra maneja personalmente cada cliente — sin transferencias."
+- "Su agenda se llena, pero puedo ayudarle a encontrar un horario."
+- "Ella revisará su situación antes de su llamada."
+
+${MODE_INSTRUCTIONS_ES}
 
 Cuando el cliente proporcione su correo o muestre gran interés, asegúrele que la misma Kasandra revisará sus detalles.`;
+
+// ============= MODE DETECTION HELPER =============
+function buildConversationState(
+  context: ChatRequest["context"],
+  history: ChatMessage[],
+  message: string,
+  extractedEmail: string | null,
+  primaryIntent: CanonicalIntent
+): ConversationState {
+  const userTurns = history.filter(m => m.role === 'user').length;
+  
+  return {
+    userTurns,
+    hasIntent: primaryIntent !== 'explore' || !!context.intent,
+    intent: primaryIntent !== 'explore' ? primaryIntent : context.intent || null,
+    guidesRead: context.guides_read || 0,
+    toolUsed: !!context.tool_used,
+    quizCompleted: !!context.quiz_completed,
+    hasToolResult: !!context.last_tool_result,
+    hasEmail: !!extractedEmail,
+    explicitBookingAsk: userAskedToBook(message),
+  };
+}
+
+// ============= STALL DETECTION =============
+const STALL_PATTERNS = /just curious|solo curiosidad|just looking|solo mirando|i don't know|no sé|not sure|no estoy segur/i;
+
+function isStalled(history: ChatMessage[], message: string): boolean {
+  const userMessages = history.filter(m => m.role === 'user');
+  if (userMessages.length < 5) return false;
+  
+  // Check if recent messages are low-intent
+  const recentMessages = userMessages.slice(-3);
+  const stallCount = recentMessages.filter(m => STALL_PATTERNS.test(m.content)).length;
+  
+  return stallCount >= 2 || STALL_PATTERNS.test(message);
+}
 
 // ============= MAIN HANDLER =============
 serve(async (req) => {
@@ -494,19 +577,74 @@ serve(async (req) => {
         await logDataCapture(context.session_id, "selena_data_email_captured", { lead_id: leadId });
       }
     }
-    // NOTE: Removed unsafe background update that overwrote intent/timeline
-    // Lead profile updates only happen via upsertLeadProfile with write-once guards
 
-    // Build system prompt
+    // Build conversation state for mode detection
+    const conversationState = buildConversationState(context, history, message, extractedEmail, primaryIntent);
+    const modeContext = detectMode(conversationState);
+    const currentMode: ConversationMode = modeContext.mode;
+    
+    // Log mode transition for analytics
+    await logDataCapture(context.session_id, "selena_mode_transition", { 
+      mode: currentMode, 
+      mode_name: modeContext.modeName,
+      user_turns: conversationState.userTurns,
+    });
+
+    // Check for stall condition (Mode 3.5 behavior)
+    const stalled = isStalled(history, message);
+
+    // Build system prompt with mode context
     const systemPrompt = language === "es" ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN;
     
+    // Add reflection context for Modes 2 & 3
+    let reflectionHint = "";
+    if (modeContext.reflectionRequired) {
+      const guideTitle = context.last_guide_title;
+      const toolUsed = context.tool_used;
+      const guidesRead = context.guides_read || 0;
+      
+      if (language === "es") {
+        if (guideTitle) {
+          reflectionHint = `\n\nCONTEXTO: El usuario ha leído la guía "${guideTitle}". Usa la Fórmula de Reflexión.`;
+        } else if (toolUsed) {
+          reflectionHint = `\n\nCONTEXTO: El usuario ha usado ${toolUsed}. Reconoce este progreso.`;
+        } else if (guidesRead >= 2) {
+          reflectionHint = `\n\nCONTEXTO: El usuario ha leído ${guidesRead} guías. Refleja su progreso.`;
+        }
+      } else {
+        if (guideTitle) {
+          reflectionHint = `\n\nCONTEXT: User has read the guide "${guideTitle}". Use the Reflection Sentence Formula.`;
+        } else if (toolUsed) {
+          reflectionHint = `\n\nCONTEXT: User has used the ${toolUsed}. Acknowledge this progress.`;
+        } else if (guidesRead >= 2) {
+          reflectionHint = `\n\nCONTEXT: User has read ${guidesRead} guides. Reflect their progress.`;
+        }
+      }
+    }
+    
+    // Add stall recovery hint if needed
+    if (stalled) {
+      reflectionHint += language === "es"
+        ? `\n\nDETECTADO: El usuario parece estancado. Ofrece resumir o preguntar si prefiere seguir explorando.`
+        : `\n\nDETECTED: User appears stalled. Offer to summarize or ask if they'd prefer to keep exploring.`;
+    }
+    
+    // Add mode hint
+    const modeHint = language === "es"
+      ? `\n\nMODO ACTUAL: ${currentMode} (${modeContext.modeName}). Ajusta el tono y las sugerencias según este modo.`
+      : `\n\nCURRENT MODE: ${currentMode} (${modeContext.modeName}). Adjust tone and suggestions for this mode.`;
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
-        messages: [{ role: "system", content: systemPrompt }, ...history.slice(-5), { role: "user", content: message }],
-        max_tokens: 150,
+        messages: [
+          { role: "system", content: systemPrompt + reflectionHint + modeHint }, 
+          ...history.slice(-5), 
+          { role: "user", content: message }
+        ],
+        max_tokens: 200,
         temperature: 0.7,
       }),
     });
@@ -514,12 +652,18 @@ serve(async (req) => {
     const data = await response.json();
     const reply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
 
-    // Check if booking access is earned (email = commitment signal)
-    const hasEarned = hasEarnedBookingAccess(context, history, message, extractedEmail);
+    // Check if booking access is earned (from mode detection)
+    const hasEarned = modeContext.allowBookingCTA;
 
-    // Get intent-aware suggested replies, then filter for earned access
-    let suggestedReplies = getSuggestedReplies(effectiveIntent, language, message);
-    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned);
+    // Get mode-specific suggested replies (behavioral rails)
+    let suggestedReplies = getModeSuggestedReplies(currentMode, language, effectiveIntent);
+    
+    // If stalled, override with stall recovery options
+    if (stalled) {
+      suggestedReplies = language === "es"
+        ? ["Sí, resume dónde estoy", "Prefiero seguir explorando", "Tengo una pregunta específica"]
+        : ["Yes, summarize where I am", "I'd rather keep exploring", "I have a specific question"];
+    }
 
     // Build actions array conditionally
     const actions: Array<{ label: string; href: string; eventType: string }> = [];
@@ -543,6 +687,9 @@ serve(async (req) => {
         // Return CANONICAL detected intent only
         detected_intent: primaryIntent !== 'explore' ? primaryIntent : null,
         booking_cta_shown: hasEarned,
+        // Mode telemetry
+        current_mode: currentMode,
+        mode_name: modeContext.modeName,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );

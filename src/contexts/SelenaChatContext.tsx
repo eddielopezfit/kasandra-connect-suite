@@ -1,6 +1,10 @@
 /**
  * Selena Chat Context
  * Manages chat state across the app with lead identity awareness
+ * 
+ * ENTRY SOURCE SUPPORT (v2):
+ * openChat() now accepts an optional EntryContext parameter for context-aware greetings.
+ * Priority order: calculator > guide_handoff > synthesis > hero > floating
  */
 
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect, useRef } from 'react';
@@ -25,6 +29,31 @@ import { getGuideById } from '@/lib/guides/guideRegistry';
 const CHAT_HISTORY_KEY = 'selena_chat_history';
 const LEAD_ID_KEY = 'selena_lead_id';
 const MAX_HISTORY = 50;
+
+// ============= ENTRY SOURCE TYPES =============
+export type EntrySource = 
+  | 'calculator' 
+  | 'guide_handoff' 
+  | 'synthesis' 
+  | 'hero' 
+  | 'floating' 
+  | 'proactive'
+  | 'question';
+
+export interface EntryContext {
+  source: EntrySource;
+  // Calculator context
+  calculatorAdvantage?: 'cash' | 'traditional' | 'consult';
+  calculatorDifference?: number;
+  // Guide context
+  guideId?: string;
+  guideTitle?: string;
+  guideCategory?: string;
+  // Synthesis context
+  guidesReadCount?: number;
+  // Prefill message (for synthesis/question flows)
+  prefillMessage?: string;
+}
 
 export interface ChatMessage {
   id: string;
@@ -95,7 +124,8 @@ interface SelenaChatContextType {
   // Calculator awareness (Task 4)
   hasUsedCalculator: boolean;
   lastCalculatorAdvantage: CalculatorAdvantage | null;
-  openChat: () => void;
+  // Context-aware chat opening (v2) - accepts optional EntryContext or can be used as click handler
+  openChat: (entryContextOrEvent?: EntryContext | React.MouseEvent) => void;
   closeChat: () => void;
   toggleChat: () => void;
   sendMessage: (content: string) => Promise<void>;
@@ -288,56 +318,171 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('selena-booking-confirmation', handleBookingConfirmation);
   }, [t, location.pathname]);
 
-  const openChat = useCallback(() => {
+  const openChat = useCallback((entryContextOrEvent?: EntryContext | React.MouseEvent) => {
     setIsOpen(true);
     logSelenaOpen(location.pathname);
     
+    // Determine if this is an EntryContext or a click event
+    const entryContext: EntryContext | undefined = 
+      entryContextOrEvent && 'source' in entryContextOrEvent 
+        ? entryContextOrEvent 
+        : undefined;
+    
+    // Log entry source for telemetry
+    if (entryContext) {
+      logEvent('selena_entry', { 
+        source: entryContext.source, 
+        route: location.pathname,
+        has_calculator_result: !!entryContext.calculatorAdvantage,
+        has_guide_context: !!entryContext.guideId,
+      });
+    }
+    
     // Add greeting if no messages
     if (messages.length === 0) {
-      const context = getSessionContext();
+      const sessionContext = getSessionContext();
       let greetingContent: string;
       let suggestedReplies: string[];
       
-      // Check if user is on a guide page
-      const guideId = context?.last_guide_id;
-      const guideEntry = guideId ? getGuideById(guideId) : null;
-      const isOnGuidePage = location.pathname.includes('/v2/guides/');
-      
-      if (guideEntry && isOnGuidePage) {
-        // Guide-aware greeting
-        const guideTitle = language === 'es' ? guideEntry.titleEs : guideEntry.titleEn;
+      // Priority 1: Calculator completion context (highest priority)
+      if (entryContext?.source === 'calculator' && entryContext.calculatorAdvantage) {
+        const diff = entryContext.calculatorDifference 
+          ? `$${entryContext.calculatorDifference.toLocaleString()}` 
+          : '';
         
-        greetingContent = t(
-          `I see you're reading "${guideTitle}." Would you like a personalized checklist based on this guide?`,
-          `Veo que estás leyendo "${guideTitle}." ¿Te gustaría una lista de verificación personalizada basada en esta guía?`
-        );
-        
-        // Contextual suggested replies based on guide category
-        if (guideEntry.category === 'buying') {
-          suggestedReplies = [
-            t("Yes, send me the checklist", "Sí, envíame la lista"),
-            t("I have a question about buying", "Tengo una pregunta sobre comprar"),
-            t("Not right now", "Ahora no"),
-          ];
-        } else if (guideEntry.category === 'selling' || guideEntry.category === 'valuation') {
-          suggestedReplies = [
-            t("Yes, send me the checklist", "Sí, envíame la lista"),
-            t("What's my home worth?", "¿Cuánto vale mi casa?"),
-            t("Not right now", "Ahora no"),
-          ];
+        if (entryContext.calculatorAdvantage === 'cash') {
+          greetingContent = t(
+            `Nice work on the analysis. Cash looks like a strong option for you — speed and certainty without the prep costs.\n\nWould you like to explore what this means for you?`,
+            `Excelente trabajo con el análisis. El efectivo parece ser una buena opción para usted — velocidad y certeza sin los costos de preparación.\n\n¿Le gustaría explorar lo que esto significa para usted?`
+          );
+        } else if (entryContext.calculatorAdvantage === 'traditional') {
+          greetingContent = diff
+            ? t(
+                `Great job on the numbers. It looks like a traditional sale could net you ${diff} more — if you have the time to maximize value.\n\nWould you like to explore what this means for you?`,
+                `Buen trabajo con los números. Parece que una venta tradicional podría darle ${diff} más — si tiene el tiempo para maximizar el valor.\n\n¿Le gustaría explorar lo que esto significa para usted?`
+              )
+            : t(
+                `Great job on the numbers. A traditional sale could net you more — if you have the time to maximize value.\n\nWould you like to explore what this means for you?`,
+                `Buen trabajo con los números. Una venta tradicional podría darle más — si tiene el tiempo para maximizar el valor.\n\n¿Le gustaría explorar lo que esto significa para usted?`
+              );
         } else {
-          // Stories
+          greetingContent = t(
+            `You've taken a great step by running your numbers. The difference is subtle — which means the right choice depends on your situation.\n\nWould you like to explore what this means for you?`,
+            `Ha hecho un gran paso al analizar sus números. La diferencia es sutil — lo cual significa que la decisión correcta depende de su situación.\n\n¿Le gustaría explorar lo que esto significa para usted?`
+          );
+        }
+        suggestedReplies = [
+          t("Which option is better for me?", "¿Qué opción es mejor para mí?"),
+          t("Review strategy with Kasandra", "Revisar estrategia con Kasandra"),
+          t("I have more questions", "Tengo más preguntas"),
+        ];
+      }
+      // Priority 2: Synthesis footer context
+      else if (entryContext?.source === 'synthesis') {
+        // Use entryContext.guidesReadCount (passed from the component)
+        const guidesCount = entryContext.guidesReadCount || 0;
+        greetingContent = guidesCount >= 3
+          ? t(
+              `You've read ${guidesCount} guides — you're building a clear picture of your options. Let me summarize the key points that matter most for your situation.`,
+              `Ha leído ${guidesCount} guías — está construyendo una imagen clara de sus opciones. Permítame resumir los puntos clave que más importan para su situación.`
+            )
+          : t(
+              `You've been exploring your options. Would you like me to summarize what you've learned so far?`,
+              `Ha estado explorando sus opciones. ¿Le gustaría que resuma lo que ha aprendido hasta ahora?`
+            );
+        suggestedReplies = [
+          t("Yes, summarize what I've learned", "Sí, resume lo que he aprendido"),
+          t("What should my next step be?", "¿Cuál debería ser mi siguiente paso?"),
+          t("I have a specific question", "Tengo una pregunta específica"),
+        ];
+      }
+      // Priority 3: Question CTA context
+      else if (entryContext?.source === 'question') {
+        greetingContent = t(
+          `I'm here to help. What question do you have in mind?`,
+          `Estoy aquí para ayudarle. ¿Qué pregunta tiene en mente?`
+        );
+        suggestedReplies = [
+          t("What's my home worth?", "¿Cuánto vale mi casa?"),
+          t("How does the process work?", "¿Cómo funciona el proceso?"),
+          t("What are my options?", "¿Cuáles son mis opciones?"),
+        ];
+      }
+      // Priority 4: Guide handoff context
+      else if (entryContext?.source === 'guide_handoff' || (sessionContext?.last_guide_id && location.pathname.includes('/v2/guides/'))) {
+        const guideId = entryContext?.guideId || sessionContext?.last_guide_id;
+        const guideEntry = guideId ? getGuideById(guideId) : null;
+        
+        if (guideEntry) {
+          const guideTitle = entryContext?.guideTitle || (language === 'es' ? guideEntry.titleEs : guideEntry.titleEn);
+          const category = entryContext?.guideCategory || guideEntry.category;
+          
+          greetingContent = t(
+            `I see you're reading "${guideTitle}."`,
+            `Veo que está leyendo "${guideTitle}."`
+          );
+          
+          if (category === 'buying') {
+            greetingContent += t(
+              ` It's a great resource for buyers. Do you have any specific questions about the buying process?`,
+              ` Es un excelente recurso para compradores. ¿Tiene alguna pregunta específica sobre el proceso de compra?`
+            );
+            suggestedReplies = [
+              t("Yes, I have a question", "Sí, tengo una pregunta"),
+              t("What's my next step?", "¿Cuál es mi siguiente paso?"),
+              t("Just exploring for now", "Solo estoy explorando"),
+            ];
+          } else if (category === 'selling' || category === 'valuation') {
+            greetingContent += t(
+              ` Great step toward understanding your selling options. Would you like a personalized checklist based on what you've read?`,
+              ` Gran paso para entender sus opciones de venta. ¿Le gustaría una lista personalizada basada en lo que ha leído?`
+            );
+            suggestedReplies = [
+              t("Yes, send me the checklist", "Sí, envíame la lista"),
+              t("What's my home worth?", "¿Cuánto vale mi casa?"),
+              t("Not right now", "Ahora no"),
+            ];
+          } else {
+            greetingContent += t(
+              ` Is there anything specific you'd like to explore further?`,
+              ` ¿Hay algo específico que le gustaría explorar más?`
+            );
+            suggestedReplies = [
+              t("I'd like similar guidance", "Me gustaría orientación similar"),
+              t("Tell me more about your services", "Cuéntame más sobre tus servicios"),
+              t("Not right now", "Ahora no"),
+            ];
+          }
+        } else {
+          // Fallback to default
+          greetingContent = t(
+            "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
+            "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
+          );
           suggestedReplies = [
-            t("I'd like similar guidance", "Me gustaría orientación similar"),
-            t("Tell me more about your services", "Cuéntame más sobre tus servicios"),
-            t("Not right now", "Ahora no"),
+            t("I'm thinking about selling", "Estoy pensando en vender"),
+            t("I'm looking to buy", "Estoy buscando comprar"),
+            t("Just exploring for now", "Solo estoy explorando"),
           ];
         }
-      } else {
-        // Default greeting
+      }
+      // Priority 5: Hero CTA context
+      else if (entryContext?.source === 'hero') {
+        greetingContent = t(
+          `Hello, I'm Selena — Kasandra's digital real estate guide.\n\nI'm here to help you explore your options calmly and without pressure. Whether you're thinking about buying, selling, or just understanding what's possible — I'm here to guide you.\n\nWhat brings you here today?`,
+          `Hola, soy Selena — la guía digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión. Ya sea que esté pensando en comprar, vender, o simplemente entendiendo lo que es posible — estoy aquí para guiarle.\n\n¿Qué le trae por aquí hoy?`
+        );
+        suggestedReplies = [
+          t("I'm thinking about selling", "Estoy pensando en vender"),
+          t("I'm looking to buy", "Estoy buscando comprar"),
+          t("Just exploring for now", "Solo estoy explorando"),
+        ];
+      }
+      // Default greeting (floating button or unknown source)
+      else {
         greetingContent = t(
           "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
-          "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarte a explorar tus opciones con calma y sin presión.\n\n¿Estás pensando en comprar, vender, o solo explorar qué es posible?"
+          "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
         );
         suggestedReplies = [
           t("I'm thinking about selling", "Estoy pensando en vender"),
@@ -355,6 +500,13 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       };
       setMessages([greeting]);
       saveHistory([greeting]);
+      
+      // If there's a prefill message (e.g., from synthesis), store it for later sending
+      // We can't call sendMessage here due to callback dependency order
+      if (entryContext?.prefillMessage) {
+        // Store the prefill in localStorage temporarily for the next render cycle
+        localStorage.setItem('selena_prefill_message', entryContext.prefillMessage);
+      }
     }
   }, [messages.length, location.pathname, t, language]);
 
@@ -487,6 +639,20 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     }
   }, [messages, isLoading, location.pathname, t, leadId]); // languageRef.current always current, no dep needed
+
+  // Handle prefill messages stored by openChat (for synthesis flows)
+  useEffect(() => {
+    if (messages.length > 0 && !isLoading) {
+      const prefill = localStorage.getItem('selena_prefill_message');
+      if (prefill) {
+        localStorage.removeItem('selena_prefill_message');
+        // Delay slightly to let UI stabilize
+        setTimeout(() => {
+          sendMessage(prefill);
+        }, 300);
+      }
+    }
+  }, [messages.length, isLoading, sendMessage]);
 
   const generateReport = useCallback(async (action: ChatAction) => {
     if (!action.reportType || !leadId) {
