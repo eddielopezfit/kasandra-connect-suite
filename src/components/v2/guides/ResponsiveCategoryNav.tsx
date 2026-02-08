@@ -1,10 +1,9 @@
-import { useRef, useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Grid3X3 } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Grid3X3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getCategoryColor, type GuideColorCategory } from "@/lib/guides/categoryColors";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface CategoryItem {
   id: string;
@@ -29,14 +28,13 @@ const PRIMARY_CATEGORY_IDS = ["all", "buying", "selling", "valuation"];
  * Responsive Category Navigation
  * 
  * Behavior by breakpoint:
- * - Desktop (≥1024px): Chips wrap to second row if needed, centered
- * - Tablet (768-1023px): Horizontal scroll with fade affordances + chevrons
+ * - Desktop (≥1024px): Chips wrap, centered
+ * - Tablet (768-1023px): 2-row wrapped flex, centered - ALL categories visible
  * - Mobile (<768px): 4 primary chips + "More" button → bottom sheet
  * 
  * Features:
  * - Color-coded chips using CATEGORY_COLORS
  * - 2-tier mobile nav with bottom sheet
- * - Scroll fade gradients for discoverability
  * - Touch-friendly 44px+ tap targets
  * - Keyboard accessible
  */
@@ -47,10 +45,6 @@ export function ResponsiveCategoryNav({
   className,
 }: ResponsiveCategoryNavProps) {
   const { t } = useLanguage();
-  const isMobile = useIsMobile();
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   // Build primary categories list for mobile
@@ -69,52 +63,6 @@ export function ResponsiveCategoryNav({
     return primaryCats;
   }, [categories, activeCategory]);
 
-  // Check scroll position to show/hide fade gradients
-  const updateScrollState = useCallback(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = container;
-    setCanScrollLeft(scrollLeft > 8);
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 8);
-  }, []);
-
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    updateScrollState();
-    container.addEventListener("scroll", updateScrollState, { passive: true });
-    window.addEventListener("resize", updateScrollState);
-
-    return () => {
-      container.removeEventListener("scroll", updateScrollState);
-      window.removeEventListener("resize", updateScrollState);
-    };
-  }, [updateScrollState]);
-
-  // Scroll by a fixed amount when clicking chevrons
-  const scrollBy = (direction: "left" | "right") => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const scrollAmount = direction === "left" ? -200 : 200;
-    container.scrollBy({ left: scrollAmount, behavior: "smooth" });
-  };
-
-  // Scroll active chip into view on mount or change (tablet only)
-  useEffect(() => {
-    if (isMobile) return; // Don't scroll on mobile (uses sheet)
-    
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const activeChip = container.querySelector(`[data-category="${activeCategory}"]`);
-    if (activeChip) {
-      activeChip.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-    }
-  }, [activeCategory, isMobile]);
-
   const handleCategorySelect = (categoryId: string) => {
     onCategorySelect(categoryId);
     setIsSheetOpen(false);
@@ -131,7 +79,7 @@ export function ResponsiveCategoryNav({
       role="navigation"
       aria-label={t("Guide categories", "Categorías de guías")}
     >
-      {/* Desktop: Wrapped flex layout */}
+      {/* Desktop (≥1024px): Wrapped flex layout, centered */}
       <div className="hidden lg:flex flex-wrap gap-2 sm:gap-3 justify-center">
         {categories.map((category) => (
           <CategoryChip
@@ -143,79 +91,20 @@ export function ResponsiveCategoryNav({
         ))}
       </div>
 
-      {/* Tablet: Horizontal scroll with affordances */}
-      <div className="hidden md:block lg:hidden relative">
-        {/* Left fade gradient */}
-        <div
-          className={cn(
-            "absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-cc-sand via-cc-sand/80 to-transparent z-10 pointer-events-none transition-opacity duration-200",
-            canScrollLeft ? "opacity-100" : "opacity-0"
-          )}
-          aria-hidden="true"
-        />
-        
-        {/* Left scroll button */}
-        <button
-          onClick={() => scrollBy("left")}
-          className={cn(
-            "absolute left-1 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-8 h-8 rounded-full bg-white/95 shadow-md border border-cc-sand-dark/30 transition-opacity duration-200",
-            canScrollLeft ? "opacity-100" : "opacity-0 pointer-events-none"
-          )}
-          aria-label={t("Scroll left", "Desplazar a la izquierda")}
-          tabIndex={canScrollLeft ? 0 : -1}
-        >
-          <ChevronLeft className="w-4 h-4 text-cc-charcoal" />
-        </button>
-
-        {/* Scrollable chip container */}
-        <div
-          ref={scrollContainerRef}
-          className={cn(
-            "flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth",
-            "py-2 px-10", // Padding for fade/chevrons
-            "snap-x snap-mandatory"
-          )}
-          style={{ 
-            WebkitOverflowScrolling: "touch",
-            scrollPaddingLeft: "40px",
-            scrollPaddingRight: "40px",
-          }}
-        >
-          {categories.map((category) => (
-            <CategoryChip
-              key={category.id}
-              category={category}
-              isActive={activeCategory === category.id}
-              onClick={() => onCategorySelect(category.id)}
-              className="snap-start flex-shrink-0"
-            />
-          ))}
-        </div>
-
-        {/* Right fade gradient */}
-        <div
-          className={cn(
-            "absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-cc-sand via-cc-sand/80 to-transparent z-10 pointer-events-none transition-opacity duration-200",
-            canScrollRight ? "opacity-100" : "opacity-0"
-          )}
-          aria-hidden="true"
-        />
-
-        {/* Right scroll button */}
-        <button
-          onClick={() => scrollBy("right")}
-          className={cn(
-            "absolute right-1 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-8 h-8 rounded-full bg-white/95 shadow-md border border-cc-sand-dark/30 transition-opacity duration-200",
-            canScrollRight ? "opacity-100" : "opacity-0 pointer-events-none"
-          )}
-          aria-label={t("Scroll right", "Desplazar a la derecha")}
-          tabIndex={canScrollRight ? 0 : -1}
-        >
-          <ChevronRight className="w-4 h-4 text-cc-charcoal" />
-        </button>
+      {/* Tablet (768-1023px): 2-row wrapped flex, ALL categories visible */}
+      <div className="hidden md:flex lg:hidden flex-wrap gap-2 justify-center max-w-2xl mx-auto">
+        {categories.map((category) => (
+          <CategoryChip
+            key={category.id}
+            category={category}
+            isActive={activeCategory === category.id}
+            onClick={() => onCategorySelect(category.id)}
+            compact
+          />
+        ))}
       </div>
 
-      {/* Mobile: 2-Tier Nav with Primary Row + More Sheet */}
+      {/* Mobile (<768px): 2-Tier Nav with Primary Row + More Sheet */}
       <div className="md:hidden">
         {/* Primary chips row */}
         <div className="flex items-center gap-2 justify-center flex-wrap">
