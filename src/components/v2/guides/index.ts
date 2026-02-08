@@ -9,6 +9,7 @@ export { default as GuideComplianceFooter } from './GuideComplianceFooter';
 
 // Digital Concierge Experience components
 export { PersonalizedHero } from './PersonalizedHero';
+export { SelenaSynthesisFooter } from './SelenaSynthesisFooter';
 export { RecommendedGuidesCarousel } from './RecommendedGuidesCarousel';
 export { JourneyProgressIndicator } from './JourneyProgressIndicator';
 export { SelenaAnchorPrompt } from './SelenaAnchorPrompt';
