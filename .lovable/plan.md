@@ -80,7 +80,8 @@ After 5+ turns without forward motion:
 ## 4. Context-Aware Greetings
 
 ### Entry Source Priority
-1. **Calculator** (highest) — References advantage and difference
+0. **Post-Booking** (highest) — Identity reinforcement, seals the decision
+1. **Calculator** — References advantage and difference
 2. **Guide Handoff** — Acknowledges specific guide read
 3. **Synthesis** — Offers to summarize guides read
 4. **Hero** — Welcome with orientation
@@ -95,7 +96,8 @@ type EntrySource =
   | 'hero' 
   | 'floating' 
   | 'proactive'
-  | 'question';
+  | 'question'
+  | 'post_booking'; // ✅ NEW - Identity reinforcement
 
 interface EntryContext {
   source: EntrySource;
@@ -106,8 +108,27 @@ interface EntryContext {
   guideCategory?: string;
   guidesReadCount?: number;
   prefillMessage?: string;
+  intent?: string; // For post-booking
+  userName?: string; // For post-booking personalization
 }
 ```
+
+### Post-Booking Identity Reinforcement
+When user clicks Selena on the thank-you page after booking:
+
+**English:**
+> "You're all set. You've already done the hard part — thinking this through carefully.
+> 
+> Kasandra will personally review what you shared before your call so you get complete clarity in 10 minutes.
+> 
+> If you'd like, tell me one thing you want to be 100% certain about when you two talk."
+
+**Spanish (formal Usted):**
+> "Listo. Usted ya hizo lo más difícil — pensar esto con cuidado.
+>
+> Kasandra revisará personalmente lo que compartió antes de su llamada para que tenga claridad completa en 10 minutos.
+>
+> Si gusta, dígame una cosa sobre la que quiera estar 100% seguro/a cuando hablen."
 
 ---
 

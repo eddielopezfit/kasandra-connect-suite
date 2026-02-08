@@ -24,7 +24,8 @@ export type EntrySource =
   | 'hero' 
   | 'floating' 
   | 'proactive'
-  | 'question';
+  | 'question'
+  | 'post_booking'; // After successful booking - identity reinforcement
 
 export interface EntryContext {
   source: EntrySource;
@@ -37,6 +38,9 @@ export interface EntryContext {
   guideCategory?: string;
   // Synthesis context
   guidesReadCount?: number;
+  // Post-booking context
+  intent?: string;
+  userName?: string;
   // General
   language: 'en' | 'es';
 }
@@ -53,6 +57,8 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
   const { source, language } = context;
 
   switch (source) {
+    case 'post_booking':
+      return generatePostBookingGreeting(context);
     case 'calculator':
       return generateCalculatorGreeting(context);
     case 'guide_handoff':
@@ -69,6 +75,44 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
     default:
       return generateDefaultGreeting(language);
   }
+}
+
+/**
+ * Post-booking identity reinforcement greeting
+ * Seals the decision and positions Kasandra as preparing for the call
+ */
+function generatePostBookingGreeting(context: EntryContext): GreetingResult {
+  const { userName, intent, language } = context;
+  const name = userName ? `${userName}, ` : '';
+  
+  if (language === 'es') {
+    return {
+      content: `${name}Listo. Usted ya hizo lo más difícil — pensar esto con cuidado.
+
+Kasandra revisará personalmente lo que compartió antes de su llamada para que tenga claridad completa en 10 minutos.
+
+Si gusta, dígame una cosa sobre la que quiera estar 100% seguro/a cuando hablen.`,
+      suggestedReplies: [
+        "¿Qué debo preparar para la llamada?",
+        "¿Puedo reprogramar si es necesario?",
+        "Gracias, Selena",
+      ],
+    };
+  }
+  
+  // English
+  return {
+    content: `${name}You're all set. You've already done the hard part — thinking this through carefully.
+
+Kasandra will personally review what you shared before your call so you get complete clarity in 10 minutes.
+
+If you'd like, tell me one thing you want to be 100% certain about when you two talk.`,
+    suggestedReplies: [
+      "What should I prepare for the call?",
+      "Can I reschedule if needed?",
+      "Thanks, Selena",
+    ],
+  };
 }
 
 function generateCalculatorGreeting(context: EntryContext): GreetingResult {

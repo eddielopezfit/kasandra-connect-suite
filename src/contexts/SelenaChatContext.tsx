@@ -38,7 +38,8 @@ export type EntrySource =
   | 'hero' 
   | 'floating' 
   | 'proactive'
-  | 'question';
+  | 'question'
+  | 'post_booking'; // After successful booking - identity reinforcement
 
 export interface EntryContext {
   source: EntrySource;
@@ -51,6 +52,9 @@ export interface EntryContext {
   guideCategory?: string;
   // Synthesis context
   guidesReadCount?: number;
+  // Post-booking context
+  intent?: string;
+  userName?: string;
   // Prefill message (for synthesis/question flows)
   prefillMessage?: string;
 }
@@ -338,14 +342,29 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       });
     }
     
-    // Add greeting if no messages
-    if (messages.length === 0) {
+    // Add greeting if no messages OR if this is a post-booking entry (always show identity reinforcement)
+    const isPostBooking = entryContext?.source === 'post_booking';
+    
+    if (messages.length === 0 || isPostBooking) {
       const sessionContext = getSessionContext();
       let greetingContent: string;
       let suggestedReplies: string[];
       
-      // Priority 1: Calculator completion context (highest priority)
-      if (entryContext?.source === 'calculator' && entryContext.calculatorAdvantage) {
+      // Priority 0: Post-booking identity reinforcement (HIGHEST - seals the decision)
+      if (isPostBooking) {
+        const name = entryContext?.userName ? `${entryContext.userName}, ` : '';
+        greetingContent = t(
+          `${name}You're all set. You've already done the hard part — thinking this through carefully.\n\nKasandra will personally review what you shared before your call so you get complete clarity in 10 minutes.\n\nIf you'd like, tell me one thing you want to be 100% certain about when you two talk.`,
+          `${name}Listo. Usted ya hizo lo más difícil — pensar esto con cuidado.\n\nKasandra revisará personalmente lo que compartió antes de su llamada para que tenga claridad completa en 10 minutos.\n\nSi gusta, dígame una cosa sobre la que quiera estar 100% seguro/a cuando hablen.`
+        );
+        suggestedReplies = [
+          t("What should I prepare for the call?", "¿Qué debo preparar para la llamada?"),
+          t("Can I reschedule if needed?", "¿Puedo reprogramar si es necesario?"),
+          t("Thanks, Selena", "Gracias, Selena"),
+        ];
+      }
+      // Priority 1: Calculator completion context
+      else if (entryContext?.source === 'calculator' && entryContext.calculatorAdvantage) {
         const diff = entryContext.calculatorDifference 
           ? `$${entryContext.calculatorDifference.toLocaleString()}` 
           : '';

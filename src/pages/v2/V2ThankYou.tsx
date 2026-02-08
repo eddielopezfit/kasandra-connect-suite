@@ -29,7 +29,7 @@ const V2ThankYouContent = () => {
     });
   };
 
-  // Handle Selena prompt click
+  // Handle Selena prompt click - with post-booking context for identity reinforcement
   const handleSelenaClick = () => {
     logCTAClick({
       cta_name: CTA_NAMES.THANK_YOU_SELENA_PROMPT,
@@ -37,7 +37,12 @@ const V2ThankYouContent = () => {
       page_path: PAGE_PATH,
       intent,
     });
-    openChat();
+    // Pass post-booking context so Selena seals the decision
+    openChat({
+      source: 'post_booking',
+      intent,
+      userName: leadName,
+    });
   };
   
   // Intent-specific content using formal Spanish
