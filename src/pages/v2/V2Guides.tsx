@@ -279,7 +279,7 @@ function GuidesContent() {
   // Handlers
   const handleStartSelena = useCallback(() => {
     logEvent('ask_selena_clicked', { source: 'hero', stage: stageId });
-    openChat();
+    openChat({ source: 'hero' });
   }, [openChat, stageId]);
   
   const handleContinue = useCallback(() => {
@@ -320,11 +320,15 @@ function GuidesContent() {
       stage: stageId, 
       hasPrefill: !!prefillMessage 
     });
-    openChat();
+    // Pass synthesis context for context-aware greeting
+    openChat({
+      source: 'synthesis',
+      guidesReadCount,
+    });
     if (prefillMessage) {
       setTimeout(() => sendMessage(prefillMessage), 500);
     }
-  }, [openChat, sendMessage, stageId]);
+  }, [openChat, sendMessage, stageId, guidesReadCount]);
   
   const handleCategoryChange = useCallback((categoryId: string) => {
     setActiveCategory(categoryId);
@@ -348,7 +352,7 @@ function GuidesContent() {
         setActiveCategory('valuation');
         break;
       case 'explore':
-        openChat();
+        openChat({ source: 'hero' });
         sendMessage(t(
           "I'm just exploring my options. Can you help me understand what's possible?",
           "Solo estoy explorando mis opciones. ¿Puedes ayudarme a entender qué es posible?"

@@ -101,14 +101,20 @@ const TucsonAlphaCalculator = () => {
     logEvent('calculator_results_view', { step: 'next_steps' });
   }, []);
 
-  // Handle asking Selena
+  // Handle asking Selena with entry context
   const handleAskSelena = useCallback(() => {
     logEvent('calculator_cta_click', { 
       cta: 'ask_selena',
       context: { estimatedValue, motivation, timeline },
     });
-    openChat();
-  }, [openChat, estimatedValue, motivation, timeline]);
+    
+    // Pass calculator context for context-aware greeting
+    openChat({
+      source: 'calculator',
+      calculatorAdvantage: results?.recommendation === 'traditional' ? 'traditional' : results?.recommendation === 'cash' ? 'cash' : 'consult',
+      calculatorDifference: results?.costOfTime?.netDifference,
+    });
+  }, [openChat, estimatedValue, motivation, timeline, results]);
 
   // Handle back navigation
   const handleBack = useCallback(() => {
