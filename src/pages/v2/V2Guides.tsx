@@ -13,6 +13,7 @@ import {
   SituationLane,
   CognitiveProgressBar,
   SelenaSynthesisFooter,
+  ResponsiveCategoryNav,
 } from "@/components/v2/guides";
 import {
   getGuidesRead,
@@ -413,33 +414,21 @@ function GuidesContent() {
         isVisible={shouldShowProgressBar}
       />
 
-      {/* Category Filter with Color-Coding */}
-      <section id="guides-section" className="bg-cc-sand py-8 border-b border-cc-sand-dark sticky top-16 z-40 w-full max-w-full overflow-hidden">
-        <div className="container mx-auto px-4 w-full max-w-full">
-          <div className="flex gap-2 sm:gap-3 mb-3 overflow-x-auto pb-2 scrollbar-hide md:flex-wrap md:justify-center md:overflow-visible">
-            {categories.map((category) => {
-              const Icon = category.icon;
-              const colors = getCategoryColor(category.id);
-              const isActive = activeCategory === category.id;
-              
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => handleCategoryChange(category.id)}
-                  className={cn(
-                    "inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 border",
-                    isActive ? colors.strong + " shadow-md" : colors.subtle
-                  )}
-                >
-                  <Icon className={cn("w-3.5 h-3.5 sm:w-4 sm:h-4", isActive ? "" : colors.icon)} />
-                  {t(category.label, category.labelEs)}
-                </button>
-              );
-            })}
-          </div>
+      {/* Category Filter with Color-Coding - Responsive Nav */}
+      <section 
+        id="guides-section" 
+        className="bg-cc-sand py-6 md:py-8 border-b border-cc-sand-dark sticky top-16 z-40 w-full"
+      >
+        <div className="container mx-auto px-4">
+          <ResponsiveCategoryNav
+            categories={categories}
+            activeCategory={activeCategory}
+            onCategorySelect={handleCategoryChange}
+          />
+          
           {/* Micro-copy for selected category */}
           {activeCategory !== "all" && (
-            <p className="text-center text-sm text-cc-slate">
+            <p className="text-center text-sm text-cc-slate mt-3">
               {t(
                 categories.find(c => c.id === activeCategory)?.desc || "",
                 categories.find(c => c.id === activeCategory)?.descEs || ""
