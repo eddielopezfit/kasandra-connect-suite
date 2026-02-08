@@ -438,8 +438,8 @@ function GuidesContent() {
         </div>
       </section>
 
-      {/* Guides Grid with Color-Coded Accents */}
-      <section className="bg-cc-ivory py-16">
+      {/* Guides Grid with Color-Coded Accents - Extra bottom padding on mobile for chat bubble */}
+      <section className="bg-cc-ivory py-16 pb-24 md:pb-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredGuides.map((guide) => {
