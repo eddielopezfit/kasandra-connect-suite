@@ -26,18 +26,23 @@ export interface PrePopulationData {
 /**
  * Map SessionContext intent to form intent value
  */
+/**
+ * Map SessionContext intent (canonical) to form select value
+ * Form values: buyer, seller, cash, buy_and_sell, browsing
+ */
 function mapIntent(sessionIntent?: string): string | undefined {
   if (!sessionIntent) return undefined;
   
   const intentMap: Record<string, string> = {
     buy: 'buyer',
     sell: 'seller',
-    cash: 'cash', // Form uses canonical value now
-    investor: 'unknown',
-    explore: 'unknown',
+    cash: 'cash',
+    dual: 'buy_and_sell',
+    investor: 'browsing',
+    explore: 'browsing',
   };
   
-  return intentMap[sessionIntent] || 'unknown';
+  return intentMap[sessionIntent] || undefined;
 }
 
 /**
