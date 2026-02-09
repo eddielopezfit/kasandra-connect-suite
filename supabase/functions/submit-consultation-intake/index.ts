@@ -24,6 +24,11 @@ interface ConsultationIntakeInput {
   page_path?: string;
   guide_id?: string;
   guide_title?: string;
+  // Consent fields (TCPA compliance)
+  consent_communications?: boolean;
+  consent_ai?: boolean;
+  // Submission timestamp
+  submitted_at?: string;
   // Full Session Dossier fields
   situation?: string;
   condition?: string;
@@ -353,6 +358,9 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
           input.quiz_completed ? "quiz_completed" : null,
           input.has_viewed_report ? "viewed_report" : null,
           priorityHandoffTriggered ? "priority_hot" : null,
+          // Consent tags for compliance audit
+          input.consent_communications ? "consent_communications" : null,
+          input.consent_ai ? "consent_ai_disclosure" : null,
         ].filter(Boolean) as string[];
 
         // Pipeline stage helper using CANONICAL intent
@@ -482,6 +490,10 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
             is_pre_approved: input.pre_approved === 'yes',
             // Priority handoff indicator
             priority_handoff: priorityHandoffTriggered,
+            // Consent fields (TCPA compliance audit trail)
+            selena_consent_communications: input.consent_communications || false,
+            selena_consent_ai_disclosure: input.consent_ai || false,
+            selena_consent_timestamp: input.submitted_at || new Date().toISOString(),
           },
         };
 

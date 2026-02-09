@@ -263,7 +263,10 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
       // Get full session dossier for GHL
       const sessionDossier = getFullSessionDossier();
 
-      // Call edge function with full session context
+      // Generate submission timestamp
+      const submittedAt = new Date().toISOString();
+
+      // Call edge function with full session context + consent + timestamp
       const { data: response, error } = await supabase.functions.invoke("submit-consultation-intake", {
         body: {
           name: data.name.trim(),
@@ -280,6 +283,11 @@ const ConsultationIntakeForm = ({ onSuccess }: ConsultationIntakeFormProps) => {
           session_id: sessionId,
           source: "lovable_native_form",
           page_path: window.location.pathname,
+          // Consent fields (required by Zod, always true when form is valid)
+          consent_communications: data.consentCommunications === true,
+          consent_ai: data.consentAI === true,
+          // Submission timestamp for audit trail
+          submitted_at: submittedAt,
           // Full Session Dossier for GHL
           ...sessionDossier,
         },
