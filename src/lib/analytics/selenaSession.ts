@@ -76,6 +76,14 @@ export interface SessionContext {
   // Ad Funnel bridge (Phase 2)
   ad_funnel_source?: 'seller_landing' | 'seller_quiz';
   ad_funnel_value_range?: string;
+  // Entry context persistence (Phase 2 - Selena memory)
+  entry_source?: string;
+  entry_guide_id?: string;
+  entry_guide_title?: string;
+  entry_guide_category?: string;
+  last_seen_page_path?: string;
+  last_seen_page_type?: 'guide' | 'tool' | 'quiz' | 'page';
+  last_opened_at?: string;
 }
 
 /**

@@ -175,8 +175,8 @@ const SellerResultContent = () => {
 
       // Unlock the report
       setIsUnlocked(true);
-      toast.success("Report sent! Check your texts.", {
-        description: "A detailed breakdown has been sent to your inbox.",
+      toast.success("Report sent! Check your messages.", {
+        description: "A detailed breakdown has been sent to you.",
       });
 
     } catch (error) {

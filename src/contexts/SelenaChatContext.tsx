@@ -332,11 +332,50 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         ? entryContextOrEvent 
         : undefined;
     
+    // Persist entry context to SessionContext for deterministic greetings
+    const pagePath = location.pathname;
+    const isGuidePage = /^\/v2\/guides\/.+$/.test(pagePath);
+    const entryUpdates: Record<string, unknown> = {
+      entry_source: entryContext?.source || (isGuidePage ? 'guide_fab' : 'fab'),
+      last_seen_page_path: pagePath,
+      last_seen_page_type: isGuidePage ? 'guide' : pagePath.includes('/quiz') ? 'quiz' : pagePath.includes('/readiness') || pagePath.includes('/cash-offer') ? 'tool' : 'page',
+      last_opened_at: new Date().toISOString(),
+    };
+    if (entryContext?.guideId) {
+      entryUpdates.entry_guide_id = entryContext.guideId;
+      entryUpdates.entry_guide_title = entryContext.guideTitle || null;
+      entryUpdates.entry_guide_category = entryContext.guideCategory || null;
+      entryUpdates.last_guide_id = entryContext.guideId;
+    } else if (isGuidePage) {
+      const guideMatch = pagePath.match(/^\/v2\/guides\/(.+)$/);
+      if (guideMatch) {
+        const gId = guideMatch[1];
+        const entry = getGuideById(gId);
+        if (entry) {
+          entryUpdates.entry_guide_id = gId;
+          entryUpdates.entry_guide_title = languageRef.current === 'es' ? entry.titleEs : entry.titleEn;
+          entryUpdates.entry_guide_category = entry.category;
+          entryUpdates.last_guide_id = gId;
+        }
+      }
+    }
+    if (entryContext?.intent) {
+      setFieldIfEmpty('intent', entryContext.intent as any);
+    }
+    updateSessionContext(entryUpdates as any);
+
+    // Emit analytics event
+    logEvent('selena_opened', {
+      entry_source: entryUpdates.entry_source,
+      entry_guide_id: entryUpdates.entry_guide_id || null,
+      page_path: pagePath,
+    });
+    
     // Log entry source for telemetry
     if (entryContext) {
       logEvent('selena_entry', { 
         source: entryContext.source, 
-        route: location.pathname,
+        route: pagePath,
         has_calculator_result: !!entryContext.calculatorAdvantage,
         has_guide_context: !!entryContext.guideId,
       });
@@ -427,51 +466,28 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           t("What are my options?", "¿Cuáles son mis opciones?"),
         ];
       }
-      // Priority 4: Guide handoff context
-      else if (entryContext?.source === 'guide_handoff' || (sessionContext?.last_guide_id && location.pathname.includes('/v2/guides/'))) {
-        const guideId = entryContext?.guideId || sessionContext?.last_guide_id;
+      // Priority 4: Guide handoff context — check BOTH EntryContext AND SessionContext
+      else if (
+        entryContext?.source === 'guide_handoff' || 
+        entryContext?.guideId ||
+        sessionContext?.entry_guide_id ||
+        (sessionContext?.last_guide_id && location.pathname.includes('/v2/guides/'))
+      ) {
+        const guideId = entryContext?.guideId || sessionContext?.entry_guide_id || sessionContext?.last_guide_id;
         const guideEntry = guideId ? getGuideById(guideId) : null;
         
         if (guideEntry) {
-          const guideTitle = entryContext?.guideTitle || (language === 'es' ? guideEntry.titleEs : guideEntry.titleEn);
-          const category = entryContext?.guideCategory || guideEntry.category;
+          const guideTitle = entryContext?.guideTitle || sessionContext?.entry_guide_title || (language === 'es' ? guideEntry.titleEs : guideEntry.titleEn);
           
           greetingContent = t(
-            `I see you're reading "${guideTitle}."`,
-            `Veo que está leyendo "${guideTitle}."`
+            `I see you're reading "${guideTitle}." Want the 30-second summary or do you have a specific question?`,
+            `Veo que estás leyendo "${guideTitle}." ¿Quieres un resumen de 30 segundos o tienes una pregunta específica?`
           );
-          
-          if (category === 'buying') {
-            greetingContent += t(
-              ` It's a great resource for buyers. Do you have any specific questions about the buying process?`,
-              ` Es un excelente recurso para compradores. ¿Tiene alguna pregunta específica sobre el proceso de compra?`
-            );
-            suggestedReplies = [
-              t("Yes, I have a question", "Sí, tengo una pregunta"),
-              t("What's my next step?", "¿Cuál es mi siguiente paso?"),
-              t("Just exploring for now", "Solo estoy explorando"),
-            ];
-          } else if (category === 'selling' || category === 'valuation') {
-            greetingContent += t(
-              ` Great step toward understanding your selling options. Do you have any questions about what you've read?`,
-              ` Gran paso para entender sus opciones de venta. ¿Tiene alguna pregunta sobre lo que ha leído?`
-            );
-            suggestedReplies = [
-              t("What's my home worth?", "¿Cuánto vale mi casa?"),
-              t("Compare my options", "Comparar mis opciones"),
-              t("Not right now", "Ahora no"),
-            ];
-          } else {
-            greetingContent += t(
-              ` Is there anything specific you'd like to explore further?`,
-              ` ¿Hay algo específico que le gustaría explorar más?`
-            );
-            suggestedReplies = [
-              t("I'd like similar guidance", "Me gustaría orientación similar"),
-              t("Tell me more about your services", "Cuéntame más sobre tus servicios"),
-              t("Not right now", "Ahora no"),
-            ];
-          }
+          suggestedReplies = [
+            t("30-second summary", "Resumen de 30 segundos"),
+            t("I have a question", "Tengo una pregunta"),
+            t("Verify my situation with Kasandra", "Verificar mi situación con Kasandra"),
+          ];
         } else {
           // Fallback to default
           greetingContent = t(

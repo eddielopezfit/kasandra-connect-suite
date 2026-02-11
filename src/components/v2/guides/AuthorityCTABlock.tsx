@@ -142,22 +142,35 @@ const AuthorityCTABlock = ({
     });
   }, [category, guideTitle, isCashGuide]);
 
+  // Extract guideId from current URL for context passing
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+  const guideMatch = currentPath.match(/^\/v2\/guides\/(.+)$/);
+  const currentGuideId = guideMatch?.[1];
+
   const handleCTAClick = () => {
-    logEvent('guide_authority_cta_click', {
+    logEvent('guide_cta_clicked', {
+      guideId: currentGuideId,
+      cta_id: `authority_cta_${category}`,
       category,
       guide_title: guideTitle,
       destination: cta.link,
     });
     
-    // Route through Selena for non-cash categories
+    // Route through Selena for non-cash categories — pass full guide context
     if (cta.routeThruSelena) {
       logCTAClick({
         cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
         destination: 'selena_chat',
-        page_path: window.location.pathname,
+        page_path: currentPath,
         intent: category === 'buying' ? 'buy' : 'sell',
       });
-      openChat();
+      openChat({
+        source: 'guide_handoff',
+        guideId: currentGuideId,
+        guideTitle,
+        guideCategory: category,
+        intent: category === 'buying' ? 'buy' : category === 'cash' ? 'cash' : 'sell',
+      });
     }
   };
 
