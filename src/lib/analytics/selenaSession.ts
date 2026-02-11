@@ -64,6 +64,11 @@ export interface SessionContext {
   // Tool usage memory (Phase 1 extension)
   tool_used?: ToolUsed;
   last_tool_result?: CalculatorAdvantage;
+  // Calculator enrichment (decision-grade fields for Selena)
+  estimated_value?: number;
+  calculator_difference?: number;
+  calculator_advantage?: CalculatorAdvantage;
+  calculator_motivation?: string;
   // Decision Room tracking (Phase 1)
   has_viewed_report?: boolean;
   last_report_id?: string;

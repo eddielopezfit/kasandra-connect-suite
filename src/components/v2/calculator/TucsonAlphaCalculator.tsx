@@ -84,13 +84,19 @@ const TucsonAlphaCalculator = () => {
     // Set Selena awareness (Task 4)
     setCalculatorResult(calculationResults.recommendation);
 
-    // Update session memory (Task 6)
-    // Intent uses write-once to preserve user-declared intent (from quiz/URL)
+    // Enrich SessionContext with decision-grade fields for Selena
     setFieldIfEmpty('intent', 'cash');
-    // Tool usage fields are definitive events - always overwrite
     updateSessionContext({
       tool_used: 'tucson_alpha_calculator',
       last_tool_result: calculationResults.recommendation,
+      estimated_value: estimatedValue,
+      calculator_difference: Math.abs(
+        calculationResults.traditional.netProceeds - calculationResults.cash.netProceeds
+      ),
+      calculator_advantage: calculationResults.recommendation === 'cash' ? 'cash'
+        : calculationResults.recommendation === 'traditional' ? 'traditional'
+        : 'consult',
+      calculator_motivation: motivation,
     });
 
   }, [estimatedValue, motivation, timeline, setCalculatorResult]);
