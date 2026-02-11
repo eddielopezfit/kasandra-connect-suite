@@ -28,6 +28,7 @@ import { getGuideById } from '@/lib/guides/guideRegistry';
 
 const CHAT_HISTORY_KEY = 'selena_chat_history';
 const LEAD_ID_KEY = 'selena_lead_id';
+const LAST_ENTRY_SIG_KEY = 'selena_last_entry_sig';
 const MAX_HISTORY = 50;
 
 // ============= ENTRY SOURCE TYPES =============
@@ -384,10 +385,23 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     // Add greeting if:
     // - No messages exist (first open)
     // - Post-booking (always show identity reinforcement)
-    // - Any CTA with meaningful context (guide_handoff, calculator, synthesis, question, hero)
-    //   → injects a contextual greeting even if chat history exists
+    // - Any CTA with meaningful context AND a NEW entry signature (prevents duplicates)
     const isPostBooking = entryContext?.source === 'post_booking';
-    const hasContextualEntry = entryContext && entryContext.source !== 'floating' && entryContext.source !== 'proactive';
+    const isMeaningfulSource = entryContext && 
+      entryContext.source !== 'floating' && 
+      entryContext.source !== 'proactive';
+    
+    // Compute entry signature to prevent duplicate greeting injection
+    const entrySig = entryContext 
+      ? `${entryContext.source}|${entryContext.guideId || ''}|${pagePath}`
+      : null;
+    const lastSig = localStorage.getItem(LAST_ENTRY_SIG_KEY);
+    const isNewEntry = entrySig && entrySig !== lastSig;
+    if (entrySig && isNewEntry) {
+      localStorage.setItem(LAST_ENTRY_SIG_KEY, entrySig);
+    }
+    
+    const hasContextualEntry = isMeaningfulSource && isNewEntry;
     
     if (messages.length === 0 || isPostBooking || hasContextualEntry) {
       const sessionContext = getSessionContext();
