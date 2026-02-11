@@ -362,37 +362,41 @@ function filterSuggestionsForEarnedAccess(suggestions: string[], hasEarned: bool
 // Maps user selection to next-best-step suggestions
 // Now cleaned of premature booking language for early stages
 const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
-  // Buyer path progressions
-  'take readiness check': {
-    en: ["How long does it take?", "Start now", "What does this check?"],
-    es: ["¿Cuánto tiempo toma?", "Comenzar ahora", "¿Qué verifica este análisis?"]
-  },
-  'view first-time buyer guide': {
-    en: ["What should I prepare?", "Ask about financing", "Check my readiness"],
-    es: ["¿Qué debo preparar?", "Preguntar sobre financiamiento", "Verificar mi preparación"]
-  },
-  // Seller path progressions
-  "what's my home worth": {
-    en: ["Get a detailed estimate", "Compare cash vs. listing", "What factors affect value?"],
-    es: ["Obtener estimación detallada", "Comparar efectivo vs. listado", "¿Qué factores afectan el valor?"]
-  },
-  'compare cash vs. traditional': {
-    en: ["Request my net sheet", "See cash timeline", "What are the trade-offs?"],
-    es: ["Solicitar mi análisis", "Ver línea de tiempo en efectivo", "¿Cuáles son las ventajas?"]
-  },
-  'request a net sheet': {
-    en: ["Review my estimate", "What costs are included?", "Ask a question"],
-    es: ["Revisar mi estimación", "¿Qué costos están incluidos?", "Hacer una pregunta"]
-  },
-  'request a cash offer': {
-    en: ["How fast can I close?", "What's the process?", "Any hidden fees?"],
-    es: ["¿Qué tan rápido puedo cerrar?", "¿Cuál es el proceso?", "¿Hay costos ocultos?"]
-  },
-  // First intent declarations
-  "i'm thinking about selling": {
-    en: ["What's my home worth?", "Compare cash vs. traditional", "Request a net sheet"],
-    es: ["¿Cuánto vale mi casa?", "Comparar efectivo vs. tradicional", "Solicitar análisis de ganancias"]
-  },
+    // Buyer path progressions
+    'take readiness check': {
+      en: ["How long does it take?", "Start now", "What does this check?"],
+      es: ["¿Cuánto tiempo toma?", "Comenzar ahora", "¿Qué verifica este análisis?"]
+    },
+    'view first-time buyer guide': {
+      en: ["What should I prepare?", "Ask about financing", "Check my readiness"],
+      es: ["¿Qué debo preparar?", "Preguntar sobre financiamiento", "Verificar mi preparación"]
+    },
+    // Seller path progressions
+    "what's my home worth": {
+      en: ["Get a detailed estimate", "Compare cash vs. listing", "What factors affect value?"],
+      es: ["Obtener estimación detallada", "Comparar efectivo vs. listado", "¿Qué factores afectan el valor?"]
+    },
+    'compare cash vs. traditional': {
+      en: ["Request my net sheet", "See cash timeline", "What are the trade-offs?"],
+      es: ["Solicitar mi análisis", "Ver línea de tiempo en efectivo", "¿Cuáles son las ventajas?"]
+    },
+    'request a net sheet': {
+      en: ["Review my estimate", "What costs are included?", "Ask a question"],
+      es: ["Revisar mi estimación", "¿Qué costos están incluidos?", "Hacer una pregunta"]
+    },
+    'request a cash offer': {
+      en: ["How fast can I close?", "What's the process?", "Any hidden fees?"],
+      es: ["¿Qué tan rápido puedo cerrar?", "¿Cuál es el proceso?", "¿Hay costos ocultos?"]
+    },
+    // First intent declarations — seller now uses timeline prequalification bubbles
+    "i'm thinking about selling": {
+      en: ["ASAP (0–30 days)", "1–3 months", "3–6 months", "Just exploring"],
+      es: ["Lo antes posible (0–30 días)", "1–3 meses", "3–6 meses", "Solo explorando"]
+    },
+    "estoy pensando en vender": {
+      en: ["ASAP (0–30 days)", "1–3 months", "3–6 months", "Just exploring"],
+      es: ["Lo antes posible (0–30 días)", "1–3 meses", "3–6 meses", "Solo explorando"]
+    },
   "i'm looking to buy": {
     en: ["Take readiness check", "View first-time buyer guide", "What should I prepare?"],
     es: ["Tomar evaluación de preparación", "Ver guía para compradores", "¿Qué debo preparar?"]
@@ -633,6 +637,41 @@ serve(async (req) => {
     const modeHint = language === "es"
       ? `\n\nMODO ACTUAL: ${currentMode} (${modeContext.modeName}). Ajusta el tono y las sugerencias según este modo.`
       : `\n\nCURRENT MODE: ${currentMode} (${modeContext.modeName}). Adjust tone and suggestions for this mode.`;
+
+    // ============= FIRST SELLER TURN INTERCEPT =============
+    // If user just declared selling intent on their first turn, short-circuit
+    // with a calm prequalification response + timeline bubbles.
+    // This prevents the AI from generating tool-branching language.
+    const isFirstSellerTurn = conversationState.userTurns <= 1
+      && (primaryIntent === 'sell' || primaryIntent === 'cash')
+      && !context.tool_used
+      && !context.quiz_completed;
+
+    if (isFirstSellerTurn) {
+      const sellerFirstReply = language === 'es'
+        ? 'Entendido — vender es una decisión importante, y lo vamos a tomar un paso tranquilo a la vez. ¿Con qué tipo de plazo está trabajando?'
+        : "Got it — selling is a big decision, and we'll take it one calm step at a time. What kind of timeline are you working with?";
+
+      const sellerTimelineBubbles = language === 'es'
+        ? ["Lo antes posible (0–30 días)", "1–3 meses", "3–6 meses", "Solo explorando"]
+        : ["ASAP (0–30 days)", "1–3 months", "3–6 months", "Just exploring"];
+
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          reply: sellerFirstReply,
+          suggestedReplies: sellerTimelineBubbles,
+          actions: [],
+          language,
+          lead_id: leadId,
+          detected_intent: primaryIntent,
+          booking_cta_shown: false,
+          current_mode: currentMode,
+          mode_name: modeContext.modeName,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
