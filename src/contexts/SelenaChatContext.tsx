@@ -453,12 +453,12 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
             ];
           } else if (category === 'selling' || category === 'valuation') {
             greetingContent += t(
-              ` Great step toward understanding your selling options. Would you like a personalized checklist based on what you've read?`,
-              ` Gran paso para entender sus opciones de venta. ¿Le gustaría una lista personalizada basada en lo que ha leído?`
+              ` Great step toward understanding your selling options. Do you have any questions about what you've read?`,
+              ` Gran paso para entender sus opciones de venta. ¿Tiene alguna pregunta sobre lo que ha leído?`
             );
             suggestedReplies = [
-              t("Yes, send me the checklist", "Sí, envíame la lista"),
               t("What's my home worth?", "¿Cuánto vale mi casa?"),
+              t("Compare my options", "Comparar mis opciones"),
               t("Not right now", "Ahora no"),
             ];
           } else {

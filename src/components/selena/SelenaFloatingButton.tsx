@@ -4,18 +4,48 @@
  */
 
 import { MessageCircle, X } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getGuideById } from '@/lib/guides/guideRegistry';
 import { cn } from '@/lib/utils';
 
 export function SelenaFloatingButton() {
-  const { isOpen, toggleChat, messages } = useSelenaChat();
+  const { isOpen, toggleChat, openChat, messages } = useSelenaChat();
+  const location = useLocation();
+  const { language } = useLanguage();
   
   // Show notification dot if there are unread messages
   const hasMessages = messages.length > 0;
   
+  // Extract guide context from current route
+  const handleClick = () => {
+    if (isOpen) {
+      toggleChat();
+      return;
+    }
+    
+    const guideMatch = location.pathname.match(/^\/v2\/guides\/(.+)$/);
+    if (guideMatch) {
+      const guideId = guideMatch[1];
+      const entry = getGuideById(guideId);
+      if (entry) {
+        openChat({
+          source: 'guide_handoff',
+          guideId,
+          guideTitle: language === 'es' ? entry.titleEs : entry.titleEn,
+          guideCategory: entry.category,
+        });
+        return;
+      }
+    }
+    
+    toggleChat();
+  };
+  
   return (
     <button
-      onClick={toggleChat}
+      onClick={handleClick}
       className={cn(
         "fixed bottom-4 right-4 z-50",
         "w-14 h-14 rounded-full",

@@ -129,7 +129,7 @@ const NativeGuideLeadCapture = ({
 
       toast({
         title: t("Success!", "¡Éxito!"),
-        description: t("Your checklist is on its way!", "¡Tu lista de verificación está en camino!"),
+        description: t("We've received your information. Kasandra will follow up soon.", "Recibimos su información. Kasandra se comunicará pronto."),
       });
     } catch (error) {
       console.error("Submission error:", error);
@@ -154,12 +154,12 @@ const NativeGuideLeadCapture = ({
             <CheckCircle2 className="w-8 h-8 text-green-600" />
           </div>
           <h3 className={`font-serif text-xl font-bold mb-2 ${variant === "inline" ? "text-cc-navy" : "text-white"}`}>
-            {t("Check Your Inbox!", "¡Revisa Tu Bandeja!")}
+            {t("Thank You", "Gracias")}
           </h3>
           <p className={`text-sm ${variant === "inline" ? "text-cc-charcoal" : "text-white/80"}`}>
             {t(
-              "Your personalized checklist and next steps have been sent.",
-              "Tu lista de verificación personalizada y próximos pasos han sido enviados."
+              "Kasandra will personally review your information and follow up with you soon.",
+              "Kasandra revisará personalmente su información y se comunicará con usted pronto."
             )}
           </p>
         </div>
@@ -178,10 +178,10 @@ const NativeGuideLeadCapture = ({
         </div>
         <div>
           <h3 className={`font-serif text-lg ${isInline ? "text-cc-navy" : "text-white"}`}>
-            {t("Want the checklist + next steps?", "¿Quieres la lista + próximos pasos?")}
+            {t("Have questions about your situation?", "¿Tiene preguntas sobre su situación?")}
           </h3>
           <p className={`text-sm ${isInline ? "text-cc-charcoal/70" : "text-white/60"}`}>
-            {t("Fill out the form below.", "Completa el formulario a continuación.")}
+            {t("Share your details and Kasandra will follow up personally.", "Comparta sus datos y Kasandra se comunicará personalmente.")}
           </p>
         </div>
       </div>
@@ -306,7 +306,7 @@ const NativeGuideLeadCapture = ({
                 {t("Sending...", "Enviando...")}
               </>
             ) : (
-              t("Get My Checklist", "Obtener Mi Lista")
+              t("Connect with Kasandra", "Conectar con Kasandra")
             )}
           </Button>
 

@@ -1,11 +1,10 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect } from "react";
-import { ArrowLeft, Clock, Calendar, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, Clock, User } from "lucide-react";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageToggle from "@/components/v2/LanguageToggle";
-import { AuthorityCTABlock, SelenaGuideHandoff, GuideLeadCapture, GuideNextSteps, GuideComplianceFooter } from "@/components/v2/guides";
+import { AuthorityCTABlock, SelenaGuideHandoff, GuideComplianceFooter } from "@/components/v2/guides";
 import { useGuideScrollTracking } from "@/hooks/useGuideScrollTracking";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { markGuideRead, setLastGuideId } from "@/lib/guides/personalization";
@@ -26,8 +25,6 @@ interface GuideData {
   readTime: string;
   readTimeEs: string;
   author: string;
-  date: string;
-  dateEs: string;
   intro: string;
   introEs: string;
   sections: GuideSection[];
@@ -43,8 +40,6 @@ const guideContent: Record<string, GuideData> = {
     readTime: "12 min read",
     readTimeEs: "12 min de lectura",
     author: "Kasandra Prieto",
-    date: "December 2024",
-    dateEs: "Diciembre 2024",
     intro: "If you're reading this, you're probably feeling a mix of excitement and uncertainty—and that's completely normal. Buying your first home is a significant step, and it's natural to have questions about the process. This guide is designed to walk you through each stage clearly, so you can move forward with understanding and confidence.",
     introEs: "Si estás leyendo esto, probablemente sientes una mezcla de emoción e incertidumbre—y eso es completamente normal. Comprar tu primera casa es un paso significativo, y es natural tener preguntas sobre el proceso. Esta guía está diseñada para guiarte a través de cada etapa con claridad, para que puedas avanzar con comprensión y confianza.",
     sections: [
@@ -106,8 +101,6 @@ const guideContent: Record<string, GuideData> = {
     readTime: "8 min read",
     readTimeEs: "8 min de lectura",
     author: "Kasandra Prieto",
-    date: "December 2024",
-    dateEs: "Diciembre 2024",
     intro: "If you're thinking about selling your home, you probably have questions—about timing, pricing, and what to expect. That's completely normal. Selling is a significant decision, and it's okay to feel uncertain. This guide is here to help you understand the process clearly, so you can decide your next step with confidence.",
     introEs: "Si está pensando en vender su casa, probablemente tenga preguntas—sobre el momento, el precio y qué esperar. Eso es completamente normal. Vender es una decisión importante, y está bien sentir incertidumbre. Esta guía está aquí para ayudarle a entender el proceso claramente, para que pueda decidir su próximo paso con confianza.",
     sections: [
@@ -157,8 +150,6 @@ const guideContent: Record<string, GuideData> = {
     readTime: "6 min read",
     readTimeEs: "6 min de lectura",
     author: "Kasandra Prieto",
-    date: "December 2024",
-    dateEs: "Diciembre 2024",
     intro: "Wondering what your home is worth? You're not alone—and it's a smart question to ask, whether you're thinking about selling, refinancing, or simply curious. This guide will help you understand how home valuation works, without any pressure or sales talk.",
     introEs: "¿Se pregunta cuánto vale su casa? No está solo—y es una pregunta inteligente, ya sea que esté pensando en vender, refinanciar, o simplemente tenga curiosidad. Esta guía le ayudará a entender cómo funciona la valoración de viviendas, sin presión ni lenguaje de ventas.",
     sections: [
@@ -214,8 +205,6 @@ const guideContent: Record<string, GuideData> = {
     readTime: "5 min read",
     readTimeEs: "5 min de lectura",
     author: "Kasandra Prieto",
-    date: "December 2024",
-    dateEs: "Diciembre 2024",
     intro: "When she first reached out, she wasn't sure if homeownership was within reach. Life had presented challenges, and the process felt overwhelming. This is a story about how taking things one step at a time made a difference.",
     introEs: "Cuando se comunicó por primera vez, no estaba segura de si ser propietaria estaba a su alcance. La vida había presentado desafíos, y el proceso se sentía abrumador. Esta es una historia sobre cómo tomar las cosas un paso a la vez hizo una diferencia.",
     sections: [
@@ -247,8 +236,6 @@ const guideContent: Record<string, GuideData> = {
     readTime: "5 min read",
     readTimeEs: "5 min de lectura",
     author: "Kasandra Prieto",
-    date: "December 2024",
-    dateEs: "Diciembre 2024",
     intro: "A family of four needed more space, but their budget required careful planning. This story is about focusing on what mattered most and finding a home that worked for their situation.",
     introEs: "Una familia de cuatro necesitaba más espacio, pero su presupuesto requería planificación cuidadosa. Esta historia es sobre enfocarse en lo que más importaba y encontrar un hogar que funcionara para su situación.",
     sections: [
@@ -280,8 +267,6 @@ const guideContent: Record<string, GuideData> = {
     readTime: "5 min read",
     readTimeEs: "5 min de lectura",
     author: "Kasandra Prieto",
-    date: "December 2024",
-    dateEs: "Diciembre 2024",
     intro: "He needed to sell due to a job relocation, but the market had shifted. This is a story about navigating uncertainty with clear communication and realistic expectations.",
     introEs: "Necesitaba vender debido a una reubicación laboral, pero el mercado había cambiado. Esta es una historia sobre navegar la incertidumbre con comunicación clara y expectativas realistas.",
     sections: [
@@ -313,8 +298,6 @@ const guideContent: Record<string, GuideData> = {
     readTime: "5 min read",
     readTimeEs: "5 min de lectura",
     author: "Kasandra Prieto",
-    date: "December 2024",
-    dateEs: "Diciembre 2024",
     intro: "For her, finding an agent who spoke Spanish wasn't just about language—it was about being fully understood. This story is about how removing communication barriers made the process accessible.",
     introEs: "Para ella, encontrar una agente que hablara español no era solo sobre el idioma—era sobre ser completamente comprendida. Esta historia es sobre cómo eliminar barreras de comunicación hizo el proceso accesible.",
     sections: [
@@ -346,8 +329,6 @@ const guideContent: Record<string, GuideData> = {
     readTime: "7 min read",
     readTimeEs: "7 min de lectura",
     author: "Kasandra Prieto",
-    date: "December 2024",
-    dateEs: "Diciembre 2024",
     intro: "You may have heard about cash offers as a way to sell your home faster and with less hassle. But what does that actually mean—and is it right for you? This guide explains the process clearly, so you can decide with confidence.",
     introEs: "Puede haber escuchado sobre ofertas en efectivo como una forma de vender su casa más rápido y con menos complicaciones. Pero, ¿qué significa eso realmente—y es lo correcto para usted? Esta guía explica el proceso claramente, para que pueda decidir con confianza.",
     sections: [
@@ -406,8 +387,6 @@ const fallbackContent: GuideData = {
   readTime: "2 min read",
   readTimeEs: "2 min de lectura",
   author: "Kasandra Prieto",
-  date: "January 2025",
-  dateEs: "Enero 2025",
   intro: "We're working on this guide to give you the clarity you deserve. In the meantime, there are several resources that might help you right now. You're welcome to explore at your own pace—no pressure.",
   introEs: "Estamos trabajando en esta guía para darle la claridad que merece. Mientras tanto, hay varios recursos que podrían ayudarle ahora mismo. Es bienvenido a explorar a su propio ritmo—sin presión.",
   sections: [
@@ -486,10 +465,6 @@ const V2GuideDetail = () => {
               {guide.author}
             </div>
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              {t(guide.date, guide.dateEs)}
-            </div>
-            <div className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
               {t(guide.readTime, guide.readTimeEs)}
             </div>
@@ -510,7 +485,7 @@ const V2GuideDetail = () => {
           </div>
         </section>
 
-        {/* Content Sections with Mid-Guide Lead Capture */}
+        {/* Content Sections with Strategic Media Placeholders */}
         {guide.sections.map((section, index) => (
           <div key={index}>
             <section
@@ -524,40 +499,29 @@ const V2GuideDetail = () => {
                   <div className="text-cc-charcoal leading-relaxed text-lg whitespace-pre-line">
                     {t(section.content, section.contentEs)}
                   </div>
+                  
+                  {/* Media Placeholder: after section 1 (image) and section 3 (video) */}
+                  {index === 1 && guide.sections.length > 3 && (
+                    <div className="mt-8 rounded-xl border-2 border-dashed border-cc-sand-dark/40 bg-cc-sand/30 p-8 text-center">
+                      <div className="text-cc-slate text-sm">
+                        {t("[Image: Visual reinforcement for this section]", "[Imagen: Refuerzo visual para esta sección]")}
+                      </div>
+                    </div>
+                  )}
+                  {index === 3 && guide.sections.length > 5 && (
+                    <div className="mt-8 rounded-xl border-2 border-dashed border-cc-sand-dark/40 bg-cc-sand/30 p-8 text-center">
+                      <div className="text-cc-slate text-sm">
+                        {t("[Video: Short explainer from Kasandra on this topic]", "[Video: Explicación breve de Kasandra sobre este tema]")}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </section>
-            
-            {/* Mid-Guide Lead Capture - After Step 2 (index 1) */}
-            {index === 1 && guide.sections.length > 3 && (
-              <section className="bg-white py-8 border-y border-cc-sand-dark">
-                <div className="container mx-auto px-4">
-                  <div className="max-w-3xl mx-auto">
-                    <GuideLeadCapture variant="inline" guideTitle={guide.title} />
-                  </div>
-                </div>
-              </section>
-            )}
           </div>
         ))}
 
         {/* Next Steps Summary */}
-        <section className="bg-white py-12 border-t border-cc-sand-dark">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto">
-              <GuideNextSteps category={guide.category} />
-            </div>
-          </div>
-        </section>
-
-        {/* Bottom Lead Capture */}
-        <section className="bg-cc-navy/5 py-12">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto">
-              <GuideLeadCapture variant="inline" guideTitle={guide.title} />
-            </div>
-          </div>
-        </section>
 
         {/* Compliance Footer */}
         <GuideComplianceFooter />
