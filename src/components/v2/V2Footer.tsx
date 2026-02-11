@@ -1,9 +1,13 @@
-import { Instagram, Linkedin, Phone, Mail, Home, Facebook } from "lucide-react";
+import { Instagram, Linkedin, Phone, Mail, Home, Facebook, MessageCircle } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 
 const V2Footer = () => {
   const { t } = useLanguage();
+  const { openChat } = useSelenaChat();
+  const location = useLocation();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -119,6 +123,30 @@ const V2Footer = () => {
               </a>
             </div>
           </div>
+        </div>
+
+        {/* Selena Digital Concierge Nudge */}
+        <div className="mb-8">
+          <button
+            onClick={() => openChat({ source: 'hero', intent: 'explore' })}
+            className="mx-auto flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer text-left max-w-md w-full group"
+            aria-label={t("Chat with Selena, Digital Concierge", "Chatear con Selena, Concierge Digital")}
+          >
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-cc-gold/20 flex items-center justify-center group-hover:bg-cc-gold/30 transition-colors">
+              <MessageCircle className="w-6 h-6 text-cc-gold" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white/60 text-xs uppercase tracking-wider mb-0.5">
+                {t("Selena, Digital Concierge", "Selena, Concierge Digital")}
+              </p>
+              <p className="text-white/90 text-sm leading-relaxed">
+                {t(
+                  "Have a question? I'm here 24/7 — no pressure, just clarity.",
+                  "¿Tiene una pregunta? Estoy aquí 24/7 — sin presión, solo claridad."
+                )}
+              </p>
+            </div>
+          </button>
         </div>
 
         {/* Disclaimer */}
