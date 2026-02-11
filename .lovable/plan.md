@@ -1,218 +1,323 @@
-# Selena Digital Concierge - Decision Certainty Engine
-## Implementation Status: ✅ COMPLETE (v2 - 2026-02-08)
+
+# Selena Digital Concierge System -- Complete User Journey Map
+
+## Document Purpose
+Pure extraction and documentation of every user interaction path through the Selena system as it exists today. No recommendations, no improvements.
 
 ---
 
-## Executive Summary
+## SECTION 1: ALL ENTRY POINTS INTO SELENA
 
-Selena has been transformed from a generic AI assistant into a **Decision Certainty Engine** — a digital concierge that guides users through psychological comfort zones until booking feels like a formality, not a sales event.
+### 1.1 Floating Button (Global -- Every V2 Page)
+- **Trigger**: Click FAB (bottom-right) on any `/v2/*` page
+- **Component**: `SelenaFloatingButton.tsx`
+- **Selena Response**: Default greeting (Mode 1 Orientation)
+  - EN: "Hello, I'm Selena, Kasandra's digital real estate concierge..."
+  - Suggested replies: "I'm thinking about selling" / "I'm looking to buy" / "Just exploring for now"
+- **Data Captured**: `selena_entry` event logged with `source: 'floating'`, current route
+- **Data Stored**: Chat history in `localStorage` (`selena_chat_history`), session context updated (`selena_context_v2`)
+- **Next Options**: 3 suggested reply chips, free text input, 4 tab bar options (Start Here / Guides / My Options / Talk)
+
+### 1.2 Hero CTA (V2 Homepage + Guides Hub)
+- **Trigger**: "Ask Selena" button on V2Home hero or V2Guides hero
+- **Component**: Various page components calling `openChat({ source: 'hero' })`
+- **Selena Response**: Extended orientation greeting introducing Selena and asking what brings the user
+- **Suggested replies**: Same 3 intent declarations
+- **Data**: `selena_entry` logged with `source: 'hero'`
+
+### 1.3 Calculator Completion
+- **Trigger**: User completes Net-to-Seller Calculator, clicks "Talk to Selena" CTA
+- **Component**: Calculator result page calling `openChat({ source: 'calculator', calculatorAdvantage, calculatorDifference })`
+- **Selena Response**: Context-aware greeting referencing calculator results
+  - Cash advantage: "Cash looks like a strong option for you -- speed and certainty..."
+  - Traditional advantage: "A traditional sale could net you $X more -- if you have the time..."
+  - Consult (close): "The difference is subtle -- the right choice depends on your situation..."
+- **Data Captured**: `calculatorAdvantage`, `calculatorDifference` passed in entry context
+- **Suggested replies**: "Which option is better for me?" / "Review strategy with Kasandra" / "I have more questions"
+
+### 1.4 Guide Handoff (Individual Guide Detail Pages)
+- **Trigger**: Click the Selena block at bottom of any guide detail page
+- **Component**: `SelenaGuideHandoff.tsx` calling `openChat({ source: 'guide_handoff', guideId, guideCategory })`
+- **Selena Response**: Category-specific greeting acknowledging the specific guide read
+  - Buying category: "...Do you have any specific questions about the buying process?"
+  - Selling/Valuation: "...Would you like a personalized checklist based on what you've read?"
+  - Cash: "Cash offers are situational..."
+  - Stories: "Still thinking? That's okay..."
+- **Data**: `selena_guide_handoff_click` event, guide_id and category logged
+
+### 1.5 Synthesis Footer (Guides Hub -- Post-Grid)
+- **Trigger**: "Summarize what I've learned" or "Ask a question" buttons at bottom of guides hub
+- **Component**: `SelenaSynthesisFooter.tsx`
+- **Condition**: "Summarize" button only appears if `guidesReadCount >= 3`
+- **Selena Response**: 
+  - If 3+ guides: "You've read X guides -- you're building a clear picture..."
+  - If fewer: "You've been exploring your options. Would you like me to summarize?"
+- **Data**: Opens chat with `source: 'synthesis'`, `guidesReadCount`, optional prefill message
+- **Prefill behavior**: If prefill message provided, it auto-sends after greeting renders (300ms delay)
+
+### 1.6 Contextual Selena Prompt (Guides Hub -- Cognitive Stage Aware)
+- **Trigger**: "Ask Selena" or "Get My Summary" on stage-aware prompt block
+- **Component**: `ContextualSelenaPrompt.tsx`
+- **Condition**: Summary offer gated by cognitive stage + guides read count
+- **Selena Response**: Same as synthesis entry
+
+### 1.7 Post-Booking (Thank You Page)
+- **Trigger**: Click "While you wait, I can help" on `/v2/thank-you`
+- **Component**: `V2ThankYou.tsx` calling `openChat({ source: 'post_booking', intent, userName })`
+- **Selena Response**: Identity reinforcement greeting:
+  - EN: "[Name], You're all set. You've already done the hard part... Kasandra will personally review..."
+  - Suggested replies: "What should I prepare for the call?" / "Can I reschedule?" / "Thanks, Selena"
+- **Data**: `selena_entry` with `source: 'post_booking'`
+
+### 1.8 Ad Funnel Result Page (SellerResult)
+- **Trigger**: Auto-triggered 12 seconds after unlock on `/ad/seller-result` (proactive), or manual click
+- **Component**: `SellerResult.tsx`
+- **Behavior**: Opens chat via `openChat()`, then dispatches `selena-proactive-message` custom event with loss-aversion message referencing the net sheet difference amount
+- **Selena Response**: Proactive message injected into chat: references dollar difference
+- **Suggested replies**: "Yes, explain the difference" / "I'd like to talk to Kasandra" / "Not right now"
+
+### 1.9 Buyer Readiness Handoff
+- **Trigger**: User completes buyer readiness check follow-up questions, clicks "Continue with Selena"
+- **Component**: `SelenaHandoff.tsx` calling `openChat()`
+- **Selena Response**: Default greeting (no special entry context passed)
+- **Data**: `CTA_NAMES.SELENA_ROUTE_CALL` event logged
+
+### 1.10 Question CTA
+- **Trigger**: Any component calling `openChat({ source: 'question' })`
+- **Selena Response**: "I'm here to help. What question do you have in mind?"
+- **Suggested replies**: "What's my home worth?" / "How does the process work?" / "What are my options?"
 
 ---
 
-## 1. Core Architecture: 4-Mode System
+## SECTION 2: CONCIERGE TAB BAR (Inside Drawer)
 
-### Mode Definitions
+Four tabs appear at the bottom of the Selena drawer, each opening a slide-up panel.
 
-| Mode | Name | Trigger | Behavior | Booking CTA |
-|------|------|---------|----------|-------------|
-| 1 | ORIENTATION | First contact | Reduce anxiety, ONE question | ❌ Never |
-| 2 | CLARITY BUILDING | Intent declared OR 1+ guides | Reference journey, suggest tools | ❌ Never |
-| 3 | CONFIDENCE | 3+ guides OR tool completed | Summarize progress, position Kasandra | ❌ Never |
-| 4 | HANDOFF | Earned access gate passed | Frame booking as clarity continuation | ✅ Show CTA |
+### 2.1 Start Here Tab
+- **Label**: "Start Here" (or journey step label if intent declared, e.g., "Step 1: Value")
+- **Panel Content**: 3 intent declaration buttons + 2 quick guide links
+- **Triggers**:
+  - "I'm thinking about selling" --> sends message to Selena chat
+  - "I'm looking to buy" --> sends message to Selena chat
+  - "Just exploring for now" --> sends message to Selena chat
+  - "First-Time Buyer Guide" --> navigates to `/v2/guides/first-time-buyer-guide`, closes drawer
+  - "Selling Your Home" --> navigates to `/v2/guides/selling-for-top-dollar`, closes drawer
 
-### Earned Access Gate (Mode 4 Triggers)
-1. **Explicit Ask**: User message contains booking keywords
-2. **Tool Completion**: `context.tool_used` OR `context.quiz_completed`
-3. **Email Provided**: Commitment signal detected in message
-4. **Engaged Turns**: 2+ user turns AND intent ≠ "explore"
+### 2.2 Guides Tab
+- **Panel Content**: "Browse All Guides" button + 3 featured guide quick links
+- **Triggers**:
+  - "Browse All Guides" --> navigates to `/v2/guides`, closes drawer
+  - Individual guides --> navigate to respective guide detail pages, close drawer
 
----
+### 2.3 My Options Tab (Intent-Filtered)
+- **Panel Content**: Intent-aware option cards, ordered by relevance
+- **Filtering Logic**:
+  - **Buyer intent**: Buyer Readiness Check (top) / Valuation / Cash vs Listing
+  - **Seller/Cash intent**: Valuation (top) / Cash vs Listing (Buyer Readiness hidden)
+  - **Exploring/Unknown**: Valuation / Cash vs Listing / Buyer Readiness
+- **Triggers**:
+  - "See what I might walk away with" --> sends chat message asking about property valuation (does NOT navigate)
+  - "Cash vs Listing Comparison" --> navigates to `/v2/cash-offer-options`, closes drawer
+  - "Buyer Readiness Check" --> navigates to `/v2/buyer-readiness`, closes drawer
+  - "View My Latest Report" --> appears ONLY if `leadId` exists AND `hasReports === true`, triggers `openLastReport()` flow
 
-## 2. Files Implemented
-
-### Edge Function (Backend)
-
-| File | Purpose |
-|------|---------|
-| `supabase/functions/selena-chat/index.ts` | Main handler with MODE_CONTEXT integration |
-| `supabase/functions/selena-chat/modeContext.ts` | Mode detection, suggested replies, system prompt additions |
-| `supabase/functions/selena-chat/entryGreetings.ts` | Context-aware greeting generation (exported for reference) |
-
-### Frontend (Context)
-
-| File | Purpose |
-|------|---------|
-| `src/contexts/SelenaChatContext.tsx` | Updated with `EntrySource` types and context-aware greetings |
-| `src/lib/analytics/logEvent.ts` | Added telemetry events: `selena_entry`, `selena_mode_transition`, `handoff_deferred` |
-
----
-
-## 3. System Prompt Enhancements
-
-### Voice Rules (Hardened)
-- ❌ Never "our team", "we", or "someone from the office"
-- ❌ No exclamation points, no emojis
-- ❌ Never compare Kasandra to other agents
-- ✅ "Kasandra will personally..." (ownership)
-- ✅ "Based on what you've shared..." (listening)
-- ✅ "Most people in your situation..." (normalization)
-
-### Kasandra Framing (Busy Professional)
-- "Kasandra personally handles every client — no handoffs."
-- "Her schedule fills up, but I can help you find a time."
-- "She'll review your situation before your call."
-
-### Mode Instructions
-- **Mode 1**: Acknowledge uncertainty, ONE question only
-- **Mode 2**: Reflection Sentence Formula, reference journey
-- **Mode 3**: Summarize progress, subtle Kasandra positioning
-- **Mode 4**: Booking as continuation, always offer "keep chatting"
-
-### Stall Recovery (Mode 3.5)
-After 5+ turns without forward motion:
-> "Would it be helpful if I summarized where you are and what usually helps people move forward from here — or would you rather keep exploring on your own?"
-
-### Post-Booking Reassurance
-> "You've already done the hard part — thinking this through carefully. Kasandra will personally review your situation before your call."
+### 2.4 Talk Tab
+- **Panel Content**: Two booking buttons + "Keep Chatting" option
+- **Triggers**:
+  - "Schedule a Call" --> triggers `handlePriorityCall()` --> opens Priority Call Modal
+  - "10-Min Priority Call" --> same as above
+  - Both log `priority_call_click` event
 
 ---
 
-## 4. Context-Aware Greetings
+## SECTION 3: INTENT-SPECIFIC JOURNEYS
 
-### Entry Source Priority
-0. **Post-Booking** (highest) — Identity reinforcement, seals the decision
-1. **Calculator** — References advantage and difference
-2. **Guide Handoff** — Acknowledges specific guide read
-3. **Synthesis** — Offers to summarize guides read
-4. **Hero** — Welcome with orientation
-5. **Floating** (default) — Standard greeting
+### 3.1 SELL PATH
 
-### Entry Types Supported
-```typescript
-type EntrySource = 
-  | 'calculator' 
-  | 'guide_handoff' 
-  | 'synthesis' 
-  | 'hero' 
-  | 'floating' 
-  | 'proactive'
-  | 'question'
-  | 'post_booking'; // ✅ NEW - Identity reinforcement
+**Entry**: User says "I'm thinking about selling" (via Start Here tab, suggested reply, or free text)
 
-interface EntryContext {
-  source: EntrySource;
-  calculatorAdvantage?: 'cash' | 'traditional' | 'consult';
-  calculatorDifference?: number;
-  guideId?: string;
-  guideTitle?: string;
-  guideCategory?: string;
-  guidesReadCount?: number;
-  prefillMessage?: string;
-  intent?: string; // For post-booking
-  userName?: string; // For post-booking personalization
-}
+```text
+Step 1: Message sent to selena-chat edge function
+  --> Intent detected: "sell" (canonical)
+  --> Mode: ORIENTATION (Mode 1) on first turn
+  --> Selena asks ONE gentle question about situation
+  --> Suggested replies: "What's my home worth?" / "Compare my options" / "View seller guide"
+
+Step 2: User engages with tool/guide
+  --> Mode transitions to CLARITY (Mode 2)
+  --> Reflection sentence formula activated
+  --> Suggested replies adapt to seller tools
+
+Step 3: Deep engagement (3+ guides OR tool result)
+  --> Mode transitions to CONFIDENCE (Mode 3)
+  --> "Summarize what I've learned" / "What should I prepare?" / "What's my next step?"
+  
+Step 4: Earned Access triggered (explicit ask, email, tool completion, or 2+ turns with intent)
+  --> Mode transitions to HANDOFF (Mode 4)
+  --> Actions array includes: "Review Strategy with Kasandra" (href: /v2/book)
+  --> "I have more questions first" / "What happens on the call?"
+  
+Step 5a: User clicks "Review Strategy with Kasandra"
+  --> Navigates to /v2/book, drawer closes
+  
+Step 5b: User clicks Talk tab --> Priority Call Modal
+  --> Step 1 of modal: Channel selection (Zoom / Phone / Keep Chatting)
+  --> Step 2: Slot selection (if available) or callback request
+  --> Terminal: Booking URL opened OR callback created via create-handoff edge function
 ```
 
-### Post-Booking Identity Reinforcement
-When user clicks Selena on the thank-you page after booking:
+**Data captured along path**:
+- `intent` set in SessionContext (write-once)
+- `selena_mode_transition` logged per message
+- If email detected in message: `lead_profiles` upserted, `lead_id` returned
+- Chat history persisted to `localStorage`
 
-**English:**
-> "You're all set. You've already done the hard part — thinking this through carefully.
-> 
-> Kasandra will personally review what you shared before your call so you get complete clarity in 10 minutes.
-> 
-> If you'd like, tell me one thing you want to be 100% certain about when you two talk."
+### 3.2 BUY PATH
 
-**Spanish (formal Usted):**
-> "Listo. Usted ya hizo lo más difícil — pensar esto con cuidado.
->
-> Kasandra revisará personalmente lo que compartió antes de su llamada para que tenga claridad completa en 10 minutos.
->
-> Si gusta, dígame una cosa sobre la que quiera estar 100% seguro/a cuando hablen."
+**Entry**: User says "I'm looking to buy"
 
----
+```text
+Step 1: Intent detected: "buy"
+  --> Mode 1 orientation, one question
+  --> Suggested replies: "Take the readiness check" / "View buyer guide" / "What should I prepare?"
 
-## 5. Mode-Specific Suggested Replies (Behavioral Rails)
+Step 2: User takes readiness check (navigates to /v2/buyer-readiness via My Options tab)
+  --> Completes readiness quiz --> SelenaHandoff follow-up questions
+  --> "Continue with Selena" button opens chat (no special entry context)
+  --> SessionContext updated: readiness_score, quiz_completed
 
-| Mode | Replies (EN) |
-|------|--------------|
-| 1 | "I'm thinking about selling", "I'm looking to buy", "Just exploring for now" |
-| 2 | Intent-aware: Tools + Guides (e.g., "Take the readiness check", "What's my home worth?") |
-| 3 | "Summarize what I've learned", "What should I prepare?", "What's my next step?" |
-| 4 | "Review strategy with Kasandra", "I have more questions first", "What happens on the call?" |
+Step 3: Mode 2 Clarity Building
+  --> References readiness score progress
+  --> Suggests guides, neighborhoods exploration
 
-Stall recovery overrides replies with:
-- "Yes, summarize where I am"
-- "I'd rather keep exploring"
-- "I have a specific question"
+Step 4-5: Same earned access gate and handoff as Sell path
+```
 
----
+### 3.3 CASH OFFER PATH
 
-## 6. Telemetry Events Added
+**Entry**: User mentions "cash" or visits from `/ad/seller*` funnel
 
-| Event | Trigger |
-|-------|---------|
-| `selena_entry` | Chat opened with entry context |
-| `selena_mode_transition` | Mode detected on each message |
-| `handoff_deferred` | User declines booking (future) |
+```text
+Step 1: Intent detected: "cash" (highest priority in detection)
+  --> If from ad funnel: proactive message with net sheet difference injected
+  --> Suggested replies: "What's my home worth?" / "How fast can I close?" / "Request a cash offer"
 
----
+Step 2-5: Same progression through modes as Sell path
+  --> Cash-specific progression map entries apply
+  --> Priority handoff triggered if timeline = "asap" + intent = "cash"
+```
 
-## 7. Integration Points
+### 3.4 EXPLORE PATH
 
-### How to Use Entry Context
+**Entry**: User says "Just exploring for now"
 
-```tsx
-// From calculator completion
-openChat({
-  source: 'calculator',
-  calculatorAdvantage: 'traditional',
-  calculatorDifference: 47250,
-});
+```text
+Step 1: Intent detected: "explore"
+  --> Mode stays at 1 (Orientation) longer
+  --> Suggested replies: "Tell me about selling" / "Tell me about buying" / "What are my options?"
+  
+Step 2: Engagement signals move to Mode 2
+  --> BUT: Earned access rule blocks booking CTA even at 2+ turns (requires intent != explore)
+  --> User must either: declare specific intent, provide email, complete tool, or explicitly ask to book
 
-// From guide handoff
-openChat({
-  source: 'guide_handoff',
-  guideId: 'cash-offer-guide',
-  guideTitle: 'Cash Offer Guide',
-  guideCategory: 'valuation',
-});
-
-// From synthesis footer
-openChat({
-  source: 'synthesis',
-  guidesReadCount: 5,
-  prefillMessage: 'Summarize what I\'ve learned',
-});
-
-// Simple click handler (works as before)
-<Button onClick={openChat}>Start with Selena</Button>
+Step 3: Stall recovery (5+ turns, repeating "just curious")
+  --> Override suggested replies: "Yes, summarize where I am" / "I'd rather keep exploring" / "I have a specific question"
 ```
 
 ---
 
-## 8. Success Criteria
+## SECTION 4: ESCALATION PATHS (Converging to Scheduling)
 
-| Metric | Target | Status |
-|--------|--------|--------|
-| Mode-based responses | Dynamic per turn | ✅ Implemented |
-| Reflection sentences | Modes 2 & 3 | ✅ Implemented |
-| Stall recovery | 5+ turns detection | ✅ Implemented |
-| Context-aware greetings | 5 entry sources | ✅ Implemented |
-| Earned access gating | Booking only Mode 4 | ✅ Implemented |
-| Voice compliance | No "we/team", formal ES | ✅ Implemented |
-| Telemetry | 3 new event types | ✅ Implemented |
+All paths converge to scheduling through these mechanisms:
+
+### 4.1 Mode 4 Action Button
+- **Source**: AI response includes `actions: [{ label: "Review Strategy with Kasandra", href: "/v2/book" }]`
+- **Condition**: `modeContext.allowBookingCTA === true`
+- **Behavior**: `handleActionClick` calls `closeChat()` then `navigate('/v2/book')`
+- **Terminal**: User lands on `/v2/book` consultation intake form
+
+### 4.2 Priority Call Modal (Talk Tab or AI Action)
+- **Source**: Talk tab click or AI returns `type: 'priority_call'` action
+- **Condition**: If no `leadId`, opens LeadCaptureModal first
+- **Flow**:
+  1. Channel selection: Zoom or Phone
+  2. `create-handoff` edge function called with chat summary
+  3. Slots displayed if available, or callback request option
+  4. Slot click / Book click --> opens booking URL (internal `/v2/book` or external) or navigates
+  5. "Text Me Instead" --> `onRequestCallback` with `contactPref: 'text'`
+  6. "Keep Chatting with Selena" --> closes modal, returns to chat
+- **Data stored**: `lead_handoffs` table row created via `create-handoff`
+- **Terminal**: Booking page opened, or callback/text request created
+
+### 4.3 Direct /v2/book Navigation
+- **Source**: V2Navigation global nav link (always visible)
+- **Behavior**: User lands directly on consultation intake form
+- **No Selena gating**: This is an authorized direct-access path
+
+### 4.4 Identity Gateway (LeadCaptureModal)
+- **Trigger**: User tries to generate report or trigger priority call without `leadId`
+- **Flow**: Email (required) --> Name + Phone (optional) --> `upsert-lead-profile` edge function
+- **Data stored**: `lead_profiles` row created, `selena_lead_id` in localStorage
+- **Resume**: After capture, pending action (report generation or priority call) auto-resumes
 
 ---
 
-## 9. Future Enhancements (P3+)
+## SECTION 5: DATA CAPTURE INVENTORY
 
-- [ ] Memory Acknowledgment Pattern: Standardize reflection sentence across all components
-- [ ] Stall recovery analytics: Track `handoff_deferred` events
-- [ ] Post-booking identity reinforcement in chat confirmation
-- [ ] Calculator integration: Pass `calculator_advantage` in request context
-- [ ] A/B test Mode 3 → Mode 4 transition timing
+| Data Point | Capture Trigger | Storage Location |
+|---|---|---|
+| `selena_lead_id` | Email detected in chat OR LeadCaptureModal | `localStorage`, `lead_profiles.id` |
+| `intent` | First message with intent keywords | `SessionContext` (write-once), `lead_profiles.intent` |
+| `timeline` | Message with urgency keywords | `lead_profiles.timeline` |
+| `email` | Typed in chat OR LeadCaptureModal | `lead_profiles.email` |
+| `chat_history` | Every message | `localStorage` (last 50 messages) |
+| `session_id` | Session init | `localStorage` (`selena_context_v2`) |
+| `last_page` | Every route change | `SessionContext.last_page` |
+| `has_booked` | Form success on /v2/book | `SessionContext.has_booked` |
+| `last_guide_id` | Guide detail page visit | `SessionContext.last_guide_id` |
+| `readiness_score` | Buyer readiness completion | `SessionContext.readiness_score` |
+| `tool_used` | Calculator/quiz completion | `SessionContext.tool_used` |
+| `calculator advantage` | Calculator result | `SelenaChatContext` state |
+| Handoff record | Priority call modal completion | `lead_handoffs` table |
+| Report | Report generation | `lead_reports` table |
 
 ---
 
-*Selena v2 is now a Decision Certainty Engine. Booking feels like a formality.*
+## SECTION 6: CONVERGING, DUPLICATED, AND LOOPING PATHS
+
+### Converging Paths (Multiple Entry --> Same Destination)
+1. **All intent declaration paths** (Start Here tab, free text, suggested replies, guide handoff) converge into the same `sendMessage()` --> `selena-chat` edge function pipeline
+2. **All scheduling paths** (Mode 4 action button, Talk tab, Priority Call Modal) converge to either `/v2/book` or `create-handoff`
+3. **All guide navigation paths** (Guides tab, Start Here quick links, My Options, AI suggested replies) converge to `/v2/guides/*` routes
+
+### Duplicated Paths
+1. **Talk tab**: Both "Schedule a Call" AND "10-Min Priority Call" buttons call the exact same `handlePriorityCall()` function -- functionally identical
+2. **Default greeting**: Floating button, hero CTA, and cleared history all generate nearly identical Mode 1 greetings with the same 3 suggested replies
+3. **"Keep Chatting"** option appears in both the Priority Call Modal (channel step AND slots step) and as a suggested reply in Mode 4
+
+### Looping Paths
+1. **Explore loop**: Users with `intent = explore` can cycle indefinitely through Mode 1-2 without earning booking access (by design -- earned access requires intent != explore OR explicit ask)
+2. **Stall recovery loop**: After stall detection, if user picks "I'd rather keep exploring," they re-enter the same loop until stall triggers again at 5+ more turns
+3. **Report --> LeadCapture --> Report**: If user clicks "View My Latest Report" without `leadId`, opens LeadCaptureModal, which on success auto-resumes `openLastReport()`. If no reports exist, shows empty state.
+4. **Guide handoff re-entry**: Opening Selena from a guide handoff replaces chat history with a new greeting (because `isPostBooking` is false and `messages.length === 0` check triggers on re-entry only when history is empty)
+
+### Non-Looping Terminal States
+1. **Booking complete**: Redirect to `/v2/thank-you` with intent and name params
+2. **Callback requested**: `create-handoff` with `contactPref: 'text'` or `'call'`, modal closes
+3. **Chat abandoned**: User closes drawer, history persists in localStorage for next session
+
+---
+
+## SECTION 7: CHAT-INDEPENDENT PATHS
+
+These paths function WITHOUT any Selena chat interaction:
+
+1. `/v2/book` (direct nav from global navigation) --> ConsultationIntakeForm --> `submit-consultation-intake` edge function --> redirect to `/v2/thank-you`
+2. `/v2/cash-offer-options` --> TucsonAlphaCalculator (standalone tool, no chat required)
+3. `/v2/buyer-readiness` --> BuyerReadinessCheck quiz (standalone, no chat required)
+4. `/v2/guides/*` --> Static guide content (readable without chat)
+5. `/v2/quiz` --> Path Quiz orientation (standalone form, submits to edge function)
+6. `/ad/seller` --> `/ad/seller-quiz` --> `/ad/seller-result` (entire ad funnel works without chat until proactive trigger)
+
+### Critical Routing Dependencies on Chat
+- **None are hard dependencies**. All pages render and function without chat. Selena enhances but does not gate any critical path except report generation (requires `leadId`, which requires LeadCaptureModal or email in chat).
