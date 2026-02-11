@@ -584,6 +584,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               utm_source: context?.utm_source,
               utm_campaign: context?.utm_campaign,
               intent: context?.intent,
+              timeline: context?.timeline,
               last_guide_id: context?.last_guide_id,
               lead_id: leadId,
               // mode-progression fields from SessionContext
