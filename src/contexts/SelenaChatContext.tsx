@@ -425,35 +425,47 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       }
       // Priority 1: Calculator completion context
       else if (entryContext?.source === 'calculator' && entryContext.calculatorAdvantage) {
-        const diff = entryContext.calculatorDifference 
-          ? `$${entryContext.calculatorDifference.toLocaleString()}` 
-          : '';
+        // Pull enriched data from SessionContext for specific numbers
+        const calcValue = sessionContext?.estimated_value;
+        const calcDiff = sessionContext?.calculator_difference ?? entryContext.calculatorDifference;
+        const formattedValue = calcValue ? `$${calcValue.toLocaleString()}` : '';
+        const formattedDiff = calcDiff ? `$${calcDiff.toLocaleString()}` : '';
         
         if (entryContext.calculatorAdvantage === 'cash') {
-          greetingContent = t(
-            `Nice work on the analysis. Cash looks like a strong option for you — speed and certainty without the prep costs.\n\nWould you like to explore what this means for you?`,
-            `Excelente trabajo con el análisis. El efectivo parece ser una buena opción para usted — velocidad y certeza sin los costos de preparación.\n\n¿Le gustaría explorar lo que esto significa para usted?`
-          );
-        } else if (entryContext.calculatorAdvantage === 'traditional') {
-          greetingContent = diff
+          greetingContent = formattedValue
             ? t(
-                `Great job on the numbers. It looks like a traditional sale could net you ${diff} more — if you have the time to maximize value.\n\nWould you like to explore what this means for you?`,
-                `Buen trabajo con los números. Parece que una venta tradicional podría darle ${diff} más — si tiene el tiempo para maximizar el valor.\n\n¿Le gustaría explorar lo que esto significa para usted?`
+                `You ran the numbers on a ~${formattedValue} home. Cash looks like a strong option — speed and certainty without the prep costs.${formattedDiff ? ` The difference is about ${formattedDiff}.` : ''}\n\nWant the 30-second breakdown or tell me your timeline?`,
+                `Analizó los números de una casa de ~${formattedValue}. El efectivo parece ser una buena opción — velocidad y certeza sin los costos de preparación.${formattedDiff ? ` La diferencia es de unos ${formattedDiff}.` : ''}\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
               )
             : t(
-                `Great job on the numbers. A traditional sale could net you more — if you have the time to maximize value.\n\nWould you like to explore what this means for you?`,
-                `Buen trabajo con los números. Una venta tradicional podría darle más — si tiene el tiempo para maximizar el valor.\n\n¿Le gustaría explorar lo que esto significa para usted?`
+                `Nice work on the analysis. Cash looks like a strong option for you — speed and certainty without the prep costs.\n\nWant the 30-second breakdown or tell me your timeline?`,
+                `Excelente trabajo con el análisis. El efectivo parece una buena opción — velocidad y certeza sin los costos de preparación.\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
+              );
+        } else if (entryContext.calculatorAdvantage === 'traditional') {
+          greetingContent = formattedValue
+            ? t(
+                `You ran the numbers on a ~${formattedValue} home. Listing could net about ${formattedDiff || 'more'} — if you have the time to maximize value.\n\nWant the 30-second breakdown or tell me your timeline?`,
+                `Analizó los números de una casa de ~${formattedValue}. Vender de forma tradicional podría darle unos ${formattedDiff || 'más'} — si tiene el tiempo para maximizar el valor.\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
+              )
+            : t(
+                `Great job on the numbers. A traditional sale could net you ${formattedDiff || 'more'} — if you have the time to maximize value.\n\nWant the 30-second breakdown or tell me your timeline?`,
+                `Buen trabajo con los números. Una venta tradicional podría darle ${formattedDiff || 'más'} — si tiene el tiempo para maximizar el valor.\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
               );
         } else {
-          greetingContent = t(
-            `You've taken a great step by running your numbers. The difference is subtle — which means the right choice depends on your situation.\n\nWould you like to explore what this means for you?`,
-            `Ha hecho un gran paso al analizar sus números. La diferencia es sutil — lo cual significa que la decisión correcta depende de su situación.\n\n¿Le gustaría explorar lo que esto significa para usted?`
-          );
+          greetingContent = formattedValue
+            ? t(
+                `You ran the numbers on a ~${formattedValue} home. The difference is small — which means your timeline matters most.\n\nWant the 30-second breakdown or tell me what you're deciding?`,
+                `Analizó los números de una casa de ~${formattedValue}. La diferencia es pequeña — lo cual significa que su plazo importa más.\n\n¿Quiere el resumen de 30 segundos o dígame qué está decidiendo?`
+              )
+            : t(
+                `You've taken a great step by running your numbers. The difference is subtle — which means the right choice depends on your situation.\n\nWant the 30-second breakdown or tell me what you're deciding?`,
+                `Ha hecho un gran paso al analizar sus números. La diferencia es sutil — la decisión correcta depende de su situación.\n\n¿Quiere el resumen de 30 segundos o dígame qué está decidiendo?`
+              );
         }
         suggestedReplies = [
-          t("Which option is better for me?", "¿Qué opción es mejor para mí?"),
-          t("Review strategy with Kasandra", "Revisar estrategia con Kasandra"),
-          t("I have more questions", "Tengo más preguntas"),
+          t("30-second breakdown", "Resumen de 30 segundos"),
+          t("What would my home net?", "¿Cuánto me daría mi casa?"),
+          t("I'm deciding: cash vs list", "Estoy decidiendo: efectivo vs venta"),
         ];
       }
       // Priority 2: Synthesis footer context
