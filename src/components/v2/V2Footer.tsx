@@ -128,7 +128,7 @@ const V2Footer = () => {
         {/* Selena Digital Concierge Nudge */}
         <div className="mb-8">
           <button
-            onClick={() => openChat({ source: 'floating', intent: 'explore' })}
+            onClick={() => openChat({ source: 'footer_nudge', intent: 'explore' })}
             className="mx-auto flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors cursor-pointer text-left max-w-md w-full group"
             aria-label={t("Chat with Selena, Digital Concierge", "Chatear con Selena, Concierge Digital")}
           >
