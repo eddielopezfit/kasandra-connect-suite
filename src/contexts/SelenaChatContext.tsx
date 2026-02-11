@@ -655,8 +655,17 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         timestamp: new Date().toISOString(),
         suggestedReplies,
       };
-      setMessages([greeting]);
-      saveHistory([greeting]);
+      
+      // If history exists and this is a cross-context injection, APPEND the greeting
+      // Otherwise (first open, no history), start fresh with just the greeting
+      if (messages.length > 0 && hasContextualEntry) {
+        const updatedMessages = [...messages, greeting];
+        setMessages(updatedMessages);
+        saveHistory(updatedMessages);
+      } else {
+        setMessages([greeting]);
+        saveHistory([greeting]);
+      }
       
       // If there's a prefill message (e.g., from synthesis), store it for later sending
       // We can't call sendMessage here due to callback dependency order
