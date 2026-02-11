@@ -86,6 +86,7 @@ const TucsonAlphaCalculator = () => {
 
     // Enrich SessionContext with decision-grade fields for Selena
     setFieldIfEmpty('intent', 'cash');
+    const runId = crypto.randomUUID();
     updateSessionContext({
       tool_used: 'tucson_alpha_calculator',
       last_tool_result: calculationResults.recommendation,
@@ -97,6 +98,7 @@ const TucsonAlphaCalculator = () => {
         : calculationResults.recommendation === 'traditional' ? 'traditional'
         : 'consult',
       calculator_motivation: motivation,
+      calculator_run_id: runId,
     });
 
   }, [estimatedValue, motivation, timeline, setCalculatorResult]);
