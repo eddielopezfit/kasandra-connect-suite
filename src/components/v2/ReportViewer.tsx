@@ -74,7 +74,7 @@ export function ReportViewer({
 
     if (ctaType === 'ask_selena' || ctaType === 'book_call') {
       // Route through Selena chat (Selena as Router policy)
-      setTimeout(() => openChat(), 300);
+      setTimeout(() => openChat({ source: 'hero', intent: 'sell' }), 300);
     } else if (ctaType === 'generate_report') {
       // Trigger report generation
       setTimeout(() => {

@@ -250,7 +250,7 @@ const V2CashOfferOptionsContent = () => {
             <Button 
               onClick={() => {
                 logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2/cash-offer-options', intent: 'cash' });
-                openChat();
+                openChat({ source: 'hero', intent: 'cash' });
               }}
               className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
             >

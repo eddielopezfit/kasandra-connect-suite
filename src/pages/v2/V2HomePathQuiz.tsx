@@ -486,7 +486,7 @@ const V2HomePathQuizContent = () => {
               <div className="grid sm:grid-cols-2 gap-3">
                 {/* Option B: Talk with Kasandra → Routes through Selena */}
                 <button
-                  onClick={openChat}
+                  onClick={() => openChat({ source: 'hero', intent: 'explore' })}
                   className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
                 >
                   <div className="flex items-start gap-4">

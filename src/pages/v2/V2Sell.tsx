@@ -31,7 +31,7 @@ const V2SellContent = () => {
   // Handle Selena routing CTA
   const handleSelenaRoute = () => {
     handleCTAClick(CTA_NAMES.SELENA_ROUTE_CALL, 'selena_chat');
-    openChat();
+    openChat({ source: 'hero', intent: 'sell' });
   };
 
   return (

@@ -227,7 +227,7 @@ const SelenaHandoff = ({ answers, questions, onBack }: SelenaHandoffProps) => {
                 page_path: '/v2/buyer-readiness',
                 intent: 'buy',
               });
-              openChat();
+              openChat({ source: 'hero', intent: 'buy' });
             }}
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
           >
