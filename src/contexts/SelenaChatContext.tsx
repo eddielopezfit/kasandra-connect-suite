@@ -38,6 +38,7 @@ export type EntrySource =
   | 'synthesis' 
   | 'hero' 
   | 'floating' 
+  | 'footer_nudge'
   | 'proactive'
   | 'question'
   | 'post_booking'; // After successful booking - identity reinforcement
@@ -389,11 +390,12 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     const isPostBooking = entryContext?.source === 'post_booking';
     const isMeaningfulSource = entryContext && 
       entryContext.source !== 'floating' && 
+      entryContext.source !== 'footer_nudge' &&
       entryContext.source !== 'proactive';
     
     // Compute entry signature to prevent duplicate greeting injection
     const entrySig = entryContext 
-      ? `${entryContext.source}|${entryContext.guideId || ''}|${pagePath}`
+      ? `${entryContext.source}|${entryContext.intent || ''}|${entryContext.guideId || ''}|${pagePath}`
       : null;
     const lastSig = localStorage.getItem(LAST_ENTRY_SIG_KEY);
     const isNewEntry = entrySig && entrySig !== lastSig;
