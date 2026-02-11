@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight, Check, MessageCircle, Phone, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getFullSessionDossier } from "@/hooks/useSessionPrePopulation";
+import { updateSessionContext, SessionContext } from "@/lib/analytics/selenaSession";
 import { toast } from "@/hooks/use-toast";
 
 /**
@@ -363,6 +364,17 @@ const V2HomePathQuizContent = () => {
       if (response.lead_id) {
         localStorage.setItem("selena_lead_id", response.lead_id);
       }
+
+      // Write intent, timeline, and quiz_completed to SessionContext
+      // so Selena acknowledges quiz results immediately when chat opens
+      const canonicalIntent = mapQuizIntentToCanonical(intentAnswer);
+      const canonicalTimeline = mapQuizTimelineToCanonical(timelineAnswer);
+      updateSessionContext({
+        intent: canonicalIntent as SessionContext['intent'],
+        timeline: canonicalTimeline as SessionContext['timeline'],
+        quiz_completed: true,
+        quiz_result_path: getResultPath(),
+      });
 
       toast({
         title: t("Quiz saved!", "¡Cuestionario guardado!"),
