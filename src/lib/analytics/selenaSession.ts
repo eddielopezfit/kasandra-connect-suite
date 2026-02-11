@@ -69,6 +69,7 @@ export interface SessionContext {
   calculator_difference?: number;
   calculator_advantage?: CalculatorAdvantage;
   calculator_motivation?: string;
+  calculator_run_id?: string;
   // Decision Room tracking (Phase 1)
   has_viewed_report?: boolean;
   last_report_id?: string;

@@ -394,8 +394,10 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       entryContext.source !== 'proactive';
     
     // Compute entry signature to prevent duplicate greeting injection
+    // For calculator contexts, include calculator_run_id so reruns with new values trigger fresh greetings
+    const calcRunId = entryContext?.source === 'calculator' ? (getSessionContext()?.calculator_run_id || '') : '';
     const entrySig = entryContext 
-      ? `${entryContext.source}|${entryContext.intent || ''}|${entryContext.guideId || ''}|${pagePath}`
+      ? `${entryContext.source}|${entryContext.intent || ''}|${entryContext.guideId || ''}|${pagePath}${calcRunId ? `|${calcRunId}` : ''}`
       : null;
     const lastSig = localStorage.getItem(LAST_ENTRY_SIG_KEY);
     const isNewEntry = entrySig && entrySig !== lastSig;
