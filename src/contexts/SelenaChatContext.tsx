@@ -577,14 +577,23 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           body: JSON.stringify({
             message: content,
             context: {
+              // existing fields
               session_id: context?.session_id || '',
               route: location.pathname,
-              language: languageRef.current, // Use ref to always get current language
+              language: languageRef.current,
               utm_source: context?.utm_source,
               utm_campaign: context?.utm_campaign,
               intent: context?.intent,
               last_guide_id: context?.last_guide_id,
-              lead_id: leadId, // Pass existing lead_id to maintain identity
+              lead_id: leadId,
+              // mode-progression fields from SessionContext
+              tool_used: context?.tool_used,
+              last_tool_result: context?.last_tool_result,
+              quiz_completed: context?.quiz_completed ?? false,
+              guides_read: context?.last_guide_id ? 1 : 0,
+              situation: context?.situation,
+              // from provider state
+              calculator_advantage: lastCalculatorAdvantage ?? undefined,
             },
             history,
           }),
