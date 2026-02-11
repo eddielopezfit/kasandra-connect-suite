@@ -381,10 +381,15 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       });
     }
     
-    // Add greeting if no messages OR if this is a post-booking entry (always show identity reinforcement)
+    // Add greeting if:
+    // - No messages exist (first open)
+    // - Post-booking (always show identity reinforcement)
+    // - Any CTA with meaningful context (guide_handoff, calculator, synthesis, question, hero)
+    //   → injects a contextual greeting even if chat history exists
     const isPostBooking = entryContext?.source === 'post_booking';
+    const hasContextualEntry = entryContext && entryContext.source !== 'floating' && entryContext.source !== 'proactive';
     
-    if (messages.length === 0 || isPostBooking) {
+    if (messages.length === 0 || isPostBooking || hasContextualEntry) {
       const sessionContext = getSessionContext();
       let greetingContent: string;
       let suggestedReplies: string[];

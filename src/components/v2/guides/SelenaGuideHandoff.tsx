@@ -11,7 +11,7 @@ import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { logEvent } from '@/lib/analytics/logEvent';
-import type { GuideCategory } from '@/lib/guides/guideRegistry';
+import { getGuideById, type GuideCategory } from '@/lib/guides/guideRegistry';
 
 interface SelenaGuideHandoffProps {
   guideId: string;
@@ -50,7 +50,6 @@ const SelenaGuideHandoff = ({ guideId, category }: SelenaGuideHandoffProps) => {
 
   const handleClick = () => {
     // Resolve guide title from registry
-    const { getGuideById } = require('@/lib/guides/guideRegistry') as { getGuideById: (id: string) => { titleEn: string; titleEs: string } | undefined };
     const entry = getGuideById(guideId);
     const resolvedTitle = entry ? (language === 'es' ? entry.titleEs : entry.titleEn) : undefined;
     
