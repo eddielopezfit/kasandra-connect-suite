@@ -169,7 +169,7 @@ const PhoneVerificationGate = ({ onVerified }: PhoneVerificationGateProps) => {
                   page_path: window.location.pathname,
                   intent: 'explore',
                 });
-                openChat();
+                openChat({ source: 'hero', intent: 'explore' });
               }}
               className="text-sm text-primary hover:underline font-medium inline-flex items-center gap-1"
             >

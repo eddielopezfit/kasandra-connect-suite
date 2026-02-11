@@ -94,7 +94,7 @@ const PrivateCashReviewContent = () => {
               size="xl" 
               variant={hasExistingReport ? "outline" : "default"}
               className="rounded-full px-10"
-              onClick={openChat}
+              onClick={() => openChat({ source: 'hero', intent: 'cash' })}
             >
               <MessageCircle className="w-5 h-5 mr-2" />
               {t("Chat with Selena", "Chatear con Selena")}
@@ -144,7 +144,7 @@ const PrivateCashReviewContent = () => {
                   "Ella recopilará sus datos y preparará su comparación de efectivo personalizada."
                 )}
               </p>
-              <Button onClick={openChat} size="lg" className="rounded-full px-8">
+              <Button onClick={() => openChat({ source: 'hero', intent: 'cash' })} size="lg" className="rounded-full px-8">
                 <MessageCircle className="w-5 h-5 mr-2" />
                 {t("Start My Review", "Iniciar Mi Revisión")}
               </Button>
@@ -260,7 +260,7 @@ const PrivateCashReviewContent = () => {
                 <Button 
                   size="lg" 
                   className="rounded-full px-8"
-                  onClick={openChat}
+                  onClick={() => openChat({ source: 'hero', intent: 'cash' })}
                 >
                   <MessageCircle className="w-5 h-5 mr-2" />
                   {t("Schedule My Review", "Agendar Mi Revisión")}

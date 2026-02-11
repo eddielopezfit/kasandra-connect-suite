@@ -641,7 +641,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     if (isOpen) {
       closeChat();
     } else {
-      openChat();
+      openChat({ source: 'floating' });
     }
   }, [isOpen, openChat, closeChat]);
 

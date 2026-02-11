@@ -88,7 +88,7 @@ const SellerResultContent = () => {
       hasTriggeredProactive.current = true;
       
       // Open chat
-      openChat();
+      openChat({ source: 'proactive', intent: 'sell' });
       
       // Dispatch proactive message event after short delay for chat to open
       setTimeout(() => {
