@@ -10,7 +10,7 @@ import { Sparkles, FileText, Loader2, MessageCircle } from 'lucide-react';
 import { useSelenaChat, ChatMessage, ChatAction } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { logEvent } from '@/lib/analytics/logEvent';
-import { getSessionContext, SessionContext } from '@/lib/analytics/selenaSession';
+import { getSessionContext, updateSessionContext, SessionContext } from '@/lib/analytics/selenaSession';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
@@ -142,9 +142,35 @@ export function SelenaChatDrawer() {
     await sendMessage(text);
   }, [isLoading, sendMessage]);
 
+  // Seller timeline bubble → SessionContext.timeline mapping (Step 2, Behavioral Spec Section 5)
+  const TIMELINE_BUBBLE_MAP: Record<string, string | null> = {
+    'ASAP (0–30 days)': 'asap',
+    'ASAP (0-30 days)': 'asap',
+    'Lo antes posible (0-30 dias)': 'asap',
+    'Lo antes posible (0–30 días)': 'asap',
+    '1-3 months': '60_90',
+    '1-3 meses': '60_90',
+    '3-6 months': '60_90',
+    '3-6 meses': '60_90',
+    'Just exploring': null,
+    'Solo explorando': null,
+  };
+
   const handleSuggestedReplyClick = (text: string) => {
     logEvent('suggested_reply_click', { text, route: window.location.pathname });
     setActiveTab(null); // Close any open panel
+
+    // Set timeline in SessionContext BEFORE sending to selena-chat
+    if (text in TIMELINE_BUBBLE_MAP) {
+      const canonical = TIMELINE_BUBBLE_MAP[text];
+      if (canonical === null) {
+        // "Just exploring" → clear timeline
+        updateSessionContext({ timeline: undefined });
+      } else {
+        updateSessionContext({ timeline: canonical as SessionContext['timeline'] });
+      }
+    }
+
     sendMessage(text);
   };
 
