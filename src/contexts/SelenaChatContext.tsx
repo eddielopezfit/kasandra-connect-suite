@@ -497,17 +497,104 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           t("Just exploring for now", "Solo estoy explorando"),
         ];
       }
-      // Default greeting (floating button or unknown source)
+      // Default greeting — Decision Engine: deterministic bubbles based on SessionContext
       else {
-        greetingContent = t(
-          "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
-          "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
-        );
-        suggestedReplies = [
-          t("I'm thinking about selling", "Estoy pensando en vender"),
-          t("I'm looking to buy", "Estoy buscando comprar"),
-          t("Just exploring for now", "Solo estoy explorando"),
-        ];
+        const sessionCtx = getSessionContext();
+        const declaredIntent = sessionCtx?.intent;
+        const declaredTimeline = sessionCtx?.timeline;
+        const toolUsed = sessionCtx?.tool_used;
+        const readinessScore = sessionCtx?.readiness_score;
+        const quizDone = sessionCtx?.quiz_completed;
+
+        // If intent is established, skip generic "buy/sell/explore" orientation
+        if (declaredIntent === 'sell' || declaredIntent === 'cash') {
+          if (declaredTimeline === 'asap') {
+            // Seller + ASAP → prioritize Cash Offer Comparison
+            greetingContent = t(
+              "Welcome back. Since you're on a tight timeline, comparing your cash vs. listing options is the fastest way to see where you stand.",
+              "Bienvenido/a de vuelta. Como tiene un cronograma ajustado, comparar sus opciones de efectivo vs. listado es la forma más rápida de ver dónde está."
+            );
+            suggestedReplies = [
+              t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
+              t("What's my home worth?", "¿Cuánto vale mi casa?"),
+              t("I have a question", "Tengo una pregunta"),
+            ];
+          } else {
+            greetingContent = t(
+              "Welcome back. I remember you're thinking about selling. How can I help you move forward?",
+              "Bienvenido/a de vuelta. Recuerdo que está pensando en vender. ¿Cómo puedo ayudarle a avanzar?"
+            );
+            suggestedReplies = [
+              t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
+              t("Read the seller guide", "Leer la guía del vendedor"),
+              t("I'm ready to talk to Kasandra", "Estoy listo/a para hablar con Kasandra"),
+            ];
+          }
+        } else if (declaredIntent === 'buy') {
+          if (readinessScore !== undefined && readinessScore < 60) {
+            // Buyer + low readiness → prioritize Buyer Readiness Guide
+            greetingContent = t(
+              "Welcome back. Based on your readiness check, there are a few steps that could strengthen your position. Let me help you get there.",
+              "Bienvenido/a de vuelta. Según su evaluación de preparación, hay algunos pasos que podrían fortalecer su posición. Permítame ayudarle."
+            );
+            suggestedReplies = [
+              t("What should I work on first?", "¿En qué debería trabajar primero?"),
+              t("Review my readiness results", "Revisar mis resultados de preparación"),
+              t("I have a question", "Tengo una pregunta"),
+            ];
+          } else if (toolUsed === 'buyer_readiness') {
+            greetingContent = t(
+              "Welcome back. You've already completed your readiness check — that's a great step. What would you like to explore next?",
+              "Bienvenido/a de vuelta. Ya completó su evaluación de preparación — ese es un gran paso. ¿Qué le gustaría explorar a continuación?"
+            );
+            suggestedReplies = [
+              t("Browse buyer guides", "Explorar guías de comprador"),
+              t("I'm ready to talk to Kasandra", "Estoy listo/a para hablar con Kasandra"),
+              t("I have a question", "Tengo una pregunta"),
+            ];
+          } else {
+            greetingContent = t(
+              "Welcome back. I remember you're looking to buy. The Buyer Readiness Check is a great place to start.",
+              "Bienvenido/a de vuelta. Recuerdo que está buscando comprar. La Evaluación de Preparación del Comprador es un buen lugar para comenzar."
+            );
+            suggestedReplies = [
+              t("Take the Buyer Readiness Check", "Tomar la Evaluación de Preparación"),
+              t("Browse buyer guides", "Explorar guías de comprador"),
+              t("I have a question", "Tengo una pregunta"),
+            ];
+          }
+        } else if (declaredIntent === 'dual') {
+          greetingContent = t(
+            "Welcome back. Buying and selling at the same time requires careful coordination. Kasandra specializes in exactly this.",
+            "Bienvenido/a de vuelta. Comprar y vender al mismo tiempo requiere coordinación cuidadosa. Kasandra se especializa exactamente en esto."
+          );
+          suggestedReplies = [
+            t("How does a dual move work?", "¿Cómo funciona una mudanza dual?"),
+            t("I'd like to talk to Kasandra", "Me gustaría hablar con Kasandra"),
+            t("I have a question", "Tengo una pregunta"),
+          ];
+        } else if (quizDone) {
+          greetingContent = t(
+            "Welcome back. I see you completed the orientation quiz — great start. How can I help you take the next step?",
+            "Bienvenido/a de vuelta. Veo que completó el cuestionario de orientación — excelente comienzo. ¿Cómo puedo ayudarle a dar el siguiente paso?"
+          );
+          suggestedReplies = [
+            t("What should I do next?", "¿Qué debería hacer a continuación?"),
+            t("Browse guides", "Explorar guías"),
+            t("I have a specific question", "Tengo una pregunta específica"),
+          ];
+        } else {
+          // Truly new visitor — orientation mode
+          greetingContent = t(
+            "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
+            "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
+          );
+          suggestedReplies = [
+            t("I'm thinking about selling", "Estoy pensando en vender"),
+            t("I'm looking to buy", "Estoy buscando comprar"),
+            t("Just exploring for now", "Solo estoy explorando"),
+          ];
+        }
       }
       
       const greeting: ChatMessage = {

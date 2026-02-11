@@ -10,7 +10,7 @@ import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { getLeadId, getStoredUserName, getLastReportId } from "@/lib/analytics/bridgeLeadIdToV2";
-import { Link } from "react-router-dom";
+// Link import removed — "View My Report" now uses openLastReport() modal
 import PhoneVerificationGate from "@/components/v2/PhoneVerificationGate";
 
 type GateState = 'checking' | 'locked' | 'unlocked';
@@ -18,7 +18,7 @@ type GateState = 'checking' | 'locked' | 'unlocked';
 // Inner component that uses SelenaChatContext (rendered inside V2Layout which provides the context)
 const PrivateCashReviewContent = () => {
   const { t } = useLanguage();
-  const { openChat } = useSelenaChat();
+  const { openChat, openLastReport } = useSelenaChat();
   const schedulingRef = useRef<HTMLDivElement>(null);
   
   // State machine: detect returning leads
@@ -84,12 +84,10 @@ const PrivateCashReviewContent = () => {
               <Button 
                 size="xl" 
                 className="rounded-full px-10"
-                asChild
+                onClick={() => openLastReport()}
               >
-                <Link to="/v2/reports">
-                  <FileText className="w-5 h-5 mr-2" />
-                  {t("View My Report", "Ver Mi Reporte")}
-                </Link>
+                <FileText className="w-5 h-5 mr-2" />
+                {t("View My Report", "Ver Mi Reporte")}
               </Button>
             )}
             <Button 
