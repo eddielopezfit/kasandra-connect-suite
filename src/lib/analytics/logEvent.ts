@@ -112,7 +112,10 @@ export type EventType =
   // Selena Mode Tracking (Decision Certainty Engine v2)
   | 'selena_entry'
   | 'selena_mode_transition'
-  | 'handoff_deferred';
+  | 'handoff_deferred'
+  // Phase 2: Context persistence events
+  | 'selena_opened'
+  | 'guide_cta_clicked';
 
 export interface EventPayload {
   [key: string]: unknown;

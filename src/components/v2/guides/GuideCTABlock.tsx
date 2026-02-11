@@ -71,15 +71,25 @@ const GuideCTABlock = ({ category }: GuideCTABlockProps) => {
   const { openChat } = useSelenaChat();
   const config = getCTAConfig(category);
 
+  // Extract guideId from current URL for context passing
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+  const guideMatch = currentPath.match(/^\/v2\/guides\/(.+)$/);
+  const currentGuideId = guideMatch?.[1];
+
   const handleClick = () => {
     if (config.routeThruSelena) {
       logCTAClick({
         cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
         destination: 'selena_chat',
-        page_path: window.location.pathname,
+        page_path: currentPath,
         intent: config.intent,
       });
-      openChat();
+      openChat({
+        source: 'guide_handoff',
+        guideId: currentGuideId,
+        guideCategory: category,
+        intent: config.intent,
+      });
     }
   };
 

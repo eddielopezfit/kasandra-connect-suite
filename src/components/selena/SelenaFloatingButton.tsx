@@ -1,6 +1,9 @@
 /**
  * Selena Floating Chat Button
  * Bottom-right FAB for opening the chat drawer
+ * 
+ * On guide pages: always uses openChat with full guide context (never toggleChat)
+ * On other pages: uses openChat with page path context
  */
 
 import { MessageCircle, X } from 'lucide-react';
@@ -15,16 +18,16 @@ export function SelenaFloatingButton() {
   const location = useLocation();
   const { language } = useLanguage();
   
-  // Show notification dot if there are unread messages
   const hasMessages = messages.length > 0;
   
-  // Extract guide context from current route
   const handleClick = () => {
+    // Close action is always toggle
     if (isOpen) {
       toggleChat();
       return;
     }
     
+    // Guide pages: always openChat with full guide context
     const guideMatch = location.pathname.match(/^\/v2\/guides\/(.+)$/);
     if (guideMatch) {
       const guideId = guideMatch[1];
@@ -40,7 +43,10 @@ export function SelenaFloatingButton() {
       }
     }
     
-    toggleChat();
+    // All other pages: openChat with page path (never bare toggleChat)
+    openChat({
+      source: 'floating',
+    });
   };
   
   return (
@@ -55,7 +61,6 @@ export function SelenaFloatingButton() {
         "transition-all duration-300 ease-out",
         "hover:scale-105 active:scale-95",
         "focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2",
-        // Avoid overlap with other widgets
         "sm:bottom-6 sm:right-6"
       )}
       aria-label={isOpen ? "Close chat" : "Open chat with Selena"}
@@ -65,7 +70,6 @@ export function SelenaFloatingButton() {
       ) : (
         <>
           <MessageCircle className="w-6 h-6" />
-          {/* Pulse animation for attention */}
           {!hasMessages && (
             <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-pulse" />
           )}

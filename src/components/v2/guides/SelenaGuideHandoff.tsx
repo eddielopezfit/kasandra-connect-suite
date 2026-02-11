@@ -43,20 +43,27 @@ const HANDOFF_COPY: Record<GuideCategory, { en: string; es: string }> = {
 };
 
 const SelenaGuideHandoff = ({ guideId, category }: SelenaGuideHandoffProps) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
   
   const copy = HANDOFF_COPY[category];
 
   const handleClick = () => {
-    logEvent('selena_guide_handoff_click', {
-      guide_id: guideId,
+    // Resolve guide title from registry
+    const { getGuideById } = require('@/lib/guides/guideRegistry') as { getGuideById: (id: string) => { titleEn: string; titleEs: string } | undefined };
+    const entry = getGuideById(guideId);
+    const resolvedTitle = entry ? (language === 'es' ? entry.titleEs : entry.titleEn) : undefined;
+    
+    logEvent('guide_cta_clicked', {
+      guideId,
+      cta_id: `handoff_${category}`,
       category,
     });
-    // Pass guide context for context-aware greeting
+    // Pass full guide context for context-aware greeting
     openChat({
       source: 'guide_handoff',
       guideId,
+      guideTitle: resolvedTitle,
       guideCategory: category,
     });
   };
