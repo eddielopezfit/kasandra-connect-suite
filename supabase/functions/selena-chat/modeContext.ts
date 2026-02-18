@@ -280,17 +280,15 @@ export function getModeSuggestedReplies(
         "¿Cuál es mi siguiente paso?",
       ],
     },
-    // MODE 4: Booking + keep chatting
+    // MODE 4: Booking + keep chatting (must match HANDOFF reply text exactly)
     4: {
       en: [
-        "Review strategy with Kasandra",
-        "I have more questions first",
-        "What happens on the call?",
+        "Find a time with Kasandra",
+        "Keep chatting with Selena",
       ],
       es: [
-        "Revisar estrategia con Kasandra",
-        "Tengo más preguntas primero",
-        "¿Qué pasa en la llamada?",
+        "Encontrar un horario con Kasandra",
+        "Seguir conversando con Selena",
       ],
     },
   };
