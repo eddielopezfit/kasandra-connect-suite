@@ -41,7 +41,8 @@ export type EntrySource =
   | 'footer_nudge'
   | 'proactive'
   | 'question'
-  | 'post_booking'; // After successful booking - identity reinforcement
+  | 'post_booking' // After successful booking - identity reinforcement
+  | 'quiz_result'; // After completing the path quiz — intent-specific routing
 
 export interface EntryContext {
   source: EntrySource;
