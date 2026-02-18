@@ -490,17 +490,36 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           t("I have a specific question", "Tengo una pregunta específica"),
         ];
       }
-      // Priority 3: Question CTA context
+      // Priority 3: Question CTA context — intent-aware, never stacks on top of existing session
+      // If messages already exist (drawer has prior context), open without injecting a new greeting.
+      // Only inject if this is genuinely the first open with no prior messages.
       else if (entryContext?.source === 'question') {
-        greetingContent = t(
-          `I'm here to help. What question do you have in mind?`,
-          `Estoy aquí para ayudarle. ¿Qué pregunta tiene en mente?`
-        );
-        suggestedReplies = [
-          t("What's my home worth?", "¿Cuánto vale mi casa?"),
-          t("How does the process work?", "¿Cómo funciona el proceso?"),
-          t("What are my options?", "¿Cuáles son mis opciones?"),
-        ];
+        if (messages.length === 0) {
+          const questionIntent = entryContext?.intent;
+          if (questionIntent === 'cash') {
+            greetingContent = t(
+              `Already received a cash offer? I can help you read it — check for red flags, compare it to what the market might offer, and make sure you understand what you're signing.\n\nTell me about your situation.`,
+              `¿Ya recibió una oferta en efectivo? Puedo ayudarle a revisarla — buscar señales de alerta, compararla con lo que el mercado podría ofrecer, y asegurar que entienda lo que está firmando.\n\nCuénteme su situación.`
+            );
+            suggestedReplies = [
+              t("I got a cash offer", "Recibí una oferta en efectivo"),
+              t("Is my offer fair?", "¿Es justa mi oferta?"),
+              t("What should I watch out for?", "¿Qué debo tener en cuenta?"),
+            ];
+          } else {
+            greetingContent = t(
+              `I'm here to help. What question do you have in mind?`,
+              `Estoy aquí para ayudarle. ¿Qué pregunta tiene en mente?`
+            );
+            suggestedReplies = [
+              t("What's my home worth?", "¿Cuánto vale mi casa?"),
+              t("How does the process work?", "¿Cómo funciona el proceso?"),
+              t("What are my options?", "¿Cuáles son mis opciones?"),
+            ];
+          }
+        }
+        // If messages.length > 0: greetingContent stays '', so the block below creates
+        // a greeting with empty content. We handle this by guarding on greetingContent below.
       }
       // Priority 3.5: Quiz result context — intent-specific routing post-quiz
       else if (entryContext?.source === 'quiz_result' && entryContext.intent) {
@@ -692,9 +711,14 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         suggestedReplies,
       };
       
+      // Guard: if greetingContent is empty (e.g., 'question' source on existing session),
+      // open the drawer with history intact — no stacking, no empty message.
+      if (!greetingContent) {
+        // No-op: drawer opens, existing messages remain.
+      }
       // If history exists and this is a cross-context injection, APPEND the greeting
       // Otherwise (first open, no history), start fresh with just the greeting
-      if (messages.length > 0 && hasContextualEntry) {
+      else if (messages.length > 0 && hasContextualEntry) {
         const updatedMessages = [...messages, greeting];
         setMessages(updatedMessages);
         saveHistory(updatedMessages);

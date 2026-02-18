@@ -72,7 +72,7 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
     case 'hero':
       return generateHeroGreeting(language);
     case 'question':
-      return generateQuestionGreeting(language);
+      return generateQuestionGreeting(language, context.intent);
     case 'footer_nudge':
     case 'proactive':
       return generateProactiveGreeting(language);
@@ -364,7 +364,29 @@ function generateHeroGreeting(language: 'en' | 'es'): GreetingResult {
   };
 }
 
-function generateQuestionGreeting(language: 'en' | 'es'): GreetingResult {
+function generateQuestionGreeting(language: 'en' | 'es', intent?: string): GreetingResult {
+  // Cash-review context: user clicked "Request a Review" after seeing cash offer info
+  if (intent === 'cash') {
+    if (language === 'es') {
+      return {
+        content: `¿Ya recibió una oferta en efectivo? Puedo ayudarle a revisarla — buscar señales de alerta, compararla con lo que el mercado podría ofrecer, y asegurar que entienda lo que está firmando.\n\nCuénteme su situación.`,
+        suggestedReplies: [
+          "Recibí una oferta en efectivo",
+          "¿Es justa mi oferta?",
+          "¿Qué debo tener en cuenta?",
+        ],
+      };
+    }
+    return {
+      content: `Already received a cash offer? I can help you read it — check for red flags, compare it to what the market might offer, and make sure you understand what you're signing.\n\nTell me about your situation.`,
+      suggestedReplies: [
+        "I got a cash offer",
+        "Is my offer fair?",
+        "What should I watch out for?",
+      ],
+    };
+  }
+
   if (language === 'es') {
     return {
       content: `Estoy aquí para ayudarle. ¿Qué pregunta tiene en mente?`,
