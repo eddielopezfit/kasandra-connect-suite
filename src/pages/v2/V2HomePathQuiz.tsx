@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import QuizFunnelLayout from "@/components/v2/QuizFunnelLayout";
@@ -54,6 +54,7 @@ type ResultPath = "buying" | "selling" | "cash" | "exploring";
 const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [contactInfo, setContactInfo] = useState<ContactInfo>({
@@ -414,6 +415,24 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
     const path = getResultPath();
     const content = resultContent[path];
     const derivedIntent = path === 'buying' ? 'buy' : path === 'selling' ? 'sell' : path === 'cash' ? 'cash' : 'explore';
+    const exploreHref = path === 'cash' ? '/v2/cash-offer-options' : '/v2/guides';
+
+    // Derive contact preference from Step 5 answer (questionIndex === 4)
+    type ContactPreference = 'email' | 'selena' | 'kasandra' | null;
+    const contactPrefIndex = answers.find(a => a.questionIndex === 4)?.answerIndex;
+    const contactPreference: ContactPreference =
+      contactPrefIndex === 0 ? 'email'
+      : contactPrefIndex === 1 ? 'selena'
+      : contactPrefIndex === 2 ? 'kasandra'
+      : null;
+
+    // Preference-specific framing line
+    const framingLine =
+      contactPreference === 'kasandra'
+        ? t("We've reserved a spot for you.", "Le hemos reservado un lugar.")
+        : contactPreference === 'selena'
+        ? t("Selena is ready when you are.", "Selena está lista cuando lo estés.")
+        : t("Here's where to go next.", "Aquí es a donde ir ahora.");
 
     return (
       <section className="min-h-[80vh] flex items-center justify-center px-4 py-16">
@@ -455,62 +474,105 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
               </p>
             </div>
 
-            {/* Choice-based CTAs */}
+            {/* Preference-driven CTAs */}
             <div className="space-y-4">
-              <p className="text-center text-sm text-cc-slate">
-                {t("Choose how you'd like to continue:", "Elige cómo te gustaría continuar:")}
+              <p className="text-center text-sm text-cc-slate font-medium">
+                {framingLine}
               </p>
-              
-              {/* Option A: Chat with Selena — stays in-page, opens with quiz result context */}
-              <button
-                onClick={() => openChat({ source: 'quiz_result', intent: derivedIntent })}
-                className="w-full p-5 text-left rounded-xl border-2 border-cc-gold bg-cc-gold/5 hover:bg-cc-gold/10 transition-all group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-cc-gold rounded-full flex items-center justify-center flex-shrink-0">
-                    <MessageCircle className="w-5 h-5 text-cc-navy" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark">
-                      {t("Chat with Selena", "Conversar con Selena")}
-                    </h4>
-                    <p className="text-sm text-cc-slate mt-1">
-                      {t(
-                        "Get personalized answers and direction — available 24/7 in English or Spanish.",
-                        "Obtén respuestas y orientación personalizadas — disponible 24/7 en inglés o español."
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </button>
 
-              <div className="grid sm:grid-cols-2 gap-3">
-                {/* Option B: Talk with Kasandra → correct source + derived intent */}
-                <button
-                  onClick={() => openChat({ source: 'quiz_result', intent: derivedIntent })}
-                  className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-5 h-5 text-cc-navy" />
+              {/* ── KASANDRA preference ── */}
+              {contactPreference === 'kasandra' && (
+                <>
+                  <button
+                    onClick={() => navigate(`/v2/book?intent=${derivedIntent}&source=quiz`)}
+                    className="w-full p-5 text-left rounded-xl border-2 border-cc-gold bg-cc-gold/5 hover:bg-cc-gold/10 transition-all group"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-cc-gold rounded-full flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-5 h-5 text-cc-navy" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark">
+                          {t("Book a Call with Kasandra", "Reservar una Llamada con Kasandra")}
+                        </h4>
+                        <p className="text-sm text-cc-slate mt-1">
+                          {t(
+                            "Schedule a calm, no-pressure 15-minute consultation.",
+                            "Agenda una consulta tranquila y sin presión de 15 minutos."
+                          )}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
-                        {t("Talk with Kasandra", "Hablar con Kasandra")}
-                      </h4>
-                      <p className="text-xs text-cc-slate mt-1">
-                        {t("Schedule a calm, no-pressure call.", "Agenda una llamada tranquila, sin presión.")}
-                      </p>
-                    </div>
-                  </div>
-                </button>
+                  </button>
 
-                {/* Option C: Continue exploring — cash path → calculator, all others → guides */}
-                <Link
-                  to={path === 'cash' ? "/v2/cash-offer-options" : "/v2/guides"}
-                  className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group block"
-                >
-                  <div className="flex items-start gap-4">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <button
+                      onClick={() => openChat({ source: 'quiz_result', intent: derivedIntent })}
+                      className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
+                          <MessageCircle className="w-5 h-5 text-cc-navy" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
+                            {t("Need clarity first? Chat with Selena →", "¿Necesita claridad primero? Chatee con Selena →")}
+                          </h4>
+                        </div>
+                      </div>
+                    </button>
+
+                    <Link
+                      to={exploreHref}
+                      className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group block"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
+                          <BookOpen className="w-5 h-5 text-cc-navy" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
+                            {t("Continue Exploring", "Continuar Explorando")}
+                          </h4>
+                          <p className="text-xs text-cc-slate mt-1">
+                            {t("Browse guides at your own pace.", "Explora guías a tu propio ritmo.")}
+                          </p>
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                </>
+              )}
+
+              {/* ── SELENA preference ── */}
+              {contactPreference === 'selena' && (
+                <>
+                  <button
+                    onClick={() => openChat({ source: 'quiz_result', intent: derivedIntent })}
+                    className="w-full p-5 text-left rounded-xl border-2 border-cc-gold bg-cc-gold/5 hover:bg-cc-gold/10 transition-all group"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-cc-gold rounded-full flex items-center justify-center flex-shrink-0">
+                        <MessageCircle className="w-5 h-5 text-cc-navy" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark">
+                          {t("Chat with Selena", "Conversar con Selena")}
+                        </h4>
+                        <p className="text-sm text-cc-slate mt-1">
+                          {t(
+                            "Get personalized answers and direction — available 24/7 in English or Spanish.",
+                            "Obtén respuestas y orientación personalizadas — disponible 24/7 en inglés o español."
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+
+                  <Link
+                    to={exploreHref}
+                    className="flex items-center gap-3 p-5 rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
+                  >
                     <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
                       <BookOpen className="w-5 h-5 text-cc-navy" />
                     </div>
@@ -522,9 +584,51 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
                         {t("Browse guides at your own pace.", "Explora guías a tu propio ritmo.")}
                       </p>
                     </div>
-                  </div>
-                </Link>
-              </div>
+                  </Link>
+                </>
+              )}
+
+              {/* ── EMAIL preference (or null fallback) ── */}
+              {(contactPreference === 'email' || contactPreference === null) && (
+                <>
+                  <Link
+                    to={exploreHref}
+                    className="w-full p-5 text-left rounded-xl border-2 border-cc-gold bg-cc-gold/5 hover:bg-cc-gold/10 transition-all group flex items-start gap-4"
+                  >
+                    <div className="w-10 h-10 bg-cc-gold rounded-full flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="w-5 h-5 text-cc-navy" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark">
+                        {t("View Your Personalized Next Steps", "Ver Sus Próximos Pasos Personalizados")}
+                      </h4>
+                      <p className="text-sm text-cc-slate mt-1">
+                        {t(
+                          "Browse our curated guides matched to your situation.",
+                          "Explora nuestras guías adaptadas a tu situación."
+                        )}
+                      </p>
+                    </div>
+                  </Link>
+
+                  <Link
+                    to={`/v2/book?intent=${derivedIntent}&source=quiz`}
+                    className="flex items-center gap-3 p-5 rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
+                  >
+                    <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
+                      <Phone className="w-5 h-5 text-cc-navy" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
+                        {t("Or book a call with Kasandra", "O reservar una llamada con Kasandra")}
+                      </h4>
+                      <p className="text-xs text-cc-slate mt-1">
+                        {t("15-minute consultation, no pressure.", "Consulta de 15 minutos, sin presión.")}
+                      </p>
+                    </div>
+                  </Link>
+                </>
+              )}
             </div>
 
             <p className="text-center text-sm text-cc-slate pt-4">
