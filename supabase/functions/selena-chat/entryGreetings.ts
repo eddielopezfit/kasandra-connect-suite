@@ -22,7 +22,8 @@ export type EntrySource =
   | 'guide_handoff' 
   | 'synthesis' 
   | 'hero' 
-  | 'floating' 
+  | 'floating'
+  | 'footer_nudge' // Blocked from greeting injection; aliased to floating behavior
   | 'proactive'
   | 'question'
   | 'post_booking' // After successful booking - identity reinforcement
@@ -72,6 +73,7 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
       return generateHeroGreeting(language);
     case 'question':
       return generateQuestionGreeting(language);
+    case 'footer_nudge':
     case 'proactive':
       return generateProactiveGreeting(language);
     case 'floating':

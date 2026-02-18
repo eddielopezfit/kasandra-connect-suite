@@ -774,7 +774,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               tool_used: context?.tool_used,
               last_tool_result: context?.last_tool_result,
               quiz_completed: context?.quiz_completed ?? false,
-              guides_read: context?.last_guide_id ? 1 : 0,
+              guides_read: context?.guides_read ?? (context?.last_guide_id ? 1 : 0),
               situation: context?.situation,
               // from provider state
               calculator_advantage: lastCalculatorAdvantage ?? undefined,
@@ -850,7 +850,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, isLoading, location.pathname, t, leadId]); // languageRef.current always current, no dep needed
+  }, [messages, isLoading, location.pathname, t, leadId, lastCalculatorAdvantage]); // FM-09: lastCalculatorAdvantage must be in deps to avoid stale closure
 
   // Handle prefill messages stored by openChat (for synthesis flows)
   useEffect(() => {

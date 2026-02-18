@@ -55,7 +55,8 @@ import {
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
 interface ChatMessage {
@@ -587,12 +588,12 @@ serve(async (req) => {
     const modeContext = detectMode(conversationState);
     const currentMode: ConversationMode = modeContext.mode;
     
-    // Log mode transition for analytics
-    await logDataCapture(context.session_id, "selena_mode_transition", { 
+    // Log mode transition for analytics (fire-and-forget — FM-11)
+    logDataCapture(context.session_id, "selena_mode_transition", { 
       mode: currentMode, 
       mode_name: modeContext.modeName,
       user_turns: conversationState.userTurns,
-    });
+    }).catch(() => {});
 
     // Check for stall condition (Mode 3.5 behavior)
     const stalled = isStalled(history, message);

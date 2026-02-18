@@ -9,6 +9,7 @@ import { useGuideScrollTracking } from "@/hooks/useGuideScrollTracking";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { markGuideRead, setLastGuideId } from "@/lib/guides/personalization";
 import { getGuideById, type GuideCategory } from "@/lib/guides/guideRegistry";
+import { getSessionContext, updateSessionContext } from "@/lib/analytics/selenaSession";
 // Guide content type for better structure
 interface GuideSection {
   heading: string;
@@ -420,6 +421,7 @@ const V2GuideDetail = () => {
   });
 
   // Log guide open and track in personalization on mount
+  // FM-02: Increment guides_read only when navigating to a NEW guide
   useEffect(() => {
     if (guideId) {
       logEvent('guide_open', {
@@ -428,6 +430,16 @@ const V2GuideDetail = () => {
       });
       markGuideRead(guideId);
       setLastGuideId(guideId);
+
+      // Increment guides_read counter only when the guide changes
+      const ctx = getSessionContext();
+      const prevGuideId = ctx?.last_guide_id;
+      if (prevGuideId !== guideId) {
+        updateSessionContext({
+          last_guide_id: guideId,
+          guides_read: (ctx?.guides_read ?? 0) + 1,
+        });
+      }
     }
   }, [guideId, guideTitle]);
 
