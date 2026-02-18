@@ -25,7 +25,8 @@ export type EntrySource =
   | 'floating' 
   | 'proactive'
   | 'question'
-  | 'post_booking'; // After successful booking - identity reinforcement
+  | 'post_booking' // After successful booking - identity reinforcement
+  | 'quiz_result'; // After completing the path quiz — intent-specific routing
 
 export interface EntryContext {
   source: EntrySource;
@@ -59,6 +60,8 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
   switch (source) {
     case 'post_booking':
       return generatePostBookingGreeting(context);
+    case 'quiz_result':
+      return generateQuizResultGreeting(context);
     case 'calculator':
       return generateCalculatorGreeting(context);
     case 'guide_handoff':
@@ -115,7 +118,98 @@ If you'd like, tell me one thing you want to be 100% certain about when you two 
   };
 }
 
-function generateCalculatorGreeting(context: EntryContext): GreetingResult {
+/**
+ * Quiz result greeting — acknowledges completed path quiz and routes based on intent
+ * intent values: 'buy' | 'sell' | 'cash' | 'explore'
+ */
+function generateQuizResultGreeting(context: EntryContext): GreetingResult {
+  const { intent, language } = context;
+
+  if (language === 'es') {
+    if (intent === 'sell') {
+      return {
+        content: `Completó su camino — y parece que vender está en su mente.\n\nBasado en lo que compartió, hay dos cosas que le ayudarán a avanzar: entender el valor actual de su casa y saber qué opciones tiene antes de comprometerse con algo.`,
+        suggestedReplies: [
+          "¿Cuánto vale mi casa?",
+          "Comparar efectivo vs. venta tradicional",
+          "Hablar con Kasandra",
+        ],
+      };
+    }
+    if (intent === 'cash') {
+      return {
+        content: `Completó su camino — y las opciones de oferta en efectivo llamaron su atención. Vale la pena explorarlo.\n\nDéjeme ayudarle a entender qué significa realmente una oferta en efectivo para su situación específica.`,
+        suggestedReplies: [
+          "¿Cuánto vale mi casa?",
+          "Comparar efectivo vs. venta tradicional",
+          "Hablar con Kasandra",
+        ],
+      };
+    }
+    if (intent === 'buy') {
+      return {
+        content: `Completó su camino — y está pensando en comprar. Es un excelente lugar para comenzar.\n\nAquí está lo que normalmente ayuda más en esta etapa: saber dónde está financieramente y entender el proceso antes de comprometerse con algo.`,
+        suggestedReplies: [
+          "Tomar la evaluación de preparación",
+          "¿Qué debo preparar?",
+          "Hablar con Kasandra",
+        ],
+      };
+    }
+    // explore / default
+    return {
+      content: `Completó su camino — y está bien que las cosas no estén completamente claras aún. Eso es más normal de lo que piensa.\n\nFigurémonos juntos cuál es su próximo paso más útil.`,
+      suggestedReplies: [
+        "Ayúdame a encontrar mi camino",
+        "Muéstrame mis opciones",
+        "Solo explorando por ahora",
+      ],
+    };
+  }
+
+  // English
+  if (intent === 'sell') {
+    return {
+      content: `You've just completed your path — and it looks like selling is on your mind.\n\nBased on what you shared, here are two things that will help you move forward: understanding your home's current value and knowing what options you have before committing to anything.`,
+      suggestedReplies: [
+        "What's my home worth?",
+        "Compare cash vs. traditional",
+        "Talk with Kasandra",
+      ],
+    };
+  }
+  if (intent === 'cash') {
+    return {
+      content: `You've just completed your path — and cash offer options caught your attention. That's worth exploring.\n\nLet me help you understand what a cash offer actually means for your specific situation.`,
+      suggestedReplies: [
+        "What's my home worth?",
+        "Compare cash vs. traditional",
+        "Talk with Kasandra",
+      ],
+    };
+  }
+  if (intent === 'buy') {
+    return {
+      content: `You've just completed your path — and you're thinking about buying. That's a great place to start.\n\nHere's what usually helps most at this stage: knowing where you stand financially and understanding the process before committing to anything.`,
+      suggestedReplies: [
+        "Take the readiness check",
+        "What should I prepare?",
+        "Talk with Kasandra",
+      ],
+    };
+  }
+  // explore / default
+  return {
+    content: `You've just completed your path — and it's okay that things aren't fully clear yet. That's more normal than you think.\n\nLet's figure out your most useful next step together.`,
+    suggestedReplies: [
+      "Help me figure out my path",
+      "Show me my options",
+      "Just exploring for now",
+    ],
+  };
+}
+
+
   const { calculatorAdvantage, calculatorDifference, language } = context;
   const diff = calculatorDifference ? `$${calculatorDifference.toLocaleString()}` : '';
 

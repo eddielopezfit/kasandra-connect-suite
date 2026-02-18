@@ -51,7 +51,7 @@ type ResultPath = "buying" | "selling" | "cash" | "exploring";
 /**
  * Inner component that uses Selena context (must be inside V2Layout)
  */
-const V2HomePathQuizContent = () => {
+const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
   const [currentStep, setCurrentStep] = useState(0);
@@ -384,6 +384,7 @@ const V2HomePathQuizContent = () => {
       });
 
       setIsComplete(true);
+      onComplete?.(); // Signal layout to reveal Selena UI
     } catch (err) {
       console.error("[V2HomePathQuiz] Unexpected error:", err);
       toast({
@@ -412,6 +413,7 @@ const V2HomePathQuizContent = () => {
   if (isComplete) {
     const path = getResultPath();
     const content = resultContent[path];
+    const derivedIntent = path === 'buying' ? 'buy' : path === 'selling' ? 'sell' : path === 'cash' ? 'cash' : 'explore';
 
     return (
       <section className="min-h-[80vh] flex items-center justify-center px-4 py-16">
@@ -459,9 +461,9 @@ const V2HomePathQuizContent = () => {
                 {t("Choose how you'd like to continue:", "Elige cómo te gustaría continuar:")}
               </p>
               
-              {/* Option A: Chat with Selena */}
+              {/* Option A: Chat with Selena — stays in-page, opens with quiz result context */}
               <button
-                onClick={() => window.location.href = "/v2"}
+                onClick={() => openChat({ source: 'quiz_result', intent: derivedIntent })}
                 className="w-full p-5 text-left rounded-xl border-2 border-cc-gold bg-cc-gold/5 hover:bg-cc-gold/10 transition-all group"
               >
                 <div className="flex items-start gap-4">
@@ -483,9 +485,9 @@ const V2HomePathQuizContent = () => {
               </button>
 
               <div className="grid sm:grid-cols-2 gap-3">
-                {/* Option B: Talk with Kasandra → Routes through Selena */}
+                {/* Option B: Talk with Kasandra → correct source + derived intent */}
                 <button
-                  onClick={() => openChat({ source: 'hero', intent: 'explore' })}
+                  onClick={() => openChat({ source: 'quiz_result', intent: derivedIntent })}
                   className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
                 >
                   <div className="flex items-start gap-4">
@@ -503,9 +505,9 @@ const V2HomePathQuizContent = () => {
                   </div>
                 </button>
 
-                {/* Option C: Continue exploring */}
+                {/* Option C: Continue exploring — cash path → calculator, all others → guides */}
                 <Link
-                  to="/v2/guides"
+                  to={path === 'cash' ? "/v2/cash-offer-options" : "/v2/guides"}
                   className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group block"
                 >
                   <div className="flex items-start gap-4">
@@ -708,12 +710,16 @@ const V2HomePathQuizContent = () => {
 };
 
 /**
- * Wrapper component that provides V2Layout context before rendering content
+ * Wrapper component — owns isQuizComplete state and wires it to both
+ * QuizFunnelLayout (showSelena) and V2HomePathQuizContent (onComplete).
+ * SelenaChatProvider stays mounted throughout; only the UI is suppressed.
  */
 const V2HomePathQuiz = () => {
+  const [isQuizComplete, setIsQuizComplete] = useState(false);
+
   return (
-    <QuizFunnelLayout>
-      <V2HomePathQuizContent />
+    <QuizFunnelLayout showSelena={isQuizComplete}>
+      <V2HomePathQuizContent onComplete={() => setIsQuizComplete(true)} />
     </QuizFunnelLayout>
   );
 };

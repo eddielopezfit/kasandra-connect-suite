@@ -9,6 +9,8 @@ import LanguageToggle from "@/components/v2/LanguageToggle";
 
 interface QuizFunnelLayoutProps {
   children: ReactNode;
+  /** When true, reveals SelenaFloatingButton + SelenaChatDrawer. Default: false (suppressed during quiz steps). */
+  showSelena?: boolean;
 }
 
 /**
@@ -20,7 +22,7 @@ interface QuizFunnelLayoutProps {
  * upstream (LanguageContext). Calling it again here would cause a redundant state
  * reset on every language change.
  */
-const QuizFunnelLayout = ({ children }: QuizFunnelLayoutProps) => {
+const QuizFunnelLayout = ({ children, showSelena = false }: QuizFunnelLayoutProps) => {
   const { t } = useLanguage();
   const location = useLocation();
 
@@ -70,9 +72,9 @@ const QuizFunnelLayout = ({ children }: QuizFunnelLayoutProps) => {
           </div>
         </footer>
 
-        {/* Selena Chat — fully functional inside isolated funnel */}
-        <SelenaFloatingButton />
-        <SelenaChatDrawer />
+        {/* Selena Chat — revealed only when quiz is complete */}
+        {showSelena && <SelenaFloatingButton />}
+        {showSelena && <SelenaChatDrawer />}
       </div>
     </SelenaChatProvider>
   );
