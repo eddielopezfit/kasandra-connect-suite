@@ -503,7 +503,7 @@ const BuyerReadinessCheck = () => {
                     page_path: '/v2/buyer-readiness',
                     intent: 'buy',
                   });
-                  openChat({ source: 'hero', intent: 'buy' });
+                  openChat({ source: 'calculator', intent: 'buy' });
                 }}
                 className="p-4 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
               >
