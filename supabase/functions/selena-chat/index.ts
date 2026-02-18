@@ -816,7 +816,7 @@ serve(async (req) => {
     // 
     // GUARD: Do NOT re-fire if the current message IS a timeline response chip.
     // This prevents the intercept from looping when the route always injects 'sell'.
-    const TIMELINE_REPLY_PATTERNS = /^(asap|0.?30|1.?3\s*month|3.?6\s*month|just exploring|solo explorando|lo antes|meses?|months?|\d+.?\d+\s*(days?|días?))/i;
+    const TIMELINE_REPLY_PATTERNS = /^(asap|lo antes posible|\d[\d\s\-–]+\s*(month|mes|day|día)|1.?3\s*(month|mes)|3.?6\s*(month|mes)|just exploring|solo explorando|months?|meses?|\d+.?\d+\s*(days?|días?))/i;
     const isTimelineReply = TIMELINE_REPLY_PATTERNS.test(message.trim());
     
     const isFirstSellerTurn = conversationState.userTurns <= 1
