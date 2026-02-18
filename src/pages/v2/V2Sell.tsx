@@ -178,28 +178,6 @@ const V2SellContent = () => {
         </div>
       </section>
 
-      {/* Important Note */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="bg-cc-ivory rounded-xl p-8 shadow-soft max-w-3xl mx-auto border border-cc-sand-dark/30">
-            <div className="flex items-start gap-4">
-              <AlertCircle className="w-8 h-8 text-cc-gold flex-shrink-0" />
-              <div>
-                <h3 className="font-serif text-xl font-bold text-cc-navy mb-3">
-                  {t("Important Note", "Nota Importante")}
-                </h3>
-                <p className="text-cc-charcoal">
-                  {t(
-                    "I provide real estate guidance and market expertise. For specific legal or tax questions, I recommend consulting with qualified professionals in those fields. My role is to guide you through the real estate process with clarity and care.",
-                    "Proporciono orientación inmobiliaria y experiencia de mercado. Para preguntas legales o fiscales específicas, recomiendo consultar con profesionales calificados en esos campos. Mi rol es guiarle a través del proceso inmobiliario con claridad y cuidado."
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Options */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
@@ -293,6 +271,28 @@ const V2SellContent = () => {
               "Selena hará unas preguntas rápidas para que Kasandra esté preparada."
             )}
           </p>
+        </div>
+      </section>
+
+      {/* Important Note */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="bg-cc-ivory rounded-xl p-8 shadow-soft max-w-3xl mx-auto border border-cc-sand-dark/30">
+            <div className="flex items-start gap-4">
+              <AlertCircle className="w-8 h-8 text-cc-gold flex-shrink-0" />
+              <div>
+                <h3 className="font-serif text-xl font-bold text-cc-navy mb-3">
+                  {t("Important Note", "Nota Importante")}
+                </h3>
+                <p className="text-cc-charcoal">
+                  {t(
+                    "I provide real estate guidance and market expertise. For specific legal or tax questions, I recommend consulting with qualified professionals in those fields. My role is to guide you through the real estate process with clarity and care.",
+                    "Proporciono orientación inmobiliaria y experiencia de mercado. Para preguntas legales o fiscales específicas, recomiendo consultar con profesionales calificados en esos campos. Mi rol es guiarle a través del proceso inmobiliario con claridad y cuidado."
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </>
