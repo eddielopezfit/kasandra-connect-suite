@@ -823,7 +823,9 @@ serve(async (req) => {
       && (primaryIntent === 'sell' || primaryIntent === 'cash')
       && !context.tool_used
       && !context.quiz_completed
-      && !isTimelineReply;  // Never re-fire on timeline chip responses
+      && !isTimelineReply    // Never re-fire on timeline chip responses
+      && !proceedsOverride   // PROCEEDS override takes absolute priority over first-turn intercept
+      && !asapTimeline;      // ASAP override also bypasses first-turn intercept
 
     if (isFirstSellerTurn) {
       const sellerFirstReply = language === 'es'
