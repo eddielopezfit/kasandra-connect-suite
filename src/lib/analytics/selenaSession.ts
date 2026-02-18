@@ -60,6 +60,7 @@ export interface SessionContext {
   condition?: 'move_in_ready' | 'minor_repairs' | 'distressed' | 'unknown';
   last_page?: string;
   last_guide_id?: string;
+  guides_read?: number; // Cumulative count of unique guides viewed this session
   last_quiz_id?: string;
   // Tool usage memory (Phase 1 extension)
   tool_used?: ToolUsed;
