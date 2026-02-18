@@ -52,23 +52,13 @@ const V2SellContent = () => {
                 "Vender su casa es una decisión significativa. Le guiaré con precios basados en el mercado, apoyo de divulgación completa, y un enfoque en protección."
               )}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                asChild 
-                className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
-                onClick={() => handleCTAClick(CTA_NAMES.HERO_CASH_COMPARISON, '/v2/cash-offer-options')}
-              >
-                <Link to="/v2/cash-offer-options">{t("Compare Your Options", "Compare Sus Opciones")}</Link>
-              </Button>
-              <Button 
-                asChild 
-                variant="outline" 
-                className="border-white/30 text-white hover:bg-white/10 rounded-full px-6 sm:px-8 text-sm sm:text-base"
-                onClick={() => handleCTAClick(CTA_NAMES.HERO_SELLING_GUIDE, '/v2/guides/selling-for-top-dollar')}
-              >
-                <Link to="/v2/guides/selling-for-top-dollar">{t("Read Our Seller Guide", "Lea Nuestra Guía")}</Link>
-              </Button>
-            </div>
+            <Button 
+              onClick={handleSelenaRoute}
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base w-fit"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              {t("Talk Through My Options", "Hablar Sobre Mis Opciones")}
+            </Button>
           </div>
         </div>
       </section>
