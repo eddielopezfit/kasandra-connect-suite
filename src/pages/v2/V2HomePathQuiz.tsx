@@ -403,7 +403,7 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
     const path = getResultPath();
     const content = resultContent[path];
     const derivedIntent = path === 'buying' ? 'buy' : path === 'selling' ? 'sell' : path === 'cash' ? 'cash' : 'explore';
-    const exploreHref = path === 'cash' ? '/v2/cash-offer-options' : '/v2/guides';
+    const exploreHref = '/v2/guides';
 
     return (
       <section className="min-h-[80vh] flex items-center justify-center px-4 py-16">
