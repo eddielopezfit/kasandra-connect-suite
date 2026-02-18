@@ -670,15 +670,22 @@ function buildConversationState(
 ): ConversationState {
   const userTurns = history.filter(m => m.role === 'user').length;
   
+  // Scan history for previously-provided email — so mode 4 persists across turns
+  const emailInHistory = history
+    .filter(m => m.role === 'user')
+    .some(m => EMAIL_REGEX.test(m.content));
+  // Reset regex lastIndex since it's global
+  EMAIL_REGEX.lastIndex = 0;
+
   return {
     userTurns,
-    hasIntent: primaryIntent !== 'explore' || !!context.intent,
-    intent: primaryIntent !== 'explore' ? primaryIntent : context.intent || null,
-    guidesRead: context.guides_read || 0,
+    hasIntent: !!primaryIntent && primaryIntent !== 'explore',
+    intent: primaryIntent,
+    guidesRead: context.guides_read ?? 0,
     toolUsed: !!context.tool_used,
     quizCompleted: !!context.quiz_completed,
     hasToolResult: !!context.last_tool_result,
-    hasEmail: !!extractedEmail,
+    hasEmail: !!extractedEmail || emailInHistory,
     explicitBookingAsk: userAskedToBook(message),
   };
 }
@@ -907,6 +914,15 @@ serve(async (req) => {
     // EXCEPTION: Phase 3 chips always include "Talk with Kasandra" — the escalation IS the earned signal.
     const isPhase3 = phase === 3 || proceedsOverride || asapTimeline;
     suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3);
+
+    // EMAIL-ASKING SUPPRESSION: If Selena is actively collecting email, clear chips
+    // so users can't click stale Phase 3 chips instead of typing their address.
+    const replyAsksForEmail = /email\s*(address)?.*\?|what.*email|your email|correo\s*(electr[oó]nico)?.*\?/i.test(reply);
+    if (replyAsksForEmail && !extractedEmail && currentMode !== 4) {
+      suggestedReplies = language === "es"
+        ? ["Prefiero omitir esto por ahora"]
+        : ["Skip for now"];
+    }
 
     // Build actions array conditionally
     const actions: Array<{ label: string; href: string; eventType: string }> = [];
