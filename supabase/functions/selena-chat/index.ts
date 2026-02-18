@@ -745,6 +745,7 @@ serve(async (req) => {
       mode_name: modeContext.modeName,
       user_turns: conversationState.userTurns,
       chip_phase: getGovernedChips(effectiveIntent, timeline, engagement, language).phase,
+      chip_escalated: getGovernedChips(effectiveIntent, timeline, engagement, language).escalated ?? false,
     }).catch(() => {});
 
     // Check for stall condition (Mode 3.5 behavior)
