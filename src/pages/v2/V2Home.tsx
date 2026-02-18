@@ -648,7 +648,7 @@ const V2HomeContent = () => {
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-10 py-6 text-lg shadow-gold"
           >
             <MessageCircle className="w-5 h-5 mr-2" />
-            {t("Book a Consultation", "Agendar una Cita")}
+            {t("Chat with Selena", "Hablar con Selena")}
           </Button>
         </div>
       </section>
