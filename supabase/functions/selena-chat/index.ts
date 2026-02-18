@@ -813,10 +813,17 @@ serve(async (req) => {
     // ============= FIRST SELLER TURN INTERCEPT =============
     // If user just declared selling intent on their first turn, short-circuit
     // with a calm prequalification response + timeline bubbles.
+    // 
+    // GUARD: Do NOT re-fire if the current message IS a timeline response chip.
+    // This prevents the intercept from looping when the route always injects 'sell'.
+    const TIMELINE_REPLY_PATTERNS = /^(asap|0.?30|1.?3\s*month|3.?6\s*month|just exploring|solo explorando|lo antes|meses?|months?|\d+.?\d+\s*(days?|días?))/i;
+    const isTimelineReply = TIMELINE_REPLY_PATTERNS.test(message.trim());
+    
     const isFirstSellerTurn = conversationState.userTurns <= 1
       && (primaryIntent === 'sell' || primaryIntent === 'cash')
       && !context.tool_used
-      && !context.quiz_completed;
+      && !context.quiz_completed
+      && !isTimelineReply;  // Never re-fire on timeline chip responses
 
     if (isFirstSellerTurn) {
       const sellerFirstReply = language === 'es'
@@ -889,7 +896,9 @@ serve(async (req) => {
     }
 
     // Apply earned-access filter (strips booking language if not earned)
-    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned);
+    // EXCEPTION: Phase 3 chips always include "Talk with Kasandra" — the escalation IS the earned signal.
+    const isPhase3 = phase === 3 || proceedsOverride || asapTimeline;
+    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3);
 
     // Build actions array conditionally
     const actions: Array<{ label: string; href: string; eventType: string }> = [];
