@@ -91,6 +91,8 @@ export interface SessionContext {
   last_seen_page_path?: string;
   last_seen_page_type?: 'guide' | 'tool' | 'quiz' | 'page';
   last_opened_at?: string;
+  // Selena mode persistence — authoritative server signal, persisted so Mode 4 survives across turns
+  current_mode?: 1 | 2 | 3 | 4;
 }
 
 /**

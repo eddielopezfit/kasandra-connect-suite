@@ -88,6 +88,9 @@ interface ChatRequest {
     entry_source?: string;
     calculator_advantage?: string;
     calculator_difference?: number;
+    // Mode persistence — client sends back the server's last reported mode
+    current_mode?: 1 | 2 | 3 | 4;
+    timeline?: string;
   };
   history?: ChatMessage[];
 }
@@ -743,7 +746,14 @@ serve(async (req) => {
 
     // Build conversation state for mode detection
     const conversationState = buildConversationState(context, history, message, extractedEmail, primaryIntent);
-    const modeContext = detectMode(conversationState);
+    const detectedModeContext = detectMode(conversationState);
+
+    // AUTHORITATIVE MODE OVERRIDE: If the frontend reports current_mode = 4 (HANDOFF),
+    // trust it — it was set by a previous server response. Never downgrade from 4.
+    const clientMode = context.current_mode as ConversationMode | undefined;
+    const modeContext = (clientMode === 4 || detectedModeContext.mode === 4)
+      ? { mode: 4 as ConversationMode, modeName: 'HANDOFF', allowBookingCTA: true, reflectionRequired: false }
+      : detectedModeContext;
     const currentMode: ConversationMode = modeContext.mode;
     
     // Log mode transition for analytics (fire-and-forget — FM-11)
