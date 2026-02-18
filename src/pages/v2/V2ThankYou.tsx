@@ -1,7 +1,7 @@
 import { useSearchParams, Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
-import { CheckCircle2, Clock, FileText, Home, Phone, ArrowRight, Play, MessageCircle } from "lucide-react";
+import { CheckCircle2, Clock, FileText, Home, Phone, ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
@@ -85,9 +85,9 @@ const V2ThankYouContent = () => {
             },
           ],
           cta: {
-            label: t('Watch: The Cash Offer Process', 'Ver: El Proceso de Oferta en Efectivo'),
-            href: '#cash-video',
-            icon: Play,
+            label: t('Explore Your Cash Offer Options', 'Explorar Sus Opciones de Oferta en Efectivo'),
+            href: '/v2/cash-offer-options',
+            icon: FileText,
           },
           resource: {
             title: t('Tucson Cash Offer Guide', 'Guía de Ofertas en Efectivo de Tucson'),

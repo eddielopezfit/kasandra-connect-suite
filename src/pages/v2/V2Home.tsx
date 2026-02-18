@@ -97,14 +97,7 @@ const V2HomeContent = () => {
                 className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-8 py-6 text-lg shadow-gold"
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
-                {t("Book a Consultation", "Agendar una Cita")}
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="border-white text-cc-navy bg-white/90 hover:bg-white rounded-full px-8 py-6 text-lg font-semibold"
-              >
-                <a href="#listings">{t("Browse Listings", "Ver Propiedades")}</a>
+                {t("Chat with Selena", "Hablar con Selena")}
               </Button>
             </div>
           </div>

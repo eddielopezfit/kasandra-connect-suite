@@ -133,7 +133,6 @@ const V2HomePathQuizContent = () => {
 
   const totalSteps = questions.length + 1; // questions + contact form
   const isContactStep = currentStep === questions.length;
-  const requiresPhone = answers.find(a => a.questionIndex === 4)?.answerIndex === 2;
 
   // Determine result path based on first question answer
   const getResultPath = (): ResultPath => {
@@ -401,7 +400,7 @@ const V2HomePathQuizContent = () => {
   const isContactValid = () => {
     const hasName = contactInfo.name.trim().length > 0;
     const hasEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
-    const hasPhone = !requiresPhone || contactInfo.phone.trim().length >= 10;
+    const hasPhone = contactInfo.phone.replace(/\D/g, '').length >= 10;
     return hasName && hasEmail && hasPhone;
   };
 
@@ -627,26 +626,24 @@ const V2HomePathQuizContent = () => {
                   />
                 </div>
 
-                {requiresPhone && (
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1.5">
-                      {t("Phone", "Teléfono")} *
-                    </label>
-                    <Input
-                      type="tel"
-                      placeholder={t("(555) 123-4567", "(555) 123-4567")}
-                      value={contactInfo.phone}
-                      onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
-                      className="w-full"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {t(
-                        "Required for a phone consultation with Kasandra.",
-                        "Requerido para una consulta telefónica con Kasandra."
-                      )}
-                    </p>
-                  </div>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">
+                    {t("Phone", "Teléfono")} *
+                  </label>
+                  <Input
+                    type="tel"
+                    placeholder={t("(555) 123-4567", "(555) 123-4567")}
+                    value={contactInfo.phone}
+                    onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t(
+                      "Required so Kasandra can reach you.",
+                      "Requerido para que Kasandra pueda contactarle."
+                    )}
+                  </p>
+                </div>
               </div>
 
               <Button

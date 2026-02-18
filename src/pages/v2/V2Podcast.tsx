@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
-import { Mic, Radio, Youtube, Clock, Users, TrendingUp, Heart } from "lucide-react";
+import { Radio, Youtube, Users, TrendingUp, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const V2PodcastContent = () => {
@@ -121,16 +121,19 @@ const V2PodcastContent = () => {
             </p>
           </div>
           <div className="bg-white rounded-2xl p-6 shadow-elevated max-w-4xl mx-auto border border-cc-sand-dark/30">
-            <div className="aspect-video rounded-xl overflow-hidden shadow-soft">
-              <iframe
-                src="https://www.youtube.com/embed/xmJ62GGtKgo"
-                title="Lifting You Up with Kasandra Prieto - Featured Episode"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              />
-            </div>
-            <div className="text-center mt-6">
+            <div className="bg-cc-navy/5 rounded-xl p-10 flex flex-col items-center justify-center gap-6 min-h-[200px]">
+              <Youtube className="w-14 h-14 text-cc-gold" />
+              <div className="text-center">
+                <h3 className="font-serif text-xl font-bold text-cc-navy mb-2">
+                  {t("Watch All Episodes", "Ver Todos los Episodios")}
+                </h3>
+                <p className="text-cc-charcoal text-sm max-w-md">
+                  {t(
+                    "New episodes added regularly. Subscribe so you never miss a conversation.",
+                    "Se agregan nuevos episodios regularmente. Suscríbase para no perderse ninguna conversación."
+                  )}
+                </p>
+              </div>
               <a
                 href="https://www.youtube.com/@KasandraPrietoTucson"
                 target="_blank"

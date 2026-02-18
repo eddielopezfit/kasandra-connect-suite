@@ -377,7 +377,7 @@ const SellerResultContent = () => {
               variant="outline"
               className="border-white/30 text-white hover:bg-white/10"
             >
-              Schedule a Call with Kasandra
+              Chat with Selena to Schedule
             </Button>
           </div>
         )}
@@ -390,7 +390,7 @@ const SellerResultContent = () => {
                 onClick={openChat}
                 className="text-cc-gold hover:text-cc-gold/80 underline underline-offset-2"
               >
-                Schedule a call with Kasandra
+                Chat with Selena to schedule
               </button>
             </p>
           </div>
