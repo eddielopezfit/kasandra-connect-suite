@@ -146,6 +146,26 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
+      {/* Selena Prompt — between comparison and warning */}
+      <section className="py-10 bg-cc-navy">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-white/80 mb-4 max-w-xl mx-auto">
+            {t(
+              "Not sure which path fits your situation? Ask Selena — she can walk you through both options based on your specific home.",
+              "¿No está seguro qué camino se adapta a su situación? Pregúntele a Selena — ella puede guiarle por ambas opciones según su casa."
+            )}
+          </p>
+          <Button
+            variant="heroOutline"
+            onClick={() => openChat({ source: 'calculator', intent: 'cash' })}
+            className="rounded-full px-8"
+          >
+            <MessageCircle className="w-4 h-4 mr-2" />
+            {t("Ask Selena About My Options", "Pregúntale a Selena Sobre Mis Opciones")}
+          </Button>
+        </div>
+      </section>
+
       {/* Warning Section */}
       <section className="py-12 bg-cc-gold/10">
         <div className="container mx-auto px-4">
@@ -250,7 +270,7 @@ const V2CashOfferOptionsContent = () => {
             <Button 
               onClick={() => {
                 logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2/cash-offer-options', intent: 'cash' });
-                openChat({ source: 'hero', intent: 'cash' });
+                openChat({ source: 'question', intent: 'cash' });
               }}
               className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
             >
