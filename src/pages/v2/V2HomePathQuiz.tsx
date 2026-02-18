@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
-import V2Layout from "@/components/v2/V2Layout";
+import QuizFunnelLayout from "@/components/v2/QuizFunnelLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, ArrowRight, Check, MessageCircle, Phone, BookOpen } from "lucide-react";
@@ -712,9 +712,9 @@ const V2HomePathQuizContent = () => {
  */
 const V2HomePathQuiz = () => {
   return (
-    <V2Layout>
+    <QuizFunnelLayout>
       <V2HomePathQuizContent />
-    </V2Layout>
+    </QuizFunnelLayout>
   );
 };
 
