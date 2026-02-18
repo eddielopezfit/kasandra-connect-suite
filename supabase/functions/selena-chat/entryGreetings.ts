@@ -210,6 +210,7 @@ function generateQuizResultGreeting(context: EntryContext): GreetingResult {
 }
 
 
+function generateCalculatorGreeting(context: EntryContext): GreetingResult {
   const { calculatorAdvantage, calculatorDifference, language } = context;
   const diff = calculatorDifference ? `$${calculatorDifference.toLocaleString()}` : '';
 
