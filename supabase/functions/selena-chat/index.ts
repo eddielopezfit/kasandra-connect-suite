@@ -293,6 +293,148 @@ function isSimilar(str1: string, str2: string, threshold = 0.8): boolean {
   return (intersection / union) >= threshold;
 }
 
+// ============= CHIP GOVERNANCE + SESSION STATE =============
+
+/**
+ * Inferred session state from conversation history.
+ * Tracks engagement flags without requiring explicit frontend context.
+ */
+interface SessionEngagementState {
+  hasAskedProceeds: boolean;     // User asked about net/walk-away/proceeds
+  hasAskedValue: boolean;        // User asked about home value
+  hasComparedOptions: number;    // How many times user asked to compare options
+  hasReadSellerGuide: boolean;   // User has opened/read a seller guide
+  hasUsedCalculator: boolean;    // User has used any calculator tool
+  chipHistory: string[];         // Last 5 user messages normalized (for loop detection)
+}
+
+// Proceeds-intent signals: any of these trigger the net proceeds override
+const PROCEEDS_PATTERNS = /walk away|net|after fees|what would i get|what do i keep|what.*pocket|proceeds|ganancias|lo que me queda|despues de.*costos|cuánto.*recibir/i;
+
+// Seller guide indicators
+const SELLER_GUIDE_PATTERNS = /view seller guide|read.*guide|seller guide|guía del vendedor|ver.*guía/i;
+
+// Compare options indicators
+const COMPARE_PATTERNS = /compare|cash vs|efectivo vs|comparison|comparar|my options|mis opciones/i;
+
+// Value inquiry indicators
+const VALUE_PATTERNS = /home worth|what.*worth|value|valuation|cuánto vale|valor.*casa/i;
+
+// Calculator usage
+const CALCULATOR_PATTERNS = /calculator|net proceeds|estimate.*net|cash offer|calculadora|calcular/i;
+
+/**
+ * Infers session engagement state from conversation history
+ */
+function inferSessionState(
+  history: ChatMessage[],
+  context: ChatRequest["context"],
+  currentMessage: string
+): SessionEngagementState {
+  const allMessages = [
+    ...history.map(m => m.content),
+    currentMessage
+  ];
+  const userMessages = history
+    .filter(m => m.role === 'user')
+    .map(m => m.content)
+    .concat(currentMessage);
+
+  const combined = allMessages.join(' ');
+  const userCombined = userMessages.join(' ');
+
+  return {
+    hasAskedProceeds: PROCEEDS_PATTERNS.test(userCombined),
+    hasAskedValue: VALUE_PATTERNS.test(userCombined),
+    hasComparedOptions: (userCombined.match(new RegExp(COMPARE_PATTERNS.source, 'gi')) || []).length,
+    hasReadSellerGuide: SELLER_GUIDE_PATTERNS.test(combined) || !!context.last_guide_id,
+    hasUsedCalculator: CALCULATOR_PATTERNS.test(combined) || !!context.tool_used,
+    chipHistory: userMessages.slice(-5).map(m => m.toLowerCase().trim()),
+  };
+}
+
+/**
+ * Detects if the user is looping (clicked effectively the same chip 2+ times)
+ */
+function detectLoop(chipHistory: string[]): boolean {
+  if (chipHistory.length < 3) return false;
+  const recent = chipHistory.slice(-4);
+  // Check if any single concept appears 2+ times in last 4 turns
+  const loopPatterns = [
+    /compare|comparar|cash vs|efectivo vs/i,
+    /guide|guía|seller guide/i,
+    /worth|value|valor|cuánto/i,
+    /options|opciones/i,
+  ];
+  return loopPatterns.some(pattern => {
+    const matches = recent.filter(m => pattern.test(m));
+    return matches.length >= 2;
+  });
+}
+
+/**
+ * Determines the conversation phase and returns the correct chip set
+ * 
+ * PHASE 1: Intent unknown → 3 chips (buy / sell / explore)
+ * PHASE 2: Intent known, no proceeds request → MAX 2 chips (value + compare)
+ * PHASE 3: Proceeds OR compare×2 OR ASAP → NET PROCEEDS path (MAX 2)
+ * LOOP:    Repeated same chip → escalate to Phase 3 chips
+ */
+function getGovernedChips(
+  intent: string | undefined,
+  timeline: string | null,
+  engagement: SessionEngagementState,
+  language: 'en' | 'es',
+): { chips: string[]; phase: 1 | 2 | 3; escalated: boolean } {
+  const hasIntent = !!intent && intent !== 'explore';
+  const isAsap = timeline === 'asap';
+  const isLooping = detectLoop(engagement.chipHistory);
+
+  // PHASE 3 triggers: proceeds asked, compared 2+ times, ASAP timeline, or looping
+  const enterPhase3 =
+    engagement.hasAskedProceeds ||
+    engagement.hasComparedOptions >= 2 ||
+    isAsap ||
+    (isLooping && hasIntent);
+
+  if (enterPhase3) {
+    const chips = language === 'es'
+      ? ["Estimar mis ganancias netas", "Hablar con Kasandra"]
+      : ["Estimate my net proceeds", "Talk with Kasandra"];
+    return { chips, phase: 3, escalated: isLooping || engagement.hasComparedOptions >= 2 };
+  }
+
+  // PHASE 2: Intent known — MAX 2 chips, no guides unless first time
+  if (hasIntent) {
+    if (intent === 'sell' || intent === 'cash') {
+      // If user already asked value → offer compare next
+      if (engagement.hasAskedValue) {
+        const chips = language === 'es'
+          ? ["Comparar efectivo vs. listado", "Estimar mis ganancias netas"]
+          : ["Compare cash vs. listing", "Estimate my net proceeds"];
+        return { chips, phase: 2, escalated: false };
+      }
+      // Default seller Phase 2
+      const chips = language === 'es'
+        ? ["¿Cuánto vale mi casa?", "Comparar efectivo vs. listado"]
+        : ["What's my home worth?", "Compare cash vs. listing"];
+      return { chips, phase: 2, escalated: false };
+    }
+    if (intent === 'buy') {
+      const chips = language === 'es'
+        ? ["Tomar la evaluación de preparación", "Explorar guías del comprador"]
+        : ["Take the readiness check", "Browse buyer guides"];
+      return { chips, phase: 2, escalated: false };
+    }
+  }
+
+  // PHASE 1: Intent unknown
+  const chips = language === 'es'
+    ? ["Estoy pensando en vender", "Estoy buscando comprar", "Solo estoy explorando"]
+    : ["I'm thinking about selling", "I'm looking to buy", "Just exploring"];
+  return { chips, phase: 1, escalated: false };
+}
+
 // ============= BOOKING GATE PATTERNS =============
 // Keywords: explicit booking actions
 const BOOKING_KEYWORDS = /book|schedule|call|talk|meet|appointment|consulta|cita|llamar|hablar|agendar/i;
@@ -583,6 +725,15 @@ serve(async (req) => {
       }
     }
 
+    // ============= CHIP GOVERNANCE: INFER SESSION STATE =============
+    const engagement = inferSessionState(history, context, message);
+    
+    // PROCEEDS OVERRIDE: immediate — supersedes all phase logic
+    const proceedsOverride = engagement.hasAskedProceeds || PROCEEDS_PATTERNS.test(message);
+    
+    // ASAP OVERRIDE: immediate — reduce education, route to action
+    const asapTimeline = timeline === 'asap' || context.intent === 'asap';
+
     // Build conversation state for mode detection
     const conversationState = buildConversationState(context, history, message, extractedEmail, primaryIntent);
     const modeContext = detectMode(conversationState);
@@ -593,6 +744,7 @@ serve(async (req) => {
       mode: currentMode, 
       mode_name: modeContext.modeName,
       user_turns: conversationState.userTurns,
+      chip_phase: getGovernedChips(effectiveIntent, timeline, engagement, language).phase,
     }).catch(() => {});
 
     // Check for stall condition (Mode 3.5 behavior)
@@ -627,6 +779,25 @@ serve(async (req) => {
       }
     }
     
+    // ============= CHIP GOVERNANCE: AI PROMPT INJECTION =============
+    // Tell the AI what phase we're in so response text matches chip direction
+    const { chips, phase, escalated } = getGovernedChips(effectiveIntent, timeline, engagement, language);
+    
+    let governanceHint = "";
+    if (proceedsOverride || asapTimeline) {
+      governanceHint = language === 'es'
+        ? `\n\nGOBERNANZA: El usuario quiere saber sus ganancias netas (o tiene urgencia ASAP). Recomenda DIRECTAMENTE la herramienta de estimación de ganancias netas. NO ofrezcas guías. Respuesta = 1 reconocimiento + 1 recomendación directa + chips: [Estimar mis ganancias netas] [Hablar con Kasandra].`
+        : `\n\nGOVERNANCE: User is asking about net proceeds (or has ASAP urgency). Recommend the net proceeds estimator DIRECTLY. Do NOT offer guides. Response = 1 acknowledgment + 1 direct recommendation + chips: [Estimate my net proceeds] [Talk with Kasandra].`;
+    } else if (escalated) {
+      governanceHint = language === 'es'
+        ? `\n\nGOBERNANZA ANTI-LOOP: El usuario ha pedido la misma cosa 2 veces. NO repitas la misma respuesta. Dile: "Ya que ha explorado eso, el paso más claro ahora es estimar sus números." Luego ofrece SOLO: [Estimar mis ganancias netas] [Hablar con Kasandra].`
+        : `\n\nGOVERNANCE ANTI-LOOP: User has repeated the same request 2 times. Do NOT offer the same response. Say: "Since you've already explored that, the clearest next step is estimating your numbers." Then offer ONLY: [Estimate my net proceeds] [Talk with Kasandra].`;
+    } else if (phase === 2) {
+      governanceHint = language === 'es'
+        ? `\n\nGOBERNANZA FASE 2: La intención está clara. Sé decisivo — recomienda UN paso concreto. No preguntes "¿preferiría una herramienta o una guía?". Máximo 2 opciones.`
+        : `\n\nGOVERNANCE PHASE 2: Intent is known. Be decisive — recommend ONE concrete next step. Do NOT ask "would you prefer a tool or a guide?". Max 2 options.`;
+    }
+    
     // Add stall recovery hint if needed
     if (stalled) {
       reflectionHint += language === "es"
@@ -642,7 +813,6 @@ serve(async (req) => {
     // ============= FIRST SELLER TURN INTERCEPT =============
     // If user just declared selling intent on their first turn, short-circuit
     // with a calm prequalification response + timeline bubbles.
-    // This prevents the AI from generating tool-branching language.
     const isFirstSellerTurn = conversationState.userTurns <= 1
       && (primaryIntent === 'sell' || primaryIntent === 'cash')
       && !context.tool_used
@@ -680,8 +850,8 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt + reflectionHint + modeHint }, 
-          ...history.slice(-5), 
+          { role: "system", content: systemPrompt + reflectionHint + governanceHint + modeHint }, 
+          ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],
         max_tokens: 200,
@@ -695,15 +865,31 @@ serve(async (req) => {
     // Check if booking access is earned (from mode detection)
     const hasEarned = modeContext.allowBookingCTA;
 
-    // Get mode-specific suggested replies (behavioral rails)
-    let suggestedReplies = getModeSuggestedReplies(currentMode, language, effectiveIntent);
+    // ============= CHIP GOVERNANCE: FINAL CHIP SELECTION =============
+    // Priority hierarchy:
+    // 1. Stall recovery (highest override)
+    // 2. Proceeds / ASAP override → Phase 3 chips
+    // 3. Governed phase chips (Phase 1, 2, or 3)
+    // 4. Mode-based replies (fallback)
+    let suggestedReplies: string[];
     
-    // If stalled, override with stall recovery options
     if (stalled) {
+      // Stall recovery — 3 options to re-anchor
       suggestedReplies = language === "es"
         ? ["Sí, resume dónde estoy", "Prefiero seguir explorando", "Tengo una pregunta específica"]
         : ["Yes, summarize where I am", "I'd rather keep exploring", "I have a specific question"];
+    } else if (proceedsOverride || asapTimeline) {
+      // PROCEEDS / ASAP override — hard lock to Phase 3 chips
+      suggestedReplies = language === 'es'
+        ? ["Estimar mis ganancias netas", "Hablar con Kasandra"]
+        : ["Estimate my net proceeds", "Talk with Kasandra"];
+    } else {
+      // Use governed phase chips
+      suggestedReplies = chips;
     }
+
+    // Apply earned-access filter (strips booking language if not earned)
+    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned);
 
     // Build actions array conditionally
     const actions: Array<{ label: string; href: string; eventType: string }> = [];
@@ -730,6 +916,9 @@ serve(async (req) => {
         // Mode telemetry
         current_mode: currentMode,
         mode_name: modeContext.modeName,
+        // Chip governance telemetry
+        chip_phase: phase,
+        chip_escalated: escalated,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
