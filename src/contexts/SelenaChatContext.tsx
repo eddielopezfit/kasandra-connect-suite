@@ -802,6 +802,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               situation: context?.situation,
               // from provider state
               calculator_advantage: lastCalculatorAdvantage ?? undefined,
+              // Mode persistence — authoritative server mode signal, survives across turns
+              current_mode: context?.current_mode,
             },
             history,
           }),
@@ -829,6 +831,15 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           console.log('[Selena] Intent set to SessionContext:', data.detected_intent);
         } else {
           console.log('[Selena] Intent detection skipped (already declared):', data.detected_intent);
+        }
+      }
+
+      // Persist server-authoritative mode to SessionContext
+      // Mode 4 (HANDOFF) must survive across turns — never downgrade once set
+      if (data.current_mode) {
+        const existingMode = getSessionContext()?.current_mode ?? 0;
+        if (data.current_mode >= existingMode) {
+          updateSessionContext({ current_mode: data.current_mode as 1 | 2 | 3 | 4 });
         }
       }
       
