@@ -232,25 +232,6 @@ const V2BuyContent = () => {
                 ctaSource="v2_buy_featured"
               />
               
-              {/* Ready to Start CTA */}
-              <div className="bg-white p-8 rounded-2xl shadow-elevated border border-cc-sand-dark/30">
-                <h3 className="font-serif text-xl font-bold text-cc-navy mb-4">
-                  {t("Ready to Start?", "¿Listo para Comenzar?")}
-                </h3>
-                <p className="text-cc-charcoal mb-6">
-                  {t(
-                    "Let's discuss your home buying goals and create a plan that works for you.",
-                    "Hablemos sobre sus metas de compra de casa y creemos un plan que funcione para usted."
-                  )}
-                </p>
-                <Button 
-                  asChild 
-                  className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold"
-                  onClick={() => handleCTAClick(CTA_NAMES.READY_TO_START_READINESS, '/v2/buyer-readiness')}
-                >
-                  <Link to="/v2/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
-                </Button>
-              </div>
             </div>
           </div>
         </div>
