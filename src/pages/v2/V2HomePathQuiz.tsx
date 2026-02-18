@@ -5,7 +5,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import QuizFunnelLayout from "@/components/v2/QuizFunnelLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, ArrowRight, Check, MessageCircle, Phone, BookOpen } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, MessageCircle, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getFullSessionDossier } from "@/hooks/useSessionPrePopulation";
 import { updateSessionContext, SessionContext } from "@/lib/analytics/selenaSession";
@@ -116,18 +116,6 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
         { en: "Timing or pressure", es: "Tiempo o presión" },
         { en: "Repairs or inspections", es: "Reparaciones o inspecciones" },
         { en: "I'm not sure — I need clarity", es: "No estoy seguro — necesito claridad" },
-      ],
-    },
-    {
-      id: "contact",
-      question: t(
-        "How would you like to receive your next steps?",
-        "¿Cómo le gustaría recibir sus próximos pasos?"
-      ),
-      options: [
-        { en: "Email", es: "Correo electrónico" },
-        { en: "Chat with Selena", es: "Conversar con Selena" },
-        { en: "Talk with Kasandra", es: "Hablar con Kasandra" },
       ],
     },
   ];
@@ -417,228 +405,143 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
     const derivedIntent = path === 'buying' ? 'buy' : path === 'selling' ? 'sell' : path === 'cash' ? 'cash' : 'explore';
     const exploreHref = path === 'cash' ? '/v2/cash-offer-options' : '/v2/guides';
 
-    // Derive contact preference from Step 5 answer (questionIndex === 4)
-    type ContactPreference = 'email' | 'selena' | 'kasandra' | null;
-    const contactPrefIndex = answers.find(a => a.questionIndex === 4)?.answerIndex;
-    const contactPreference: ContactPreference =
-      contactPrefIndex === 0 ? 'email'
-      : contactPrefIndex === 1 ? 'selena'
-      : contactPrefIndex === 2 ? 'kasandra'
-      : null;
-
-    // Preference-specific framing line
-    const framingLine =
-      contactPreference === 'kasandra'
-        ? t("We've reserved a spot for you.", "Le hemos reservado un lugar.")
-        : contactPreference === 'selena'
-        ? t("Selena is ready when you are.", "Selena está lista cuando lo estés.")
-        : t("Here's where to go next.", "Aquí es a donde ir ahora.");
-
     return (
       <section className="min-h-[80vh] flex items-center justify-center px-4 py-16">
-          <div className="max-w-2xl mx-auto space-y-8">
-            <div className="text-center">
-              <div className="w-20 h-20 mx-auto rounded-full bg-cc-gold/20 flex items-center justify-center mb-6">
-                <Check className="w-10 h-10 text-cc-gold" />
-              </div>
-              
-              {/* Path-specific headline and validation */}
-              <h1 className="text-2xl md:text-3xl font-serif font-semibold text-cc-navy mb-4">
-                {t(content.headline.en, content.headline.es)}
-              </h1>
-              <p className="text-cc-slate text-lg leading-relaxed mb-6">
-                {t(content.validation.en, content.validation.es)}
-              </p>
+        <div className="max-w-2xl mx-auto space-y-8">
+          <div className="text-center">
+            <div className="w-20 h-20 mx-auto rounded-full bg-cc-gold/20 flex items-center justify-center mb-6">
+              <Check className="w-10 h-10 text-cc-gold" />
             </div>
+            
+            {/* Path-specific headline and validation */}
+            <h1 className="text-2xl md:text-3xl font-serif font-semibold text-cc-navy mb-4">
+              {t(content.headline.en, content.headline.es)}
+            </h1>
+            <p className="text-cc-slate text-lg leading-relaxed mb-6">
+              {t(content.validation.en, content.validation.es)}
+            </p>
+          </div>
 
-            {/* Most Helpful Next Steps */}
-            <div className="bg-cc-sand rounded-xl p-6">
-              <p className="text-cc-navy font-semibold mb-4">
-                {t(content.nextStep.en, content.nextStep.es)}
-              </p>
-              <ul className="space-y-3">
-                {content.helpfulSteps.en.map((step, index) => (
-                  <li key={index} className="flex items-start gap-3 text-cc-charcoal">
-                    <Check className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                    <span>{t(step, content.helpfulSteps.es[index])}</span>
-                  </li>
-                ))}
-              </ul>
-              
-              {/* Personalization note */}
-              <p className="mt-6 text-sm text-cc-slate border-t border-cc-sand-dark pt-4">
-                {t(
-                  "Every recommendation is reviewed by Kasandra Prieto, licensed REALTOR®. You'll never feel pushed — just supported.",
-                  "Cada recomendación es revisada por Kasandra Prieto, REALTOR® licenciada. Nunca te sentirás presionado — solo apoyado."
-                )}
-              </p>
-            </div>
-
-            {/* Preference-driven CTAs */}
-            <div className="space-y-4">
-              <p className="text-center text-sm text-cc-slate font-medium">
-                {framingLine}
-              </p>
-
-              {/* ── KASANDRA preference ── */}
-              {contactPreference === 'kasandra' && (
-                <>
-                  <button
-                    onClick={() => navigate(`/v2/book?intent=${derivedIntent}&source=quiz`)}
-                    className="w-full p-5 text-left rounded-xl border-2 border-cc-gold bg-cc-gold/5 hover:bg-cc-gold/10 transition-all group"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-cc-gold rounded-full flex items-center justify-center flex-shrink-0">
-                        <Phone className="w-5 h-5 text-cc-navy" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark">
-                          {t("Book a Call with Kasandra", "Reservar una Llamada con Kasandra")}
-                        </h4>
-                        <p className="text-sm text-cc-slate mt-1">
-                          {t(
-                            "Schedule a calm, no-pressure 15-minute consultation.",
-                            "Agenda una consulta tranquila y sin presión de 15 minutos."
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    <button
-                      onClick={() => openChat({ source: 'quiz_result', intent: derivedIntent })}
-                      className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
-                          <MessageCircle className="w-5 h-5 text-cc-navy" />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
-                            {t("Need clarity first? Chat with Selena →", "¿Necesita claridad primero? Chatee con Selena →")}
-                          </h4>
-                        </div>
-                      </div>
-                    </button>
-
-                    <Link
-                      to={exploreHref}
-                      className="p-5 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group block"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
-                          <BookOpen className="w-5 h-5 text-cc-navy" />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
-                            {t("Continue Exploring", "Continuar Explorando")}
-                          </h4>
-                          <p className="text-xs text-cc-slate mt-1">
-                            {t("Browse guides at your own pace.", "Explora guías a tu propio ritmo.")}
-                          </p>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                </>
-              )}
-
-              {/* ── SELENA preference ── */}
-              {contactPreference === 'selena' && (
-                <>
-                  <button
-                    onClick={() => openChat({ source: 'quiz_result', intent: derivedIntent })}
-                    className="w-full p-5 text-left rounded-xl border-2 border-cc-gold bg-cc-gold/5 hover:bg-cc-gold/10 transition-all group"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-cc-gold rounded-full flex items-center justify-center flex-shrink-0">
-                        <MessageCircle className="w-5 h-5 text-cc-navy" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark">
-                          {t("Chat with Selena", "Conversar con Selena")}
-                        </h4>
-                        <p className="text-sm text-cc-slate mt-1">
-                          {t(
-                            "Get personalized answers and direction — available 24/7 in English or Spanish.",
-                            "Obtén respuestas y orientación personalizadas — disponible 24/7 en inglés o español."
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </button>
-
-                  <Link
-                    to={exploreHref}
-                    className="flex items-center gap-3 p-5 rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
-                  >
-                    <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
-                      <BookOpen className="w-5 h-5 text-cc-navy" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
-                        {t("Continue Exploring", "Continuar Explorando")}
-                      </h4>
-                      <p className="text-xs text-cc-slate mt-1">
-                        {t("Browse guides at your own pace.", "Explora guías a tu propio ritmo.")}
-                      </p>
-                    </div>
-                  </Link>
-                </>
-              )}
-
-              {/* ── EMAIL preference (or null fallback) ── */}
-              {(contactPreference === 'email' || contactPreference === null) && (
-                <>
-                  <Link
-                    to={exploreHref}
-                    className="w-full p-5 text-left rounded-xl border-2 border-cc-gold bg-cc-gold/5 hover:bg-cc-gold/10 transition-all group flex items-start gap-4"
-                  >
-                    <div className="w-10 h-10 bg-cc-gold rounded-full flex items-center justify-center flex-shrink-0">
-                      <BookOpen className="w-5 h-5 text-cc-navy" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark">
-                        {t("View Your Personalized Next Steps", "Ver Sus Próximos Pasos Personalizados")}
-                      </h4>
-                      <p className="text-sm text-cc-slate mt-1">
-                        {t(
-                          "Browse our curated guides matched to your situation.",
-                          "Explora nuestras guías adaptadas a tu situación."
-                        )}
-                      </p>
-                    </div>
-                  </Link>
-
-                  <Link
-                    to={`/v2/book?intent=${derivedIntent}&source=quiz`}
-                    className="flex items-center gap-3 p-5 rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
-                  >
-                    <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-5 h-5 text-cc-navy" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
-                        {t("Or book a call with Kasandra", "O reservar una llamada con Kasandra")}
-                      </h4>
-                      <p className="text-xs text-cc-slate mt-1">
-                        {t("15-minute consultation, no pressure.", "Consulta de 15 minutos, sin presión.")}
-                      </p>
-                    </div>
-                  </Link>
-                </>
-              )}
-            </div>
-
-            <p className="text-center text-sm text-cc-slate pt-4">
+          {/* Most Helpful Next Steps */}
+          <div className="bg-cc-sand rounded-xl p-6">
+            <p className="text-cc-navy font-semibold mb-4">
+              {t(content.nextStep.en, content.nextStep.es)}
+            </p>
+            <ul className="space-y-3">
+              {content.helpfulSteps.en.map((step, index) => (
+                <li key={index} className="flex items-start gap-3 text-cc-charcoal">
+                  <Check className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span>{t(step, content.helpfulSteps.es[index])}</span>
+                </li>
+              ))}
+            </ul>
+            
+            {/* Personalization note */}
+            <p className="mt-6 text-sm text-cc-slate border-t border-cc-sand-dark pt-4">
               {t(
-                "You're not behind — you're exactly where you need to be.",
-                "No está atrasado — está exactamente donde necesita estar."
+                "Every recommendation is reviewed by Kasandra Prieto, licensed REALTOR®. You'll never feel pushed — just supported.",
+                "Cada recomendación es revisada por Kasandra Prieto, REALTOR® licenciada. Nunca te sentirás presionado — solo apoyado."
               )}
             </p>
           </div>
-        </section>
+
+          {/* Fixed three-tier CTA hierarchy */}
+          <div className="space-y-4">
+            <p className="text-center text-sm text-cc-slate font-medium">
+              {t("Here's what to do next.", "Aquí está lo que puede hacer ahora.")}
+            </p>
+
+            {/* PRIMARY — Selena (always) */}
+            <button
+              onClick={() => openChat({ source: 'quiz_result', intent: derivedIntent })}
+              className="w-full p-5 text-left rounded-xl border-2 border-cc-gold bg-cc-gold/5 hover:bg-cc-gold/10 transition-all group"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-cc-gold rounded-full flex items-center justify-center flex-shrink-0">
+                  <MessageCircle className="w-5 h-5 text-cc-navy" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark">
+                    {t(
+                      "Selena has your results — talk with her now",
+                      "Selena ya revisó sus respuestas — hable con ella ahora"
+                    )}
+                  </h4>
+                  <p className="text-sm text-cc-slate mt-1">
+                    {t(
+                      "Get personalized answers based on your quiz — available 24/7 in English or Spanish.",
+                      "Obtén respuestas personalizadas según tu cuestionario — disponible 24/7 en inglés o español."
+                    )}
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            {/* SECONDARY — Cash Options (cash path) or Booking (all other paths) */}
+            {path === 'cash' ? (
+              <Link
+                to="/v2/cash-offer-options"
+                className="flex items-start gap-4 p-5 rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
+              >
+                <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-5 h-5 text-cc-navy" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
+                    {t("Explore Cash vs. Traditional Options", "Explorar opciones en efectivo vs. tradicional")}
+                  </h4>
+                  <p className="text-xs text-cc-slate mt-1">
+                    {t("See a side-by-side comparison for your situation.", "Vea una comparación para su situación.")}
+                  </p>
+                </div>
+              </Link>
+            ) : (
+              <Link
+                to={`/v2/book?intent=${derivedIntent}&source=quiz`}
+                className="flex items-start gap-4 p-5 rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
+              >
+                <div className="w-10 h-10 bg-cc-sand rounded-full flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-5 h-5 text-cc-navy" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-cc-navy group-hover:text-cc-navy-dark text-sm">
+                    {t("Book a Consultation with Kasandra", "Reservar una Consulta con Kasandra")}
+                  </h4>
+                  <p className="text-xs text-cc-slate mt-1">
+                    {t("15-minute consultation, no pressure.", "Consulta de 15 minutos, sin presión.")}
+                  </p>
+                </div>
+              </Link>
+            )}
+
+            {/* TERTIARY — low-weight text link */}
+            <div className="text-center pt-1">
+              {path === 'exploring' ? (
+                <Link
+                  to="/v2/buyer-readiness"
+                  className="text-sm text-cc-slate hover:text-cc-navy underline underline-offset-2 transition-colors"
+                >
+                  {t("Take the Buyer Readiness Check", "Realizar la evaluación de preparación")}
+                </Link>
+              ) : (
+                <Link
+                  to={exploreHref}
+                  className="text-sm text-cc-slate hover:text-cc-navy underline underline-offset-2 transition-colors"
+                >
+                  {t("Browse guides at your own pace", "Explorar guías a su propio ritmo")}
+                </Link>
+              )}
+            </div>
+          </div>
+
+          <p className="text-center text-sm text-cc-slate pt-4">
+            {t(
+              "You're not behind — you're exactly where you need to be.",
+              "No está atrasado — está exactamente donde necesita estar."
+            )}
+          </p>
+        </div>
+      </section>
     );
   }
 
