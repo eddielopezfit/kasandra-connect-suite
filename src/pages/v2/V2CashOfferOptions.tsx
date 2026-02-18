@@ -149,7 +149,7 @@ const V2CashOfferOptionsContent = () => {
       {/* Selena Prompt — between comparison and warning */}
       <section className="py-10 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-white/80 mb-4 max-w-xl mx-auto">
+          <p className="max-w-xl mx-auto mb-4 text-white">
             {t(
               "Not sure which path fits your situation? Ask Selena — she can walk you through both options based on your specific home.",
               "¿No está seguro qué camino se adapta a su situación? Pregúntele a Selena — ella puede guiarle por ambas opciones según su casa."
@@ -160,7 +160,7 @@ const V2CashOfferOptionsContent = () => {
             onClick={() => openChat({ source: 'calculator', intent: 'cash' })}
             className="rounded-full px-8"
           >
-            <MessageCircle className="w-4 h-4 mr-2" />
+            <MessageCircle className="mr-2 h-4 w-4" />
             {t("Ask Selena About My Options", "Pregúntale a Selena Sobre Mis Opciones")}
           </Button>
         </div>
