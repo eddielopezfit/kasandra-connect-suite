@@ -883,7 +883,12 @@ serve(async (req) => {
     // 4. Mode-based replies (fallback)
     let suggestedReplies: string[];
     
-    if (stalled) {
+    if (currentMode === 4) {
+      // HANDOFF mode: bypass all chip governance — chips must align with reply text
+      suggestedReplies = language === "es"
+        ? ["Encontrar un horario con Kasandra", "Seguir conversando con Selena"]
+        : ["Find a time with Kasandra", "Keep chatting with Selena"];
+    } else if (stalled) {
       // Stall recovery — 3 options to re-anchor
       suggestedReplies = language === "es"
         ? ["Sí, resume dónde estoy", "Prefiero seguir explorando", "Tengo una pregunta específica"]
