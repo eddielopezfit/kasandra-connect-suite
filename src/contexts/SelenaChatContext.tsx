@@ -502,6 +502,41 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           t("What are my options?", "¿Cuáles son mis opciones?"),
         ];
       }
+      // Priority 3.5: Quiz result context — intent-specific routing post-quiz
+      else if (entryContext?.source === 'quiz_result' && entryContext.intent) {
+        const quizIntent = entryContext.intent.toLowerCase();
+        if (quizIntent === 'sell' || quizIntent === 'cash') {
+          greetingContent = t(
+            `You just completed your path — and it looks like ${quizIntent === 'cash' ? 'a cash offer' : 'selling'} is on your mind.\n\nBased on what you shared, here's where I can help most: understanding your home's current value and comparing what cash vs. a traditional listing actually means for your situation.`,
+            `Acaba de completar su camino — y parece que ${quizIntent === 'cash' ? 'una oferta en efectivo' : 'vender'} está en su mente.\n\nBasado en lo que compartió, aquí es donde puedo ayudarle más: entender el valor actual de su casa y comparar lo que el efectivo vs. una venta tradicional significa para su situación.`
+          );
+          suggestedReplies = [
+            t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
+            t("What's my home worth?", "¿Cuánto vale mi casa?"),
+            t("Book a call with Kasandra", "Reservar una llamada con Kasandra"),
+          ];
+        } else if (quizIntent === 'buy') {
+          greetingContent = t(
+            `You just completed your path — and you're thinking about buying. That's a great place to start.\n\nThe most useful next step for you right now is the Buyer Readiness Check — it tells you exactly where you stand before committing to anything.`,
+            `Acaba de completar su camino — y está pensando en comprar. Es un excelente lugar para comenzar.\n\nEl siguiente paso más útil para usted ahora mismo es la Evaluación de Preparación del Comprador — le dice exactamente dónde está antes de comprometerse con algo.`
+          );
+          suggestedReplies = [
+            t("Take the Buyer Readiness Check", "Tomar la Evaluación de Preparación"),
+            t("Browse buyer guides", "Explorar guías de comprador"),
+            t("I have a question", "Tengo una pregunta"),
+          ];
+        } else {
+          greetingContent = t(
+            `You just completed your path — and it's okay that things aren't fully clear yet. That's more normal than you think.\n\nLet's figure out your most useful next step together.`,
+            `Acaba de completar su camino — y está bien que las cosas no estén completamente claras aún. Eso es más normal de lo que piensa.\n\nFigurémonos juntos cuál es su próximo paso más útil.`
+          );
+          suggestedReplies = [
+            t("Help me find my path", "Ayúdame a encontrar mi camino"),
+            t("Show me my options", "Muéstrame mis opciones"),
+            t("Just exploring for now", "Solo estoy explorando"),
+          ];
+        }
+      }
       // Priority 4: Guide handoff context — check BOTH EntryContext AND SessionContext
       else if (
         entryContext?.source === 'guide_handoff' || 
