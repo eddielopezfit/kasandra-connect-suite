@@ -4,8 +4,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
 import { logPageView } from "@/lib/analytics/logEvent";
-import { initSessionContext } from "@/lib/analytics/selenaSession";
 import { Home } from "lucide-react";
+import LanguageToggle from "@/components/v2/LanguageToggle";
 
 interface QuizFunnelLayoutProps {
   children: ReactNode;
@@ -14,16 +14,17 @@ interface QuizFunnelLayoutProps {
 /**
  * Isolated funnel layout for /v2/quiz (paid traffic).
  * Intentionally suppresses global V2Navigation and V2Footer to remove exit routes.
- * Provides: Selena providers, minimal back-to-home escape link, compliance footer.
+ * Provides: Selena providers, minimal back-to-home escape link, EN/ES toggle, compliance footer.
+ *
+ * NOTE: initSessionContext is NOT called here — it is handled by the LanguageProvider
+ * upstream (LanguageContext). Calling it again here would cause a redundant state
+ * reset on every language change.
  */
 const QuizFunnelLayout = ({ children }: QuizFunnelLayoutProps) => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   const location = useLocation();
 
-  useEffect(() => {
-    initSessionContext(language);
-  }, [language]);
-
+  // Log page view on route change — no session init duplication
   useEffect(() => {
     logPageView(location.pathname);
   }, [location.pathname]);
@@ -31,7 +32,7 @@ const QuizFunnelLayout = ({ children }: QuizFunnelLayoutProps) => {
   return (
     <SelenaChatProvider>
       <div className="min-h-screen flex flex-col bg-cc-ivory">
-        {/* Minimal top bar — back-to-home only, no nav links */}
+        {/* Minimal top bar — back-to-home + language toggle only, zero nav links */}
         <div className="border-b border-cc-sand-dark/30 bg-white/80 backdrop-blur-sm px-4 py-3">
           <div className="container mx-auto max-w-3xl flex items-center justify-between">
             <Link
@@ -41,9 +42,9 @@ const QuizFunnelLayout = ({ children }: QuizFunnelLayoutProps) => {
               <Home className="w-3.5 h-3.5" />
               <span>{t("Back to Home", "Volver al Inicio")}</span>
             </Link>
-            <span className="text-xs text-cc-slate/60 font-medium tracking-wide uppercase">
-              KASANDRA PRIETO
-            </span>
+            <div className="flex items-center gap-3">
+              <LanguageToggle variant="light" />
+            </div>
           </div>
         </div>
 
