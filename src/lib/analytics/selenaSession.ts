@@ -75,7 +75,7 @@ export interface SessionContext {
   has_viewed_report?: boolean;
   last_report_id?: string;
   quiz_completed?: boolean;
-  quiz_result_path?: 'buying' | 'selling' | 'cash' | 'exploring';
+  quiz_result_path?: 'buying' | 'selling' | 'cash' | 'exploring' | 'selling_compare';
   has_booked?: boolean;
   // Buyer Readiness scoring (Intelligence Injection)
   readiness_score?: number;
