@@ -272,8 +272,8 @@ const V2SellerQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
 
   const isContactValid = () => {
     const hasName = contactInfo.name.trim().length > 0;
-    const hasEmail = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(contactInfo.email);
-    const hasPhone = contactInfo.phone.replace(/\\D/g, "").length >= 10;
+    const hasEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
+    const hasPhone = contactInfo.phone.replace(/\D/g, "").length >= 10;
     return hasName && hasEmail && hasPhone;
   };
 
@@ -282,7 +282,7 @@ const V2SellerQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
 
   // ── Submission ────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
-    if (!contactInfo.phone.trim() || contactInfo.phone.replace(/\\D/g, "").length < 10) {
+    if (!contactInfo.phone.trim() || contactInfo.phone.replace(/\D/g, "").length < 10) {
       toast({
         title: t("Phone required", "Teléfono requerido"),
         description: t(
