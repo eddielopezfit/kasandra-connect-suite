@@ -241,6 +241,7 @@ export type Database = {
           estimated_value: string | null
           id: string
           name: string
+          property_address: string | null
           situation: string | null
           source: string | null
           timeline: string | null
@@ -254,6 +255,7 @@ export type Database = {
           estimated_value?: string | null
           id?: string
           name: string
+          property_address?: string | null
           situation?: string | null
           source?: string | null
           timeline?: string | null
@@ -267,6 +269,7 @@ export type Database = {
           estimated_value?: string | null
           id?: string
           name?: string
+          property_address?: string | null
           situation?: string | null
           source?: string | null
           timeline?: string | null
