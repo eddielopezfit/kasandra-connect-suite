@@ -75,12 +75,19 @@ export function getScoreBand(score: number): string {
 /** Inject fbq script + init pixel. Safe to call multiple times. */
 export function init() {
   if (initialized || !PIXEL_ID) return;
-  initialized = true;
 
-  // Standard Meta Pixel snippet (minified)
-  const f = window;
+  const f = window as any;
   const b = document;
-  if (f.fbq) return;
+
+  // If fbq already exists (e.g. injected by GTM), just init the pixel ID
+  if (typeof f.fbq === "function") {
+    f.fbq("init", PIXEL_ID);
+    initialized = true;
+    log("init(existing)", PIXEL_ID);
+    return;
+  }
+
+  // Otherwise inject the standard snippet + script tag
   const n: any = (f.fbq = function (...args: any[]) {
     n.callMethod ? n.callMethod.apply(n, args) : n.queue.push(args);
   });
@@ -89,13 +96,15 @@ export function init() {
   n.loaded = true;
   n.version = "2.0";
   n.queue = [];
+
   const s = b.createElement("script");
   s.async = true;
   s.src = "https://connect.facebook.net/en_US/fbevents.js";
   const firstScript = b.getElementsByTagName("script")[0];
   firstScript?.parentNode?.insertBefore(s, firstScript);
 
-  fbq("init", PIXEL_ID);
+  f.fbq("init", PIXEL_ID);
+  initialized = true;
   log("init", PIXEL_ID);
 }
 
