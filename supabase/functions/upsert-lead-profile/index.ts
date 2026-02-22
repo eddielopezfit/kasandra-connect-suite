@@ -270,9 +270,28 @@ Deno.serve(async (req) => {
         } else {
           const errorText = await ghlResponse.text();
           console.error("[upsert-lead-profile] GHL webhook failed:", { status: ghlResponse.status, error: errorText });
+          await supabase.from("event_log").insert({
+            event_type: "ghl_sync_failed",
+            session_id: input.session_id || leadId,
+            event_payload: {
+              lead_id: leadId,
+              funnel: "upsert-lead-profile",
+              error: errorText?.slice(0, 500) || "unknown",
+              status: ghlResponse.status,
+            },
+          });
         }
       } catch (ghlError) {
         console.error("[upsert-lead-profile] GHL sync error:", ghlError);
+        await supabase.from("event_log").insert({
+          event_type: "ghl_sync_failed",
+          session_id: input.session_id || leadId,
+          event_payload: {
+            lead_id: leadId,
+            funnel: "upsert-lead-profile",
+            error: String((ghlError as Error)?.message ?? ghlError),
+          },
+        });
       }
     } else {
       console.log("[upsert-lead-profile] GHL_WEBHOOK_URL not configured, skipping sync");
