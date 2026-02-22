@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import SellerFunnelLayout from "@/components/ad/SellerFunnelLayout";
 import { Progress } from "@/components/ui/progress";
@@ -7,29 +7,15 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, MapPin, ArrowRight } from "lucide-react";
 import { initAdFunnelSession } from "@/lib/analytics/initAdFunnelSession";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-// Value ranges for calculator
-const VALUE_RANGES: Record<string, number> = {
-  "under-200k": 175000,
-  "200-350k": 275000,
-  "350-500k": 425000,
-  "over-500k": 600000,
-};
+// Value ranges kept here for reference (used in SellerResult calculator)
+// "under-200k": 175000, "200-350k": 275000, "350-500k": 425000, "over-500k": 600000
 
-interface QuizOption {
+interface QuizStepOption {
   id: string;
   label: string;
   icon: string;
-}
-
-interface QuizStep {
-  id: string;
-  question: string;
-  options: QuizOption[];
-}
-
-interface QuizStepOption extends QuizOption {
-  isTextInput?: boolean;
 }
 
 interface QuizStepBase {
@@ -39,65 +25,66 @@ interface QuizStepBase {
   isAddressStep?: boolean;
 }
 
-const quizSteps: QuizStepBase[] = [
+const getQuizSteps = (t: (en: string, es: string) => string): QuizStepBase[] => [
   {
     id: "situation",
-    question: "What's your situation?",
+    question: t("What's your situation?", "¿Cuál es tu situación?"),
     options: [
-      { id: "inherited", label: "Inherited Property", icon: "🏠" },
-      { id: "relocating", label: "Relocating", icon: "✈️" },
-      { id: "downsizing", label: "Downsizing", icon: "📦" },
-      { id: "other", label: "Other", icon: "💭" },
+      { id: "inherited", label: t("Inherited Property", "Propiedad heredada"), icon: "🏠" },
+      { id: "relocating", label: t("Relocating", "Reubicación"), icon: "✈️" },
+      { id: "downsizing", label: t("Downsizing", "Reducción de espacio"), icon: "📦" },
+      { id: "other", label: t("Other", "Otro"), icon: "💭" },
     ],
   },
   {
     id: "condition",
-    question: "How would you describe the property's condition?",
+    question: t("How would you describe the property's condition?", "¿Cómo describirías la condición de la propiedad?"),
     options: [
-      { id: "excellent", label: "Move-in Ready", icon: "✨" },
-      { id: "good", label: "Minor Updates Needed", icon: "🔧" },
-      { id: "fair", label: "Needs Work", icon: "🛠️" },
-      { id: "poor", label: "Major Repairs Required", icon: "🏚️" },
+      { id: "excellent", label: t("Move-in Ready", "Lista para mudarse"), icon: "✨" },
+      { id: "good", label: t("Minor Updates Needed", "Necesita actualizaciones menores"), icon: "🔧" },
+      { id: "fair", label: t("Needs Work", "Necesita reparaciones"), icon: "🛠️" },
+      { id: "poor", label: t("Major Repairs Required", "Necesita reparaciones mayores"), icon: "🏚️" },
     ],
   },
   {
     id: "timeline",
-    question: "What's your ideal timeline to sell?",
+    question: t("What's your ideal timeline to sell?", "¿Cuál es tu plazo ideal para vender?"),
     options: [
-      { id: "asap", label: "ASAP (1-2 weeks)", icon: "⚡" },
-      { id: "soon", label: "Within 30 days", icon: "📅" },
-      { id: "flexible", label: "2-3 months", icon: "🗓️" },
-      { id: "no-rush", label: "No rush", icon: "🌴" },
+      { id: "asap", label: t("ASAP (1-2 weeks)", "Lo antes posible (1-2 semanas)"), icon: "⚡" },
+      { id: "soon", label: t("Within 30 days", "Dentro de 30 días"), icon: "📅" },
+      { id: "flexible", label: t("2-3 months", "2-3 meses"), icon: "🗓️" },
+      { id: "no-rush", label: t("No rush", "Sin prisa"), icon: "🌴" },
     ],
   },
   {
     id: "value",
-    question: "What's your estimated home value?",
+    question: t("What's your estimated home value?", "¿Cuál es el valor estimado de tu casa?"),
     options: [
-      { id: "under-200k", label: "Under $200K", icon: "💵" },
+      { id: "under-200k", label: t("Under $200K", "Menos de $200K"), icon: "💵" },
       { id: "200-350k", label: "$200K - $350K", icon: "💰" },
       { id: "350-500k", label: "$350K - $500K", icon: "💎" },
-      { id: "over-500k", label: "Over $500K", icon: "🏆" },
+      { id: "over-500k", label: t("Over $500K", "Más de $500K"), icon: "🏆" },
     ],
   },
   {
     id: "address",
-    question: "What's the property address?",
+    question: t("What's the property address?", "¿Cuál es la dirección de la propiedad?"),
     isAddressStep: true,
     options: [
-      { id: "skip", label: "I'd rather not share yet", icon: "🔒" },
+      { id: "skip", label: t("I'd rather not share yet", "Prefiero no compartir aún"), icon: "🔒" },
     ],
   },
 ];
 
 const SellerQuiz = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [addressInput, setAddressInput] = useState("");
 
-  // Initialize session on mount and mark as quiz entry
-  // ad_funnel_source is last-touch (reflects current entry point for attribution)
+  const quizSteps = useMemo(() => getQuizSteps(t), [t]);
+
   useEffect(() => {
     initAdFunnelSession();
     updateSessionContext({ ad_funnel_source: 'seller_quiz' });
@@ -121,7 +108,6 @@ const SellerQuiz = () => {
     const newAnswers = { ...answers, [currentQuestion.id]: optionId };
     setAnswers(newAnswers);
 
-    // Auto-advance after short delay
     setTimeout(() => {
       if (currentStep < quizSteps.length - 1) {
         setCurrentStep(currentStep + 1);
@@ -162,10 +148,10 @@ const SellerQuiz = () => {
               className="flex items-center gap-1 text-white/60 hover:text-white transition-colors text-sm"
             >
               <ChevronLeft className="w-4 h-4" />
-              Back
+              {t("Back", "Atrás")}
             </button>
             <span className="text-white/40 text-sm">
-              Step {currentStep + 1} of {quizSteps.length}
+              {t(`Step ${currentStep + 1} of ${quizSteps.length}`, `Paso ${currentStep + 1} de ${quizSteps.length}`)}
             </span>
           </div>
           <Progress 
@@ -195,7 +181,10 @@ const SellerQuiz = () => {
                 />
               </div>
               <p className="text-white/50 text-sm text-center">
-                Tucson area addresses help us provide the most accurate estimate
+                {t(
+                  "Tucson area addresses help us provide the most accurate estimate",
+                  "Las direcciones del área de Tucson nos ayudan a dar un estimado más preciso"
+                )}
               </p>
               <div className="flex flex-col gap-3">
                 <Button
@@ -203,19 +192,19 @@ const SellerQuiz = () => {
                   disabled={!addressInput.trim()}
                   className="w-full bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold py-6 rounded-full text-lg"
                 >
-                  Continue
+                  {t("Continue", "Continuar")}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
                 <button
                   onClick={handleAddressSkip}
                   className="text-white/60 hover:text-white transition-colors text-sm underline underline-offset-2"
                 >
-                  I'd rather not share yet
+                  {t("I'd rather not share yet", "Prefiero no compartir aún")}
                 </button>
               </div>
             </div>
           ) : (
-            /* Options Grid for regular steps */
+            /* Options Grid */
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
               {currentQuestion.options.map((option) => (
                 <button
@@ -236,7 +225,6 @@ const SellerQuiz = () => {
                       {option.label}
                     </span>
                   </div>
-                  {/* Selected indicator */}
                   {answers[currentQuestion.id] === option.id && (
                     <div className="absolute top-3 right-3 w-6 h-6 bg-cc-gold rounded-full flex items-center justify-center">
                       <svg className="w-4 h-4 text-cc-navy" fill="currentColor" viewBox="0 0 20 20">
