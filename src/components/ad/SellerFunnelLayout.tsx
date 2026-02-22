@@ -4,6 +4,7 @@ import { SelenaWidgetProvider } from "@/contexts/SelenaWidgetContext";
 import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
 import SelenaVoiceWidget from "./SelenaVoiceWidget";
+import LanguageToggle from "@/components/v2/LanguageToggle";
 
 interface SellerFunnelLayoutProps {
   children: ReactNode;
@@ -14,6 +15,11 @@ const SellerFunnelLayout = ({ children }: SellerFunnelLayoutProps) => {
     <SelenaChatProvider>
       <SelenaWidgetProvider>
         <div className="min-h-screen bg-cc-navy flex flex-col">
+        {/* Language Toggle Header */}
+        <header className="flex justify-end px-4 py-3">
+          <LanguageToggle variant="dark" />
+        </header>
+
         {/* Main Content */}
         <main className="flex-1">
           {children}
@@ -24,7 +30,6 @@ const SellerFunnelLayout = ({ children }: SellerFunnelLayoutProps) => {
           <div className="container mx-auto max-w-4xl">
             <div className="flex flex-col items-center gap-3 text-center">
               <div className="flex items-center gap-2">
-                {/* Equal Housing Logo */}
                 <div className="w-8 h-8 border border-white/50 flex items-center justify-center">
                   <Home className="w-5 h-5 text-white/70" />
                 </div>

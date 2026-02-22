@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, LabelList } from "recharts";
 import { bridgeQuizResultsToV2, bridgeLeadIdToV2, setStoredUserName, setStoredEmail } from "@/lib/analytics/initAdFunnelSession";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Value ranges - midpoints for calculation
 const VALUE_RANGES: Record<string, number> = {
@@ -21,21 +22,10 @@ const VALUE_RANGES: Record<string, number> = {
 
 // Calculator function
 const calculateNetProceeds = (estimatedValue: number) => {
-  // Path A: Cash Offer (75% of value - speed offer)
   const cashOffer = Math.round(estimatedValue * 0.75);
-  
-  // Path B: Traditional Listing (94% of value minus $5k closing costs)
   const listingNet = Math.round(estimatedValue * 0.94 - 5000);
-  
-  // Difference
   const difference = listingNet - cashOffer;
-  
-  return {
-    estimatedValue,
-    cashOffer,
-    listingNet,
-    difference,
-  };
+  return { estimatedValue, cashOffer, listingNet, difference };
 };
 
 // Format currency
@@ -47,7 +37,7 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-// Inner component that uses the chat context (rendered inside the provider)
+// Inner component that uses the chat context
 const SellerResultContent = () => {
   const [searchParams] = useSearchParams();
   const [name, setName] = useState("");
@@ -56,6 +46,7 @@ const SellerResultContent = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const { openChat, isOpen: isChatOpen } = useSelenaChat();
   const hasTriggeredProactive = useRef(false);
+  const { t } = useLanguage();
 
   // Get quiz answers from URL params
   const quizAnswers = {
@@ -81,37 +72,36 @@ const SellerResultContent = () => {
   
   // Loss aversion timer - proactive Selena chat trigger after 30 seconds
   useEffect(() => {
-    // Only trigger if form not yet submitted, chat not already open, and not already triggered
     if (isUnlocked || isChatOpen || hasTriggeredProactive.current) return;
     
     const timer = setTimeout(() => {
       hasTriggeredProactive.current = true;
-      
-      // Open chat
       openChat({ source: 'proactive', intent: 'sell' });
       
-      // Dispatch proactive message event after short delay for chat to open
       setTimeout(() => {
-        const proactiveMessage = `I noticed the ${formatCurrency(calculations.difference)} difference in your report. Would you like me to explain exactly how we calculated the "Cost of Time" for your property?`;
+        const proactiveMessage = t(
+          `I noticed the ${formatCurrency(calculations.difference)} difference in your report — want me to explain what's driving that number?`,
+          `Noté una diferencia de ${formatCurrency(calculations.difference)} en tu reporte — ¿quieres que te explique qué está influyendo en ese número?`
+        );
         
         window.dispatchEvent(new CustomEvent('selena-proactive-message', {
           detail: { message: proactiveMessage }
         }));
       }, 500);
-    }, 30000); // 30 seconds
+    }, 30000);
     
     return () => clearTimeout(timer);
-  }, [isUnlocked, isChatOpen, calculations.difference, openChat]);
+  }, [isUnlocked, isChatOpen, calculations.difference, openChat, t]);
 
   // Chart data
   const chartData = [
     {
-      name: "Cash Offer",
+      name: t("Cash Offer", "Oferta en efectivo"),
       value: calculations.cashOffer,
       fill: "#E3B23C",
     },
     {
-      name: "Traditional Listing",
+      name: t("Traditional Listing", "Listado tradicional"),
       value: calculations.listingNet,
       fill: "#22C55E",
     },
@@ -120,24 +110,22 @@ const SellerResultContent = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate inputs
     if (!name.trim() || !email.trim()) {
-      toast.error("Please fill in all fields");
+      toast.error(t("Please fill in all fields", "Por favor completa todos los campos"));
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      toast.error("Please enter a valid email address");
+      toast.error(t("Please enter a valid email address", "Por favor ingresa un correo electrónico válido"));
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Get session context for GHL sync
       const sessionId = localStorage.getItem('selena_session_id') || undefined;
-      const language = localStorage.getItem('selena_language') || 'en';
+      const language = localStorage.getItem('kasandra-language') || 'en';
       
       const { data, error } = await supabase.functions.invoke('submit-seller', {
         body: {
@@ -157,7 +145,6 @@ const SellerResultContent = () => {
 
       if (error) throw error;
 
-      // Bridge quiz answers to V2 session context
       bridgeQuizResultsToV2({
         situation: quizAnswers.situation,
         condition: quizAnswers.condition,
@@ -165,23 +152,21 @@ const SellerResultContent = () => {
         value: quizAnswers.value,
       });
 
-      // Bridge lead_id for V2 continuity (if returned from edge function)
       if (data?.lead_id) {
         bridgeLeadIdToV2(data.lead_id, 'seller_funnel');
-        // Store contact info for personalization and gate bypass
         setStoredUserName(name.trim());
         setStoredEmail(email.trim());
       }
 
-      // Unlock the report
       setIsUnlocked(true);
-      toast.success("Report sent! Check your messages.", {
-        description: "A detailed breakdown has been sent to you.",
-      });
+      toast.success(
+        t("Report sent! Check your messages.", "¡Reporte enviado! Revisa tus mensajes."),
+        { description: t("A detailed breakdown has been sent to you.", "Se te ha enviado un desglose detallado.") }
+      );
 
     } catch (error) {
       console.error("Submission error:", error);
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("Something went wrong. Please try again.", "Algo salió mal. Por favor intenta de nuevo."));
     } finally {
       setIsSubmitting(false);
     }
@@ -202,23 +187,25 @@ const SellerResultContent = () => {
             )}
           </div>
           <p className="text-cc-gold text-sm font-medium uppercase tracking-wide">
-            {isUnlocked ? "Report Unlocked" : "Analysis Complete"}
+            {isUnlocked
+              ? t("Report Unlocked", "Reporte desbloqueado")
+              : t("Analysis Complete", "Análisis completo")}
           </p>
         </div>
 
         {/* Teaser Card */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 text-center">
           <h2 className="font-serif text-2xl sm:text-3xl text-white mb-2">
-            Potential Difference
+            {t("Potential Difference", "Diferencia potencial")}
           </h2>
           <p className="text-cc-gold text-4xl sm:text-5xl font-bold mb-4">
             {formatCurrency(calculations.difference)}
           </p>
           <p className="text-white/60 text-sm mb-6">
-            Between Cash Offer and Traditional Listing
+            {t("Between Cash Offer and Traditional Listing", "Entre oferta en efectivo y listado tradicional")}
           </p>
 
-          {/* Bar Chart Comparison */}
+          {/* Bar Chart */}
           <div className="mb-6 h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -262,24 +249,24 @@ const SellerResultContent = () => {
               isUnlocked ? "" : "blur-sm select-none pointer-events-none"
             }`}>
               <div className="flex justify-between text-white/80">
-                <span>Estimated Market Value</span>
+                <span>{t("Estimated Market Value", "Valor estimado de mercado")}</span>
                 <span>{formatCurrency(calculations.estimatedValue)}</span>
               </div>
               <div className="flex justify-between text-white/80">
-                <span>Cash Offer (As-Is)</span>
+                <span>{t("Cash Offer (As-Is)", "Oferta en efectivo (como está)")}</span>
                 <span className="text-cc-gold">{formatCurrency(calculations.cashOffer)}</span>
               </div>
               <div className="flex justify-between text-white/80">
-                <span>Traditional Net (Est.)</span>
+                <span>{t("Traditional Net (Est.)", "Neto tradicional (est.)")}</span>
                 <span className="text-green-400">{formatCurrency(calculations.listingNet)}</span>
               </div>
               <div className="border-t border-white/10 pt-3 mt-3 flex justify-between text-white/80">
-                <span>Time to Close</span>
-                <span>7-14 days vs 45-60 days</span>
+                <span>{t("Time to Close", "Tiempo de cierre")}</span>
+                <span>{t("7-14 days vs 45-60 days", "7-14 días vs 45-60 días")}</span>
               </div>
               <div className="flex justify-between text-white/60 text-sm">
-                <span>Your Timeline Preference</span>
-                <span className="capitalize">{quizAnswers.timeline.replace(/-/g, ' ') || 'Flexible'}</span>
+                <span>{t("Your Timeline Preference", "Tu preferencia de plazo")}</span>
+                <span className="capitalize">{quizAnswers.timeline.replace(/-/g, ' ') || t('Flexible', 'Flexible')}</span>
               </div>
             </div>
             
@@ -288,36 +275,41 @@ const SellerResultContent = () => {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="bg-cc-navy/90 rounded-xl px-4 py-2 flex items-center gap-2">
                   <Lock className="w-4 h-4 text-cc-gold" />
-                  <span className="text-white text-sm font-medium">Unlock Full Report</span>
+                  <span className="text-white text-sm font-medium">
+                    {t("Unlock Full Report", "Desbloquear reporte completo")}
+                  </span>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* The Gate - Lead Capture Form (Hidden when unlocked) */}
+        {/* Lead Capture Form (Hidden when unlocked) */}
         {!isUnlocked && (
           <div className="bg-white/10 border border-cc-gold/30 rounded-2xl p-6 sm:p-8">
             <div className="text-center mb-6">
               <h3 className="font-serif text-xl text-white mb-2">
-                Unlock Your Certified Net Sheet
+                {t("Unlock Your Full Net Sheet", "Desbloquea tu reporte completo")}
               </h3>
               <p className="text-white/60 text-sm">
-                Get a personalized breakdown with exact numbers for your property.
+                {t(
+                  "Get a personalized breakdown with exact numbers for your property.",
+                  "Obtén un desglose personalizado con números exactos para tu propiedad."
+                )}
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-white/80 text-sm">
-                  Your Name
+                  {t("Your Name", "Tu nombre")}
                 </Label>
                 <Input
                   id="name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
+                  placeholder={t("Enter your name", "Ingresa tu nombre")}
                   className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-cc-gold focus:ring-cc-gold/20"
                   required
                   maxLength={100}
@@ -326,14 +318,14 @@ const SellerResultContent = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-white/80 text-sm">
-                  Email Address
+                  {t("Email Address", "Correo electrónico")}
                 </Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@email.com"
+                  placeholder={t("you@email.com", "tu@correo.com")}
                   className="bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-cc-gold focus:ring-cc-gold/20"
                   required
                   maxLength={255}
@@ -346,10 +338,10 @@ const SellerResultContent = () => {
                 className="w-full bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold py-6 rounded-full text-lg shadow-lg hover:shadow-xl transition-all"
               >
                 {isSubmitting ? (
-                  "Sending..."
+                  t("Sending...", "Enviando...")
                 ) : (
                   <>
-                    Unlock My Net Sheet
+                    {t("Unlock My Net Sheet", "Desbloquear mi reporte")}
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </>
                 )}
@@ -357,7 +349,10 @@ const SellerResultContent = () => {
             </form>
 
             <p className="text-white/40 text-xs text-center mt-4">
-              No spam. Unsubscribe anytime. We respect your privacy.
+              {t(
+                "No spam. Unsubscribe anytime. We respect your privacy.",
+                "Sin spam. Puedes darte de baja cuando quieras. Respetamos tu privacidad."
+              )}
             </p>
           </div>
         )}
@@ -367,17 +362,20 @@ const SellerResultContent = () => {
           <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-6 text-center">
             <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
             <h3 className="font-serif text-xl text-white mb-2">
-              Your Net Sheet is Ready
+              {t("Your Net Sheet is Ready", "Tu reporte está listo")}
             </h3>
             <p className="text-white/60 text-sm mb-4">
-              We've sent a detailed breakdown to {email}. Kasandra will personally reach out shortly.
+              {t(
+                `We've sent a detailed breakdown to ${email}. Kasandra will personally reach out shortly.`,
+                `Hemos enviado un desglose detallado a ${email}. Kasandra se comunicará contigo pronto.`
+              )}
             </p>
             <Button
               onClick={openChat}
               variant="outline"
               className="border-white/30 text-white hover:bg-white/10"
             >
-              Chat with Selena to Schedule
+              {t("Chat with Selena to Schedule", "Chatea con Selena para agendar")}
             </Button>
           </div>
         )}
@@ -385,12 +383,12 @@ const SellerResultContent = () => {
         {!isUnlocked && (
           <div className="text-center">
             <p className="text-white/50 text-sm">
-              Prefer to talk to a human?{" "}
+              {t("Prefer to talk to a human?", "¿Prefieres hablar con una persona?")}{" "}
               <button 
                 onClick={openChat}
                 className="text-cc-gold hover:text-cc-gold/80 underline underline-offset-2"
               >
-                Chat with Selena to schedule
+                {t("Chat with Selena to schedule", "Chatea con Selena para agendar")}
               </button>
             </p>
           </div>
@@ -400,7 +398,6 @@ const SellerResultContent = () => {
   );
 };
 
-// Outer component that provides the context via SellerFunnelLayout
 const SellerResult = () => {
   return (
     <SellerFunnelLayout>
