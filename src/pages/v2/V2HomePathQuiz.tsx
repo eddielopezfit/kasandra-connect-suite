@@ -5,6 +5,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import QuizFunnelLayout from "@/components/v2/QuizFunnelLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft, ArrowRight, Check, MessageCircle, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getFullSessionDossier } from "@/hooks/useSessionPrePopulation";
@@ -62,7 +63,10 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
     email: "",
     phone: "",
   });
+  const [consentChecked, setConsentChecked] = useState(false);
+  const [consentError, setConsentError] = useState("");
   const [isComplete, setIsComplete] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const questions = [
     {
@@ -266,6 +270,15 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
   };
 
   const handleSubmit = async () => {
+    // Validate consent
+    if (!consentChecked) {
+      setConsentError(t(
+        "Please agree to continue.",
+        "Por favor acepta para continuar."
+      ));
+      return;
+    }
+
     // Validate phone is present (required by submit-consultation-intake)
     if (!contactInfo.phone.trim() || contactInfo.phone.trim().length < 10) {
       toast({
@@ -278,6 +291,8 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
       });
       return;
     }
+
+    setIsSubmitting(true);
 
     // Ensure session ID exists
     let sessionId = localStorage.getItem("selena_session_id");
@@ -299,21 +314,27 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
     // Build structured notes from non-mapped quiz answers
     const notes = `path_quiz: experience=${experienceAnswer}; friction=${frictionAnswer}; contact_pref=${contactPrefAnswer}`;
 
-    // Build payload for submit-consultation-intake
+    // Build payload — spread dossier FIRST, then authoritative overrides AFTER (A2 fix)
     const payload = {
       name: contactInfo.name.trim(),
       email: contactInfo.email.trim().toLowerCase(),
       phone: contactInfo.phone.trim(),
       language,
-      intent: mapQuizIntentToCanonical(intentAnswer),
-      timeline: mapQuizTimelineToCanonical(timelineAnswer),
+      notes,
+      // Session dossier (attribution, tool signals, UTMs) — spread FIRST
+      ...sessionDossier,
+      // Authoritative overrides — MUST come after dossier spread
       session_id: sessionId,
       source: "path_quiz",
       page_path: "/v2/quiz",
+      intent: mapQuizIntentToCanonical(intentAnswer),
+      timeline: mapQuizTimelineToCanonical(timelineAnswer),
       quiz_completed: true,
       quiz_result_path: getResultPath(),
-      notes,
-      ...sessionDossier,
+      // Consent (single checkbox covers both)
+      consent_communications: true,
+      consent_ai: true,
+      submitted_at: new Date().toISOString(),
     };
 
     try {
@@ -384,6 +405,8 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
         ),
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -391,7 +414,7 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
     const hasName = contactInfo.name.trim().length > 0;
     const hasEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
     const hasPhone = contactInfo.phone.replace(/\D/g, '').length >= 10;
-    return hasName && hasEmail && hasPhone;
+    return hasName && hasEmail && hasPhone && consentChecked;
   };
 
   const getSelectedAnswer = (questionIndex: number) => {
@@ -655,14 +678,46 @@ const V2HomePathQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
                 </div>
               </div>
 
+              {/* TCPA + AI Consent Checkbox */}
+              <div className="space-y-1.5">
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="consent-quiz"
+                    checked={consentChecked}
+                    onCheckedChange={(checked) => {
+                      setConsentChecked(checked === true);
+                      if (checked) setConsentError("");
+                    }}
+                    className="mt-0.5"
+                  />
+                  <label htmlFor="consent-quiz" className="text-sm text-foreground leading-snug cursor-pointer">
+                    {t(
+                      "I agree to receive texts/emails about my request and understand Selena is an AI assistant.",
+                      "Acepto recibir textos/correos sobre mi solicitud y entiendo que Selena es una asistente de IA."
+                    )}
+                  </label>
+                </div>
+                <p className="text-[11px] text-muted-foreground pl-7">
+                  {t(
+                    "Msg/data rates may apply. Reply STOP to opt out.",
+                    "Pueden aplicarse tarifas. Responda STOP para cancelar."
+                  )}
+                </p>
+                {consentError && (
+                  <p className="text-xs text-destructive pl-7">{consentError}</p>
+                )}
+              </div>
+
               <Button
                 size="lg"
                 className="w-full gap-2"
-                disabled={!isContactValid()}
+                disabled={!isContactValid() || isSubmitting}
                 onClick={handleSubmit}
               >
-                {t("Get My Next Steps", "Obtener Mis Próximos Pasos")}
-                <ArrowRight className="w-5 h-5" />
+                {isSubmitting
+                  ? t("Saving…", "Guardando…")
+                  : t("Get My Next Steps", "Obtener Mis Próximos Pasos")}
+                {!isSubmitting && <ArrowRight className="w-5 h-5" />}
               </Button>
 
               <p className="text-center text-xs text-muted-foreground">

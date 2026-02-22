@@ -5,6 +5,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import QuizFunnelLayout from "@/components/v2/QuizFunnelLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft, ArrowRight, Check, MessageCircle, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getFullSessionDossier } from "@/hooks/useSessionPrePopulation";
@@ -183,6 +184,8 @@ const V2SellerQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
     email: "",
     phone: "",
   });
+  const [consentChecked, setConsentChecked] = useState(false);
+  const [consentError, setConsentError] = useState("");
   const [isComplete, setIsComplete] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -274,7 +277,7 @@ const V2SellerQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
     const hasName = contactInfo.name.trim().length > 0;
     const hasEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactInfo.email);
     const hasPhone = contactInfo.phone.replace(/\D/g, "").length >= 10;
-    return hasName && hasEmail && hasPhone;
+    return hasName && hasEmail && hasPhone && consentChecked;
   };
 
   const getSelectedAnswer = (questionIndex: number) =>
@@ -282,6 +285,15 @@ const V2SellerQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
 
   // ── Submission ────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
+    // Validate consent
+    if (!consentChecked) {
+      setConsentError(t(
+        "Please agree to continue.",
+        "Por favor acepta para continuar."
+      ));
+      return;
+    }
+
     if (!contactInfo.phone.trim() || contactInfo.phone.replace(/\D/g, "").length < 10) {
       toast({
         title: t("Phone required", "Teléfono requerido"),
@@ -338,6 +350,10 @@ const V2SellerQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
       timeline:         canonicalTimeline,
       quiz_completed:   true,
       quiz_result_path: quizResultPath,
+      // Consent (single checkbox covers both)
+      consent_communications: true,
+      consent_ai: true,
+      submitted_at: new Date().toISOString(),
     };
 
     try {
@@ -638,26 +654,56 @@ const V2SellerQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
                   )}
                 </p>
               </div>
-            </div>
+              </div>
 
-            <Button
-              size="lg"
-              className="w-full gap-2"
-              disabled={!isContactValid() || isSubmitting}
-              onClick={handleSubmit}
-            >
-              {isSubmitting
-                ? t("Saving…", "Guardando…")
-                : t("Get My Next Steps", "Obtener Mis Próximos Pasos")}
-              {!isSubmitting && <ArrowRight className="w-5 h-5" />}
-            </Button>
+              {/* TCPA + AI Consent Checkbox */}
+              <div className="space-y-1.5">
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="consent-seller-quiz"
+                    checked={consentChecked}
+                    onCheckedChange={(checked) => {
+                      setConsentChecked(checked === true);
+                      if (checked) setConsentError("");
+                    }}
+                    className="mt-0.5"
+                  />
+                  <label htmlFor="consent-seller-quiz" className="text-sm text-foreground leading-snug cursor-pointer">
+                    {t(
+                      "I agree to receive texts/emails about my request and understand Selena is an AI assistant.",
+                      "Acepto recibir textos/correos sobre mi solicitud y entiendo que Selena es una asistente de IA."
+                    )}
+                  </label>
+                </div>
+                <p className="text-[11px] text-muted-foreground pl-7">
+                  {t(
+                    "Msg/data rates may apply. Reply STOP to opt out.",
+                    "Pueden aplicarse tarifas. Responda STOP para cancelar."
+                  )}
+                </p>
+                {consentError && (
+                  <p className="text-xs text-destructive pl-7">{consentError}</p>
+                )}
+              </div>
 
-            <p className="text-center text-xs text-muted-foreground">
-              {t(
-                "Your information is private and will never be shared.",
-                "Tu información es privada y nunca será compartida."
-              )}
-            </p>
+              <Button
+                size="lg"
+                className="w-full gap-2"
+                disabled={!isContactValid() || isSubmitting}
+                onClick={handleSubmit}
+              >
+                {isSubmitting
+                  ? t("Saving…", "Guardando…")
+                  : t("Get My Next Steps", "Obtener Mis Próximos Pasos")}
+                {!isSubmitting && <ArrowRight className="w-5 h-5" />}
+              </Button>
+
+              <p className="text-center text-xs text-muted-foreground">
+                {t(
+                  "Your information is private and will never be shared.",
+                  "Tu información es privada y nunca será compartida."
+                )}
+              </p>
           </div>
         ) : (
           /* Question steps (0–3) */
