@@ -169,7 +169,7 @@ Deno.serve(async (req) => {
     // Persist score + grade
     await supabase
       .from("lead_profiles")
-      .update({ lead_score: scoreResult.lead_score, lead_grade: scoreResult.lead_score_bucket })
+      .update({ lead_score: scoreResult.lead_score, lead_grade: scoreResult.lead_grade })
       .eq("id", leadId);
 
     // Deduped event log (Guardrail 4)
