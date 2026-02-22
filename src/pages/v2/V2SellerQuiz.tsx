@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getFullSessionDossier } from "@/hooks/useSessionPrePopulation";
 import { updateSessionContext, SessionContext } from "@/lib/analytics/selenaSession";
 import { toast } from "@/hooks/use-toast";
+import { track, trackCustom } from "@/lib/metaPixel";
 
 /**
  * Map seller quiz Step 1 answerIndex to canonical intent for edge function.
@@ -409,6 +410,10 @@ const V2SellerQuizContent = ({ onComplete }: { onComplete?: () => void }) => {
           "Tus respuestas han sido guardadas. Encontremos tus próximos pasos."
         ),
       });
+
+      // Meta Pixel: Lead + custom quiz completion
+      track("Lead", { content_category: "v2_seller_quiz", intent: canonicalIntent, timeline: canonicalTimeline });
+      trackCustom("V2QuizCompleted", { content_category: "v2_seller_quiz", intent: canonicalIntent, timeline: canonicalTimeline });
 
       setIsComplete(true);
       onComplete?.();

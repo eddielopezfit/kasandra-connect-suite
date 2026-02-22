@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import ScrollManager from "@/components/ScrollManager";
+import RouteAnalytics from "@/components/RouteAnalytics";
 import NotFound from "./pages/NotFound";
 // V2 Pages (Canonical)
 import V2Home from "./pages/v2/V2Home";
@@ -36,6 +37,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollManager />
+          <RouteAnalytics />
           <Routes>
             {/* Legacy redirects → V2 */}
             <Route path="/" element={<Navigate to="/v2" replace />} />

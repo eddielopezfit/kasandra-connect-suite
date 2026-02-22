@@ -11,6 +11,7 @@ import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, LabelList } fro
 import { bridgeQuizResultsToV2, bridgeLeadIdToV2, setStoredUserName, setStoredEmail } from "@/lib/analytics/initAdFunnelSession";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { track, trackCustom, getDifferenceBand } from "@/lib/metaPixel";
 
 // Value ranges - midpoints for calculation
 const VALUE_RANGES: Record<string, number> = {
@@ -63,11 +64,12 @@ const SellerResultContent = () => {
     return calculateNetProceeds(estimatedValue);
   }, [quizAnswers.value]);
   
-  // Store difference for booking page context continuity
+  // Store difference for booking page context continuity + ViewContent
   useEffect(() => {
     if (calculations.difference) {
       localStorage.setItem('cc_net_sheet_difference', String(calculations.difference));
     }
+    track("ViewContent", { content_name: "Seller Result", content_category: "seller_funnel" });
   }, [calculations.difference]);
   
   // Loss aversion timer - proactive Selena chat trigger after 30 seconds
@@ -157,6 +159,19 @@ const SellerResultContent = () => {
         setStoredUserName(name.trim());
         setStoredEmail(email.trim());
       }
+
+      // Fire Lead + custom event (no PII — only bucketed values)
+      track("Lead", {
+        content_category: "seller_funnel",
+        value_band: quizAnswers.value,
+        timeline: quizAnswers.timeline,
+      });
+      trackCustom("SellerReportUnlocked", {
+        content_category: "seller_funnel",
+        value_band: quizAnswers.value,
+        timeline: quizAnswers.timeline,
+        difference_band: getDifferenceBand(calculations.difference),
+      });
 
       setIsUnlocked(true);
       toast.success(

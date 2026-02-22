@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import SelenaTextTrigger from "@/components/ad/SelenaTextTrigger";
 import { initAdFunnelSession } from "@/lib/analytics/initAdFunnelSession";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { track, trackCustom } from "@/lib/metaPixel";
 
 const SellerLanding = () => {
   const { t } = useLanguage();
 
   useEffect(() => {
     initAdFunnelSession();
+    track("ViewContent", { content_name: "Seller Landing", content_category: "seller_funnel" });
   }, []);
 
   return (
@@ -47,7 +49,10 @@ const SellerLanding = () => {
               size="lg"
               className="bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold text-lg px-10 py-7 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105"
             >
-              <Link to="/ad/seller-quiz">
+              <Link
+                to="/ad/seller-quiz"
+                onClick={() => trackCustom("SellerQuizStarted", { content_category: "seller_funnel" })}
+              >
                 {t("Start Free Net Sheet", "Comenzar reporte gratis")}
               </Link>
             </Button>
