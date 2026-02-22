@@ -16,6 +16,8 @@ interface UpdateScoreInput {
   quiz_completed?: boolean;
   page_path?: string;
   language?: string;
+  intent?: string;
+  timeline?: string;
 }
 
 Deno.serve(async (req) => {
@@ -52,10 +54,13 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Merge: incoming signals overlay existing lead data
+    // Merge: incoming signals overlay existing lead data (input wins over stored)
+    const mergedIntent = input.intent || lead.intent || null;
+    const mergedTimeline = input.timeline || lead.timeline || null;
+
     const scoreResult = computeLeadScore({
-      intent_canonical: lead.intent || null,
-      timeline_canonical: lead.timeline || null,
+      intent_canonical: mergedIntent,
+      timeline_canonical: mergedTimeline,
       quiz_completed: input.quiz_completed || false,
       phone: lead.phone || null,
       property_address: null, // not passed in this lightweight call
