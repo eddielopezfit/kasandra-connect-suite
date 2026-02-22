@@ -1,152 +1,128 @@
-# Kasandra's Oasis: Implementation Roadmap
 
-## Decisions (Approved)
 
-| # | Question | Decision |
-|---|---|---|
-| 1 | Ad funnel language | **Both** — Translate `/ad/*` pages AND keep `/v2/seller-quiz` as alternate ES entry |
-| 2 | Private Cash Review access | **CTA after calculator** — Show CTA on `/v2/cash-offer-options` after calculator completion |
-| 3 | TCPA consent format | **Single combined checkbox** — One checkbox covering communications + AI disclosure |
-| 4 | Lead scoring | **Edge function** — Compute server-side in submit edge functions before sending to GHL |
-| 5 | Buyer lead capture | **Modal trigger** — Pop up LeadCaptureModal after Buyer Readiness score is shown |
+# P0 Guides Patch: Brand Voice, CTA Transparency, and Spanish Register
+
+## Summary
+
+Four surgical fixes across 3 files. No routing, scoring, or schema changes. Content and label corrections only.
 
 ---
 
-## Phase A: Critical Fixes ✅ Complete
+## P0-1: Fix CTA Label Transparency (Buying Guides)
 
-- 1.1 — Fixed `quiz_completed` dossier override bug in V2HomePathQuiz
-- 1.2 — Added TCPA consent checkbox to V2HomePathQuiz + V2SellerQuiz
-- 1.3 — Added Private Cash Review CTA to CalculatorNextSteps
-- 1.4 — Added Buyer Readiness lead capture modal with 3 guardrails + fallback save link
+**File**: `src/components/v2/guides/AuthorityCTABlock.tsx` (lines 73-74)
 
-## Phase B: Calculator & Buyer Readiness Enrichment ✅ Complete
+**Change**: Replace the buying category CTA labels that falsely imply booking.
 
-- B1 — Calculator next-steps CTA enriches SessionContext and routes to `/v2/private-cash-review`
-- B2 — Buyer Readiness auto LeadCaptureModal with guardrails (lead_id check, stored email check, namespaced prompted flag)
-
-## Phase C: Ad Funnel Bilingual ✅ Complete
-
-- C1 — SellerFunnelLayout: language toggle header + unified brokerage footer
-- C2 — SellerLanding + SelenaTextTrigger fully bilingual with proper accents/punctuation
-- C3 — SellerQuiz: dynamic `getQuizSteps(t)` with full ES accents
-- C4 — SellerResult: bilingual chart, form, proactive Selena message; removed "Certified" claim
-
-## Phase D: Meta Pixel Integration ✅ Complete
-
-### D1 — Pixel Utility + RouteAnalytics
-- **New:** `src/lib/metaPixel.ts` — lazy init, PII-safe, debug/suppress modes
-- **New:** `src/components/RouteAnalytics.tsx` — fires PageView on route change (deduplicated)
-- **Edit:** `src/App.tsx` — RouteAnalytics mounted inside BrowserRouter
-- Env vars: `VITE_META_PIXEL_ID`, `VITE_PIXEL_DEBUG`, `VITE_PIXEL_SUPPRESS`
-
-### D2 — Funnel Event Wiring
-| Page | Events Fired |
+| Current | Replacement |
 |---|---|
-| `/ad/seller` | ViewContent (mount), SellerQuizStarted (CTA click) |
-| `/ad/seller-quiz` | ViewContent (mount), SellerQuizCompleted (navigate to results) |
-| `/ad/seller-result` | ViewContent (mount, once), Lead + SellerReportUnlocked (form submit) |
-| `/v2/seller-quiz` | Lead + V2QuizCompleted (submit success) |
-| `/v2/buyer-readiness` | BuyerReadinessCompleted (score reveal), Lead + BuyerReadinessLeadCaptured (modal submit) |
-| Calculator Next Steps | PrivateCashReviewRequested (CTA click) |
+| EN: "Book Your Buyer Strategy Session" | EN: "Get Clarity on Your Buying Journey" |
+| ES: "Reserve Su Sesion de Estrategia para Comprador" | ES: "Obtenga Claridad sobre Su Proceso de Compra" |
 
-### D3 — PII & Safety Guardrails
-- No email/phone/name/address in any event params
-- Dollar amounts bucketed via `getDifferenceBand()`: 0-10k, 10-25k, 25-50k, 50k+
-- Readiness scores bucketed via `getScoreBand()`: 0-39, 40-59, 60-79, 80-100
-- Debug mode logs + fires; Suppress mode logs only (no fbq calls)
-
-### D4 — Bugs Fixed
-- `init()` race condition: handles pre-existing `window.fbq` correctly
-- ViewContent spam: separated into own `useEffect([], [])` on SellerResult
+No routing or behavior changes. Label-only edit, 2 lines.
 
 ---
 
-## Phase E: Unified Lead Scoring ✅ Complete
+## P0-2: Fix Spanish Register (tu to Usted)
 
-### E1 — Shared `computeLeadScore()` in `_shared/normalizeLead.ts`
-- Rubric: intent(25) + timeline(25) + quiz(10) + phone(10) + address(10) + tool(5) + readiness(5) + consent(5) + report(5) = 100 max
-- Buckets: >=75 hot, >=45 warm, else cold
-- `shouldSkipScoreLog()` dedupe helper (Guardrail 4: no spam within 10 min if score unchanged)
+**File**: `src/pages/v2/V2GuideDetail.tsx`
 
-### E2 — DRY refactor `submit-consultation-intake`
-- Replaced 80-line inline `computeLeadScore()` with shared import
-- Persists `lead_score` + `lead_grade` to `lead_profiles`
-- Uses deduped event log
+Three guides have informal Spanish that violates the Usted mandate:
 
-### E3 — Scoring added to `upsert-lead-profile`
-- Accepts `tool_used`, `readiness_score`, `quiz_completed`, `has_viewed_report`, `timeline`, `consent_communications`
-- Guardrail 3: `consent_communications` defaults false — only true when explicitly collected
-- GHL payload includes `selena_lead_score`, `lead_score_bucket`, `lead_score_reasons`
+### first-time-buyer-guide (lines 45-93)
+Every Spanish string uses informal register. Systematic replacements:
 
-### E4 — Scoring + `lead_profiles` upsert added to `submit-seller`
-- Guardrail 1: email-primary dedup with session_id fallback; reuses canonical lead_id
-- Guardrail 2: `quiz_completed = true` only when >=3 of 4 quiz fields (situation/condition/timeline/value) are non-empty
-- Upserts into `lead_profiles` with intent=sell, timeline, situation, condition
-- GHL payload includes scoring fields
+- "Si estas leyendo esto" -> "Si esta leyendo esto"
+- "tu primera casa" -> "su primera casa"
+- "para que puedas" -> "para que pueda"
+- "Evalua Tu Preparacion" -> "Evalue Su Preparacion"
+- "tu punto de partida" -> "su punto de partida"
+- "tu perfil crediticio" -> "su perfil crediticio"
+- "Tambien querras" -> "Tambien querra"
+- "Obten Pre-Aprobacion" -> "Obtenga Pre-Aprobacion"
+- "te ayuda a entender" -> "le ayuda a entender"
+- "tus ingresos" -> "sus ingresos"
+- "Ten en cuenta" -> "Tenga en cuenta"
+- "Elige al Profesional" -> "Elija al Profesional"
+- "tus areas preferidas" -> "sus areas preferidas"
+- "Explique... sin presion" (already correct form)
+- "tus intereses" -> "sus intereses"
+- "tomate el tiempo" -> "tomese el tiempo"
+- "Busqueda de Casa" -> stays (noun, fine)
+- "Mientras exploras" -> "Mientras explora"
+- "Tu objetivo" -> "Su objetivo"
+- "Hacer una Oferta" -> stays
+- "estes listo" -> "este listo"
+- "Tu agente te ayudara" -> "Su agente le ayudara" (also feeds into P0-4 pattern for buyer guide)
+- "Tomese el tiempo" sections in Steps 6-7 similarly
+- "Bienvenido a casa" -> "Bienvenido(a) a casa" (gender-inclusive)
+- Final section: "Si estas listo" -> "Si esta listo", "eres bienvenido" -> "es bienvenido(a)"
 
-### E5 — Frontend `LeadCaptureModal` enriched
-- Passes `tool_used`, `readiness_score`, `quiz_completed`, `has_viewed_report`, `timeline` from SessionContext
-- Guardrail 3: `consent_communications: false` explicitly set
+All 8 contentEs + introEs + headingEs fields for this guide will be updated.
 
-### E6 — update-lead-score Merge Fix + Re-scoring Wiring
-- Fixed `update-lead-score` to accept `intent`/`timeline` and merge with stored lead data (input wins)
-- Calculator CTA (`CalculatorNextSteps`) fires fire-and-forget re-score via `update-lead-score`
-- Buyer Readiness (`V2BuyerReadiness`) already fires fire-and-forget re-score on score reveal
-- All 3 scoring paths verified E2E; test data cleaned
+### first-time-buyer-story (line 228)
+- "tener a alguien que te guie" -> "tener a alguien que le guie"
 
----
+One line fix in the last section's contentEs.
 
-## Phase F: Production Hardening ✅ Complete
+### budget-buyer-story
+After re-reading: the narrative is third-person ("La familia", "Sabian que querian"). This is already correct register (no direct address). No changes needed.
 
-### F1 — GHL Sync Failure Logging
-- Added `ghl_sync_failed` event_log inserts to `upsert-lead-profile` and `update-lead-score`
-- No PII in payload (lead_id only, no email)
-- `session_id` prefers real session_id, falls back to leadId
-- Error text truncated to 500 chars; `funnel` tag distinguishes origin
-- Now all 4 scoring edge functions log GHL failures consistently
-
-### F2 — Scoring Health Dashboard Queries
-- Created `directives/scoring_health_queries.md` with operational SQL:
-  - Leads by bucket (24h / 7d)
-  - Scored vs unscored coverage %
-  - GHL sync failures by funnel (24h / 7d)
-  - Score distribution histogram
-  - Recent score events (debug)
+**Total**: ~20 Spanish string edits across intro + 8 sections of first-time-buyer-guide, plus 1 line in first-time-buyer-story.
 
 ---
 
-## Phase G: GHL Workflow Routing Alignment (GHL-side only)
+## P0-3: Remove Dead Guides from Index
 
-### G1 — Custom Field Verification
-Verify these 3 fields exist in GHL and are mapped:
-- `selena_lead_score` — sent by all scoring edge functions
-- `lead_score_bucket` — in customField payload
-- `lead_score_reasons` — in customField payload
+**File**: `src/pages/v2/V2Guides.tsx` (lines 139-196)
 
-### G2 — Bucket-Based Workflow Routing
-| Bucket | Workflow |
+Remove these 6 guide objects from the `guides` array:
+
+1. `mortgage-options-explained` (lines 139-147)
+2. `tucson-neighborhood-guide` (lines 148-157)
+3. `home-staging-secrets` (lines 159-167)
+4. `negotiation-strategies` (lines 169-177)
+5. `closing-costs-breakdown` (lines 179-187)
+6. `oro-valley-vs-marana` (lines 189-197)
+
+Clean removal from the array. No route or content file changes. These guides have no real content in V2GuideDetail.tsx (they fall through to `fallbackContent`), so removing them from the index simply stops advertising empty pages.
+
+---
+
+## P0-4: Fix Third-Person "Your Agent" Language
+
+**File**: `src/pages/v2/V2GuideDetail.tsx`
+
+In `selling-for-top-dollar`, section "How Selling Works: Step by Step" (line 117-118):
+
+| Current (EN) | Replacement |
 |---|---|
-| `hot` (≥75) | Human-engaged: immediate notification + priority call |
-| `hot` + `intent=cash` | Cash Review follow-up branch |
-| `warm` (45-74) | Nurture sequence + booking CTA |
-| `warm` + `intent=sell` | Net Sheet Nurture branch |
-| `cold` (<45) | Education drip + retargeting |
+| "Your agent provides information; the decision is yours." | "I provide information; the decision is yours." |
+| "Your agent will help you understand options" (Step 5 within same block) | "I will help you understand options" |
+
+| Current (ES) | Replacement |
+|---|---|
+| "Su agente proporciona informacion; la decision es suya." | "Yo proporciono informacion; la decision es suya." |
+| "Tu agente te ayudara a entender" | "Le ayudare a entender" |
+
+These are within the multiline content strings on lines 117-118. Two content blocks, EN and ES.
 
 ---
 
-## Phase H: Hub Completion (Launch-Ready)
+## Files Changed
 
-### H1 — North Star Journeys ✅ Complete
-| Journey | Path | Status |
+| File | Lines Touched | Change Type |
 |---|---|---|
-| Seller | Ad funnel → quiz → report → booking | Complete |
-| Buyer | Readiness → capture → consult → booking | Complete |
-| Cash | Calculator → private review → consult → booking | Complete |
+| `src/components/v2/guides/AuthorityCTABlock.tsx` | 2 lines | Label text swap |
+| `src/pages/v2/V2GuideDetail.tsx` | ~25 content strings | Spanish register + first-person voice |
+| `src/pages/v2/V2Guides.tsx` | ~60 lines removed | Dead guide cards removed |
 
-### H2 — Nice-to-Have (Future)
-- Buyer ad funnel (`/ad/buyer`)
-- Off-market/VIP buyer access gate
-- Guide read history sync to CRM
-- Calculator lead capture (currently fire-and-forget re-score only)
-- Google Sign-In repositioning
-- Server-side Conversions API edge function (CAPI)
+## What Is NOT Touched
+
+- No routing, analytics, or openChat logic changes
+- No edge functions, schema, or scoring changes
+- No GuideCTABlock.tsx changes (unused component, P1 item)
+- No English content rewrites (P1 item)
+- No new sections or content additions
+- No guide registry or personalization changes
+
