@@ -399,6 +399,12 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
       },
     });
 
+    // Persist score to lead_profiles
+    await supabase
+      .from("lead_profiles")
+      .update({ lead_score: scoreResult.lead_score })
+      .eq("id", leadId);
+
     // Sync to GoHighLevel
     let ghlSynced = false;
 
