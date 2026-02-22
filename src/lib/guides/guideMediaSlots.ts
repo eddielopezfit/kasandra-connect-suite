@@ -1,3 +1,6 @@
+import ftbOrientationImg from '@/assets/guides/ftb-orientation.jpg';
+import sellOrientationImg from '@/assets/guides/sell-orientation.jpg';
+
 /**
  * Guide Media Slots - Per-guide media placement configuration
  * 
@@ -6,7 +9,6 @@
  * 
  * Rule: Max 1 human element per guide (video OR pull-quote-image, not both).
  */
-
 export type MediaSlotVariant = 'orientation' | 'trust' | 'clarity';
 
 export interface MediaSlot {
@@ -54,6 +56,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Calm visual after intro to reduce cognitive load before financial section',
       alt: 'A welcoming Tucson home exterior',
       altEs: 'Exterior acogedor de una casa en Tucson',
+      src: ftbOrientationImg,
     },
     {
       id: 'ftb-trust',
@@ -86,6 +89,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Warm image after emotional validation section to transition into process',
       alt: 'A Tucson home ready for sale',
       altEs: 'Una casa en Tucson lista para la venta',
+      src: sellOrientationImg,
     },
     {
       id: 'sell-trust',
