@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { normalizeIntent, normalizeTimeline, computeLeadScore, shouldSkipScoreLog } from "../_shared/normalizeLead.ts";
+import { normalizeIntent, normalizeTimeline, normalizeCondition, normalizeSituation, computeLeadScore, shouldSkipScoreLog } from "../_shared/normalizeLead.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -155,8 +155,8 @@ Deno.serve(async (req) => {
           name: sanitizedPayload.name,
           intent: 'sell',
           timeline: normalizedTimeline.canonical,
-          situation: sanitizedPayload.situation,
-          condition: sanitizedPayload.condition,
+          situation: normalizeSituation(sanitizedPayload.situation),
+          condition: normalizeCondition(sanitizedPayload.condition),
           source: 'seller_funnel',
           session_id: payload.sessionId || null,
         })
@@ -173,8 +173,8 @@ Deno.serve(async (req) => {
           language: payload.language || 'en',
           intent: 'sell',
           timeline: normalizedTimeline.canonical,
-          situation: sanitizedPayload.situation,
-          condition: sanitizedPayload.condition,
+          situation: normalizeSituation(sanitizedPayload.situation),
+          condition: normalizeCondition(sanitizedPayload.condition),
           source: 'seller_funnel',
           session_id: payload.sessionId || null,
         })
@@ -213,7 +213,7 @@ Deno.serve(async (req) => {
     // Persist score + grade to lead_profiles
     await supabase
       .from('lead_profiles')
-      .update({ lead_score: scoreResult.lead_score, lead_grade: scoreResult.lead_score_bucket })
+      .update({ lead_score: scoreResult.lead_score, lead_grade: scoreResult.lead_grade })
       .eq('id', canonicalLeadId);
 
     // Deduped event log (Guardrail 4)

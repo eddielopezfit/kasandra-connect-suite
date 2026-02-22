@@ -13,9 +13,9 @@ const INTENT_MAP: Record<string, { canonical: string; raw: string }> = {
   // Cash offer intents
   cash_offer: { canonical: 'cash', raw: 'cash_offer' },
   cash: { canonical: 'cash', raw: 'cash_offer' },
-  // Dual intent (VIP)
-  buy_and_sell: { canonical: 'dual', raw: 'buy_and_sell' },
-  dual: { canonical: 'dual', raw: 'buy_and_sell' },
+  // Dual intent (maps to sell for DB constraint)
+  buy_and_sell: { canonical: 'sell', raw: 'buy_and_sell' },
+  dual: { canonical: 'sell', raw: 'buy_and_sell' },
   // Nurture/browsing intents
   browsing: { canonical: 'explore', raw: 'browsing' },
   unknown: { canonical: 'explore', raw: 'browsing' },
@@ -31,7 +31,7 @@ const INTENT_MAP: Record<string, { canonical: string; raw: string }> = {
  */
 
 export interface NormalizedIntent {
-  canonical: 'buy' | 'sell' | 'cash' | 'dual' | 'explore' | null;
+  canonical: 'buy' | 'sell' | 'cash' | 'explore' | null;
   raw: string | null;
 }
 
@@ -56,7 +56,7 @@ export function normalizeIntent(raw: string | undefined | null): NormalizedInten
     return { canonical: null, raw: null };
   }
 
-  const intentMap: Record<string, 'buy' | 'sell' | 'cash' | 'dual' | 'explore'> = {
+  const intentMap: Record<string, 'buy' | 'sell' | 'cash' | 'explore'> = {
     buyer: 'buy',
     buy: 'buy',
     buying: 'buy',
@@ -65,8 +65,8 @@ export function normalizeIntent(raw: string | undefined | null): NormalizedInten
     selling: 'sell',
     cash_offer: 'cash',
     cash: 'cash',
-    buy_and_sell: 'dual',
-    dual: 'dual',
+    buy_and_sell: 'sell', // DB constraint doesn't allow 'dual'; map to primary action
+    dual: 'sell',
     browsing: 'explore',
     unknown: 'explore',
     exploring: 'explore',
@@ -108,6 +108,44 @@ export function normalizeTimeline(raw: string | undefined | null): NormalizedTim
   return { canonical, raw };
 }
 
+// ── DB-safe value normalizers ────────────────────────────────────────────────
+
+/**
+ * Normalize condition to DB-valid values: move_in_ready | minor_repairs | distressed | null
+ * Maps ad funnel values (excellent/good/fair/poor/needs_work) to DB constraint values
+ */
+export function normalizeCondition(raw: string | undefined | null): string | null {
+  if (!raw) return null;
+  const map: Record<string, string> = {
+    excellent: 'move_in_ready',
+    good: 'move_in_ready',
+    move_in_ready: 'move_in_ready',
+    fair: 'minor_repairs',
+    needs_work: 'minor_repairs',
+    minor_repairs: 'minor_repairs',
+    poor: 'distressed',
+    distressed: 'distressed',
+  };
+  return map[raw.toLowerCase()] || null;
+}
+
+/**
+ * Normalize situation to DB-valid values: inherited | divorce | tired_landlord | none | null
+ */
+export function normalizeSituation(raw: string | undefined | null): string | null {
+  if (!raw) return null;
+  const map: Record<string, string> = {
+    inherited: 'inherited',
+    divorce: 'divorce',
+    tired_landlord: 'tired_landlord',
+    none: 'none',
+    relocating: 'none',
+    downsizing: 'none',
+    other: 'none',
+  };
+  return map[raw.toLowerCase()] || 'none';
+}
+
 // ── Lead Scoring (Phase E — Shared) ─────────────────────────────────────────
 
 export interface LeadScoreInput {
@@ -125,6 +163,7 @@ export interface LeadScoreInput {
 export interface LeadScoreResult {
   lead_score: number;
   lead_score_bucket: 'hot' | 'warm' | 'cold';
+  lead_grade: 'A' | 'B' | 'C' | 'D';
   score_reasons: string;
 }
 
@@ -207,9 +246,14 @@ export function computeLeadScore(input: LeadScoreInput): LeadScoreResult {
   const lead_score_bucket: 'hot' | 'warm' | 'cold' =
     score >= 75 ? 'hot' : score >= 45 ? 'warm' : 'cold';
 
+  // Map to DB-compatible grade (lead_profiles_lead_grade_check: A/B/C/D)
+  const lead_grade: 'A' | 'B' | 'C' | 'D' =
+    score >= 75 ? 'A' : score >= 45 ? 'B' : score >= 25 ? 'C' : 'D';
+
   return {
     lead_score: score,
     lead_score_bucket,
+    lead_grade,
     score_reasons: reasons.join('|'),
   };
 }
