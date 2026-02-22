@@ -4,6 +4,7 @@ import BuyerReadinessCheck from "@/components/v2/BuyerReadinessCheck";
 import LeadCaptureModal from "@/components/v2/LeadCaptureModal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getSessionContext, updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { getStoredEmail } from "@/lib/analytics/bridgeLeadIdToV2";
 import { Save } from "lucide-react";
 
 const LEAD_ID_KEY = "selena_lead_id";
@@ -28,15 +29,15 @@ const V2BuyerReadinessContent = () => {
         primary_priority: data.primary_priority,
       });
 
-      // Guardrail 2: check lead_id, storedEmail, AND prompted flag
+      // Guardrail 2: check lead_id, storedEmail (cc_user_email), AND prompted flag
       const leadId = localStorage.getItem(LEAD_ID_KEY);
+      const storedEmail = getStoredEmail();
       const ctx = getSessionContext();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const ctxAny = ctx as any;
-      const storedEmail = ctxAny?.email as string | undefined;
-      const alreadyPrompted = !!ctxAny?.tool_buyer_readiness_capture_prompted;
+      const alreadyPrompted = !!(ctx as any)?.tool_buyer_readiness_capture_prompted;
 
       const alreadyKnown = !!leadId || !!storedEmail || alreadyPrompted;
+
 
       // Guardrail 3: namespaced flag to prevent re-open on refresh
       // Using any cast because this is an ad-hoc flag not in SessionContext type
