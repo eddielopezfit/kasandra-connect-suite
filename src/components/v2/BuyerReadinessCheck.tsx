@@ -15,7 +15,11 @@ interface Answer {
   answerIndex: number;
 }
 
-const BuyerReadinessCheck = () => {
+interface BuyerReadinessCheckProps {
+  onScoreRevealed?: (data: { readiness_score: number; primary_priority: string }) => void;
+}
+
+const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps = {}) => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
   const [currentStep, setCurrentStep] = useState(0); // 0 = intro, 1-4 = questions, 5 = results, 6 = selena
@@ -283,6 +287,8 @@ const BuyerReadinessCheck = () => {
           primary_priority,
         });
         setCurrentStep(5); // Go to results
+        // Notify parent of score reveal
+        onScoreRevealed?.({ readiness_score, primary_priority });
       }
     }, 300);
   };

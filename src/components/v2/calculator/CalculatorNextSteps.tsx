@@ -4,11 +4,12 @@
  * Includes contextual guide suggestions based on recommendation
  */
 
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MessageCircle, Calendar, FileText } from "lucide-react";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
+import { setFieldIfEmpty, updateSessionContext } from "@/lib/analytics/selenaSession";
 import GuideSuggestionCard from "@/components/v2/shared/GuideSuggestionCard";
 
 type CalculatorRecommendation = 'cash' | 'traditional' | 'consult' | 'cash_advantage' | 'listing_advantage';
@@ -27,6 +28,7 @@ const CalculatorNextSteps = ({
   recommendation,
 }: CalculatorNextStepsProps) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const handleCTAClick = (ctaName: string, destination: string) => {
     logCTAClick({
@@ -79,19 +81,23 @@ const CalculatorNextSteps = ({
       </p>
 
       {/* Primary CTA: Private Cash Review */}
-      <Link 
-        to="/v2/private-cash-review" 
-        className="block"
-        onClick={() => handleCTAClick(CTA_NAMES.TOOL_PRIVATE_CASH_REVIEW, '/v2/private-cash-review')}
+      <Button
+        onClick={() => {
+          handleCTAClick(CTA_NAMES.TOOL_PRIVATE_CASH_REVIEW, '/v2/private-cash-review');
+          // Guardrail 1: only set intent if empty (preserves sell_compare / sell)
+          setFieldIfEmpty('intent', 'cash');
+          updateSessionContext({
+            entry_source: 'calculator',
+            tool_used: 'tucson_alpha_calculator',
+          });
+          navigate('/v2/private-cash-review');
+        }}
+        className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-xl py-6 text-base shadow-gold group"
       >
-        <Button
-          className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-xl py-6 text-base shadow-gold group"
-        >
-          <FileText className="w-5 h-5 mr-2" />
-          {t("Start My Private Cash Review", "Comenzar Mi Revisión Privada de Efectivo")}
-          <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-        </Button>
-      </Link>
+        <FileText className="w-5 h-5 mr-2" />
+        {t("Start My Private Cash Review", "Comenzar Mi Revisión Privada de Efectivo")}
+        <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+      </Button>
       <p className="text-center text-xs text-cc-slate -mt-2">
         {t(
           "Get a deeper analysis with your specific property details",
