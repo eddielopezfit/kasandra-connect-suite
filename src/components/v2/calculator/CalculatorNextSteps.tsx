@@ -11,6 +11,7 @@ import { ArrowRight, MessageCircle, Calendar, FileText } from "lucide-react";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { setFieldIfEmpty, updateSessionContext } from "@/lib/analytics/selenaSession";
 import { trackCustom } from "@/lib/metaPixel";
+import { supabase } from "@/integrations/supabase/client";
 import GuideSuggestionCard from "@/components/v2/shared/GuideSuggestionCard";
 
 type CalculatorRecommendation = 'cash' | 'traditional' | 'consult' | 'cash_advantage' | 'listing_advantage';
@@ -92,6 +93,22 @@ const CalculatorNextSteps = ({
             entry_source: 'calculator',
             tool_used: 'tucson_alpha_calculator',
           });
+
+          // Fire-and-forget re-score for returning leads
+          const leadId = localStorage.getItem('selena_lead_id');
+          if (leadId) {
+            supabase.functions.invoke('update-lead-score', {
+              body: {
+                lead_id: leadId,
+                session_id: localStorage.getItem('selena_session_id'),
+                tool_used: 'tucson_alpha_calculator',
+                intent: 'cash',
+                has_viewed_report: true,
+                page_path: '/v2/cash-offer-options',
+              },
+            }).catch(() => {}); // fire-and-forget
+          }
+
           navigate('/v2/private-cash-review');
         }}
         className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-xl py-6 text-base shadow-gold group"
