@@ -12,57 +12,68 @@
 
 ---
 
-## Phase 1: Critical Fixes (Must Fix)
+## Phase A: Critical Fixes ✅ Complete
 
-### 1.1 — Fix `quiz_completed` bug in V2HomePathQuiz
-- **File:** `src/pages/v2/V2HomePathQuiz.tsx`
-- **Fix:** Reorder payload so `quiz_completed: true` and `quiz_result_path` come AFTER `...sessionDossier` spread
+- 1.1 — Fixed `quiz_completed` dossier override bug in V2HomePathQuiz
+- 1.2 — Added TCPA consent checkbox to V2HomePathQuiz + V2SellerQuiz
+- 1.3 — Added Private Cash Review CTA to CalculatorNextSteps
+- 1.4 — Added Buyer Readiness lead capture modal with 3 guardrails + fallback save link
 
-### 1.2 — Add TCPA consent checkbox to quiz forms
-- **Files:** `src/pages/v2/V2HomePathQuiz.tsx`, `src/pages/v2/V2SellerQuiz.tsx`
-- **Spec:** Single combined checkbox with bilingual copy via `t()`
-- **Behavior:** Block submission until checked; pass `consent_communications: true` and `consent_ai: true` in payload
+## Phase B: Calculator & Buyer Readiness Enrichment ✅ Complete
 
-### 1.3 — Add Private Cash Review CTA after calculator
-- **File:** `src/components/v2/calculator/CalculatorNextSteps.tsx` or equivalent
-- **Spec:** Bilingual CTA card linking to `/v2/private-cash-review` after results display
+- B1 — Calculator next-steps CTA enriches SessionContext and routes to `/v2/private-cash-review`
+- B2 — Buyer Readiness auto LeadCaptureModal with guardrails (lead_id check, stored email check, namespaced prompted flag)
 
-### 1.4 — Add Buyer Readiness lead capture modal
-- **File:** `src/pages/v2/V2BuyerReadiness.tsx`
-- **Spec:** Trigger `LeadCaptureModal` ~2s after readiness score reveal
+## Phase C: Ad Funnel Bilingual ✅ Complete
+
+- C1 — SellerFunnelLayout: language toggle header + unified brokerage footer
+- C2 — SellerLanding + SelenaTextTrigger fully bilingual with proper accents/punctuation
+- C3 — SellerQuiz: dynamic `getQuizSteps(t)` with full ES accents
+- C4 — SellerResult: bilingual chart, form, proactive Selena message; removed "Certified" claim
+
+## Phase D: Meta Pixel Integration ✅ Complete
+
+### D1 — Pixel Utility + RouteAnalytics
+- **New:** `src/lib/metaPixel.ts` — lazy init, PII-safe, debug/suppress modes
+- **New:** `src/components/RouteAnalytics.tsx` — fires PageView on route change (deduplicated)
+- **Edit:** `src/App.tsx` — RouteAnalytics mounted inside BrowserRouter
+- Env vars: `VITE_META_PIXEL_ID`, `VITE_PIXEL_DEBUG`, `VITE_PIXEL_SUPPRESS`
+
+### D2 — Funnel Event Wiring
+| Page | Events Fired |
+|---|---|
+| `/ad/seller` | ViewContent (mount), SellerQuizStarted (CTA click) |
+| `/ad/seller-quiz` | ViewContent (mount), SellerQuizCompleted (navigate to results) |
+| `/ad/seller-result` | ViewContent (mount, once), Lead + SellerReportUnlocked (form submit) |
+| `/v2/seller-quiz` | Lead + V2QuizCompleted (submit success) |
+| `/v2/buyer-readiness` | BuyerReadinessCompleted (score reveal), Lead + BuyerReadinessLeadCaptured (modal submit) |
+| Calculator Next Steps | PrivateCashReviewRequested (CTA click) |
+
+### D3 — PII & Safety Guardrails
+- No email/phone/name/address in any event params
+- Dollar amounts bucketed via `getDifferenceBand()`: 0-10k, 10-25k, 25-50k, 50k+
+- Readiness scores bucketed via `getScoreBand()`: 0-39, 40-59, 60-79, 80-100
+- Debug mode logs + fires; Suppress mode logs only (no fbq calls)
+
+### D4 — Bugs Fixed
+- `init()` race condition: handles pre-existing `window.fbq` correctly
+- ViewContent spam: separated into own `useEffect([], [])` on SellerResult
 
 ---
 
-## Phase 2: Ad Funnel Bilingual
+## Phase E: Lead Scoring (Edge Function) — Next
 
-### 2.1 — Translate `/ad/seller` (SellerLanding)
-### 2.2 — Translate `/ad/seller-quiz` (SellerQuiz)
-### 2.3 — Translate `/ad/seller-result` (SellerResult)
-### 2.4 — Add language toggle to SellerFunnelLayout
-
----
-
-## Phase 3: Meta Pixel & Telemetry
-
-### 3.1 — Add Meta Pixel base code to `index.html`
-### 3.2 — Implement funnel events (ViewContent, InitiateCheckout, SellerQuizStep, Lead)
-### 3.3 — Server-side CAPI edge function (Phase 3b)
-
----
-
-## Phase 4: Lead Scoring (Edge Function)
-
-### 4.1 — Add scoring logic to submit edge functions
+### E1 — Add scoring logic to submit edge functions
 - **Signals:** quiz_completed, readiness_score, tool_used, intent, timeline urgency, consent
-- **Output:** Numeric `lead_score` (0-100) → `lead_profiles.lead_score` + GHL
+- **Output:** Numeric `lead_score` (0-100) → `lead_profiles.lead_score` + `lead_grade` (hot/warm/cold)
 
 ---
 
-## Phase 5: Nice-to-Have (Future)
+## Phase F: Nice-to-Have (Future)
 
 - Buyer ad funnel (`/ad/buyer`)
 - Off-market/VIP buyer access gate
 - Guide read history sync to CRM
 - Calculator lead capture
-- Corner Connect brand clarification
 - Google Sign-In repositioning
+- Server-side Conversions API edge function (CAPI — Phase D2.5)
