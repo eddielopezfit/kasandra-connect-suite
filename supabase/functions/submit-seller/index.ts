@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { normalizeIntent, normalizeTimeline, computeLeadScore, shouldSkipScoreLog } from "../_shared/normalizeLead.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,7 +21,6 @@ interface SellerLeadPayload {
 }
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -28,7 +28,6 @@ Deno.serve(async (req) => {
   try {
     const payload: SellerLeadPayload = await req.json();
 
-    // Validate required fields
     if (!payload.name || !payload.email) {
       console.error("Validation failed: Missing name or email");
       return new Response(
@@ -37,7 +36,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(payload.email)) {
       console.error("Validation failed: Invalid email format");
@@ -47,10 +45,8 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Normalize and sanitize email
     const normalizedEmail = payload.email.trim().toLowerCase();
 
-    // Sanitize inputs - trim and limit length
     const sanitizedPayload = {
       name: payload.name.trim().slice(0, 100),
       email: normalizedEmail.slice(0, 255),
@@ -70,12 +66,11 @@ Deno.serve(async (req) => {
       hasAddress: !!sanitizedPayload.property_address,
     });
 
-    // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Check for existing lead by email (dedupe logic)
+    // ── Save to seller_leads (existing behavior) ──
     const { data: existing } = await supabase
       .from('seller_leads')
       .select('id, name, situation, condition, timeline')
@@ -83,11 +78,10 @@ Deno.serve(async (req) => {
       .limit(1)
       .maybeSingle();
 
-    let leadData;
+    let sellerLeadData;
     let isNew = true;
 
     if (existing) {
-      // Update existing record - merge new data (preserve non-null existing values)
       isNew = false;
       console.log("[submit-seller] Updating existing seller lead:", existing.id);
       
@@ -113,9 +107,8 @@ Deno.serve(async (req) => {
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      leadData = data;
+      sellerLeadData = data;
     } else {
-      // Insert new record
       const { data, error: insertError } = await supabase
         .from('seller_leads')
         .insert(sanitizedPayload)
@@ -129,23 +122,128 @@ Deno.serve(async (req) => {
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      leadData = data;
+      sellerLeadData = data;
     }
 
-    console.log("[submit-seller] Lead saved to database:", { id: leadData.id, isNew });
+    console.log("[submit-seller] Lead saved to seller_leads:", { id: sellerLeadData.id, isNew });
 
-    // POST to GoHighLevel webhook
+    // ── Upsert into lead_profiles (Phase E — Guardrail 1: email + session dedup) ──
+    const normalizedTimeline = normalizeTimeline(sanitizedPayload.timeline);
+    let canonicalLeadId: string;
+
+    // Guardrail 1: Primary match on email, secondary on session_id
+    let profileMatch = await supabase
+      .from('lead_profiles')
+      .select('id, lead_score')
+      .eq('email', normalizedEmail)
+      .maybeSingle();
+
+    if (!profileMatch.data && payload.sessionId) {
+      // Secondary: check if session_id maps to an existing lead
+      profileMatch = await supabase
+        .from('lead_profiles')
+        .select('id, lead_score')
+        .eq('session_id', payload.sessionId)
+        .maybeSingle();
+    }
+
+    if (profileMatch.data) {
+      // Update existing lead_profiles row
+      await supabase
+        .from('lead_profiles')
+        .update({
+          name: sanitizedPayload.name,
+          intent: 'sell',
+          timeline: normalizedTimeline.canonical,
+          situation: sanitizedPayload.situation,
+          condition: sanitizedPayload.condition,
+          source: 'seller_funnel',
+          session_id: payload.sessionId || null,
+        })
+        .eq('id', profileMatch.data.id);
+
+      canonicalLeadId = profileMatch.data.id;
+    } else {
+      // Insert new lead_profiles row
+      const { data: newProfile, error: profileInsertErr } = await supabase
+        .from('lead_profiles')
+        .insert({
+          email: normalizedEmail,
+          name: sanitizedPayload.name,
+          language: payload.language || 'en',
+          intent: 'sell',
+          timeline: normalizedTimeline.canonical,
+          situation: sanitizedPayload.situation,
+          condition: sanitizedPayload.condition,
+          source: 'seller_funnel',
+          session_id: payload.sessionId || null,
+        })
+        .select('id')
+        .single();
+
+      if (profileInsertErr) {
+        console.error("[submit-seller] lead_profiles insert error:", profileInsertErr);
+        // Non-fatal — seller_leads was already saved
+        canonicalLeadId = sellerLeadData.id;
+      } else {
+        canonicalLeadId = newProfile.id;
+      }
+    }
+
+    // ── Lead Scoring (Phase E) ──
+    // Guardrail 2: quiz_completed only if at least 3 of 4 quiz fields are non-empty
+    const quizFields = [sanitizedPayload.situation, sanitizedPayload.condition, sanitizedPayload.timeline, sanitizedPayload.estimated_value];
+    const filledQuizFields = quizFields.filter(f => f && f.trim()).length;
+    const quizCompleted = filledQuizFields >= 3;
+
+    const scoreResult = computeLeadScore({
+      intent_canonical: 'sell',
+      timeline_canonical: normalizedTimeline.canonical,
+      quiz_completed: quizCompleted,
+      phone: null, // ad funnel doesn't collect phone
+      property_address: sanitizedPayload.property_address,
+      tool_used: 'seller_quiz',
+      readiness_score: null,
+      consent_communications: false, // Guardrail 3: no consent checkbox in ad funnel
+      has_viewed_report: false,
+    });
+
+    console.log("[submit-seller] Lead score computed:", scoreResult);
+
+    // Persist score + grade to lead_profiles
+    await supabase
+      .from('lead_profiles')
+      .update({ lead_score: scoreResult.lead_score, lead_grade: scoreResult.lead_score_bucket })
+      .eq('id', canonicalLeadId);
+
+    // Deduped event log (Guardrail 4)
+    const skipLog = await shouldSkipScoreLog(supabase, canonicalLeadId, scoreResult.lead_score);
+    if (!skipLog) {
+      await supabase.from('event_log').insert({
+        event_type: 'lead_score_computed',
+        session_id: canonicalLeadId,
+        event_payload: {
+          lead_id: canonicalLeadId,
+          seller_lead_id: sellerLeadData.id,
+          session_id: payload.sessionId || null,
+          lead_score: scoreResult.lead_score,
+          lead_score_bucket: scoreResult.lead_score_bucket,
+          score_reasons: scoreResult.score_reasons,
+          quiz_fields_filled: filledQuizFields,
+        },
+      });
+    }
+
+    // ── GHL Webhook ──
     const ghlWebhookUrl = Deno.env.get('GHL_WEBHOOK_URL');
     let ghlSynced = false;
     
     if (ghlWebhookUrl) {
       try {
-        // Parse name into first/last
         const nameParts = sanitizedPayload.name.split(' ');
         const firstName = nameParts[0] || sanitizedPayload.name;
         const lastName = nameParts.slice(1).join(' ') || '';
 
-        // Build semantic tags based on quiz answers
         const situationTagMap: Record<string, string[]> = {
           inherited: ['Legacy Property Seller', 'situation_inherited'],
           relocating: ['Relocation Seller', 'situation_relocating'],
@@ -154,14 +252,12 @@ Deno.serve(async (req) => {
           tired_landlord: ['Tired Landlord', 'situation_tired_landlord'],
           other: ['situation_other'],
         };
-
         const conditionTagMap: Record<string, string> = {
           excellent: 'condition_move_in_ready',
           good: 'condition_minor_repairs',
           fair: 'condition_needs_work',
           poor: 'condition_distressed',
         };
-
         const timelineTagMap: Record<string, string> = {
           asap: 'timeline_urgent',
           soon: 'timeline_30_days',
@@ -169,7 +265,6 @@ Deno.serve(async (req) => {
           'no-rush': 'timeline_no_rush',
         };
 
-        // Build tags array with semantic situation tags
         const baseTags = ["Seller Funnel", "seller_funnel"];
         const situationTags = sanitizedPayload.situation 
           ? (situationTagMap[sanitizedPayload.situation] || [`situation_${sanitizedPayload.situation}`]) 
@@ -187,31 +282,31 @@ Deno.serve(async (req) => {
           conditionTag,
           timelineTag,
           payload.language === 'es' ? 'spanish_speaker' : 'english_speaker',
+          quizCompleted ? 'quiz_completed' : null,
         ].filter(Boolean) as string[];
 
-        // STANDARDIZED GHL PAYLOAD with selena_* prefixed keys at top level
         const ghlPayload = {
-          // Standard contact fields
           email: sanitizedPayload.email,
           name: sanitizedPayload.name,
           firstName,
           lastName,
           tags: allTags,
           
-          // STANDARDIZED selena_* top-level keys for GHL workflow mapping
-          selena_lead_id: leadData.id,
+          // STANDARDIZED selena_* top-level keys
+          selena_lead_id: canonicalLeadId,
           selena_session_id: payload.sessionId || null,
           selena_intent_canonical: 'sell',
           selena_language_raw: payload.language || 'en',
           selena_timeline_raw: sanitizedPayload.timeline || null,
           selena_budget_raw: sanitizedPayload.estimated_value || null,
-          selena_target_neighborhoods: null, // N/A for sellers
+          selena_target_neighborhoods: null,
           selena_property_address: sanitizedPayload.property_address || null,
-          selena_is_pre_approved: 'No', // N/A for sellers
+          selena_is_pre_approved: 'No',
+          selena_lead_score: scoreResult.lead_score,
           
-          // Keep customField for rich context / backward compatibility
           customField: {
-            lead_id: leadData.id,
+            lead_id: canonicalLeadId,
+            seller_lead_id: sellerLeadData.id,
             situation: sanitizedPayload.situation,
             condition: sanitizedPayload.condition,
             timeline: sanitizedPayload.timeline,
@@ -219,53 +314,45 @@ Deno.serve(async (req) => {
             property_address: sanitizedPayload.property_address,
             cash_offer: sanitizedPayload.calculated_cash_offer,
             listing_net: sanitizedPayload.calculated_listing_net,
+            // Phase E scoring
+            lead_score: scoreResult.lead_score,
+            lead_score_bucket: scoreResult.lead_score_bucket,
+            lead_score_reasons: scoreResult.score_reasons,
           },
           source: "Seller Funnel - Tucson Inherited Homes"
         };
 
-        console.log("[submit-seller] Sending to GHL webhook with standardized payload...");
+        console.log("[submit-seller] Sending to GHL webhook with scoring...");
         
         const ghlResponse = await fetch(ghlWebhookUrl, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(ghlPayload),
         });
 
         if (!ghlResponse.ok) {
           console.error("[submit-seller] GHL webhook failed:", ghlResponse.status);
-          
-          // Log failure to event_log for monitoring
           await supabase.from('event_log').insert({
             event_type: 'ghl_sync_failed',
-            session_id: leadData.id,
-            event_payload: {
-              lead_id: leadData.id,
-              email: sanitizedPayload.email,
-              error: `HTTP ${ghlResponse.status}`,
-              funnel: 'seller',
-              timestamp: new Date().toISOString()
-            }
+            session_id: canonicalLeadId,
+            event_payload: { lead_id: canonicalLeadId, error: `HTTP ${ghlResponse.status}`, funnel: 'seller' },
           });
         } else {
           ghlSynced = true;
           console.log("[submit-seller] GHL webhook success");
+
+          // Update ghl_synced_at on lead_profiles
+          await supabase
+            .from('lead_profiles')
+            .update({ ghl_synced_at: new Date().toISOString() })
+            .eq('id', canonicalLeadId);
         }
       } catch (ghlError) {
         console.error("[submit-seller] GHL webhook error:", ghlError);
-        
-        // Log exception to event_log
         await supabase.from('event_log').insert({
           event_type: 'ghl_sync_failed',
-          session_id: leadData.id,
-          event_payload: {
-            lead_id: leadData.id,
-            email: sanitizedPayload.email,
-            error: ghlError instanceof Error ? ghlError.message : 'Unknown error',
-            funnel: 'seller',
-            timestamp: new Date().toISOString()
-          }
+          session_id: canonicalLeadId,
+          event_payload: { lead_id: canonicalLeadId, error: ghlError instanceof Error ? ghlError.message : 'Unknown error', funnel: 'seller' },
         });
       }
     } else {
@@ -276,9 +363,11 @@ Deno.serve(async (req) => {
       JSON.stringify({ 
         ok: true, 
         message: "Lead submitted successfully",
-        lead_id: leadData.id,
+        lead_id: canonicalLeadId,
+        seller_lead_id: sellerLeadData.id,
         is_new: isNew,
-        ghl_synced: ghlSynced
+        ghl_synced: ghlSynced,
+        lead_score: scoreResult.lead_score,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

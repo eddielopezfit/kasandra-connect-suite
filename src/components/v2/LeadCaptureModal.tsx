@@ -111,6 +111,13 @@ const LeadCaptureModal = ({
           utm_source: context?.utm_source,
           utm_campaign: context?.utm_campaign,
           intent: context?.intent || null,
+          // Phase E: scoring context from SessionContext
+          tool_used: context?.tool_used || null,
+          readiness_score: context?.readiness_score || null,
+          quiz_completed: context?.quiz_completed || false,
+          has_viewed_report: context?.has_viewed_report || false,
+          timeline: context?.timeline || null,
+          consent_communications: false, // Guardrail 3: no explicit consent checkbox in modal
         },
       });
 
