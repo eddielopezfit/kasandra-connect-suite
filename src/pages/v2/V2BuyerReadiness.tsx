@@ -6,6 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { getSessionContext, updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { getStoredEmail } from "@/lib/analytics/bridgeLeadIdToV2";
 import { Save } from "lucide-react";
+import { track, trackCustom, getScoreBand } from "@/lib/metaPixel";
 
 const LEAD_ID_KEY = "selena_lead_id";
 
@@ -26,6 +27,11 @@ const V2BuyerReadinessContent = () => {
       updateSessionContext({
         tool_used: "buyer_readiness",
         readiness_score: data.readiness_score,
+        primary_priority: data.primary_priority,
+      });
+
+      trackCustom("BuyerReadinessCompleted", {
+        readiness_score_band: getScoreBand(data.readiness_score),
         primary_priority: data.primary_priority,
       });
 
@@ -64,6 +70,8 @@ const V2BuyerReadinessContent = () => {
   };
 
   const handleModalSuccess = () => {
+    track("Lead", { content_category: "buyer_readiness" });
+    trackCustom("BuyerReadinessLeadCaptured", { content_category: "buyer_readiness" });
     setCaptured(true);
     setShowSaveLink(false);
   };

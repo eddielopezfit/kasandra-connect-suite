@@ -8,6 +8,7 @@ import { ChevronLeft, MapPin, ArrowRight } from "lucide-react";
 import { initAdFunnelSession } from "@/lib/analytics/initAdFunnelSession";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { track, trackCustom } from "@/lib/metaPixel";
 
 // Value ranges kept here for reference (used in SellerResult calculator)
 // "under-200k": 175000, "200-350k": 275000, "350-500k": 425000, "over-500k": 600000
@@ -88,12 +89,21 @@ const SellerQuiz = () => {
   useEffect(() => {
     initAdFunnelSession();
     updateSessionContext({ ad_funnel_source: 'seller_quiz' });
+    track("ViewContent", { content_name: "Seller Quiz", content_category: "seller_funnel" });
   }, []);
 
   const progress = ((currentStep + 1) / quizSteps.length) * 100;
   const currentQuestion = quizSteps[currentStep];
 
   const navigateToResults = (finalAnswers: Record<string, string>) => {
+    trackCustom("SellerQuizCompleted", {
+      content_category: "seller_funnel",
+      situation: finalAnswers.situation || "",
+      condition: finalAnswers.condition || "",
+      timeline: finalAnswers.timeline || "",
+      value_band: finalAnswers.value || "",
+      has_address: !!finalAnswers.address,
+    });
     const params = new URLSearchParams({
       situation: finalAnswers.situation || '',
       condition: finalAnswers.condition || '',

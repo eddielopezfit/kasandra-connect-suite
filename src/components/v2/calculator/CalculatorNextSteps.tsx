@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, MessageCircle, Calendar, FileText } from "lucide-react";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { setFieldIfEmpty, updateSessionContext } from "@/lib/analytics/selenaSession";
+import { trackCustom } from "@/lib/metaPixel";
 import GuideSuggestionCard from "@/components/v2/shared/GuideSuggestionCard";
 
 type CalculatorRecommendation = 'cash' | 'traditional' | 'consult' | 'cash_advantage' | 'listing_advantage';
@@ -84,6 +85,7 @@ const CalculatorNextSteps = ({
       <Button
         onClick={() => {
           handleCTAClick(CTA_NAMES.TOOL_PRIVATE_CASH_REVIEW, '/v2/private-cash-review');
+          trackCustom("PrivateCashReviewRequested", { content_category: "calculator" });
           // Guardrail 1: only set intent if empty (preserves sell_compare / sell)
           setFieldIfEmpty('intent', 'cash');
           updateSessionContext({
