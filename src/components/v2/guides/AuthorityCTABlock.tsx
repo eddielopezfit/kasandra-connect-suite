@@ -70,8 +70,8 @@ const CTA_CONFIG: Record<GuideCategory, {
 }> = {
   buying: {
     link: 'selena_chat',
-    labelEn: 'Book Your Buyer Strategy Session',
-    labelEs: 'Reserve Su Sesión de Estrategia para Comprador',
+    labelEn: 'Get Clarity on Your Buying Journey',
+    labelEs: 'Obtenga Claridad sobre Su Proceso de Compra',
     icon: MessageCircle,
     routeThruSelena: true,
   },
