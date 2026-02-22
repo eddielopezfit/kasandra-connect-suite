@@ -5,6 +5,10 @@ import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageToggle from "@/components/v2/LanguageToggle";
 import { AuthorityCTABlock, SelenaGuideHandoff, GuideComplianceFooter } from "@/components/v2/guides";
+import GuideImage from "@/components/v2/guides/GuideImage";
+import GuideVideo from "@/components/v2/guides/GuideVideo";
+import GuidePullQuote from "@/components/v2/guides/GuidePullQuote";
+import { GUIDE_MEDIA_SLOTS, validateMediaSlots, type MediaSlot } from "@/lib/guides/guideMediaSlots";
 import { useGuideScrollTracking } from "@/hooks/useGuideScrollTracking";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { markGuideRead, setLastGuideId } from "@/lib/guides/personalization";
@@ -443,6 +447,18 @@ const V2GuideDetail = () => {
     }
   }, [guideId, guideTitle]);
 
+  // Renders a single media slot — returns null if no content
+  const MediaSlotRenderer = ({ slot }: { slot: MediaSlot }) => {
+    if (slot.type === 'pull-quote-image') {
+      return <GuidePullQuote quote={slot.quote} quoteEs={slot.quoteEs} />;
+    }
+    if (slot.type === 'video') {
+      return <GuideVideo src={slot.src} posterSrc={slot.posterSrc} alt={slot.alt} altEs={slot.altEs} />;
+    }
+    // image or checklist-image
+    return <GuideImage src={slot.src} alt={slot.alt} altEs={slot.altEs} />;
+  };
+
   return (
     <V2Layout>
       {/* Hero Section */}
@@ -497,41 +513,39 @@ const V2GuideDetail = () => {
           </div>
         </section>
 
-        {/* Content Sections with Strategic Media Placeholders */}
-        {guide.sections.map((section, index) => (
-          <div key={index}>
-            <section
-              className={`py-12 ${index % 2 === 0 ? "bg-cc-sand" : "bg-white"}`}
-            >
-              <div className="container mx-auto px-4">
-                <div className="max-w-3xl mx-auto">
-                  <h2 className="font-serif text-2xl md:text-3xl text-cc-navy mb-6">
-                    {t(section.heading, section.headingEs)}
-                  </h2>
-                  <div className="text-cc-charcoal leading-relaxed text-lg whitespace-pre-line">
-                    {t(section.content, section.contentEs)}
+        {/* Media slots after intro (afterSection === -1) */}
+        {(() => {
+          const slots = guideId ? GUIDE_MEDIA_SLOTS[guideId] : undefined;
+          if (slots && guideId) validateMediaSlots(slots, guideId);
+          const introSlots = slots?.filter((s) => s.afterSection === -1) || [];
+          return introSlots.map((slot) => <MediaSlotRenderer key={slot.id} slot={slot} />);
+        })()}
+
+        {/* Content Sections with Per-Guide Media Slots */}
+        {guide.sections.map((section, index) => {
+          const slots = guideId ? GUIDE_MEDIA_SLOTS[guideId] : undefined;
+          const sectionSlots = slots?.filter((s) => s.afterSection === index) || [];
+
+          return (
+            <div key={index}>
+              <section
+                className={`py-12 ${index % 2 === 0 ? "bg-cc-sand" : "bg-white"}`}
+              >
+                <div className="container mx-auto px-4">
+                  <div className="max-w-3xl mx-auto">
+                    <h2 className="font-serif text-2xl md:text-3xl text-cc-navy mb-6">
+                      {t(section.heading, section.headingEs)}
+                    </h2>
+                    <div className="text-cc-charcoal leading-relaxed text-lg whitespace-pre-line">
+                      {t(section.content, section.contentEs)}
+                    </div>
                   </div>
-                  
-                  {/* Media Placeholder: after section 1 (image) and section 3 (video) */}
-                  {index === 1 && guide.sections.length > 3 && (
-                    <div className="mt-8 rounded-xl border-2 border-dashed border-cc-sand-dark/40 bg-cc-sand/30 p-8 text-center">
-                      <div className="text-cc-slate text-sm">
-                        {t("[Image: Visual reinforcement for this section]", "[Imagen: Refuerzo visual para esta sección]")}
-                      </div>
-                    </div>
-                  )}
-                  {index === 3 && guide.sections.length > 5 && (
-                    <div className="mt-8 rounded-xl border-2 border-dashed border-cc-sand-dark/40 bg-cc-sand/30 p-8 text-center">
-                      <div className="text-cc-slate text-sm">
-                        {t("[Video: Short explainer from Kasandra on this topic]", "[Video: Explicación breve de Kasandra sobre este tema]")}
-                      </div>
-                    </div>
-                  )}
                 </div>
-              </div>
-            </section>
-          </div>
-        ))}
+              </section>
+              {sectionSlots.map((slot) => <MediaSlotRenderer key={slot.id} slot={slot} />)}
+            </div>
+          );
+        })}
 
         {/* Next Steps Summary */}
 
