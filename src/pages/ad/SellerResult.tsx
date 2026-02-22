@@ -64,13 +64,17 @@ const SellerResultContent = () => {
     return calculateNetProceeds(estimatedValue);
   }, [quizAnswers.value]);
   
-  // Store difference for booking page context continuity + ViewContent
+  // Store difference for booking page context continuity
   useEffect(() => {
     if (calculations.difference) {
       localStorage.setItem('cc_net_sheet_difference', String(calculations.difference));
     }
-    track("ViewContent", { content_name: "Seller Result", content_category: "seller_funnel" });
   }, [calculations.difference]);
+
+  // ViewContent — once per page load
+  useEffect(() => {
+    track("ViewContent", { content_name: "Seller Result", content_category: "seller_funnel" });
+  }, []);
   
   // Loss aversion timer - proactive Selena chat trigger after 30 seconds
   useEffect(() => {
