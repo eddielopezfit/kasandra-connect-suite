@@ -154,10 +154,30 @@ Deno.serve(async (req) => {
             .update({ ghl_synced_at: new Date().toISOString() })
             .eq('id', lead.id);
         } else {
-          console.error("[update-lead-score] GHL failed:", ghlResponse.status);
+          const errorText = await ghlResponse.text();
+          console.error("[update-lead-score] GHL failed:", { status: ghlResponse.status, error: errorText });
+          await supabase.from('event_log').insert({
+            event_type: 'ghl_sync_failed',
+            session_id: input.session_id || lead.id,
+            event_payload: {
+              lead_id: lead.id,
+              funnel: 'update-lead-score',
+              error: errorText?.slice(0, 500) || 'unknown',
+              status: ghlResponse.status,
+            },
+          });
         }
       } catch (ghlErr) {
         console.error("[update-lead-score] GHL error:", ghlErr);
+        await supabase.from('event_log').insert({
+          event_type: 'ghl_sync_failed',
+          session_id: input.session_id || lead.id,
+          event_payload: {
+            lead_id: lead.id,
+            funnel: 'update-lead-score',
+            error: String((ghlErr as Error)?.message ?? ghlErr),
+          },
+        });
       }
     }
 

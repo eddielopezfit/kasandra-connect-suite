@@ -88,13 +88,65 @@
 - Passes `tool_used`, `readiness_score`, `quiz_completed`, `has_viewed_report`, `timeline` from SessionContext
 - Guardrail 3: `consent_communications: false` explicitly set
 
+### E6 — update-lead-score Merge Fix + Re-scoring Wiring
+- Fixed `update-lead-score` to accept `intent`/`timeline` and merge with stored lead data (input wins)
+- Calculator CTA (`CalculatorNextSteps`) fires fire-and-forget re-score via `update-lead-score`
+- Buyer Readiness (`V2BuyerReadiness`) already fires fire-and-forget re-score on score reveal
+- All 3 scoring paths verified E2E; test data cleaned
+
 ---
 
-## Phase F: Nice-to-Have (Future)
+## Phase F: Production Hardening ✅ Complete
 
+### F1 — GHL Sync Failure Logging
+- Added `ghl_sync_failed` event_log inserts to `upsert-lead-profile` and `update-lead-score`
+- No PII in payload (lead_id only, no email)
+- `session_id` prefers real session_id, falls back to leadId
+- Error text truncated to 500 chars; `funnel` tag distinguishes origin
+- Now all 4 scoring edge functions log GHL failures consistently
+
+### F2 — Scoring Health Dashboard Queries
+- Created `directives/scoring_health_queries.md` with operational SQL:
+  - Leads by bucket (24h / 7d)
+  - Scored vs unscored coverage %
+  - GHL sync failures by funnel (24h / 7d)
+  - Score distribution histogram
+  - Recent score events (debug)
+
+---
+
+## Phase G: GHL Workflow Routing Alignment (GHL-side only)
+
+### G1 — Custom Field Verification
+Verify these 3 fields exist in GHL and are mapped:
+- `selena_lead_score` — sent by all scoring edge functions
+- `lead_score_bucket` — in customField payload
+- `lead_score_reasons` — in customField payload
+
+### G2 — Bucket-Based Workflow Routing
+| Bucket | Workflow |
+|---|---|
+| `hot` (≥75) | Human-engaged: immediate notification + priority call |
+| `hot` + `intent=cash` | Cash Review follow-up branch |
+| `warm` (45-74) | Nurture sequence + booking CTA |
+| `warm` + `intent=sell` | Net Sheet Nurture branch |
+| `cold` (<45) | Education drip + retargeting |
+
+---
+
+## Phase H: Hub Completion (Launch-Ready)
+
+### H1 — North Star Journeys ✅ Complete
+| Journey | Path | Status |
+|---|---|---|
+| Seller | Ad funnel → quiz → report → booking | Complete |
+| Buyer | Readiness → capture → consult → booking | Complete |
+| Cash | Calculator → private review → consult → booking | Complete |
+
+### H2 — Nice-to-Have (Future)
 - Buyer ad funnel (`/ad/buyer`)
 - Off-market/VIP buyer access gate
 - Guide read history sync to CRM
-- Calculator lead capture
+- Calculator lead capture (currently fire-and-forget re-score only)
 - Google Sign-In repositioning
-- Server-side Conversions API edge function (CAPI — Phase D2.5)
+- Server-side Conversions API edge function (CAPI)
