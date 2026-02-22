@@ -5,6 +5,7 @@ import LeadCaptureModal from "@/components/v2/LeadCaptureModal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getSessionContext, updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { getStoredEmail } from "@/lib/analytics/bridgeLeadIdToV2";
+import { supabase } from "@/integrations/supabase/client";
 import { Save } from "lucide-react";
 import { track, trackCustom, getScoreBand } from "@/lib/metaPixel";
 
@@ -51,6 +52,25 @@ const V2BuyerReadinessContent = () => {
       updateSessionContext({
         tool_buyer_readiness_capture_prompted: true,
       } as any);
+
+      // Re-score returning leads on tool completion (no modal needed)
+      if (leadId) {
+        supabase.functions.invoke("update-lead-score", {
+          body: {
+            lead_id: leadId,
+            session_id: localStorage.getItem("selena_session_id") || undefined,
+            tool_used: "buyer_readiness",
+            readiness_score: data.readiness_score,
+            primary_priority: data.primary_priority,
+            page_path: window.location.pathname,
+            language: localStorage.getItem("kasandra-language") || "en",
+          },
+        }).then((res) => {
+          if (res.data?.ok) {
+            console.log("[BuyerReadiness] Re-scored returning lead:", res.data.lead_score);
+          }
+        }).catch((err) => console.error("[BuyerReadiness] Re-score error:", err));
+      }
 
       if (alreadyKnown) return;
 
