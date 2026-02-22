@@ -21,3 +21,8 @@ export { SituationLane } from './SituationLane';
 export { CognitiveProgressBar } from './CognitiveProgressBar';
 export { ContextualSelenaPrompt } from './ContextualSelenaPrompt';
 export { ResponsiveCategoryNav } from './ResponsiveCategoryNav';
+
+// Guide Media Components
+export { default as GuideImage } from './GuideImage';
+export { default as GuideVideo } from './GuideVideo';
+export { default as GuidePullQuote } from './GuidePullQuote';
