@@ -61,11 +61,32 @@
 
 ---
 
-## Phase E: Lead Scoring (Edge Function) — Next
+## Phase E: Unified Lead Scoring ✅ Complete
 
-### E1 — Add scoring logic to submit edge functions
-- **Signals:** quiz_completed, readiness_score, tool_used, intent, timeline urgency, consent
-- **Output:** Numeric `lead_score` (0-100) → `lead_profiles.lead_score` + `lead_grade` (hot/warm/cold)
+### E1 — Shared `computeLeadScore()` in `_shared/normalizeLead.ts`
+- Rubric: intent(25) + timeline(25) + quiz(10) + phone(10) + address(10) + tool(5) + readiness(5) + consent(5) + report(5) = 100 max
+- Buckets: >=75 hot, >=45 warm, else cold
+- `shouldSkipScoreLog()` dedupe helper (Guardrail 4: no spam within 10 min if score unchanged)
+
+### E2 — DRY refactor `submit-consultation-intake`
+- Replaced 80-line inline `computeLeadScore()` with shared import
+- Persists `lead_score` + `lead_grade` to `lead_profiles`
+- Uses deduped event log
+
+### E3 — Scoring added to `upsert-lead-profile`
+- Accepts `tool_used`, `readiness_score`, `quiz_completed`, `has_viewed_report`, `timeline`, `consent_communications`
+- Guardrail 3: `consent_communications` defaults false — only true when explicitly collected
+- GHL payload includes `selena_lead_score`, `lead_score_bucket`, `lead_score_reasons`
+
+### E4 — Scoring + `lead_profiles` upsert added to `submit-seller`
+- Guardrail 1: email-primary dedup with session_id fallback; reuses canonical lead_id
+- Guardrail 2: `quiz_completed = true` only when >=3 of 4 quiz fields (situation/condition/timeline/value) are non-empty
+- Upserts into `lead_profiles` with intent=sell, timeline, situation, condition
+- GHL payload includes scoring fields
+
+### E5 — Frontend `LeadCaptureModal` enriched
+- Passes `tool_used`, `readiness_score`, `quiz_completed`, `has_viewed_report`, `timeline` from SessionContext
+- Guardrail 3: `consent_communications: false` explicitly set
 
 ---
 
