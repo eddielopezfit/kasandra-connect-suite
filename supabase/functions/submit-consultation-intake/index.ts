@@ -51,12 +51,97 @@ interface ConsultationIntakeInput {
   ad_funnel_value_range?: string;
 }
 
+// ── Lead Scoring ─────────────────────────────────────────────────────────────
+interface LeadScoreResult {
+  lead_score: number;
+  lead_score_bucket: "hot" | "warm" | "cold";
+  score_reasons: string;
+}
+
+function computeLeadScore(input: ConsultationIntakeInput, normalizedIntent: { canonical: string | null }, normalizedTimeline: { canonical: string | null }): LeadScoreResult {
+  let score = 0;
+  const reasons: string[] = [];
+
+  // Intent specificity (+25 max)
+  const intentScores: Record<string, number> = { cash: 25, sell: 20, dual: 20, buy: 15, explore: 5 };
+  const intentPts = intentScores[normalizedIntent.canonical || "explore"] || 5;
+  score += intentPts;
+  reasons.push(`intent:${normalizedIntent.canonical || "explore"}(+${intentPts})`);
+
+  // Timeline urgency (+25 max)
+  const timelineScores: Record<string, number> = { asap: 25, "30_days": 20, "60_90": 15, exploring: 5 };
+  const timelinePts = timelineScores[normalizedTimeline.canonical || "exploring"] || 5;
+  score += timelinePts;
+  reasons.push(`timeline:${normalizedTimeline.canonical || "exploring"}(+${timelinePts})`);
+
+  // Quiz completed (+10)
+  if (input.quiz_completed) {
+    score += 10;
+    reasons.push("quiz_completed(+10)");
+  }
+
+  // Phone provided (+10)
+  if (input.phone && input.phone.trim().length >= 10) {
+    score += 10;
+    reasons.push("phone_provided(+10)");
+  }
+
+  // Property address — check multiple field name variants (Edit #6)
+  const hasAddress = !!(
+    (input.property_address && input.property_address.trim()) ||
+    (input as any).propertyAddress?.trim() ||
+    (input as any).selena_property_address?.trim()
+  );
+  if (hasAddress) {
+    score += 10;
+    reasons.push("property_address(+10)");
+  }
+
+  // Tool used (+5)
+  if (input.tool_used) {
+    score += 5;
+    reasons.push(`tool_used:${input.tool_used}(+5)`);
+  }
+
+  // Readiness score (+5 if >= 60)
+  if (input.readiness_score && input.readiness_score >= 60) {
+    score += 5;
+    reasons.push(`readiness_score:${input.readiness_score}(+5)`);
+  }
+
+  // Consent given (+5)
+  if (input.consent_communications) {
+    score += 5;
+    reasons.push("consent_given(+5)");
+  }
+
+  // Has viewed report (+5)
+  if (input.has_viewed_report) {
+    score += 5;
+    reasons.push("has_viewed_report(+5)");
+  }
+
+  // Cap at 100
+  score = Math.min(score, 100);
+
+  // Bucket thresholds (Edit #5)
+  const lead_score_bucket: "hot" | "warm" | "cold" =
+    score >= 75 ? "hot" : score >= 45 ? "warm" : "cold";
+
+  return {
+    lead_score: score,
+    lead_score_bucket,
+    score_reasons: reasons.join("|"),
+  };
+}
+
 interface ConsultationIntakeResponse {
   ok: boolean;
   lead_id?: string;
   is_new?: boolean;
   ghl_synced?: boolean;
   priority_handoff_triggered?: boolean;
+  lead_score?: number;
   error?: string;
   code?: string;
   field?: string;
@@ -295,6 +380,25 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
       }
     }
 
+    // =====================================================
+    // LEAD SCORING (A3)
+    // =====================================================
+    const scoreResult = computeLeadScore(input, normalizedIntent, normalizedTimeline);
+    console.log("[submit-consultation-intake] Lead score computed:", scoreResult);
+
+    // Log score to event_log
+    await supabase.from("event_log").insert({
+      event_type: "lead_score_computed",
+      session_id: leadId,
+      event_payload: {
+        lead_id: leadId,
+        session_id: input.session_id || null,
+        lead_score: scoreResult.lead_score,
+        lead_score_bucket: scoreResult.lead_score_bucket,
+        score_reasons: scoreResult.score_reasons,
+      },
+    });
+
     // Sync to GoHighLevel
     let ghlSynced = false;
 
@@ -418,7 +522,7 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
           selena_is_pre_approved: input.pre_approved === 'yes' ? 'Yes' : 'No',
           selena_motivation_raw: input.notes || null,
           selena_priority_handoff: priorityHandoffTriggered ? 'hot' : null,
-          
+          selena_lead_score: scoreResult.lead_score,
           // Legacy top-level fields for backward compatibility
           intent_canonical: normalizedIntent.canonical,
           intent_raw: normalizedIntent.raw,
@@ -490,6 +594,10 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
             is_pre_approved: input.pre_approved === 'yes',
             // Priority handoff indicator
             priority_handoff: priorityHandoffTriggered,
+            // Lead scoring
+            lead_score: scoreResult.lead_score,
+            lead_score_bucket: scoreResult.lead_score_bucket,
+            lead_score_reasons: scoreResult.score_reasons,
             // Consent fields (TCPA compliance audit trail)
             selena_consent_communications: input.consent_communications || false,
             selena_consent_ai_disclosure: input.consent_ai || false,
@@ -554,6 +662,7 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
         is_new: isNew,
         ghl_synced: ghlSynced,
         priority_handoff_triggered: priorityHandoffTriggered,
+        lead_score: scoreResult.lead_score,
       } as ConsultationIntakeResponse),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
