@@ -1,1 +1,7 @@
 project_id = "sghuhlmsrmqryfvcbqqj"
+
+[functions.generate-guide-image]
+verify_jwt = false
+
+[functions.generate-all-guide-images]
+verify_jwt = false

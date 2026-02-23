@@ -8,7 +8,7 @@ import { AuthorityCTABlock, SelenaGuideHandoff, GuideComplianceFooter } from "@/
 import GuideImage from "@/components/v2/guides/GuideImage";
 import GuideVideo from "@/components/v2/guides/GuideVideo";
 import GuidePullQuote from "@/components/v2/guides/GuidePullQuote";
-import { GUIDE_MEDIA_SLOTS, validateMediaSlots, type MediaSlot } from "@/lib/guides/guideMediaSlots";
+import { getGovernedMediaSlots, validateMediaSlots, type MediaSlot } from "@/lib/guides/guideMediaSlots";
 import { useGuideScrollTracking } from "@/hooks/useGuideScrollTracking";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { markGuideRead, setLastGuideId } from "@/lib/guides/personalization";
@@ -612,16 +612,16 @@ const V2GuideDetail = () => {
 
         {/* Media slots after intro (afterSection === -1) */}
         {(() => {
-          const slots = guideId ? GUIDE_MEDIA_SLOTS[guideId] : undefined;
-          if (slots && guideId) validateMediaSlots(slots, guideId);
-          const introSlots = slots?.filter((s) => s.afterSection === -1) || [];
+          const slots = guideId ? getGovernedMediaSlots(guideId) : [];
+          if (slots.length && guideId) validateMediaSlots(slots, guideId);
+          const introSlots = slots.filter((s) => s.afterSection === -1);
           return introSlots.map((slot) => <MediaSlotRenderer key={slot.id} slot={slot} />);
         })()}
 
         {/* Content Sections with Per-Guide Media Slots */}
         {guide.sections.map((section, index) => {
-          const slots = guideId ? GUIDE_MEDIA_SLOTS[guideId] : undefined;
-          const sectionSlots = slots?.filter((s) => s.afterSection === index) || [];
+          const slots = guideId ? getGovernedMediaSlots(guideId) : [];
+          const sectionSlots = slots.filter((s) => s.afterSection === index);
 
           return (
             <div key={index}>
