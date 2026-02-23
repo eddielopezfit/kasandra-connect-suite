@@ -328,13 +328,28 @@ function MarkdownRenderer({ markdown }: { markdown: string }) {
         return;
       }
 
-      // Bold text inline (simple replace for **text**)
-      const processInlineStyles = (text: string) => {
-        // Bold
-        let processed = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        // Italic
-        processed = processed.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-        return processed;
+      // Safe inline style rendering without dangerouslySetInnerHTML
+      const renderInlineStyles = (text: string, keyPrefix: string) => {
+        // Split by bold markers first
+        const boldParts = text.split(/\*\*([^*]+)\*\*/g);
+        const elements: React.ReactNode[] = [];
+        boldParts.forEach((part, i) => {
+          if (i % 2 === 1) {
+            // Bold segment
+            elements.push(<strong key={`${keyPrefix}-b-${i}`}>{part}</strong>);
+          } else if (part) {
+            // Check for italic within non-bold segments
+            const italicParts = part.split(/\*([^*]+)\*/g);
+            italicParts.forEach((ip, j) => {
+              if (j % 2 === 1) {
+                elements.push(<em key={`${keyPrefix}-i-${i}-${j}`}>{ip}</em>);
+              } else if (ip) {
+                elements.push(<span key={`${keyPrefix}-t-${i}-${j}`}>{ip}</span>);
+              }
+            });
+          }
+        });
+        return elements;
       };
 
       // Regular paragraph
@@ -343,8 +358,9 @@ function MarkdownRenderer({ markdown }: { markdown: string }) {
         <p
           key={index}
           className="text-base leading-relaxed text-cc-text my-3"
-          dangerouslySetInnerHTML={{ __html: processInlineStyles(trimmed) }}
-        />
+        >
+          {renderInlineStyles(trimmed, `p-${index}`)}
+        </p>
       );
     });
 
