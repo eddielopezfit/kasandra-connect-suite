@@ -76,7 +76,13 @@ const CHIP_ACTION_MAP: Array<{ pattern: string; actionSpec: ActionSpec }> = [
 ];
 
 function normalizeChipLabel(label: string): string {
-  return label.toLowerCase().trim().replace(/[.,!?¿¡]/g, '').replace(/\s+/g, ' ');
+  return label
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // strip diacritics
+    .toLowerCase()
+    .trim()
+    .replace(/[.,!?¿¡]/g, '')
+    .replace(/\s+/g, ' ');
 }
 
 function mapChipsToActionSpecs(replies: string[]): MappedReply[] {
