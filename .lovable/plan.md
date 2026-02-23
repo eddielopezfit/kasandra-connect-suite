@@ -1,48 +1,50 @@
 
 
-# Fix: selling-for-top-dollar "Max 1 Human Element" Rule Violation
+# Wire All Image Slots to Public Asset Paths
 
-## Status of Previous Concerns
+## What Changes
 
-The renderer calls (`MediaSlotRenderer`) are **already correct and compiling**. The component is defined as a proper React component with JSX syntax and stable `key={slot.id}` props. No fix needed there.
+**Single file**: `src/lib/guides/guideMediaSlots.ts`
 
-The only actionable issue is the `selling-for-top-dollar` config violating the "max 1 human element" rule.
+- Remove the two `import` statements for `ftb-orientation.jpg` and `sell-orientation.jpg`
+- Replace imported references with public path strings
+- Add `src` fields to all 16 image/checklist-image slots that are currently missing them
 
----
+## Path Convention
 
-## The Problem
+All paths follow: `/guides/<guide-slug>/<asset-name>.jpg`
 
-In `src/lib/guides/guideMediaSlots.ts`, `selling-for-top-dollar` has:
-- `sell-trust`: type `video` (human element)
-- `sell-clarity`: type `pull-quote-image` (human element)
+| Slot ID | Type | Path |
+|---------|------|------|
+| ftb-orientation | image | `/guides/first-time-buyer-guide/orientation.jpg` |
+| ftb-clarity | checklist-image | `/guides/first-time-buyer-guide/checklist.jpg` |
+| sell-orientation | image | `/guides/selling-for-top-dollar/orientation.jpg` |
+| sell-clarity | image | `/guides/selling-for-top-dollar/clarity.jpg` |
+| val-orientation | image | `/guides/understanding-home-valuation/orientation.jpg` |
+| val-clarity | image | `/guides/understanding-home-valuation/clarity.jpg` |
+| cash-orientation | image | `/guides/cash-offer-guide/orientation.jpg` |
+| cash-clarity | checklist-image | `/guides/cash-offer-guide/checklist.jpg` |
+| ftbs-orientation | image | `/guides/first-time-buyer-story/orientation.jpg` |
+| ftbs-clarity | image | `/guides/first-time-buyer-story/clarity.jpg` |
+| bbs-orientation | image | `/guides/budget-buyer-story/orientation.jpg` |
+| bbs-clarity | image | `/guides/budget-buyer-story/clarity.jpg` |
+| sms-orientation | image | `/guides/seller-stressful-market-story/orientation.jpg` |
+| sms-clarity | image | `/guides/seller-stressful-market-story/clarity.jpg` |
+| ssc-orientation | image | `/guides/spanish-speaking-client-story/orientation.jpg` |
+| ssc-clarity | image | `/guides/spanish-speaking-client-story/clarity.jpg` |
 
-The `validateMediaSlots` guard will fire a console warning once the video slot gets a `src`. The rule says: max 1 human element per guide.
+## What Is NOT Changed
 
-## The Fix
+- **Video slots** (`sell-trust`, `cash-trust`): no `src` added (no video files yet)
+- **Pull-quote-image slots**: no `src` added (they render via `quote` text + Kasandra headshot, no background image needed)
+- No guide text, routing, scoring, analytics, or schema changes
+- No other files modified
 
-**File**: `src/lib/guides/guideMediaSlots.ts` (lines 99-109)
+## Important Note
 
-Change `sell-clarity` from `pull-quote-image` to `image` type and remove the `quote`/`quoteEs` fields. The quote text ("A good decision comes from understanding your options, not from pressure.") is already present in the guide prose, so elevating it as a standalone pull-quote is redundant once the video slot is active.
+The public folder directories (`/public/guides/<slug>/`) and actual image files need to exist for the images to render. Once the `src` paths are wired, `GuideImage` will attempt to load them. Missing files will simply show a broken image -- but the slot system itself will be fully configured and ready for asset drops.
 
-| Field | Before | After |
-|-------|--------|-------|
-| `type` | `pull-quote-image` | `image` |
-| `purpose` | No-pressure reinforcement after sell vs wait comparison | Calm visual anchor after sell vs wait comparison |
-| `quote` | "A good decision comes from understanding..." | (removed) |
-| `quoteEs` | "Una buena decision viene de entender..." | (removed) |
+## Technical Detail
 
-This is a 1-slot config change in a single file. No rendering logic, routing, or content changes.
-
-## Files Changed
-
-| File | Lines | Change |
-|------|-------|--------|
-| `src/lib/guides/guideMediaSlots.ts` | 99-109 | Change sell-clarity type from pull-quote-image to image, remove quote fields |
-
-## What Is NOT Touched
-
-- No rendering logic changes
-- No guide content changes
-- No routing or analytics changes
-- No other guide slot configs
+Lines 1-2 (imports) are removed. The `src` field on `ftb-orientation` (line 59) changes from `ftbOrientationImg` to a string. The `src` field on `sell-orientation` (line 92) changes similarly. All other image/checklist-image slots gain a new `src: '/guides/...'` line.
 
