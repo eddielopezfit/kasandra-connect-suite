@@ -157,7 +157,7 @@ Deno.serve(async (req) => {
       if (updateError) {
         console.error("Error updating lead:", updateError);
         return new Response(
-          JSON.stringify(createStructuredError('DB_CONSTRAINT', `Failed to update lead: ${updateError.message}`)),
+          JSON.stringify(createStructuredError('DB_CONSTRAINT', 'Failed to update lead profile')),
           { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -184,7 +184,7 @@ Deno.serve(async (req) => {
       if (insertError) {
         console.error("Error inserting lead:", insertError);
         return new Response(
-          JSON.stringify(createStructuredError('DB_CONSTRAINT', `Failed to create lead: ${insertError.message}`)),
+          JSON.stringify(createStructuredError('DB_CONSTRAINT', 'Failed to create lead profile')),
           { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
