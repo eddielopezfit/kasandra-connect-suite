@@ -4,15 +4,20 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { DollarSign, BookOpen, MessageCircle } from "lucide-react";
+import type { GuideCategory } from "@/lib/guides/guideRegistry";
 
 interface GuideCTABlockProps {
-  category: string;
+  category: GuideCategory;
 }
 
-// Category-specific CTA routing - ONE primary CTA per category
-const getCTAConfig = (category: string) => {
-  // Buyer-focused categories -> direct to buyer readiness tool
-  if (category.includes("Buying") || category === "Financial Guidance") {
+// Life-event categories that always route through Selena
+const SELENA_ROUTED_CATEGORIES: Set<GuideCategory> = new Set([
+  'selling', 'valuation', 'probate', 'divorce', 'distressed', 'military', 'senior',
+]);
+
+// Category-specific CTA routing - strict key matching, no string.includes()
+const getCTAConfig = (category: GuideCategory) => {
+  if (category === 'buying') {
     return {
       link: "/v2/buyer-readiness",
       textEn: "Start Buyer Readiness Check",
@@ -24,23 +29,8 @@ const getCTAConfig = (category: string) => {
       intent: 'buy' as const,
     };
   }
-  
-  // Seller-focused categories (including Valuation) -> route through Selena
-  if (category.includes("Selling") || category.includes("Valuation")) {
-    return {
-      link: "selena_chat",
-      textEn: "Request a Home Value Review",
-      textEs: "Solicitar Revisión de Valor",
-      subtextEn: "Understand what your home might be worth today",
-      subtextEs: "Entienda cuánto podría valer su casa hoy",
-      icon: MessageCircle,
-      routeThruSelena: true,
-      intent: 'sell' as const,
-    };
-  }
-  
-  // Cash offer category -> direct to cash decision room
-  if (category.includes("Cash")) {
+
+  if (category === 'cash') {
     return {
       link: "/v2/cash-offer-options",
       textEn: "Explore Cash Offer Options",
@@ -52,22 +42,64 @@ const getCTAConfig = (category: string) => {
       intent: 'cash' as const,
     };
   }
-  
-  // Probate / Inherited Property -> route through Selena
-  if (category.includes("Inherited") || category.includes("Probate")) {
+
+  if (SELENA_ROUTED_CATEGORIES.has(category)) {
+    // Map category to appropriate CTA copy
+    const copyMap: Partial<Record<GuideCategory, { textEn: string; textEs: string; subtextEn: string; subtextEs: string }>> = {
+      selling: {
+        textEn: "Request a Home Value Review",
+        textEs: "Solicitar Revisión de Valor",
+        subtextEn: "Understand what your home might be worth today",
+        subtextEs: "Entienda cuánto podría valer su casa hoy",
+      },
+      valuation: {
+        textEn: "Request a Home Value Review",
+        textEs: "Solicitar Revisión de Valor",
+        subtextEn: "Understand what your home might be worth today",
+        subtextEs: "Entienda cuánto podría valer su casa hoy",
+      },
+      probate: {
+        textEn: "Discuss Your Inherited Property Options",
+        textEs: "Converse Sobre Sus Opciones de Propiedad Heredada",
+        subtextEn: "A calm conversation to understand your options",
+        subtextEs: "Una conversación tranquila para entender sus opciones",
+      },
+      divorce: {
+        textEn: "Talk Through Your Situation",
+        textEs: "Converse Sobre Su Situación",
+        subtextEn: "Sensitive guidance for a difficult transition",
+        subtextEs: "Orientación sensible para una transición difícil",
+      },
+      distressed: {
+        textEn: "Explore Your Property Options",
+        textEs: "Explore Sus Opciones de Propiedad",
+        subtextEn: "Understand what's possible for your situation",
+        subtextEs: "Entienda lo que es posible para su situación",
+      },
+      military: {
+        textEn: "Explore Your Transition Options",
+        textEs: "Explore Sus Opciones de Transición",
+        subtextEn: "Programs and paths available to you",
+        subtextEs: "Programas y caminos disponibles para usted",
+      },
+      senior: {
+        textEn: "Discuss Your Next Chapter",
+        textEs: "Converse Sobre Su Próximo Capítulo",
+        subtextEn: "Planning at your pace, on your terms",
+        subtextEs: "Planificación a su ritmo, en sus términos",
+      },
+    };
+    const copy = copyMap[category] ?? copyMap.selling!;
     return {
       link: "selena_chat",
-      textEn: "Discuss Your Inherited Property Options",
-      textEs: "Converse Sobre Sus Opciones de Propiedad Heredada",
-      subtextEn: "A calm conversation to understand your options",
-      subtextEs: "Una conversación tranquila para entender sus opciones",
+      ...copy,
       icon: MessageCircle,
       routeThruSelena: true,
       intent: 'sell' as const,
     };
   }
-  
-  // Default for neighborhoods, tips, stories, early-stage readers
+
+  // Default for stories, tips, etc.
   return {
     link: "/v2/guides",
     textEn: "Explore More Resources",
@@ -121,7 +153,6 @@ const GuideCTABlock = ({ category }: GuideCTABlockProps) => {
             )}
           </p>
           
-          {/* Single Primary CTA - Selena routing for seller categories */}
           {config.routeThruSelena ? (
             <Button 
               size="lg" 
@@ -144,7 +175,6 @@ const GuideCTABlock = ({ category }: GuideCTABlockProps) => {
             </Button>
           )}
           
-          {/* Subtext */}
           <p className="text-white/50 text-sm mt-4">
             {t(config.subtextEn, config.subtextEs)}
           </p>
