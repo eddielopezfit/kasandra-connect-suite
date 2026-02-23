@@ -1,50 +1,59 @@
+# Guide Image System — Production-Ready
 
+## Status: ✅ Implemented
 
-# Wire All Image Slots to Public Asset Paths
+## What Was Built
 
-## What Changes
+### 1. Storage Bucket: `guide-assets`
+- **Public read** with path constraint: only `guides/*.jpg|jpeg|png|webp` readable
+- No client INSERT/UPDATE/DELETE policies — uploads only via service role in edge functions
 
-**Single file**: `src/lib/guides/guideMediaSlots.ts`
+### 2. Edge Function: `generate-guide-image`
+- Generates a single guide image via Lovable AI gateway
+- Model abstracted behind `IMAGE_MODEL` env var (default: `google/gemini-3-pro-image-preview`)
+- Uploads to `guide-assets` bucket with upsert
+- Saves `.meta.json` alongside each image (prompt, model, timestamp)
+- Base prompt enforces governance: no people, no faces, no cars, no staging, golden hour, documentary-style
 
-- Remove the two `import` statements for `ftb-orientation.jpg` and `sell-orientation.jpg`
-- Replace imported references with public path strings
-- Add `src` fields to all 16 image/checklist-image slots that are currently missing them
+### 3. Edge Function: `generate-all-guide-images`
+- Batch orchestrator: generates all 9 images (Tier 1 + Tier 2)
+- Calls `generate-guide-image` sequentially with per-slot variations
+- Returns success/failure report
 
-## Path Convention
+### 4. `guideMediaSlots.ts` Updates
+- **Tier 1**: `src` fields point to storage public URLs
+- **Tier 2**: `val-clarity` slot removed (max 1 image governance)
+- **Tier 3**: All `src` fields removed from story slots
+- **New function**: `getGovernedMediaSlots(guideId)` — programmatically strips `src` from Tier 3 guides at runtime (prevents drift)
+- `V2GuideDetail.tsx` updated to use `getGovernedMediaSlots` instead of raw `GUIDE_MEDIA_SLOTS`
 
-All paths follow: `/guides/<guide-slug>/<asset-name>.jpg`
+## Image Inventory (9 total)
 
-| Slot ID | Type | Path |
-|---------|------|------|
-| ftb-orientation | image | `/guides/first-time-buyer-guide/orientation.jpg` |
-| ftb-clarity | checklist-image | `/guides/first-time-buyer-guide/checklist.jpg` |
-| sell-orientation | image | `/guides/selling-for-top-dollar/orientation.jpg` |
-| sell-clarity | image | `/guides/selling-for-top-dollar/clarity.jpg` |
-| val-orientation | image | `/guides/understanding-home-valuation/orientation.jpg` |
-| val-clarity | image | `/guides/understanding-home-valuation/clarity.jpg` |
-| cash-orientation | image | `/guides/cash-offer-guide/orientation.jpg` |
-| cash-clarity | checklist-image | `/guides/cash-offer-guide/checklist.jpg` |
-| ftbs-orientation | image | `/guides/first-time-buyer-story/orientation.jpg` |
-| ftbs-clarity | image | `/guides/first-time-buyer-story/clarity.jpg` |
-| bbs-orientation | image | `/guides/budget-buyer-story/orientation.jpg` |
-| bbs-clarity | image | `/guides/budget-buyer-story/clarity.jpg` |
-| sms-orientation | image | `/guides/seller-stressful-market-story/orientation.jpg` |
-| sms-clarity | image | `/guides/seller-stressful-market-story/clarity.jpg` |
-| ssc-orientation | image | `/guides/spanish-speaking-client-story/orientation.jpg` |
-| ssc-clarity | image | `/guides/spanish-speaking-client-story/clarity.jpg` |
+| Guide | Slot | Variation |
+|-------|------|-----------|
+| first-time-buyer-guide | orientation | welcoming single-story home exterior |
+| first-time-buyer-guide | checklist | shaded porch in soft light with desert plants |
+| selling-for-top-dollar | orientation | well-maintained home with desert landscaping |
+| selling-for-top-dollar | clarity | quiet central Tucson residential street |
+| cash-offer-guide | orientation | desert foothills behind a residential street |
+| cash-offer-guide | checklist | modest single-story home with stucco facade |
+| inherited-probate-property | orientation | quiet neighborhood at golden hour |
+| inherited-probate-property | checklist | single-story home with mature trees |
+| understanding-home-valuation | orientation | street view with foothills in distance |
 
-## What Is NOT Changed
+## Governance Enforced
 
-- **Video slots** (`sell-trust`, `cash-trust`): no `src` added (no video files yet)
-- **Pull-quote-image slots**: no `src` added (they render via `quote` text + Kasandra headshot, no background image needed)
-- No guide text, routing, scoring, analytics, or schema changes
-- No other files modified
+- ✅ Tier 3 = text only (programmatic, not hardcoded IDs)
+- ✅ Tier 2 = max 1 image (orientation only)
+- ✅ No "keys", "welcome mat", or staging cues in prompts
+- ✅ Model ID abstracted behind env var
+- ✅ Bucket path-constrained + file-type-constrained
+- ✅ Metadata saved per image for audit/reproduction
 
-## Important Note
+## Next Step
 
-The public folder directories (`/public/guides/<slug>/`) and actual image files need to exist for the images to render. Once the `src` paths are wired, `GuideImage` will attempt to load them. Missing files will simply show a broken image -- but the slot system itself will be fully configured and ready for asset drops.
-
-## Technical Detail
-
-Lines 1-2 (imports) are removed. The `src` field on `ftb-orientation` (line 59) changes from `ftbOrientationImg` to a string. The `src` field on `sell-orientation` (line 92) changes similarly. All other image/checklist-image slots gain a new `src: '/guides/...'` line.
-
+Run the batch generator:
+```
+POST /functions/v1/generate-all-guide-images
+Authorization: Bearer <service_role_key>
+```
