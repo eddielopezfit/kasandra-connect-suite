@@ -166,23 +166,8 @@ interface ReportState {
   reportType?: string;
 }
 
-interface TimeSlot {
-  start: string;
-  end: string;
-  booking_url: string;
-  display_time: string;
-}
 
-type HandoffChannel = 'call' | 'zoom';
-
-interface PriorityCallState {
-  isOpen: boolean;
-  isLoading: boolean;
-  bookingUrl: string;
-  slots: TimeSlot[];
-  onChannelSelect?: (channel: HandoffChannel) => Promise<{ bookingUrl: string; slots: TimeSlot[] }>;
-  onRequestCallback?: (channel: HandoffChannel, contactPref?: 'call' | 'text') => void;
-}
+// Calculator awareness types
 
 // Calculator awareness types
 export type CalculatorAdvantage = 'cash' | 'traditional' | 'consult';
@@ -194,10 +179,9 @@ interface SelenaChatContextType {
   leadId: string | null;
   hasReports: boolean; // Track if user has generated any reports
   report: ReportState;
-  priorityCall: PriorityCallState;
   showLeadCapture: boolean;
   pendingReportId: string | null;
-  pendingAction: 'report' | 'priority_call' | null;
+  pendingAction: 'report' | null;
   // Calculator awareness (Task 4)
   hasUsedCalculator: boolean;
   lastCalculatorAdvantage: CalculatorAdvantage | null;
@@ -214,8 +198,6 @@ interface SelenaChatContextType {
   openLastReport: () => Promise<void>;
   closeLeadCapture: () => void;
   onLeadCaptured: (newLeadId: string) => void;
-  closePriorityCall: () => void;
-  triggerPriorityCall: () => Promise<void>;
   // Calculator awareness setter
   setCalculatorResult: (advantage: CalculatorAdvantage) => void;
 }
@@ -276,15 +258,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     title: '',
     markdown: '',
   });
-  const [priorityCall, setPriorityCall] = useState<PriorityCallState>({
-    isOpen: false,
-    isLoading: false,
-    bookingUrl: '',
-    slots: [],
-  });
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const [pendingReportId, setPendingReportId] = useState<string | null>(null);
-  const [pendingAction, setPendingAction] = useState<'report' | 'priority_call' | null>(null);
+  const [pendingAction, setPendingAction] = useState<'report' | null>(null);
   
   // Track if user has generated any reports (for "View My Latest Report" visibility)
   const [hasReports, setHasReports] = useState(false);
@@ -313,9 +289,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     setPendingAction(null);
   }, []);
 
-  const closePriorityCall = useCallback(() => {
-    setPriorityCall(prev => ({ ...prev, isOpen: false }));
-  }, []);
 
   // Initialize session, load history and stored lead ID
   useEffect(() => {
@@ -1252,16 +1225,13 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     setLeadIdentity(newLeadId);
     setShowLeadCapture(false);
     
-    const currentPendingAction = pendingAction;
     const currentPendingReportId = pendingReportId;
     setPendingAction(null);
     setPendingReportId(null);
     
-    // Resume pending action
+    // Resume pending report action
     setTimeout(() => {
-      if (currentPendingAction === 'priority_call') {
-        triggerPriorityCall();
-      } else if (currentPendingReportId) {
+      if (currentPendingReportId) {
         if (currentPendingReportId === 'LAST') {
           openLastReport();
         } else {
@@ -1269,7 +1239,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         }
       }
     }, 100);
-  }, [setLeadIdentity, pendingAction, pendingReportId, openReportById]);
+  }, [setLeadIdentity, pendingReportId, openReportById]);
 
   // Open the user's last report (shortcut from UI)
   const openLastReport = useCallback(async () => {
@@ -1329,160 +1299,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     }
   }, [leadId, t, location.pathname, openReportById]);
 
-  // Generate chat summary for handoff
-  const generateChatSummary = useCallback((): { markdown: string; json: Record<string, unknown> } => {
-    const lastMessages = messages.slice(-8);
-    const summaryLines: string[] = [];
-    
-    // Extract structured data from conversation
-    const summaryJson: Record<string, unknown> = {
-      intent: null,
-      situation: null,
-      timeline: null,
-      condition: null,
-      pain_points: [],
-      desired_outcome: null,
-      address_if_known: null,
-      urgency_level: 'medium',
-    };
-    
-    for (const msg of lastMessages) {
-      const role = msg.role === 'user' ? 'User' : 'Selena';
-      const content = msg.content.substring(0, 200);
-      summaryLines.push(`${role}: ${content}`);
-      
-      // Try to extract structured data from user messages
-      if (msg.role === 'user') {
-        const lower = content.toLowerCase();
-        if (lower.includes('cash') || lower.includes('offer')) {
-          summaryJson.intent = 'cash'; // Canonical value
-        }
-        if (lower.includes('sell') || lower.includes('selling')) {
-          summaryJson.intent = summaryJson.intent || 'sell';
-        }
-        if (lower.includes('asap') || lower.includes('urgent') || lower.includes('fast')) {
-          summaryJson.urgency_level = 'high';
-          summaryJson.timeline = 'asap';
-        }
-        if (lower.includes('inherit') || lower.includes('estate')) {
-          summaryJson.situation = 'inherited';
-        }
-      }
-    }
-    
-    return {
-      markdown: summaryLines.join('\n\n'),
-      json: summaryJson,
-    };
-  }, [messages]);
-
-  // Create handoff with channel selection
-  const createHandoffWithChannel = useCallback(async (
-    channel: HandoffChannel,
-    selectedSlot?: { start: string; label: string; booking_url: string } | null,
-    contactPref?: 'call' | 'text'
-  ): Promise<{ bookingUrl: string; slots: TimeSlot[]; handoffId?: string }> => {
-    if (!leadId) {
-      throw new Error('No lead_id available');
-    }
-
-    const { markdown: summaryMd, json: summaryJson } = generateChatSummary();
-
-    const response = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-handoff`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({
-          lead_id: leadId,
-          channel,
-          priority: 'hot',
-          reason: 'User requested direct help / urgent situation',
-          summary_md: summaryMd,
-          summary_json: summaryJson,
-          recommended_next_step: 'Book 10-min call',
-          selected_slot: selectedSlot || null,
-          contact_pref: contactPref || null,
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (!data.ok) {
-      throw new Error(data.error || 'Failed to create handoff');
-    }
-
-    logEvent('handoff_create_success', {
-      handoff_id: data.handoff_id,
-      booking_url: data.booking_url,
-      channel,
-    });
-
-    return {
-      bookingUrl: data.booking_url || '/v2/book',
-      slots: data.slots || [],
-      handoffId: data.handoff_id,
-    };
-  }, [leadId, generateChatSummary]);
-
-  // Trigger priority call handoff
-  const triggerPriorityCall = useCallback(async () => {
-    // If no lead identity, capture first
-    if (!leadId) {
-      setPendingAction('priority_call');
-      setShowLeadCapture(true);
-      return;
-    }
-
-    logEvent('handoff_create_start', { lead_id: leadId });
-
-    // Open modal immediately in channel selection mode
-    setPriorityCall({
-      isOpen: true,
-      isLoading: false,
-      bookingUrl: '/v2/book',
-      slots: [],
-      onChannelSelect: async (channel: HandoffChannel) => {
-        try {
-          const result = await createHandoffWithChannel(channel);
-          return { bookingUrl: result.bookingUrl, slots: result.slots };
-        } catch (error) {
-          console.error('[Selena] Error creating handoff:', error);
-          logEvent('handoff_create_error', {
-            error: error instanceof Error ? error.message : 'Unknown error',
-            channel,
-          });
-          // Return fallback
-          return { bookingUrl: `/v2/book?channel=${channel}&callback=true`, slots: [] };
-        }
-      },
-      onRequestCallback: async (channel: HandoffChannel, contactPref?: 'call' | 'text') => {
-        try {
-          await createHandoffWithChannel(channel, null, contactPref);
-          logEvent('handoff_request_callback', { channel, contact_pref: contactPref });
-        } catch (error) {
-          console.error('[Selena] Error creating callback handoff:', error);
-          logEvent('handoff_create_error', {
-            error: error instanceof Error ? error.message : 'Unknown error',
-            channel,
-            contact_pref: contactPref,
-          });
-        }
-      },
-    });
-
-  }, [leadId, createHandoffWithChannel]);
-
-  // Listen for priority call events (avoids circular dependency)
-  useEffect(() => {
-    const handler = () => triggerPriorityCall();
-    window.addEventListener('selena-priority-call', handler);
-    return () => window.removeEventListener('selena-priority-call', handler);
-  }, [triggerPriorityCall]);
 
   // Set calculator result - for Selena awareness (Task 4)
   const setCalculatorResult = useCallback((advantage: CalculatorAdvantage) => {
@@ -1500,7 +1316,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         leadId,
         hasReports,
         report,
-        priorityCall,
+        
         showLeadCapture,
         pendingReportId,
         pendingAction,
@@ -1518,8 +1334,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         openLastReport,
         closeLeadCapture,
         onLeadCaptured,
-        closePriorityCall,
-        triggerPriorityCall,
         setCalculatorResult,
       }}
     >
