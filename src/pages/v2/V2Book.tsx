@@ -9,12 +9,25 @@ import { logEvent } from "@/lib/analytics/logEvent";
 const V2BookContent = () => {
   const { t } = useLanguage();
   const [searchParams] = useSearchParams();
-  const intent = searchParams.get("intent");
 
-  // Condition 1: lightweight analytics — log page view + intent
+  // Condition 1: lightweight analytics — log page view + intent + UTMs
   useEffect(() => {
-    logEvent('booking_started', { intent: intent || 'direct' });
-  }, [intent]);
+    const intent = searchParams.get("intent") || "direct";
+    const utm_source = searchParams.get("utm_source");
+    const utm_campaign = searchParams.get("utm_campaign");
+    const utm_medium = searchParams.get("utm_medium");
+    const utm_content = searchParams.get("utm_content");
+    const utm_term = searchParams.get("utm_term");
+
+    logEvent('booking_started', {
+      intent,
+      ...(utm_source && { utm_source }),
+      ...(utm_campaign && { utm_campaign }),
+      ...(utm_medium && { utm_medium }),
+      ...(utm_content && { utm_content }),
+      ...(utm_term && { utm_term }),
+    });
+  }, [searchParams]);
 
   return (
     <>
