@@ -1,5 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/contexts/SelenaChatContext";
+import { type ActionSpec, isActionValid, resolveAction } from "@/lib/actions/actionSpec";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
+
+type SuggestedReply = string | { label: string; actionSpec: ActionSpec };
 
 export function SelenaDrawerSuggestedRepliesChips({
   suggestedReplies,
@@ -8,12 +13,15 @@ export function SelenaDrawerSuggestedRepliesChips({
   messages,
   onSuggestedReplyClick,
 }: {
-  suggestedReplies?: string[];
+  suggestedReplies?: SuggestedReply[];
   isLoading: boolean;
-  activeTab: unknown; // tab type lives in SelenaChatDrawer; we just treat it as truthy/falsy
+  activeTab: unknown;
   messages: ChatMessage[];
   onSuggestedReplyClick: (text: string) => void;
 }) {
+  const navigate = useNavigate();
+  const { openChat } = useSelenaChat();
+
   if (!suggestedReplies || suggestedReplies.length === 0 || isLoading || activeTab) {
     return null;
   }
@@ -23,8 +31,9 @@ export function SelenaDrawerSuggestedRepliesChips({
     .find((m) => m.role === "user")?.content?.toLowerCase().trim();
 
   const filteredReplies = suggestedReplies.filter((reply) => {
+    const replyText = typeof reply === 'string' ? reply : reply.label;
     if (!lastUserMessage) return true;
-    const normalized = reply.toLowerCase().trim();
+    const normalized = replyText.toLowerCase().trim();
     if (normalized === lastUserMessage) return false;
 
     const replyWords = new Set(normalized.split(/\s+/).filter((w) => w.length > 2));
@@ -35,9 +44,23 @@ export function SelenaDrawerSuggestedRepliesChips({
     const union = new Set([...replyWords, ...userWords]).size;
     if (union > 0 && intersection / union >= 0.7) return false;
     return true;
+  }).filter((reply) => {
+    // No-action-no-render: if actionSpec exists but is invalid, skip
+    if (typeof reply !== 'string' && !isActionValid(reply.actionSpec)) return false;
+    return true;
   });
 
   if (filteredReplies.length === 0) return null;
+
+  const handleClick = (reply: SuggestedReply) => {
+    if (typeof reply === 'string') {
+      onSuggestedReplyClick(reply);
+    } else {
+      resolveAction(reply.actionSpec, navigate, (payload) => {
+        openChat(payload as any);
+      });
+    }
+  };
 
   return (
     <div className="border-t border-border px-4 py-2.5 shrink-0 bg-background/95 backdrop-blur-sm">
@@ -45,7 +68,7 @@ export function SelenaDrawerSuggestedRepliesChips({
         {filteredReplies.map((reply, index) => (
           <button
             key={index}
-            onClick={() => onSuggestedReplyClick(reply)}
+            onClick={() => handleClick(reply)}
             className={cn(
               "shrink-0 text-xs font-medium px-3 py-2 rounded-full",
               "bg-cc-sand text-cc-navy border border-cc-navy/20",
@@ -56,7 +79,7 @@ export function SelenaDrawerSuggestedRepliesChips({
               "max-w-[200px] truncate"
             )}
           >
-            {reply}
+            {typeof reply === 'string' ? reply : reply.label}
           </button>
         ))}
       </div>

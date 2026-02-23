@@ -444,7 +444,7 @@ const BOOKING_KEYWORDS = /book|schedule|call|talk|meet|appointment|consulta|cita
 
 // Phrases: implicit booking suggestions (stricter filter for earned access)
 // NOTE: "kasandra" removed to avoid over-filtering educational mentions of the agent
-const BOOKING_PHRASES = /(talk to kasandra|priority call|strategy call|consultation|consult|review strategy|revisar estrategia)/i;
+const BOOKING_PHRASES = /(talk to kasandra|priority call|strategy call|consultation|consult|review strategy|revisar estrategia|verify.*kasandra|verificar.*kasandra)/i;
 
 /**
  * Checks if user explicitly asked to book/call
@@ -483,10 +483,9 @@ function hasEarnedBookingAccess(
   // 3. Email provided = commitment signal (soft gate)
   if (extractedEmail) return true;
   
-  // 4. Earned after 2 user turns ONLY if intent is declared (not explore)
-  // This keeps "explorers" in education mode longer → increases perceived premium
-  const hasIntent = context.intent && context.intent !== 'explore';
-  if (userTurnCount(history) >= 2 && hasIntent) return true;
+  // 4. REMOVED: Turn-count gate removed per governance review.
+  // Simple turn count is insufficient per earned access rules.
+  // Only explicit booking keywords, tool completion, or email unlock booking.
   
   return false;
 }
@@ -824,6 +823,14 @@ serve(async (req) => {
     }
     
     // Add mode hint
+    let guideModeHint = "";
+    if (context.entry_source === 'guide' || context.entry_source === 'guide_handoff') {
+      const guideTitle = context.last_guide_title || 'a guide';
+      guideModeHint = language === 'es'
+        ? `\n\nMODO GUÍA: El usuario abrió el chat desde la guía "${guideTitle}". Restringe las sugerencias a: entender la guía, usar herramientas relacionadas, o hacer preguntas. NO sugieras guías o herramientas no relacionadas. NO hagas ventas cruzadas ni introduzcas urgencia.`
+        : `\n\nGUIDE MODE: User opened chat from guide "${guideTitle}". Restrict suggestions to: understanding the guide, using related tools, or asking questions. Do NOT suggest unrelated guides or tools. Do NOT cross-sell or introduce urgency.`;
+    }
+
     const modeHint = language === "es"
       ? `\n\nMODO ACTUAL: ${currentMode} (${modeContext.modeName}). Ajusta el tono y las sugerencias según este modo.`
       : `\n\nCURRENT MODE: ${currentMode} (${modeContext.modeName}). Adjust tone and suggestions for this mode.`;
@@ -877,7 +884,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt + reflectionHint + governanceHint + modeHint }, 
+          { role: "system", content: systemPrompt + reflectionHint + governanceHint + guideModeHint + modeHint }, 
           ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],

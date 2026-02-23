@@ -37,6 +37,13 @@ export interface GuideAssetSlots {
   disclaimer?: DisclaimerType; // Type of disclaimer needed
 }
 
+// Destination mapping — what actions each guide offers
+export interface GuideDestinations {
+  primaryAction: import('@/lib/actions/actionSpec').ActionSpec;
+  secondaryActions: import('@/lib/actions/actionSpec').ActionSpec[];  // max 2
+  relatedGuideIds: string[];  // max 4
+}
+
 export interface GuideRegistryEntry {
   id: string;
   path: string;
@@ -52,6 +59,8 @@ export interface GuideRegistryEntry {
   tier: GuideTier;
   lifeEvent: string; // snake_case, singular, canonical, never UI-facing
   assetSlots: GuideAssetSlots;
+  // Destination mapping
+  destinations: GuideDestinations;
   // Authority metadata for decision-compression guides
   authorityTheme?: AuthorityTheme;
   isCashGuide?: boolean;
@@ -75,6 +84,13 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     tier: 1,
     lifeEvent: 'first_time_buying',
     assetSlots: { disclaimer: 'financial' },
+    destinations: {
+      primaryAction: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Check my readiness', es: 'Verificar mi preparación' } },
+      secondaryActions: [
+        { type: 'open_chat', payload: { source: 'guide', guideId: 'first-time-buyer-guide', lifeEvent: 'first_time_buying' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
+      ],
+      relatedGuideIds: ['selling-for-top-dollar', 'cash-offer-guide', 'first-time-buyer-story'],
+    },
     authorityTheme: 'buyer_strategy',
     isCashGuide: false,
   },
@@ -92,6 +108,13 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     tier: 1,
     lifeEvent: 'general_selling',
     assetSlots: { disclaimer: 'financial' },
+    destinations: {
+      primaryAction: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare my options', es: 'Comparar mis opciones' } },
+      secondaryActions: [
+        { type: 'open_chat', payload: { source: 'guide', guideId: 'selling-for-top-dollar', lifeEvent: 'general_selling' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
+      ],
+      relatedGuideIds: ['cash-offer-guide', 'understanding-home-valuation', 'seller-stressful-market-story'],
+    },
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
   },
@@ -109,6 +132,13 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     tier: 1,
     lifeEvent: 'cash_vs_traditional',
     assetSlots: { disclaimer: 'financial' },
+    destinations: {
+      primaryAction: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare my options', es: 'Comparar mis opciones' } },
+      secondaryActions: [
+        { type: 'open_chat', payload: { source: 'guide', guideId: 'cash-offer-guide', lifeEvent: 'cash_vs_traditional' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
+      ],
+      relatedGuideIds: ['selling-for-top-dollar', 'understanding-home-valuation'],
+    },
     authorityTheme: 'cash_structure',
     isCashGuide: true,
     authorityBridge: {
@@ -134,6 +164,13 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     tier: 1,
     lifeEvent: 'inherited_property',
     assetSlots: { disclaimer: 'legal' },
+    destinations: {
+      primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'inherited-probate-property', lifeEvent: 'inherited_property' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
+      secondaryActions: [
+        { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare my options', es: 'Comparar mis opciones' } },
+      ],
+      relatedGuideIds: ['cash-offer-guide', 'selling-for-top-dollar'],
+    },
     authorityTheme: 'probate_clarity',
     isCashGuide: false,
     authorityBridge: {
@@ -157,6 +194,13 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     tier: 2,
     lifeEvent: 'valuation_awareness',
     assetSlots: { disclaimer: 'general' },
+    destinations: {
+      primaryAction: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare my options', es: 'Comparar mis opciones' } },
+      secondaryActions: [
+        { type: 'open_chat', payload: { source: 'guide', guideId: 'understanding-home-valuation', lifeEvent: 'valuation_awareness' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
+      ],
+      relatedGuideIds: ['selling-for-top-dollar', 'cash-offer-guide'],
+    },
     authorityTheme: 'valuation_insight',
     isCashGuide: false,
   },
@@ -176,6 +220,11 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     tier: 3,
     lifeEvent: 'first_time_buying',
     assetSlots: {},
+    destinations: {
+      primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'first-time-buyer-story', lifeEvent: 'first_time_buying' }, label: { en: 'Continue the conversation', es: 'Continuar la conversación' } },
+      secondaryActions: [],
+      relatedGuideIds: [],
+    },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -193,6 +242,11 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     tier: 3,
     lifeEvent: 'budget_buying',
     assetSlots: {},
+    destinations: {
+      primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'budget-buyer-story', lifeEvent: 'budget_buying' }, label: { en: 'Continue the conversation', es: 'Continuar la conversación' } },
+      secondaryActions: [],
+      relatedGuideIds: [],
+    },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -210,6 +264,11 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     tier: 3,
     lifeEvent: 'general_selling',
     assetSlots: {},
+    destinations: {
+      primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'seller-stressful-market-story', lifeEvent: 'general_selling' }, label: { en: 'Continue the conversation', es: 'Continuar la conversación' } },
+      secondaryActions: [],
+      relatedGuideIds: [],
+    },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -227,6 +286,11 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     tier: 3,
     lifeEvent: 'bilingual_service',
     assetSlots: {},
+    destinations: {
+      primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'spanish-speaking-client-story', lifeEvent: 'bilingual_service' }, label: { en: 'Continue the conversation', es: 'Continuar la conversación' } },
+      secondaryActions: [],
+      relatedGuideIds: [],
+    },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -269,6 +333,11 @@ export const getGuidesByTier = (tier: GuideTier): GuideRegistryEntry[] =>
 
 export const getGuidesByLifeEvent = (lifeEvent: string): GuideRegistryEntry[] =>
   getLiveGuides().filter(g => g.lifeEvent === lifeEvent);
+
+export const getGuideDestinations = (guideId: string): GuideDestinations | undefined => {
+  const guide = getGuideById(guideId);
+  return guide?.destinations;
+};
 
 /**
  * Dev-only: Warn if a Tier 1 guide is missing required asset slots
