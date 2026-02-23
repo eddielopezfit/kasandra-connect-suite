@@ -3,28 +3,55 @@
  * 
  * All guides must be registered here with their status.
  * Only guides with status: 'live' will be suggested by Selena.
+ * 
+ * Tiered taxonomy:
+ *   Tier 1 (Pillar) = Life-event authority guides — require video, infographic, PDF
+ *   Tier 2 (Supporting) = Decision clarification — require infographic
+ *   Tier 3 (Micro) = Social proof / narrative — optional infographic only
  */
 
 export type GuideStatus = 'live' | 'draft' | 'coming_soon';
 export type GuideFunnelStage = 'tofu' | 'mofu' | 'bofu';
+export type GuideTier = 1 | 2 | 3;
 
 // Strict category type - used for CTA routing and authority messaging
-export type GuideCategory = 'buying' | 'selling' | 'valuation' | 'cash' | 'stories';
+export type GuideCategory = 
+  | 'buying' | 'selling' | 'valuation' | 'cash' | 'stories'
+  | 'probate' | 'divorce' | 'distressed' | 'military' | 'senior';
 
 // Authority theme for decision-compression messaging
-export type AuthorityTheme = 'buyer_strategy' | 'seller_clarity' | 'cash_structure' | 'valuation_insight' | 'story_empathy';
+export type AuthorityTheme = 
+  | 'buyer_strategy' | 'seller_clarity' | 'cash_structure' 
+  | 'valuation_insight' | 'story_empathy'
+  | 'probate_clarity' | 'divorce_guidance' | 'distressed_support' 
+  | 'military_transition' | 'senior_strategy';
+
+// Disclaimer type for legal/financial content
+export type DisclaimerType = 'legal' | 'financial' | 'general';
+
+// Asset slot configuration — render nothing when undefined
+export interface GuideAssetSlots {
+  videoOverview?: string;    // URL to hosted video (required for Tier 1)
+  infographic?: string;      // URL/path to infographic image (required for Tier 1-2)
+  pdfGuide?: string;         // URL to downloadable PDF (required for Tier 1 only)
+  disclaimer?: DisclaimerType; // Type of disclaimer needed
+}
 
 export interface GuideRegistryEntry {
   id: string;
   path: string;
   titleEn: string;
   titleEs: string;
-  labelEn: string; // Short label for action buttons
+  labelEn: string;
   labelEs: string;
   category: GuideCategory;
   status: GuideStatus;
   funnelStage: GuideFunnelStage;
   keywords: string[];
+  // Tier governance
+  tier: GuideTier;
+  lifeEvent: string; // snake_case, singular, canonical, never UI-facing
+  assetSlots: GuideAssetSlots;
   // Authority metadata for decision-compression guides
   authorityTheme?: AuthorityTheme;
   isCashGuide?: boolean;
@@ -33,7 +60,7 @@ export interface GuideRegistryEntry {
 }
 
 export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
-  // === BUYER GUIDES ===
+  // === TIER 1 — PILLAR GUIDES ===
   {
     id: 'first-time-buyer-guide',
     path: '/v2/guides/first-time-buyer-guide',
@@ -45,11 +72,12 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['first', 'new', 'never', 'bought', 'primero', 'nuevo', 'nunca', 'comprado', 'beginner', 'start'],
+    tier: 1,
+    lifeEvent: 'first_time_buying',
+    assetSlots: { disclaimer: 'financial' },
     authorityTheme: 'buyer_strategy',
     isCashGuide: false,
   },
-  
-  // === SELLER GUIDES ===
   {
     id: 'selling-for-top-dollar',
     path: '/v2/guides/selling-for-top-dollar',
@@ -61,23 +89,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['sell', 'selling', 'list', 'listing', 'vender', 'listar', 'timeline', 'process', 'steps', 'how long'],
+    tier: 1,
+    lifeEvent: 'general_selling',
+    assetSlots: { disclaimer: 'financial' },
     authorityTheme: 'seller_clarity',
-    isCashGuide: false,
-  },
-  
-  // === VALUATION GUIDES ===
-  {
-    id: 'understanding-home-valuation',
-    path: '/v2/guides/understanding-home-valuation',
-    titleEn: "Understanding Your Home's Value",
-    titleEs: 'Entendiendo el Valor de Su Casa',
-    labelEn: "Understanding Your Home's Value",
-    labelEs: 'Entender el Valor de Su Casa',
-    category: 'valuation',
-    status: 'live',
-    funnelStage: 'tofu',
-    keywords: ['value', 'valuation', 'worth', 'price', 'cma', 'valor', 'precio', 'cuánto'],
-    authorityTheme: 'valuation_insight',
     isCashGuide: false,
   },
   {
@@ -91,6 +106,9 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'mofu',
     keywords: ['cash', 'quick', 'fast', 'as-is', 'efectivo', 'rápido', 'investor', 'inversionista'],
+    tier: 1,
+    lifeEvent: 'cash_vs_traditional',
+    assetSlots: { disclaimer: 'financial' },
     authorityTheme: 'cash_structure',
     isCashGuide: true,
     authorityBridge: {
@@ -102,8 +120,48 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       es: "En Tucson, la actividad de compradores en efectivo varía significativamente por vecindario y temporada. Una oferta que parece competitiva en julio puede ser baja en octubre. El conocimiento local no es opcional—es la diferencia entre aceptar una oferta que funciona para usted y conformarse con una que funciona para el comprador.",
     },
   },
-  
-  // === CLIENT STORIES ===
+  {
+    id: 'inherited-probate-property',
+    path: '/v2/guides/inherited-probate-property',
+    titleEn: 'Inherited Property in Pima County: Understanding Your Options',
+    titleEs: 'Propiedad Heredada en el Condado de Pima: Entendiendo Sus Opciones',
+    labelEn: 'Inherited Property Guide',
+    labelEs: 'Guía de Propiedad Heredada',
+    category: 'probate',
+    status: 'live',
+    funnelStage: 'tofu',
+    keywords: ['inherited', 'probate', 'estate', 'heir', 'heredado', 'herencia', 'sucesion', 'testamento', 'beneficiary', 'beneficiario', 'deceased', 'fallecido', 'passed', 'death', 'will'],
+    tier: 1,
+    lifeEvent: 'inherited_property',
+    assetSlots: { disclaimer: 'legal' },
+    authorityTheme: 'probate_clarity',
+    isCashGuide: false,
+    authorityBridge: {
+      en: "Inherited property decisions are rarely just about real estate—they involve family, grief, and legal complexity. Kasandra has guided families through exactly this, with patience and clarity at every step.",
+      es: "Las decisiones sobre propiedades heredadas rara vez se tratan solo de bienes raíces—involucran familia, duelo y complejidad legal. Kasandra ha guiado a familias a través de exactamente esto, con paciencia y claridad en cada paso.",
+    },
+  },
+
+  // === TIER 2 — SUPPORTING GUIDES ===
+  {
+    id: 'understanding-home-valuation',
+    path: '/v2/guides/understanding-home-valuation',
+    titleEn: "Understanding Your Home's Value",
+    titleEs: 'Entendiendo el Valor de Su Casa',
+    labelEn: "Understanding Your Home's Value",
+    labelEs: 'Entender el Valor de Su Casa',
+    category: 'valuation',
+    status: 'live',
+    funnelStage: 'tofu',
+    keywords: ['value', 'valuation', 'worth', 'price', 'cma', 'valor', 'precio', 'cuánto'],
+    tier: 2,
+    lifeEvent: 'valuation_awareness',
+    assetSlots: { disclaimer: 'general' },
+    authorityTheme: 'valuation_insight',
+    isCashGuide: false,
+  },
+
+  // === TIER 3 — MICRO GUIDES (Client Stories) ===
   {
     id: 'first-time-buyer-story',
     path: '/v2/guides/first-time-buyer-story',
@@ -115,6 +173,9 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['story', 'client', 'first', 'historia', 'cliente', 'primero'],
+    tier: 3,
+    lifeEvent: 'first_time_buying',
+    assetSlots: {},
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -129,6 +190,9 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['budget', 'affordable', 'presupuesto', 'asequible', 'story', 'historia'],
+    tier: 3,
+    lifeEvent: 'budget_buying',
+    assetSlots: {},
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -143,6 +207,9 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['seller', 'stress', 'market', 'vendedor', 'estrés', 'mercado', 'story', 'historia'],
+    tier: 3,
+    lifeEvent: 'general_selling',
+    assetSlots: {},
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -157,6 +224,9 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     status: 'live',
     funnelStage: 'tofu',
     keywords: ['spanish', 'español', 'bilingual', 'bilingüe', 'story', 'historia', 'language', 'idioma'],
+    tier: 3,
+    lifeEvent: 'bilingual_service',
+    assetSlots: {},
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -164,35 +234,20 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
 // ============= HELPER FUNCTIONS =============
 
-/**
- * Get all guides with status: 'live'
- */
 export const getLiveGuides = (): GuideRegistryEntry[] => 
   GUIDE_REGISTRY.filter(g => g.status === 'live');
 
-/**
- * Get a specific guide by ID
- */
 export const getGuideById = (id: string): GuideRegistryEntry | undefined => 
   GUIDE_REGISTRY.find(g => g.id === id);
 
-/**
- * Check if a guide exists and is live
- */
 export const isGuideLive = (id: string): boolean => {
   const guide = getGuideById(id);
   return guide !== undefined && guide.status === 'live';
 };
 
-/**
- * Get all live guide IDs as a Set (for fast lookup)
- */
 export const getLiveGuideIds = (): Set<string> => 
   new Set(getLiveGuides().map(g => g.id));
 
-/**
- * Find matching guides by keyword
- */
 export const findGuidesByKeyword = (keyword: string): GuideRegistryEntry[] => {
   const lower = keyword.toLowerCase();
   return getLiveGuides().filter(g => 
@@ -200,14 +255,33 @@ export const findGuidesByKeyword = (keyword: string): GuideRegistryEntry[] => {
   );
 };
 
-/**
- * Get guides by category
- */
 export const getGuidesByCategory = (category: GuideRegistryEntry['category']): GuideRegistryEntry[] =>
   getLiveGuides().filter(g => g.category === category);
 
-/**
- * Get guides by funnel stage
- */
 export const getGuidesByFunnelStage = (stage: GuideFunnelStage): GuideRegistryEntry[] =>
   getLiveGuides().filter(g => g.funnelStage === stage);
+
+export const getGuidesByTier = (tier: GuideTier): GuideRegistryEntry[] =>
+  getLiveGuides().filter(g => g.tier === tier);
+
+export const getGuidesByLifeEvent = (lifeEvent: string): GuideRegistryEntry[] =>
+  getLiveGuides().filter(g => g.lifeEvent === lifeEvent);
+
+/**
+ * Dev-only: Warn if a Tier 1 guide is missing required asset slots
+ */
+export const validateTierAssets = (entry: GuideRegistryEntry): void => {
+  if (import.meta.env.PROD) return;
+  if (entry.tier === 1) {
+    const missing: string[] = [];
+    if (!entry.assetSlots.videoOverview) missing.push('videoOverview');
+    if (!entry.assetSlots.infographic) missing.push('infographic');
+    if (!entry.assetSlots.pdfGuide) missing.push('pdfGuide');
+    if (missing.length > 0) {
+      console.warn(`[GuideRegistry] Tier 1 guide "${entry.id}" missing asset slots: ${missing.join(', ')}`);
+    }
+  }
+  if (entry.tier === 2 && !entry.assetSlots.infographic) {
+    console.warn(`[GuideRegistry] Tier 2 guide "${entry.id}" missing required infographic asset slot`);
+  }
+};

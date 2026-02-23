@@ -302,4 +302,38 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       src: '/guides/spanish-speaking-client-story/clarity.jpg',
     },
   ],
+
+  'inherited-probate-property': [
+    {
+      id: 'inh-orientation',
+      variant: 'orientation',
+      afterSection: -1,
+      type: 'image',
+      purpose: 'Calm Tucson neighborhood to ground emotional state after loss',
+      alt: 'A quiet Tucson neighborhood at golden hour',
+      altEs: 'Un vecindario tranquilo de Tucson al atardecer',
+      src: '/guides/inherited-probate-property/orientation.jpg',
+    },
+    {
+      id: 'inh-trust',
+      variant: 'trust',
+      afterSection: 2,
+      type: 'pull-quote-image',
+      purpose: 'Kasandra on navigating inherited property decisions with empathy',
+      alt: 'Kasandra Prieto',
+      altEs: 'Kasandra Prieto',
+      quote: 'Inheriting a home comes with more than paperwork — it comes with memories, responsibility, and decisions that deserve time.',
+      quoteEs: 'Heredar una casa viene con más que papeleo — viene con recuerdos, responsabilidad, y decisiones que merecen tiempo.',
+    },
+    {
+      id: 'inh-clarity',
+      variant: 'clarity',
+      afterSection: 4,
+      type: 'checklist-image',
+      purpose: 'Options comparison: Keep vs Sell vs Transfer at the decision point',
+      alt: 'Inherited property options comparison',
+      altEs: 'Comparación de opciones para propiedad heredada',
+      src: '/guides/inherited-probate-property/checklist.jpg',
+    },
+  ],
 };

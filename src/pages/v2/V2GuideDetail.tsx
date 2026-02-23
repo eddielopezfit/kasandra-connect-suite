@@ -381,6 +381,73 @@ const guideContent: Record<string, GuideData> = {
       },
     ],
   },
+  "inherited-probate-property": {
+    title: "Inherited Property in Pima County: Understanding Your Options",
+    titleEs: "Propiedad Heredada en el Condado de Pima: Entendiendo Sus Opciones",
+    category: "Inherited Property",
+    categoryEs: "Propiedad Heredada",
+    readTime: "10 min read",
+    readTimeEs: "10 min de lectura",
+    author: "Kasandra Prieto",
+    intro: "If you've recently inherited a property—or learned that you may—this is likely not the first thing on your mind. Grief, family dynamics, and legal questions can all arrive at once. This guide is here to help you understand what comes next, clearly and without pressure, so you can make decisions when you're ready.",
+    introEs: "Si recientemente heredó una propiedad—o se enteró de que podría hacerlo—esto probablemente no es lo primero en su mente. El duelo, las dinámicas familiares y las preguntas legales pueden llegar todas a la vez. Esta guía está aquí para ayudarle a entender qué viene después, con claridad y sin presión, para que pueda tomar decisiones cuando esté listo(a).",
+    sections: [
+      {
+        heading: "What You're Probably Feeling",
+        headingEs: "Lo Que Probablemente Está Sintiendo",
+        content: "Inheriting a property is rarely simple. You may be managing grief while also facing unfamiliar legal and financial questions. You might feel pressure from family members, uncertainty about timelines, or confusion about what's expected of you.\n\nAll of that is normal. There is no single right answer—only the answer that fits your situation. This guide will help you see your options clearly.",
+        contentEs: "Heredar una propiedad rara vez es simple. Puede estar manejando el duelo mientras también enfrenta preguntas legales y financieras desconocidas. Podría sentir presión de miembros de la familia, incertidumbre sobre los plazos, o confusión sobre lo que se espera de usted.\n\nTodo eso es normal. No hay una sola respuesta correcta—solo la respuesta que se ajusta a su situación. Esta guía le ayudará a ver sus opciones con claridad.",
+      },
+      {
+        heading: "What Matters Most Right Now",
+        headingEs: "Lo Que Más Importa Ahora Mismo",
+        content: "Before diving into legal steps, take a moment to consider three things:\n\n• What is the property's current condition? Is it occupied, vacant, or in need of repairs?\n• Are there other heirs or beneficiaries involved? Do you all agree on what to do?\n• What is your personal situation? Do you want to keep it, sell it, or transfer it?\n\nThese three questions will shape every decision that follows.",
+        contentEs: "Antes de sumergirse en los pasos legales, tómese un momento para considerar tres cosas:\n\n• ¿Cuál es la condición actual de la propiedad? ¿Está ocupada, vacía, o necesita reparaciones?\n• ¿Hay otros herederos o beneficiarios involucrados? ¿Todos están de acuerdo en qué hacer?\n• ¿Cuál es su situación personal? ¿Quiere conservarla, venderla, o transferirla?\n\nEstas tres preguntas darán forma a cada decisión que siga.",
+      },
+      {
+        heading: "Understanding Probate in Pima County",
+        headingEs: "Entendiendo la Sucesión en el Condado de Pima",
+        content: "Probate is the legal process of transferring property after someone passes away. In Arizona, the process is handled through the Pima County Superior Court when the property is located in Pima County.\n\nKey things to know:\n• Not all inherited properties require full probate. If a beneficiary deed was in place, the property may transfer outside of probate.\n• Arizona allows both formal and informal probate. Informal probate is simpler and more common when there are no disputes.\n• A personal representative (executor) is appointed to manage the estate.\n• The process typically takes several months, though timelines vary.\n\nAn attorney specializing in estate or probate law is the best resource for understanding the specific legal steps in your situation.",
+        contentEs: "La sucesión es el proceso legal de transferir propiedad después del fallecimiento de alguien. En Arizona, el proceso se maneja a través del Tribunal Superior del Condado de Pima cuando la propiedad está ubicada en el Condado de Pima.\n\nCosas clave que saber:\n• No todas las propiedades heredadas requieren sucesión completa. Si había una escritura de beneficiario, la propiedad puede transferirse fuera de la sucesión.\n• Arizona permite sucesión formal e informal. La sucesión informal es más simple y más común cuando no hay disputas.\n• Se designa un representante personal (albacea) para administrar el patrimonio.\n• El proceso típicamente toma varios meses, aunque los plazos varían.\n\nUn abogado especializado en leyes de patrimonio o sucesión es el mejor recurso para entender los pasos legales específicos en su situación.",
+      },
+      {
+        heading: "Property Assessment and Condition",
+        headingEs: "Evaluación y Condición de la Propiedad",
+        content: "Understanding the property's current state is essential for making a clear decision.\n\nConsider:\n• Has the home been maintained? Deferred maintenance is common with inherited properties.\n• Are there any liens, unpaid taxes, or outstanding debts attached to the property?\n• Is the home occupied by tenants or family members?\n• What is the current market value in its present condition?\n\nA property assessment helps you understand whether selling, renting, or keeping the property makes financial sense. This doesn't require a commitment—it's simply information to help you decide.",
+        contentEs: "Entender el estado actual de la propiedad es esencial para tomar una decisión clara.\n\nConsidere:\n• ¿Se ha mantenido la casa? El mantenimiento diferido es común con propiedades heredadas.\n• ¿Hay gravámenes, impuestos no pagados, o deudas pendientes vinculadas a la propiedad?\n• ¿Está la casa ocupada por inquilinos o miembros de la familia?\n• ¿Cuál es el valor de mercado actual en su condición presente?\n\nUna evaluación de la propiedad le ayuda a entender si vender, rentar, o conservar la propiedad tiene sentido financieramente. Esto no requiere compromiso—es simplemente información para ayudarle a decidir.",
+      },
+      {
+        heading: "Your Options: Keep, Sell, or Transfer",
+        headingEs: "Sus Opciones: Conservar, Vender, o Transferir",
+        content: "You generally have three paths:\n\nKeep the Property\n• Move in, rent it out, or hold it as an investment\n• Consider ongoing costs: property taxes, insurance, maintenance, HOA fees\n• If multiple heirs are involved, one may buy out the others\n\nSell the Property\n• Selling on the open market typically yields the highest price\n• Cash offers may be faster but often come at a lower price\n• The property can often be sold as-is if repairs are not feasible\n\nTransfer the Property\n• A beneficiary deed or quitclaim deed can transfer ownership to another family member\n• Tax implications vary—consult a CPA or tax advisor\n\nThere is no wrong choice. The best option depends on your timeline, financial situation, and family dynamics.",
+        contentEs: "Generalmente tiene tres caminos:\n\nConservar la Propiedad\n• Mudarse, rentarla, o mantenerla como inversión\n• Considere los costos continuos: impuestos de propiedad, seguro, mantenimiento, cuotas HOA\n• Si hay múltiples herederos, uno puede comprar la parte de los otros\n\nVender la Propiedad\n• Vender en el mercado abierto típicamente produce el precio más alto\n• Las ofertas en efectivo pueden ser más rápidas pero generalmente vienen a un precio más bajo\n• La propiedad a menudo puede venderse como está si las reparaciones no son factibles\n\nTransferir la Propiedad\n• Una escritura de beneficiario o escritura de renuncia puede transferir la propiedad a otro miembro de la familia\n• Las implicaciones fiscales varían—consulte a un contador o asesor fiscal\n\nNo hay elección incorrecta. La mejor opción depende de su cronograma, situación financiera, y dinámicas familiares.",
+      },
+      {
+        heading: "Working with Multiple Heirs",
+        headingEs: "Trabajando con Múltiples Herederos",
+        content: "When multiple family members inherit a property together, decisions require agreement—or at least clear communication.\n\nCommon situations include:\n• All heirs agree to sell and split proceeds\n• One heir wants to keep the property and buy out the others\n• Heirs disagree on what to do\n\nIn cases of disagreement, mediation or legal guidance may be necessary. An experienced real estate professional can help facilitate conversations by providing clear market data and options for all parties.\n\nThe goal is clarity for everyone involved.",
+        contentEs: "Cuando múltiples miembros de la familia heredan una propiedad juntos, las decisiones requieren acuerdo—o al menos comunicación clara.\n\nSituaciones comunes incluyen:\n• Todos los herederos acuerdan vender y dividir las ganancias\n• Un heredero quiere conservar la propiedad y comprar la parte de los otros\n• Los herederos no están de acuerdo en qué hacer\n\nEn casos de desacuerdo, la mediación o guía legal puede ser necesaria. Un profesional inmobiliario experimentado puede ayudar a facilitar conversaciones proporcionando datos de mercado claros y opciones para todas las partes.\n\nEl objetivo es claridad para todos los involucrados.",
+      },
+      {
+        heading: "Financial and Tax Considerations",
+        headingEs: "Consideraciones Financieras y Fiscales",
+        content: "Inherited property comes with specific tax considerations in Arizona:\n\n• Stepped-Up Basis: In most cases, the property's tax basis is \"stepped up\" to its fair market value at the time of the owner's death. This can significantly reduce capital gains taxes if you sell.\n• Property Taxes: Arizona reassesses property taxes upon sale, not upon inheritance. Until then, existing rates generally continue.\n• Ongoing Costs: Even during probate, someone is responsible for insurance, utilities, and maintenance.\n\nThese are general principles—your specific situation may differ. A qualified CPA or tax advisor can provide guidance tailored to your circumstances.",
+        contentEs: "La propiedad heredada viene con consideraciones fiscales específicas en Arizona:\n\n• Base Incrementada: En la mayoría de los casos, la base fiscal de la propiedad se \"incrementa\" a su valor justo de mercado al momento del fallecimiento del propietario. Esto puede reducir significativamente los impuestos sobre ganancias de capital si vende.\n• Impuestos de Propiedad: Arizona reevalúa los impuestos de propiedad al momento de la venta, no al heredar. Hasta entonces, las tasas existentes generalmente continúan.\n• Costos Continuos: Incluso durante la sucesión, alguien es responsable del seguro, servicios y mantenimiento.\n\nEstos son principios generales—su situación específica puede diferir. Un contador o asesor fiscal calificado puede proporcionar orientación adaptada a sus circunstancias.",
+      },
+      {
+        heading: "Important Information",
+        headingEs: "Información Importante",
+        content: "This guide is for general educational purposes only. It is not legal, tax, or financial advice. For questions about probate proceedings, property transfers, or estate matters, please consult with a qualified attorney. For tax implications, consult a CPA or tax advisor.\n\nNo promises or guarantees are made regarding property values, legal outcomes, or timelines.",
+        contentEs: "Esta guía es solo para propósitos educativos generales. No es asesoría legal, fiscal o financiera. Para preguntas sobre procedimientos de sucesión, transferencias de propiedad o asuntos de patrimonio, consulte con un abogado calificado. Para implicaciones fiscales, consulte a un contador o asesor fiscal.\n\nNo se hacen promesas ni garantías respecto a valores de propiedad, resultados legales o cronogramas.",
+      },
+      {
+        heading: "Your Next Step",
+        headingEs: "Su Próximo Paso",
+        content: "If you've inherited a property and want to understand your options, you're welcome to have a calm, no-pressure conversation about your situation. Whether you're leaning toward keeping, selling, or simply need clarity on what comes next—support is available when you're ready.",
+        contentEs: "Si ha heredado una propiedad y desea entender sus opciones, es bienvenido(a) a tener una conversación tranquila, sin presión, sobre su situación. Ya sea que se incline hacia conservar, vender, o simplemente necesite claridad sobre qué viene después—el apoyo está disponible cuando esté listo(a).",
+      },
+    ],
+  },
 };
 
 // Improved fallback content for guides that don't have full content yet

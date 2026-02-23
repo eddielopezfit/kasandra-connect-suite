@@ -17,7 +17,12 @@ export type GuideColorCategory =
   | 'financial' 
   | 'neighborhoods' 
   | 'stories' 
-  | 'tips';
+  | 'tips'
+  | 'probate'
+  | 'divorce'
+  | 'distressed'
+  | 'military'
+  | 'senior';
 
 export interface CategoryColorConfig {
   /** Strong color for active chip, primary badge */
@@ -109,6 +114,41 @@ export const CATEGORY_COLORS: Record<GuideColorCategory, CategoryColorConfig> = 
     icon: 'text-slate-600',
     emotionalIntent: 'Practical, helpful, universal',
   },
+  probate: {
+    strong: 'bg-indigo-700 text-white',
+    subtle: 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100',
+    accent: 'border-l-4 border-l-indigo-600',
+    icon: 'text-indigo-700',
+    emotionalIntent: 'Gravity, respect, careful guidance',
+  },
+  divorce: {
+    strong: 'bg-purple-600 text-white',
+    subtle: 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100',
+    accent: 'border-l-4 border-l-purple-500',
+    icon: 'text-purple-600',
+    emotionalIntent: 'Sensitivity, fairness, fresh start',
+  },
+  distressed: {
+    strong: 'bg-orange-600 text-white',
+    subtle: 'bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100',
+    accent: 'border-l-4 border-l-orange-500',
+    icon: 'text-orange-600',
+    emotionalIntent: 'Urgency with compassion, practical resolution',
+  },
+  military: {
+    strong: 'bg-teal-700 text-white',
+    subtle: 'bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100',
+    accent: 'border-l-4 border-l-teal-600',
+    icon: 'text-teal-700',
+    emotionalIntent: 'Service, structure, honor',
+  },
+  senior: {
+    strong: 'bg-sky-600 text-white',
+    subtle: 'bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100',
+    accent: 'border-l-4 border-l-sky-500',
+    icon: 'text-sky-600',
+    emotionalIntent: 'Warmth, dignity, next chapter',
+  },
 };
 
 /**
@@ -191,6 +231,12 @@ export const DECISION_PATH_LABELS: Record<string, { en: string; es: string }> = 
   'spanish-speaking-client-story': {
     en: 'Story: Bilingual Support',
     es: 'Historia: Apoyo Bilingüe',
+  },
+  
+  // Probate / Inherited
+  'inherited-probate-property': {
+    en: 'Decision: Inherited Property Options',
+    es: 'Decisión: Opciones de Propiedad Heredada',
   },
 };
 

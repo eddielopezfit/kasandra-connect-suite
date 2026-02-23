@@ -40,6 +40,26 @@ const HANDOFF_COPY: Record<GuideCategory, { en: string; es: string }> = {
     en: "Still thinking? That's okay. I'm here whenever you're ready to talk.",
     es: "¿Aún pensándolo? Está bien. Estoy aquí cuando usted esté listo(a) para conversar.",
   },
+  probate: {
+    en: "Navigating an inherited property is personal. If you'd like to talk through your specific situation, I'm here — no rush, no pressure.",
+    es: "Navegar una propiedad heredada es personal. Si desea conversar sobre su situación específica, estoy aquí — sin prisa, sin presión.",
+  },
+  divorce: {
+    en: "These decisions are never easy. If you'd like a calm conversation about your options, I'm here.",
+    es: "Estas decisiones nunca son fáciles. Si desea una conversación tranquila sobre sus opciones, estoy aquí.",
+  },
+  distressed: {
+    en: "Every property situation has options. I can help you understand yours whenever you're ready.",
+    es: "Cada situación de propiedad tiene opciones. Puedo ayudarle a entender las suyas cuando esté listo(a).",
+  },
+  military: {
+    en: "Transitions are complex. I can help you understand the programs and options available to you.",
+    es: "Las transiciones son complejas. Puedo ayudarle a entender los programas y opciones disponibles para usted.",
+  },
+  senior: {
+    en: "Planning your next chapter takes time. I'm here whenever you'd like to explore what's possible.",
+    es: "Planificar su próximo capítulo toma tiempo. Estoy aquí cuando desee explorar lo que es posible.",
+  },
 };
 
 const SelenaGuideHandoff = ({ guideId, category }: SelenaGuideHandoffProps) => {

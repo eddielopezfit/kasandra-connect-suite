@@ -50,6 +50,26 @@ const DEFAULT_AUTHORITY_BRIDGE: Record<GuideCategory, { en: string; es: string }
     en: "Every situation is different. What stays the same is having someone who can see the whole picture.",
     es: "Cada situación es diferente. Lo que no cambia es tener a alguien que pueda ver el panorama completo.",
   },
+  probate: {
+    en: "Inherited property decisions involve family, legal timelines, and emotional weight. Kasandra has helped families navigate exactly this—with patience and clarity.",
+    es: "Las decisiones sobre propiedades heredadas involucran familia, plazos legales y peso emocional. Kasandra ha ayudado a familias a navegar exactamente esto—con paciencia y claridad.",
+  },
+  divorce: {
+    en: "Selling during a separation requires sensitivity, clear communication, and someone who understands the process from all sides.",
+    es: "Vender durante una separación requiere sensibilidad, comunicación clara y alguien que entienda el proceso desde todos los ángulos.",
+  },
+  distressed: {
+    en: "When a property needs work and time is limited, having someone who can evaluate your real options makes all the difference.",
+    es: "Cuando una propiedad necesita trabajo y el tiempo es limitado, tener a alguien que pueda evaluar sus opciones reales hace toda la diferencia.",
+  },
+  military: {
+    en: "Military transitions come with unique timelines and benefits. Kasandra understands the programs available and how to use them effectively.",
+    es: "Las transiciones militares vienen con plazos y beneficios únicos. Kasandra entiende los programas disponibles y cómo usarlos efectivamente.",
+  },
+  senior: {
+    en: "Downsizing or planning for the next chapter is deeply personal. Kasandra provides guidance that respects your pace and priorities.",
+    es: "Reducir espacio o planificar el próximo capítulo es profundamente personal. Kasandra ofrece orientación que respeta su ritmo y prioridades.",
+  },
 };
 
 // Default market insight for cash guides (only shown when isCashGuide)
@@ -100,6 +120,41 @@ const CTA_CONFIG: Record<GuideCategory, {
     link: 'selena_chat',
     labelEn: 'Explore Your Options with Kasandra',
     labelEs: 'Explore Sus Opciones con Kasandra',
+    icon: MessageCircle,
+    routeThruSelena: true,
+  },
+  probate: {
+    link: 'selena_chat',
+    labelEn: 'Discuss Your Inherited Property Options',
+    labelEs: 'Converse Sobre Sus Opciones de Propiedad Heredada',
+    icon: MessageCircle,
+    routeThruSelena: true,
+  },
+  divorce: {
+    link: 'selena_chat',
+    labelEn: 'Talk Through Your Situation',
+    labelEs: 'Converse Sobre Su Situación',
+    icon: MessageCircle,
+    routeThruSelena: true,
+  },
+  distressed: {
+    link: 'selena_chat',
+    labelEn: 'Explore Your Property Options',
+    labelEs: 'Explore Sus Opciones de Propiedad',
+    icon: MessageCircle,
+    routeThruSelena: true,
+  },
+  military: {
+    link: 'selena_chat',
+    labelEn: 'Explore Your Transition Options',
+    labelEs: 'Explore Sus Opciones de Transición',
+    icon: MessageCircle,
+    routeThruSelena: true,
+  },
+  senior: {
+    link: 'selena_chat',
+    labelEn: 'Discuss Your Next Chapter',
+    labelEs: 'Converse Sobre Su Próximo Capítulo',
     icon: MessageCircle,
     routeThruSelena: true,
   },
