@@ -1,6 +1,3 @@
-import ftbOrientationImg from '@/assets/guides/ftb-orientation.jpg';
-import sellOrientationImg from '@/assets/guides/sell-orientation.jpg';
-
 /**
  * Guide Media Slots - Per-guide media placement configuration
  * 
@@ -12,11 +9,11 @@ import sellOrientationImg from '@/assets/guides/sell-orientation.jpg';
 export type MediaSlotVariant = 'orientation' | 'trust' | 'clarity';
 
 export interface MediaSlot {
-  id: string;                // Stable identifier for analytics
-  variant: MediaSlotVariant; // Semantic role
-  afterSection: number;      // -1 = after intro, 0+ = after that section index
+  id: string;
+  variant: MediaSlotVariant;
+  afterSection: number;
   type: 'image' | 'video' | 'pull-quote-image' | 'checklist-image';
-  purpose: string;           // Dev/content reference only, not rendered
+  purpose: string;
   alt: string;
   altEs: string;
   src?: string;
@@ -25,23 +22,14 @@ export interface MediaSlot {
   quoteEs?: string;
 }
 
-/**
- * Dev-only guard: warns if a guide has both video AND pull-quote-image slots
- * with content (src/quote). Max 1 human element per guide.
- */
 export function validateMediaSlots(slots: MediaSlot[], guideId: string): void {
   if (import.meta.env.PROD) return;
-
   const humanSlots = slots.filter(
-    (s) =>
-      (s.type === 'video' || s.type === 'pull-quote-image') &&
-      (s.src || s.quote)
+    (s) => (s.type === 'video' || s.type === 'pull-quote-image') && (s.src || s.quote)
   );
-
   if (humanSlots.length > 1) {
     console.warn(
-      `[GuideMedia] Guide "${guideId}" has ${humanSlots.length} human elements (video + pull-quote). ` +
-      `Max 1 is recommended. IDs: ${humanSlots.map((s) => s.id).join(', ')}`
+      `[GuideMedia] Guide "${guideId}" has ${humanSlots.length} human elements. IDs: ${humanSlots.map((s) => s.id).join(', ')}`
     );
   }
 }
@@ -56,7 +44,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Calm visual after intro to reduce cognitive load before financial section',
       alt: 'A welcoming Tucson home exterior',
       altEs: 'Exterior acogedor de una casa en Tucson',
-      src: ftbOrientationImg,
+      src: '/guides/first-time-buyer-guide/orientation.jpg',
     },
     {
       id: 'ftb-trust',
@@ -77,6 +65,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Visual checklist for inspections/due-diligence — highest anxiety phase',
       alt: 'Home inspection checklist overview',
       altEs: 'Resumen de lista de inspección del hogar',
+      src: '/guides/first-time-buyer-guide/checklist.jpg',
     },
   ],
 
@@ -89,7 +78,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Warm image after emotional validation section to transition into process',
       alt: 'A Tucson home ready for sale',
       altEs: 'Una casa en Tucson lista para la venta',
-      src: sellOrientationImg,
+      src: '/guides/selling-for-top-dollar/orientation.jpg',
     },
     {
       id: 'sell-trust',
@@ -108,6 +97,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Calm visual anchor after sell vs wait comparison',
       alt: 'A calm Tucson neighborhood',
       altEs: 'Un vecindario tranquilo de Tucson',
+      src: '/guides/selling-for-top-dollar/clarity.jpg',
     },
   ],
 
@@ -120,6 +110,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Ground the reader visually after empathy-forward opening',
       alt: 'A Tucson neighborhood street view',
       altEs: 'Vista de una calle de vecindario en Tucson',
+      src: '/guides/understanding-home-valuation/orientation.jpg',
     },
     {
       id: 'val-trust',
@@ -140,6 +131,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'CMA vs Appraisal vs Online comparison to reduce confusion',
       alt: 'Comparison of home valuation methods',
       altEs: 'Comparación de métodos de valoración de vivienda',
+      src: '/guides/understanding-home-valuation/clarity.jpg',
     },
   ],
 
@@ -152,6 +144,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Calming image after emotional grounding intro',
       alt: 'A calm Tucson landscape',
       altEs: 'Un paisaje tranquilo de Tucson',
+      src: '/guides/cash-offer-guide/orientation.jpg',
     },
     {
       id: 'cash-trust',
@@ -170,6 +163,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Cash vs Traditional side-by-side at the decision point',
       alt: 'Cash offer versus traditional sale comparison',
       altEs: 'Comparación de oferta en efectivo versus venta tradicional',
+      src: '/guides/cash-offer-guide/checklist.jpg',
     },
   ],
 
@@ -182,6 +176,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Warm image to set emotional tone for short story',
       alt: 'Keys on a table beside a front door',
       altEs: 'Llaves sobre una mesa junto a la puerta principal',
+      src: '/guides/first-time-buyer-story/orientation.jpg',
     },
     {
       id: 'ftbs-trust',
@@ -202,6 +197,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Emotional resolution image before CTA',
       alt: 'A welcoming front door',
       altEs: 'Una puerta principal acogedora',
+      src: '/guides/first-time-buyer-story/clarity.jpg',
     },
   ],
 
@@ -214,6 +210,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Family-oriented image to set domestic tone',
       alt: 'A modest family home with a yard',
       altEs: 'Una casa familiar modesta con jardín',
+      src: '/guides/budget-buyer-story/orientation.jpg',
     },
     {
       id: 'bbs-trust',
@@ -234,6 +231,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Right-sized home image reinforcing that modest is a win',
       alt: 'A well-kept modest home',
       altEs: 'Una casa modesta bien cuidada',
+      src: '/guides/budget-buyer-story/clarity.jpg',
     },
   ],
 
@@ -246,6 +244,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Transition image grounding the urgency theme',
       alt: 'Moving boxes and a timeline',
       altEs: 'Cajas de mudanza y un cronograma',
+      src: '/guides/seller-stressful-market-story/orientation.jpg',
     },
     {
       id: 'sms-trust',
@@ -266,6 +265,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Calm resolution image',
       alt: 'A sold sign on a home',
       altEs: 'Un letrero de vendido en una casa',
+      src: '/guides/seller-stressful-market-story/clarity.jpg',
     },
   ],
 
@@ -278,6 +278,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Community-oriented image for cultural grounding',
       alt: 'A South Tucson neighborhood',
       altEs: 'Un vecindario del sur de Tucson',
+      src: '/guides/spanish-speaking-client-story/orientation.jpg',
     },
     {
       id: 'ssc-trust',
@@ -298,6 +299,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Welcoming home in South Tucson for cultural grounding',
       alt: 'A welcoming home in South Tucson',
       altEs: 'Una casa acogedora en el sur de Tucson',
+      src: '/guides/spanish-speaking-client-story/clarity.jpg',
     },
   ],
 };
