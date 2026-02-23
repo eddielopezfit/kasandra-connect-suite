@@ -87,7 +87,7 @@ export function resolveAction(
       openChat?.(spec.payload);
       break;
     case 'book':
-      openChat?.({ source: 'earned_access' });
+      navigate('/v2/book');
       break;
     case 'call_contact':
       window.open(`tel:${spec.phone}`, '_self');
