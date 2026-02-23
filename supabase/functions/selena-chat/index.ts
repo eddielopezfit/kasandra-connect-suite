@@ -91,6 +91,11 @@ interface ChatRequest {
     // Mode persistence — client sends back the server's last reported mode
     current_mode?: 1 | 2 | 3 | 4;
     timeline?: string;
+    // Phase governance fields (monotonic)
+    chip_phase_floor?: number;
+    greeting_phase_seen?: number;
+    timeline_last_asked_turn?: number;
+    turn_count?: number;
   };
   history?: ChatMessage[];
 }
@@ -784,11 +789,20 @@ serve(async (req) => {
     const conversationState = buildConversationState(context, history, message, extractedEmail, primaryIntent);
     const detectedModeContext = detectMode(conversationState);
 
-    // AUTHORITATIVE MODE OVERRIDE: If the frontend reports current_mode = 4 (HANDOFF),
-    // trust it — it was set by a previous server response. Never downgrade from 4.
-    const clientMode = context.current_mode as ConversationMode | undefined;
-    const modeContext = (clientMode === 4 || detectedModeContext.mode === 4)
-      ? { mode: 4 as ConversationMode, modeName: 'HANDOFF', allowBookingCTA: true, reflectionRequired: false }
+    // UNIVERSAL MONOTONIC MODE FLOOR: Mode must never decrease within a session.
+    const clientMode = (context.current_mode ?? 0) as number;
+    const detectedMode = detectedModeContext.mode;
+    const effectiveMode = Math.max(clientMode, detectedMode) as ConversationMode;
+    
+    // Select the correct modeContext for the effective mode
+    const modeContext = effectiveMode !== detectedMode
+      ? (() => {
+          // Re-derive context for the floored mode
+          if (effectiveMode === 4) return { mode: 4 as ConversationMode, modeName: 'HANDOFF', allowBookingCTA: true, reflectionRequired: false };
+          if (effectiveMode === 3) return { mode: 3 as ConversationMode, modeName: 'CONFIDENCE', allowBookingCTA: false, reflectionRequired: true };
+          if (effectiveMode === 2) return { mode: 2 as ConversationMode, modeName: 'CLARITY', allowBookingCTA: false, reflectionRequired: true };
+          return detectedModeContext;
+        })()
       : detectedModeContext;
     const currentMode: ConversationMode = modeContext.mode;
     
@@ -835,7 +849,52 @@ serve(async (req) => {
     
     // ============= CHIP GOVERNANCE: AI PROMPT INJECTION =============
     // Tell the AI what phase we're in so response text matches chip direction
-    const { chips, phase, escalated } = getGovernedChips(effectiveIntent, timeline, engagement, language);
+    const rawGoverned = getGovernedChips(effectiveIntent, timeline, engagement, language);
+    
+    // ============= CHIP PHASE FLOOR ENFORCEMENT (monotonic) =============
+    const clientChipFloor = context.chip_phase_floor ?? 0;
+    const effectiveChipPhase = Math.max(clientChipFloor, rawGoverned.phase) as 1 | 2 | 3;
+    
+    // Re-derive chips if floor pushed us past what getGovernedChips returned
+    let chips: string[];
+    let phase: 1 | 2 | 3;
+    let escalated: boolean;
+    
+    if (effectiveChipPhase > rawGoverned.phase) {
+      // Floor is higher — re-derive chips for the effective phase
+      // Phase-biased: allow pulling down by 1 band for Phase-2 intents, never to Phase 1
+      const PHASE2_PATTERNS = /worth|value|valor|cuánto vale|preparation|prepare|preparar|how does.*work|cómo funciona|process|proceso/i;
+      const isPhase2Question = PHASE2_PATTERNS.test(message);
+      
+      if (effectiveChipPhase >= 3 && isPhase2Question && effectiveChipPhase - 1 >= 2) {
+        // Allow Phase 2 chips for Phase-2-type questions even at floor 3
+        const phase2Chips = effectiveIntent === 'buy'
+          ? (language === 'es' ? ["Tomar la evaluación de preparación", "Explorar guías del comprador"] : ["Take the readiness check", "Browse buyer guides"])
+          : (language === 'es' ? ["¿Cuánto vale mi casa?", "Comparar efectivo vs. listado"] : ["What's my home worth?", "Compare cash vs. listing"]);
+        chips = phase2Chips;
+        phase = 2;
+        escalated = false;
+      } else if (effectiveChipPhase >= 3) {
+        chips = language === 'es' ? ["Estimar mis ganancias netas", "Hablar con Kasandra"] : ["Estimate my net proceeds", "Talk with Kasandra"];
+        phase = 3;
+        escalated = rawGoverned.escalated;
+      } else {
+        // effectiveChipPhase is 2 but governed returned 1 — use Phase 2 chips
+        if (effectiveIntent === 'sell' || effectiveIntent === 'cash') {
+          chips = language === 'es' ? ["¿Cuánto vale mi casa?", "Comparar efectivo vs. listado"] : ["What's my home worth?", "Compare cash vs. listing"];
+        } else if (effectiveIntent === 'buy') {
+          chips = language === 'es' ? ["Tomar la evaluación de preparación", "Explorar guías del comprador"] : ["Take the readiness check", "Browse buyer guides"];
+        } else {
+          chips = rawGoverned.chips; // fallback
+        }
+        phase = 2;
+        escalated = false;
+      }
+    } else {
+      chips = rawGoverned.chips;
+      phase = rawGoverned.phase;
+      escalated = rawGoverned.escalated;
+    }
     
     let governanceHint = "";
     if (proceedsOverride || asapTimeline) {
@@ -890,13 +949,21 @@ serve(async (req) => {
     const TIMELINE_REPLY_PATTERNS = /^(asap|lo antes posible|\d[\d\s\-–]+\s*(month|mes|day|día)|1.?3\s*(month|mes)|3.?6\s*(month|mes)|just exploring|solo explorando|months?|meses?|\d+.?\d+\s*(days?|días?))/i;
     const isTimelineReply = TIMELINE_REPLY_PATTERNS.test(message.trim());
     
+    // Timeline re-ask guard: skip first-seller intercept if timeline was recently asked
+    const turnCount = context.turn_count ?? 0;
+    const timelineRecentlyAsked = context.timeline_last_asked_turn !== undefined && 
+      context.timeline_last_asked_turn !== null &&
+      (turnCount - context.timeline_last_asked_turn) < 10;
+    
     const isFirstSellerTurn = conversationState.userTurns <= 1
       && (primaryIntent === 'sell' || primaryIntent === 'cash')
       && !context.tool_used
       && !context.quiz_completed
       && !isTimelineReply    // Never re-fire on timeline chip responses
       && !proceedsOverride   // PROCEEDS override takes absolute priority over first-turn intercept
-      && !asapTimeline;      // ASAP override also bypasses first-turn intercept
+      && !asapTimeline       // ASAP override also bypasses first-turn intercept
+      && !context.timeline   // Don't re-ask if timeline already known
+      && !timelineRecentlyAsked; // Don't spam timeline question
 
     if (isFirstSellerTurn) {
       const sellerFirstReply = language === 'es'
@@ -919,6 +986,8 @@ serve(async (req) => {
           booking_cta_shown: false,
           current_mode: currentMode,
           mode_name: modeContext.modeName,
+          chip_phase_floor: Math.max(effectiveChipPhase, 2), // Intent declared → floor at least 2
+          timeline_last_asked_turn: turnCount,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
@@ -941,7 +1010,18 @@ serve(async (req) => {
 
     const data = await response.json();
     const rawReply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
-    const reply = sanitizeBracketCTAs(rawReply);
+    let reply = sanitizeBracketCTAs(rawReply);
+
+    // ============= SERVER-SIDE ONBOARDING HARD BLOCK =============
+    // Safety backstop: if intent exists or chip_phase_floor >= 2, the AI must never
+    // output literal onboarding prompt variants. Replace with neutral "welcome back".
+    const ONBOARDING_BLOCK_PATTERNS = /are you looking to buy.*sell.*explore|just explore what's possible|what brings you here today|what brings you here|qué le trae por aquí|está pensando en comprar.*vender.*explorar|está buscando comprar.*vender.*explorar/i;
+    
+    if ((context.intent || effectiveChipPhase >= 2) && ONBOARDING_BLOCK_PATTERNS.test(reply)) {
+      reply = language === 'es'
+        ? 'Bienvenido/a de vuelta — podemos continuar donde lo dejamos.'
+        : 'Welcome back — we can pick up where you left off.';
+    }
 
     // Check if booking access is earned (from mode detection)
     const hasEarned = modeContext.allowBookingCTA;
@@ -1013,8 +1093,9 @@ serve(async (req) => {
         // Mode telemetry
         current_mode: currentMode,
         mode_name: modeContext.modeName,
-        // Chip governance telemetry
+        // Chip governance telemetry + monotonic floor
         chip_phase: phase,
+        chip_phase_floor: effectiveChipPhase,
         chip_escalated: escalated,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
