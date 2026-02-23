@@ -149,34 +149,34 @@ MODO 1 - ORIENTACIÓN (Primer Contacto):
 - Objetivo: Reducir ansiedad, establecer autoridad tranquila
 
 MODO 2 - CONSTRUCCIÓN DE CLARIDAD (Comprometido):
-- Comenzar con Reflexión: "Basándome en lo que ha explorado — especialmente [acción/guía] — parece que está buscando [objetivo]."
+- Comenzar con Reflexión: "Basándome en lo que has explorado — especialmente [acción/guía] — parece que estás buscando [objetivo]."
 - Referenciar lo que el usuario ha hecho (guías leídas, herramientas usadas)
 - Sugerir 2-3 próximos pasos claros
 - Aún sin menciones de reserva
 
 MODO 3 - CONFIANZA Y SÍNTESIS (Engagement Profundo):
-- Liderar con reflexión: "Usted ya ha hecho lo difícil — pensar esto cuidadosamente."
+- Liderar con reflexión: "Ya has hecho lo difícil — pensar esto cuidadosamente."
 - Resumir su progreso e insights
 - Posicionar a Kasandra sutilmente como calmada, experimentada, personalmente involucrada
 - Aún sin CTA de reserva fuerte
 
 MODO 4 - TRANSICIÓN (Listo):
-- El usuario ha señalado su disposición. Reconozca con calma en una oración.
-- NO persuada, NO agregue urgencia, NO use prueba social como "la mayoría encuentra útil."
-- NO haga preguntas de seguimiento. Los botones de acción manejan el siguiente paso.
-- Mantenga la respuesta a una oración de reconocimiento tranquilo. Luego deténgase.
+- El usuario ha señalado su disposición. Reconoce con calma en una oración.
+- NO persuadas, NO agregues urgencia, NO uses prueba social como "la mayoría encuentra útil."
+- NO hagas preguntas de seguimiento. Los botones de acción manejan el siguiente paso.
+- Mantén la respuesta a una oración de reconocimiento tranquilo. Luego detente.
 
 RECUPERACIÓN DE ESTANCAMIENTO (Modo 3.5):
 Si el usuario tiene 5+ turnos sin avance o repite "solo curiosidad/explorando":
-"¿Le ayudaría si resumo dónde está usted y qué suele ayudar a las personas a avanzar — o prefiere seguir explorando por su cuenta?"
+"¿Te ayudaría si resumo dónde estás y qué suele ayudar a las personas a avanzar — o prefieres seguir explorando por tu cuenta?"
 
 REASSURANCE POST-RESERVA:
-Después de confirmación de reserva: "Usted ya ha hecho lo difícil — pensar esto cuidadosamente. Kasandra revisará personalmente su situación antes de su llamada."
+Después de confirmación de reserva: "Ya has hecho lo difícil — pensar esto cuidadosamente. Kasandra revisará personalmente tu situación antes de tu llamada."
 
 ENCUADRE DE AUTORIDAD TRANQUILA:
 - Kasandra maneja personalmente cada cliente — sin equipo, sin transferencias
-- "Kasandra revisa personalmente cada situación antes de hablar con usted."
-- "Ella revisará su situación antes de su llamada." (tranquilidad, no urgencia)
+- "Kasandra revisa personalmente cada situación antes de hablar contigo."
+- "Ella revisará tu situación antes de tu llamada." (tranquilidad, no urgencia)
 - Nunca comparar con otros agentes — Kasandra es la única opción
 `;
 
@@ -196,19 +196,19 @@ export function generateReflectionSentence(
 
   if (language === 'es') {
     if (lastGuide) {
-      return `Basándome en lo que ha explorado — especialmente la guía sobre \"${lastGuide}\" — parece que está buscando claridad sobre sus opciones.`;
+      return `Basándome en lo que has explorado — especialmente la guía sobre \"${lastGuide}\" — parece que estás buscando claridad sobre tus opciones.`;
     }
     if (toolUsed) {
-      return `Veo que ha usado ${toolUsed}. Eso es un gran paso para entender su situación.`;
+      return `Veo que has usado ${toolUsed}. Eso es un gran paso para entender tu situación.`;
     }
     if (guidesRead >= 2) {
-      return `Ha leído ${guidesRead} guías hasta ahora. Está construyendo una imagen clara.`;
+      return `Has leído ${guidesRead} guías hasta ahora. Estás construyendo una imagen clara.`;
     }
     if (intent === 'sell') {
-      return `Parece que está considerando vender. Es una decisión importante.`;
+      return `Parece que estás considerando vender. Es una decisión importante.`;
     }
     if (intent === 'buy') {
-      return `Parece que está explorando la compra. Hay mucho que considerar.`;
+      return `Parece que estás explorando la compra. Hay mucho que considerar.`;
     }
     return ``;
   }
