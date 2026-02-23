@@ -851,6 +851,15 @@ serve(async (req) => {
         ? `\n\nGOBERNANZA FASE 2: La intención está clara. Sea decisivo — recomiende UN paso concreto. No pregunte "¿preferiría una herramienta o una guía?". Máximo 2 opciones. Los botones se muestran automáticamente.`
         : `\n\nGOVERNANCE PHASE 2: Intent is known. Be decisive — recommend ONE concrete next step. Do NOT ask "would you prefer a tool or a guide?". Max 2 options. Action buttons are shown automatically by the system.`;
     }
+
+    // ============= STOP TALKING RULE (Phase 3 / Mode 4) =============
+    // When action buttons are present (calculator, booking, tools), the AI must
+    // end its turn immediately. No follow-up questions. No persuasion.
+    if (currentMode === 4 || phase === 3 || proceedsOverride || asapTimeline) {
+      governanceHint += language === 'es'
+        ? `\n\nREGLA DURA: Botones de acción están adjuntos a esta respuesta. Su texto DEBE ser 1-2 oraciones máximo — un reconocimiento breve y una recomendación directa. NO haga preguntas de seguimiento. NO agregue "¿le gustaría...?" ni "la mayoría encuentra útil...". Termine su turno.`
+        : `\n\nHARD RULE: Action buttons are attached to this response. Your text MUST be 1-2 sentences max — one brief acknowledgment and one direct recommendation. Do NOT ask follow-up questions. Do NOT add "would you like to..." or "most people find it helpful...". End your turn.`;
+    }
     
     // Add stall recovery hint if needed
     if (stalled) {

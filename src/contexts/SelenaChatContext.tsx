@@ -25,6 +25,70 @@ import {
   logEvent,
 } from '@/lib/analytics/logEvent';
 import { getGuideById } from '@/lib/guides/guideRegistry';
+import type { ActionSpec } from '@/lib/actions/actionSpec';
+
+// ============= CHIP → ACTIONSPEC MAPPING =============
+// Converts known action-bearing string labels to structured ActionSpec objects.
+// Uses normalized lowercase matching with whitespace/punctuation tolerance.
+type MappedReply = string | { label: string; actionSpec: ActionSpec };
+
+const CHIP_ACTION_MAP: Array<{ pattern: string; actionSpec: ActionSpec }> = [
+  {
+    pattern: 'estimate my net proceeds',
+    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
+  },
+  {
+    pattern: 'estimar mis ganancias netas',
+    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
+  },
+  {
+    pattern: 'compare cash vs listing',
+    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
+  },
+  {
+    pattern: 'comparar efectivo vs listado',
+    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
+  },
+  {
+    pattern: 'talk with kasandra',
+    actionSpec: { type: 'book', label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
+  },
+  {
+    pattern: 'hablar con kasandra',
+    actionSpec: { type: 'book', label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
+  },
+  {
+    pattern: 'find a time with kasandra',
+    actionSpec: { type: 'book', label: { en: 'Find a time with Kasandra', es: 'Encontrar un horario con Kasandra' } },
+  },
+  {
+    pattern: 'encontrar un horario con kasandra',
+    actionSpec: { type: 'book', label: { en: 'Find a time with Kasandra', es: 'Encontrar un horario con Kasandra' } },
+  },
+  {
+    pattern: 'take the readiness check',
+    actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+  },
+  {
+    pattern: 'tomar la evaluacion de preparacion',
+    actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+  },
+];
+
+function normalizeChipLabel(label: string): string {
+  return label.toLowerCase().trim().replace(/[.,!?¿¡]/g, '').replace(/\s+/g, ' ');
+}
+
+function mapChipsToActionSpecs(replies: string[]): MappedReply[] {
+  return replies.map((reply) => {
+    const normalized = normalizeChipLabel(reply);
+    const match = CHIP_ACTION_MAP.find((entry) => normalizeChipLabel(entry.pattern) === normalized);
+    if (match) {
+      return { label: reply, actionSpec: match.actionSpec };
+    }
+    return reply; // plain string — stays conversational
+  });
+}
 
 const CHAT_HISTORY_KEY = 'selena_chat_history';
 const LEAD_ID_KEY = 'selena_lead_id';
@@ -852,6 +916,12 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         }
       }
       
+      // ============= CHIP → ACTIONSPEC MAPPING =============
+      // Convert known action-bearing string chips to structured ActionSpec objects.
+      // This ensures clicks call resolveAction() (deterministic routing) instead of
+      // sending a user message (which would trigger an AI round-trip).
+      const mappedReplies = mapChipsToActionSpecs(data.suggestedReplies || []);
+
       const assistantMessage: ChatMessage = {
         id: generateMessageId(),
         role: 'assistant',
@@ -861,7 +931,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         ),
         timestamp: new Date().toISOString(),
         actions: data.actions || [],
-        suggestedReplies: data.suggestedReplies || [],
+        suggestedReplies: mappedReplies,
       };
 
       const updatedMessages = [...newMessages, assistantMessage];
