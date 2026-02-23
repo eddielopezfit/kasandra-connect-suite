@@ -262,6 +262,10 @@ function generateCalculatorGreeting(context: EntryContext): GreetingResult {
   };
 }
 
+/**
+ * GUARD: Guide handoff greetings must NEVER include identity statements
+ * ("I'm Selena", "Soy Selena"). They are contextual-only mid-conversation injections.
+ */
 function generateGuideHandoffGreeting(context: EntryContext): GreetingResult {
   const { guideTitle, guideCategory, language } = context;
 
@@ -345,7 +349,7 @@ function generateSynthesisGreeting(context: EntryContext): GreetingResult {
 function generateHeroGreeting(language: 'en' | 'es'): GreetingResult {
   if (language === 'es') {
     return {
-      content: `Hola, soy Selena — la guía digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarte a explorar tus opciones con calma y sin presión. Ya sea que estés pensando en comprar, vender, o simplemente entendiendo lo que es posible — estoy aquí para guiarte.\n\n¿Qué te trae por aquí hoy?`,
+      content: `Hola, soy Selena — la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarte a explorar tus opciones con calma y sin presión. Ya sea que estés pensando en comprar, vender, o simplemente entendiendo lo que es posible — estoy aquí para ayudarte.\n\n¿Qué te trae por aquí hoy?`,
       suggestedReplies: [
         "Estoy pensando en vender",
         "Estoy buscando comprar",
@@ -355,7 +359,7 @@ function generateHeroGreeting(language: 'en' | 'es'): GreetingResult {
   }
 
   return {
-    content: `Hello, I'm Selena — Kasandra's digital real estate guide.\n\nI'm here to help you explore your options calmly and without pressure. Whether you're thinking about buying, selling, or just understanding what's possible — I'm here to guide you.\n\nWhat brings you here today?`,
+    content: `Hello, I'm Selena — Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure. Whether you're thinking about buying, selling, or just understanding what's possible — I'm here to help.\n\nWhat brings you here today?`,
     suggestedReplies: [
       "I'm thinking about selling",
       "I'm looking to buy",

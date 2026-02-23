@@ -270,6 +270,19 @@ export function applyGuardRules(
       : 'GUARD: This is a returning user. Do NOT give a fresh introduction. Continue naturally.');
   }
 
+  // ── RULE 12: GUIDE LOOP ESCALATION ──
+  // If 2+ guides have been surfaced AND the last system action was a guide,
+  // force escalation to a decisive action (calculator/booking) instead of another guide.
+  // Aligns with: "If a user repeats the same choice twice, she must escalate."
+  if (state.guide_history.length >= 2 && state.last_system_action === 'guide') {
+    const ACCEPTANCE_PATTERNS = /^(yes|yeah|sure|ok|guide|show me|send it|sí|si|claro|muéstrame|muestrame|envía|envia|dale)/i;
+    // Only trigger if current turn looks like an acceptance (checked upstream via message param)
+    hints.push(language === 'es'
+      ? 'GUARDIA ESCALACIÓN: Ya se han sugerido 2+ guías. NO ofrezcas otra guía. Recomienda una acción decisiva: la calculadora de ganancias netas o una conversación con Kasandra.'
+      : 'GUARD ESCALATION: 2+ guides have been surfaced. Do NOT offer another guide. Recommend a decisive action: the net proceeds estimator or a conversation with Kasandra.');
+    violations.push({ rule: 'guide_loop_escalation', action: 'modified' });
+  }
+
   return {
     guardHints: hints.length > 0 ? '\n\n' + hints.join('\n') : '',
     chipOverrides,
