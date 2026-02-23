@@ -92,11 +92,11 @@ function generatePostBookingGreeting(context: EntryContext): GreetingResult {
   
   if (language === 'es') {
     return {
-      content: `${name}Listo. Usted ya hizo lo más difícil — pensar esto con cuidado.
+      content: `${name}Listo. Ya hiciste lo más difícil — pensar esto con cuidado.
 
-Kasandra revisará personalmente lo que compartió antes de su llamada para que tenga claridad completa en 10 minutos.
+Kasandra revisará personalmente lo que compartiste antes de tu llamada para que tengas claridad completa en 10 minutos.
 
-Si gusta, dígame una cosa sobre la que quiera estar 100% seguro/a cuando hablen.`,
+Si gustas, dime una cosa sobre la que quieras estar 100% seguro/a cuando hablen.`,
       suggestedReplies: [
         "¿Qué debo preparar para la llamada?",
         "¿Puedo reprogramar si es necesario?",
@@ -130,7 +130,7 @@ function generateQuizResultGreeting(context: EntryContext): GreetingResult {
   if (language === 'es') {
     if (intent === 'sell') {
       return {
-        content: `Completó su camino — y parece que vender está en su mente.\n\nBasado en lo que compartió, hay dos cosas que le ayudarán a avanzar: entender el valor actual de su casa y saber qué opciones tiene antes de comprometerse con algo.`,
+        content: `Completaste tu camino — y parece que vender está en tu mente.\n\nBasado en lo que compartiste, hay dos cosas que te ayudarán a avanzar: entender el valor actual de tu casa y saber qué opciones tienes antes de comprometerte con algo.`,
         suggestedReplies: [
           "¿Cuánto vale mi casa?",
           "Comparar efectivo vs. venta tradicional",
@@ -140,7 +140,7 @@ function generateQuizResultGreeting(context: EntryContext): GreetingResult {
     }
     if (intent === 'cash') {
       return {
-        content: `Completó su camino — y las opciones de oferta en efectivo llamaron su atención. Vale la pena explorarlo.\n\nDéjeme ayudarle a entender qué significa realmente una oferta en efectivo para su situación específica.`,
+        content: `Completaste tu camino — y las opciones de oferta en efectivo llamaron tu atención. Vale la pena explorarlo.\n\nDéjame ayudarte a entender qué significa realmente una oferta en efectivo para tu situación específica.`,
         suggestedReplies: [
           "¿Cuánto vale mi casa?",
           "Comparar efectivo vs. venta tradicional",
@@ -150,7 +150,7 @@ function generateQuizResultGreeting(context: EntryContext): GreetingResult {
     }
     if (intent === 'buy') {
       return {
-        content: `Completó su camino — y está pensando en comprar. Es un excelente lugar para comenzar.\n\nAquí está lo que normalmente ayuda más en esta etapa: saber dónde está financieramente y entender el proceso antes de comprometerse con algo.`,
+        content: `Completaste tu camino — y estás pensando en comprar. Es un excelente lugar para comenzar.\n\nAquí está lo que normalmente ayuda más en esta etapa: saber dónde estás financieramente y entender el proceso antes de comprometerte con algo.`,
         suggestedReplies: [
           "Tomar la evaluación de preparación",
           "¿Qué debo preparar?",
@@ -160,7 +160,7 @@ function generateQuizResultGreeting(context: EntryContext): GreetingResult {
     }
     // explore / default
     return {
-      content: `Completó su camino — y está bien que las cosas no estén completamente claras aún. Eso es más normal de lo que piensa.\n\nFigurémonos juntos cuál es su próximo paso más útil.`,
+      content: `Completaste tu camino — y está bien que las cosas no estén completamente claras aún. Eso es más normal de lo que piensas.\n\nFiguremos juntos cuál es tu próximo paso más útil.`,
       suggestedReplies: [
         "Ayúdame a encontrar mi camino",
         "Muéstrame mis opciones",
@@ -217,20 +217,20 @@ function generateCalculatorGreeting(context: EntryContext): GreetingResult {
   const diff = calculatorDifference ? `$${calculatorDifference.toLocaleString()}` : '';
 
   if (language === 'es') {
-    let content = 'Veo que ha completado el análisis.';
+    let content = 'Veo que completaste el análisis.';
     
     if (calculatorAdvantage === 'cash') {
-      content = `Excelente trabajo con el análisis. El efectivo parece ser una buena opción para usted — velocidad y certeza sin los costos de preparación.`;
+      content = `Excelente trabajo con el análisis. El efectivo parece ser una buena opción para ti — velocidad y certeza sin los costos de preparación.`;
     } else if (calculatorAdvantage === 'traditional') {
       content = diff 
-        ? `Buen trabajo con los números. Parece que una venta tradicional podría darle ${diff} más — si tiene el tiempo para maximizar el valor.`
-        : `Buen trabajo con los números. Una venta tradicional podría darle más — si tiene el tiempo para maximizar el valor.`;
+        ? `Buen trabajo con los números. Parece que una venta tradicional podría darte ${diff} más — si tienes el tiempo para maximizar el valor.`
+        : `Buen trabajo con los números. Una venta tradicional podría darte más — si tienes el tiempo para maximizar el valor.`;
     } else {
-      content = `Ha hecho un gran paso al analizar sus números. La diferencia es sutil — lo cual significa que la decisión correcta depende de su situación.`;
+      content = `Has dado un gran paso al analizar tus números. La diferencia es sutil — lo cual significa que la decisión correcta depende de tu situación.`;
     }
 
     return {
-      content: content + `\n\n¿Le gustaría explorar lo que significa esto para usted?`,
+      content: content + `\n\n¿Te gustaría explorar lo que significa esto para ti?`,
       suggestedReplies: [
         "¿Qué opción es mejor para mí?",
         "Revisar estrategia con Kasandra",
@@ -267,14 +267,14 @@ function generateGuideHandoffGreeting(context: EntryContext): GreetingResult {
 
   if (language === 'es') {
     const title = guideTitle || 'esta guía';
-    let content = `Veo que está leyendo "${title}."`;
+    let content = `Veo que estás leyendo "${title}."`;
     
     if (guideCategory === 'buying') {
-      content += ` Es un excelente recurso para compradores. ¿Tiene alguna pregunta específica sobre el proceso de compra?`;
+      content += ` Es un excelente recurso para compradores. ¿Tienes alguna pregunta específica sobre el proceso de compra?`;
     } else if (guideCategory === 'selling' || guideCategory === 'valuation') {
-      content += ` Gran paso para entender sus opciones de venta. ¿Le gustaría una lista personalizada basada en lo que ha leído?`;
+      content += ` Gran paso para entender tus opciones de venta. ¿Te gustaría una lista personalizada basada en lo que has leído?`;
     } else {
-      content += ` ¿Hay algo específico que le gustaría explorar más?`;
+      content += ` ¿Hay algo específico que te gustaría explorar más?`;
     }
 
     return {
@@ -314,8 +314,8 @@ function generateSynthesisGreeting(context: EntryContext): GreetingResult {
 
   if (language === 'es') {
     const content = guidesReadCount >= 3
-      ? `Ha leído ${guidesReadCount} guías — está construyendo una imagen clara de sus opciones. Permítame resumir los puntos clave que más importan para su situación.`
-      : `Ha estado explorando sus opciones. ¿Le gustaría que resuma lo que ha aprendido hasta ahora?`;
+      ? `Has leído ${guidesReadCount} guías — estás construyendo una imagen clara de tus opciones. Déjame resumir los puntos clave que más importan para tu situación.`
+      : `Has estado explorando tus opciones. ¿Te gustaría que resuma lo que has aprendido hasta ahora?`;
 
     return {
       content,
@@ -345,7 +345,7 @@ function generateSynthesisGreeting(context: EntryContext): GreetingResult {
 function generateHeroGreeting(language: 'en' | 'es'): GreetingResult {
   if (language === 'es') {
     return {
-      content: `Hola, soy Selena — la guía digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión. Ya sea que esté pensando en comprar, vender, o simplemente entendiendo lo que es posible — estoy aquí para guiarle.\n\n¿Qué le trae por aquí hoy?`,
+      content: `Hola, soy Selena — la guía digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarte a explorar tus opciones con calma y sin presión. Ya sea que estés pensando en comprar, vender, o simplemente entendiendo lo que es posible — estoy aquí para guiarte.\n\n¿Qué te trae por aquí hoy?`,
       suggestedReplies: [
         "Estoy pensando en vender",
         "Estoy buscando comprar",
@@ -369,7 +369,7 @@ function generateQuestionGreeting(language: 'en' | 'es', intent?: string): Greet
   if (intent === 'cash') {
     if (language === 'es') {
       return {
-        content: `¿Ya recibió una oferta en efectivo? Puedo ayudarle a revisarla — buscar señales de alerta, compararla con lo que el mercado podría ofrecer, y asegurar que entienda lo que está firmando.\n\nCuénteme su situación.`,
+        content: `¿Ya recibiste una oferta en efectivo? Puedo ayudarte a revisarla — buscar señales de alerta, compararla con lo que el mercado podría ofrecer, y asegurar que entiendas lo que estás firmando.\n\nCuéntame tu situación.`,
         suggestedReplies: [
           "Recibí una oferta en efectivo",
           "¿Es justa mi oferta?",
@@ -389,7 +389,7 @@ function generateQuestionGreeting(language: 'en' | 'es', intent?: string): Greet
 
   if (language === 'es') {
     return {
-      content: `Estoy aquí para ayudarle. ¿Qué pregunta tiene en mente?`,
+      content: `Estoy aquí para ayudarte. ¿Qué pregunta tienes en mente?`,
       suggestedReplies: [
         "¿Cuánto vale mi casa?",
         "¿Cómo funciona el proceso?",
@@ -413,7 +413,7 @@ function generateProactiveGreeting(language: 'en' | 'es'): GreetingResult {
   // This is a fallback if no specific context is provided
   if (language === 'es') {
     return {
-      content: `Noté que ha estado explorando sus opciones. ¿Hay algo en lo que pueda ayudarle?`,
+      content: `Noté que has estado explorando tus opciones. ¿Hay algo en lo que pueda ayudarte?`,
       suggestedReplies: [
         "Sí, tengo una pregunta",
         "¿Cuáles son mis opciones?",
@@ -435,7 +435,7 @@ function generateProactiveGreeting(language: 'en' | 'es'): GreetingResult {
 function generateDefaultGreeting(language: 'en' | 'es'): GreetingResult {
   if (language === 'es') {
     return {
-      content: `Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?`,
+      content: `Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarte a explorar tus opciones con calma y sin presión.\n\n¿Estás pensando en comprar, vender, o solo explorar qué es posible?`,
       suggestedReplies: [
         "Estoy pensando en vender",
         "Estoy buscando comprar",
