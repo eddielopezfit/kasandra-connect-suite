@@ -7,7 +7,7 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Sparkles, FileText, Loader2, MessageCircle } from 'lucide-react';
-import { useSelenaChat, ChatMessage, ChatAction } from '@/contexts/SelenaChatContext';
+import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { logEvent } from '@/lib/analytics/logEvent';
 import { getSessionContext, updateSessionContext, SessionContext } from '@/lib/analytics/selenaSession';
@@ -193,52 +193,45 @@ export function SelenaChatDrawer() {
     }
   }, [activeTab]);
 
-  // ========== SHARED CONTENT COMPONENTS ==========
+  // Shared content rendered directly (no inline wrappers to prevent subtree unmount/remount)
+  const sharedMessagesProps = {
+    messages,
+    isLoading,
+    onActionClick: handleActionClick,
+    onMessagesAreaClick: handleMessagesAreaClick,
+    scrollRef,
+    bottomRef,
+  };
 
-  const MessagesArea = () => (
-    <SelenaDrawerMessagesArea
-      messages={messages}
-      isLoading={isLoading}
-      onActionClick={handleActionClick}
-      onMessagesAreaClick={handleMessagesAreaClick}
-      scrollRef={scrollRef}
-      bottomRef={bottomRef}
-    />
-  );
+  const sharedChipsProps = {
+    suggestedReplies,
+    isLoading,
+    activeTab,
+    messages,
+    onSuggestedReplyClick: handleSuggestedReplyClick,
+  };
 
-  const SuggestedRepliesChips = () => (
-    <SelenaDrawerSuggestedRepliesChips
-      suggestedReplies={suggestedReplies}
-      isLoading={isLoading}
-      activeTab={activeTab}
-      messages={messages}
-      onSuggestedReplyClick={handleSuggestedReplyClick}
-    />
-  );
-
-  const BottomSection = () => (
-    <SelenaDrawerBottomSection
-      activeTab={activeTab}
-      onCloseTabPanel={handleCloseTabPanel}
-      onTabChange={handleTabChange}
-      onSuggestedReplyClick={handleSuggestedReplyClick}
-      onActionClick={handleActionClick}
-      language={language}
-      leadId={leadId}
-      hasReports={hasReports}
-      closeDrawer={closeChat}
-      currentIntent={journeyContext.intent}
-      journeyStep={journeyContext.step}
-      isMobile={isMobile}
-      onSubmitText={handleSubmitText}
-      isLoading={isLoading}
-      placeholder={t('Type your message...', 'Escribe tu mensaje...')}
-      disclaimer={t(
-        'Selena is an AI assistant. All advice is reviewed by Kasandra Prieto, licensed Realtor®.',
-        'Selena es una asistente de IA. Todo consejo es revisado por Kasandra Prieto, Realtor® licenciada.'
-      )}
-    />
-  );
+  const sharedBottomProps = {
+    activeTab,
+    onCloseTabPanel: handleCloseTabPanel,
+    onTabChange: handleTabChange,
+    onSuggestedReplyClick: handleSuggestedReplyClick,
+    onActionClick: handleActionClick,
+    language,
+    leadId,
+    hasReports,
+    closeDrawer: closeChat,
+    currentIntent: journeyContext.intent,
+    journeyStep: journeyContext.step,
+    isMobile,
+    onSubmitText: handleSubmitText,
+    isLoading,
+    placeholder: t('Type your message...', 'Escribe tu mensaje...'),
+    disclaimer: t(
+      'Selena is an AI assistant. All advice is reviewed by Kasandra Prieto, licensed Realtor®.',
+      'Selena es una asistente de IA. Todo consejo es revisado por Kasandra Prieto, Realtor® licenciada.'
+    ),
+  };
 
   // ========== MINIMIZED STATE (Desktop only) ==========
   if (!isMobile && isMinimized && isOpen) {
@@ -329,9 +322,9 @@ export function SelenaChatDrawer() {
               </div>
             </DrawerHeader>
 
-            <MessagesArea />
-            <SuggestedRepliesChips />
-            <BottomSection />
+            <SelenaDrawerMessagesArea {...sharedMessagesProps} />
+            <SelenaDrawerSuggestedRepliesChips {...sharedChipsProps} />
+            <SelenaDrawerBottomSection {...sharedBottomProps} />
           </DrawerContent>
         </Drawer>
 
@@ -421,9 +414,9 @@ export function SelenaChatDrawer() {
             </div>
           </SheetHeader>
 
-          <MessagesArea />
-          <SuggestedRepliesChips />
-          <BottomSection />
+          <SelenaDrawerMessagesArea {...sharedMessagesProps} />
+          <SelenaDrawerSuggestedRepliesChips {...sharedChipsProps} />
+          <SelenaDrawerBottomSection {...sharedBottomProps} />
         </SheetContent>
       </Sheet>
 

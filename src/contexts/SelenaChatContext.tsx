@@ -68,7 +68,7 @@ export interface ChatMessage {
   content: string;
   timestamp: string;
   actions?: ChatAction[];
-  suggestedReplies?: string[];
+  suggestedReplies?: (string | { label: string; actionSpec: import('@/lib/actions/actionSpec').ActionSpec })[];
   metadata?: {
     report_id?: string;
     report_type?: string;
@@ -411,7 +411,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     if (messages.length === 0 || isPostBooking || hasContextualEntry) {
       const sessionContext = getSessionContext();
       let greetingContent: string;
-      let suggestedReplies: string[];
+      let suggestedReplies: (string | { label: string; actionSpec: import('@/lib/actions/actionSpec').ActionSpec })[];
       
       // Priority 0: Post-booking identity reinforcement (HIGHEST - seals the decision)
       if (isPostBooking) {
@@ -571,13 +571,22 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           
           greetingContent = t(
             `I see you're reading "${guideTitle}." Want the 30-second summary or do you have a specific question?`,
-            `Veo que estás leyendo "${guideTitle}." ¿Quieres un resumen de 30 segundos o tienes una pregunta específica?`
+            `Veo que está leyendo "${guideTitle}." ¿Quiere un resumen de 30 segundos o tiene una pregunta específica?`
           );
+
+          // Build destination-backed chips from guide registry
+          const destinations = guideEntry.destinations;
+          const primaryChip = destinations?.primaryAction;
+          const actionChip: string | { label: string; actionSpec: import('@/lib/actions/actionSpec').ActionSpec } | undefined = 
+            primaryChip ? { label: language === 'es' ? primaryChip.label.es : primaryChip.label.en, actionSpec: primaryChip } : undefined;
+          
           suggestedReplies = [
             t("30-second summary", "Resumen de 30 segundos"),
             t("I have a question", "Tengo una pregunta"),
-            t("Verify my situation with Kasandra", "Verificar mi situación con Kasandra"),
           ];
+          if (actionChip) {
+            suggestedReplies.push(actionChip);
+          }
         } else {
           // Fallback to default
           greetingContent = t(
@@ -1147,7 +1156,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       role: 'assistant',
       content: t(
         "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
-        "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarte a explorar tus opciones con calma y sin presión.\n\n¿Estás pensando en comprar, vender, o solo explorar qué es posible?"
+        "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
       ),
       timestamp: new Date().toISOString(),
       suggestedReplies: [

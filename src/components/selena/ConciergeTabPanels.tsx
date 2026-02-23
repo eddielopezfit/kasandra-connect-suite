@@ -13,13 +13,13 @@ import {
   ShoppingBag, 
   Compass,
   Calendar,
-  MessageCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ConciergeTab, JourneyIntent } from './ConciergeTabBar';
 import { ChatAction } from '@/contexts/SelenaChatContext';
 import { logEvent, EventType } from '@/lib/analytics/logEvent';
+import { getLiveGuides } from '@/lib/guides/guideRegistry';
 
 interface ConciergeTabPanelsProps {
   activeTab: ConciergeTab | null;
@@ -145,10 +145,10 @@ function StartHerePanel({
     <>
       <div className="text-center mb-4">
         <h3 className="font-serif text-lg font-semibold text-foreground">
-          {t("Let's find your starting point", "Encontremos tu punto de partida")}
+          {t("Let's find your starting point", "Encontremos su punto de partida")}
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
-          {t("Tell me what brings you here today.", "Cuéntame qué te trae hoy.")}
+          {t("Tell me what brings you here today.", "Cuénteme qué le trae hoy.")}
         </p>
       </div>
 
@@ -198,11 +198,9 @@ function GuidesPanel({
   t: (en: string, es: string) => string;
   onNavigate: (path: string, eventType?: EventType) => void;
 }) {
-  const featuredGuides = [
-    { id: 'first-time-buyer-guide', labelEn: 'First-Time Buyers', labelEs: 'Compradores Primerizos' },
-    { id: 'selling-for-top-dollar', labelEn: 'Selling Your Home', labelEs: 'Vender Su Casa' },
-    { id: 'cash-offer-guide', labelEn: 'Cash Offers', labelEs: 'Ofertas en Efectivo' },
-  ];
+  const featuredGuides = getLiveGuides()
+    .filter(g => g.tier <= 2)
+    .map(g => ({ id: g.id, labelEn: g.labelEn, labelEs: g.labelEs }));
 
   return (
     <>
@@ -302,7 +300,7 @@ function MyOptionsPanel({
     <>
       <div className="text-center mb-4">
         <h3 className="font-serif text-lg font-semibold text-foreground">
-          {t("Get Clarity on Your Options", "Claridad Sobre Tus Opciones")}
+          {t("Get Clarity on Your Options", "Claridad Sobre Sus Opciones")}
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
           {t("Personalized insights, no obligation.", "Información personalizada, sin compromiso.")}
@@ -328,17 +326,17 @@ function MyOptionsPanel({
             <OptionCard
               onClick={handleBuyerReadinessClick}
               label={t("Buyer Readiness Check", "Verificación de Preparación")}
-              description={t("See where you stand", "Ve en qué punto estás")}
+              description={t("See where you stand", "Vea en qué punto está")}
             />
             <OptionCard
               onClick={handleValuationClick}
               label={t("See what I might walk away with", "Ver lo que podría recibir")}
-              description={t("Selling your current home?", "¿Vendiendo tu casa actual?")}
+              description={t("Selling your current home?", "¿Vendiendo su casa actual?")}
             />
             <OptionCard
               onClick={handleCashComparisonClick}
               label={t("Cash vs Listing Comparison", "Comparación: Efectivo vs Listado")}
-              description={t("Compare your options", "Compara tus opciones")}
+              description={t("Compare your options", "Compare sus opciones")}
             />
           </>
         )}
@@ -397,33 +395,23 @@ function TalkToKasandraPanel({
     <>
       <div className="text-center mb-4">
         <h3 className="font-serif text-lg font-semibold text-foreground">
-          {t("Ready to Connect?", "¿Lista para Conectar?")}
+          {t("Ready to Connect?", "¿Listo/a para Conectar?")}
         </h3>
         <p className="text-sm text-muted-foreground mt-1">
-          {t("Book time with Kasandra when you're ready.", "Agenda tiempo con Kasandra cuando estés lista.")}
+          {t("Book time with Kasandra when you're ready.", "Agenda tiempo con Kasandra cuando esté listo/a.")}
         </p>
       </div>
 
       <div className="space-y-3">
-        {/* Primary CTA - Schedule a Call */}
+        {/* Single CTA - Connect with Kasandra */}
         <Button
           onClick={onPriorityCall}
           className="w-full bg-cc-navy hover:bg-cc-navy/90"
           size="lg"
         >
           <Calendar className="w-4 h-4 mr-2" />
-          {t("Schedule a Call", "Agendar una Llamada")}
+          {t("Connect with Kasandra", "Conectarse con Kasandra")}
           <ArrowRight className="w-4 h-4 ml-2" />
-        </Button>
-        
-        {/* Secondary CTA - 10-Min Priority Call */}
-        <Button
-          variant="outline"
-          onClick={onPriorityCall}
-          className="w-full"
-        >
-          <MessageCircle className="w-4 h-4 mr-2" />
-          {t("10-Min Priority Call", "Llamada Prioritaria de 10 Min")}
         </Button>
       </div>
 
