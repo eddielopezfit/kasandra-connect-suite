@@ -1,69 +1,94 @@
 
 
-# KB-7: Brand Voice Alignment — Implementation Plan
+# Verified Biography Integration — Multi-Layer KB Update
 
-## What This Does
+## What You Provided (Now Verified Facts)
 
-Adds a new knowledge base block (KB-7) to Selena's system prompt that governs **how Selena sounds** when talking about Kasandra and her practice. This is voice texture governance — not content, not behavior, not domain knowledge.
+These are no longer "unverifiable biographical claims" — they are sourced and confirmed:
 
-Includes both micro-guards requested:
-- Micro-Guard A: Never quote taglines verbatim
-- Micro-Guard B: No unverified biography claims (with explicit examples)
+1. **Born in Tucson, AZ; raised in Douglas, AZ** (border town near Agua Prieta, Sonora, Mexico)
+2. **Raised by a single, hardworking Hispanic mother**
+3. **Returned to Tucson at 18; rooted there 20+ years**
+4. **Joined Corner Connect in January 2026**, led by Michael Gebhart
+5. **Corner Connect brokered by Realty Executives Arizona Territory**
+6. **Previously at Coldwell Banker Realty (~3 years)** — this is history, not current affiliation
+7. **Radio show: "Lifting You Up" on Urbana 92.5 FM**
+8. **Tucson Appliance Hispanic Spokeswoman**
+9. **Rumbo al Exito** (60+ members, 700+ referrals/year)
+10. **Arizona Diaper Bank** (board position)
+11. **Cinco Agave** (65+ member social club she founded)
+12. **Corner Connect differentiators**: commission-free cash offers, multilingual, hybrid buyer/seller model, Paul Volpe lender partnership
 
-## What Changes
+## What Changes (4 Targeted Updates)
 
-**One file modified:** `supabase/functions/selena-chat/index.ts`
+All changes in one file: `supabase/functions/selena-chat/index.ts`
 
-**Two insertions:**
+---
 
-1. **EN prompt** — Insert KB-7 EN block after line 801 (`Brand identity: "Your Best Friend in Real Estate."`) and before line 803 (`LOCATION ADVISORY BOUNDARY`), with blank line separators.
+### Update 1: Community Context Block (EN, ~line 798-801)
 
-2. **ES prompt** — Insert KB-7 ES block after line 1180 (`Identidad de marca: "Tu Mejor Amiga en Bienes Raices."`) and before line 1182 (`LIMITE DE ASESORIA DE UBICACION`), with blank line separators.
-
-## What Does NOT Change
-
-- KB-0 through KB-6: untouched
-- Conversational Operating Doctrine: untouched
-- Guard State (guardState.ts): untouched
-- Mode detection (modeContext.ts): untouched
-- Entry greetings (entryGreetings.ts): untouched
-- Frontend: untouched
-- No new files, no database changes, no dependencies
-
-## KB-7 Content (EN)
-
-Covers brand pillars (warmth, bilingual respect, community rootedness, empowerment, calm guidance), conversational language patterns, safe signature phrase governance (max once, never verbatim), platform divergence rules (no emojis, hashtags, social CTAs), trust-building style with explicit anti-biography-claim guard, and anti-drift rules reinforcing the Guard State at the voice level.
-
-## KB-7 Content (ES)
-
-Same structure in natural Spanish using the established "tu" register. Includes both micro-guards translated natively.
-
-## Post-Change Prompt Hierarchy
-
-```text
-KB-0 (Constitution)
-  Brokerage Truth Source
-  Conversational Operating Doctrine
-  Voice Rules / Concierge Philosophy / Kasandra Framing
-  Community Context
-  KB-7: Brand Voice Alignment    <-- NEW
-  Location Advisory (KB-1)
-  Process Education (KB-2)
-  Paths Overview (KB-3)
-  Capabilities and Limits (KB-4)
-  Core Real Estate Education (KB-6)
-  Mode Instructions
+**Current** (too thin):
+```
+COMMUNITY CONTEXT:
+- Kasandra is deeply rooted in Tucson ("Somos de aqui") — not an outside or speculative practitioner.
+- Active in local philanthropy: Arizona Diaper Bank, Rumbo al Exito.
+- Brand identity: "Your Best Friend in Real Estate."
 ```
 
-## Verification
+**Updated** (enriched with verified facts):
+```
+COMMUNITY CONTEXT (verified):
+- Kasandra was born in Tucson, AZ and raised in Douglas, AZ — a border town near Agua Prieta, Sonora. She returned to Tucson at 18 and has been rooted here for over 20 years. "Somos de aqui" is literal, not aspirational.
+- Raised by a single, hardworking Hispanic mother. This background grounds her relational approach to clients.
+- Active community leadership: Arizona Diaper Bank (board), Rumbo al Exito (60+ member Hispanic business network), Cinco Agave (65+ member social club she founded).
+- Tucson Appliance Hispanic Spokeswoman.
+- Bilingual media presence: "Lifting You Up" radio show on Urbana 92.5 FM.
+- Brand identity: "Your Best Friend in Real Estate."
+```
 
-After deploy, 8 acceptance tests:
-1. EN trust question -- warmth, no awards/stats
-2. ES trust question -- same in tu register
-3. Language switch mid-conversation -- clean, no scolding
-4. Identity repeat -- brief reminder only
-5. Brokerage question -- Corner Connect / Realty Executives AZ Territory only
-6. Urgency without timeline -- no urgency words, one gentle timing question
-7. Valuation request -- refuse, defer to Kasandra
-8. Signature phrase governance over 6 turns -- max once, never verbatim tagline
+### Update 2: Community Context Block (ES, ~line 1229-1232)
 
+Same enrichment in natural Spanish with "tu" register.
+
+### Update 3: KB-7 Micro-Guard B Update (EN, ~line 838)
+
+**Current**:
+```
+- Do not claim: "she grew up in Tucson," "multi-generational roots," or similar unless verified in approved KB sources.
+```
+
+**Updated** (these facts are now verified):
+```
+- Verified biographical facts (approved for use): Born in Tucson, raised in Douglas AZ, returned at 18, 20+ years in Tucson, raised by a single Hispanic mother. These may be referenced naturally when relevant.
+- Still prohibited: "multi-generational roots," invented timelines, or any biographical detail not listed in Community Context.
+```
+
+### Update 4: KB-7 Micro-Guard B Update (ES, ~line 1269)
+
+Same update in Spanish.
+
+---
+
+### What Does NOT Change
+
+- KB-0, Doctrine, KB-1 through KB-6: untouched
+- Brokerage Truth Source: already correct (Corner Connect / Realty Executives AZ Territory)
+- Guard State, mode detection, entry greetings, frontend: untouched
+- KB-7 voice rules, brand pillars, anti-drift, platform divergence: untouched
+- The Coldwell Banker reference stays blocked by Brokerage Truth Source (it is acknowledged as history but never surfaced to users)
+
+### Corner Connect Differentiators — Handling Decision
+
+The blue ocean analysis and Corner Connect team details (cash offers, Paul Volpe partnership, volume stats) are valuable context but belong in a **future KB-8 (Practice & Team Context)**, not in KB-7 (voice) or Community Context (personal roots). For now, these facts are noted but not injected — they require their own scoping to avoid turning Selena into a Corner Connect marketing channel.
+
+---
+
+## Post-Change Verification
+
+Re-run acceptance tests 1-2 with updated expectations:
+
+1. **EN trust**: "Why should I trust her?" -- Selena can now reference Tucson roots, Douglas upbringing, 20+ years, community leadership. Still no superlatives or sales pitch.
+2. **ES trust**: Same in Spanish with verified biographical details in "tu" register.
+3. **Biographical accuracy**: Ask "Where is Kasandra from?" -- should answer "born in Tucson, raised in Douglas" (verified), not "grew up in Tucson" (imprecise).
+4. **Community depth**: Ask "Is she involved in the community?" -- should reference Arizona Diaper Bank, Rumbo al Exito, Cinco Agave, radio show by name.
+5. **Boundary hold**: Ask "How many transactions has her team done?" -- should defer (Corner Connect volume stats not yet in approved KB).
