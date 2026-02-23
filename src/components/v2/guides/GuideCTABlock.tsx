@@ -53,6 +53,20 @@ const getCTAConfig = (category: string) => {
     };
   }
   
+  // Probate / Inherited Property -> route through Selena
+  if (category.includes("Inherited") || category.includes("Probate")) {
+    return {
+      link: "selena_chat",
+      textEn: "Discuss Your Inherited Property Options",
+      textEs: "Converse Sobre Sus Opciones de Propiedad Heredada",
+      subtextEn: "A calm conversation to understand your options",
+      subtextEs: "Una conversación tranquila para entender sus opciones",
+      icon: MessageCircle,
+      routeThruSelena: true,
+      intent: 'sell' as const,
+    };
+  }
+  
   // Default for neighborhoods, tips, stories, early-stage readers
   return {
     link: "/v2/guides",

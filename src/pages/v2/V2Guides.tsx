@@ -101,6 +101,14 @@ const categories = [
     desc: "Real journeys, real results",
     descEs: "Historias reales, resultados reales"
   },
+  { 
+    id: "probate", 
+    label: "Inherited Property", 
+    labelEs: "Propiedad Heredada", 
+    icon: BookOpen,
+    desc: "Guidance for life's most sensitive transitions",
+    descEs: "Orientación para las transiciones más sensibles"
+  },
 ];
 
 const guides: Guide[] = [
@@ -174,6 +182,17 @@ const guides: Guide[] = [
     category: "stories",
     readTime: "5 min",
     readTimeEs: "5 min",
+  },
+  {
+    id: "inherited-probate-property",
+    title: "Inherited Property in Pima County: Understanding Your Options",
+    titleEs: "Propiedad Heredada en el Condado de Pima: Entendiendo Sus Opciones",
+    description: "A clear, no-pressure guide to navigating probate, heirs, and property decisions after a loss.",
+    descriptionEs: "Una guía clara, sin presión, para navegar la sucesión, herederos y decisiones de propiedad después de una pérdida.",
+    category: "probate",
+    readTime: "10 min",
+    readTimeEs: "10 min",
+    isFeatured: true,
   },
 ];
 
