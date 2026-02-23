@@ -1,202 +1,104 @@
 
-# Selena Phase Governance & Session Continuity Fix
 
-**Status:** ✅ IMPLEMENTED (2026-02-23)
+# Knowledge Base Injection #2: Seller & Buyer Process — General Educational Overview
 
----
+## What This Changes
 
-## Problem Diagnosis
+Injects two new educational reference blocks into Selena's system prompts (EN and ES) in `supabase/functions/selena-chat/index.ts`. These give Selena structured awareness of how real estate transactions typically flow, so she can orient users educationally without crossing into advisory territory.
 
-Five concrete regression vectors cause phase resets:
-
-1. **Greeting injection on navigation:** `openChat()` injects new greetings when entry signature changes during normal navigation, producing Phase 0/1 text even when intent is declared.
-2. **Fallback greeting resets chips to Phase 1:** Guide handoff fallback and error handler both produce Phase 1 chips ("I'm thinking about selling"), re-triggering the first-seller-turn intercept.
-3. **Edge function mode detection has no floor:** `detectMode()` re-derives mode from scratch every turn. Modes 2/3 can regress to Mode 1 if context signals are lost.
-4. **Chip governance and mode governance are decoupled:** Mode could be 3 while chips are Phase 1 if `effectiveIntent` is "explore" and engagement signals are low.
-5. **Error fallback resets to orientation:** `sendMessage` error handler always offers Phase 1 chips regardless of current phase.
+No new files. No new dependencies. No database changes. No UI changes.
 
 ---
 
-## 1. Phase Governance Model
+## File Modified: `supabase/functions/selena-chat/index.ts`
 
-### Phase Definitions
+### 1. Insert EN process education block into `SYSTEM_PROMPT_EN` (after LOCATION ADVISORY BOUNDARY, before MODE_INSTRUCTIONS)
 
-| Phase | Name | Entry Condition | Locked Questions |
-|-------|------|----------------|-----------------|
-| 0 | First Contact | `messages.length === 0` AND no `sessionContext.intent` | "What brings you here?" |
-| 1 | Intent Declaration | Messages exist but `intent` is null/explore | "Are you buying, selling, or exploring?" |
-| 2 | Discovery | `intent` is set (buy/sell/cash/dual) | Timeline, situation, tool suggestions |
-| 3 | Evaluation | `tool_used` OR `quiz_completed` OR `guides_read >= 3` | Net proceeds, comparison, synthesis |
-| 4 | Handoff | Email provided OR explicit booking ask OR `tool_used + 2+ turns` | Booking CTA only |
+New section inserted at ~line 659:
 
-### Anti-Regression Rule (monotonic floor)
+```text
+PROCESS EDUCATION — SELLER (general orientation only, never advisory):
+Selling typically flows through these stages:
+1. Initial Conversation & Goal Clarity — understanding priorities (speed, convenience, exposure). No decisions required.
+2. Property Review & Path Selection — gathering property details, choosing a general direction (speed-focused or market-exposure).
+3. Preparation or Direct Path — if market-exposure: cleaning, repairs, staging. If direct: no public marketing.
+4. Offer Review & Agreement — evaluating interest, reviewing written terms.
+5. Contract-to-Close — inspections, title work, documentation. Length depends on complexity.
+6. Closing & Transition — formal transfer of ownership.
 
-Implement `chip_phase_floor` in SessionContext (renamed from `phase_floor` per Refinement 1):
+PROCESS EDUCATION — BUYER (general orientation only, never advisory):
+Buying typically flows through these stages:
+1. Goal Definition & Readiness — clarifying criteria and budget awareness.
+2. Inventory Exploration — reviewing resale, new construction, and pre-market options; touring properties.
+3. Offer Expression — formally expressing interest. All negotiations handled by licensed professionals.
+4. Contract-to-Close — inspections, appraisals, financing coordination.
+5. Move-In Transition — walkthrough and key transfer.
 
-- On every edge function response, compute `effectiveChipPhase = max(client_chip_phase_floor, detected_phase)`
-- Write `effectiveChipPhase` back to both the response and SessionContext
-- The client persists `chip_phase_floor` and sends it on every request
+TYPICAL TIMELINES (non-binding, educational only):
+- Direct/Cash: Often several weeks to about a month (title processing, document coordination).
+- Financed/Market: Often several months from listing to closing; varies significantly.
+- Variability factors: financing vs. non-financing, inspection findings, appraisal requirements, title coordination, personal readiness.
 
-### Phase-Locked Questions
-
-- "What brings you here?" — Phase 0 only
-- "Are you looking to buy, sell, or explore?" — Phase 0-1 only
-- "What kind of timeline are you working with?" — Phase 1-2, re-askable per Refinement 3 rules
-- "Would you like to explore your options?" — Phase 2 only
-
----
-
-## 2. Entry Greeting Guard
-
-### Greeting Injection Conditions
-
-A greeting may be injected ONLY when ALL are true:
-
-1. Entry signature is genuinely new
-2. Source is in allowed set: `calculator`, `guide_handoff`, `synthesis`, `hero`, `quiz_result`, `post_booking`
-3. Generated greeting matches current `chip_phase_floor`
-4. **Refinement 5:** `hasStoredHistory` is false (check localStorage before React state hydration)
-
-### Phase-Aware Greeting Selection
-
-- If generated greeting contains Phase 1 chips AND `sessionContext.intent` exists → replace with phase-appropriate chips
-- If greeting text asks "buy, sell, or explore?" AND intent is known → suppress greeting entirely
-
-### greeting_phase_seen
-
-Track the highest phase greeting shown. Never show a greeting from phase ≤ `greeting_phase_seen` unless source is `post_booking` or `calculator`.
-
-### Refinement 6: Server-Side Hard Block
-
-If `intent` exists OR `chip_phase_floor >= 2`, the edge function must never output literal onboarding prompt variants. If it would, replace with "Welcome back—pick up where we left off" + governed chips.
-
----
-
-## 3. Session Continuity Specification
-
-### Required Persistent Fields
-
-| Field | Survives All Events |
-|-------|:---:|
-| `intent` | ✅ |
-| `timeline` | ✅ |
-| `current_mode` | ✅ |
-| `chip_phase_floor` (NEW) | ✅ |
-| `greeting_phase_seen` (NEW) | ✅ |
-| `tool_used` / `last_tool_result` | ✅ |
-| `quiz_completed` / `guides_read` | ✅ |
-
-### Refinement 2: Chat History Persistence
-
-History persistence is **optional**. Persist only:
-- `history_tail` (last 10-20 messages)
-- `last_chips` or `last_chip_phase`
-- All SessionContext fields above
-
-Governance must work correctly with **empty chat history** as long as SessionContext exists.
-
-### Refinement 3: Timeline Re-Ask Rules
-
-Add `timeline_last_asked_turn` (or timestamp) to SessionContext. Timeline question can be re-asked if:
-- `timeline` is missing, OR
-- User explicitly says it changed, OR
-- `timeline_last_asked_turn` is older than 8-12 turns
-
-Optional: `timeline_confidence` (low/med/high).
-
-### sendMessage Payload (must always include)
-
-`current_mode`, `chip_phase_floor`, `tool_used`, `last_tool_result`, `quiz_completed`, `guides_read`, `intent`, `timeline`
-
----
-
-## 4. Chip Behavior Rules
-
-### Phase Advancement
-
-- Phase 1 chips set `intent` and advance `chip_phase_floor` to 2
-- Phase 2 chips are ActionSpec-mapped where possible
-- Phase 3/4 chips are ALWAYS ActionSpec — never trigger edge function
-
-### Refinement 4: Phase-Biased (Not Phase-Blocked)
-
-- `chip_phase_floor` sets the **default** chip band
-- Phase-2 chips allowed when user's last message matches Phase-2 intent (valuation, preparation, process), even if floor is 3+
-- **Never** regress to Phase 1 once intent is known
-
-### Error Fallback Chips (Phase-Aware)
-
+PROCESS EDUCATION BOUNDARY (strict):
+This process knowledge is for general educational orientation ONLY.
+You must NEVER use it to provide strategy, pricing, valuation, guarantees, or advice.
+You must ALWAYS pair process explanations with deferral language.
+All specific recommendations, negotiations, timelines, and professional decisions must be deferred to Kasandra Prieto.
+Standard deferral: "Every situation is different — Kasandra can walk you through what applies to yours."
+This knowledge base does NOT override Distress & Human Escalation rules or Location Advisory boundaries.
 ```
-chip_phase_floor >= 3: ["Estimate my net proceeds", "Talk with Kasandra"]
-chip_phase_floor >= 2 + sell: ["Compare cash vs. listing", "What's my home worth?"]
-chip_phase_floor >= 2 + buy: ["Take the readiness check", "Browse buyer guides"]
-chip_phase_floor < 2: Phase 1 chips (current behavior)
+
+### 2. Insert ES equivalent into `SYSTEM_PROMPT_ES` (after LIMITE DE ASESORIA, before MODE_INSTRUCTIONS)
+
+New section inserted at ~line 707:
+
+```text
+EDUCACION DE PROCESO — VENDEDOR (solo orientacion general, nunca asesoramiento):
+La venta generalmente sigue estas etapas:
+1. Conversacion Inicial y Claridad de Objetivos — entender prioridades (rapidez, conveniencia, exposicion). Sin decisiones requeridas.
+2. Revision de Propiedad y Seleccion de Camino — recopilar detalles, elegir una direccion general.
+3. Preparacion o Camino Directo — si exposicion al mercado: limpieza, reparaciones. Si directo: sin marketing publico.
+4. Revision de Ofertas y Acuerdo — evaluar interes, revisar terminos escritos.
+5. Contrato a Cierre — inspecciones, trabajo de titulo, documentacion.
+6. Cierre y Transicion — transferencia formal de propiedad.
+
+EDUCACION DE PROCESO — COMPRADOR (solo orientacion general, nunca asesoramiento):
+La compra generalmente sigue estas etapas:
+1. Definicion de Objetivos y Preparacion — clarificar criterios y conciencia de presupuesto.
+2. Exploracion de Inventario — revisar opciones de reventa, nueva construccion y pre-mercado; recorrer propiedades.
+3. Expresion de Oferta — expresar interes formalmente. Todas las negociaciones las manejan profesionales licenciados.
+4. Contrato a Cierre — inspecciones, avaluos, coordinacion de financiamiento.
+5. Transicion de Mudanza — recorrido final y entrega de llaves.
+
+PLAZOS TIPICOS (no vinculantes, solo educativos):
+- Directo/Efectivo: Generalmente varias semanas a un mes (procesamiento de titulo, coordinacion de documentos).
+- Financiado/Mercado: Generalmente varios meses desde listado hasta cierre; varia significativamente.
+- Factores de variabilidad: financiamiento vs. no financiamiento, hallazgos de inspeccion, requisitos de avaluo, coordinacion de titulo, preparacion personal.
+
+LIMITE DE EDUCACION DE PROCESO (estricto):
+Este conocimiento de proceso es SOLO para orientacion educativa general.
+NUNCA lo uses para dar estrategia, precios, valuaciones, garantias o consejos.
+SIEMPRE acompana las explicaciones de proceso con lenguaje de deferencia.
+Todas las recomendaciones especificas, negociaciones, plazos y decisiones profesionales se refieren a Kasandra Prieto.
+Deferencia estandar: "Cada situacion es diferente — Kasandra puede guiarte en lo que aplica a la tuya."
+Este conocimiento NO anula las reglas de Escalacion Humana ni los limites de Asesoria de Ubicacion.
 ```
 
 ---
 
-## 5. Soft Reset vs Hard Reset
+## What Does NOT Change
 
-### Soft Reset (all of these)
-- Drawer close/reopen
-- Page navigation
-- Page refresh
-- Language toggle
+- No new files or dependencies
+- No database changes
+- No UI changes
+- KB #1 (Geographic, Tone, Register) is untouched
+- Phase governance, chip logic, mode detection unchanged
+- `modeContext.ts` and `entryGreetings.ts` unchanged
 
-Behavior: Load history from localStorage, no greeting injection, chips from last AI response.
+## Priority & Override Rules (embedded in the boundary text)
 
-### Hard Reset (explicit only)
-- User clicks "Clear History"
-- `clearSession()` called programmatically
-- User clears browser localStorage
+- KB #2 is normal priority
+- Distress and Human Escalation rules (future KB) override this
+- Location Advisory boundaries (KB #1) override this
+- Process education is always paired with deferral — never standalone advice
 
-Behavior: Clear chat history + `chip_phase_floor` + `greeting_phase_seen`. Keep `intent`, `timeline`, `tool_used` (real user data).
-
----
-
-## 6. QA Checklist
-
-| # | Test | Expected |
-|---|------|----------|
-| 1 | Fresh session, open from floating | Phase 0 greeting + Phase 1 chips |
-| 2 | Click "I'm thinking about selling" | `intent=sell` set, Phase 2+ chips |
-| 3 | Select "ASAP" | Phase advances, chips NOT Phase 1 |
-| 4 | Close drawer, navigate, reopen | No new greeting, history intact |
-| 5 | Close drawer, go to /v2/cash-offer-options, reopen | No "buy, sell, explore?" greeting |
-| 6 | Use calculator, open from handoff | Calculator greeting, Phase 2/3 chips |
-| 7 | Network error | Error chips match current phase |
-| 8 | Page refresh, reopen | History loads, no duplicate greeting |
-| 9 | Complete quiz, open from quiz_result | Quiz greeting, no Phase 1 regression |
-| 10 | Mode 4, close and reopen | Mode 4 persists, handoff chips only |
-| 11 | `chip_phase_floor` never decreases | Verify in SessionContext after each action |
-| 12 | "Are you looking to buy, sell, or explore?" never appears when intent is set | String search in transcript |
-| 13 | ActionSpec chips (Phase 3/4) produce zero `selena-chat` calls | Network tab verification |
-
----
-
-## Files to Modify
-
-| File | Change |
-|------|--------|
-| `src/lib/analytics/selenaSession.ts` | Add `chip_phase_floor`, `greeting_phase_seen`, `timeline_last_asked_turn`, optional `timeline_confidence` to SessionContext |
-| `src/contexts/SelenaChatContext.tsx` | 1) `hasStoredHistory` check in `openChat()`. 2) Phase-aware error fallback chips. 3) Send `chip_phase_floor` in payload. 4) Monotonic mode floor for all modes. |
-| `supabase/functions/selena-chat/index.ts` | 1) Accept `chip_phase_floor`. 2) Phase-biased `getGovernedChips()`. 3) Return `chip_phase_floor`. 4) Server-side onboarding hard block. 5) Monotonic mode floor. |
-
-No new dependencies. No database changes. No new edge functions.
-
----
-
-## Operational Decisions (Confirmed)
-
-- **GHL Form:** Step 2 (time selection first, then form)
-- **Confirmation Page:** Redirect URL to `/v2/thank-you` (already wired with `booking_completed` event)
-
----
-
-## Previous Completed Work
-
-### ✅ Wire /v2/thank-you as GHL Post-Booking Destination (Done)
-
-- Added `booking_completed` event logging on mount with intent + name + UTM params
-- Added `booking_completed` to `EventType` union in `logEvent.ts`
-- GHL redirect URL format: `https://<domain>/v2/thank-you?intent=sell`
