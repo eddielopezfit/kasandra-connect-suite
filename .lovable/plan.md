@@ -1,94 +1,142 @@
 
 
-# Verified Biography Integration — Multi-Layer KB Update
+# Optimize and Test Every Chip and Conversation Flow — Brand Voice Alignment
 
-## What You Provided (Now Verified Facts)
+## Summary
 
-These are no longer "unverifiable biographical claims" — they are sourced and confirmed:
-
-1. **Born in Tucson, AZ; raised in Douglas, AZ** (border town near Agua Prieta, Sonora, Mexico)
-2. **Raised by a single, hardworking Hispanic mother**
-3. **Returned to Tucson at 18; rooted there 20+ years**
-4. **Joined Corner Connect in January 2026**, led by Michael Gebhart
-5. **Corner Connect brokered by Realty Executives Arizona Territory**
-6. **Previously at Coldwell Banker Realty (~3 years)** — this is history, not current affiliation
-7. **Radio show: "Lifting You Up" on Urbana 92.5 FM**
-8. **Tucson Appliance Hispanic Spokeswoman**
-9. **Rumbo al Exito** (60+ members, 700+ referrals/year)
-10. **Arizona Diaper Bank** (board position)
-11. **Cinco Agave** (65+ member social club she founded)
-12. **Corner Connect differentiators**: commission-free cash offers, multilingual, hybrid buyer/seller model, Paul Volpe lender partnership
-
-## What Changes (4 Targeted Updates)
-
-All changes in one file: `supabase/functions/selena-chat/index.ts`
+A comprehensive audit of Selena's chip governance, greeting system, conversation flows, and brand voice consistency across edge function, frontend context, entry greetings, guard state, mode context, concierge tabs, and suggested reply chips. Three categories of issues found: **title inconsistency**, **guide-loop escalation gap**, and **re-introduction bug** (session boundary). Plus several brand voice micro-violations.
 
 ---
 
-### Update 1: Community Context Block (EN, ~line 798-801)
+## Issue 1: Title Inconsistency — "concierge" vs. "guide"
 
-**Current** (too thin):
-```
-COMMUNITY CONTEXT:
-- Kasandra is deeply rooted in Tucson ("Somos de aqui") — not an outside or speculative practitioner.
-- Active in local philanthropy: Arizona Diaper Bank, Rumbo al Exito.
-- Brand identity: "Your Best Friend in Real Estate."
-```
+**Problem:** Selena's title is inconsistent across surfaces.
 
-**Updated** (enriched with verified facts):
-```
-COMMUNITY CONTEXT (verified):
-- Kasandra was born in Tucson, AZ and raised in Douglas, AZ — a border town near Agua Prieta, Sonora. She returned to Tucson at 18 and has been rooted here for over 20 years. "Somos de aqui" is literal, not aspirational.
-- Raised by a single, hardworking Hispanic mother. This background grounds her relational approach to clients.
-- Active community leadership: Arizona Diaper Bank (board), Rumbo al Exito (60+ member Hispanic business network), Cinco Agave (65+ member social club she founded).
-- Tucson Appliance Hispanic Spokeswoman.
-- Bilingual media presence: "Lifting You Up" radio show on Urbana 92.5 FM.
-- Brand identity: "Your Best Friend in Real Estate."
-```
+| Location | Current Title |
+|---|---|
+| `entryGreetings.ts` line 358 (hero EN) | "digital real estate **guide**" |
+| `entryGreetings.ts` line 348 (hero ES) | "guia digital de bienes raices" |
+| `entryGreetings.ts` line 448 (default EN) | "digital real estate **concierge**" |
+| `entryGreetings.ts` line 438 (default ES) | "**concierge** digital de bienes raices" |
+| `SelenaChatContext.tsx` line 754 (hero EN) | "digital real estate **guide**" |
+| `SelenaChatContext.tsx` line 755 (hero ES) | "guia digital de bienes raices" |
+| `SelenaChatContext.tsx` line 860 (default EN) | "digital real estate **concierge**" |
+| `SelenaChatContext.tsx` line 861 (default ES) | "**concierge** digital de bienes raices" |
+| `index.ts` KB-0 Doctrine line 707 | "digital real estate **concierge**" |
+| `index.ts` KB-0 line 723 | "digital **concierge**" |
 
-### Update 2: Community Context Block (ES, ~line 1229-1232)
+**Decision:** The approved title is **"digital real estate concierge"** / **"concierge digital de bienes raices"** per KB-0 Doctrine. The word "guide" is too generic and conflicts with the Guide Hub naming.
 
-Same enrichment in natural Spanish with "tu" register.
+**Fix:** 4 replacements:
+- `entryGreetings.ts` hero EN (line 358): "guide" to "concierge"
+- `entryGreetings.ts` hero ES (line 348): "guia" to "concierge"
+- `SelenaChatContext.tsx` hero EN (line 754): "guide" to "concierge"
+- `SelenaChatContext.tsx` hero ES (line 755): "guia" to "concierge"
 
-### Update 3: KB-7 Micro-Guard B Update (EN, ~line 838)
-
-**Current**:
-```
-- Do not claim: "she grew up in Tucson," "multi-generational roots," or similar unless verified in approved KB sources.
-```
-
-**Updated** (these facts are now verified):
-```
-- Verified biographical facts (approved for use): Born in Tucson, raised in Douglas AZ, returned at 18, 20+ years in Tucson, raised by a single Hispanic mother. These may be referenced naturally when relevant.
-- Still prohibited: "multi-generational roots," invented timelines, or any biographical detail not listed in Community Context.
-```
-
-### Update 4: KB-7 Micro-Guard B Update (ES, ~line 1269)
-
-Same update in Spanish.
+Also update the closing phrase from "I'm here to guide you" to "I'm here to help" (avoids self-referential "guide" wording).
 
 ---
 
-### What Does NOT Change
+## Issue 2: Guide-Loop Escalation Gap
 
-- KB-0, Doctrine, KB-1 through KB-6: untouched
-- Brokerage Truth Source: already correct (Corner Connect / Realty Executives AZ Territory)
-- Guard State, mode detection, entry greetings, frontend: untouched
-- KB-7 voice rules, brand pillars, anti-drift, platform divergence: untouched
-- The Coldwell Banker reference stays blocked by Brokerage Truth Source (it is acknowledged as history but never surfaced to users)
+**Problem:** From the test chat thread, Selena offers guides repeatedly after the user accepted them multiple times ("guide" -> accepted -> "guide" -> accepted -> still offers another "guide"). The edge function's `detectLoop()` catches word-level repetition but does not detect guide-acceptance patterns specifically.
 
-### Corner Connect Differentiators — Handling Decision
+**Current behavior:**
+- `detectLoop()` in `index.ts` (line 368-382) checks word overlap in last 4 messages
+- `guardState.ts` Rule 3 (line 183-188) blocks **re-suggesting the same guide** but does NOT escalate after 2+ consecutive guide acceptances
 
-The blue ocean analysis and Corner Connect team details (cash offers, Paul Volpe partnership, volume stats) are valuable context but belong in a **future KB-8 (Practice & Team Context)**, not in KB-7 (voice) or Community Context (personal roots). For now, these facts are noted but not injected — they require their own scoping to avoid turning Selena into a Corner Connect marketing channel.
+**Fix:** Add a guide-acceptance escalation rule in `guardState.ts`:
+- New Rule 12: GUIDE LOOP ESCALATION
+- If `guide_history.length >= 2` AND the last system action was `guide` AND the current message is an acceptance pattern ("yes", "guide", "show me", "si", "muestrame"), inject a governance hint forcing escalation to a decisive action (calculator, booking) instead of offering a third guide
+- This aligns with the memory: "If a user repeats the same choice twice, she must escalate"
 
 ---
 
-## Post-Change Verification
+## Issue 3: Session Boundary Re-Introduction Bug
 
-Re-run acceptance tests 1-2 with updated expectations:
+**Problem:** From the test thread, Selena re-introduced herself mid-conversation with "Hello, I'm Selena -- Kasandra's digital real estate guide." This happened when a guide page changed the entry context, triggering a new greeting injection despite `identity_disclosed` being true in history.
 
-1. **EN trust**: "Why should I trust her?" -- Selena can now reference Tucson roots, Douglas upbringing, 20+ years, community leadership. Still no superlatives or sales pitch.
-2. **ES trust**: Same in Spanish with verified biographical details in "tu" register.
-3. **Biographical accuracy**: Ask "Where is Kasandra from?" -- should answer "born in Tucson, raised in Douglas" (verified), not "grew up in Tucson" (imprecise).
-4. **Community depth**: Ask "Is she involved in the community?" -- should reference Arizona Diaper Bank, Rumbo al Exito, Cinco Agave, radio show by name.
-5. **Boundary hold**: Ask "How many transactions has her team done?" -- should defer (Corner Connect volume stats not yet in approved KB).
+**Root cause:** The `shouldInjectGreeting` logic in `SelenaChatContext.tsx` (lines 531-548) allows greeting injection for `guide_handoff` source when the entry signature is new, even if the user already has an active conversation. The guide handoff greeting template at line 712 does NOT include an identity statement, but the hero/default templates do. The re-introduction happens when:
+1. User navigates to a new guide page
+2. Entry signature changes (new guide ID)
+3. System selects the default or hero greeting template instead of the guide-handoff template
+
+**Fix:** Two-layer defense:
+1. In `SelenaChatContext.tsx`, add a check: if `messages.length > 3` (active conversation), NEVER inject a full identity greeting. Only contextual guide-handoff greetings ("I see you're reading...") are allowed.
+2. In `entryGreetings.ts`, ensure `generateGuideHandoffGreeting()` never includes "I'm Selena" phrasing (already correct, but add a comment-guard).
+
+---
+
+## Issue 4: Brand Voice Micro-Violations in Chips
+
+Several chip labels violate the "no exclamation points" and "calm authority" brand rules:
+
+| File | Line | Violation |
+|---|---|---|
+| `SelenaChatContext.tsx` | 1043 | Fallback uses exclamation: "I'm here to help**!**" |
+| `SelenaChatContext.tsx` | 1065 | Error fallback informal "don't worry" + "te preocupes" (should be "no se preocupe" for formal register, though the chat uses informal "tu" for Spanish) |
+
+**Fix:**
+- Line 1043: Remove exclamation from fallback
+- Line 1065: Verify the Spanish register matches the "tu" standard (currently correct per KB-7)
+
+---
+
+## Issue 5: Concierge Tab Panel — Missing ActionSpec Mapping
+
+The `ConciergeTabPanels.tsx` Start Here panel chips ("I'm thinking about selling", etc.) fire `onSendMessage()` which triggers an AI round-trip. Per the ActionSpec governance, intent declaration should be deterministic. However, these specific chips legitimately need AI processing (first-turn seller intercept), so no change needed here.
+
+The "Talk to Kasandra" panel navigates directly to `/v2/book` via `handleBookWithKasandra()`. This is within the allowlist per the "Selena as Router" memory. No change needed.
+
+---
+
+## Issue 6: `entryGreetings.ts` / `SelenaChatContext.tsx` Greeting Duplication
+
+There are two parallel greeting systems:
+1. `entryGreetings.ts` (used by the edge function for server-side greetings)
+2. `SelenaChatContext.tsx` (client-side greeting injection)
+
+The client-side version is the active one (the edge function's `entryGreetings.ts` is not called from the main handler). This creates a maintenance burden but is not a functional bug. No change in this scope, but noted for future consolidation.
+
+---
+
+## Implementation Plan
+
+### File 1: `src/contexts/SelenaChatContext.tsx`
+
+1. **Title fix (hero greeting):** Lines 754-755 -- replace "digital real estate guide" with "digital real estate concierge" and "guia digital" with "concierge digital". Remove "I'm here to guide you" phrasing.
+2. **Session boundary guard:** Around line 531 -- add condition: if `messages.length > 3`, restrict greeting injection to only contextual templates (guide_handoff, calculator, synthesis), never full identity greetings.
+3. **Fallback exclamation fix:** Line 1043 -- remove exclamation mark.
+
+### File 2: `supabase/functions/selena-chat/entryGreetings.ts`
+
+4. **Title fix (hero greeting):** Lines 348, 358 -- same "guide" to "concierge" replacement.
+5. **Add comment-guard:** Note that guide_handoff greetings must never include identity statements.
+
+### File 3: `supabase/functions/selena-chat/guardState.ts`
+
+6. **Rule 12 (Guide Loop Escalation):** After Rule 11 (~line 271), add a new rule that detects `guide_history.length >= 2 AND last_system_action === 'guide'` and injects an escalation hint forcing a decisive next step instead of another guide.
+
+### File 4: `supabase/functions/selena-chat/index.ts`
+
+7. No prompt content changes needed (KB-7 is already in place). Only redeploy after guardState update.
+
+### Deployment
+
+- Redeploy `selena-chat` edge function after all changes.
+
+---
+
+## Verification Tests
+
+After deploy, run these tests manually:
+
+1. **Title consistency:** Open Selena from the hero CTA -- verify "concierge" (never "guide") in both EN and ES
+2. **Title consistency (default):** Open Selena from the floating button -- verify "concierge" in both languages
+3. **Guide loop escalation:** Accept 2 guide suggestions consecutively -- verify Selena escalates to calculator/booking on the third turn instead of offering another guide
+4. **Session boundary:** Mid-conversation, navigate to a new guide page and open Selena -- verify no re-introduction ("I'm Selena"), only contextual "I see you're reading..." message
+5. **Brand voice:** Check all chip labels for exclamation points, emojis, or urgency language
+6. **Phase governance:** Verify chips never regress after intent is declared (sell -> Phase 2 chips, not Phase 1)
+7. **ActionSpec determinism:** Click "Estimate my net proceeds" chip -- verify it navigates directly to the calculator without sending a message
+8. **Overwhelm gate:** Send "I'm panicking about losing my home" -- verify chips switch to "Connect with Kasandra" / "Keep chatting" only
+
