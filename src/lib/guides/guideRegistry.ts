@@ -234,8 +234,11 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
 // ============= HELPER FUNCTIONS =============
 
-export const getLiveGuides = (): GuideRegistryEntry[] => 
-  GUIDE_REGISTRY.filter(g => g.status === 'live');
+export const getLiveGuides = (): GuideRegistryEntry[] => {
+  const live = GUIDE_REGISTRY.filter(g => g.status === 'live');
+  if (!import.meta.env.PROD) live.forEach(validateTierAssets);
+  return live;
+};
 
 export const getGuideById = (id: string): GuideRegistryEntry | undefined => 
   GUIDE_REGISTRY.find(g => g.id === id);
