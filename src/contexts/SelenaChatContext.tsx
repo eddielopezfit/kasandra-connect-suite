@@ -14,7 +14,8 @@ import {
   getSessionContext, 
   initSessionContext, 
   updateSessionContext,
-  setFieldIfEmpty 
+  setFieldIfEmpty,
+  type SessionContext,
 } from '@/lib/analytics/selenaSession';
 import {
   logSelenaOpen,
@@ -100,6 +101,67 @@ const CHAT_HISTORY_KEY = 'selena_chat_history';
 const LEAD_ID_KEY = 'selena_lead_id';
 const LAST_ENTRY_SIG_KEY = 'selena_last_entry_sig';
 const MAX_HISTORY = 50;
+
+// ============= PHASE-AWARE HELPERS =============
+
+/**
+ * Reads localStorage directly (NOT React state) to determine if stored chat history exists.
+ * Must not depend on React state since state may not have hydrated yet.
+ */
+function hasStoredChatHistory(): boolean {
+  try {
+    const stored = localStorage.getItem(CHAT_HISTORY_KEY);
+    if (!stored) return false;
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) && parsed.length > 0;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Derives phase-appropriate fallback chips from chip_phase_floor + intent.
+ * Used for error fallback and soft-resume when no chips are available from server.
+ */
+function getPhaseAwareChips(
+  t: (en: string, es: string) => string,
+  ctx?: SessionContext | null,
+): (string | { label: string; actionSpec: import('@/lib/actions/actionSpec').ActionSpec })[] {
+  const floor = ctx?.chip_phase_floor ?? 0;
+  const intent = ctx?.intent;
+
+  if (floor >= 3) {
+    return mapChipsToActionSpecs([
+      t("Estimate my net proceeds", "Estimar mis ganancias netas"),
+      t("Talk with Kasandra", "Hablar con Kasandra"),
+    ]);
+  }
+  if (floor >= 2 && (intent === 'sell' || intent === 'cash')) {
+    return [
+      t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
+      t("What's my home worth?", "¿Cuánto vale mi casa?"),
+    ];
+  }
+  if (floor >= 2 && intent === 'buy') {
+    return [
+      t("Take the readiness check", "Tomar la evaluación de preparación"),
+      t("Browse buyer guides", "Explorar guías de comprador"),
+    ];
+  }
+  if (floor >= 2 && intent) {
+    // intent is known but not sell/buy/cash — generic Phase 2
+    return [
+      t("What are my options?", "¿Cuáles son mis opciones?"),
+      t("I have a question", "Tengo una pregunta"),
+    ];
+  }
+  // Phase 0/1 — intent unknown
+  return [
+    t("I'm thinking about selling", "Estoy pensando en vender"),
+    t("I'm looking to buy", "Estoy buscando comprar"),
+    t("Just exploring for now", "Solo estoy explorando"),
+  ];
+}
 
 // ============= ENTRY SOURCE TYPES =============
 export type EntrySource = 
@@ -451,9 +513,44 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     
     const hasContextualEntry = isMeaningfulSource && isNewEntry;
     
-    if (messages.length === 0 || isPostBooking || hasContextualEntry) {
+    // ============= PHASE GOVERNANCE: GREETING INJECTION GUARD =============
+    const storedHistoryExists = hasStoredChatHistory();
+    
+    // Blocked sources: NEVER inject a greeting (even if messages.length===0)
+    const isBlockedSource = !entryContext || 
+      entryContext.source === 'floating' || 
+      entryContext.source === 'footer_nudge' || 
+      entryContext.source === 'proactive';
+    
+    // Allowed greeting sources (can inject if signature is new + phase matches)
+    const isAllowedGreetingSource = entryContext && [
+      'calculator', 'guide_handoff', 'synthesis', 'hero', 'quiz_result', 'post_booking'
+    ].includes(entryContext.source);
+
+    // Core decision: should we inject a greeting?
+    const shouldInjectGreeting = (() => {
+      // If stored history exists and source is blocked → silent open
+      if (storedHistoryExists && isBlockedSource) return false;
+      
+      // Post-booking always injects (identity reinforcement)
+      if (isPostBooking) return true;
+      
+      // If stored history exists and source is NOT in allowed set → silent open
+      if (storedHistoryExists && !isAllowedGreetingSource) return false;
+      
+      // If no stored history AND no messages → first contact OR returning visitor
+      if (!storedHistoryExists && messages.length === 0) return true;
+      
+      // Contextual entry with allowed source + new signature
+      if (hasContextualEntry && isAllowedGreetingSource) return true;
+      
+      return false;
+    })();
+    
+    if (shouldInjectGreeting) {
       const sessionContext = getSessionContext();
-      let greetingContent: string;
+      const currentFloor = sessionContext?.chip_phase_floor ?? 0;
+      let greetingContent: string = '';
       let suggestedReplies: (string | { label: string; actionSpec: import('@/lib/actions/actionSpec').ActionSpec })[];
       
       // Priority 0: Post-booking identity reinforcement (HIGHEST - seals the decision)
@@ -631,16 +728,24 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
             suggestedReplies.push(actionChip);
           }
         } else {
-          // Fallback to default
-          greetingContent = t(
-            "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
-            "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
-          );
-          suggestedReplies = [
-            t("I'm thinking about selling", "Estoy pensando en vender"),
-            t("I'm looking to buy", "Estoy buscando comprar"),
-            t("Just exploring for now", "Solo estoy explorando"),
-          ];
+          // Fallback: guide not found. Use phase-aware chips instead of Phase 1 regression
+          if (sessionContext?.intent) {
+            greetingContent = t(
+              "Welcome back — we can pick up where you left off.",
+              "Bienvenido/a de vuelta — podemos continuar donde lo dejamos."
+            );
+            suggestedReplies = getPhaseAwareChips(t, sessionContext);
+          } else {
+            greetingContent = t(
+              "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
+              "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
+            );
+            suggestedReplies = [
+              t("I'm thinking about selling", "Estoy pensando en vender"),
+              t("I'm looking to buy", "Estoy buscando comprar"),
+              t("Just exploring for now", "Solo estoy explorando"),
+            ];
+          }
         }
       }
       // Priority 5: Hero CTA context
@@ -741,8 +846,16 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
             t("Browse guides", "Explorar guías"),
             t("I have a specific question", "Tengo una pregunta específica"),
           ];
+        } else if (sessionContext?.intent) {
+          // Returning visitor with known intent but no stored history → "Welcome back"
+          // NEVER show Phase 0/1 onboarding when intent exists
+          greetingContent = t(
+            "Welcome back — we can pick up where you left off.",
+            "Bienvenido/a de vuelta — podemos continuar donde lo dejamos."
+          );
+          suggestedReplies = getPhaseAwareChips(t, sessionContext);
         } else {
-          // Truly new visitor — orientation mode
+          // Truly new visitor — orientation mode (Phase 0)
           greetingContent = t(
             "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
             "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
@@ -856,6 +969,11 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               calculator_advantage: lastCalculatorAdvantage ?? undefined,
               // Mode persistence — authoritative server mode signal, survives across turns
               current_mode: context?.current_mode,
+              // Phase governance fields
+              chip_phase_floor: context?.chip_phase_floor ?? 0,
+              greeting_phase_seen: context?.greeting_phase_seen ?? 0,
+              timeline_last_asked_turn: context?.timeline_last_asked_turn,
+              turn_count: (context?.turn_count ?? 0) + 1,
             },
             history,
           }),
@@ -886,14 +1004,30 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      // Persist server-authoritative mode to SessionContext
-      // Mode 4 (HANDOFF) must survive across turns — never downgrade once set
+      // Persist server-authoritative mode to SessionContext (monotonic — never downgrade)
       if (data.current_mode) {
         const existingMode = getSessionContext()?.current_mode ?? 0;
         if (data.current_mode >= existingMode) {
           updateSessionContext({ current_mode: data.current_mode as 1 | 2 | 3 | 4 });
         }
       }
+
+      // Persist chip_phase_floor from server response (monotonic — never decrease)
+      if (data.chip_phase_floor !== undefined) {
+        const existingFloor = getSessionContext()?.chip_phase_floor ?? 0;
+        if (data.chip_phase_floor > existingFloor) {
+          updateSessionContext({ chip_phase_floor: data.chip_phase_floor });
+        }
+      }
+
+      // Persist timeline_last_asked_turn if server reports it
+      if (data.timeline_last_asked_turn !== undefined) {
+        updateSessionContext({ timeline_last_asked_turn: data.timeline_last_asked_turn });
+      }
+
+      // Increment turn_count
+      const currentTurnCount = getSessionContext()?.turn_count ?? 0;
+      updateSessionContext({ turn_count: currentTurnCount + 1 });
       
       // ============= CHIP → ACTIONSPEC MAPPING =============
       // Convert known action-bearing string chips to structured ActionSpec objects.
@@ -921,7 +1055,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('[Selena] Chat error:', error);
       
-      // Graceful fallback
+      // Graceful fallback — phase-aware chips (never regress to Phase 1 if intent known)
+      const fallbackCtx = getSessionContext();
       const fallbackMessage: ChatMessage = {
         id: generateMessageId(),
         role: 'assistant',
@@ -930,11 +1065,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           "Estoy teniendo un momento - pero no te preocupes, sigo aquí para ayudarte. ¿Qué te gustaría explorar?"
         ),
         timestamp: new Date().toISOString(),
-        suggestedReplies: [
-          t("I'm thinking about selling", "Estoy pensando en vender"),
-          t("I'm looking to buy", "Estoy buscando comprar"),
-          t("Just exploring for now", "Solo estoy explorando"),
-        ],
+        suggestedReplies: getPhaseAwareChips(t, fallbackCtx),
       };
       
       const updatedMessages = [...newMessages, fallbackMessage];
@@ -1189,22 +1320,36 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
   const clearHistory = useCallback(() => {
     setMessages([]);
     localStorage.removeItem(CHAT_HISTORY_KEY);
-    // Generate fresh session for new conversation
-    updateSessionContext({ session_id: crypto.randomUUID() });
-    // Re-add greeting message
+    localStorage.removeItem(LAST_ENTRY_SIG_KEY);
+    // Reset phase governance fields (conversation state) but keep real user data (intent, timeline, tool_used)
+    updateSessionContext({ 
+      chip_phase_floor: 0, 
+      greeting_phase_seen: 0,
+      turn_count: 0,
+      timeline_last_asked_turn: undefined,
+    });
+    // Re-add greeting message — phase-aware
+    const ctx = getSessionContext();
     const greeting: ChatMessage = {
       id: generateMessageId(),
       role: 'assistant',
-      content: t(
-        "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
-        "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
-      ),
+      content: ctx?.intent
+        ? t(
+            "Welcome back — we can pick up where you left off.",
+            "Bienvenido/a de vuelta — podemos continuar donde lo dejamos."
+          )
+        : t(
+            "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
+            "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
+          ),
       timestamp: new Date().toISOString(),
-      suggestedReplies: [
-        t("I'm thinking about selling", "Estoy pensando en vender"),
-        t("I'm looking to buy", "Estoy buscando comprar"),
-        t("Just exploring for now", "Solo estoy explorando"),
-      ],
+      suggestedReplies: ctx?.intent
+        ? getPhaseAwareChips(t, ctx)
+        : [
+            t("I'm thinking about selling", "Estoy pensando en vender"),
+            t("I'm looking to buy", "Estoy buscando comprar"),
+            t("Just exploring for now", "Solo estoy explorando"),
+          ],
     };
     setMessages([greeting]);
     saveHistory([greeting]);

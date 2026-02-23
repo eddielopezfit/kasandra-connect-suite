@@ -93,6 +93,12 @@ export interface SessionContext {
   last_opened_at?: string;
   // Selena mode persistence — authoritative server signal, persisted so Mode 4 survives across turns
   current_mode?: 1 | 2 | 3 | 4;
+  // Phase Governance (monotonic — never decreases within a session)
+  chip_phase_floor?: number;          // 0-4, default 0 — governs chips + greeting gates
+  greeting_phase_seen?: number;       // 0-4, highest phase greeting shown
+  timeline_last_asked_turn?: number;  // turn count when timeline was last asked
+  timeline_confidence?: 'low' | 'med' | 'high';
+  turn_count?: number;                // monotonic client-side turn counter (incremented per sendMessage)
 }
 
 /**
