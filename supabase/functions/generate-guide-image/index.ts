@@ -30,16 +30,16 @@ serve(async (req) => {
       );
     }
 
-    const fullPrompt = `${BASE_PROMPT}\n${variation}\nUltra high resolution. 16:9 aspect ratio.`;
+    const fullPrompt = `${BASE_PROMPT}\n${variation}\nUltra high resolution. 16:9 aspect ratio photograph.`;
 
-    // Use Lovable AI gateway for image generation
     const imageModel = Deno.env.get("IMAGE_MODEL") || "google/gemini-3-pro-image-preview";
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!lovableApiKey) {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    const aiResponse = await fetch("https://ai-gateway.lovable.dev/imagine", {
+    // Use Lovable AI gateway chat completions endpoint with image modality
+    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -47,9 +47,13 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: imageModel,
-        prompt: fullPrompt,
-        width: 1920,
-        height: 1080,
+        messages: [
+          {
+            role: "user",
+            content: fullPrompt,
+          },
+        ],
+        modalities: ["image", "text"],
       }),
     });
 
@@ -58,8 +62,25 @@ serve(async (req) => {
       throw new Error(`AI gateway error (${aiResponse.status}): ${errText}`);
     }
 
-    const imageData = await aiResponse.arrayBuffer();
-    const imageBytes = new Uint8Array(imageData);
+    const aiData = await aiResponse.json();
+    const imageUrl = aiData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+
+    if (!imageUrl) {
+      throw new Error("No image returned from AI gateway");
+    }
+
+    // Extract base64 data from data URL
+    const base64Match = imageUrl.match(/^data:image\/\w+;base64,(.+)$/);
+    if (!base64Match) {
+      throw new Error("Unexpected image format from AI gateway");
+    }
+
+    // Decode base64 to bytes
+    const binaryString = atob(base64Match[1]);
+    const imageBytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      imageBytes[i] = binaryString.charCodeAt(i);
+    }
 
     // Upload to guide-assets bucket via service role
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -94,9 +115,10 @@ serve(async (req) => {
       slot_name: slotName,
     };
 
+    const metaBytes = new TextEncoder().encode(JSON.stringify(metadata, null, 2));
     await supabase.storage
       .from("guide-assets")
-      .upload(metadataPath, JSON.stringify(metadata, null, 2), {
+      .upload(metadataPath, metaBytes, {
         contentType: "application/json",
         upsert: true,
       });
