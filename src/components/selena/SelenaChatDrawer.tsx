@@ -28,7 +28,7 @@ import {
 
 import { ReportViewer } from '@/components/v2/ReportViewer';
 import LeadCaptureModal from '@/components/v2/LeadCaptureModal';
-import { PriorityCallModal } from './PriorityCallModal';
+
 import { ConciergeTab, JourneyIntent } from './ConciergeTabBar';
 import { SelenaDrawerHeaderControls } from './drawer/SelenaDrawerHeaderControls';
 import { SelenaDrawerMessagesArea } from './drawer/SelenaDrawerMessagesArea';
@@ -71,8 +71,7 @@ export function SelenaChatDrawer() {
     handleActionClick, 
     report, 
     closeReport,
-    priorityCall,
-    closePriorityCall,
+    
     showLeadCapture,
     closeLeadCapture,
     onLeadCaptured,
@@ -273,21 +272,9 @@ export function SelenaChatDrawer() {
           isOpen={showLeadCapture}
           onClose={closeLeadCapture}
           onSuccess={onLeadCaptured}
-          source={pendingAction === 'priority_call' ? 'selena_priority_call' : 'selena_report_access'}
-          title={pendingAction === 'priority_call'
-            ? { en: 'Connect with Kasandra', es: 'Conectarse con Kasandra' }
-            : { en: 'Access Your Report', es: 'Accede a Tu Reporte' }}
-          subtitle={pendingAction === 'priority_call'
-            ? { en: 'Share your contact info so Kasandra can reach you.', es: 'Comparta su información para que Kasandra pueda contactarle.' }
-            : { en: 'Please provide your email so I can find your personalized report.', es: 'Por favor proporciona tu correo para encontrar tu reporte personalizado.' }}
-        />
-        <PriorityCallModal
-          open={priorityCall.isOpen}
-          onClose={closePriorityCall}
-          bookingUrl={priorityCall.bookingUrl}
-          slots={priorityCall.slots}
-          onChannelSelect={priorityCall.onChannelSelect}
-          onRequestCallback={priorityCall.onRequestCallback}
+          source="selena_report_access"
+          title={{ en: 'Access Your Report', es: 'Accede a Tu Reporte' }}
+          subtitle={{ en: 'Please provide your email so I can find your personalized report.', es: 'Por favor proporciona tu correo para encontrar tu reporte personalizado.' }}
         />
       </>
     );
@@ -360,23 +347,11 @@ export function SelenaChatDrawer() {
           isOpen={showLeadCapture}
           onClose={closeLeadCapture}
           onSuccess={onLeadCaptured}
-          source={pendingAction === 'priority_call' ? 'selena_priority_call' : 'selena_report_access'}
-          title={pendingAction === 'priority_call'
-            ? { en: 'Connect with Kasandra', es: 'Conectarse con Kasandra' }
-            : { en: 'Access Your Report', es: 'Accede a Tu Reporte' }}
-          subtitle={pendingAction === 'priority_call'
-            ? { en: 'Share your contact info so Kasandra can reach you.', es: 'Comparta su información para que Kasandra pueda contactarle.' }
-            : { en: 'Please provide your email so I can find your personalized report.', es: 'Por favor proporciona tu correo para encontrar tu reporte personalizado.' }}
+          source="selena_report_access"
+          title={{ en: 'Access Your Report', es: 'Accede a Tu Reporte' }}
+          subtitle={{ en: 'Please provide your email so I can find your personalized report.', es: 'Por favor proporciona tu correo para encontrar tu reporte personalizado.' }}
         />
 
-        <PriorityCallModal
-          open={priorityCall.isOpen}
-          onClose={closePriorityCall}
-          bookingUrl={priorityCall.bookingUrl}
-          slots={priorityCall.slots}
-          onChannelSelect={priorityCall.onChannelSelect}
-          onRequestCallback={priorityCall.onRequestCallback}
-        />
       </>
     );
   }
@@ -450,23 +425,11 @@ export function SelenaChatDrawer() {
         isOpen={showLeadCapture}
         onClose={closeLeadCapture}
         onSuccess={onLeadCaptured}
-        source={pendingAction === 'priority_call' ? 'selena_priority_call' : 'selena_report_access'}
-        title={pendingAction === 'priority_call'
-          ? { en: 'Connect with Kasandra', es: 'Conectarse con Kasandra' }
-          : { en: 'Access Your Report', es: 'Accede a Tu Reporte' }}
-        subtitle={pendingAction === 'priority_call'
-          ? { en: 'Share your contact info so Kasandra can reach you.', es: 'Comparta su información para que Kasandra pueda contactarle.' }
-          : { en: 'Please provide your email so I can find your personalized report.', es: 'Por favor proporciona tu correo para encontrar tu reporte personalizado.' }}
+        source="selena_report_access"
+        title={{ en: 'Access Your Report', es: 'Accede a Tu Reporte' }}
+        subtitle={{ en: 'Please provide your email so I can find your personalized report.', es: 'Por favor proporciona tu correo para encontrar tu reporte personalizado.' }}
       />
 
-      <PriorityCallModal
-        open={priorityCall.isOpen}
-        onClose={closePriorityCall}
-        bookingUrl={priorityCall.bookingUrl}
-        slots={priorityCall.slots}
-        onChannelSelect={priorityCall.onChannelSelect}
-        onRequestCallback={priorityCall.onRequestCallback}
-      />
     </>
   );
 }

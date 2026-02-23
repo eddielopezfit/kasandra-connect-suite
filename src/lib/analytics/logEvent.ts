@@ -136,15 +136,15 @@ export async function logEvent(
     const context = getSessionContext();
     const currentRoute = typeof window !== 'undefined' ? window.location.pathname : '';
     
-    // Enrich payload with context
+    // Enrich payload with context (payload values win over session defaults)
     const enrichedPayload = {
-      ...payload,
-      route: payload.route || currentRoute,
+      route: currentRoute,
       language: context?.language,
       utm_source: context?.utm_source,
       utm_campaign: context?.utm_campaign,
       utm_medium: context?.utm_medium,
       timestamp: new Date().toISOString(),
+      ...payload,
     };
 
     // Fire and forget - don't await in production for performance
