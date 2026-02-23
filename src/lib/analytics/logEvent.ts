@@ -109,6 +109,7 @@ export type EventType =
   // Booking lifecycle events (Sprint Opus 4.6)
   | 'booking_started'
   | 'booking_submitted'
+  | 'booking_completed'
   // Selena Mode Tracking (Decision Certainty Engine v2)
   | 'selena_entry'
   | 'selena_mode_transition'

@@ -1,10 +1,12 @@
 import { useSearchParams, Link } from "react-router-dom";
+import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { CheckCircle2, Clock, FileText, Home, Phone, ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
+import { logEvent } from "@/lib/analytics/logEvent";
 
 type IntentType = 'cash' | 'sell' | 'buy' | 'dual' | 'explore';
 
@@ -18,6 +20,28 @@ const V2ThankYouContent = () => {
   const intent = (searchParams.get("intent") || "explore") as IntentType;
   const slotTime = searchParams.get("slot_time") || null;
   const leadName = searchParams.get("name")?.split(" ")[0] || "";
+
+  // Log booking_completed on mount for GHL redirect tracking
+  useEffect(() => {
+    const intentParam = searchParams.get("intent") || "direct";
+    const name = searchParams.get("name") || undefined;
+    const utm_source = searchParams.get("utm_source");
+    const utm_campaign = searchParams.get("utm_campaign");
+    const utm_medium = searchParams.get("utm_medium");
+    const utm_content = searchParams.get("utm_content");
+    const utm_term = searchParams.get("utm_term");
+
+    logEvent('booking_completed', {
+      intent: intentParam,
+      source: 'ghl_calendar_redirect',
+      ...(name && { name }),
+      ...(utm_source && { utm_source }),
+      ...(utm_campaign && { utm_campaign }),
+      ...(utm_medium && { utm_medium }),
+      ...(utm_content && { utm_content }),
+      ...(utm_term && { utm_term }),
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   
   // Handle CTA clicks with tracking
   const handleCTAClick = (ctaName: string, destination: string) => {
