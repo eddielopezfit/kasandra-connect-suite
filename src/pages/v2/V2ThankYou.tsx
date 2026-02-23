@@ -136,8 +136,8 @@ const V2ThankYouContent = () => {
             },
           ],
           cta: {
-            label: t('Download: Tucson Buyer\'s Guide', 'Descargar: Guía del Comprador de Tucson'),
-            href: '/guides/tucson-buyers-guide.pdf',
+            label: t('Read: First-Time Buyer Guide', 'Leer: Guía para Compradores Primerizos'),
+            href: '/v2/guides/first-time-buyer-guide',
             icon: FileText,
           },
           resource: {
