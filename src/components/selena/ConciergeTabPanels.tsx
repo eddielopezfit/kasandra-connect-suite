@@ -63,14 +63,10 @@ export function ConciergeTabPanels({
     onClose();
   };
 
-  const handlePriorityCall = () => {
+  const handleBookWithKasandra = () => {
     logEvent('priority_call_click', { source: 'concierge_tabs' });
-    onActionClick({
-      label: t('Schedule a Call', 'Agendar una Llamada'),
-      type: 'priority_call',
-      eventType: 'priority_call_click',
-    });
-    onClose();
+    closeDrawer();
+    navigate('/v2/book');
   };
 
   return (
@@ -123,7 +119,7 @@ export function ConciergeTabPanels({
         {activeTab === 'talk' && (
           <TalkToKasandraPanel 
             t={t} 
-            onPriorityCall={handlePriorityCall}
+            onBookWithKasandra={handleBookWithKasandra}
           />
         )}
       </div>
@@ -386,10 +382,10 @@ function MyOptionsPanel({
 // IMPORTANT: Never claim to check schedules. Always route to self-service scheduling.
 function TalkToKasandraPanel({ 
   t, 
-  onPriorityCall 
+  onBookWithKasandra 
 }: { 
   t: (en: string, es: string) => string;
-  onPriorityCall: () => void;
+  onBookWithKasandra: () => void;
 }) {
   return (
     <>
@@ -403,9 +399,8 @@ function TalkToKasandraPanel({
       </div>
 
       <div className="space-y-3">
-        {/* Single CTA - Connect with Kasandra */}
         <Button
-          onClick={onPriorityCall}
+          onClick={onBookWithKasandra}
           className="w-full bg-cc-navy hover:bg-cc-navy/90"
           size="lg"
         >

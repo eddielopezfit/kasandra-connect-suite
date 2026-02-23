@@ -1201,17 +1201,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       action.id === 'priority_call';
     
     if (isPriorityCallAction) {
-      // Trigger priority call - handled inline to avoid circular dependency
-      if (!leadId) {
-        setPendingAction('priority_call');
-        setShowLeadCapture(true);
-      } else {
-        // Will be handled by triggerPriorityCall after render
-        setTimeout(() => {
-          const event = new CustomEvent('selena-priority-call');
-          window.dispatchEvent(event);
-        }, 0);
-      }
+      // Route directly to booking page — no lead capture gate for booking
+      closeChat();
+      navigate('/v2/book');
       return;
     }
     
