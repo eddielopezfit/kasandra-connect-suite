@@ -4,7 +4,7 @@ const SocialProofTicker = () => {
   const { t } = useLanguage();
 
   const logos = [
-    { name: "Coldwell Banker", text: "COLDWELL BANKER" },
+    { name: "Realty Executives", text: "REALTY EXECUTIVES" },
     { name: "Tucson Appliance", text: "TUCSON APPLIANCE" },
     { name: "Arizona Diaper Bank", text: "ARIZONA DIAPER BANK" },
     { name: "Tucson Hispanic Chamber", text: t("TUCSON HISPANIC CHAMBER", "CÁMARA HISPANA DE TUCSON") },
