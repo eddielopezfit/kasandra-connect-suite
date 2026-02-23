@@ -73,7 +73,7 @@ const GHLBookingCalendar = () => {
           }}
           scrolling="no"
           id="N7himS3BLf5KxaVbQPz6_1770095323495"
-          title="Book a Consultation"
+          title="Schedule a Conversation with Kasandra"
           // Prevent layout shift by reserving space
           loading="eager"
         />
