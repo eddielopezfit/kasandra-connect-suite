@@ -619,6 +619,7 @@ VOICE RULES:
 - Mirror the user's language.
 - NO exclamation points. NO emojis. No over-enthusiasm.
 - Never compare Kasandra to other agents — she is the only option.
+- NEVER include bracket-wrapped CTAs like [Action Label] in your response text. Actionable buttons are handled separately by the system. Your text should describe direction, not render buttons.
 
 CONCIERGE PHILOSOPHY:
 - Educate before qualifying. Offer value (guides, calculators, insights) before asking for personal details.
@@ -626,9 +627,9 @@ CONCIERGE PHILOSOPHY:
 - If the user seems interested in selling, suggest exploring their options (calculator, guides) before asking for property address.
 - One question at a time. Never overwhelm.
 
-KASANDRA FRAMING (Busy Professional):
+KASANDRA FRAMING (Calm Authority):
 - "Kasandra personally handles every client — no handoffs."
-- "Her schedule fills up, but I can help you find a time."
+- "Kasandra personally reviews each situation before speaking with a client."
 - "She'll review your situation before your call."
 
 ${MODE_INSTRUCTIONS_EN}
@@ -646,6 +647,7 @@ REGLAS DE VOZ:
 - Sea profesional, calmada y brinde apoyo sin presión.
 - SIN signos de exclamación. SIN emojis. Sin exceso de entusiasmo.
 - Nunca compare a Kasandra con otros agentes — ella es la única opción.
+- NUNCA incluya CTAs entre corchetes como [Etiqueta de Acción] en el texto de su respuesta. Los botones de acción se manejan por separado por el sistema.
 
 FILOSOFÍA DE CONCIERGE:
 - Educar antes de calificar. Ofrezca valor (guías, calculadoras, información) antes de solicitar datos personales.
@@ -653,9 +655,9 @@ FILOSOFÍA DE CONCIERGE:
 - Si el usuario parece interesado en vender, sugiera explorar sus opciones antes de pedir la dirección de la propiedad.
 - Una pregunta a la vez. Nunca abrume.
 
-ENCUADRE DE KASANDRA (Profesional Ocupada):
+ENCUADRE DE KASANDRA (Autoridad Tranquila):
 - "Kasandra maneja personalmente cada cliente — sin transferencias."
-- "Su agenda se llena, pero puedo ayudarle a encontrar un horario."
+- "Kasandra revisa personalmente cada situación antes de hablar con usted."
 - "Ella revisará su situación antes de su llamada."
 
 ${MODE_INSTRUCTIONS_ES}
@@ -704,6 +706,41 @@ function isStalled(history: ChatMessage[], message: string): boolean {
   const stallCount = recentMessages.filter(m => STALL_PATTERNS.test(m.content)).length;
   
   return stallCount >= 2 || STALL_PATTERNS.test(message);
+}
+
+// ============= BRACKET CTA SANITIZER (ALLOWLIST-BASED) =============
+// Safety net: strips bracket-wrapped CTAs that match exact known chip labels.
+// Prevention is in the prompt; this catches any AI leakage.
+const BRACKET_CTA_ALLOWLIST = new Set([
+  // EN labels
+  'estimate my net proceeds',
+  'talk with kasandra',
+  'compare my options',
+  'check my readiness',
+  'compare cash vs. listing',
+  'find a time with kasandra',
+  'keep chatting with selena',
+  'review strategy with kasandra',
+  // ES labels
+  'estimar mis ganancias netas',
+  'hablar con kasandra',
+  'comparar mis opciones',
+  'verificar mi preparación',
+  'comparar efectivo vs. listado',
+  'encontrar un horario con kasandra',
+  'seguir conversando con selena',
+  'revisar estrategia con kasandra',
+]);
+
+function sanitizeBracketCTAs(text: string): string {
+  return text
+    .replace(/\[([^\]]{5,80})\]/g, (_match, inner: string) => {
+      const normalized = inner.toLowerCase().trim();
+      if (BRACKET_CTA_ALLOWLIST.has(normalized)) return '';
+      return _match; // preserve non-CTA brackets (e.g., "[optional]")
+    })
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 // ============= MAIN HANDLER =============
@@ -803,16 +840,16 @@ serve(async (req) => {
     let governanceHint = "";
     if (proceedsOverride || asapTimeline) {
       governanceHint = language === 'es'
-        ? `\n\nGOBERNANZA: El usuario quiere saber sus ganancias netas (o tiene urgencia ASAP). Recomenda DIRECTAMENTE la herramienta de estimación de ganancias netas. NO ofrezcas guías. Respuesta = 1 reconocimiento + 1 recomendación directa + chips: [Estimar mis ganancias netas] [Hablar con Kasandra].`
-        : `\n\nGOVERNANCE: User is asking about net proceeds (or has ASAP urgency). Recommend the net proceeds estimator DIRECTLY. Do NOT offer guides. Response = 1 acknowledgment + 1 direct recommendation + chips: [Estimate my net proceeds] [Talk with Kasandra].`;
+        ? `\n\nGOBERNANZA: El usuario quiere saber sus ganancias netas (o tiene urgencia ASAP). Recomiende DIRECTAMENTE la herramienta de estimación de ganancias netas. NO ofrezca guías. Respuesta = 1 reconocimiento + 1 recomendación directa. Las opciones de acción se muestran automáticamente como botones.`
+        : `\n\nGOVERNANCE: User is asking about net proceeds (or has ASAP urgency). Recommend the net proceeds estimator DIRECTLY. Do NOT offer guides. Response = 1 acknowledgment + 1 direct recommendation. Action buttons are shown automatically by the system.`;
     } else if (escalated) {
       governanceHint = language === 'es'
-        ? `\n\nGOBERNANZA ANTI-LOOP: El usuario ha pedido la misma cosa 2 veces. NO repitas la misma respuesta. Dile: "Ya que ha explorado eso, el paso más claro ahora es estimar sus números." Luego ofrece SOLO: [Estimar mis ganancias netas] [Hablar con Kasandra].`
-        : `\n\nGOVERNANCE ANTI-LOOP: User has repeated the same request 2 times. Do NOT offer the same response. Say: "Since you've already explored that, the clearest next step is estimating your numbers." Then offer ONLY: [Estimate my net proceeds] [Talk with Kasandra].`;
+        ? `\n\nGOBERNANZA ANTI-LOOP: El usuario ha pedido la misma cosa 2 veces. NO repita la misma respuesta. Diga: "Ya que ha explorado eso, el paso más claro ahora es estimar sus números." Los botones de acción se muestran automáticamente.`
+        : `\n\nGOVERNANCE ANTI-LOOP: User has repeated the same request 2 times. Do NOT offer the same response. Say: "Since you've already explored that, the clearest next step is estimating your numbers." Action buttons are shown automatically by the system.`;
     } else if (phase === 2) {
       governanceHint = language === 'es'
-        ? `\n\nGOBERNANZA FASE 2: La intención está clara. Sé decisivo — recomienda UN paso concreto. No preguntes "¿preferiría una herramienta o una guía?". Máximo 2 opciones.`
-        : `\n\nGOVERNANCE PHASE 2: Intent is known. Be decisive — recommend ONE concrete next step. Do NOT ask "would you prefer a tool or a guide?". Max 2 options.`;
+        ? `\n\nGOBERNANZA FASE 2: La intención está clara. Sea decisivo — recomiende UN paso concreto. No pregunte "¿preferiría una herramienta o una guía?". Máximo 2 opciones. Los botones se muestran automáticamente.`
+        : `\n\nGOVERNANCE PHASE 2: Intent is known. Be decisive — recommend ONE concrete next step. Do NOT ask "would you prefer a tool or a guide?". Max 2 options. Action buttons are shown automatically by the system.`;
     }
     
     // Add stall recovery hint if needed
@@ -894,7 +931,8 @@ serve(async (req) => {
     });
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
+    const rawReply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
+    const reply = sanitizeBracketCTAs(rawReply);
 
     // Check if booking access is earned (from mode detection)
     const hasEarned = modeContext.allowBookingCTA;
