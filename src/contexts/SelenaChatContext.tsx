@@ -541,6 +541,14 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       // If no stored history AND no messages → first contact OR returning visitor
       if (!storedHistoryExists && messages.length === 0) return true;
       
+      // SESSION BOUNDARY GUARD: If active conversation (>3 messages), only allow
+      // contextual greetings (guide_handoff, calculator, synthesis), NEVER full
+      // identity greetings (hero, default). Prevents mid-thread re-introductions.
+      if (messages.length > 3 && hasContextualEntry && isAllowedGreetingSource) {
+        const contextualSources = ['guide_handoff', 'calculator', 'synthesis', 'quiz_result'];
+        return contextualSources.includes(entryContext?.source || '');
+      }
+      
       // Contextual entry with allowed source + new signature
       if (hasContextualEntry && isAllowedGreetingSource) return true;
       
@@ -751,8 +759,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       // Priority 5: Hero CTA context
       else if (entryContext?.source === 'hero') {
         greetingContent = t(
-          `Hello, I'm Selena — Kasandra's digital real estate guide.\n\nI'm here to help you explore your options calmly and without pressure. Whether you're thinking about buying, selling, or just understanding what's possible — I'm here to guide you.\n\nWhat brings you here today?`,
-          `Hola, soy Selena — la guía digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión. Ya sea que esté pensando en comprar, vender, o simplemente entendiendo lo que es posible — estoy aquí para guiarle.\n\n¿Qué le trae por aquí hoy?`
+          `Hello, I'm Selena — Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure. Whether you're thinking about buying, selling, or just understanding what's possible — I'm here to help.\n\nWhat brings you here today?`,
+          `Hola, soy Selena — la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión. Ya sea que esté pensando en comprar, vender, o simplemente entendiendo lo que es posible — estoy aquí para ayudarle.\n\n¿Qué le trae por aquí hoy?`
         );
         suggestedReplies = [
           t("I'm thinking about selling", "Estoy pensando en vender"),
@@ -1039,8 +1047,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         id: generateMessageId(),
         role: 'assistant',
         content: data.reply || t(
-          "I'm here to help! What would you like to know?",
-          "¡Estoy aquí para ayudar! ¿Qué te gustaría saber?"
+          "I'm here to help. What would you like to know?",
+          "Estoy aquí para ayudar. ¿Qué te gustaría saber?"
         ),
         timestamp: new Date().toISOString(),
         actions: data.actions || [],
