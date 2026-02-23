@@ -52,6 +52,7 @@ import {
   type ConversationMode,
   type ConversationState,
 } from "./modeContext.ts";
+import { buildGuardState, applyGuardRules } from "./guardState.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -1491,6 +1492,30 @@ serve(async (req) => {
     const conversationState = buildConversationState(context, history, message, extractedEmail, primaryIntent);
     const detectedModeContext = detectMode(conversationState);
 
+    // ============= CONVERSATION STATE GUARD v1.0 =============
+    const guardState = buildGuardState(history, context, message);
+    const guardRules = applyGuardRules(guardState, language);
+
+    // RULE 9: Human takeover — block AI generation entirely
+    if (guardRules.blockGeneration) {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          reply: '',
+          suggestedReplies: [],
+          actions: [],
+          language,
+          lead_id: leadId,
+          detected_intent: primaryIntent !== 'explore' ? primaryIntent : null,
+          booking_cta_shown: false,
+          current_mode: context.current_mode ?? 1,
+          mode_name: 'HUMAN_TAKEOVER',
+          guard_violations: guardRules.violations,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     // UNIVERSAL MONOTONIC MODE FLOOR: Mode must never decrease within a session.
     const clientMode = (context.current_mode ?? 0) as number;
     const detectedMode = detectedModeContext.mode;
@@ -1701,11 +1726,11 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt + reflectionHint + governanceHint + guideModeHint + modeHint }, 
+          { role: "system", content: systemPrompt + reflectionHint + governanceHint + guideModeHint + modeHint + guardRules.guardHints }, 
           ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],
-        max_tokens: 200,
+        max_tokens: guardRules.maxTokensOverride ?? 200,
         temperature: 0.7,
       }),
     });
@@ -1770,7 +1795,13 @@ serve(async (req) => {
         : ["Skip for now"];
     }
 
-    // Build actions array conditionally
+    // ============= GUARD CHIP OVERRIDES =============
+    // If the guard produced chip overrides (overwhelm, post-booking, anxiety loop),
+    // they take absolute priority over all other chip governance.
+    if (guardRules.chipOverrides) {
+      suggestedReplies = guardRules.chipOverrides;
+    }
+
     const actions: Array<{ label: string; href: string; eventType: string }> = [];
     
     if (hasEarned) {
@@ -1799,6 +1830,10 @@ serve(async (req) => {
         chip_phase: phase,
         chip_phase_floor: effectiveChipPhase,
         chip_escalated: escalated,
+        // Guard telemetry
+        guard_violations: guardRules.violations,
+        guard_emotional_posture: guardState.emotional_posture,
+        guard_escalation_level: guardState.escalation_level,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
