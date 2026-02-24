@@ -44,6 +44,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { 
   detectMode, 
   getModeSuggestedReplies, 
@@ -1568,7 +1569,19 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { message, context, history = [] }: ChatRequest = await req.json();
+    const body = await req.json();
+    const { message, context, history = [] }: ChatRequest = body;
+
+    // Rate limiting
+    const rlUrl = Deno.env.get("SUPABASE_URL");
+    const rlKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (rlUrl && rlKey) {
+      const rlClient = createClient(rlUrl, rlKey);
+      const rlk = extractRateLimitKey(req, body);
+      const rl = await checkRateLimit(rlClient, rlk, 'selena-chat');
+      if (!rl.allowed) return rateLimitResponse(corsHeaders);
+    }
+
     const language = context.language || "en";
     let leadId = context.lead_id;
 

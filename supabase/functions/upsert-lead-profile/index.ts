@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { normalizeIntent, createStructuredError, computeLeadScore, shouldSkipScoreLog } from "../_shared/normalizeLead.ts";
+import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -41,6 +42,16 @@ Deno.serve(async (req) => {
 
   try {
     const input: UpsertLeadInput = await req.json();
+
+    // Rate limiting
+    const rlUrl = Deno.env.get("SUPABASE_URL");
+    const rlKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (rlUrl && rlKey) {
+      const rlClient = createClient(rlUrl, rlKey);
+      const rlk = extractRateLimitKey(req, input as any);
+      const rl = await checkRateLimit(rlClient, rlk, 'upsert-lead-profile');
+      if (!rl.allowed) return rateLimitResponse(corsHeaders);
+    }
 
     // Validate email
     if (!input.email || typeof input.email !== "string") {
