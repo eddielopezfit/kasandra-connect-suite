@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -103,7 +104,18 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { lead_id, report_type, context }: GenerateReportRequest = await req.json();
+    const body = await req.json();
+    const { lead_id, report_type, context }: GenerateReportRequest = body;
+
+    // Rate limiting
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (supabaseUrl && supabaseServiceKey) {
+      const rlClient = createClient(supabaseUrl, supabaseServiceKey);
+      const rlKey = extractRateLimitKey(req, body);
+      const rl = await checkRateLimit(rlClient, rlKey, 'generate-report');
+      if (!rl.allowed) return rateLimitResponse(corsHeaders);
+    }
 
     // Validate inputs
     if (!lead_id) {
