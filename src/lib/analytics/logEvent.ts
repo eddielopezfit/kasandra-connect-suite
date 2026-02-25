@@ -122,6 +122,27 @@ export interface EventPayload {
   [key: string]: unknown;
 }
 
+// ============= DEV-ONLY Event Buffer =============
+// In-memory ring buffer for /v2/qa-determinism diagnostics
+// Never allocates in production (tree-shaken by import.meta.env.DEV)
+// Stores metadata only — never payload values, never PII
+
+interface DevEventEntry {
+  event_type: string;
+  timestamp: string;
+  payload_keys: string[];
+}
+
+const DEV_EVENT_BUFFER: DevEventEntry[] = [];
+
+/**
+ * Returns a frozen copy of the last 50 dev events (metadata only).
+ * Empty array in production.
+ */
+export function getDevEventBuffer(): readonly DevEventEntry[] {
+  return Object.freeze([...DEV_EVENT_BUFFER]);
+}
+
 /**
  * Core event logging function - calls edge function
  * NEVER throws - always fails silently
@@ -131,6 +152,16 @@ export async function logEvent(
   payload: EventPayload = {}
 ): Promise<void> {
   try {
+    // DEV-ONLY: capture event metadata (keys only, never values)
+    if (import.meta.env.DEV) {
+      DEV_EVENT_BUFFER.push({
+        event_type: eventType,
+        timestamp: new Date().toISOString(),
+        payload_keys: Object.keys(payload ?? {}),
+      });
+      if (DEV_EVENT_BUFFER.length > 50) DEV_EVENT_BUFFER.shift();
+    }
+
     const sessionId = getOrCreateSessionId();
     if (!sessionId) return;
 
