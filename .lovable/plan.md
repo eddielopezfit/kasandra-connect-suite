@@ -1,29 +1,48 @@
 
 
-# Plan: Match Google Studio Visual Details
+# Plan: Align Calculator Progress Bar, Timeline Layout, and /sell Page with Google Studio
 
-## 4 Changes
+## 3 Changes
 
-### 1. Gold Floating Chat Bubble with Hover Tooltip
-**File:** `src/components/selena/SelenaFloatingButton.tsx`
-- Change bubble color from `bg-primary` to `bg-cc-gold text-cc-navy`
-- Add a tooltip on hover: "Chat with Selena" (EN) / "Hablar con Selena" (ES) using Radix Tooltip
-- Match the Google Studio gold bubble exactly
+### 1. Progress Bar — Show All 4 Stage Labels
+**File:** `src/components/v2/calculator/CashOfferProgressBar.tsx`
 
-### 2. Gold "Ask Selena About My Options" Button
-**File:** `src/pages/v2/V2CashOfferOptions.tsx` (line 162-168)
-- Change from `variant="heroOutline"` to solid gold: `bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold`
-- Matches the Google Studio gold CTA button style
+The Google Studio build shows all 4 labels (EXPLORING, CALCULATING, COMPARING, DECIDING) displayed horizontally beneath each bar segment in uppercase. The current Lovable build only shows the active stage label on the left + "1/4" on the right.
 
-### 3. Gold Center Chat Icon in "Meet Selena AI" Section
-**File:** `src/pages/v2/V2Home.tsx` (lines 477-488)
-- Change the concentric circles from `bg-white/10` and `bg-white/20` to `bg-cc-gold/20` and `bg-cc-gold/40`
-- Change the MessageCircle icon from `text-white/80` to `text-cc-navy`
-- Add a solid gold inner circle background matching the Google Studio screenshot
+- Replace the bottom row with a 4-column layout where each label sits under its segment
+- Active/completed labels in `text-cc-gold font-semibold`, inactive in `text-cc-slate/60`
+- Labels in uppercase `tracking-wider text-[10px]`
+- Move the "1/4" counter to align right above the bar
 
-### 4. Expand Community Section from 2 to 4 Organizations
-**File:** `src/pages/v2/V2Home.tsx` (lines 598-608)
-- Add "Leadership Tucson" (star icon) and "Community Advocate" (heart-handshake icon)
-- Change grid from `grid-cols-2` to `grid-cols-2` with 4 items (2x2 grid)
-- Bilingual labels for all 4 organizations matching Google Studio: Arizona Diaper Bank, Rumbo al Éxito, Leadership Tucson, Community Advocate
+### 2. Timeline Options — 2x2 Grid Layout
+**File:** `src/components/v2/calculator/CalculatorInputs.tsx`
+
+The Google Studio build shows timeline options in a 2x2 grid (2 columns, 2 rows) instead of a vertical stack. The motivation options remain stacked.
+
+- Change timeline container from `space-y-3` (vertical stack) to `grid grid-cols-2 gap-3`
+- Keep motivation options as vertical stack (matches Google Studio)
+
+### 3. V2Sell Page — Gold Italic Accent Word + Layout Refinements
+**File:** `src/pages/v2/V2Sell.tsx`
+
+The Google Studio /sell hero has "Confidence" on a separate line in gold italic serif. The "How I Protect" section has a 2-column layout (left: text + numbered steps, right: 2x2 card grid). The "Your Selling Options" section has navy background on Traditional and outline on Cash with better contrast.
+
+**Hero changes:**
+- Split h1 into two lines: "Sell Your Home with" + "Confidence" in `text-cc-gold italic`
+- Spanish: "Venda Su Casa con" + "Confianza"
+
+**"How I Protect Sellers" section (lines 71-140):**
+- Remove the navy header bar (move title into the section itself)
+- Change to 2-column layout: left side has h2 "How I Protect Your Interests" + description text + 3 numbered steps (01 Strategic Analysis, 02 Risk Mitigation, 03 Expert Execution), right side has the 2x2 card grid
+- Bilingual for all new content
+
+**"Your Selling Options" section (lines 176-240):**
+- Add "THE CHOICE IS YOURS" gold uppercase label above h2
+- Traditional Listing card: navy background with white text, "Learn Listing Strategy →" button in gold
+- Cash Offer card: dark navy/slate background with white text and gold accent, "Explore Cash Options →" button with gold outline
+
+## Technical Details
+- All changes are purely presentational (CSS/JSX restructuring)
+- No new dependencies or database changes
+- All content remains bilingual via `t()` helper
 
