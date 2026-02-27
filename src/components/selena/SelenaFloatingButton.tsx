@@ -1,9 +1,7 @@
 /**
  * Selena Floating Chat Button
  * Bottom-right FAB for opening the chat drawer
- * 
- * On guide pages: always uses openChat with full guide context (never toggleChat)
- * On other pages: uses openChat with page path context
+ * Gold bubble with bilingual hover tooltip
  */
 
 import { MessageCircle, X } from 'lucide-react';
@@ -12,6 +10,12 @@ import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getGuideById } from '@/lib/guides/guideRegistry';
 import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export function SelenaFloatingButton() {
   const { isOpen, toggleChat, openChat, messages } = useSelenaChat();
@@ -21,13 +25,11 @@ export function SelenaFloatingButton() {
   const hasMessages = messages.length > 0;
   
   const handleClick = () => {
-    // Close action is always toggle
     if (isOpen) {
       toggleChat();
       return;
     }
     
-    // Guide pages: always openChat with full guide context
     const guideMatch = location.pathname.match(/^\/v2\/guides\/(.+)$/);
     if (guideMatch) {
       const guideId = guideMatch[1];
@@ -43,24 +45,23 @@ export function SelenaFloatingButton() {
       }
     }
     
-    // All other pages: openChat with page path (never bare toggleChat)
     openChat({
       source: 'floating',
     });
   };
-  
-  return (
+
+  const buttonEl = (
     <button
       onClick={handleClick}
       className={cn(
         "fixed bottom-4 right-4 z-50",
         "w-14 h-14 rounded-full",
-        "bg-primary text-primary-foreground",
+        "bg-cc-gold text-cc-navy",
         "shadow-lg hover:shadow-xl",
         "flex items-center justify-center",
         "transition-all duration-300 ease-out",
         "hover:scale-105 active:scale-95",
-        "focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2",
+        "focus:outline-none focus:ring-2 focus:ring-cc-gold/50 focus:ring-offset-2",
         "sm:bottom-6 sm:right-6"
       )}
       aria-label={isOpen ? "Close chat" : "Open chat with Selena"}
@@ -76,5 +77,20 @@ export function SelenaFloatingButton() {
         </>
       )}
     </button>
+  );
+
+  if (isOpen) return buttonEl;
+
+  return (
+    <TooltipProvider delayDuration={300}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {buttonEl}
+        </TooltipTrigger>
+        <TooltipContent side="left" className="bg-cc-navy text-white border-cc-navy">
+          {language === 'es' ? 'Hablar con Selena' : 'Chat with Selena'}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
