@@ -102,23 +102,6 @@ const V2HomeContent = () => {
                 {t("Chat with Selena", "Hablar con Selena")}
               </Button>
             </div>
-            {/* Intent Pills — 2 compact links */}
-            <div className="flex gap-3 mt-4 animate-fade-up animation-delay-600">
-              <Link
-                to="/v2/sell"
-                onClick={() => logCTAClick({ cta_name: 'hero_intent_sell', destination: '/v2/sell', page_path: '/v2', intent: 'sell' })}
-                className="text-sm text-white/80 hover:text-white border border-white/25 hover:border-white/50 rounded-full px-4 py-1.5 transition-colors"
-              >
-                {t("I'm Selling", "Quiero Vender")}
-              </Link>
-              <Link
-                to="/v2/buy"
-                onClick={() => logCTAClick({ cta_name: 'hero_intent_buy', destination: '/v2/buy', page_path: '/v2', intent: 'buy' })}
-                className="text-sm text-white/80 hover:text-white border border-white/25 hover:border-white/50 rounded-full px-4 py-1.5 transition-colors"
-              >
-                {t("I'm Buying", "Quiero Comprar")}
-              </Link>
-            </div>
           </div>
         </div>
       </section>
