@@ -4,13 +4,10 @@ import JsonLd from "@/components/seo/JsonLd";
 import V2Layout from "@/components/v2/V2Layout";
 import { Radio, Youtube, Users, TrendingUp, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import heroImage from "@/assets/hero-bg.jpg";
-import { useYouTubeVideos } from "@/hooks/useYouTubeVideos";
 
 const V2PodcastContent = () => {
   const { t } = useLanguage();
-  const { data: videos, isLoading } = useYouTubeVideos(9);
   useDocumentHead({
     titleEn: "Lifting You Up Podcast | Tucson Real Estate & Community",
     titleEs: "Podcast Lifting You Up | Bienes Raíces y Comunidad en Tucson",
@@ -29,6 +26,7 @@ const V2PodcastContent = () => {
         author: { "@type": "Person", name: "Kasandra Prieto" },
         inLanguage: ["en", "es"],
       }} />
+
       {/* Hero */}
       <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>
@@ -127,106 +125,6 @@ const V2PodcastContent = () => {
               </p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* YouTube Channel — Dynamic Grid */}
-      <section className="py-16 lg:py-20 bg-cc-sand">
-        <div className="container mx-auto px-4">
-          <div className="bg-cc-navy rounded-xl p-6 md:p-8 mb-10 text-center">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-white">
-              {t("Watch on YouTube", "Ver en YouTube")}
-            </h2>
-            <p className="text-white/80 mt-3 max-w-2xl mx-auto">
-              {t(
-                "Catch up on all episodes featuring community leaders, entrepreneurs, and inspiring stories from Tucson.",
-                "Vea todos los episodios con líderes comunitarios, emprendedores e historias inspiradoras de Tucson."
-              )}
-            </p>
-          </div>
-
-          {/* Dynamic video grid with 3-tier fallback */}
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="bg-white rounded-xl overflow-hidden shadow-soft border border-cc-sand-dark/30">
-                  <Skeleton className="aspect-video w-full" />
-                  <div className="p-4 space-y-2">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-2/3" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : videos && videos.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              {videos.map((video) => (
-                <a
-                  key={video.id}
-                  href={video.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group bg-white rounded-xl overflow-hidden shadow-soft border border-cc-sand-dark/30 hover:shadow-elevated transition-shadow"
-                >
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={video.thumbnail}
-                      alt={video.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-serif text-sm font-semibold text-cc-navy line-clamp-2 group-hover:text-cc-gold transition-colors">
-                      {video.title}
-                    </h3>
-                  </div>
-                </a>
-              ))}
-            </div>
-          ) : (
-            /* Tier 3 fallback: Static CTA */
-            <div className="bg-white rounded-2xl p-6 shadow-elevated max-w-4xl mx-auto border border-cc-sand-dark/30">
-              <div className="bg-cc-navy/5 rounded-xl p-10 flex flex-col items-center justify-center gap-6 min-h-[200px]">
-                <Youtube className="w-14 h-14 text-cc-gold" />
-                <div className="text-center">
-                  <h3 className="font-serif text-xl font-bold text-cc-navy mb-2">
-                    {t("Watch All Episodes", "Ver Todos los Episodios")}
-                  </h3>
-                  <p className="text-cc-charcoal text-sm max-w-md">
-                    {t(
-                      "New episodes added regularly. Subscribe so you never miss a conversation.",
-                      "Se agregan nuevos episodios regularmente. Suscríbase para no perderse ninguna conversación."
-                    )}
-                  </p>
-                </div>
-                <a
-                  href="https://www.youtube.com/@KasandraPrietoTucson"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold px-6 py-3 rounded-full transition-colors shadow-gold"
-                >
-                  <Youtube className="w-5 h-5" />
-                  {t("Visit Channel", "Visitar Canal")}
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Channel link below grid */}
-          {videos && videos.length > 0 && (
-            <div className="text-center mt-8">
-              <a
-                href="https://www.youtube.com/@KasandraPrietoTucson"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold px-6 py-3 rounded-full transition-colors shadow-gold"
-              >
-                <Youtube className="w-5 h-5" />
-                {t("See All Episodes on YouTube", "Ver Todos los Episodios en YouTube")}
-              </a>
-            </div>
-          )}
         </div>
       </section>
 
