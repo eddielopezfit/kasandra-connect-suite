@@ -1,30 +1,30 @@
 
 
-## Analysis: Are the "I'm Selling" / "I'm Buying" Hero Pills Redundant?
+## Analysis: "Your Situation Matters" Section
 
-**Short answer: Yes. Remove them.**
+**Verdict: Remove it entirely. It's redundant and messy.**
 
-### The Redundancy Problem
+### Why it should go:
 
-The desktop nav already shows **Buy** and **Sell** as top-level links, permanently visible. The hero pills duplicate these exact destinations (`/v2/sell`, `/v2/buy`). On desktop, a user sees both the nav links AND the pills simultaneously — that's 4 paths to 2 destinations.
+1. **Duplicates the category nav.** "Inherited Property" = the "Inherited Property" category filter below. "First-Time Buyer" = the "Buying" category. The user scrolls past situation cards only to see the same taxonomy repeated as filter pills.
 
-On mobile, the nav links are behind a hamburger menu, so the pills theoretically add value there. But the hero already has "Chat with Selena" as the primary CTA, and Selena's first question is always intent-based ("Are you buying or selling?"). The pills shortcut Selena's triage — which undermines the concierge model.
+2. **"Relocating to Tucson" links to a guide that doesn't exist** (`tucson-neighborhood-guide`). That's a dead link — it will 404 or show a "guide not found" state.
 
-### Why Removal Is Correct
+3. **"Prefiero Español" is not a situation — it's a language preference.** The language toggle in the nav already handles this. Putting it as a "situation" card conflates UI controls with content routing.
 
-1. **Click-First philosophy says max 2 chips once intent is known.** On the home page, intent is NOT yet known. Showing intent chips before the user has engaged creates premature decision pressure — the exact cognitive overload the user flagged.
+4. **Mobile layout is bad.** 4 full-width stacked cards consume ~500px of vertical scroll before the user sees any actual guide content. That's a wall of navigation before the content. On a guides page, content should come fast.
 
-2. **Selena IS the router.** The architectural mandate says Selena handles intent detection and routing. Hero pills bypass this, sending cold visitors directly to orientation pages without context. Selena would have captured intent, timeline, and language preference first.
+5. **Cognitive load.** The page already has: Hero (3 CTAs) → Start Here Lane (conditionally) → Situation Lane → Recommended Carousel → Progress Bar → Category Nav → Grid. That's 6 layers before the actual guides. Removing Situation Lane drops it to 5.
 
-3. **The nav already covers it.** Buy and Sell are the 2nd and 3rd nav items. On mobile, they're one tap away in the hamburger. Adding them again in the hero is redundant surface area.
+### What changes:
 
-4. **Visual clutter.** The screenshot shows: hero title + subtitle + disclaimer + Chat with Selena button + 2 pills = 6 elements competing for attention in the hero. Removing the pills drops it to 4 — title, subtitle, disclaimer, one clear CTA. That's clean.
+**File: `src/pages/v2/V2Guides.tsx`**
+- Remove the `SituationLane` import and the `<SituationLane>` render block (~4 lines)
+- Remove the `handleSituationClick` callback (~3 lines)
+- Remove `SituationLane` from the guides index export if present
 
-### What Changes
+**File: `src/components/v2/guides/index.ts`**
+- Remove `SituationLane` export (cleanup)
 
-**File:** `src/pages/v2/V2Home.tsx` (lines 105-121)
-
-Remove the entire intent pills block (the `<div className="flex gap-3 mt-4 ...">` containing the two `<Link>` elements). No replacement needed.
-
-This is a 1-file, 17-line deletion. No other files affected.
+The component file itself (`SituationLane.tsx`) can stay — no harm in dead code for now, and it could be repurposed later if needed.
 
