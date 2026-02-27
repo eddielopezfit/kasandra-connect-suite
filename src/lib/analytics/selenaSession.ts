@@ -99,6 +99,9 @@ export interface SessionContext {
   timeline_last_asked_turn?: number;  // turn count when timeline was last asked
   timeline_confidence?: 'low' | 'med' | 'high';
   turn_count?: number;                // monotonic client-side turn counter (incremented per sendMessage)
+  // Neighborhood Intelligence (Phase 1)
+  last_neighborhood_zip?: string;
+  neighborhood_explored?: boolean;
 }
 
 /**

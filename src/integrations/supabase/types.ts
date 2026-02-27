@@ -231,6 +231,36 @@ export type Database = {
           },
         ]
       }
+      neighborhood_profiles: {
+        Row: {
+          created_at: string
+          generated_at: string
+          id: string
+          profile_en: Json
+          profile_es: Json
+          profile_hash: string | null
+          zip_code: string
+        }
+        Insert: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          profile_en: Json
+          profile_es: Json
+          profile_hash?: string | null
+          zip_code: string
+        }
+        Update: {
+          created_at?: string
+          generated_at?: string
+          id?: string
+          profile_en?: Json
+          profile_es?: Json
+          profile_hash?: string | null
+          zip_code?: string
+        }
+        Relationships: []
+      }
       rate_limits: {
         Row: {
           endpoint: string

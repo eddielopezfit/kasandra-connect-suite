@@ -116,7 +116,10 @@ export type EventType =
   | 'handoff_deferred'
   // Phase 2: Context persistence events
   | 'selena_opened'
-  | 'guide_cta_clicked';
+  | 'guide_cta_clicked'
+  // Neighborhood Intelligence (Phase 1)
+  | 'neighborhood_profile_generated'
+  | 'neighborhood_profile_cached';
 
 export interface EventPayload {
   [key: string]: unknown;

@@ -11,6 +11,7 @@ import { Home, Search, DollarSign, FileCheck, CheckCircle, MessageCircle } from 
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
+import { NeighborhoodExplorer } from "@/components/v2/neighborhood";
 import heroImage from "@/assets/hero-bg.jpg";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 
@@ -162,6 +163,9 @@ const V2BuyContent = () => {
           </div>
         </div>
       </section>
+
+      {/* Neighborhood Intelligence */}
+      <NeighborhoodExplorer />
 
       {/* Buyer Testimonials */}
       <section className="py-12 bg-white">
