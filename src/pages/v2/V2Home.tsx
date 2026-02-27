@@ -445,7 +445,7 @@ const V2HomeContent = () => {
                   "Selena AI es la asistente de IA de Kasandra—diseñada para responder instantáneamente, contestar preguntas generales, apoyar conversaciones en inglés y español, y asegurar que ningún cliente serio sea ignorado."
                 )}
               </p>
-              <p className="text-white/80 mb-8 italic">
+              <p className="text-cc-gold mb-8 italic">
                 {t(
                   "Selena AI does not replace Kasandra. She protects Kasandra's time so Kasandra can protect her clients.",
                   "Selena AI no reemplaza a Kasandra. Ella protege el tiempo de Kasandra para que Kasandra pueda proteger a sus clientes."
@@ -478,8 +478,8 @@ const V2HomeContent = () => {
             </div>
             <div className="flex justify-center">
               <div className="relative">
-                <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-cc-gold/20 flex items-center justify-center">
-                  <div className="w-48 h-48 md:w-60 md:h-60 rounded-full bg-cc-gold/40 flex items-center justify-center">
+                <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-white/10 flex items-center justify-center">
+                  <div className="w-48 h-48 md:w-60 md:h-60 rounded-full bg-white/15 flex items-center justify-center">
                     <div className="w-28 h-28 rounded-full bg-cc-gold flex items-center justify-center">
                       <MessageCircle className="w-14 h-14 text-cc-navy" />
                     </div>
