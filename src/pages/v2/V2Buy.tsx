@@ -117,7 +117,7 @@ const V2BuyContent = () => {
               <Button 
                 asChild 
                 variant="outline" 
-                className="border-white/30 text-white hover:bg-white/10 rounded-full px-6 sm:px-8 text-sm sm:text-base"
+                className="bg-white/15 border-white/40 text-white hover:bg-white/20 hover:border-white/50 rounded-full px-6 sm:px-8 text-sm sm:text-base"
                 onClick={() => handleCTAClick(CTA_NAMES.HERO_VALUATION_GUIDE, '/v2/guides/understanding-home-valuation')}
               >
                 <Link to="/v2/guides/understanding-home-valuation">{t("Understand Home Values", "Entienda los Valores")}</Link>
