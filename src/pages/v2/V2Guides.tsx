@@ -10,7 +10,7 @@ import {
   RecommendedGuidesCarousel,
   GuideCardBadge,
   StartHereLane,
-  SituationLane,
+  
   CognitiveProgressBar,
   SelenaSynthesisFooter,
   ResponsiveCategoryNav,
@@ -33,7 +33,7 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import { useCognitiveStage } from "@/hooks/useCognitiveStage";
 import { useRecommendationEngine } from "@/hooks/useRecommendationEngine";
 import type { StartHereIntent } from "@/components/v2/guides/StartHereLane";
-import type { Situation } from "@/components/v2/guides/SituationLane";
+
 import { cn } from "@/lib/utils";
 
 const categories = [
@@ -297,9 +297,6 @@ function GuidesContent() {
     document.getElementById('guides-section')?.scrollIntoView({ behavior: 'smooth' });
   }, [openChat, sendMessage, t]);
   
-  const handleSituationClick = useCallback((situation: Situation) => {
-    logEvent('situation_selected', { situation });
-  }, []);
   
   // Progress bar is now pure context - no CTA handler needed
   
@@ -334,10 +331,6 @@ function GuidesContent() {
         <StartHereLane onIntentSelect={handleStartHereIntent} />
       )}
       
-      {/* Layer 3: Situation Lane - For new or exploring visitors */}
-      {(isFirstVisit || currentIntent === 'explore') && (
-        <SituationLane onSituationClick={handleSituationClick} />
-      )}
       
       {/* Layer 4: Recommended For You Carousel */}
       {recommendedItems.length > 0 && hasEngaged && (
