@@ -73,7 +73,7 @@ const V2HomeContent = () => {
 
         <div className="relative container mx-auto px-4 pt-24 w-full max-w-full">
           <div className="max-w-2xl text-white">
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-6 animate-fade-up">
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-up">
               {t("Your Best Friend in Real Estate.", "Su Mejor Guía en Bienes Raíces.")}
             </h1>
             <p className="text-lg md:text-xl text-white/90 mb-4 animate-fade-up animation-delay-200">
@@ -142,7 +142,7 @@ const V2HomeContent = () => {
               <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
                 {t("About Kasandra", "Sobre Kasandra")}
               </span>
-              <h2 className="font-serif text-3xl xl:text-4xl font-bold text-cc-blue mt-2 mb-6">
+              <h2 className="font-serif text-4xl xl:text-5xl font-bold text-cc-blue mt-2 mb-6">
                 {t("Your Trusted Tucson REALTOR®", "Su REALTOR® de Confianza en Tucson")}
               </h2>
               <div className="space-y-4 text-cc-text-muted mb-6">
@@ -200,7 +200,7 @@ const V2HomeContent = () => {
               <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
                 {t("About Kasandra", "Sobre Kasandra")}
               </span>
-              <h2 className="font-serif text-3xl font-bold text-cc-blue mt-2 mb-4">
+              <h2 className="font-serif text-4xl font-bold text-cc-blue mt-2 mb-4">
                 {t("Your Trusted Tucson REALTOR®", "Su REALTOR® de Confianza en Tucson")}
               </h2>
               <p className="text-cc-text-muted max-w-2xl mx-auto">
@@ -269,7 +269,7 @@ const V2HomeContent = () => {
               <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
                 {t("About Kasandra", "Sobre Kasandra")}
               </span>
-              <h2 className="font-serif text-2xl font-bold text-cc-blue mt-2 mb-4">
+              <h2 className="font-serif text-3xl font-bold text-cc-blue mt-2 mb-4">
                 {t("Your Trusted Tucson REALTOR®", "Su REALTOR® de Confianza en Tucson")}
               </h2>
             </div>
@@ -357,7 +357,7 @@ const V2HomeContent = () => {
             <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
               {t("How I Help", "Cómo Puedo Ayudarle")}
             </span>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mt-2">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-white mt-2">
               {t("Real Estate Services", "Servicios de Bienes Raíces")}
             </h2>
           </div>
@@ -434,7 +434,7 @@ const V2HomeContent = () => {
               <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
                 {t("24/7 Concierge", "Asistente 24/7")}
               </span>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold mt-2 mb-6">
+              <h2 className="font-serif text-4xl md:text-5xl font-bold mt-2 mb-6">
                 {t("Meet Selena AI", "Conozca a Selena AI")}
               </h2>
               <p className="text-white/90 mb-6">
@@ -494,7 +494,7 @@ const V2HomeContent = () => {
       <section className="py-16 lg:py-20 bg-cc-sand">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-blue mb-3">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-blue mb-3">
               {t("What Clients Say", "Lo Que Dicen los Clientes")}
             </h2>
             <p className="text-xs text-muted-foreground/70 uppercase tracking-wider">
@@ -556,7 +556,7 @@ const V2HomeContent = () => {
               <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
                 {t("Podcast & Radio", "Podcast y Radio")}
               </span>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-blue mt-2 mb-6">
+              <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-blue mt-2 mb-6">
                 {t("Lifting You Up with Kasandra Prieto", "Lifting You Up con Kasandra Prieto")}
               </h2>
               <p className="text-cc-text-muted mb-6">
@@ -611,7 +611,7 @@ const V2HomeContent = () => {
               <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
                 {t("Community Leadership", "Liderazgo Comunitario")}
               </span>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-blue mt-2 mb-6">
+              <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-blue mt-2 mb-6">
                 {t("Giving Back to Tucson", "Retribuyendo a Tucson")}
               </h2>
               <p className="text-cc-text-muted mb-6">
@@ -631,7 +631,7 @@ const V2HomeContent = () => {
       {/* Final CTA */}
       <section className="py-16 lg:py-20 bg-cc-blue text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">
             {t("Ready to Start Your Journey?", "¿Listo para Comenzar Su Viaje?")}
           </h2>
           <p className="text-white/80 max-w-2xl mx-auto mb-8">

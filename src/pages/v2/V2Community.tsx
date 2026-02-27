@@ -9,6 +9,7 @@ import tucsonApplianceLogo from "@/assets/tucson-appliance-logo.jpg";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
 import GoogleSignInButton from "@/components/v2/GoogleSignInButton";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
+import heroImage from "@/assets/hero-bg.jpg";
 
 const V2CommunityContent = () => {
   const { t } = useLanguage();
@@ -17,16 +18,19 @@ const V2CommunityContent = () => {
   return (
     <>
       {/* Hero */}
-      <section className="bg-cc-navy pt-32 pb-16">
-        <div className="container mx-auto px-4">
+      <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>
+          <div className="absolute inset-0 bg-gradient-to-r from-cc-blue/90 to-cc-blue/75" />
+        </div>
+        <div className="relative container mx-auto px-4 pt-32 pb-16">
           <div className="max-w-3xl">
             <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
               {t("Community Leadership", "Liderazgo Comunitario")}
             </span>
-            <h1 className="font-serif text-4xl md:text-5xl font-bold mt-2 mb-6 text-white">
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mt-2 mb-6 text-white">
               {t("Giving Back to Tucson", "Retribuyendo a Tucson")}
             </h1>
-            <p className="text-lg text-white/90">
+            <p className="text-xl text-white/90">
               {t(
                 "Real estate is about more than transactions—it's about building stronger communities. I'm committed to making a difference in the lives of families across Tucson.",
                 "Los bienes raíces son más que transacciones—se trata de construir comunidades más fuertes. Estoy comprometida a hacer una diferencia en la vida de las familias en todo Tucson."
@@ -48,7 +52,7 @@ const V2CommunityContent = () => {
                 <div className="w-16 h-16 bg-cc-gold/10 rounded-full flex items-center justify-center mb-6">
                   <Heart className="w-8 h-8 text-cc-gold" />
                 </div>
-                <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
+                <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">
                   Arizona Diaper Bank
                 </h2>
                 <p className="text-cc-charcoal mb-6">
@@ -100,7 +104,7 @@ const V2CommunityContent = () => {
                 <div className="w-16 h-16 bg-cc-navy/10 rounded-full flex items-center justify-center mb-6">
                   <Users className="w-8 h-8 text-cc-navy" />
                 </div>
-                <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
+                <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">
                   Rumbo al Éxito Latino Business Group
                 </h2>
                 <p className="text-cc-charcoal mb-6">
@@ -138,7 +142,7 @@ const V2CommunityContent = () => {
                 <div className="w-16 h-16 bg-cc-gold/10 rounded-full flex items-center justify-center mb-6">
                   <Store className="w-8 h-8 text-cc-gold" />
                 </div>
-                <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
+                <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">
                   Tucson Appliance
                 </h2>
                 <p className="text-sm text-cc-gold font-semibold uppercase tracking-wider mb-4">
@@ -180,7 +184,7 @@ const V2CommunityContent = () => {
       {/* Why Community Matters */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4 text-center max-w-3xl">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">
             {t("Why Community Matters", "Por Qué la Comunidad Importa")}
           </h2>
           <p className="text-cc-charcoal mb-8">

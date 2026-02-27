@@ -36,7 +36,7 @@ const V2BookContent = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <Calendar className="w-12 h-12 text-cc-gold mx-auto mb-6" />
-            <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4 text-white">
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-4 text-white">
               {t(
                 "Schedule a Conversation with Kasandra",
                 "Agende una Conversación con Kasandra"

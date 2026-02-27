@@ -10,6 +10,7 @@ import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, Mess
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
+import heroImage from "@/assets/hero-bg.jpg";
 
 const PAGE_PATH = '/v2/sell';
 const PAGE_INTENT = 'sell' as const;
@@ -37,16 +38,19 @@ const V2SellContent = () => {
   return (
     <>
       {/* Hero */}
-      <section className="bg-cc-navy pt-32 pb-16">
-        <div className="container mx-auto px-4">
+      <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>
+          <div className="absolute inset-0 bg-gradient-to-r from-cc-blue/90 to-cc-blue/75" />
+        </div>
+        <div className="relative container mx-auto px-4 pt-32 pb-16">
           <div className="max-w-3xl">
             <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
               {t("For Sellers", "Para Vendedores")}
             </span>
-            <h1 className="font-serif text-4xl md:text-5xl font-bold mt-2 mb-6 text-white">
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mt-2 mb-6 text-white">
               {t("Sell Your Home with Confidence", "Venda Su Casa con Confianza")}
             </h1>
-            <p className="text-lg text-white/90 mb-8">
+            <p className="text-xl text-white/90 mb-8">
               {t(
                 "Selling your home is a significant decision. I'll guide you with market-based pricing, full disclosure support, and a protection-first approach.",
                 "Vender su casa es una decisión significativa. Le guiaré con precios basados en el mercado, apoyo de divulgación completa, y un enfoque en protección."
@@ -68,7 +72,7 @@ const V2SellContent = () => {
         <div className="container mx-auto px-4">
           {/* Section Header */}
           <div className="bg-cc-navy rounded-xl p-6 md:p-8 mb-10 text-center">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-white">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-white">
               {t("How I Protect Sellers", "Cómo Protejo a los Vendedores")}
             </h2>
             <p className="text-white/80 mt-3 max-w-2xl mx-auto">
@@ -172,7 +176,7 @@ const V2SellContent = () => {
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy">
               {t("Your Selling Options", "Sus Opciones de Venta")}
             </h2>
           </div>
@@ -239,7 +243,7 @@ const V2SellContent = () => {
       {/* CTA */}
       <section className="py-16 lg:py-20 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6 text-white">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
             {t("Ready to Sell?", "¿Listo para Vender?")}
           </h2>
           <p className="text-white/80 max-w-2xl mx-auto mb-8">

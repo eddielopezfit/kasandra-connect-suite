@@ -131,7 +131,7 @@ export function PersonalizedHero({
           </span>
           
           {/* Headline */}
-          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight animate-fade-up">
+          <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-white mb-6 leading-tight animate-fade-up">
             {headline}
           </h1>
           
