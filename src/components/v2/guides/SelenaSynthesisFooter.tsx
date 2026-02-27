@@ -61,9 +61,9 @@ export function SelenaSynthesisFooter({
           <h3 className="font-medium text-cc-navy mb-1">
             {showSummary
               ? t(
-                  "Want me to connect the dots?",
-                  "¿Quieres que conecte los puntos?"
-                )
+                   "Ready for your next step?",
+                   "¿Listo para tu siguiente paso?"
+                 )
               : t(
                   "Not sure which guide fits?",
                   "¿No sabes cuál guía te conviene?"
@@ -92,7 +92,7 @@ export function SelenaSynthesisFooter({
               className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-medium rounded-full px-5"
             >
               <FileText className="w-4 h-4 mr-2" />
-              {t('Summarize what I\'ve learned', 'Resúmeme lo más importante')}
+              {t('Get My Summary', 'Obtener Mi Resumen')}
             </Button>
           )}
           <Button

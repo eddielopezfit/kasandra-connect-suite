@@ -11,7 +11,7 @@ import {
   GuideCardBadge,
   StartHereLane,
   
-  CognitiveProgressBar,
+  
   SelenaSynthesisFooter,
   ResponsiveCategoryNav,
 } from "@/components/v2/guides";
@@ -340,11 +340,6 @@ function GuidesContent() {
         />
       )}
       
-      {/* Layer 5: Cognitive Progress Bar - Compact context indicator, no CTAs */}
-      <CognitiveProgressBar
-        stage={stage}
-        isVisible={shouldShowProgressBar}
-      />
 
       {/* Category Filter with Color-Coding - Responsive Nav */}
       <section 
@@ -393,9 +388,6 @@ function GuidesContent() {
                     {/* Category pill with subtle color */}
                     <span className={cn("px-3 py-1 rounded-full text-xs font-medium border", colors.subtle)}>
                       {getCategoryLabel(guide.category)}
-                    </span>
-                    <span className="text-cc-slate text-xs">
-                      {t(guide.readTime, guide.readTimeEs)}
                     </span>
                     {/* Badge from personalization */}
                     {gridBadge && gridBadge !== 'read' && (

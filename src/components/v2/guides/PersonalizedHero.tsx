@@ -158,7 +158,7 @@ export function PersonalizedHero({
                 onClick={onContinue}
                 variant="outline"
                 size="lg"
-                className="border-white/30 text-white hover:bg-white/10 hover:border-white/50 rounded-full px-8"
+                className="bg-white/15 border-white/40 text-white hover:bg-white/20 hover:border-white/50 rounded-full px-8"
               >
                 <ArrowRight className="w-5 h-5 mr-2" />
                 {t("Continue Your Journey", "Continúa Tu Camino")}
