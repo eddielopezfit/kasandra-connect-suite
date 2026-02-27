@@ -250,7 +250,7 @@ const V2BuyContent = () => {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-16 lg:py-20 bg-cc-navy">
+      <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
             {t("Ready to Get Started?", "¿Listo para Comenzar?")}
@@ -263,10 +263,11 @@ const V2BuyContent = () => {
           </p>
           <Button 
             onClick={handleSelenaRoute}
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-10 py-6 text-lg shadow-gold"
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 py-3 text-sm sm:px-10 sm:py-6 sm:text-lg shadow-gold"
           >
             <MessageCircle className="w-5 h-5 mr-2" />
-            {t("Ask Selena to Help Me Get Started", "Pídale a Selena que me Ayude a Empezar")}
+            <span className="sm:hidden">{t("Ask Selena", "Pregúntale a Selena")}</span>
+            <span className="hidden sm:inline">{t("Ask Selena to Help Me Get Started", "Pídale a Selena que me Ayude a Empezar")}</span>
           </Button>
           <p className="text-white/60 text-sm mt-4 max-w-md mx-auto">
             {t(
