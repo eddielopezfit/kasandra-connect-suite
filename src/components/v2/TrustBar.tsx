@@ -36,7 +36,7 @@ const TrustBar = () => {
   return (
     <section className="py-10 bg-white border-y border-border/30 overflow-hidden">
       <div className="container mx-auto px-4 mb-6">
-        <p className="text-center text-xs font-medium text-cc-gold uppercase tracking-[0.2em]">
+        <p className="text-center text-xs font-medium text-cc-navy uppercase tracking-[0.2em]">
           {t("Trusted by & Actively Involved With", "De Confianza y Activamente Involucrada Con")}
         </p>
       </div>
