@@ -368,9 +368,9 @@ const V2HomeContent = () => {
           <div className="bg-cc-sand rounded-2xl p-6 md:p-10 shadow-soft">
             <div className="grid md:grid-cols-3 gap-6">
               {/* Buyers */}
-              <div className="bg-white p-8 rounded-xl shadow-soft hover:shadow-elevated transition-shadow">
-                <div className="w-14 h-14 bg-cc-blue/10 rounded-full flex items-center justify-center mb-6">
-                  <Home className="w-7 h-7 text-cc-blue" />
+              <div className="bg-white p-8 rounded-xl shadow-soft hover:shadow-elevated transition-all group">
+                <div className="w-14 h-14 bg-cc-blue/10 group-hover:bg-cc-gold rounded-full flex items-center justify-center mb-6 transition-colors">
+                  <Home className="w-7 h-7 text-cc-blue group-hover:text-cc-navy transition-colors" />
                 </div>
                 <h3 className="font-serif text-xl font-bold text-cc-blue mb-4">
                   {t("For Buyers", "Para Compradores")}
@@ -387,9 +387,9 @@ const V2HomeContent = () => {
               </div>
 
               {/* Sellers */}
-              <div className="bg-white p-8 rounded-xl shadow-soft hover:shadow-elevated transition-shadow">
-                <div className="w-14 h-14 bg-cc-blue/10 rounded-full flex items-center justify-center mb-6">
-                  <Shield className="w-7 h-7 text-cc-blue" />
+              <div className="bg-white p-8 rounded-xl shadow-soft hover:shadow-elevated transition-all group">
+                <div className="w-14 h-14 bg-cc-blue/10 group-hover:bg-cc-gold rounded-full flex items-center justify-center mb-6 transition-colors">
+                  <Shield className="w-7 h-7 text-cc-blue group-hover:text-cc-navy transition-colors" />
                 </div>
                 <h3 className="font-serif text-xl font-bold text-cc-blue mb-4">
                   {t("For Sellers", "Para Vendedores")}
@@ -406,9 +406,9 @@ const V2HomeContent = () => {
               </div>
 
               {/* Cash Offer Options */}
-              <div className="bg-white p-8 rounded-xl shadow-soft hover:shadow-elevated transition-shadow">
-                <div className="w-14 h-14 bg-cc-blue/10 rounded-full flex items-center justify-center mb-6">
-                  <Clock className="w-7 h-7 text-cc-blue" />
+              <div className="bg-white p-8 rounded-xl shadow-soft hover:shadow-elevated transition-all group">
+                <div className="w-14 h-14 bg-cc-blue/10 group-hover:bg-cc-gold rounded-full flex items-center justify-center mb-6 transition-colors">
+                  <Clock className="w-7 h-7 text-cc-blue group-hover:text-cc-navy transition-colors" />
                 </div>
                 <h3 className="font-serif text-xl font-bold text-cc-blue mb-4">
                   {t("Cash Offer Options", "Opciones de Oferta en Efectivo")}
