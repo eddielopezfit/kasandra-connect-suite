@@ -2,6 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Radio, Youtube, Users, TrendingUp, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import heroImage from "@/assets/hero-bg.jpg";
 
 const V2PodcastContent = () => {
   const { t } = useLanguage();
@@ -9,16 +10,19 @@ const V2PodcastContent = () => {
   return (
     <>
       {/* Hero */}
-      <section className="bg-cc-navy pt-32 pb-16">
-        <div className="container mx-auto px-4">
+      <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>
+          <div className="absolute inset-0 bg-gradient-to-r from-cc-blue/90 to-cc-blue/75" />
+        </div>
+        <div className="relative container mx-auto px-4 pt-32 pb-16">
           <div className="max-w-3xl">
             <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
               {t("Podcast & Radio", "Podcast y Radio")}
             </span>
-            <h1 className="font-serif text-4xl md:text-5xl font-bold mt-2 mb-6 text-white">
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mt-2 mb-6 text-white">
               {t("Lifting You Up with Kasandra Prieto", "Lifting You Up con Kasandra Prieto")}
             </h1>
-            <p className="text-lg text-white/90 mb-8">
+            <p className="text-xl text-white/90 mb-8">
               {t(
                 "Inspiring conversations about community leadership, generational wealth, and Hispanic success stories in Tucson and beyond.",
                 "Conversaciones inspiradoras sobre liderazgo comunitario, riqueza generacional, e historias de éxito hispano en Tucson y más allá."
@@ -49,7 +53,7 @@ const V2PodcastContent = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="bg-white rounded-2xl p-8 shadow-elevated border border-cc-sand-dark/30">
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
+              <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">
                 {t("About the Show", "Sobre el Programa")}
               </h2>
               <p className="text-cc-charcoal mb-6">
@@ -110,7 +114,7 @@ const V2PodcastContent = () => {
       <section className="py-16 lg:py-20 bg-cc-sand">
         <div className="container mx-auto px-4">
           <div className="bg-cc-navy rounded-xl p-6 md:p-8 mb-10 text-center">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-white">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-white">
               {t("Watch on YouTube", "Ver en YouTube")}
             </h2>
             <p className="text-white/80 mt-3 max-w-2xl mx-auto">
@@ -151,7 +155,7 @@ const V2PodcastContent = () => {
       {/* Listen CTA */}
       <section className="py-16 lg:py-20 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6 text-white">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
             {t("Never Miss an Episode", "No Se Pierda Ningún Episodio")}
           </h2>
           <p className="text-white/80 max-w-2xl mx-auto mb-8">

@@ -6,6 +6,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
 import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, MessageCircle } from "lucide-react";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
+import heroImage from "@/assets/hero-bg.jpg";
 
 const V2CashOfferOptionsContent = () => {
   const { t } = useLanguage();
@@ -14,16 +15,19 @@ const V2CashOfferOptionsContent = () => {
   return (
     <>
       {/* Hero */}
-      <section className="bg-cc-navy pt-32 pb-16">
-        <div className="container mx-auto px-4">
+      <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>
+          <div className="absolute inset-0 bg-gradient-to-r from-cc-blue/90 to-cc-blue/75" />
+        </div>
+        <div className="relative container mx-auto px-4 pt-32 pb-16">
           <div className="max-w-3xl">
             <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
               {t("Education & Options", "Educación y Opciones")}
             </span>
-            <h1 className="font-serif text-4xl md:text-5xl font-bold mt-2 mb-6 text-white">
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mt-2 mb-6 text-white">
               {t("Understanding Cash Offers", "Entendiendo las Ofertas en Efectivo")}
             </h1>
-            <p className="text-lg text-white/90 mb-8">
+            <p className="text-xl text-white/90 mb-8">
               {t(
                 "Not all cash offers are created equal. Let me help you understand your options so you can make an informed decision—with no pressure.",
                 "No todas las ofertas en efectivo son iguales. Permítame ayudarle a entender sus opciones para que pueda tomar una decisión informada—sin presión."
@@ -38,7 +42,7 @@ const V2CashOfferOptionsContent = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8">
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-4">
+              <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-4">
                 {t("Compare Your Options", "Compara Tus Opciones")}
               </h2>
               <p className="text-cc-charcoal max-w-2xl mx-auto">
@@ -58,7 +62,7 @@ const V2CashOfferOptionsContent = () => {
         <div className="container mx-auto px-4">
           {/* Section Header */}
           <div className="bg-cc-navy rounded-xl p-6 md:p-8 mb-10 text-center">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-white">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-white">
               {t("Quick Reference: Cash vs. Traditional", "Referencia Rápida: Efectivo vs. Tradicional")}
             </h2>
             <p className="text-white/80 mt-3 max-w-2xl mx-auto">
@@ -251,7 +255,7 @@ const V2CashOfferOptionsContent = () => {
       {/* Cash Offer Review Service */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-6">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">
             {t("Complimentary Cash Offer Review", "Revisión Complementaria de Oferta en Efectivo")}
           </h2>
           <p className="text-cc-charcoal max-w-2xl mx-auto mb-8">
