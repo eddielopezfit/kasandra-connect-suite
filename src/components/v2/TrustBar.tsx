@@ -58,7 +58,7 @@ const TrustBar = () => {
                 <span className="text-sm md:text-base font-serif font-semibold text-cc-charcoal/80 whitespace-nowrap group-hover:text-cc-navy transition-colors">
                   {entity.name}
                 </span>
-                <span className="text-[10px] md:text-xs text-cc-gold/70 whitespace-nowrap mt-0.5">
+                <span className="text-[10px] md:text-xs text-cc-gold font-semibold uppercase tracking-wider whitespace-nowrap mt-0.5">
                   {entity.role}
                 </span>
               </div>
