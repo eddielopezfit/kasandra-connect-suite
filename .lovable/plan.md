@@ -1,76 +1,62 @@
 
 
-# Ship All Priority Items Now
+# Full Build Checkup: Clean Up + Responsive Audit
 
-## 7 Changes
+## Issues Identified
 
-### 1. Add 3-Button Intent Row to V2Home Hero
-**File:** `src/pages/v2/V2Home.tsx` (after line 104)
+### 1. V2Home Hero — Intent Row is Messy (Cognitive Overload)
+The 3 intent buttons (`Selling: See My Options`, `Buying: Check My Readiness`, `Not Sure: 60-Second Quiz`) wrap awkwardly on mobile, creating visual clutter below the already-large "Chat with Selena" button. Four clickable elements stacked in the hero = too many choices.
 
-Add three outline-style buttons below "Chat with Selena":
-- "Selling: See My Options" → `/v2/sell` (with logCTAClick)
-- "Buying: Check My Readiness" → `/v2/buyer-readiness`
-- "Not Sure: 60-Second Quiz" → `/v2/quiz`
+**Fix:** Simplify to 2 intent buttons only (Selling, Buying) styled as compact pill links — not full `Button` components. Remove the quiz button from the hero (quiz remains accessible via Selena routing and nav). This follows the Click-First philosophy: max 2 visible chips once intent is known.
 
-Styled as `variant="outline"` with `border-white/30 text-white hover:bg-white/10 rounded-full`. Row uses `flex flex-wrap gap-3 mt-4`. Each button logs CTA click before navigating via `Link`.
+### 2. V2Buy Bottom CTA — Button Too Large on Mobile
+Line 264-270: `px-10 py-6 text-lg` makes the "Ask Selena to Help Me Get Started" button oversized on small screens. The long text + large padding = touch target that dominates the viewport.
 
-### 2. Add Google Reviews to /v2/sell
-**File:** `src/pages/v2/V2Sell.tsx`
+**Fix:** Reduce to `px-6 py-4 text-base` on mobile, keep `sm:px-10 sm:py-6 sm:text-lg` for desktop. Shorten mobile label to "Ask Selena" with full text on `sm:` and above using hidden/block classes.
 
-Import `GoogleReviewsSection` and insert `<GoogleReviewsSection />` after the seller testimonials section (after line 202, before the "Your Selling Options" section).
+### 3. V2Sell Bottom CTA — Same Oversized Pattern
+Line 307-313: Same `px-10 py-6 text-lg` pattern. Long Spanish text ("Pídale a Selena que Programe Mi Llamada") will overflow on narrow screens.
 
-### 3. Add Google Reviews to /v2/cash-offer-options
-**File:** `src/pages/v2/V2CashOfferOptions.tsx`
+**Fix:** Same responsive sizing as V2Buy.
 
-Import `GoogleReviewsSection` and insert `<GoogleReviewsSection />` after the "Cash Offer Review Service" section (after line 285, before the "Back Link" section).
+### 4. V2CashOfferOptions — Selena Mid-Page CTA
+Line 163-169: Mid-page Selena button is fine sizing, but the bottom "Back Link" section (lines 291-304) has no visual breathing room on mobile.
 
-### 4. Hide Empty Guide Categories
-**File:** `src/pages/v2/V2Guides.tsx`
+**Fix:** Add `pb-24 md:pb-16` to the last content section to prevent overlap with the floating chat button.
 
-Remove three category objects from the `categories` array:
-- `tips` (lines 64-71)
-- `financial` (lines 81-87)
-- `neighborhoods` (lines 88-95)
+### 5. V2Podcast — Video Grid Cards
+The dynamic YouTube grid looks good on desktop. On mobile, single-column cards are fine. No sizing issues detected.
 
-### 5. Brand-Align V2PrivateCashReview
-**File:** `src/pages/v2/V2PrivateCashReview.tsx`
+### 6. V2PrivateCashReview — Brand Alignment Check
+The previous edit already applied brand tokens. Verified: `cc-gold`, `cc-navy`, `cc-ivory`, `cc-sand` are used throughout. The hero gradient, card borders, and icon circles all use brand tokens. No issues.
 
-Replace generic Shadcn tokens with brand tokens across all 4 sections:
-- `bg-primary/5` → `bg-cc-gold/10`, `bg-primary/20` → `bg-cc-gold/20`
-- `text-primary` → `text-cc-gold`
-- `text-foreground` → `text-cc-navy`
-- `text-muted-foreground` → `text-cc-charcoal/80`
-- `bg-background` → `bg-cc-ivory`
-- `bg-muted/30` → `bg-cc-sand`
-- `border-primary/30` → `border-cc-gold/30`
-- `bg-primary` (solid circles) → `bg-cc-gold`
-- `text-primary-foreground` → `text-cc-navy`
-- `shadow-elevated` stays as-is
-- Section backgrounds: Hero gradient → `from-cc-gold/5 to-cc-ivory`, Selena Entry → `bg-cc-ivory`, Kasandra Authority → `bg-cc-sand`, Scheduling → `bg-cc-ivory`
+### 7. V2Guides — Empty Categories Already Removed
+Confirmed: `tips`, `financial`, `neighborhoods` are removed. Only `all`, `buying`, `selling`, `valuation`, `stories`, `probate` remain. Clean.
 
-### 6. Returning Visitor Personalization on /v2/sell and /v2/buy
-**Files:** `src/pages/v2/V2Sell.tsx`, `src/pages/v2/V2Buy.tsx`
+### 8. V2BuyerReadiness — Hero Title Too Small
+Line 108: `text-3xl md:text-4xl` is inconsistent with the site-wide typography standard (`text-5xl md:text-6xl lg:text-7xl` for heroes). This page should match.
 
-In each page's content component:
-- Import `getStoredUserName` from `bridgeLeadIdToV2`
-- On mount, check for stored name. If found, render a "Welcome Back, [FirstName]" subtitle line below the hero h1 with `text-cc-gold font-medium`
-- This is a lightweight addition — just a conditional `<p>` tag in the hero, no layout changes
+**Fix:** Increase to `text-4xl md:text-5xl font-bold` to match other page heroes while keeping it appropriate for a tool page.
 
-### 7. Wire Dynamic YouTube Grid to Podcast Page
-**File:** `src/pages/v2/V2Podcast.tsx`
+### 9. V2Book — Hero Title Sizing
+Line 39: Already uses `text-5xl md:text-6xl lg:text-7xl`. Consistent. No issue.
 
-Replace the static "Watch All Episodes" CTA block (lines 127-152) with a dynamic grid:
-- Import `useYouTubeVideos` hook
-- Render a responsive grid (`grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6`) of video cards
-- Each card: thumbnail image, title, link to YouTube
-- Loading state: 6 skeleton cards
-- Error/empty fallback: keep the existing static "Visit Channel" CTA (3-tier fallback per custom instructions)
+### 10. Floating Chat Button — Mobile Overlap Risk
+The floating button at `bottom-4 right-4` (mobile) / `bottom-6 right-6` (desktop) can overlap bottom CTA sections on pages with full-width bottom bars.
 
-## Technical Notes
-- No new dependencies needed
-- No database migrations
-- `GoogleReviewsSection` already implements 3-tier fallback (Live API → Cache → Static)
-- `useYouTubeVideos` hook already exists and is tested
-- All new text is bilingual via `t()` helper
-- Brand tokens (`cc-navy`, `cc-gold`, `cc-ivory`, `cc-sand`, `cc-charcoal`) are already in Tailwind config
+**Fix:** Already handled by existing `pb-24 md:pb-16` on guides page. Add similar bottom padding to V2Buy and V2Sell bottom CTA sections.
+
+---
+
+## Implementation Steps
+
+1. **Simplify V2Home hero intent row** — Replace 3 outline buttons with 2 compact text links styled as subtle pills. Remove quiz link from hero.
+
+2. **Fix oversized CTA buttons on mobile** — Apply responsive sizing to bottom CTAs on V2Buy (`px-6 py-3 text-sm sm:px-10 sm:py-6 sm:text-lg`) and V2Sell (same pattern). Shorten mobile-only labels.
+
+3. **Fix V2BuyerReadiness hero title** — Increase from `text-3xl md:text-4xl` to `text-4xl md:text-5xl`.
+
+4. **Add bottom padding for floating button clearance** — Add `pb-24 md:pb-16` to the last section on V2Buy and V2Sell to prevent overlap with the Selena floating button on mobile.
+
+5. **Verify V2CashOfferOptions bottom spacing** — Ensure the "Back Link" section has adequate padding below for the floating button.
 
