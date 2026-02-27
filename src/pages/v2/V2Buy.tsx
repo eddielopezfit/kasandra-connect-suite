@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Home, Search, DollarSign, FileCheck, CheckCircle, MessageCircle } from 
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
-import { NeighborhoodExplorer } from "@/components/v2/neighborhood";
+import { NeighborhoodExplorer, NeighborhoodQuiz } from "@/components/v2/neighborhood";
 import heroImage from "@/assets/hero-bg.jpg";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 
@@ -22,6 +22,11 @@ const V2BuyContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
   const [leadName, setLeadName] = useState<string | null>(null);
+  const [quizExploreZip, setQuizExploreZip] = useState<string | null>(null);
+
+  const handleQuizExplore = useCallback((zip: string) => {
+    setQuizExploreZip(zip);
+  }, []);
   useDocumentHead({
     titleEn: "Buy a Home in Tucson | First-Time Buyer & Relocation Guide",
     titleEs: "Compre una Casa en Tucson | Guía para Compradores Primerizos y Reubicación",
@@ -164,8 +169,11 @@ const V2BuyContent = () => {
         </div>
       </section>
 
+      {/* Neighborhood Quiz */}
+      <NeighborhoodQuiz onExploreZip={handleQuizExplore} />
+
       {/* Neighborhood Intelligence */}
-      <NeighborhoodExplorer />
+      <NeighborhoodExplorer externalZip={quizExploreZip} />
 
       {/* Buyer Testimonials */}
       <section className="py-12 bg-white">

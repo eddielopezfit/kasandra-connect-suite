@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,13 +10,20 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import NeighborhoodCard, { type NeighborhoodProfile } from "./NeighborhoodCard";
 import { toast } from "sonner";
 
-const NeighborhoodExplorer = () => {
+interface NeighborhoodExplorerProps {
+  /** External ZIP to auto-explore (e.g. from quiz results) */
+  externalZip?: string | null;
+}
+
+const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
   const { t } = useLanguage();
   const [zip, setZip] = useState("");
   const [loading, setLoading] = useState(false);
   const [profileEn, setProfileEn] = useState<NeighborhoodProfile | null>(null);
   const [profileEs, setProfileEs] = useState<NeighborhoodProfile | null>(null);
   const [resultZip, setResultZip] = useState("");
+  const sectionRef = useRef<HTMLElement>(null);
+  const processedExternalZip = useRef<string | null>(null);
 
   const handleExplore = async () => {
     const trimmed = zip.trim();
@@ -65,8 +72,46 @@ const NeighborhoodExplorer = () => {
     }
   };
 
+  // Handle external ZIP from quiz
+  useEffect(() => {
+    if (externalZip && externalZip !== processedExternalZip.current) {
+      processedExternalZip.current = externalZip;
+      setZip(externalZip);
+      // Scroll into view then auto-explore
+      setTimeout(() => {
+        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+      // Auto-trigger explore
+      const runExplore = async () => {
+        setLoading(true);
+        setProfileEn(null);
+        setProfileEs(null);
+        try {
+          const { data, error } = await supabase.functions.invoke("neighborhood-profile", {
+            body: { zip_code: externalZip },
+          });
+          if (error) throw error;
+          if (!data?.ok) throw new Error(data?.error || "Unknown error");
+          setProfileEn(data.profile_en);
+          setProfileEs(data.profile_es);
+          setResultZip(externalZip);
+          updateSessionContext({ last_neighborhood_zip: externalZip, neighborhood_explored: true });
+          logEvent(data.cached ? "neighborhood_profile_cached" : "neighborhood_profile_generated", {
+            zip_code: externalZip, cached: data.cached, source: "quiz",
+          });
+        } catch (err: any) {
+          console.error("[NeighborhoodExplorer] Auto-explore error:", err);
+          toast.error(t("Something went wrong. Please try again.", "Algo salió mal. Intente de nuevo."));
+        } finally {
+          setLoading(false);
+        }
+      };
+      runExplore();
+    }
+  }, [externalZip, t]);
+
   return (
-    <section className="py-16 lg:py-20 bg-cc-ivory">
+    <section ref={sectionRef} className="py-16 lg:py-20 bg-cc-ivory">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 bg-cc-navy text-white px-4 py-1.5 rounded-full text-sm font-medium mb-4">

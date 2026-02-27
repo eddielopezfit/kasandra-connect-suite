@@ -102,6 +102,8 @@ export interface SessionContext {
   // Neighborhood Intelligence (Phase 1)
   last_neighborhood_zip?: string;
   neighborhood_explored?: boolean;
+  // Neighborhood Quiz (Phase 2)
+  neighborhood_quiz_top_zip?: string | null;
 }
 
 /**

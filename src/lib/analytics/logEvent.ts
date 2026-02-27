@@ -119,7 +119,10 @@ export type EventType =
   | 'guide_cta_clicked'
   // Neighborhood Intelligence (Phase 1)
   | 'neighborhood_profile_generated'
-  | 'neighborhood_profile_cached';
+  | 'neighborhood_profile_cached'
+  // Neighborhood Quiz (Phase 2)
+  | 'neighborhood_quiz_started'
+  | 'neighborhood_quiz_completed';
 
 export interface EventPayload {
   [key: string]: unknown;
