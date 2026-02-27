@@ -22,6 +22,8 @@ import {
   Users,
   Mic,
   Heart,
+  HeartHandshake,
+  Star,
   MessageCircle,
   Calendar,
   CheckCircle,
@@ -476,9 +478,11 @@ const V2HomeContent = () => {
             </div>
             <div className="flex justify-center">
               <div className="relative">
-                <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-white/10 flex items-center justify-center">
-                  <div className="w-48 h-48 md:w-60 md:h-60 rounded-full bg-white/20 flex items-center justify-center">
-                    <MessageCircle className="w-24 h-24 text-white/80" />
+                <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-cc-gold/20 flex items-center justify-center">
+                  <div className="w-48 h-48 md:w-60 md:h-60 rounded-full bg-cc-gold/40 flex items-center justify-center">
+                    <div className="w-28 h-28 rounded-full bg-cc-gold flex items-center justify-center">
+                      <MessageCircle className="w-14 h-14 text-cc-navy" />
+                    </div>
                   </div>
                 </div>
                 <div className="absolute -top-2 -right-2 bg-cc-gold text-cc-blue text-xs font-bold px-3 py-1 rounded-full">
@@ -604,6 +608,14 @@ const V2HomeContent = () => {
                 <div className="text-center">
                   <Users className="w-10 h-10 text-cc-gold mx-auto mb-3" />
                   <p className="text-sm text-cc-text-muted">{t("Vice President, Rumbo al Éxito", "Vicepresidenta, Rumbo al Éxito")}</p>
+                </div>
+                <div className="text-center">
+                  <Star className="w-10 h-10 text-cc-gold mx-auto mb-3" />
+                  <p className="text-sm text-cc-text-muted">{t("Leadership Tucson", "Liderazgo Tucson")}</p>
+                </div>
+                <div className="text-center">
+                  <HeartHandshake className="w-10 h-10 text-cc-gold mx-auto mb-3" />
+                  <p className="text-sm text-cc-text-muted">{t("Community Advocate", "Defensora Comunitaria")}</p>
                 </div>
               </div>
             </div>
