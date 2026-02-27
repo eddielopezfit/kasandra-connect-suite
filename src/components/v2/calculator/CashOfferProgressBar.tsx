@@ -23,6 +23,13 @@ const CashOfferProgressBar = ({ currentStage }: CashOfferProgressBarProps) => {
 
   return (
     <div className="w-full">
+      {/* Counter */}
+      <div className="flex justify-end mb-1.5">
+        <span className="text-xs text-cc-slate font-medium">
+          {currentStage + 1} / {stages.length}
+        </span>
+      </div>
+
       {/* Progress bar segments */}
       <div className="flex gap-1.5 mb-2">
         {stages.map((_, index) => (
@@ -37,14 +44,20 @@ const CashOfferProgressBar = ({ currentStage }: CashOfferProgressBarProps) => {
         ))}
       </div>
 
-      {/* Stage label */}
-      <div className="flex justify-between items-center">
-        <span className="text-xs text-cc-slate">
-          {language === 'en' ? stages[currentStage].en : stages[currentStage].es}
-        </span>
-        <span className="text-xs text-cc-slate">
-          {currentStage + 1} / {stages.length}
-        </span>
+      {/* All 4 stage labels */}
+      <div className="grid grid-cols-4 gap-1.5">
+        {stages.map((stage, index) => (
+          <span
+            key={index}
+            className={`text-[10px] tracking-wider uppercase text-center transition-colors duration-300 ${
+              index <= currentStage
+                ? 'text-cc-gold font-semibold'
+                : 'text-cc-slate/60'
+            }`}
+          >
+            {language === 'en' ? stage.en : stage.es}
+          </span>
+        ))}
       </div>
     </div>
   );

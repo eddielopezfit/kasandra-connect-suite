@@ -134,7 +134,7 @@ const CalculatorInputs = ({
           {t("When do you need to sell?", "¿Cuándo necesitas vender?")}
         </Label>
         
-        <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
           {timelineOptions.map((option) => (
             <button
               key={option.value}

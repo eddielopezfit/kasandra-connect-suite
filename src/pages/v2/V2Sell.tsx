@@ -6,7 +6,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
-import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle } from "lucide-react";
+import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle, ArrowRight } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
@@ -19,17 +19,14 @@ const V2SellContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
 
-  // Auto-set intent only if not already declared (prevents overwriting quiz/URL intent)
   useEffect(() => {
     setFieldIfEmpty('intent', 'sell');
   }, []);
 
-  // Handle CTA clicks with tracking (uses constants from CTA_NAMES)
   const handleCTAClick = (cta_name: string, destination: string) => {
     logCTAClick({ cta_name, destination, page_path: PAGE_PATH, intent: PAGE_INTENT });
   };
 
-  // Handle Selena routing CTA
   const handleSelenaRoute = () => {
     handleCTAClick(CTA_NAMES.SELENA_ROUTE_CALL, 'selena_chat');
     openChat({ source: 'hero', intent: 'sell' });
@@ -37,7 +34,7 @@ const V2SellContent = () => {
 
   return (
     <>
-      {/* Hero */}
+      {/* Hero — Gold italic accent word */}
       <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>
           <div className="absolute inset-0 bg-gradient-to-r from-cc-blue/90 to-cc-blue/75" />
@@ -48,7 +45,9 @@ const V2SellContent = () => {
               {t("For Sellers", "Para Vendedores")}
             </span>
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mt-2 mb-6 text-white">
-              {t("Sell Your Home with Confidence", "Venda Su Casa con Confianza")}
+              {t("Sell Your Home with", "Venda Su Casa con")}
+              <br />
+              <span className="text-cc-gold italic">{t("Confidence", "Confianza")}</span>
             </h1>
             <p className="text-xl text-white/90 mb-8">
               {t(
@@ -67,71 +66,104 @@ const V2SellContent = () => {
         </div>
       </section>
 
-      {/* How I Protect Sellers */}
+      {/* How I Protect Sellers — 2-column layout */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
-          {/* Section Header */}
-          <div className="bg-cc-navy rounded-xl p-6 md:p-8 mb-10 text-center">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-white">
-              {t("How I Protect Sellers", "Cómo Protejo a los Vendedores")}
-            </h2>
-            <p className="text-white/80 mt-3 max-w-2xl mx-auto">
-              {t(
-                "My approach is centered on your protection and informed decision-making.",
-                "Mi enfoque está centrado en su protección y toma de decisiones informada."
-              )}
-            </p>
-          </div>
+          <div className="grid lg:grid-cols-2 gap-10 items-start">
+            {/* Left: Title + description + numbered steps */}
+            <div>
+              <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-4">
+                {t("How I Protect Your Interests", "Cómo Protejo Sus Intereses")}
+              </h2>
+              <p className="text-cc-charcoal mb-8 max-w-lg">
+                {t(
+                  "My approach is centered on your protection and informed decision-making at every stage.",
+                  "Mi enfoque está centrado en su protección y toma de decisiones informada en cada etapa."
+                )}
+              </p>
 
-          {/* Cards Container */}
-          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-elevated">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-cc-sand p-6 rounded-xl text-center border border-cc-sand-dark/30">
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <span className="text-cc-gold font-serif text-2xl font-bold">01</span>
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-cc-navy">
+                      {t("Strategic Analysis", "Análisis Estratégico")}
+                    </h3>
+                    <p className="text-sm text-cc-charcoal">
+                      {t(
+                        "Market-based pricing strategy using current data and comparable sales in your area.",
+                        "Estrategia de precios basada en datos actuales del mercado y ventas comparables en su área."
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <span className="text-cc-gold font-serif text-2xl font-bold">02</span>
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-cc-navy">
+                      {t("Risk Mitigation", "Mitigación de Riesgos")}
+                    </h3>
+                    <p className="text-sm text-cc-charcoal">
+                      {t(
+                        "Full disclosure support and offer reliability assessment to protect you throughout.",
+                        "Apoyo completo de divulgación y evaluación de confiabilidad de ofertas para protegerle."
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <span className="text-cc-gold font-serif text-2xl font-bold">03</span>
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-cc-navy">
+                      {t("Expert Execution", "Ejecución Experta")}
+                    </h3>
+                    <p className="text-sm text-cc-charcoal">
+                      {t(
+                        "Skilled negotiation and professional marketing to maximize your outcome.",
+                        "Negociación hábil y marketing profesional para maximizar su resultado."
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: 2x2 card grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white p-6 rounded-xl text-center border border-cc-sand-dark/30 shadow-soft">
                 <TrendingUp className="w-10 h-10 text-cc-navy mx-auto mb-4" />
-                <h3 className="font-serif text-lg font-bold text-cc-navy mb-3">
+                <h3 className="font-serif text-base font-bold text-cc-navy mb-2">
                   {t("Market-Based Pricing", "Precios Basados en el Mercado")}
                 </h3>
-                <p className="text-sm text-cc-charcoal">
-                  {t(
-                    "Pricing strategy based on current market data and comparable sales in your area.",
-                    "Estrategia de precios basada en datos actuales del mercado y ventas comparables en su área."
-                  )}
+                <p className="text-xs text-cc-charcoal">
+                  {t("Data-driven pricing strategy", "Estrategia de precios basada en datos")}
                 </p>
               </div>
-              <div className="bg-cc-sand p-6 rounded-xl text-center border border-cc-sand-dark/30">
+              <div className="bg-white p-6 rounded-xl text-center border border-cc-sand-dark/30 shadow-soft">
                 <Shield className="w-10 h-10 text-cc-navy mx-auto mb-4" />
-                <h3 className="font-serif text-lg font-bold text-cc-navy mb-3">
+                <h3 className="font-serif text-base font-bold text-cc-navy mb-2">
                   {t("Offer Reliability", "Confiabilidad de Ofertas")}
                 </h3>
-                <p className="text-sm text-cc-charcoal">
-                  {t(
-                    "I assess each offer's strength and reliability so you can make informed decisions.",
-                    "Evalúo la fortaleza y confiabilidad de cada oferta para que pueda tomar decisiones informadas."
-                  )}
+                <p className="text-xs text-cc-charcoal">
+                  {t("Assess each offer's strength", "Evaluar la fortaleza de cada oferta")}
                 </p>
               </div>
-              <div className="bg-cc-sand p-6 rounded-xl text-center border border-cc-sand-dark/30">
+              <div className="bg-white p-6 rounded-xl text-center border border-cc-sand-dark/30 shadow-soft">
                 <FileText className="w-10 h-10 text-cc-navy mx-auto mb-4" />
-                <h3 className="font-serif text-lg font-bold text-cc-navy mb-3">
+                <h3 className="font-serif text-base font-bold text-cc-navy mb-2">
                   {t("Disclosure Guidance", "Orientación de Divulgación")}
                 </h3>
-                <p className="text-sm text-cc-charcoal">
-                  {t(
-                    "Full support with required disclosures to protect you throughout the transaction.",
-                    "Apoyo completo con las divulgaciones requeridas para protegerle durante la transacción."
-                  )}
+                <p className="text-xs text-cc-charcoal">
+                  {t("Full transaction protection", "Protección completa de transacción")}
                 </p>
               </div>
-              <div className="bg-cc-sand p-6 rounded-xl text-center border border-cc-sand-dark/30">
+              <div className="bg-white p-6 rounded-xl text-center border border-cc-sand-dark/30 shadow-soft">
                 <Handshake className="w-10 h-10 text-cc-navy mx-auto mb-4" />
-                <h3 className="font-serif text-lg font-bold text-cc-navy mb-3">
+                <h3 className="font-serif text-base font-bold text-cc-navy mb-2">
                   {t("Negotiation Support", "Apoyo en Negociación")}
                 </h3>
-                <p className="text-sm text-cc-charcoal">
-                  {t(
-                    "Skilled negotiation on your behalf, always keeping your best interests first.",
-                    "Negociación hábil en su nombre, siempre poniendo sus mejores intereses primero."
-                  )}
+                <p className="text-xs text-cc-charcoal">
+                  {t("Your interests always first", "Sus intereses siempre primero")}
                 </p>
               </div>
             </div>
@@ -139,7 +171,7 @@ const V2SellContent = () => {
         </div>
       </section>
 
-      {/* Featured Guide: Selling for Top Dollar */}
+      {/* Featured Guide */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
@@ -161,80 +193,87 @@ const V2SellContent = () => {
       <section className="py-12 bg-cc-sand">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto space-y-6">
-            {/* Primary Testimonial */}
             <div className="bg-white rounded-2xl p-2 border border-cc-sand-dark/30">
               <TestimonialCard testimonial={sellerTestimonials[0]} variant="primary" />
             </div>
-            
-            {/* Secondary Testimonial */}
             <TestimonialCard testimonial={sellerTestimonials[1]} variant="secondary" />
           </div>
         </div>
       </section>
 
-      {/* Options */}
+      {/* Your Selling Options — Navy/dark styled cards */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy">
+            <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+              {t("The Choice Is Yours", "La Decisión Es Suya")}
+            </span>
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mt-2">
               {t("Your Selling Options", "Sus Opciones de Venta")}
             </h2>
           </div>
-          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-elevated">
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              <div className="bg-cc-sand p-8 rounded-xl border-2 border-cc-navy">
-                <h3 className="font-serif text-xl font-bold text-cc-navy mb-4">
-                  {t("Traditional Listing", "Venta Tradicional")}
-                </h3>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Maximum market exposure", "Máxima exposición al mercado")}</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Competitive offers from multiple buyers", "Ofertas competitivas de múltiples compradores")}</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Professional marketing and showings", "Marketing profesional y visitas")}</span>
-                  </li>
-                </ul>
-                <Button 
-                  asChild 
-                  className="w-full bg-cc-navy hover:bg-cc-navy-dark text-white rounded-full"
-                  onClick={() => handleCTAClick(CTA_NAMES.TRADITIONAL_LISTING_GUIDE, '/v2/guides/selling-for-top-dollar')}
-                >
-                  <Link to="/v2/guides/selling-for-top-dollar">{t("Learn Traditional Sale Strategy", "Conozca la Estrategia de Venta")}</Link>
-                </Button>
-              </div>
-              <div className="bg-white p-8 rounded-xl border border-cc-sand-dark/50">
-                <h3 className="font-serif text-xl font-bold text-cc-navy mb-4">
-                  {t("Cash Offer Options", "Opciones de Oferta en Efectivo")}
-                </h3>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Faster closing timeline", "Cierre más rápido")}</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Sell as-is without repairs", "Venda como está sin reparaciones")}</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Certainty over maximum price", "Certeza sobre precio máximo")}</span>
-                  </li>
-                </ul>
-                <Button 
-                  asChild 
-                  variant="outline" 
-                  className="w-full border-cc-gold text-cc-gold hover:bg-cc-gold hover:text-cc-navy rounded-full"
-                  onClick={() => handleCTAClick(CTA_NAMES.CASH_OFFER_OPTIONS, '/v2/cash-offer-options')}
-                >
-                  <Link to="/v2/cash-offer-options">{t("Explore Cash Options", "Explorar Opciones en Efectivo")}</Link>
-                </Button>
-              </div>
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {/* Traditional Listing — navy bg */}
+            <div className="bg-cc-navy p-8 rounded-2xl">
+              <h3 className="font-serif text-xl font-bold text-white mb-4">
+                {t("Traditional Listing", "Venta Tradicional")}
+              </h3>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/90">{t("Maximum market exposure", "Máxima exposición al mercado")}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/90">{t("Competitive offers from multiple buyers", "Ofertas competitivas de múltiples compradores")}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/90">{t("Professional marketing and showings", "Marketing profesional y visitas")}</span>
+                </li>
+              </ul>
+              <Button 
+                asChild 
+                className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full"
+                onClick={() => handleCTAClick(CTA_NAMES.TRADITIONAL_LISTING_GUIDE, '/v2/guides/selling-for-top-dollar')}
+              >
+                <Link to="/v2/guides/selling-for-top-dollar">
+                  {t("Learn Listing Strategy", "Conocer Estrategia de Venta")}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
+
+            {/* Cash Offer — dark slate bg */}
+            <div className="bg-cc-charcoal p-8 rounded-2xl border border-cc-gold/20">
+              <h3 className="font-serif text-xl font-bold text-white mb-4">
+                {t("Cash Offer Options", "Opciones de Oferta en Efectivo")}
+              </h3>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/90">{t("Faster closing timeline", "Cierre más rápido")}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/90">{t("Sell as-is without repairs", "Venda como está sin reparaciones")}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/90">{t("Certainty over maximum price", "Certeza sobre precio máximo")}</span>
+                </li>
+              </ul>
+              <Button 
+                asChild 
+                variant="outline"
+                className="w-full border-cc-gold text-cc-gold hover:bg-cc-gold hover:text-cc-navy font-semibold rounded-full"
+                onClick={() => handleCTAClick(CTA_NAMES.CASH_OFFER_OPTIONS, '/v2/cash-offer-options')}
+              >
+                <Link to="/v2/cash-offer-options">
+                  {t("Explore Cash Options", "Explorar Opciones en Efectivo")}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
