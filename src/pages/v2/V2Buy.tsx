@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -11,6 +11,7 @@ import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 import heroImage from "@/assets/hero-bg.jpg";
+import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 
 const PAGE_PATH = '/v2/buy';
 const PAGE_INTENT = 'buy' as const;
@@ -18,10 +19,12 @@ const PAGE_INTENT = 'buy' as const;
 const V2BuyContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+  const [leadName, setLeadName] = useState<string | null>(null);
 
-  // Auto-set intent only if not already declared (prevents overwriting quiz/URL intent)
   useEffect(() => {
     setFieldIfEmpty('intent', 'buy');
+    const stored = getStoredUserName();
+    if (stored) setLeadName(stored.split(' ')[0]);
   }, []);
 
   // Handle CTA clicks with tracking (uses constants from CTA_NAMES)
@@ -85,6 +88,11 @@ const V2BuyContent = () => {
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mt-2 mb-6 text-white">
               {t("Find Your Perfect Home in Tucson", "Encuentre Su Casa Perfecta en Tucson")}
             </h1>
+            {leadName && (
+              <p className="text-cc-gold font-medium text-lg -mt-2 mb-4">
+                {t(`Welcome back, ${leadName}`, `Bienvenido/a de nuevo, ${leadName}`)}
+              </p>
+            )}
             <p className="text-xl text-white/90 mb-8">
               {t(
                 "Buying a home is one of the biggest decisions you'll make. With bilingual guidance and step-by-step support, I'll help you navigate the process with confidence.",

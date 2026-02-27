@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -6,11 +6,13 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
+import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
 import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle, ArrowRight } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 import heroImage from "@/assets/hero-bg.jpg";
+import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 
 const PAGE_PATH = '/v2/sell';
 const PAGE_INTENT = 'sell' as const;
@@ -18,9 +20,12 @@ const PAGE_INTENT = 'sell' as const;
 const V2SellContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+  const [leadName, setLeadName] = useState<string | null>(null);
 
   useEffect(() => {
     setFieldIfEmpty('intent', 'sell');
+    const stored = getStoredUserName();
+    if (stored) setLeadName(stored.split(' ')[0]);
   }, []);
 
   const handleCTAClick = (cta_name: string, destination: string) => {
@@ -49,6 +54,11 @@ const V2SellContent = () => {
               <br />
               <span className="text-cc-gold italic">{t("Confidence", "Confianza")}</span>
             </h1>
+            {leadName && (
+              <p className="text-cc-gold font-medium text-lg -mt-2 mb-4">
+                {t(`Welcome back, ${leadName}`, `Bienvenido/a de nuevo, ${leadName}`)}
+              </p>
+            )}
             <p className="text-xl text-white/90 mb-8">
               {t(
                 "Selling your home is a significant decision. I'll guide you with market-based pricing, full disclosure support, and a protection-first approach.",
@@ -200,6 +210,9 @@ const V2SellContent = () => {
           </div>
         </div>
       </section>
+
+      {/* Google Reviews — Social Proof */}
+      <GoogleReviewsSection />
 
       {/* Your Selling Options — Navy/dark styled cards */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
