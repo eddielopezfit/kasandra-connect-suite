@@ -1,56 +1,80 @@
 
 
-# Guides Page Optimization Audit
+# Phase 1: SEO Infrastructure — Make the Hub Discoverable
 
-## Issue 1: "Continue Your Journey" Button — Poor Contrast
-The button uses `border-white/30 text-white` on a dark navy background with no fill. The 30% opacity border makes it nearly invisible, especially on mobile. The text blends into the hero gradient.
+The strategy analysis is correct. SEO is the foundation that compounds. Here's the implementation plan.
 
-**Fix:** Change to a semi-filled style: `bg-white/15 border-white/40 text-white` so it has a visible background tint. This keeps it secondary to the gold "Start with Selena" button while being actually readable.
+## What Gets Built
 
-**File:** `src/components/v2/guides/PersonalizedHero.tsx` (line 161)
+### 1. `useDocumentHead` Hook
+A reusable hook that sets `document.title`, `<meta name="description">`, and `<meta property="og:*">` tags dynamically per route. Called at the top of each page component.
 
-## Issue 2: "Deciding" Stage Label — Meaningless to Users
-The CognitiveProgressBar shows internal system labels like "Deciding", "Exploring", "Clarifying". An end user landing on this page has no idea what "Deciding" means in this context, what determined it, or what it's measuring. It's internal UX jargon exposed to the user. The progress dots + label feel like gamification metrics from a product manager's dashboard, not something a homebuyer cares about.
+**File:** `src/hooks/useDocumentHead.ts`
 
-**Fix:** Remove the CognitiveProgressBar entirely from the guides page. It adds no user value — it's a system-state indicator that only confuses visitors. The personalized hero already adapts messaging based on cognitive stage. Showing the stage label redundantly as a pill badge is noise.
+Parameters: `{ title, description, ogTitle?, ogDescription?, ogImage?, canonical? }`
 
-**File:** `src/pages/v2/V2Guides.tsx` — Remove the `<CognitiveProgressBar>` render block (lines 343-347) and its import.
+On mount/update: sets `document.title`, upserts meta tags via `document.querySelector` + `setAttribute`. Cleanup restores defaults on unmount.
 
-## Issue 3: Read Time Labels — Remove "12 min", "10 min"
-The `readTime` values on guide cards ("12 min", "10 min", "5 min") add visual clutter without value. For educational content designed to build trust, showing time estimates creates a transactional "is this worth my time?" frame — the opposite of the unhurried, trust-first experience the platform promises.
+### 2. `JsonLd` Component
+A simple component that renders a `<script type="application/ld+json">` tag in the DOM.
 
-**Fix:** Remove the `<span>` rendering `readTime` from the guide card grid (line 397-399 in V2Guides.tsx). Keep the `readTime` data in the guide objects for potential future use on individual guide detail pages.
+**File:** `src/components/seo/JsonLd.tsx`
 
-## Issue 4: "Connect the Dots" Synthesis Footer — Optimization
-The current implementation is solid architecturally. The gating logic (3+ guides = summary offer, otherwise = question prompt) is correct. Two improvements:
+### 3. Per-Route SEO Data
+Each V2 page gets a `useDocumentHead` call with route-specific metadata. Key pages and their target keywords:
 
-**A) Copy tightening:** "Want me to connect the dots?" is clever but vague. A user who's read 5 guides doesn't think in terms of "connecting dots" — they think "what should I do next?" Change to: "Ready for your next step?" / "¿Listo para tu siguiente paso?"
+| Route | Title | Target Keywords |
+|-------|-------|----------------|
+| `/v2` | "Kasandra Prieto \| Tucson Realtor & Bilingual Real Estate Agent" | bilingual realtor tucson |
+| `/v2/sell` | "Sell Your Tucson Home \| Cash Offer & Traditional Listing Options" | sell my house tucson, cash offer tucson |
+| `/v2/buy` | "Buy a Home in Tucson \| First-Time Buyer & Relocation Guide" | buy home tucson, first time buyer tucson |
+| `/v2/cash-offer-options` | "Cash Offer vs. Traditional Listing \| Tucson Home Sale Calculator" | cash offer tucson, sell house fast tucson |
+| `/v2/guides` | "Real Estate Guides \| Tucson Home Buying & Selling Education" | tucson real estate guide |
+| `/v2/guides/:id` | Dynamic from guide registry `titleEn` / `titleEs` | per-guide keywords |
+| `/v2/podcast` | "Rumbo Al Éxito Podcast \| Tucson Real Estate & Community" | tucson real estate podcast |
+| `/v2/community` | "Tucson Community Impact \| Kasandra Prieto Gives Back" | tucson community realtor |
+| `/v2/book` | "Book a Consultation \| Kasandra Prieto, Tucson Realtor" | book realtor tucson |
 
-**B) Summary button label:** "Summarize what I've learned" is long. Shorten to "Get My Summary" / "Obtener Mi Resumen" — more action-oriented and fits better on mobile.
+### 4. JSON-LD Structured Data
+Added to specific pages via the `JsonLd` component:
 
-**File:** `src/components/v2/guides/SelenaSynthesisFooter.tsx`
+- **V2Home:** `RealEstateAgent` + `LocalBusiness` schema (name, address, phone, image, areaServed: Tucson)
+- **V2Guides:** `FAQPage` schema (top 3-5 common questions from guide topics)
+- **V2GuideDetail:** `Article` schema (headline, author, datePublished, description)
+- **V2Podcast:** `PodcastSeries` schema
 
-## Issue 5: Is the Guides Page Blue Ocean?
-After removing the progress bar and read times, the page flow becomes:
-1. Personalized Hero (stage-aware messaging + Selena CTA)
-2. Start Here Lane (first-visit only)
-3. Recommended Carousel (returning visitors)
-4. Category Nav (sticky filters)
-5. Guide Grid (clean cards)
-6. Synthesis Footer (gated Selena entry)
-7. Bottom CTA (book consultation)
+### 5. Static `sitemap.xml`
+**File:** `public/sitemap.xml`
 
-This is clean and differentiated. The blue ocean elements are: cognitive-stage-aware hero copy, deterministic synthesis, bilingual throughout, and category-filtered educational content. No competitor in Tucson real estate has this architecture.
+Lists all canonical `/v2/*` routes with `<lastmod>`, `<changefreq>`, and `<priority>`. Guide detail pages included statically from registry.
 
----
+### 6. Updated `robots.txt`
+Add `Sitemap: https://[domain]/sitemap.xml` directive.
 
-## Implementation Steps
+### 7. OG Image Update
+Replace the Lovable placeholder OG image in `index.html` with Kasandra's headshot (`/src/assets/kasandra-headshot.jpg`). Move the headshot to `public/og-kasandra.jpg` so it's publicly accessible.
 
-1. **Fix "Continue Your Journey" button contrast** — Add `bg-white/15` background and increase border opacity to `border-white/40`.
+### 8. Language-Aware Titles
+The `useDocumentHead` hook accepts both `titleEn` and `titleEs`. It reads from `LanguageContext` and sets the appropriate title. When language toggles, the document title updates reactively.
 
-2. **Remove CognitiveProgressBar** from V2Guides — delete render block and import. The hook can remain for other components that use stage data.
+## Files Created
+- `src/hooks/useDocumentHead.ts`
+- `src/components/seo/JsonLd.tsx`
+- `public/sitemap.xml`
+- `public/og-kasandra.jpg` (copy of headshot)
 
-3. **Remove read time from guide cards** — Delete the `readTime` span from the grid card template.
+## Files Modified
+- `index.html` — update OG image URL, keep as fallback defaults
+- `public/robots.txt` — add Sitemap directive
+- `src/pages/v2/V2Home.tsx` — add `useDocumentHead` + `JsonLd` (RealEstateAgent)
+- `src/pages/v2/V2Sell.tsx` — add `useDocumentHead`
+- `src/pages/v2/V2Buy.tsx` — add `useDocumentHead`
+- `src/pages/v2/V2CashOfferOptions.tsx` — add `useDocumentHead`
+- `src/pages/v2/V2Guides.tsx` — add `useDocumentHead` + `JsonLd` (FAQPage)
+- `src/pages/v2/V2GuideDetail.tsx` — add `useDocumentHead` + `JsonLd` (Article)
+- `src/pages/v2/V2Podcast.tsx` — add `useDocumentHead`
+- `src/pages/v2/V2Community.tsx` — add `useDocumentHead`
+- `src/pages/v2/V2Book.tsx` — add `useDocumentHead`
 
-4. **Optimize SelenaSynthesisFooter copy** — Change heading to "Ready for your next step?" and button label to "Get My Summary".
+No database changes. No edge functions. Pure frontend SEO infrastructure.
 
