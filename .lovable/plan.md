@@ -1,48 +1,76 @@
 
 
-# Plan: Align Calculator Progress Bar, Timeline Layout, and /sell Page with Google Studio
+# Ship All Priority Items Now
 
-## 3 Changes
+## 7 Changes
 
-### 1. Progress Bar — Show All 4 Stage Labels
-**File:** `src/components/v2/calculator/CashOfferProgressBar.tsx`
+### 1. Add 3-Button Intent Row to V2Home Hero
+**File:** `src/pages/v2/V2Home.tsx` (after line 104)
 
-The Google Studio build shows all 4 labels (EXPLORING, CALCULATING, COMPARING, DECIDING) displayed horizontally beneath each bar segment in uppercase. The current Lovable build only shows the active stage label on the left + "1/4" on the right.
+Add three outline-style buttons below "Chat with Selena":
+- "Selling: See My Options" → `/v2/sell` (with logCTAClick)
+- "Buying: Check My Readiness" → `/v2/buyer-readiness`
+- "Not Sure: 60-Second Quiz" → `/v2/quiz`
 
-- Replace the bottom row with a 4-column layout where each label sits under its segment
-- Active/completed labels in `text-cc-gold font-semibold`, inactive in `text-cc-slate/60`
-- Labels in uppercase `tracking-wider text-[10px]`
-- Move the "1/4" counter to align right above the bar
+Styled as `variant="outline"` with `border-white/30 text-white hover:bg-white/10 rounded-full`. Row uses `flex flex-wrap gap-3 mt-4`. Each button logs CTA click before navigating via `Link`.
 
-### 2. Timeline Options — 2x2 Grid Layout
-**File:** `src/components/v2/calculator/CalculatorInputs.tsx`
-
-The Google Studio build shows timeline options in a 2x2 grid (2 columns, 2 rows) instead of a vertical stack. The motivation options remain stacked.
-
-- Change timeline container from `space-y-3` (vertical stack) to `grid grid-cols-2 gap-3`
-- Keep motivation options as vertical stack (matches Google Studio)
-
-### 3. V2Sell Page — Gold Italic Accent Word + Layout Refinements
+### 2. Add Google Reviews to /v2/sell
 **File:** `src/pages/v2/V2Sell.tsx`
 
-The Google Studio /sell hero has "Confidence" on a separate line in gold italic serif. The "How I Protect" section has a 2-column layout (left: text + numbered steps, right: 2x2 card grid). The "Your Selling Options" section has navy background on Traditional and outline on Cash with better contrast.
+Import `GoogleReviewsSection` and insert `<GoogleReviewsSection />` after the seller testimonials section (after line 202, before the "Your Selling Options" section).
 
-**Hero changes:**
-- Split h1 into two lines: "Sell Your Home with" + "Confidence" in `text-cc-gold italic`
-- Spanish: "Venda Su Casa con" + "Confianza"
+### 3. Add Google Reviews to /v2/cash-offer-options
+**File:** `src/pages/v2/V2CashOfferOptions.tsx`
 
-**"How I Protect Sellers" section (lines 71-140):**
-- Remove the navy header bar (move title into the section itself)
-- Change to 2-column layout: left side has h2 "How I Protect Your Interests" + description text + 3 numbered steps (01 Strategic Analysis, 02 Risk Mitigation, 03 Expert Execution), right side has the 2x2 card grid
-- Bilingual for all new content
+Import `GoogleReviewsSection` and insert `<GoogleReviewsSection />` after the "Cash Offer Review Service" section (after line 285, before the "Back Link" section).
 
-**"Your Selling Options" section (lines 176-240):**
-- Add "THE CHOICE IS YOURS" gold uppercase label above h2
-- Traditional Listing card: navy background with white text, "Learn Listing Strategy →" button in gold
-- Cash Offer card: dark navy/slate background with white text and gold accent, "Explore Cash Options →" button with gold outline
+### 4. Hide Empty Guide Categories
+**File:** `src/pages/v2/V2Guides.tsx`
 
-## Technical Details
-- All changes are purely presentational (CSS/JSX restructuring)
-- No new dependencies or database changes
-- All content remains bilingual via `t()` helper
+Remove three category objects from the `categories` array:
+- `tips` (lines 64-71)
+- `financial` (lines 81-87)
+- `neighborhoods` (lines 88-95)
+
+### 5. Brand-Align V2PrivateCashReview
+**File:** `src/pages/v2/V2PrivateCashReview.tsx`
+
+Replace generic Shadcn tokens with brand tokens across all 4 sections:
+- `bg-primary/5` → `bg-cc-gold/10`, `bg-primary/20` → `bg-cc-gold/20`
+- `text-primary` → `text-cc-gold`
+- `text-foreground` → `text-cc-navy`
+- `text-muted-foreground` → `text-cc-charcoal/80`
+- `bg-background` → `bg-cc-ivory`
+- `bg-muted/30` → `bg-cc-sand`
+- `border-primary/30` → `border-cc-gold/30`
+- `bg-primary` (solid circles) → `bg-cc-gold`
+- `text-primary-foreground` → `text-cc-navy`
+- `shadow-elevated` stays as-is
+- Section backgrounds: Hero gradient → `from-cc-gold/5 to-cc-ivory`, Selena Entry → `bg-cc-ivory`, Kasandra Authority → `bg-cc-sand`, Scheduling → `bg-cc-ivory`
+
+### 6. Returning Visitor Personalization on /v2/sell and /v2/buy
+**Files:** `src/pages/v2/V2Sell.tsx`, `src/pages/v2/V2Buy.tsx`
+
+In each page's content component:
+- Import `getStoredUserName` from `bridgeLeadIdToV2`
+- On mount, check for stored name. If found, render a "Welcome Back, [FirstName]" subtitle line below the hero h1 with `text-cc-gold font-medium`
+- This is a lightweight addition — just a conditional `<p>` tag in the hero, no layout changes
+
+### 7. Wire Dynamic YouTube Grid to Podcast Page
+**File:** `src/pages/v2/V2Podcast.tsx`
+
+Replace the static "Watch All Episodes" CTA block (lines 127-152) with a dynamic grid:
+- Import `useYouTubeVideos` hook
+- Render a responsive grid (`grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6`) of video cards
+- Each card: thumbnail image, title, link to YouTube
+- Loading state: 6 skeleton cards
+- Error/empty fallback: keep the existing static "Visit Channel" CTA (3-tier fallback per custom instructions)
+
+## Technical Notes
+- No new dependencies needed
+- No database migrations
+- `GoogleReviewsSection` already implements 3-tier fallback (Live API → Cache → Static)
+- `useYouTubeVideos` hook already exists and is tested
+- All new text is bilingual via `t()` helper
+- Brand tokens (`cc-navy`, `cc-gold`, `cc-ivory`, `cc-sand`, `cc-charcoal`) are already in Tailwind config
 
