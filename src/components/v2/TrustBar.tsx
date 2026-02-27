@@ -36,7 +36,7 @@ const TrustBar = () => {
   return (
     <section className="py-10 bg-white border-y border-border/30 overflow-hidden">
       <div className="container mx-auto px-4 mb-6">
-        <p className="text-center text-xs font-medium text-muted-foreground uppercase tracking-[0.2em]">
+        <p className="text-center text-xs font-medium text-cc-gold uppercase tracking-[0.2em]">
           {t("Trusted by & Actively Involved With", "De Confianza y Activamente Involucrada Con")}
         </p>
       </div>
@@ -58,7 +58,7 @@ const TrustBar = () => {
                 <span className="text-sm md:text-base font-serif font-semibold text-cc-charcoal/80 whitespace-nowrap group-hover:text-cc-navy transition-colors">
                   {entity.name}
                 </span>
-                <span className="text-[10px] md:text-xs text-muted-foreground/60 whitespace-nowrap mt-0.5">
+                <span className="text-[10px] md:text-xs text-cc-gold/70 whitespace-nowrap mt-0.5">
                   {entity.role}
                 </span>
               </div>
