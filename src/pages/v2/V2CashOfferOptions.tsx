@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
@@ -12,6 +13,12 @@ import heroImage from "@/assets/hero-bg.jpg";
 const V2CashOfferOptionsContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+  useDocumentHead({
+    titleEn: "Cash Offer vs. Traditional Listing | Tucson Home Sale Calculator",
+    titleEs: "Oferta en Efectivo vs. Venta Tradicional | Calculadora de Venta en Tucson",
+    descriptionEn: "Compare cash offer vs. traditional listing net proceeds with our Tucson calculator. Understand your options with no pressure.",
+    descriptionEs: "Compare ganancias netas de oferta en efectivo vs. venta tradicional con nuestra calculadora de Tucson.",
+  });
 
   return (
     <>

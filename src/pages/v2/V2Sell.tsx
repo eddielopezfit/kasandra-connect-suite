@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -21,6 +22,12 @@ const V2SellContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
   const [leadName, setLeadName] = useState<string | null>(null);
+  useDocumentHead({
+    titleEn: "Sell Your Tucson Home | Cash Offer & Traditional Listing Options",
+    titleEs: "Venda Su Casa en Tucson | Opciones de Oferta en Efectivo y Venta Tradicional",
+    descriptionEn: "Explore your selling options in Tucson. Market-based pricing, cash offer review, and full disclosure support from a bilingual REALTOR®.",
+    descriptionEs: "Explore sus opciones de venta en Tucson. Precios de mercado, revisión de ofertas en efectivo y apoyo bilingüe.",
+  });
 
   useEffect(() => {
     setFieldIfEmpty('intent', 'sell');

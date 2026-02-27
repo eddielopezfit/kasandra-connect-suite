@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { ArrowLeft, Clock, User } from "lucide-react";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
+import JsonLd from "@/components/seo/JsonLd";
 import LanguageToggle from "@/components/v2/LanguageToggle";
 import { AuthorityCTABlock, SelenaGuideHandoff, GuideComplianceFooter } from "@/components/v2/guides";
 import GuideImage from "@/components/v2/guides/GuideImage";
@@ -556,8 +558,24 @@ const V2GuideDetail = () => {
     return <GuideImage src={slot.src} alt={slot.alt} altEs={slot.altEs} />;
   };
 
+  useDocumentHead({
+    titleEn: `${guide.title} | Kasandra Prieto`,
+    titleEs: `${guide.titleEs} | Kasandra Prieto`,
+    descriptionEn: guide.intro.slice(0, 155) + "…",
+    descriptionEs: guide.introEs.slice(0, 155) + "…",
+  });
+
   return (
     <V2Layout>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: t(guide.title, guide.titleEs),
+        author: { "@type": "Person", name: guide.author },
+        publisher: { "@type": "Person", name: "Kasandra Prieto" },
+        description: t(guide.intro, guide.introEs).slice(0, 200),
+        inLanguage: language,
+      }} />
       {/* Hero Section */}
       <section className="relative bg-cc-navy pt-32 pb-16">
         <div className="absolute inset-0 bg-gradient-to-br from-cc-navy via-cc-navy-dark to-cc-navy opacity-95" />

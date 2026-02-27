@@ -1,4 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
+import JsonLd from "@/components/seo/JsonLd";
 import V2Layout from "@/components/v2/V2Layout";
 import { Radio, Youtube, Users, TrendingUp, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,9 +11,24 @@ import { useYouTubeVideos } from "@/hooks/useYouTubeVideos";
 const V2PodcastContent = () => {
   const { t } = useLanguage();
   const { data: videos, isLoading } = useYouTubeVideos(9);
+  useDocumentHead({
+    titleEn: "Lifting You Up Podcast | Tucson Real Estate & Community",
+    titleEs: "Podcast Lifting You Up | Bienes Raíces y Comunidad en Tucson",
+    descriptionEn: "Listen to Lifting You Up with Kasandra Prieto on Urbana 92.5 FM. Inspiring conversations about community, wealth, and Hispanic success stories.",
+    descriptionEs: "Escuche Lifting You Up con Kasandra Prieto en Urbana 92.5 FM. Conversaciones sobre comunidad, riqueza y éxito hispano.",
+  });
 
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "PodcastSeries",
+        name: "Lifting You Up with Kasandra Prieto",
+        description: "Inspiring conversations about community leadership, generational wealth, and Hispanic success stories in Tucson.",
+        url: "https://www.youtube.com/@KasandraPrietoTucson",
+        author: { "@type": "Person", name: "Kasandra Prieto" },
+        inLanguage: ["en", "es"],
+      }} />
       {/* Hero */}
       <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>

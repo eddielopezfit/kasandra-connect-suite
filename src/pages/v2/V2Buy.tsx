@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -20,6 +21,12 @@ const V2BuyContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
   const [leadName, setLeadName] = useState<string | null>(null);
+  useDocumentHead({
+    titleEn: "Buy a Home in Tucson | First-Time Buyer & Relocation Guide",
+    titleEs: "Compre una Casa en Tucson | Guía para Compradores Primerizos y Reubicación",
+    descriptionEn: "Step-by-step home buying guidance in Tucson. Bilingual support, down payment assistance programs, and 24/7 AI concierge.",
+    descriptionEs: "Guía paso a paso para comprar casa en Tucson. Apoyo bilingüe, programas de asistencia y asistente IA 24/7.",
+  });
 
   useEffect(() => {
     setFieldIfEmpty('intent', 'buy');

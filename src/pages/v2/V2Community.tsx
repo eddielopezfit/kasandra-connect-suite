@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Heart, Users, Award, HandHeart, Store, MessageCircle } from "lucide-react";
@@ -14,6 +15,12 @@ import heroImage from "@/assets/hero-bg.jpg";
 const V2CommunityContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+  useDocumentHead({
+    titleEn: "Tucson Community Impact | Kasandra Prieto Gives Back",
+    titleEs: "Impacto Comunitario en Tucson | Kasandra Prieto Retribuye",
+    descriptionEn: "Kasandra Prieto's community leadership in Tucson. Arizona Diaper Bank, Rumbo al Éxito, and local business advocacy.",
+    descriptionEs: "Liderazgo comunitario de Kasandra Prieto en Tucson. Arizona Diaper Bank, Rumbo al Éxito y apoyo empresarial local.",
+  });
 
   return (
     <>
