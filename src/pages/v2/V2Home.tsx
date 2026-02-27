@@ -102,41 +102,22 @@ const V2HomeContent = () => {
                 {t("Chat with Selena", "Hablar con Selena")}
               </Button>
             </div>
-            {/* Intent Row — 3 path buttons */}
-            <div className="flex flex-wrap gap-3 mt-4 animate-fade-up animation-delay-600">
-              <Button
-                asChild
-                variant="outline"
-                className="border-white/30 text-white hover:bg-white/10 rounded-full px-5 text-sm"
+            {/* Intent Pills — 2 compact links */}
+            <div className="flex gap-3 mt-4 animate-fade-up animation-delay-600">
+              <Link
+                to="/v2/sell"
                 onClick={() => logCTAClick({ cta_name: 'hero_intent_sell', destination: '/v2/sell', page_path: '/v2', intent: 'sell' })}
+                className="text-sm text-white/80 hover:text-white border border-white/25 hover:border-white/50 rounded-full px-4 py-1.5 transition-colors"
               >
-                <Link to="/v2/sell">
-                  <Home className="w-4 h-4 mr-2" />
-                  {t("Selling: See My Options", "Vender: Ver Mis Opciones")}
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="border-white/30 text-white hover:bg-white/10 rounded-full px-5 text-sm"
-                onClick={() => logCTAClick({ cta_name: 'hero_intent_buy', destination: '/v2/buyer-readiness', page_path: '/v2', intent: 'buy' })}
+                {t("I'm Selling", "Quiero Vender")}
+              </Link>
+              <Link
+                to="/v2/buy"
+                onClick={() => logCTAClick({ cta_name: 'hero_intent_buy', destination: '/v2/buy', page_path: '/v2', intent: 'buy' })}
+                className="text-sm text-white/80 hover:text-white border border-white/25 hover:border-white/50 rounded-full px-4 py-1.5 transition-colors"
               >
-                <Link to="/v2/buyer-readiness">
-                  <Shield className="w-4 h-4 mr-2" />
-                  {t("Buying: Check My Readiness", "Comprar: Evaluar Mi Preparación")}
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="border-white/30 text-white hover:bg-white/10 rounded-full px-5 text-sm"
-                onClick={() => logCTAClick({ cta_name: 'hero_intent_quiz', destination: '/v2/quiz', page_path: '/v2', intent: 'explore' })}
-              >
-                <Link to="/v2/quiz">
-                  <Clock className="w-4 h-4 mr-2" />
-                  {t("Not Sure: 60-Second Quiz", "No Sé: Quiz de 60 Segundos")}
-                </Link>
-              </Button>
+                {t("I'm Buying", "Quiero Comprar")}
+              </Link>
             </div>
           </div>
         </div>

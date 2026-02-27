@@ -105,7 +105,7 @@ const V2BuyerReadinessContent = () => {
             <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
               {t("For Buyers", "Para Compradores")}
             </span>
-            <h1 className="font-serif text-3xl md:text-4xl font-bold mt-2 mb-4 text-white">
+            <h1 className="font-serif text-4xl md:text-5xl font-bold mt-2 mb-4 text-white">
               {t(
                 "Where Are You in Your Home Buying Journey?",
                 "¿Dónde Estás en Tu Camino de Compra de Casa?"

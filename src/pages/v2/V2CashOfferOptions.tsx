@@ -289,7 +289,7 @@ const V2CashOfferOptionsContent = () => {
       <GoogleReviewsSection />
 
       {/* Back Link */}
-      <section className="py-10 bg-cc-navy">
+      <section className="py-10 pb-24 sm:pb-10 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <p className="text-white/80 mb-4">
             {t(
