@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import V2Layout from "@/components/v2/V2Layout";
 import GHLBookingCalendar from "@/components/v2/GHLBookingCalendar";
 import { Calendar } from "lucide-react";
@@ -9,6 +10,12 @@ import { logEvent } from "@/lib/analytics/logEvent";
 const V2BookContent = () => {
   const { t } = useLanguage();
   const [searchParams] = useSearchParams();
+  useDocumentHead({
+    titleEn: "Book a Consultation | Kasandra Prieto, Tucson Realtor",
+    titleEs: "Agendar una Consulta | Kasandra Prieto, Realtor en Tucson",
+    descriptionEn: "Schedule a conversation with Kasandra Prieto. Bilingual real estate consultation for buyers and sellers in Tucson.",
+    descriptionEs: "Agende una conversación con Kasandra Prieto. Consulta bilingüe de bienes raíces para compradores y vendedores en Tucson.",
+  });
 
   // Condition 1: lightweight analytics — log page view + intent + UTMs
   useEffect(() => {

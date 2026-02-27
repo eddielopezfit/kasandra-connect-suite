@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
+import JsonLd from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
@@ -37,6 +39,12 @@ import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 const V2HomeContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+  useDocumentHead({
+    titleEn: "Kasandra Prieto | Tucson Realtor & Bilingual Real Estate Agent",
+    titleEs: "Kasandra Prieto | Agente de Bienes Raíces Bilingüe en Tucson",
+    descriptionEn: "Bilingual real estate guidance in Tucson. 24/7 AI concierge, cash offer options, and personalized home buying & selling support.",
+    descriptionEs: "Orientación bilingüe de bienes raíces en Tucson. Asistente IA 24/7, opciones de oferta en efectivo y apoyo personalizado.",
+  });
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
   
@@ -64,6 +72,18 @@ const V2HomeContent = () => {
 
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": ["RealEstateAgent", "LocalBusiness"],
+        name: "Kasandra Prieto",
+        description: "Bilingual REALTOR® serving the Tucson community with integrity, heart, and expertise.",
+        url: "https://kasandraprieto.com/v2",
+        image: "https://kasandraprieto.com/og-kasandra.jpg",
+        telephone: "+1-520-000-0000",
+        address: { "@type": "PostalAddress", addressLocality: "Tucson", addressRegion: "AZ", addressCountry: "US" },
+        areaServed: { "@type": "City", name: "Tucson" },
+        knowsLanguage: ["en", "es"],
+      }} />
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center w-full max-w-full overflow-hidden">
         <div

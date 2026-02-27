@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, Heart } from "lucide-react";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
+import JsonLd from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/button";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -178,6 +180,12 @@ function GuidesContent() {
   const navigate = useNavigate();
   const { openChat, sendMessage } = useSelenaChat();
   const [activeCategory, setActiveCategory] = useState("all");
+  useDocumentHead({
+    titleEn: "Real Estate Guides | Tucson Home Buying & Selling Education",
+    titleEs: "Guías de Bienes Raíces | Educación de Compra y Venta en Tucson",
+    descriptionEn: "Free bilingual guides on buying, selling, cash offers, and inherited property in Tucson. Learn at your own pace.",
+    descriptionEs: "Guías bilingües gratuitas sobre compra, venta, ofertas en efectivo y propiedad heredada en Tucson.",
+  });
   
   // Personalization state - refreshed on mount
   const [guidesRead, setGuidesReadState] = useState<string[]>([]);
@@ -316,6 +324,16 @@ function GuidesContent() {
 
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+          { "@type": "Question", name: "How do I buy my first home in Tucson?", acceptedAnswer: { "@type": "Answer", text: "Start with pre-approval, explore down payment assistance programs, and work with a bilingual REALTOR® who knows the Tucson market." } },
+          { "@type": "Question", name: "Should I accept a cash offer on my house?", acceptedAnswer: { "@type": "Answer", text: "Cash offers trade speed and certainty for a lower price. Compare net proceeds using a calculator and consult a local agent." } },
+          { "@type": "Question", name: "What is my Tucson home worth?", acceptedAnswer: { "@type": "Answer", text: "Home values depend on location, condition, and market trends. A Comparative Market Analysis (CMA) gives the most accurate picture." } },
+          { "@type": "Question", name: "How do I sell an inherited property in Pima County?", acceptedAnswer: { "@type": "Answer", text: "Inherited property may require probate. Understanding your options—keep, sell, or rent—starts with knowing the property's current value and legal status." } },
+        ],
+      }} />
       {/* Layer 1: Personalized Hero */}
       <PersonalizedHero
         isReturning={isReturning}
