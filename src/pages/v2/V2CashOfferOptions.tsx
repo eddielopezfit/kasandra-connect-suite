@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
+import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
 import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, MessageCircle } from "lucide-react";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-bg.jpg";
@@ -283,6 +284,9 @@ const V2CashOfferOptionsContent = () => {
           </div>
         </div>
       </section>
+
+      {/* Google Reviews — Social Proof */}
+      <GoogleReviewsSection />
 
       {/* Back Link */}
       <section className="py-10 bg-cc-navy">

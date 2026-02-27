@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Home, DollarSign, TrendingUp, MapPin, Calculator, ArrowRight, Heart } from "lucide-react";
+import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -62,36 +62,12 @@ const categories = [
     descEs: "Para propietarios listos para avanzar"
   },
   { 
-    id: "tips", 
-    label: "Practical Tips", 
-    labelEs: "Consejos Prácticos", 
-    icon: ArrowRight,
-    desc: "Helpful for any stage",
-    descEs: "Útil para cualquier etapa"
-  },
-  { 
     id: "valuation", 
     label: "Understanding Your Value", 
     labelEs: "Entendiendo Tu Valor", 
     icon: Calculator,
     desc: "Know what your home is worth",
     descEs: "Conoce cuánto vale tu casa"
-  },
-  { 
-    id: "financial", 
-    label: "Financial Guidance", 
-    labelEs: "Guía Financiera", 
-    icon: DollarSign,
-    desc: "For those exploring affordability",
-    descEs: "Para quienes exploran su presupuesto"
-  },
-  { 
-    id: "neighborhoods", 
-    label: "Tucson Neighborhoods", 
-    labelEs: "Vecindarios de Tucson", 
-    icon: MapPin,
-    desc: "Find the right community",
-    descEs: "Encuentra la comunidad ideal"
   },
   { 
     id: "stories", 
