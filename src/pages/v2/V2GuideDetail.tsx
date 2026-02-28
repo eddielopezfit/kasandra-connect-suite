@@ -32,7 +32,8 @@ const MID_GUIDE_PROMPTS: Record<MidGuidePromptKey, { en: string; es: string }> =
   trust_story_followup: { en: "Does this sound like your situation? Selena can help you take the next step.", es: "¿Esto suena como tu situación? Selena puede ayudarte a dar el siguiente paso." },
 };
 
-const V2GuideDetail = () => {
+// Inner component — must be rendered inside V2Layout (which provides SelenaChatProvider)
+function GuideDetailContent() {
   const { guideId } = useParams<{ guideId: string }>();
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
@@ -153,18 +154,16 @@ const V2GuideDetail = () => {
 
   if (isLoading || !guide) {
     return (
-      <V2Layout>
-        <section className="bg-cc-navy pt-32 pb-16 min-h-[40vh] flex items-center justify-center">
-          <div className="text-white/50 text-lg">{t("Loading guide…", "Cargando guía…")}</div>
-        </section>
-      </V2Layout>
+      <section className="bg-cc-navy pt-32 pb-16 min-h-[40vh] flex items-center justify-center">
+        <div className="text-white/50 text-lg">{t("Loading guide…", "Cargando guía…")}</div>
+      </section>
     );
   }
 
   const safeCategory: GuideCategory = registryEntry?.category ?? 'stories';
 
   return (
-    <V2Layout>
+    <>
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "Article",
@@ -312,8 +311,14 @@ const V2GuideDetail = () => {
           category={safeCategory}
         />
       </article>
-    </V2Layout>
+    </>
   );
-};
+}
+
+const V2GuideDetail = () => (
+  <V2Layout>
+    <GuideDetailContent />
+  </V2Layout>
+);
 
 export default V2GuideDetail;
