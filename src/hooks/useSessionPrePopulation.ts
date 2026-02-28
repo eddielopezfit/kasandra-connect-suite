@@ -190,6 +190,12 @@ export function getFullSessionDossier(): Record<string, unknown> {
     // Ad funnel bridge
     ad_funnel_source: session.ad_funnel_source,
     ad_funnel_value_range: session.ad_funnel_value_range,
+    
+    // Seller Decision Path
+    seller_decision_step: session.seller_decision_step,
+    seller_decision_recommended_path: session.seller_decision_recommended_path,
+    seller_goal_priority: session.seller_goal_priority,
+    property_condition_raw: session.property_condition_raw,
   };
   
   // Filter out undefined values to prevent edge function issues
