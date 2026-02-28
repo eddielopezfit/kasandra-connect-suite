@@ -50,7 +50,8 @@ Deno.serve(async (req) => {
     }
 
     const rawBody = await req.text();
-    if (rawBody.length > MAX_PAYLOAD_BYTES) {
+    const bodyBytes = new TextEncoder().encode(rawBody).length;
+    if (bodyBytes > MAX_PAYLOAD_BYTES) {
       return new Response(
         JSON.stringify({ ok: false, error: 'Payload too large (max 50KB)' }),
         { status: 413, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -98,16 +99,20 @@ async function handleCreate(
   supabase: ReturnType<typeof createClient>,
   payload: CreatePayload
 ): Promise<Response> {
+  // Default receipt_type to 'seller_decision' if omitted
+  const receiptType = payload.receipt_type || 'seller_decision';
+
   // Validate receipt_type
-  if (!VALID_RECEIPT_TYPES.includes(payload.receipt_type as ReceiptType)) {
+  if (!VALID_RECEIPT_TYPES.includes(receiptType as ReceiptType)) {
     return new Response(
       JSON.stringify({ ok: false, error: `Invalid receipt_type. Must be one of: ${VALID_RECEIPT_TYPES.join(', ')}` }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 
-  // Validate language
-  if (!['en', 'es'].includes(payload.language)) {
+  // Validate language — default to 'en' if missing
+  const language = payload.language || 'en';
+  if (!['en', 'es'].includes(language)) {
     return new Response(
       JSON.stringify({ ok: false, error: 'Language must be "en" or "es"' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -122,7 +127,7 @@ async function handleCreate(
     );
   }
 
-  const requiredKeys = REQUIRED_RECEIPT_KEYS[payload.receipt_type as ReceiptType] || [];
+  const requiredKeys = REQUIRED_RECEIPT_KEYS[receiptType as ReceiptType] || [];
   const missingKeys = requiredKeys.filter(k => !(k in payload.receipt_data));
   if (missingKeys.length > 0) {
     return new Response(
@@ -133,8 +138,8 @@ async function handleCreate(
 
   console.log('[save-decision-receipt] Creating receipt:', {
     session_id: payload.session_id,
-    receipt_type: payload.receipt_type,
-    language: payload.language,
+    receipt_type: receiptType,
+    language,
   });
 
   // UPSERT: one receipt per (session_id, receipt_type) — handles Step 5 refreshes
@@ -143,13 +148,13 @@ async function handleCreate(
     .upsert(
       {
         session_id: payload.session_id,
-        receipt_type: payload.receipt_type,
+        receipt_type: receiptType,
         receipt_data: payload.receipt_data,
-        language: payload.language,
+        language,
       },
       { onConflict: 'session_id,receipt_type' }
     )
-    .select('id')
+    .select('id, lead_id')
     .single();
 
   if (error) {
@@ -187,14 +192,37 @@ async function handleAttach(
     session_id: payload.session_id,
   });
 
-  // Anti-hijack: match both id AND session_id
-  // Guard: only attach if lead_id IS NULL or already matches (prevents overwrite)
+  // Two-step attach for deterministic correctness (Option A)
+  // Step 1: Find the receipt and check ownership + lead_id state
+  const { data: existing, error: fetchErr } = await supabase
+    .from('decision_receipts')
+    .select('id, lead_id')
+    .eq('id', payload.receipt_id)
+    .eq('session_id', payload.session_id)
+    .single();
+
+  if (fetchErr || !existing) {
+    console.error('[save-decision-receipt] Receipt not found or session mismatch');
+    return new Response(
+      JSON.stringify({ ok: false, error: 'Receipt not found or session mismatch' }),
+      { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // Step 2: Guard — only attach if lead_id is null or already matches
+  if (existing.lead_id !== null && existing.lead_id !== payload.lead_id) {
+    console.error('[save-decision-receipt] lead_id already set to different value');
+    return new Response(
+      JSON.stringify({ ok: false, error: 'Receipt already attached to a different lead' }),
+      { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // Step 3: Update
   const { data, error } = await supabase
     .from('decision_receipts')
     .update({ lead_id: payload.lead_id })
     .eq('id', payload.receipt_id)
-    .eq('session_id', payload.session_id)
-    .or(`lead_id.is.null,lead_id.eq.${payload.lead_id}`)
     .select('id')
     .single();
 
