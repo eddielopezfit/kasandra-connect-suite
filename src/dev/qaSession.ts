@@ -57,3 +57,39 @@ export function resetAll(): void {
   localStorage.removeItem(CONTEXT_KEY);
   console.log('[QA] All session data cleared.');
 }
+
+/**
+ * Reset only seller-decision wizard keys in SessionContext.
+ * Preserves session ID, UTMs, language, and lead identity.
+ */
+export function resetSellerDecisionContext(): void {
+  try {
+    const raw = localStorage.getItem(CONTEXT_KEY);
+    if (!raw) {
+      console.log('[QA] No session context to reset.');
+      return;
+    }
+    const ctx = JSON.parse(raw);
+
+    // Null out seller-decision-specific keys
+    const sellerKeys = [
+      'seller_decision_step',
+      'seller_decision_recommended_path',
+      'seller_goal_priority',
+      'property_condition_raw',
+      'neighborhood_explored',
+      'last_neighborhood_zip',
+      'situation',
+      'timeline',
+      'condition',
+    ];
+    for (const key of sellerKeys) {
+      delete ctx[key];
+    }
+
+    localStorage.setItem(CONTEXT_KEY, JSON.stringify(ctx));
+    console.log('[QA] Seller decision context keys cleared:', sellerKeys);
+  } catch {
+    console.warn('[QA] Failed to reset seller decision context.');
+  }
+}
