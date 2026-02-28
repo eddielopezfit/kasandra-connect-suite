@@ -1,7 +1,11 @@
 export { default as StepSituation } from './StepSituation';
 export { default as StepPropertySnapshot } from './StepPropertySnapshot';
 export { default as StepCondition } from './StepCondition';
+export { default as StepNeighborhood } from './StepNeighborhood';
+export { default as StepDualPath } from './StepDualPath';
 export { conditionInsights, conditionTierOrder } from './conditionInsights';
 export type { ConditionTier, ConditionInsight } from './conditionInsights';
 export type { Situation, Timeline, GoalPriority } from './StepSituation';
 export type { PropertySnapshotData, BedsCount, BathsCount, SqftRange, HomeEra } from './StepPropertySnapshot';
+export type { NeighborhoodResult } from './StepNeighborhood';
+export type { RecommendedPath } from './StepDualPath';
