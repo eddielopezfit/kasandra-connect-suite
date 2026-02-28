@@ -178,6 +178,18 @@ export const DECISION_PATH_LABELS: Record<string, { en: string; es: string }> = 
     en: 'Story: Bilingual Support',
     es: 'Historia: Apoyo Bilingüe',
   },
+  'cash-vs-traditional-sale': {
+    en: 'Decision: Cash vs Traditional',
+    es: 'Decisión: Efectivo vs Tradicional',
+  },
+  'sell-now-or-wait': {
+    en: 'Decision: Timing',
+    es: 'Decisión: Momento',
+  },
+  'life-change-selling': {
+    en: 'Decision: Life Change',
+    es: 'Decisión: Cambio de Vida',
+  },
 };
 
 export function getDecisionLabel(guideId: string): { en: string; es: string } | null {
