@@ -2,12 +2,13 @@ import { useState, useCallback, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import QuizFunnelLayout from "@/components/v2/QuizFunnelLayout";
 import { Progress } from "@/components/ui/progress";
-import { StepSituation, StepPropertySnapshot, StepCondition, StepNeighborhood, StepDualPath } from "@/components/v2/seller-decision";
+import { StepSituation, StepPropertySnapshot, StepCondition, StepNeighborhood, StepDualPath, StepContact } from "@/components/v2/seller-decision";
 import type { Situation, Timeline, GoalPriority } from "@/components/v2/seller-decision/StepSituation";
 import type { PropertySnapshotData } from "@/components/v2/seller-decision/StepPropertySnapshot";
 import type { ConditionTier } from "@/components/v2/seller-decision/conditionInsights";
 import type { NeighborhoodResult } from "@/components/v2/seller-decision/StepNeighborhood";
 import type { RecommendedPath } from "@/components/v2/seller-decision/StepDualPath";
+import type { ContactResult } from "@/components/v2/seller-decision/StepContact";
 import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
@@ -24,6 +25,7 @@ interface WizardState {
   neighborhood?: NeighborhoodResult | null;
   recommendedPath?: RecommendedPath;
   receiptId?: string | null;
+  contact?: ContactResult;
 }
 
 const V2SellerDecision = () => {
@@ -97,6 +99,13 @@ const V2SellerDecision = () => {
     goTo(6);
   }, [goTo]);
 
+  const handleStep6 = useCallback((result: ContactResult) => {
+    setWizardData(prev => ({ ...prev, contact: result }));
+    updateSessionContext({ seller_decision_step: 6 });
+    logEvent('seller_decision_step_completed', { step: 6, lead_id: result.leadId, cta_variant: result.variant });
+    goTo(7);
+  }, [goTo]);
+
   return (
     <QuizFunnelLayout showSelena={step >= TOTAL_STEPS}>
       <div className="container mx-auto max-w-2xl px-4 py-8">
@@ -146,8 +155,21 @@ const V2SellerDecision = () => {
           />
         )}
 
-        {/* Placeholder for Steps 6–7 */}
-        {step >= 6 && step <= TOTAL_STEPS && (
+        {/* Step 6: Contact */}
+        {step === 6 && wizardData.recommendedPath && (
+          <StepContact
+            receiptId={wizardData.receiptId ?? null}
+            recommendedPath={wizardData.recommendedPath}
+            situation={wizardData.situation}
+            timeline={wizardData.timeline}
+            condition={wizardData.condition}
+            onNext={handleStep6}
+            onBack={() => goTo(5)}
+          />
+        )}
+
+        {/* Placeholder for Step 7 (Receipt view) */}
+        {step === 7 && (
           <div className="text-center py-16 space-y-6 animate-fade-in">
             <div className="w-16 h-16 rounded-full bg-cc-gold/10 flex items-center justify-center mx-auto">
               <Clock className="w-8 h-8 text-cc-gold" />
@@ -158,8 +180,8 @@ const V2SellerDecision = () => {
               </h2>
               <p className="text-cc-text-muted text-sm max-w-md mx-auto">
                 {t(
-                  "The contact step and your personalized Decision Receipt view are coming very soon. Your data is safe.",
-                  "El paso de contacto y la vista de su Recibo de Decisión personalizado llegarán muy pronto. Sus datos están seguros."
+                  "Your personalized Decision Receipt view is coming very soon. Your data is safe.",
+                  "La vista de su Recibo de Decisión personalizado llegará muy pronto. Sus datos están seguros."
                 )}
               </p>
               {wizardData.recommendedPath && (
@@ -170,11 +192,11 @@ const V2SellerDecision = () => {
               )}
             </div>
             <button
-              onClick={() => goTo(5)}
+              onClick={() => goTo(6)}
               className="inline-flex items-center gap-1.5 text-sm text-cc-navy hover:text-cc-navy-dark transition-colors underline underline-offset-2"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              {t("Back to comparison", "Volver a la comparación")}
+              {t("Back", "Atrás")}
             </button>
           </div>
         )}
