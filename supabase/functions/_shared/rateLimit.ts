@@ -17,6 +17,7 @@ const ENDPOINT_LIMITS: Record<string, RateLimitConfig> = {
   'submit-seller': { maxRequests: 5, windowSeconds: 3600 },
   'upsert-lead-profile': { maxRequests: 10, windowSeconds: 3600 },
   'neighborhood-profile': { maxRequests: 10, windowSeconds: 3600 },
+  'save-decision-receipt': { maxRequests: 10, windowSeconds: 3600 },
 };
 
 /**
