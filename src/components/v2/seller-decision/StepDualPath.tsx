@@ -110,6 +110,7 @@ const StepDualPath = ({
         hasGarage: property.hasGarage,
         zip: property.zip || null,
       },
+      condition: condition,
       property_condition_raw: condition,
       neighborhood: neighborhood ? {
         zip: neighborhood.zip,
