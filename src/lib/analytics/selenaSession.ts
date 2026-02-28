@@ -108,6 +108,7 @@ export interface SessionContext {
   seller_decision_step?: number;
   seller_decision_recommended_path?: 'cash' | 'traditional' | 'consult';
   seller_goal_priority?: 'speed' | 'price' | 'least_stress' | 'privacy' | 'not_sure';
+  property_condition_raw?: 'needs_work' | 'mostly_original' | 'standard' | 'updated' | 'like_new';
 }
 
 /**
