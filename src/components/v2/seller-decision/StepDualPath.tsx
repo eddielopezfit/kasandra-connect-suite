@@ -19,7 +19,7 @@ interface StepDualPathProps {
   property: PropertySnapshotData;
   condition: ConditionTier;
   neighborhood?: NeighborhoodResult | null;
-  onNext: (result: { recommendedPath: RecommendedPath; receiptId: string }) => void;
+  onNext: (result: { recommendedPath: RecommendedPath; receiptId: string | null }) => void;
   onBack: () => void;
 }
 
@@ -108,10 +108,12 @@ const StepDualPath = ({
         hasGarage: property.hasGarage,
         zip: property.zip || null,
       },
-      condition,
+      property_condition_raw: condition,
       neighborhood: neighborhood ? {
         zip: neighborhood.zip,
         cached: neighborhood.cached,
+        lifestyle_feel: neighborhood.profileEn?.lifestyle_feel || null,
+        buyer_fit: neighborhood.profileEn?.buyer_fit || null,
       } : null,
       recommended_path: recommendedPath,
       language,
@@ -146,12 +148,18 @@ const StepDualPath = ({
         has_neighborhood: !!neighborhood,
       });
 
+      logEvent('seller_decision_step_completed', {
+        step: 5,
+        recommended_path: recommendedPath,
+        receipt_saved: true,
+      });
+
       onNext({ recommendedPath, receiptId });
     } catch (err) {
       console.error('[StepDualPath] Receipt save error:', err);
       // Non-blocking: proceed even if receipt save fails, using a placeholder ID
-      logEvent('seller_decision_step_completed', { step: 5, recommended_path: recommendedPath, receipt_error: true });
-      onNext({ recommendedPath, receiptId: '' });
+      logEvent('seller_decision_step_completed', { step: 5, recommended_path: recommendedPath, receipt_saved: false });
+      onNext({ recommendedPath, receiptId: null });
     } finally {
       setSaving(false);
     }
@@ -269,6 +277,22 @@ const StepDualPath = ({
           </div>
         </div>
       </div>
+
+      {/* Consult bridge CTA */}
+      {recommendedPath === 'consult' && (
+        <div className="text-center">
+          <button
+            onClick={() => {
+              logEvent('cta_click', { cta: 'consult_talk_to_selena', destination: 'selena_chat' });
+              // Trigger Selena open via custom event
+              window.dispatchEvent(new CustomEvent('selena:open'));
+            }}
+            className="text-sm text-cc-gold hover:text-cc-gold-dark underline underline-offset-2 font-medium transition-colors"
+          >
+            {t("💬 Talk to Selena for a calm recommendation", "💬 Habla con Selena para una recomendación tranquila")}
+          </button>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex items-center gap-3">
