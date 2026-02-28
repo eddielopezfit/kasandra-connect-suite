@@ -38,10 +38,10 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Rate limiting (looser for reads: 30/hr)
+    // Rate limiting (looser for reads: 30/hr, keyed by IP+session to avoid shared-IP collisions)
     const forwarded = req.headers.get('x-forwarded-for');
     const ip = forwarded?.split(',')[0]?.trim() || 'unknown';
-    const rl = await checkRateLimit(supabase, `ip:${ip}`, 'get-decision-receipt');
+    const rl = await checkRateLimit(supabase, `ip:${ip}:sid:${session_id}`, 'get-decision-receipt');
     if (!rl.allowed) return rateLimitResponse(corsHeaders);
 
     const { data, error } = await supabase
