@@ -28,6 +28,7 @@ interface ReceiptData {
   timeline?: string;
   goal_priority?: string;
   condition?: string;
+  property_condition_raw?: string;
   recommended_path?: RecommendedPath;
   property?: {
     beds?: string;
@@ -57,8 +58,6 @@ interface Receipt {
 }
 
 interface StepReceiptViewProps {
-  /** Fallback receiptId from wizard state (optimization) */
-  receiptId?: string | null;
   onBackToComparison: () => void;
   onRestart: () => void;
 }
@@ -85,6 +84,7 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
 
         setReceipt(data.receipt as Receipt);
         logEvent("decision_receipt_viewed", { receipt_id: data.receipt.id });
+        logEvent("seller_decision_step_completed", { step: 7, receipt_id: data.receipt.id });
       } catch (e) {
         console.error("[StepReceiptView] Load error:", e);
         setError(true);
@@ -144,6 +144,7 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
 
   const rd = receipt.receipt_data;
   const recommended = rd.recommended_path;
+  const conditionKey = rd.property_condition_raw ?? rd.condition ?? null;
 
   // Label maps
   const situationLabel: Record<string, string> = {
@@ -256,12 +257,12 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
               </div>
             </div>
           )}
-          {rd.condition && (
+          {conditionKey && (
             <div className="flex items-start gap-3">
               <Home className="w-4 h-4 text-cc-text-muted flex-shrink-0 mt-0.5" />
               <div>
                 <span className="font-medium text-cc-navy">{t("Condition:", "Condición:")}</span>{" "}
-                <span className="text-cc-charcoal">{conditionLabel[rd.condition] || rd.condition}</span>
+                <span className="text-cc-charcoal">{conditionLabel[conditionKey] || conditionKey}</span>
               </div>
             </div>
           )}
