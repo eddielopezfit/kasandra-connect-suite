@@ -92,13 +92,7 @@ function calculateGuideScore(
     }
   }
 
-  // 7. Short read time for hesitant users (+10 points)
-  if (signals.sessionDuration < 60 && guide.readTime.includes('5')) {
-    score += 10;
-    reasons.push('Quick read for new visitors');
-  }
-
-  // 8. Stories for trust-building (+10 points for new users)
+  // 7. Stories for trust-building (+10 points for new users)
   if (signals.guidesRead.length < 2 && guide.category === 'stories') {
     score += 10;
     reasons.push('Trust-building story');

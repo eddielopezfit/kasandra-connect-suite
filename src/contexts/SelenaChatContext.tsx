@@ -167,6 +167,8 @@ function getPhaseAwareChips(
 export type EntrySource = 
   | 'calculator' 
   | 'guide_handoff' 
+  | 'guide_exit_ramp'
+  | 'guide_mid_cta'
   | 'synthesis' 
   | 'hero' 
   | 'floating' 

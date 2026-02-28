@@ -10,11 +10,15 @@ import { useRef, useState } from "react";
 interface RecommendedGuidesCarouselProps {
   items: RecommendedGuide[];
   onGuideClick: (guideId: string) => void;
+  headingEn?: string;
+  headingEs?: string;
 }
 
 export function RecommendedGuidesCarousel({
   items,
   onGuideClick,
+  headingEn = "Recommended For You",
+  headingEs = "Recomendado Para Ti",
 }: RecommendedGuidesCarouselProps) {
   const { t } = useLanguage();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -46,8 +50,8 @@ export function RecommendedGuidesCarousel({
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="font-serif text-2xl md:text-3xl text-cc-navy mb-2">
-              {t("Recommended For You", "Recomendado Para Ti")}
+          <h2 className="font-serif text-2xl md:text-3xl text-cc-navy mb-2">
+              {t(headingEn, headingEs)}
             </h2>
             <p className="text-cc-slate text-sm">
               {t(
@@ -113,13 +117,10 @@ export function RecommendedGuidesCarousel({
                 {t(guide.description, guide.descriptionEs)}
               </p>
               
-              {/* Read Time & CTA */}
-              <div className="flex items-center justify-between mt-auto">
-                <span className="text-xs text-cc-slate">
-                  {t(guide.readTime, guide.readTimeEs)}
-                </span>
+              {/* CTA */}
+              <div className="flex items-center justify-end mt-auto">
                 <span className="flex items-center text-cc-gold font-medium text-sm group-hover:gap-2 transition-all">
-                  {t("Read Guide", "Leer Guía")}
+                  {t("Get Clarity", "Obtener Claridad")}
                   <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                 </span>
               </div>
