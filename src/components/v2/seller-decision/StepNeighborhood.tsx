@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,24 +31,25 @@ const StepNeighborhood = ({ externalZip, initialResult, onNext, onBack }: StepNe
   const [result, setResult] = useState<NeighborhoodResult | null>(initialResult || null);
   const hasAutoExplored = useRef(false);
 
-  // Auto-explore if external ZIP provided and no existing result
-  useEffect(() => {
-    if (externalZip && !initialResult && !hasAutoExplored.current && /^\d{5}$/.test(externalZip)) {
-      hasAutoExplored.current = true;
-      handleExplore(externalZip);
-    }
-  }, [externalZip]);
-
-  const handleExplore = async (overrideZip?: string) => {
+  const handleExplore = useCallback(async (overrideZip?: string) => {
     const trimmed = (overrideZip || zip).trim();
     if (!/^\d{5}$/.test(trimmed)) {
       toast.error(t("Please enter a valid 5-digit ZIP code.", "Ingrese un código postal válido de 5 dígitos."));
       return;
     }
 
+    // Tucson-area soft warning
+    const isTucsonZip = /^(857\d{2}|856\d{2})$/.test(trimmed);
+    if (!isTucsonZip) {
+      toast.info(t(
+        "This tool is tuned for Tucson/Vail. Results for other areas may be limited.",
+        "Esta herramienta está optimizada para Tucson/Vail. Los resultados para otras áreas pueden ser limitados."
+      ));
+    }
+
     logEvent('seller_decision_neighborhood_started', { zip: trimmed });
     setLoading(true);
-    setResult(null);
+    // Keep existing result visible until new one succeeds
 
     try {
       const { data, error } = await supabase.functions.invoke("neighborhood-profile", {
@@ -80,13 +81,22 @@ const StepNeighborhood = ({ externalZip, initialResult, onNext, onBack }: StepNe
       } else {
         toast.error(t("Something went wrong. Please try again.", "Algo salió mal. Intente de nuevo."));
       }
+      // Keep prior result visible on failure (no setResult(null))
     } finally {
       setLoading(false);
     }
-  };
+  }, [zip, t]);
+
+  // Auto-explore if external ZIP provided and no existing result
+  useEffect(() => {
+    if (externalZip && !initialResult && !hasAutoExplored.current && /^\d{5}$/.test(externalZip)) {
+      hasAutoExplored.current = true;
+      handleExplore(externalZip);
+    }
+  }, [externalZip, initialResult, handleExplore]);
 
   const handleSkip = () => {
-    logEvent('seller_decision_neighborhood_skipped', {});
+    logEvent('seller_decision_neighborhood_skipped', { zip_draft: zip || null });
     onNext(null);
   };
 
@@ -121,7 +131,9 @@ const StepNeighborhood = ({ externalZip, initialResult, onNext, onBack }: StepNe
             placeholder={t("Enter ZIP code (e.g. 85719)", "Código postal (ej. 85719)")}
             value={zip}
             onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
-            onKeyDown={(e) => e.key === "Enter" && handleExplore()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") { e.preventDefault(); handleExplore(); }
+            }}
             className="text-center text-lg font-medium tracking-wider border-cc-sand-dark/40 focus-visible:ring-cc-gold"
           />
           <Button
@@ -135,7 +147,7 @@ const StepNeighborhood = ({ externalZip, initialResult, onNext, onBack }: StepNe
         </div>
       </div>
 
-      {/* Loading */}
+      {/* Loading skeleton (shown over existing result) */}
       {loading && (
         <div className="space-y-4">
           <Skeleton className="h-16 w-full rounded-xl" />
@@ -144,7 +156,7 @@ const StepNeighborhood = ({ externalZip, initialResult, onNext, onBack }: StepNe
         </div>
       )}
 
-      {/* Result */}
+      {/* Result — visible even while loading a new one (loading skeleton overlays) */}
       {!loading && result && (
         <NeighborhoodCard profileEn={result.profileEn} profileEs={result.profileEs} zipCode={result.zip} />
       )}

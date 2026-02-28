@@ -23,7 +23,7 @@ interface WizardState {
   condition?: ConditionTier;
   neighborhood?: NeighborhoodResult | null;
   recommendedPath?: RecommendedPath;
-  receiptId?: string;
+  receiptId?: string | null;
 }
 
 const V2SellerDecision = () => {
@@ -90,7 +90,7 @@ const V2SellerDecision = () => {
     goTo(5);
   }, [goTo]);
 
-  const handleStep5 = useCallback((result: { recommendedPath: RecommendedPath; receiptId: string }) => {
+  const handleStep5 = useCallback((result: { recommendedPath: RecommendedPath; receiptId: string | null }) => {
     setWizardData(prev => ({ ...prev, recommendedPath: result.recommendedPath, receiptId: result.receiptId }));
     updateSessionContext({ seller_decision_step: 5, seller_decision_recommended_path: result.recommendedPath });
     logEvent('seller_decision_step_completed', { step: 5, recommended_path: result.recommendedPath, receipt_id: result.receiptId });
