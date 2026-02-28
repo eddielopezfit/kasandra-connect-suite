@@ -195,7 +195,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'open_chat', payload: { source: 'guide', guideId: 'cash-offer-guide', lifeEvent: 'cash_vs_traditional' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
       ],
-      relatedGuideIds: ['selling-for-top-dollar', 'understanding-home-valuation'],
+      relatedGuideIds: ['selling-for-top-dollar', 'understanding-home-valuation', 'cash-vs-traditional-sale'],
     },
     decisionIntent: 'cash',
     decisionStage: 'compare',
@@ -416,6 +416,53 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     midGuideCTA: { afterSection: 1, promptKey: 'bilingual_support' },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
+  },
+  
+  // === PHASE 2 — DECISION COMPRESSION GUIDES ===
+  {
+    id: 'cash-vs-traditional-sale',
+    path: '/v2/guides/cash-vs-traditional-sale',
+    titleEn: 'Cash Offer vs. Traditional Sale: Which Path Nets You More?',
+    titleEs: 'Oferta en Efectivo vs. Venta Tradicional: ¿Cuál Te Deja Más?',
+    labelEn: 'Cash vs. Traditional Sale',
+    labelEs: 'Efectivo vs. Venta Tradicional',
+    descriptionEn: "A side-by-side comparison of your two selling paths — so you can choose with confidence, not guesswork.",
+    descriptionEs: "Una comparación lado a lado de tus dos caminos de venta — para que elijas con confianza, no con suposiciones.",
+    readTime: "8 min read",
+    readTimeEs: "8 min de lectura",
+    isFeatured: true,
+    category: 'cash',
+    status: 'live',
+    funnelStage: 'mofu',
+    keywords: ['cash', 'traditional', 'compare', 'comparison', 'net', 'proceeds', 'efectivo', 'tradicional', 'comparar', 'comparación', 'neto', 'ganancias', 'which', 'better', 'cuál', 'mejor'],
+    tier: 2,
+    lifeEvent: 'cash_vs_traditional',
+    assetSlots: { disclaimer: 'financial' },
+    destinations: {
+      primaryAction: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Run my numbers', es: 'Calcular mis números' } },
+      secondaryActions: [
+        { type: 'open_chat', payload: { source: 'guide', guideId: 'cash-vs-traditional-sale', lifeEvent: 'cash_vs_traditional' }, label: { en: 'Help me decide', es: 'Ayúdame a decidir' } },
+      ],
+      relatedGuideIds: ['cash-offer-guide', 'selling-for-top-dollar', 'understanding-home-valuation'],
+    },
+    decisionIntent: 'cash',
+    decisionStage: 'compare',
+    sortOrder: 35,
+    midGuideCTA: { afterSection: 2, promptKey: 'cash_vs_list' },
+    exitRampCopy: {
+      en: "Want to skip the reading and just see your numbers? Selena can walk you through it.",
+      es: "¿Quieres saltarte la lectura y ver tus números? Selena puede guiarte.",
+    },
+    authorityTheme: 'cash_structure',
+    isCashGuide: true,
+    authorityBridge: {
+      en: "The right path depends on your timeline, your home's condition, and what matters most to you. Kasandra helps homeowners compare these options every week — with real numbers, not hypotheticals.",
+      es: "El camino correcto depende de tu línea de tiempo, la condición de tu casa, y lo que más te importa. Kasandra ayuda a propietarios a comparar estas opciones cada semana — con números reales, no hipotéticos.",
+    },
+    marketInsight: {
+      en: "In Tucson's current market, the gap between cash offers and traditional sale proceeds can range from $15,000 to $60,000+ depending on condition, location, and timing. Knowing your specific number changes the conversation entirely.",
+      es: "En el mercado actual de Tucson, la diferencia entre ofertas en efectivo y las ganancias de una venta tradicional puede variar de $15,000 a $60,000+ dependiendo de la condición, ubicación y tiempo. Conocer tu número específico cambia la conversación por completo.",
+    },
   },
 ];
 

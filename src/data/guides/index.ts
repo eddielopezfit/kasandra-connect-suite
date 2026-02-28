@@ -18,4 +18,5 @@ export const GUIDE_DATA_LOADERS: Record<string, () => Promise<{ default: GuideCo
   'budget-buyer-story': () => import('./budget-buyer-story'),
   'seller-stressful-market-story': () => import('./seller-stressful-market-story'),
   'spanish-speaking-client-story': () => import('./spanish-speaking-client-story'),
+  'cash-vs-traditional-sale': () => import('./cash-vs-traditional-sale'),
 };
