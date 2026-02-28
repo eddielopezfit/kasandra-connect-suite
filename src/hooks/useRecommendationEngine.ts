@@ -12,7 +12,7 @@ export interface RecommendationSignals {
   intent: Intent;
   guidesRead: string[];
   lastViewedCategory: string | null;
-  sessionDuration: number; // seconds
+  sessionDuration: number;
 }
 
 export interface RankedGuide {
@@ -21,19 +21,19 @@ export interface RankedGuide {
   reasons: string[];
 }
 
-// Category weights by intent
+// Category weights by intent — uses exact category IDs from registry
 const INTENT_CATEGORY_MAP: Record<string, string[]> = {
-  buy: ['buying', 'financial', 'neighborhoods'],
-  sell: ['selling', 'valuation', 'tips'],
-  cash: ['valuation', 'selling'],
-  explore: ['stories', 'tips', 'buying', 'selling'],
+  buy: ['buying'],
+  sell: ['selling', 'valuation'],
+  cash: ['cash', 'selling'],
+  explore: ['stories', 'buying', 'selling'],
 };
 
-// Situation-based guide mapping
+// Situation-based guide mapping — only IDs that exist in registry
 const SITUATION_GUIDE_MAP: Record<string, string[]> = {
-  inherited: ['understanding-home-valuation', 'selling-for-top-dollar'],
-  relocating: ['tucson-neighborhood-guide', 'first-time-buyer-guide'],
-  first_time: ['first-time-buyer-guide', 'mortgage-options-explained'],
+  inherited: ['inherited-probate-property', 'cash-offer-guide'],
+  relocating: ['selling-for-top-dollar', 'cash-offer-guide'],
+  first_time: ['first-time-buyer-guide', 'first-time-buyer-story'],
   spanish_first: ['spanish-speaking-client-story'],
 };
 
@@ -56,7 +56,7 @@ function calculateGuideScore(
     }
   }
 
-  // 2. Category continuity - boost same category as last viewed (+20 points)
+  // 2. Category continuity (+20 points)
   if (signals.lastViewedCategory && guide.category === signals.lastViewedCategory) {
     score += 20;
     reasons.push('Same category as last viewed');
@@ -85,14 +85,14 @@ function calculateGuideScore(
 
   // 6. Experienced visitors - boost advanced/comparison content (+15 points)
   if (signals.guidesRead.length >= 3) {
-    const advancedGuides = ['negotiation-strategies', 'closing-costs-breakdown', 'oro-valley-vs-marana'];
+    const advancedGuides = ['cash-offer-guide', 'inherited-probate-property'];
     if (advancedGuides.includes(guide.id)) {
       score += 15;
       reasons.push('Advanced content for engaged users');
     }
   }
 
-  // 7. Short read time for hesitant users (low session duration) (+10 points)
+  // 7. Short read time for hesitant users (+10 points)
   if (signals.sessionDuration < 60 && guide.readTime.includes('5')) {
     score += 10;
     reasons.push('Quick read for new visitors');
@@ -114,9 +114,7 @@ export function getRecommendationSignals(): RecommendationSignals {
   const context = getSessionContext();
   const intent = getIntent();
   const guidesRead = getGuidesRead();
-  const lastGuideId = getLastGuideId();
-  
-  // Estimate session duration from context timestamps
+
   let sessionDuration = 0;
   if (context?.created_at && context?.last_seen_at) {
     const created = new Date(context.created_at).getTime();
@@ -124,15 +122,11 @@ export function getRecommendationSignals(): RecommendationSignals {
     sessionDuration = Math.floor((lastSeen - created) / 1000);
   }
 
-  // Determine last viewed category from last guide
-  let lastViewedCategory: string | null = null;
-  // This will be populated by the hook when guides are passed in
-
   return {
     language: context?.language || 'en',
     intent,
     guidesRead,
-    lastViewedCategory,
+    lastViewedCategory: null,
     sessionDuration,
   };
 }
@@ -144,7 +138,6 @@ export function useRecommendationEngine(allGuides: Guide[]) {
   const signals = useMemo(() => {
     const base = getRecommendationSignals();
     
-    // Find last viewed category from guides
     const lastGuideId = getLastGuideId();
     if (lastGuideId) {
       const lastGuide = allGuides.find(g => g.id === lastGuideId);
@@ -162,18 +155,15 @@ export function useRecommendationEngine(allGuides: Guide[]) {
       return { guide, score, reasons };
     });
 
-    // Sort by score descending
     return ranked.sort((a, b) => b.score - a.score);
   }, [allGuides, signals]);
 
-  // Top recommendations (unread, positive score)
   const topRecommendations = useMemo(() => {
     return rankedGuides
       .filter(r => r.score > 0 && !signals.guidesRead.includes(r.guide.id))
       .slice(0, 6);
   }, [rankedGuides, signals.guidesRead]);
 
-  // Situation-based recommendations
   const getSituationGuides = (situation: string): Guide[] => {
     const guideIds = SITUATION_GUIDE_MAP[situation] || [];
     return guideIds

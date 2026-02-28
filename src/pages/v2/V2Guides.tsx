@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, Heart } from "lucide-react";
+import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, Heart, DollarSign } from "lucide-react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,6 @@ import {
   RecommendedGuidesCarousel,
   GuideCardBadge,
   StartHereLane,
-  
-  
   SelenaSynthesisFooter,
   ResponsiveCategoryNav,
 } from "@/components/v2/guides";
@@ -31,6 +29,7 @@ import {
   type Guide,
 } from "@/lib/guides/personalization";
 import { getCategoryColor, getDecisionLabel } from "@/lib/guides/categoryColors";
+import { getLiveGuides } from "@/lib/guides/guideRegistry";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { useCognitiveStage } from "@/hooks/useCognitiveStage";
 import { useRecommendationEngine } from "@/hooks/useRecommendationEngine";
@@ -63,6 +62,14 @@ const categories = [
     desc: "For homeowners ready to move on",
     descEs: "Para propietarios listos para avanzar"
   },
+  {
+    id: "cash",
+    label: "Cash Offers",
+    labelEs: "Ofertas en Efectivo",
+    icon: DollarSign,
+    desc: "Understand your cash offer options",
+    descEs: "Entiende tus opciones de oferta en efectivo"
+  },
   { 
     id: "valuation", 
     label: "Understanding Your Value", 
@@ -89,90 +96,20 @@ const categories = [
   },
 ];
 
-const guides: Guide[] = [
-  {
-    id: "first-time-buyer-guide",
-    title: "First-Time Home Buyer's Complete Guide",
-    titleEs: "Guía Completa para Compradores de Primera Vivienda",
-    description: "Everything you need to know about buying your first home in Tucson, from pre-approval to closing day.",
-    descriptionEs: "Todo lo que necesitas saber sobre comprar tu primera casa en Tucson, desde la pre-aprobación hasta el día de cierre.",
-    category: "buying",
-    readTime: "12 min",
-    readTimeEs: "12 min",
-    isFeatured: true,
-  },
-  {
-    id: "selling-for-top-dollar",
-    title: "How to Sell Your Home for Top Dollar",
-    titleEs: "Cómo Vender tu Casa al Mejor Precio",
-    description: "Strategic tips and proven methods to maximize your home's value and attract qualified buyers.",
-    descriptionEs: "Consejos estratégicos y métodos probados para maximizar el valor de tu casa y atraer compradores calificados.",
-    category: "selling",
-    readTime: "10 min",
-    readTimeEs: "10 min",
-  },
-  {
-    id: "understanding-home-valuation",
-    title: "Understanding Your Home's True Value",
-    titleEs: "Entendiendo el Verdadero Valor de tu Casa",
-    description: "Learn what factors affect your home's market value and how to get an accurate assessment.",
-    descriptionEs: "Aprende qué factores afectan el valor de mercado de tu casa y cómo obtener una evaluación precisa.",
-    category: "valuation",
-    readTime: "8 min",
-    readTimeEs: "8 min",
-  },
-  {
-    id: "first-time-buyer-story",
-    title: "From Fear to Keys: A First-Time Buyer's Journey",
-    titleEs: "Del Miedo a las Llaves: El Viaje de una Compradora Primeriza",
-    description: "How one client overcame doubt and found a place to call her own—with patience and guidance every step of the way.",
-    descriptionEs: "Cómo una cliente superó sus dudas y encontró un lugar para llamar suyo—con paciencia y guía en cada paso.",
-    category: "stories",
-    readTime: "5 min",
-    readTimeEs: "5 min",
-  },
-  {
-    id: "budget-buyer-story",
-    title: "Finding Security on a Tight Budget",
-    titleEs: "Encontrando Seguridad con un Presupuesto Ajustado",
-    description: "A family's story of finding the right home without compromising what mattered most.",
-    descriptionEs: "La historia de una familia que encontró el hogar adecuado sin comprometer lo que más importaba.",
-    category: "stories",
-    readTime: "5 min",
-    readTimeEs: "5 min",
-  },
-  {
-    id: "seller-stressful-market-story",
-    title: "Navigating a Stressful Market: A Seller's Story",
-    titleEs: "Navegando un Mercado Estresante: Historia de un Vendedor",
-    description: "When the market felt uncertain, clarity and support made all the difference.",
-    descriptionEs: "Cuando el mercado se sentía incierto, la claridad y el apoyo hicieron toda la diferencia.",
-    category: "stories",
-    readTime: "5 min",
-    readTimeEs: "5 min",
-  },
-  {
-    id: "spanish-speaking-client-story",
-    title: "Truly Understood: A Spanish-Speaking Client's Experience",
-    titleEs: "Verdaderamente Comprendida: La Experiencia de una Cliente Hispanohablante",
-    description: "The power of being served in your own language—and feeling heard every step of the way.",
-    descriptionEs: "El poder de ser atendida en tu propio idioma—y sentirse escuchada en cada paso.",
-    category: "stories",
-    readTime: "5 min",
-    readTimeEs: "5 min",
-  },
-  {
-    id: "inherited-probate-property",
-    title: "Inherited Property in Pima County: Understanding Your Options",
-    titleEs: "Propiedad Heredada en el Condado de Pima: Entendiendo Sus Opciones",
-    description: "A clear, no-pressure guide to navigating probate, heirs, and property decisions after a loss.",
-    descriptionEs: "Una guía clara, sin presión, para navegar la sucesión, herederos y decisiones de propiedad después de una pérdida.",
-    category: "probate",
-    readTime: "10 min",
-    readTimeEs: "10 min",
-    isFeatured: true,
-  },
-];
+// Derive guide cards from registry — single source of truth
+function getGuideCards(): Guide[] {
+  return getLiveGuides().map(entry => ({
+    id: entry.id,
+    title: entry.titleEn,
+    titleEs: entry.titleEs,
+    description: entry.descriptionEn,
+    descriptionEs: entry.descriptionEs,
+    category: entry.category,
+    readTime: entry.readTime,
+    readTimeEs: entry.readTimeEs,
+    isFeatured: entry.isFeatured,
+  }));
+}
 
 // Inner component that uses Selena context (rendered inside V2Layout which provides SelenaChatProvider)
 function GuidesContent() {
@@ -180,6 +117,10 @@ function GuidesContent() {
   const navigate = useNavigate();
   const { openChat, sendMessage } = useSelenaChat();
   const [activeCategory, setActiveCategory] = useState("all");
+  
+  // Derive guides from registry
+  const guides = useMemo(() => getGuideCards(), []);
+  
   useDocumentHead({
     titleEn: "Real Estate Guides | Tucson Home Buying & Selling Education",
     titleEs: "Guías de Bienes Raíces | Educación de Compra y Venta en Tucson",
@@ -198,17 +139,14 @@ function GuidesContent() {
   const { hasEngaged } = useRecommendationEngine(guides);
   
   useEffect(() => {
-    // Initialize personalization state
     setGuidesReadState(getGuidesRead());
     setLastGuideIdState(getLastGuideId());
-    
-    // Log page view
     logEvent('guides_page_view', { returning: isReturningVisitor() });
   }, []);
   
   const isReturning = guidesRead.length > 0 || lastGuideId !== null;
   const currentIntent = getIntent();
-  const recommendedItems = useMemo(() => getRecommendedGuides(guides), [guidesRead, lastGuideId]);
+  const recommendedItems = useMemo(() => getRecommendedGuides(guides), [guidesRead, lastGuideId, guides]);
 
   const filteredGuides = activeCategory === "all" 
     ? guides 
@@ -263,7 +201,6 @@ function GuidesContent() {
       stage: stageId, 
       hasPrefill: !!prefillMessage 
     });
-    // Pass synthesis context for context-aware greeting
     openChat({
       source: 'synthesis',
       guidesReadCount,
@@ -280,10 +217,8 @@ function GuidesContent() {
   
   const handleStartHereIntent = useCallback((intentType: StartHereIntent) => {
     logEvent('start_here_intent_selected', { intent: intentType });
-    // Store intent for personalization
     setIntent(intentType === 'explore' ? 'explore' : intentType);
     
-    // Navigate to appropriate category or open Selena
     switch (intentType) {
       case 'buy':
         setActiveCategory('buying');
@@ -292,7 +227,7 @@ function GuidesContent() {
         setActiveCategory('selling');
         break;
       case 'cash':
-        setActiveCategory('valuation');
+        setActiveCategory('cash');
         break;
       case 'explore':
         openChat({ source: 'hero' });
@@ -305,9 +240,6 @@ function GuidesContent() {
     document.getElementById('guides-section')?.scrollIntoView({ behavior: 'smooth' });
   }, [openChat, sendMessage, t]);
   
-  
-  // Progress bar is now pure context - no CTA handler needed
-  
   const handleRequestSummary = useCallback(() => {
     logEvent('personalized_summary_offered', { 
       guidesReadCount,
@@ -315,7 +247,6 @@ function GuidesContent() {
     });
   }, [guidesReadCount, stageId]);
   
-  // Log journey checkpoint when stage changes
   useEffect(() => {
     if (shouldShowProgressBar) {
       logEvent('journey_checkpoint_shown', { stage: stageId, level: stage.level });
@@ -349,7 +280,6 @@ function GuidesContent() {
         <StartHereLane onIntentSelect={handleStartHereIntent} />
       )}
       
-      
       {/* Layer 4: Recommended For You Carousel */}
       {recommendedItems.length > 0 && hasEngaged && (
         <RecommendedGuidesCarousel
@@ -357,7 +287,6 @@ function GuidesContent() {
           onGuideClick={handleRecommendedGuideClick}
         />
       )}
-      
 
       {/* Category Filter with Color-Coding - Responsive Nav */}
       <section 
@@ -371,7 +300,6 @@ function GuidesContent() {
             onCategorySelect={handleCategoryChange}
           />
           
-          {/* Micro-copy for selected category */}
           {activeCategory !== "all" && (
             <p className="text-center text-sm text-cc-slate mt-3">
               {t(
@@ -383,7 +311,7 @@ function GuidesContent() {
         </div>
       </section>
 
-      {/* Guides Grid with Color-Coded Accents - Extra bottom padding on mobile for chat bubble */}
+      {/* Guides Grid — no readTime on cards */}
       <section className="bg-cc-ivory py-16 pb-24 md:pb-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -399,25 +327,21 @@ function GuidesContent() {
                   onClick={() => handleGuideClick(guide.id)}
                   className={cn(
                     "group bg-white rounded-xl p-6 shadow-soft hover:shadow-elevated transition-all duration-300 border border-cc-sand-dark/50 hover:border-cc-gold/30",
-                    colors.accent // Left-edge color accent
+                    colors.accent
                   )}
                 >
                   <div className="flex items-center gap-2 mb-3 flex-wrap">
-                    {/* Category pill with subtle color */}
                     <span className={cn("px-3 py-1 rounded-full text-xs font-medium border", colors.subtle)}>
                       {getCategoryLabel(guide.category)}
                     </span>
-                    {/* Badge from personalization */}
                     {gridBadge && gridBadge !== 'read' && (
                       <GuideCardBadge badgeType={gridBadge} />
                     )}
-                    {/* Subtle read indicator */}
                     {gridBadge === 'read' && (
                       <span className="w-2 h-2 rounded-full bg-emerald-400" title={t("Read", "Leído")} />
                     )}
                   </div>
                   
-                  {/* Decision Path Label */}
                   {decisionLabel && (
                     <span className="text-xs text-cc-slate/70 font-medium mb-2 block">
                       {t(decisionLabel.en, decisionLabel.es)}
@@ -439,7 +363,6 @@ function GuidesContent() {
             })}
           </div>
           
-          {/* Post-Grid Selena Synthesis Footer */}
           <div className="mt-12 max-w-3xl mx-auto">
             <SelenaSynthesisFooter
               guidesReadCount={guidesReadCount}

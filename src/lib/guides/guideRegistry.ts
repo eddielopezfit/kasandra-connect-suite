@@ -29,6 +29,20 @@ export type AuthorityTheme =
 // Disclaimer type for legal/financial content
 export type DisclaimerType = 'legal' | 'financial' | 'general';
 
+// Intent + stage types for deterministic routing
+export type DecisionIntent = 'buy' | 'sell' | 'value' | 'cash' | 'life_event' | 'trust';
+export type DecisionStage = 'explore' | 'compare' | 'decide';
+
+// Mid-guide CTA prompt keys — typed union prevents drift
+export type MidGuidePromptKey =
+  | 'valuation_confusion'
+  | 'selling_options'
+  | 'cash_vs_list'
+  | 'life_event_support'
+  | 'first_time_confidence'
+  | 'bilingual_support'
+  | 'trust_story_followup';
+
 // Asset slot configuration — render nothing when undefined
 export interface GuideAssetSlots {
   videoOverview?: string;    // URL to hosted video (required for Tier 1)
@@ -51,6 +65,12 @@ export interface GuideRegistryEntry {
   titleEs: string;
   labelEn: string;
   labelEs: string;
+  // Card metadata (single source of truth — no duplicate in V2Guides)
+  descriptionEn: string;
+  descriptionEs: string;
+  readTime: string;
+  readTimeEs: string;
+  isFeatured?: boolean;
   category: GuideCategory;
   status: GuideStatus;
   funnelStage: GuideFunnelStage;
@@ -61,6 +81,15 @@ export interface GuideRegistryEntry {
   assetSlots: GuideAssetSlots;
   // Destination mapping
   destinations: GuideDestinations;
+  // Intent + stage for deterministic Selena routing
+  decisionIntent: DecisionIntent;
+  decisionStage: DecisionStage;
+  // Stable sort order for grid display
+  sortOrder: number;
+  // Mid-guide CTA slot
+  midGuideCTA?: { afterSection: number; promptKey: MidGuidePromptKey };
+  // Soft exit ramp under hero
+  exitRampCopy?: { en: string; es: string };
   // Authority metadata for decision-compression guides
   authorityTheme?: AuthorityTheme;
   isCashGuide?: boolean;
@@ -77,6 +106,11 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     titleEs: 'Guía Completa para Compradores de Primera Vivienda',
     labelEn: 'First-Time Buyer Guide',
     labelEs: 'Guía para Compradores Primerizos',
+    descriptionEn: "Everything you need to know about buying your first home in Tucson, from pre-approval to closing day.",
+    descriptionEs: "Todo lo que necesitas saber sobre comprar tu primera casa en Tucson, desde la pre-aprobación hasta el día de cierre.",
+    readTime: "14 min read",
+    readTimeEs: "14 min de lectura",
+    isFeatured: true,
     category: 'buying',
     status: 'live',
     funnelStage: 'tofu',
@@ -91,6 +125,14 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       ],
       relatedGuideIds: ['selling-for-top-dollar', 'cash-offer-guide', 'first-time-buyer-story'],
     },
+    decisionIntent: 'buy',
+    decisionStage: 'explore',
+    sortOrder: 10,
+    midGuideCTA: { afterSection: 1, promptKey: 'first_time_confidence' },
+    exitRampCopy: {
+      en: "If you'd rather talk this through than read, Selena can help.",
+      es: "Si prefieres hablarlo en vez de leer, Selena puede ayudarte.",
+    },
     authorityTheme: 'buyer_strategy',
     isCashGuide: false,
   },
@@ -101,6 +143,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     titleEs: 'Vender Su Casa en Arizona: Un Camino Claro',
     labelEn: 'Selling Your Home Guide',
     labelEs: 'Guía para Vender Su Casa',
+    descriptionEn: "Strategic tips and proven methods to maximize your home's value and attract qualified buyers.",
+    descriptionEs: "Consejos estratégicos y métodos probados para maximizar el valor de tu casa y atraer compradores calificados.",
+    readTime: "10 min read",
+    readTimeEs: "10 min de lectura",
     category: 'selling',
     status: 'live',
     funnelStage: 'tofu',
@@ -115,6 +161,14 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       ],
       relatedGuideIds: ['cash-offer-guide', 'understanding-home-valuation', 'seller-stressful-market-story'],
     },
+    decisionIntent: 'sell',
+    decisionStage: 'explore',
+    sortOrder: 20,
+    midGuideCTA: { afterSection: 1, promptKey: 'selling_options' },
+    exitRampCopy: {
+      en: "If you'd rather talk this through than read, Selena can help.",
+      es: "Si prefieres hablarlo en vez de leer, Selena puede ayudarte.",
+    },
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
   },
@@ -125,6 +179,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     titleEs: 'Ofertas en Efectivo Explicadas: Lo Que Los Propietarios Deben Saber',
     labelEn: 'Cash Offer Guide',
     labelEs: 'Guía de Ofertas en Efectivo',
+    descriptionEn: "Understand how cash offers work, when they make sense, and how to compare with a traditional sale.",
+    descriptionEs: "Entienda cómo funcionan las ofertas en efectivo, cuándo tienen sentido y cómo compararlas con una venta tradicional.",
+    readTime: "9 min read",
+    readTimeEs: "9 min de lectura",
     category: 'cash',
     status: 'live',
     funnelStage: 'mofu',
@@ -138,6 +196,14 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
         { type: 'open_chat', payload: { source: 'guide', guideId: 'cash-offer-guide', lifeEvent: 'cash_vs_traditional' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
       ],
       relatedGuideIds: ['selling-for-top-dollar', 'understanding-home-valuation'],
+    },
+    decisionIntent: 'cash',
+    decisionStage: 'compare',
+    sortOrder: 30,
+    midGuideCTA: { afterSection: 2, promptKey: 'cash_vs_list' },
+    exitRampCopy: {
+      en: "If you'd rather talk this through than read, Selena can help.",
+      es: "Si prefieres hablarlo en vez de leer, Selena puede ayudarte.",
     },
     authorityTheme: 'cash_structure',
     isCashGuide: true,
@@ -157,6 +223,11 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     titleEs: 'Propiedad Heredada en el Condado de Pima: Entendiendo Sus Opciones',
     labelEn: 'Inherited Property Guide',
     labelEs: 'Guía de Propiedad Heredada',
+    descriptionEn: "A clear, no-pressure guide to navigating probate, heirs, and property decisions after a loss.",
+    descriptionEs: "Una guía clara, sin presión, para navegar la sucesión, herederos y decisiones de propiedad después de una pérdida.",
+    readTime: "12 min read",
+    readTimeEs: "12 min de lectura",
+    isFeatured: true,
     category: 'probate',
     status: 'live',
     funnelStage: 'tofu',
@@ -170,6 +241,14 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
         { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare my options', es: 'Comparar mis opciones' } },
       ],
       relatedGuideIds: ['cash-offer-guide', 'selling-for-top-dollar'],
+    },
+    decisionIntent: 'life_event',
+    decisionStage: 'explore',
+    sortOrder: 40,
+    midGuideCTA: { afterSection: 1, promptKey: 'life_event_support' },
+    exitRampCopy: {
+      en: "If this feels heavy, you don't have to sort it out alone.",
+      es: "Si esto se siente pesado, no tienes que resolverlo solo.",
     },
     authorityTheme: 'probate_clarity',
     isCashGuide: false,
@@ -187,6 +266,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     titleEs: 'Entendiendo el Valor de Su Casa',
     labelEn: "Understanding Your Home's Value",
     labelEs: 'Entender el Valor de Su Casa',
+    descriptionEn: "Learn what factors affect your home's market value and how to get an accurate assessment.",
+    descriptionEs: "Aprende qué factores afectan el valor de mercado de tu casa y cómo obtener una evaluación precisa.",
+    readTime: "7 min read",
+    readTimeEs: "7 min de lectura",
     category: 'valuation',
     status: 'live',
     funnelStage: 'tofu',
@@ -201,6 +284,14 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       ],
       relatedGuideIds: ['selling-for-top-dollar', 'cash-offer-guide'],
     },
+    decisionIntent: 'value',
+    decisionStage: 'explore',
+    sortOrder: 50,
+    midGuideCTA: { afterSection: 1, promptKey: 'valuation_confusion' },
+    exitRampCopy: {
+      en: "If you'd rather talk this through than read, Selena can help.",
+      es: "Si prefieres hablarlo en vez de leer, Selena puede ayudarte.",
+    },
     authorityTheme: 'valuation_insight',
     isCashGuide: false,
   },
@@ -213,6 +304,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     titleEs: 'Una Compradora Primeriza Encuentra Su Camino',
     labelEn: 'First-Time Buyer Story',
     labelEs: 'Historia de Compradora Primeriza',
+    descriptionEn: "How one client overcame doubt and found a place to call her own—with patience and guidance every step of the way.",
+    descriptionEs: "Cómo una cliente superó sus dudas y encontró un lugar para llamar suyo—con paciencia y guía en cada paso.",
+    readTime: "5 min read",
+    readTimeEs: "5 min de lectura",
     category: 'stories',
     status: 'live',
     funnelStage: 'tofu',
@@ -225,6 +320,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [],
       relatedGuideIds: [],
     },
+    decisionIntent: 'trust',
+    decisionStage: 'explore',
+    sortOrder: 70,
+    midGuideCTA: { afterSection: 1, promptKey: 'trust_story_followup' },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -235,6 +334,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     titleEs: 'Encontrando Seguridad con Presupuesto Limitado',
     labelEn: 'Budget Buyer Story',
     labelEs: 'Historia de Comprador con Presupuesto',
+    descriptionEn: "A family's story of finding the right home without compromising what mattered most.",
+    descriptionEs: "La historia de una familia que encontró el hogar adecuado sin comprometer lo que más importaba.",
+    readTime: "5 min read",
+    readTimeEs: "5 min de lectura",
     category: 'stories',
     status: 'live',
     funnelStage: 'tofu',
@@ -247,6 +350,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [],
       relatedGuideIds: [],
     },
+    decisionIntent: 'trust',
+    decisionStage: 'explore',
+    sortOrder: 80,
+    midGuideCTA: { afterSection: 1, promptKey: 'trust_story_followup' },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -257,6 +364,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     titleEs: 'Vendiendo en un Mercado Incierto',
     labelEn: 'Seller Story',
     labelEs: 'Historia de Vendedor',
+    descriptionEn: "When the market felt uncertain, clarity and support made all the difference.",
+    descriptionEs: "Cuando el mercado se sentía incierto, la claridad y el apoyo hicieron toda la diferencia.",
+    readTime: "5 min read",
+    readTimeEs: "5 min de lectura",
     category: 'stories',
     status: 'live',
     funnelStage: 'tofu',
@@ -269,6 +380,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [],
       relatedGuideIds: [],
     },
+    decisionIntent: 'trust',
+    decisionStage: 'explore',
+    sortOrder: 90,
+    midGuideCTA: { afterSection: 1, promptKey: 'trust_story_followup' },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -279,6 +394,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     titleEs: 'Una Familia Encuentra Hogar en Su Idioma',
     labelEn: 'Spanish-Speaking Client Story',
     labelEs: 'Historia de Cliente Hispanohablante',
+    descriptionEn: "The power of being served in your own language—and feeling heard every step of the way.",
+    descriptionEs: "El poder de ser atendida en tu propio idioma—y sentirse escuchada en cada paso.",
+    readTime: "5 min read",
+    readTimeEs: "5 min de lectura",
     category: 'stories',
     status: 'live',
     funnelStage: 'tofu',
@@ -291,6 +410,10 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [],
       relatedGuideIds: [],
     },
+    decisionIntent: 'trust',
+    decisionStage: 'explore',
+    sortOrder: 100,
+    midGuideCTA: { afterSection: 1, promptKey: 'bilingual_support' },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -301,7 +424,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 export const getLiveGuides = (): GuideRegistryEntry[] => {
   const live = GUIDE_REGISTRY.filter(g => g.status === 'live');
   if (!import.meta.env.PROD) live.forEach(validateTierAssets);
-  return live;
+  return live.sort((a, b) => a.sortOrder - b.sortOrder);
 };
 
 export const getGuideById = (id: string): GuideRegistryEntry | undefined => 

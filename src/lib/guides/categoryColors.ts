@@ -25,31 +25,13 @@ export type GuideColorCategory =
   | 'senior';
 
 export interface CategoryColorConfig {
-  /** Strong color for active chip, primary badge */
   strong: string;
-  /** Subtle color for hover, secondary contexts */
   subtle: string;
-  /** Left-edge accent bar for guide cards */
   accent: string;
-  /** Icon color in chips and badges */
   icon: string;
-  /** Emotional intent behind this color choice */
   emotionalIntent: string;
 }
 
-/**
- * Category → Color → Intent Mapping
- * 
- * Design rationale for each:
- * - Buying (Blue): Calm, trust, stability - "your future home"
- * - Selling (Emerald): Growth, progress, moving forward
- * - Valuation (Amber): Insight, clarity, knowledge
- * - Cash (Amber-Dark): Urgency, certainty, resolution
- * - Financial (Navy): Security, planning, guidance
- * - Neighborhoods (Violet): Discovery, lifestyle, belonging
- * - Stories (Rose): Connection, empathy, warmth
- * - Tips (Slate): Practical, helpful, universal
- */
 export const CATEGORY_COLORS: Record<GuideColorCategory, CategoryColorConfig> = {
   all: {
     strong: 'bg-cc-navy text-white',
@@ -151,45 +133,23 @@ export const CATEGORY_COLORS: Record<GuideColorCategory, CategoryColorConfig> = 
   },
 };
 
-/**
- * Get color config for a category
- */
 export function getCategoryColor(category: string): CategoryColorConfig {
   const key = category as GuideColorCategory;
   return CATEGORY_COLORS[key] || CATEGORY_COLORS.all;
 }
 
 /**
- * Decision Path Labels
- * Maps guides to their primary decision-compression purpose.
- * Displayed on guide cards to align with "Decision Room" philosophy.
+ * Decision Path Labels — only for guides that exist in registry
  */
 export const DECISION_PATH_LABELS: Record<string, { en: string; es: string }> = {
-  // Buying guides
   'first-time-buyer-guide': {
     en: 'Decision: Start Buying',
     es: 'Decisión: Comenzar a Comprar',
   },
-  'mortgage-options-explained': {
-    en: 'Decision: Choose Loan Type',
-    es: 'Decisión: Elegir Tipo de Préstamo',
-  },
-  'closing-costs-breakdown': {
-    en: 'Decision: Budget Preparation',
-    es: 'Decisión: Preparar Presupuesto',
-  },
-  
-  // Selling guides
   'selling-for-top-dollar': {
     en: 'Decision: Sell vs Wait',
     es: 'Decisión: Vender o Esperar',
   },
-  'home-staging-secrets': {
-    en: 'Decision: Prepare to List',
-    es: 'Decisión: Preparar para Vender',
-  },
-  
-  // Valuation guides
   'understanding-home-valuation': {
     en: 'Decision: Know Your Position',
     es: 'Decisión: Conocer Tu Posición',
@@ -198,24 +158,10 @@ export const DECISION_PATH_LABELS: Record<string, { en: string; es: string }> = 
     en: 'Decision: Speed vs Price',
     es: 'Decisión: Rapidez vs Precio',
   },
-  
-  // Neighborhood guides
-  'tucson-neighborhood-guide': {
-    en: 'Decision: Where to Live',
-    es: 'Decisión: Dónde Vivir',
+  'inherited-probate-property': {
+    en: 'Decision: Inherited Property Options',
+    es: 'Decisión: Opciones de Propiedad Heredada',
   },
-  'oro-valley-vs-marana': {
-    en: 'Decision: Compare Areas',
-    es: 'Decisión: Comparar Zonas',
-  },
-  
-  // Tips
-  'negotiation-strategies': {
-    en: 'Skill: Negotiate Better',
-    es: 'Habilidad: Negociar Mejor',
-  },
-  
-  // Stories (trust-building, not decision-focused)
   'first-time-buyer-story': {
     en: 'Story: First-Time Success',
     es: 'Historia: Éxito Primerizo',
@@ -232,17 +178,8 @@ export const DECISION_PATH_LABELS: Record<string, { en: string; es: string }> = 
     en: 'Story: Bilingual Support',
     es: 'Historia: Apoyo Bilingüe',
   },
-  
-  // Probate / Inherited
-  'inherited-probate-property': {
-    en: 'Decision: Inherited Property Options',
-    es: 'Decisión: Opciones de Propiedad Heredada',
-  },
 };
 
-/**
- * Get decision path label for a guide
- */
 export function getDecisionLabel(guideId: string): { en: string; es: string } | null {
   return DECISION_PATH_LABELS[guideId] || null;
 }
