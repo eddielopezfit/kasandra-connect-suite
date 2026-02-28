@@ -162,6 +162,8 @@ const V2SellerDecision = () => {
             recommendedPath={wizardData.recommendedPath}
             situation={wizardData.situation}
             timeline={wizardData.timeline}
+            goalPriority={wizardData.goalPriority}
+            property={wizardData.property}
             condition={wizardData.condition}
             onNext={handleStep6}
             onBack={() => goTo(5)}

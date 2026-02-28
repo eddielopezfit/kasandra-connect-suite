@@ -14,7 +14,8 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import { getStoredUserName, getStoredEmail, getStoredPhone } from "@/lib/analytics/bridgeLeadIdToV2";
 import type { RecommendedPath } from "./StepDualPath";
 import type { ConditionTier } from "./conditionInsights";
-import type { Situation, Timeline } from "./StepSituation";
+import type { Situation, Timeline, GoalPriority } from "./StepSituation";
+import type { PropertySnapshotData } from "./StepPropertySnapshot";
 import { toast } from "sonner";
 
 // ============= Schemas =============
@@ -48,6 +49,8 @@ interface StepContactProps {
   recommendedPath: RecommendedPath;
   situation?: Situation;
   timeline?: Timeline;
+  goalPriority?: GoalPriority;
+  property?: PropertySnapshotData;
   condition?: ConditionTier;
   onNext: (result: ContactResult) => void;
   onBack: () => void;
@@ -58,6 +61,8 @@ const StepContact = ({
   recommendedPath,
   situation,
   timeline,
+  goalPriority,
+  property,
   condition,
   onNext,
   onBack,
@@ -69,13 +74,13 @@ const StepContact = ({
   // Full form
   const fullForm = useForm<FullFormData>({
     resolver: zodResolver(fullSchema),
-    defaultValues: { name: "", email: "", phone: "", consent: undefined as any },
+    defaultValues: { name: "", email: "", phone: "", consent: false as any },
   });
 
   // Email-only form
   const emailForm = useForm<EmailOnlyFormData>({
     resolver: zodResolver(emailOnlySchema),
-    defaultValues: { email: "", consent: undefined as any },
+    defaultValues: { email: "", consent: false as any },
   });
 
   // Pre-populate from session
@@ -98,16 +103,23 @@ const StepContact = ({
     try {
       const sessionId = getOrCreateSessionId();
 
-      // 1. Submit to seller edge function
+      // 1. Submit to seller edge function (enriched payload for GHL segmentation)
       const { data: result, error } = await supabase.functions.invoke("submit-seller", {
         body: {
+          source: "seller_decision",
+          sessionId,
+          language,
           name: data.name || "Decision Path Lead",
           email: data.email,
           situation: situation || null,
           condition: condition || null,
           timeline: timeline || null,
-          sessionId,
-          language,
+          // Enrichment fields for GHL nurture segmentation
+          goal_priority: goalPriority || null,
+          recommended_path: recommendedPath,
+          property_condition_raw: condition || null,
+          zip: property?.zip || null,
+          receipt_id: receiptId || null,
         },
       });
 
@@ -123,8 +135,7 @@ const StepContact = ({
             body: {
               session_id: sessionId,
               receipt_id: receiptId,
-              attach_lead_id: leadId,
-              language,
+              lead_id: leadId,
             },
           });
         } catch (attachErr) {
