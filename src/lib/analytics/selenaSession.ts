@@ -104,6 +104,10 @@ export interface SessionContext {
   neighborhood_explored?: boolean;
   // Neighborhood Quiz (Phase 2)
   neighborhood_quiz_top_zip?: string | null;
+  // Seller Decision Path
+  seller_decision_step?: number;
+  seller_decision_recommended_path?: 'cash' | 'traditional' | 'consult';
+  seller_goal_priority?: 'speed' | 'price' | 'least_stress' | 'privacy' | 'not_sure';
 }
 
 /**
