@@ -12,7 +12,7 @@ type ReceiptType = typeof VALID_RECEIPT_TYPES[number];
 
 /** Minimum required keys in receipt_data for seller_decision (after normalization) */
 const REQUIRED_RECEIPT_KEYS: Record<ReceiptType, string[]> = {
-  seller_decision: ['situation', 'timeline', 'condition', 'recommended_path'],
+  seller_decision: ['situation', 'timeline', 'recommended_path'],
 };
 
 /** Valid condition tiers */
@@ -22,18 +22,18 @@ const VALID_CONDITIONS = new Set([
 
 /**
  * Normalize receipt_data.condition ↔ property_condition_raw
- * Accepts either key, writes both so old/new readers always work.
+ * Accepts either key, validates against allowlist, writes both.
+ * Rejects invalid/missing values — no "banana" passes.
  */
 function normalizeReceiptData(data: Record<string, unknown>): { ok: true } | { ok: false; error: string } {
-  // Condition normalization: accept property_condition_raw OR condition
-  const raw = (data.property_condition_raw ?? data.condition ?? null) as string | null;
-  if (raw && typeof raw === 'string' && VALID_CONDITIONS.has(raw)) {
-    data.condition = raw;
-    data.property_condition_raw = raw;
-  } else if (!data.condition) {
-    // Neither key present or invalid value
-    return { ok: false, error: 'receipt_data.condition is required (or property_condition_raw)' };
+  const raw = (data?.property_condition_raw ?? data?.condition ?? null) as string | null;
+
+  if (typeof raw !== 'string' || !VALID_CONDITIONS.has(raw)) {
+    return { ok: false, error: 'receipt_data.condition is required (or property_condition_raw) and must be valid' };
   }
+
+  data.condition = raw;
+  data.property_condition_raw = raw;
   return { ok: true };
 }
 
