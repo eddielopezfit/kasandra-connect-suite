@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { X, FlaskConical, Copy, Check } from "lucide-react";
-import { clearQaSession, setQaSession, getQaSessionId } from "./qaSession";
+import { X, FlaskConical, Copy, Check, RotateCcw } from "lucide-react";
+import { clearQaSession, setQaSession, getQaSessionId, resetSellerDecisionContext } from "./qaSession";
 import { getOrCreateSessionId } from "@/lib/analytics/selenaSession";
 
 const isDev = import.meta.env.DEV;
@@ -103,6 +103,17 @@ export default function QaSessionToggle() {
             className="w-full text-xs text-cc-muted underline hover:text-cc-charcoal transition-colors py-1"
           >
             Clear override + Reload
+          </button>
+
+          <button
+            onClick={() => {
+              resetSellerDecisionContext();
+              window.location.href = "/v2/seller-decision";
+            }}
+            className="w-full mt-1 inline-flex items-center justify-center gap-1.5 text-xs text-cc-muted underline hover:text-cc-charcoal transition-colors py-1"
+          >
+            <RotateCcw className="w-3 h-3" />
+            Reset Seller Wizard
           </button>
 
           <p className="text-[10px] text-cc-muted mt-2 font-mono truncate">
