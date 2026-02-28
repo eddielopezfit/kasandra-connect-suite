@@ -1,9 +1,11 @@
 /**
  * Bilingual condition interpretation data for the Seller Decision Path.
  * Deterministic — no AI variance. Each tier maps to buyer type, speed, and prep expectations.
+ * 
+ * Canonical tiers (worst → best): needs_work, mostly_original, standard, updated, like_new
  */
 
-export type ConditionTier = 'needs_work' | 'fair' | 'good' | 'move_in_ready' | 'like_new';
+export type ConditionTier = 'needs_work' | 'mostly_original' | 'standard' | 'updated' | 'like_new';
 
 export interface ConditionInsight {
   tier: ConditionTier;
@@ -36,10 +38,10 @@ export const conditionInsights: Record<ConditionTier, ConditionInsight> = {
     prepEs: 'Preparación mínima necesaria. Venda como está.',
     accentColor: 'destructive',
   },
-  fair: {
-    tier: 'fair',
-    labelEn: 'Fair Condition',
-    labelEs: 'Condición Regular',
+  mostly_original: {
+    tier: 'mostly_original',
+    labelEn: 'Mostly Original',
+    labelEs: 'Mayormente Original',
     descriptionEn: 'Livable but dated — cosmetic updates, older systems, some deferred maintenance.',
     descriptionEs: 'Habitable pero anticuada — actualizaciones cosméticas, sistemas antiguos, algo de mantenimiento diferido.',
     buyerTypeEn: 'Budget-conscious buyers or investors seeking value-add deals.',
@@ -50,10 +52,10 @@ export const conditionInsights: Record<ConditionTier, ConditionInsight> = {
     prepEs: 'Limpieza ligera y orden recomendados. Reparaciones mayores opcionales.',
     accentColor: 'accent',
   },
-  good: {
-    tier: 'good',
-    labelEn: 'Good Condition',
-    labelEs: 'Buena Condición',
+  standard: {
+    tier: 'standard',
+    labelEn: 'Standard Condition',
+    labelEs: 'Condición Estándar',
     descriptionEn: 'Well-maintained with minor cosmetic needs — paint, landscaping touch-ups.',
     descriptionEs: 'Bien mantenida con necesidades cosméticas menores — pintura, retoques de jardinería.',
     buyerTypeEn: 'Traditional buyers including families and first-time homebuyers.',
@@ -64,10 +66,10 @@ export const conditionInsights: Record<ConditionTier, ConditionInsight> = {
     prepEs: 'Algo de preparación y trabajo cosmético menor puede aumentar su precio.',
     accentColor: 'primary',
   },
-  move_in_ready: {
-    tier: 'move_in_ready',
-    labelEn: 'Move-In Ready',
-    labelEs: 'Lista para Mudarse',
+  updated: {
+    tier: 'updated',
+    labelEn: 'Updated / Move-In Ready',
+    labelEs: 'Actualizada / Lista para Mudarse',
     descriptionEn: 'Updated finishes, modern systems, no immediate repairs needed.',
     descriptionEs: 'Acabados actualizados, sistemas modernos, sin reparaciones inmediatas necesarias.',
     buyerTypeEn: 'Broadest buyer pool — families, professionals, relocators.',
@@ -96,5 +98,5 @@ export const conditionInsights: Record<ConditionTier, ConditionInsight> = {
 
 /** Ordered tiers for rendering (worst → best) */
 export const conditionTierOrder: ConditionTier[] = [
-  'needs_work', 'fair', 'good', 'move_in_ready', 'like_new',
+  'needs_work', 'mostly_original', 'standard', 'updated', 'like_new',
 ];

@@ -8,6 +8,7 @@ import type { PropertySnapshotData } from "@/components/v2/seller-decision/StepP
 import type { ConditionTier } from "@/components/v2/seller-decision/conditionInsights";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import { Clock, ArrowLeft } from "lucide-react";
 
 const TOTAL_STEPS = 7;
 
@@ -44,19 +45,24 @@ const V2SellerDecision = () => {
       intent: 'sell',
       situation: data.situation as any,
       timeline: data.timeline === 'soon' ? 'asap' : data.timeline === 'considering' ? '30_days' : 'exploring',
-      seller_goal_priority: data.goalPriority as any,
+      seller_goal_priority: data.goalPriority,
+      seller_decision_step: 1,
     });
     goTo(2);
   }, [goTo]);
 
   const handleStep2 = useCallback((data: PropertySnapshotData) => {
     setWizardData(prev => ({ ...prev, property: data }));
+    updateSessionContext({ seller_decision_step: 2 });
     goTo(3);
   }, [goTo]);
 
   const handleStep3 = useCallback((condition: ConditionTier) => {
     setWizardData(prev => ({ ...prev, condition }));
-    updateSessionContext({ condition: condition as any });
+    updateSessionContext({
+      property_condition_raw: condition,
+      seller_decision_step: 3,
+    });
     goTo(4);
   }, [goTo]);
 
@@ -95,19 +101,30 @@ const V2SellerDecision = () => {
             onBack={() => goTo(2)}
           />
         )}
+
+        {/* Placeholder for Steps 4–7: calm "coming soon" — not an error */}
         {step >= 4 && step <= TOTAL_STEPS && (
-          <div className="text-center py-16 space-y-4">
-            <h2 className="font-serif text-2xl font-bold text-cc-navy">
-              {t("Coming Soon", "Próximamente")}
-            </h2>
-            <p className="text-cc-text-muted text-sm">
-              {t(
-                `Steps 4–${TOTAL_STEPS} (Neighborhood, Dual Path, Contact, Receipt) are being built.`,
-                `Los pasos 4–${TOTAL_STEPS} (Vecindario, Ruta Doble, Contacto, Recibo) están en construcción.`
-              )}
-            </p>
-            <button onClick={() => goTo(3)} className="text-cc-navy underline text-sm">
-              {t("← Back to Step 3", "← Volver al Paso 3")}
+          <div className="text-center py-16 space-y-6 animate-fade-in">
+            <div className="w-16 h-16 rounded-full bg-cc-gold/10 flex items-center justify-center mx-auto">
+              <Clock className="w-8 h-8 text-cc-gold" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="font-serif text-2xl font-bold text-cc-navy">
+                {t("We're building this for you", "Estamos construyendo esto para usted")}
+              </h2>
+              <p className="text-cc-text-muted text-sm max-w-md mx-auto">
+                {t(
+                  "Your answers have been saved. The remaining steps — neighborhood insights, your personalized comparison, and your Decision Receipt — are coming very soon.",
+                  "Sus respuestas han sido guardadas. Los pasos restantes — información del vecindario, su comparación personalizada, y su Recibo de Decisión — llegarán muy pronto."
+                )}
+              </p>
+            </div>
+            <button
+              onClick={() => goTo(3)}
+              className="inline-flex items-center gap-1.5 text-sm text-cc-navy hover:text-cc-navy-dark transition-colors underline underline-offset-2"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              {t("Back to your last step", "Volver a su último paso")}
             </button>
           </div>
         )}

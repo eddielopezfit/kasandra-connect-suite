@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowRight, ArrowLeft, Waves, Car } from "lucide-react";
 
 export type BedsCount = '1' | '2' | '3' | '4' | '5+';
 export type BathsCount = '1' | '1.5' | '2' | '3+';
@@ -41,11 +41,13 @@ const StepPropertySnapshot = ({ initialData, onNext, onBack }: StepPropertySnaps
     }`;
 
   const toggleClass = (active: boolean) =>
-    `px-4 py-2.5 rounded-full text-sm font-medium border transition-all cursor-pointer ${
+    `inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-medium border transition-all cursor-pointer ${
       active
         ? 'bg-cc-gold/20 text-cc-navy border-cc-gold font-semibold'
         : 'bg-white text-cc-charcoal border-cc-sand-dark/40 hover:border-cc-navy/40'
     }`;
+
+  const zipIsValid = !data.zip || data.zip.length === 0 || data.zip.length === 5;
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -120,23 +122,25 @@ const StepPropertySnapshot = ({ initialData, onNext, onBack }: StepPropertySnaps
         </div>
       </div>
 
-      {/* Toggles: Pool + Garage */}
+      {/* Toggles: Pool + Garage (Lucide icons, no emojis) */}
       <div className="space-y-3">
         <label className="text-sm font-semibold text-cc-navy uppercase tracking-wider">
           {t("Features", "Características")}
         </label>
         <div className="flex flex-wrap gap-2">
           <button className={toggleClass(!!data.hasPool)} onClick={() => update('hasPool', !data.hasPool)}>
-            🏊 {t("Pool", "Piscina")}
+            <Waves className="w-4 h-4" />
+            {t("Pool", "Piscina")}
           </button>
           <button className={toggleClass(!!data.hasGarage)} onClick={() => update('hasGarage', !data.hasGarage)}>
-            🚗 {t("Garage", "Garaje")}
+            <Car className="w-4 h-4" />
+            {t("Garage", "Garaje")}
           </button>
         </div>
       </div>
 
-      {/* ZIP (optional) */}
-      <div className="space-y-3">
+      {/* ZIP (optional) with helper text */}
+      <div className="space-y-2">
         <label className="text-sm font-semibold text-cc-navy uppercase tracking-wider">
           {t("ZIP Code (optional)", "Código Postal (opcional)")}
         </label>
@@ -147,8 +151,18 @@ const StepPropertySnapshot = ({ initialData, onNext, onBack }: StepPropertySnaps
           placeholder="85701"
           value={data.zip || ''}
           onChange={e => update('zip', e.target.value.replace(/\D/g, '').slice(0, 5))}
-          className="w-32 px-4 py-2.5 rounded-full border border-cc-sand-dark/40 text-sm text-cc-charcoal focus:outline-none focus:border-cc-navy/40"
+          className={`w-32 px-4 py-2.5 rounded-full border text-sm text-cc-charcoal focus:outline-none transition-colors ${
+            data.zip && data.zip.length > 0 && data.zip.length < 5
+              ? 'border-destructive/50 focus:border-destructive'
+              : 'border-cc-sand-dark/40 focus:border-cc-navy/40'
+          }`}
         />
+        <p className="text-xs text-cc-text-muted">
+          {t(
+            "Optional — helps us add neighborhood context.",
+            "Opcional — nos ayuda a agregar contexto del vecindario."
+          )}
+        </p>
       </div>
 
       <div className="flex items-center gap-3">
@@ -158,7 +172,7 @@ const StepPropertySnapshot = ({ initialData, onNext, onBack }: StepPropertySnaps
         </Button>
         <Button
           onClick={() => canProceed && onNext(data)}
-          disabled={!canProceed}
+          disabled={!canProceed || !zipIsValid}
           className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
         >
           {t("Continue", "Continuar")}
