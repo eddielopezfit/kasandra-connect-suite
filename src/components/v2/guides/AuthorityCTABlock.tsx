@@ -10,7 +10,7 @@
  * No urgency, no "free", no hype, no exclamation points
  */
 
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -166,13 +166,13 @@ const SUBTEXT = {
   es: "Una conversación tranquila, sin presión, para entender sus opciones reales.",
 };
 
-const AuthorityCTABlock = ({
+const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(({
   category,
   guideTitle,
   isCashGuide = false,
   authorityBridge,
   marketInsight,
-}: AuthorityCTABlockProps) => {
+}, ref) => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
   
@@ -230,7 +230,7 @@ const AuthorityCTABlock = ({
   };
 
   return (
-    <section className="bg-cc-navy py-16">
+    <section ref={ref} className="bg-cc-navy py-16">
       <div className="container mx-auto px-4">
         <div className="max-w-xl mx-auto text-center">
           {/* Authority Bridge */}
@@ -280,6 +280,8 @@ const AuthorityCTABlock = ({
       </div>
     </section>
   );
-};
+});
+
+AuthorityCTABlock.displayName = 'AuthorityCTABlock';
 
 export default AuthorityCTABlock;
