@@ -29,7 +29,6 @@ import V2QADeterminism from "./pages/v2/V2QADeterminism";
 import SellerLanding from "./pages/ad/SellerLanding";
 import SellerQuiz from "./pages/ad/SellerQuiz";
 import SellerResult from "./pages/ad/SellerResult";
-import QaSessionToggle from "./dev/QaSessionToggle";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -74,7 +73,6 @@ const App = () => (
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <QaSessionToggle />
         </BrowserRouter>
       </TooltipProvider>
     </LanguageProvider>
