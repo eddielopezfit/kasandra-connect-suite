@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import QuizFunnelLayout from "@/components/v2/QuizFunnelLayout";
 import { Progress } from "@/components/ui/progress";
 import { StepSituation, StepPropertySnapshot, StepCondition, StepNeighborhood, StepDualPath, StepContact } from "@/components/v2/seller-decision";
+import StepReceiptView from "@/components/v2/seller-decision/StepReceiptView";
 import type { Situation, Timeline, GoalPriority } from "@/components/v2/seller-decision/StepSituation";
 import type { PropertySnapshotData } from "@/components/v2/seller-decision/StepPropertySnapshot";
 import type { ConditionTier } from "@/components/v2/seller-decision/conditionInsights";
@@ -12,7 +13,8 @@ import type { ContactResult } from "@/components/v2/seller-decision/StepContact"
 import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { Clock, ArrowLeft } from "lucide-react";
+
+
 
 const TOTAL_STEPS = 7;
 
@@ -170,37 +172,12 @@ const V2SellerDecision = () => {
           />
         )}
 
-        {/* Placeholder for Step 7 (Receipt view) */}
+        {/* Step 7: Decision Receipt View */}
         {step === 7 && (
-          <div className="text-center py-16 space-y-6 animate-fade-in">
-            <div className="w-16 h-16 rounded-full bg-cc-gold/10 flex items-center justify-center mx-auto">
-              <Clock className="w-8 h-8 text-cc-gold" />
-            </div>
-            <div className="space-y-2">
-              <h2 className="font-serif text-2xl font-bold text-cc-navy">
-                {t("Your Decision Receipt is saved", "Su Recibo de Decisión está guardado")}
-              </h2>
-              <p className="text-cc-text-muted text-sm max-w-md mx-auto">
-                {t(
-                  "Your personalized Decision Receipt view is coming very soon. Your data is safe.",
-                  "La vista de su Recibo de Decisión personalizado llegará muy pronto. Sus datos están seguros."
-                )}
-              </p>
-              {wizardData.recommendedPath && (
-                <p className="text-cc-navy font-medium text-sm mt-4">
-                  {t("Recommended path: ", "Camino recomendado: ")}
-                  <span className="text-cc-gold font-bold capitalize">{wizardData.recommendedPath}</span>
-                </p>
-              )}
-            </div>
-            <button
-              onClick={() => goTo(6)}
-              className="inline-flex items-center gap-1.5 text-sm text-cc-navy hover:text-cc-navy-dark transition-colors underline underline-offset-2"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              {t("Back", "Atrás")}
-            </button>
-          </div>
+          <StepReceiptView
+            onBackToComparison={() => goTo(5)}
+            onRestart={() => goTo(1)}
+          />
         )}
       </div>
     </QuizFunnelLayout>

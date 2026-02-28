@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.save-decision-receipt]
 verify_jwt = false
+
+[functions.get-decision-receipt]
+verify_jwt = false
