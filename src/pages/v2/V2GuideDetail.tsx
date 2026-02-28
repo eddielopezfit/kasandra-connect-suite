@@ -14,7 +14,7 @@ import GuidePullQuote from "@/components/v2/guides/GuidePullQuote";
 import { getGovernedMediaSlots, validateMediaSlots, type MediaSlot } from "@/lib/guides/guideMediaSlots";
 import { useGuideScrollTracking } from "@/hooks/useGuideScrollTracking";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { markGuideRead, setLastGuideId } from "@/lib/guides/personalization";
+import { markGuideOpened, setLastGuideId } from '@/lib/guides/personalization';
 import { getGuideById, type GuideCategory, type MidGuidePromptKey } from "@/lib/guides/guideRegistry";
 import { getSessionContext, updateSessionContext } from "@/lib/analytics/selenaSession";
 import { GUIDE_DATA_LOADERS, type GuideContentData } from "@/data/guides";
@@ -91,7 +91,7 @@ const V2GuideDetail = () => {
         guide_id: guideId,
         guide_title: guideTitle,
       });
-      markGuideRead(guideId);
+      markGuideOpened(guideId);
       setLastGuideId(guideId);
 
       const ctx = getSessionContext();
@@ -121,7 +121,7 @@ const V2GuideDetail = () => {
     if (!registryEntry) return;
     const mappedIntent = registryEntry.decisionIntent === 'buy' ? 'buy' : 'sell';
     openChat({
-      source: 'guide_handoff',
+      source: 'guide_exit_ramp',
       guideId: registryEntry.id,
       intent: mappedIntent,
     });
@@ -135,10 +135,10 @@ const V2GuideDetail = () => {
   const handleMidGuideCTA = () => {
     if (!registryEntry) return;
     openChat({
-      source: 'guide_handoff',
+      source: 'guide_mid_cta',
       guideId: registryEntry.id,
     });
-    logEvent('mid_guide_cta_clicked', {
+    logEvent('guide_mid_cta_clicked', {
       guide_id: registryEntry.id,
       prompt_key: registryEntry.midGuideCTA?.promptKey,
     });

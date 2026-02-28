@@ -465,8 +465,10 @@ export const getGuideDestinations = (guideId: string): GuideDestinations | undef
 /**
  * Dev-only: Warn if a Tier 1 guide is missing required asset slots
  */
+const _validatedIds = new Set<string>();
 export const validateTierAssets = (entry: GuideRegistryEntry): void => {
-  if (import.meta.env.PROD) return;
+  if (import.meta.env.PROD || _validatedIds.has(entry.id)) return;
+  _validatedIds.add(entry.id);
   if (entry.tier === 1) {
     const missing: string[] = [];
     if (!entry.assetSlots.videoOverview) missing.push('videoOverview');

@@ -21,8 +21,6 @@ export interface Guide {
   description: string;
   descriptionEs: string;
   category: string;
-  readTime: string;
-  readTimeEs: string;
   isFeatured?: boolean;
 }
 
@@ -68,7 +66,7 @@ export function getGuidesRead(): string[] {
 /**
  * Mark a guide as read
  */
-export function markGuideRead(guideId: string): void {
+export function markGuideOpened(guideId: string): void {
   if (typeof window === 'undefined') return;
   try {
     const current = getGuidesRead();

@@ -17,7 +17,7 @@ import {
 } from "@/components/v2/guides";
 import {
   getGuidesRead,
-  markGuideRead,
+  markGuideOpened,
   setLastGuideId,
   getLastGuideId,
   getIntent,
@@ -105,8 +105,6 @@ function getGuideCards(): Guide[] {
     description: entry.descriptionEn,
     descriptionEs: entry.descriptionEs,
     category: entry.category,
-    readTime: entry.readTime,
-    readTimeEs: entry.readTimeEs,
     isFeatured: entry.isFeatured,
   }));
 }
@@ -179,7 +177,7 @@ function GuidesContent() {
   
   const handleGuideClick = useCallback((guideId: string) => {
     setLastGuideId(guideId);
-    markGuideRead(guideId);
+    markGuideOpened(guideId);
     logEvent('guide_opened', { guideId, source: 'grid' });
   }, []);
   
@@ -281,10 +279,12 @@ function GuidesContent() {
       )}
       
       {/* Layer 4: Recommended For You Carousel */}
-      {recommendedItems.length > 0 && hasEngaged && (
+      {recommendedItems.length > 0 && (
         <RecommendedGuidesCarousel
           items={recommendedItems}
           onGuideClick={handleRecommendedGuideClick}
+          headingEn={hasEngaged ? "Recommended For You" : "Start With These"}
+          headingEs={hasEngaged ? "Recomendado Para Ti" : "Comienza Con Estas"}
         />
       )}
 
@@ -355,7 +355,7 @@ function GuidesContent() {
                     {t(guide.description, guide.descriptionEs)}
                   </p>
                   <div className="flex items-center text-cc-gold font-medium text-sm group-hover:gap-2 transition-all">
-                    {t("Read Guide", "Leer Guía")}
+                    {t("Get Clarity", "Obtener Claridad")}
                     <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>

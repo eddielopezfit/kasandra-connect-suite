@@ -135,7 +135,7 @@ export type EventType =
   | 'seller_decision_neighborhood_completed'
   | 'seller_decision_neighborhood_skipped'
   | 'guide_exit_ramp_clicked'
-  | 'mid_guide_cta_clicked';
+  | 'guide_mid_cta_clicked';
 
 export interface EventPayload {
   [key: string]: unknown;
