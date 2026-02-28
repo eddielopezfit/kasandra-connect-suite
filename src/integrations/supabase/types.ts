@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      decision_receipts: {
+        Row: {
+          created_at: string
+          id: string
+          language: string
+          lead_id: string | null
+          receipt_data: Json
+          receipt_type: string
+          session_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          language?: string
+          lead_id?: string | null
+          receipt_data?: Json
+          receipt_type?: string
+          session_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          language?: string
+          lead_id?: string | null
+          receipt_data?: Json
+          receipt_type?: string
+          session_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       event_log: {
         Row: {
           created_at: string

@@ -129,6 +129,7 @@ export type EventType =
   | 'seller_decision_step_completed'
   | 'seller_decision_completed'
   | 'decision_receipt_generated'
+  | 'decision_receipt_viewed'
   | 'seller_decision_contact_submitted'
   | 'seller_decision_neighborhood_started'
   | 'seller_decision_neighborhood_completed'
