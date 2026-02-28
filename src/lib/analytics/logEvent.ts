@@ -122,7 +122,17 @@ export type EventType =
   | 'neighborhood_profile_cached'
   // Neighborhood Quiz (Phase 2)
   | 'neighborhood_quiz_started'
-  | 'neighborhood_quiz_completed';
+  | 'neighborhood_quiz_completed'
+  // Seller Decision Path
+  | 'seller_decision_started'
+  | 'seller_decision_step_viewed'
+  | 'seller_decision_step_completed'
+  | 'seller_decision_completed'
+  | 'decision_receipt_generated'
+  | 'seller_decision_contact_submitted'
+  | 'seller_decision_neighborhood_started'
+  | 'seller_decision_neighborhood_completed'
+  | 'seller_decision_neighborhood_skipped';
 
 export interface EventPayload {
   [key: string]: unknown;

@@ -158,10 +158,10 @@ const StepPropertySnapshot = ({ initialData, onNext, onBack }: StepPropertySnaps
           }`}
         />
         <p className="text-xs text-cc-text-muted">
-          {t(
-            "Optional — helps us add neighborhood context.",
-            "Opcional — nos ayuda a agregar contexto del vecindario."
-          )}
+          {data.zip && data.zip.length > 0 && data.zip.length < 5
+            ? t("Enter 5 digits or clear the field.", "Ingrese 5 dígitos o borre el campo.")
+            : t("Optional — helps us add neighborhood context.", "Opcional — nos ayuda a agregar contexto del vecindario.")
+          }
         </p>
       </div>
 

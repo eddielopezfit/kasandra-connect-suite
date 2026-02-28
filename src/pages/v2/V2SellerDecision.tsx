@@ -6,8 +6,9 @@ import { StepSituation, StepPropertySnapshot, StepCondition } from "@/components
 import type { Situation, Timeline, GoalPriority } from "@/components/v2/seller-decision/StepSituation";
 import type { PropertySnapshotData } from "@/components/v2/seller-decision/StepPropertySnapshot";
 import type { ConditionTier } from "@/components/v2/seller-decision/conditionInsights";
-import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import { logEvent } from "@/lib/analytics/logEvent";
 import { Clock, ArrowLeft } from "lucide-react";
 
 const TOTAL_STEPS = 7;
@@ -41,19 +42,22 @@ const V2SellerDecision = () => {
 
   const handleStep1 = useCallback((data: { situation: Situation; timeline: Timeline; goalPriority: GoalPriority }) => {
     setWizardData(prev => ({ ...prev, ...data }));
+    // Write-once guard: don't stomp higher-confidence intent/timeline from other paths
+    setFieldIfEmpty('intent', 'sell');
     updateSessionContext({
-      intent: 'sell',
       situation: data.situation as any,
       timeline: data.timeline === 'soon' ? 'asap' : data.timeline === 'considering' ? '30_days' : 'exploring',
       seller_goal_priority: data.goalPriority,
       seller_decision_step: 1,
     });
+    logEvent('seller_decision_step_completed', { step: 1, situation: data.situation, timeline: data.timeline, goal_priority: data.goalPriority });
     goTo(2);
   }, [goTo]);
 
   const handleStep2 = useCallback((data: PropertySnapshotData) => {
     setWizardData(prev => ({ ...prev, property: data }));
     updateSessionContext({ seller_decision_step: 2 });
+    logEvent('seller_decision_step_completed', { step: 2, beds: data.beds, baths: data.baths, zip: data.zip || null });
     goTo(3);
   }, [goTo]);
 
@@ -63,6 +67,7 @@ const V2SellerDecision = () => {
       property_condition_raw: condition,
       seller_decision_step: 3,
     });
+    logEvent('seller_decision_step_completed', { step: 3, condition });
     goTo(4);
   }, [goTo]);
 
