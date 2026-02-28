@@ -152,6 +152,12 @@ function parseUTMParams(): Partial<SessionContext> {
 export function getOrCreateSessionId(): string {
   if (typeof window === 'undefined') return '';
   
+  // DEV: Allow QA session override for deterministic test runs
+  if (import.meta.env.DEV) {
+    const qa = localStorage.getItem('selena_qa_session_id');
+    if (qa) return qa;
+  }
+  
   let sessionId = localStorage.getItem(SESSION_KEY);
   if (!sessionId) {
     sessionId = generateUUID();
