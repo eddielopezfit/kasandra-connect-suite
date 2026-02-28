@@ -151,7 +151,7 @@ const StepPropertySnapshot = ({ initialData, onNext, onBack }: StepPropertySnaps
           placeholder="85701"
           value={data.zip || ''}
           onChange={e => update('zip', e.target.value.replace(/\D/g, '').slice(0, 5))}
-          className={`w-32 px-4 py-2.5 rounded-full border text-sm text-cc-charcoal focus:outline-none transition-colors ${
+          className={`w-32 px-4 py-2.5 rounded-full border text-base md:text-sm text-cc-charcoal focus:outline-none transition-colors ${
             data.zip && data.zip.length > 0 && data.zip.length < 5
               ? 'border-destructive/50 focus:border-destructive'
               : 'border-cc-sand-dark/40 focus:border-cc-navy/40'
