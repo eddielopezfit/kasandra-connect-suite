@@ -3,6 +3,7 @@ export { default as StepPropertySnapshot } from './StepPropertySnapshot';
 export { default as StepCondition } from './StepCondition';
 export { default as StepNeighborhood } from './StepNeighborhood';
 export { default as StepDualPath } from './StepDualPath';
+export { default as StepContact } from './StepContact';
 export { conditionInsights, conditionTierOrder } from './conditionInsights';
 export type { ConditionTier, ConditionInsight } from './conditionInsights';
 export type { Situation, Timeline, GoalPriority } from './StepSituation';
