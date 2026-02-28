@@ -295,6 +295,34 @@ const V2SellContent = () => {
                 </Link>
               </Button>
             </div>
+        </div>
+
+          {/* Decision Path CTA */}
+          <div className="max-w-4xl mx-auto mt-8">
+            <div className="bg-white rounded-2xl p-8 border border-cc-gold/30 text-center shadow-soft">
+              <span className="text-cc-gold font-semibold text-xs tracking-wider uppercase">
+                {t("Not Sure Which Path?", "¿No Está Seguro/a Cuál Camino?")}
+              </span>
+              <h3 className="font-serif text-2xl font-bold text-cc-navy mt-2 mb-3">
+                {t("Discover Your Best Path", "Descubra Su Mejor Camino")}
+              </h3>
+              <p className="text-cc-charcoal text-sm mb-6 max-w-lg mx-auto">
+                {t(
+                  "Answer a few quick questions about your property and goals. Get a personalized recommendation — no pressure, no commitment.",
+                  "Responda algunas preguntas rápidas sobre su propiedad y objetivos. Obtenga una recomendación personalizada — sin presión, sin compromiso."
+                )}
+              </p>
+              <Button
+                asChild
+                className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
+                onClick={() => handleCTAClick('seller_decision_path', '/v2/seller-decision')}
+              >
+                <Link to="/v2/seller-decision">
+                  {t("Start the Decision Tool", "Iniciar la Herramienta de Decisión")}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
