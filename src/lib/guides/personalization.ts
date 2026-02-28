@@ -39,6 +39,8 @@ const CATEGORY_INTENT_MAP: Record<string, Intent> = {
   buying: 'buy',
   selling: 'sell',
   valuation: 'sell',
+  cash: 'cash',
+  probate: 'sell',
   financial: 'buy',
   neighborhoods: 'buy',
   stories: null,
@@ -48,7 +50,7 @@ const CATEGORY_INTENT_MAP: Record<string, Intent> = {
 // Buyer-focused categories
 const BUYER_CATEGORIES = ['buying', 'financial', 'neighborhoods'];
 // Seller-focused categories  
-const SELLER_CATEGORIES = ['selling', 'valuation'];
+const SELLER_CATEGORIES = ['selling', 'valuation', 'cash'];
 
 /**
  * Get list of guide IDs the user has read
@@ -74,7 +76,6 @@ export function markGuideRead(guideId: string): void {
       current.push(guideId);
       localStorage.setItem(GUIDES_READ_KEY, JSON.stringify(current));
     }
-    // Also update session context
     updateSessionContext({ last_guide_id: guideId });
   } catch (e) {
     console.warn('[Guides] Failed to mark guide read:', e);
@@ -112,20 +113,18 @@ export function setLastGuideId(guideId: string): void {
 export function getIntent(): Intent {
   if (typeof window === 'undefined') return null;
   
-  // First try session context
   const context = getSessionContext();
   if (context?.intent) {
     const intentMap: Record<string, Intent> = {
       buy: 'buy',
       sell: 'sell',
-      cash: 'cash', // Canonical value (session context already normalized)
+      cash: 'cash',
       explore: 'explore',
       investor: 'explore',
     };
     return intentMap[context.intent] || null;
   }
   
-  // Fallback to localStorage
   try {
     const stored = localStorage.getItem(INTENT_KEY);
     if (stored && ['buy', 'sell', 'cash', 'explore'].includes(stored)) {
@@ -145,7 +144,6 @@ export function setIntent(intent: Intent): void {
   if (typeof window === 'undefined' || !intent) return;
   try {
     localStorage.setItem(INTENT_KEY, intent);
-    // Intent values are now canonical - 'cash' is used directly
     updateSessionContext({ intent: intent as 'buy' | 'sell' | 'cash' | 'explore' });
   } catch (e) {
     console.warn('[Guides] Failed to set intent:', e);
@@ -184,43 +182,21 @@ function getJourneyActions(): string[] {
 
 /**
  * Calculate journey stage (1-5)
- * 1 = Just starting (0 guides read)
- * 2 = Exploring (1-2 guides read)
- * 3 = Building clarity (3+ guides read)
- * 4 = Narrowing down (intent exists)
- * 5 = Ready to talk (clicked book/talk/report)
  */
 export function getJourneyStage(): JourneyStage {
   const guidesRead = getGuidesRead();
   const intent = getIntent();
   const journeyActions = getJourneyActions();
   
-  // Stage 5: User has clicked high-intent CTAs
-  if (journeyActions.length > 0) {
-    return 5;
-  }
-  
-  // Stage 4: Intent is known
-  if (intent) {
-    return 4;
-  }
-  
-  // Stage 3: 3+ guides read
-  if (guidesRead.length >= 3) {
-    return 3;
-  }
-  
-  // Stage 2: 1-2 guides read
-  if (guidesRead.length >= 1) {
-    return 2;
-  }
-  
-  // Stage 1: Just starting
+  if (journeyActions.length > 0) return 5;
+  if (intent) return 4;
+  if (guidesRead.length >= 3) return 3;
+  if (guidesRead.length >= 1) return 2;
   return 1;
 }
 
 /**
- * Check if user is returning (has read at least one guide or has last guide)
+ * Check if user is returning
  */
 export function isReturningVisitor(): boolean {
   return getGuidesRead().length > 0 || getLastGuideId() !== null;
@@ -228,7 +204,6 @@ export function isReturningVisitor(): boolean {
 
 /**
  * Get recommended guides with badges
- * Returns up to 8 guides with appropriate badges
  */
 export function getRecommendedGuides(allGuides: Guide[]): RecommendedGuide[] {
   const guidesRead = getGuidesRead();
@@ -238,7 +213,6 @@ export function getRecommendedGuides(allGuides: Guide[]): RecommendedGuide[] {
   const recommended: RecommendedGuide[] = [];
   const usedIds = new Set<string>();
   
-  // Helper to add guide with badge if not already used
   const addGuide = (guideId: string, badgeType: BadgeType) => {
     if (usedIds.has(guideId)) return;
     const guide = allGuides.find(g => g.id === guideId);
@@ -248,17 +222,14 @@ export function getRecommendedGuides(allGuides: Guide[]): RecommendedGuide[] {
     }
   };
   
-  // 1. Continue reading (if last guide exists and not fully read conceptually)
   if (lastGuideId) {
     addGuide(lastGuideId, 'continue');
   }
   
-  // 2. If no guides read, add "Start Here" foundational guides
   if (guidesRead.length === 0) {
     START_HERE_GUIDES.forEach(id => addGuide(id, 'start_here'));
   }
   
-  // 3. Intent-based recommendations
   if (intent === 'buy') {
     allGuides
       .filter(g => BUYER_CATEGORIES.includes(g.category) && !guidesRead.includes(g.id))
@@ -271,7 +242,6 @@ export function getRecommendedGuides(allGuides: Guide[]): RecommendedGuide[] {
       .forEach(g => addGuide(g.id, 'popular_sellers'));
   }
   
-  // 4. Next best step: Same category as last guide
   if (lastGuideId) {
     const lastGuide = allGuides.find(g => g.id === lastGuideId);
     if (lastGuide) {
@@ -282,7 +252,6 @@ export function getRecommendedGuides(allGuides: Guide[]): RecommendedGuide[] {
     }
   }
   
-  // 5. Fill remaining with recommended (unread guides prioritized)
   allGuides
     .filter(g => !guidesRead.includes(g.id) && !usedIds.has(g.id))
     .slice(0, 8 - recommended.length)
@@ -293,24 +262,15 @@ export function getRecommendedGuides(allGuides: Guide[]): RecommendedGuide[] {
 
 /**
  * Get badge for a guide in the main grid
- * Returns null if no badge should be shown
  */
 export function getGridBadge(guideId: string, guideCategory: string): BadgeType | null {
   const lastGuideId = getLastGuideId();
   const guidesRead = getGuidesRead();
   const intent = getIntent();
   
-  // Continue badge for last guide
-  if (guideId === lastGuideId) {
-    return 'continue';
-  }
+  if (guideId === lastGuideId) return 'continue';
+  if (guidesRead.includes(guideId)) return 'read';
   
-  // Read indicator (subtle)
-  if (guidesRead.includes(guideId)) {
-    return 'read';
-  }
-  
-  // Popular with buyers/sellers based on intent and category
   if (intent === 'buy' && BUYER_CATEGORIES.includes(guideCategory) && !guidesRead.includes(guideId)) {
     return 'popular_buyers';
   }
