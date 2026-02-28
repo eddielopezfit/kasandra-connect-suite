@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useGoogleReviews, GoogleReview } from "@/hooks/useGoogleReviews";
 import { Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
@@ -13,9 +13,9 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 
-const ReviewCard = ({ review }: { review: GoogleReview }) => {
+const ReviewCard = React.forwardRef<HTMLDivElement, { review: GoogleReview }>(({ review }, ref) => {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-elevated border border-cc-sand-dark/30 flex flex-col h-full min-h-[220px]">
+    <div ref={ref} className="bg-white rounded-xl p-6 shadow-elevated border border-cc-sand-dark/30 flex flex-col h-full min-h-[220px]">
       <div className="flex items-center gap-1 mb-3">
         {[...Array(5)].map((_, i) => (
           <Star key={i} className="w-4 h-4 fill-cc-gold text-cc-gold" />
@@ -39,7 +39,8 @@ const ReviewCard = ({ review }: { review: GoogleReview }) => {
       </div>
     </div>
   );
-};
+});
+ReviewCard.displayName = "ReviewCard";
 
 const LoadingSkeleton = () => (
   <div className="flex gap-4 overflow-hidden">
