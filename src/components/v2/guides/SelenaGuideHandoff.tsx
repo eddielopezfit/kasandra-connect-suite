@@ -7,6 +7,7 @@
  * Tone: Calm, supportive, no-pressure
  */
 
+import React from 'react';
 import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
@@ -62,7 +63,7 @@ const HANDOFF_COPY: Record<GuideCategory, { en: string; es: string }> = {
   },
 };
 
-const SelenaGuideHandoff = ({ guideId, category }: SelenaGuideHandoffProps) => {
+const SelenaGuideHandoff = React.forwardRef<HTMLElement, SelenaGuideHandoffProps>(({ guideId, category }, ref) => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
   
@@ -88,7 +89,7 @@ const SelenaGuideHandoff = ({ guideId, category }: SelenaGuideHandoffProps) => {
   };
 
   return (
-    <section className="bg-cc-navy/95 py-8 border-t border-white/10">
+    <section ref={ref} className="bg-cc-navy/95 py-8 border-t border-white/10">
       <div className="container mx-auto px-4">
         <button
           onClick={handleClick}
@@ -110,8 +111,10 @@ const SelenaGuideHandoff = ({ guideId, category }: SelenaGuideHandoffProps) => {
           </div>
         </button>
       </div>
-    </section>
-  );
-};
+      </section>
+    );
+});
+
+SelenaGuideHandoff.displayName = 'SelenaGuideHandoff';
 
 export default SelenaGuideHandoff;
