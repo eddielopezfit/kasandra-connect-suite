@@ -174,7 +174,8 @@ export type EntrySource =
   | 'proactive'
   | 'question'
   | 'post_booking' // After successful booking - identity reinforcement
-  | 'quiz_result'; // After completing the path quiz — intent-specific routing
+  | 'quiz_result' // After completing the path quiz — intent-specific routing
+  | 'seller_decision'; // From seller decision wizard consult CTA
 
 export interface EntryContext {
   source: EntrySource;

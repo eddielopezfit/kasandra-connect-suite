@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, Zap, TrendingUp, HelpCircle, CheckCircle } from "lucide-react";
+import { ArrowRight, ArrowLeft, Zap, TrendingUp, HelpCircle, CheckCircle, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getOrCreateSessionId, updateSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
@@ -66,6 +67,7 @@ const StepDualPath = ({
   onBack,
 }: StepDualPathProps) => {
   const { language, t } = useLanguage();
+  const { openChat } = useSelenaChat();
   const [saving, setSaving] = useState(false);
 
   const recommendedPath = computeRecommendation(timeline, condition, goalPriority);
@@ -284,12 +286,12 @@ const StepDualPath = ({
           <button
             onClick={() => {
               logEvent('cta_click', { cta: 'consult_talk_to_selena', destination: 'selena_chat' });
-              // Trigger Selena open via custom event
-              window.dispatchEvent(new CustomEvent('selena:open'));
+              openChat({ source: 'seller_decision', intent: 'sell' });
             }}
-            className="text-sm text-cc-gold hover:text-cc-gold-dark underline underline-offset-2 font-medium transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-cc-gold hover:text-cc-gold-dark underline underline-offset-2 font-medium transition-colors"
           >
-            {t("💬 Talk to Selena for a calm recommendation", "💬 Habla con Selena para una recomendación tranquila")}
+            <MessageCircle className="w-4 h-4" />
+            {t("Talk to Selena for a calm recommendation", "Habla con Selena para una recomendación tranquila")}
           </button>
         </div>
       )}

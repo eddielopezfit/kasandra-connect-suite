@@ -147,18 +147,28 @@ const StepNeighborhood = ({ externalZip, initialResult, onNext, onBack }: StepNe
         </div>
       </div>
 
-      {/* Loading skeleton (shown over existing result) */}
-      {loading && (
+      {/* Result — always visible; skeleton overlays during reload */}
+      {result && (
+        <div className="relative">
+          <NeighborhoodCard profileEn={result.profileEn} profileEs={result.profileEs} zipCode={result.zip} />
+          {loading && (
+            <div className="absolute inset-0 bg-white/70 rounded-xl flex items-center justify-center">
+              <div className="space-y-4 w-full px-4">
+                <Skeleton className="h-16 w-full rounded-xl" />
+                <Skeleton className="h-32 w-full rounded-xl" />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Initial loading (no prior result) */}
+      {loading && !result && (
         <div className="space-y-4">
           <Skeleton className="h-16 w-full rounded-xl" />
           <Skeleton className="h-32 w-full rounded-xl" />
           <Skeleton className="h-24 w-full rounded-xl" />
         </div>
-      )}
-
-      {/* Result — visible even while loading a new one (loading skeleton overlays) */}
-      {!loading && result && (
-        <NeighborhoodCard profileEn={result.profileEn} profileEs={result.profileEs} zipCode={result.zip} />
       )}
 
       {/* Actions */}
