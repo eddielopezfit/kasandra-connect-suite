@@ -10,10 +10,32 @@ const corsHeaders = {
 const VALID_RECEIPT_TYPES = ['seller_decision'] as const;
 type ReceiptType = typeof VALID_RECEIPT_TYPES[number];
 
-/** Minimum required keys in receipt_data for seller_decision */
+/** Minimum required keys in receipt_data for seller_decision (after normalization) */
 const REQUIRED_RECEIPT_KEYS: Record<ReceiptType, string[]> = {
   seller_decision: ['situation', 'timeline', 'condition', 'recommended_path'],
 };
+
+/** Valid condition tiers */
+const VALID_CONDITIONS = new Set([
+  'needs_work', 'mostly_original', 'standard', 'updated', 'like_new',
+]);
+
+/**
+ * Normalize receipt_data.condition ↔ property_condition_raw
+ * Accepts either key, writes both so old/new readers always work.
+ */
+function normalizeReceiptData(data: Record<string, unknown>): { ok: true } | { ok: false; error: string } {
+  // Condition normalization: accept property_condition_raw OR condition
+  const raw = (data.property_condition_raw ?? data.condition ?? null) as string | null;
+  if (raw && typeof raw === 'string' && VALID_CONDITIONS.has(raw)) {
+    data.condition = raw;
+    data.property_condition_raw = raw;
+  } else if (!data.condition) {
+    // Neither key present or invalid value
+    return { ok: false, error: 'receipt_data.condition is required (or property_condition_raw)' };
+  }
+  return { ok: true };
+}
 
 const MAX_PAYLOAD_BYTES = 50 * 1024; // 50KB
 
@@ -127,6 +149,16 @@ async function handleCreate(
     );
   }
 
+  // Normalize aliased keys (condition ↔ property_condition_raw)
+  const normResult = normalizeReceiptData(payload.receipt_data as Record<string, unknown>);
+  if (!normResult.ok) {
+    return new Response(
+      JSON.stringify({ ok: false, error: normResult.error }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // Check remaining required keys (condition already guaranteed by normalizer)
   const requiredKeys = REQUIRED_RECEIPT_KEYS[receiptType as ReceiptType] || [];
   const missingKeys = requiredKeys.filter(k => !(k in payload.receipt_data));
   if (missingKeys.length > 0) {
