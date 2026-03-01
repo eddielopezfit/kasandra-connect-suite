@@ -223,47 +223,47 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-[500px] flex flex-col">
+    <div className="min-h-[420px] flex flex-col justify-center">
       {/* Progress bar — visible during questions */}
       {currentStep >= 1 && currentStep <= 4 && (
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <Progress
             value={progressValue}
             className="h-2 bg-cc-sand-dark [&>div]:bg-cc-gold"
           />
           <p className="text-xs text-cc-slate text-center mt-2">
-            {t("Question", "Pregunta")} {currentStep} {t("of", "de")} 4
+            {currentStep} {t("of", "de")} 4
           </p>
         </div>
       )}
 
       {/* ── Step 0: Selena Context Card ── */}
       {currentStep === 0 && (
-        <div className="text-center animate-fade-in">
-          <div className="w-16 h-16 bg-cc-gold/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Sparkles className="w-8 h-8 text-cc-gold" />
+        <div className="text-center animate-fade-in px-2">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-cc-gold/20 rounded-full flex items-center justify-center mx-auto mb-5">
+            <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 text-cc-gold" />
           </div>
-          <h3 className="font-serif text-2xl md:text-3xl font-bold text-cc-navy mb-4">
+          <h3 className="font-serif text-2xl md:text-3xl font-bold text-cc-navy mb-3">
             {t(
               "Where Are You in Your Home Buying Journey?",
               "¿Dónde Estás en Tu Camino de Compra de Casa?"
             )}
           </h3>
-          <p className="text-cc-charcoal mb-6 max-w-md mx-auto">
+          <p className="text-cc-charcoal mb-4 max-w-md mx-auto leading-relaxed">
             {t(
-              "Hi, I'm Selena — I'll guide you through a few quick questions. Tap what fits best. No right or wrong answers.",
-              "Hola, soy Selena — te guiaré con unas preguntas rápidas. Toca lo que mejor te describa. No hay respuestas correctas ni incorrectas."
+              "4 quick taps — no typing needed. I'll help you figure out your best next step.",
+              "4 toques rápidos — sin escribir. Te ayudaré a descubrir tu mejor próximo paso."
             )}
           </p>
-          <p className="text-sm text-cc-slate mb-8">
-            {t("Takes about 1 minute · Tap-only", "Toma ~1 minuto · Solo toques")}
+          <p className="text-sm text-cc-slate mb-6">
+            {t("~1 min · Tap only · No wrong answers", "~1 min · Solo toques · Sin respuestas incorrectas")}
           </p>
           <Button
             onClick={handleStart}
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-6 shadow-gold text-base min-h-[52px]"
           >
-            {t("Start Quick Check", "Comenzar Evaluación")}
-            <ArrowRight className="w-4 h-4 ml-2" />
+            {t("Let's Go", "Comencemos")}
+            <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
       )}
@@ -271,23 +271,24 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
       {/* ── Steps 1–4: Questions ── */}
       {currentStep >= 1 && currentStep <= 4 && currentQuestion && (
         <div className="animate-fade-in">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-5">
             <button
               onClick={handleBack}
-              className="text-cc-slate hover:text-cc-navy transition-colors flex items-center gap-1 text-sm"
+              className="text-cc-slate hover:text-cc-navy transition-colors flex items-center gap-1.5 text-sm min-h-[44px] min-w-[44px]"
+              aria-label={t("Go back", "Regresar")}
             >
               <ArrowLeft className="w-4 h-4" />
               {t("Back", "Atrás")}
             </button>
             <button
               onClick={handleFinishLater}
-              className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-2"
+              className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-4 min-h-[44px] flex items-center"
             >
-              {t("I'll finish later", "Termino después")}
+              {t("Finish later", "Terminar después")}
             </button>
           </div>
 
-          <h3 className="font-serif text-xl md:text-2xl font-bold text-cc-navy mb-6 text-center">
+          <h3 className="font-serif text-xl md:text-2xl font-bold text-cc-navy mb-5 sm:mb-6 text-center leading-snug">
             {currentQuestion.question}
           </h3>
 
@@ -297,10 +298,10 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
                 key={index}
                 disabled={isTransitioning}
                 onClick={() => handleAnswer(index)}
-                className={`w-full py-5 px-6 min-h-[56px] text-left rounded-xl border-2 transition-all text-base ${
+                className={`w-full py-4 sm:py-5 px-5 sm:px-6 min-h-[60px] text-left rounded-xl border-2 transition-all text-base leading-snug active:scale-[0.98] ${
                   selectedAnswer?.answerIndex === index
-                    ? "border-cc-gold bg-cc-gold/10"
-                    : "border-cc-sand-dark hover:border-cc-gold/50 bg-white"
+                    ? "border-cc-gold bg-cc-gold/10 shadow-sm"
+                    : "border-cc-sand-dark hover:border-cc-gold/50 hover:shadow-sm bg-white"
                 } disabled:opacity-60`}
               >
                 <span className="text-cc-charcoal">
@@ -311,11 +312,11 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
           </div>
 
           {/* Skip link */}
-          <div className="text-center mt-4">
+          <div className="text-center mt-5">
             <button
               onClick={handleSkip}
               disabled={isTransitioning}
-              className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-2 disabled:opacity-60"
+              className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-4 disabled:opacity-60 min-h-[44px] inline-flex items-center"
             >
               {t("Skip this question", "Saltar esta pregunta")}
             </button>
@@ -325,27 +326,25 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
 
       {/* ── Step 5: Completion ── */}
       {currentStep === 5 && (
-        <div className="text-center animate-fade-in py-12">
+        <div className="text-center animate-fade-in py-10 sm:py-12">
           {!isComplete ? (
             <>
-              {/* Processing state */}
               <div className="flex justify-center gap-2 mb-6">
                 <div className="w-3 h-3 bg-cc-gold rounded-full animate-pulse" />
                 <div className="w-3 h-3 bg-cc-gold rounded-full animate-pulse [animation-delay:200ms]" />
                 <div className="w-3 h-3 bg-cc-gold rounded-full animate-pulse [animation-delay:400ms]" />
               </div>
-              <p className="text-cc-charcoal">
+              <p className="text-cc-charcoal text-sm sm:text-base">
                 {t(
-                  "Thanks — we're putting your answers together.",
-                  "Gracias — estamos organizando tus respuestas."
+                  "Putting your results together…",
+                  "Preparando tus resultados…"
                 )}
               </p>
             </>
           ) : (
             <>
-              {/* Complete state */}
-              <div className="w-16 h-16 bg-cc-gold/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8 text-cc-gold" />
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-cc-gold/20 rounded-full flex items-center justify-center mx-auto mb-5">
+                <CheckCircle className="w-7 h-7 sm:w-8 sm:h-8 text-cc-gold" />
               </div>
               <h3 className="font-serif text-2xl font-bold text-cc-navy mb-2">
                 {t("All set.", "Listo.")}
