@@ -74,6 +74,14 @@ const CHIP_ACTION_MAP: Array<{ pattern: string; actionSpec: ActionSpec }> = [
     pattern: 'tomar la evaluacion de preparacion',
     actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
   },
+  {
+    pattern: 'take the cash readiness check',
+    actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' } },
+  },
+  {
+    pattern: 'tomar el check de preparacion en efectivo',
+    actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' } },
+  },
 ];
 
 function normalizeChipLabel(label: string): string {

@@ -9,7 +9,7 @@
 import { getGuideById } from '@/lib/guides/guideRegistry';
 
 // Known tools and calculators — semantic IDs only
-export const KNOWN_TOOLS = ['buyer-readiness'] as const;
+export const KNOWN_TOOLS = ['buyer-readiness', 'cash-readiness'] as const;
 export const KNOWN_CALCULATORS = ['cash-comparison'] as const;
 
 // Valid entry sources for open_chat
@@ -34,6 +34,7 @@ export type ActionSpec =
 // Internal route maps — never exposed outside this module
 const TOOL_ROUTES: Record<ToolId, string> = {
   'buyer-readiness': '/v2/buyer-readiness',
+  'cash-readiness': '/v2/cash-readiness',
 };
 
 const CALC_ROUTES: Record<CalculatorId, string> = {
