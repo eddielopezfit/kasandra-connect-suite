@@ -1,24 +1,30 @@
 /**
  * AuthorityCTABlock - Decision-Compression CTA
  * 
- * High-authority CTA block for guide pages that:
- * - Displays category-specific authority bridge text
- * - Shows market insight for cash guides
- * - Provides a single calm, inevitable CTA
+ * Renders registry-driven CTAs when `registryDestinations` is provided (Model A).
+ * Falls back to category-level CTA_CONFIG when registry data is absent.
+ * 
+ * Authority bridge text, market insight, and visual rhythm are always
+ * preserved — only the CTA buttons swap based on the data source.
  * 
  * Tone: Calm, Adult, Inevitable, Earned
- * No urgency, no "free", no hype, no exclamation points
  */
 
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { logEvent } from '@/lib/analytics/logEvent';
 import { logCTAClick, CTA_NAMES } from '@/lib/analytics/ctaDefaults';
-import type { GuideCategory } from '@/lib/guides/guideRegistry';
-import { DollarSign, MessageCircle } from 'lucide-react';
+import type { GuideCategory, GuideDestinations } from '@/lib/guides/guideRegistry';
+import type { ActionSpec } from '@/lib/actions/actionSpec';
+import { isActionValid, resolveAction } from '@/lib/actions/actionSpec';
+import { DollarSign, MessageCircle, ArrowRight, Calendar } from 'lucide-react';
+
+// ---------------------------------------------------------------------------
+// Props
+// ---------------------------------------------------------------------------
 
 interface AuthorityCTABlockProps {
   category: GuideCategory;
@@ -26,9 +32,14 @@ interface AuthorityCTABlockProps {
   isCashGuide?: boolean;
   authorityBridge?: { en: string; es: string };
   marketInsight?: { en: string; es: string };
+  /** When provided, buttons are rendered from registry (Model A). */
+  registryDestinations?: GuideDestinations;
 }
 
-// Default authority bridge copy by category
+// ---------------------------------------------------------------------------
+// Authority bridge copy (category-level defaults)
+// ---------------------------------------------------------------------------
+
 const DEFAULT_AUTHORITY_BRIDGE: Record<GuideCategory, { en: string; es: string }> = {
   buying: {
     en: "This decision has nuances most people don't see until it's too late. Kasandra walks people through exactly this every day.",
@@ -72,99 +83,55 @@ const DEFAULT_AUTHORITY_BRIDGE: Record<GuideCategory, { en: string; es: string }
   },
 };
 
-// Default market insight for cash guides (only shown when isCashGuide)
 const DEFAULT_CASH_MARKET_INSIGHT = {
   en: "In Tucson, cash buyer patterns vary by neighborhood and season. Kasandra has evaluated hundreds of cash offers and rejected the ones that didn't serve her clients. She'll do the same for you.",
   es: "En Tucson, los patrones de compradores en efectivo varían por vecindario y temporada. Kasandra ha evaluado cientos de ofertas en efectivo y rechazado las que no beneficiaban a sus clientes. Hará lo mismo por usted.",
 };
 
-// CTA configuration by category
-// Note: 'buying', 'selling', 'valuation', 'stories' route through Selena (selena_chat)
-// Only 'cash' goes directly to /v2/cash-offer-options decision room
-const CTA_CONFIG: Record<GuideCategory, { 
-  link: string; 
-  labelEn: string; 
-  labelEs: string; 
-  icon: typeof MessageCircle;
+// ---------------------------------------------------------------------------
+// Fallback CTA_CONFIG — used ONLY when registryDestinations is absent
+// ---------------------------------------------------------------------------
+
+const CTA_CONFIG: Record<GuideCategory, {
+  labelEn: string;
+  labelEs: string;
   routeThruSelena: boolean;
+  link: string;
 }> = {
-  buying: {
-    link: 'selena_chat',
-    labelEn: 'Get Clarity on Your Buying Journey',
-    labelEs: 'Obtenga Claridad sobre Su Proceso de Compra',
-    icon: MessageCircle,
-    routeThruSelena: true,
-  },
-  selling: {
-    link: 'selena_chat',
-    labelEn: 'Request a Home Value Review',
-    labelEs: 'Solicitar Revisión de Valor de Vivienda',
-    icon: MessageCircle,
-    routeThruSelena: true,
-  },
-  valuation: {
-    link: 'selena_chat',
-    labelEn: 'Request a Home Value Review',
-    labelEs: 'Solicitar Revisión de Valor de Vivienda',
-    icon: MessageCircle,
-    routeThruSelena: true,
-  },
-  cash: {
-    link: '/v2/cash-offer-options',
-    labelEn: 'Schedule Your Private Cash Review',
-    labelEs: 'Programe Su Revisión Privada de Efectivo',
-    icon: DollarSign,
-    routeThruSelena: false,
-  },
-  stories: {
-    link: 'selena_chat',
-    labelEn: 'Explore Your Options with Kasandra',
-    labelEs: 'Explore Sus Opciones con Kasandra',
-    icon: MessageCircle,
-    routeThruSelena: true,
-  },
-  probate: {
-    link: 'selena_chat',
-    labelEn: 'Discuss Your Inherited Property Options',
-    labelEs: 'Converse Sobre Sus Opciones de Propiedad Heredada',
-    icon: MessageCircle,
-    routeThruSelena: true,
-  },
-  divorce: {
-    link: 'selena_chat',
-    labelEn: 'Talk Through Your Situation',
-    labelEs: 'Converse Sobre Su Situación',
-    icon: MessageCircle,
-    routeThruSelena: true,
-  },
-  distressed: {
-    link: 'selena_chat',
-    labelEn: 'Explore Your Property Options',
-    labelEs: 'Explore Sus Opciones de Propiedad',
-    icon: MessageCircle,
-    routeThruSelena: true,
-  },
-  military: {
-    link: 'selena_chat',
-    labelEn: 'Explore Your Transition Options',
-    labelEs: 'Explore Sus Opciones de Transición',
-    icon: MessageCircle,
-    routeThruSelena: true,
-  },
-  senior: {
-    link: 'selena_chat',
-    labelEn: 'Discuss Your Next Chapter',
-    labelEs: 'Converse Sobre Su Próximo Capítulo',
-    icon: MessageCircle,
-    routeThruSelena: true,
-  },
+  buying:    { labelEn: 'Get Clarity on Your Buying Journey',         labelEs: 'Obtenga Claridad sobre Su Proceso de Compra',       routeThruSelena: true,  link: 'selena_chat' },
+  selling:   { labelEn: 'Request a Home Value Review',               labelEs: 'Solicitar Revisión de Valor de Vivienda',            routeThruSelena: true,  link: 'selena_chat' },
+  valuation: { labelEn: 'Request a Home Value Review',               labelEs: 'Solicitar Revisión de Valor de Vivienda',            routeThruSelena: true,  link: 'selena_chat' },
+  cash:      { labelEn: 'Schedule Your Private Cash Review',         labelEs: 'Programe Su Revisión Privada de Efectivo',           routeThruSelena: false, link: '/v2/cash-offer-options' },
+  stories:   { labelEn: 'Explore Your Options with Kasandra',        labelEs: 'Explore Sus Opciones con Kasandra',                  routeThruSelena: true,  link: 'selena_chat' },
+  probate:   { labelEn: 'Discuss Your Inherited Property Options',   labelEs: 'Converse Sobre Sus Opciones de Propiedad Heredada',  routeThruSelena: true,  link: 'selena_chat' },
+  divorce:   { labelEn: 'Talk Through Your Situation',               labelEs: 'Converse Sobre Su Situación',                       routeThruSelena: true,  link: 'selena_chat' },
+  distressed:{ labelEn: 'Explore Your Property Options',             labelEs: 'Explore Sus Opciones de Propiedad',                  routeThruSelena: true,  link: 'selena_chat' },
+  military:  { labelEn: 'Explore Your Transition Options',           labelEs: 'Explore Sus Opciones de Transición',                 routeThruSelena: true,  link: 'selena_chat' },
+  senior:    { labelEn: 'Discuss Your Next Chapter',                 labelEs: 'Converse Sobre Su Próximo Capítulo',                 routeThruSelena: true,  link: 'selena_chat' },
 };
 
-// Subtext (same for all categories - calm, no-pressure)
 const SUBTEXT = {
   en: "A calm, no-pressure conversation to understand your real options.",
   es: "Una conversación tranquila, sin presión, para entender sus opciones reales.",
 };
+
+// ---------------------------------------------------------------------------
+// Icon resolver for ActionSpec types
+// ---------------------------------------------------------------------------
+
+function iconForSpec(spec: ActionSpec) {
+  switch (spec.type) {
+    case 'open_chat':   return MessageCircle;
+    case 'run_calculator':
+    case 'open_tool':   return DollarSign;
+    case 'book':        return Calendar;
+    default:            return ArrowRight;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 
 const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(({
   category,
@@ -172,62 +139,167 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
   isCashGuide = false,
   authorityBridge,
   marketInsight,
+  registryDestinations,
 }, ref) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const { openChat } = useSelenaChat();
-  
-  // Resolve authority bridge (use override or default)
-  const bridge = authorityBridge ?? DEFAULT_AUTHORITY_BRIDGE[category];
-  
-  // Resolve market insight for cash guides
-  const insight = isCashGuide 
-    ? (marketInsight ?? DEFAULT_CASH_MARKET_INSIGHT)
-    : null;
-  
-  // Get CTA config
-  const cta = CTA_CONFIG[category];
-  const Icon = cta.icon;
 
-  // Log view on mount
+  // Framing text — always uses category defaults or overrides (never changes with registry)
+  const bridge = authorityBridge ?? DEFAULT_AUTHORITY_BRIDGE[category];
+  const insight = isCashGuide ? (marketInsight ?? DEFAULT_CASH_MARKET_INSIGHT) : null;
+
+  // Extract guideId from URL for analytics context
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+  const guideMatch = currentPath.match(/^\/v2\/guides\/(.+)$/);
+  const currentGuideId = guideMatch?.[1];
+
   useEffect(() => {
     logEvent('guide_authority_cta_view', {
       category,
       guide_title: guideTitle,
       is_cash_guide: isCashGuide,
+      source: registryDestinations ? 'registry' : 'cta_config',
     });
-  }, [category, guideTitle, isCashGuide]);
+  }, [category, guideTitle, isCashGuide, registryDestinations]);
 
-  // Extract guideId from current URL for context passing
-  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
-  const guideMatch = currentPath.match(/^\/v2\/guides\/(.+)$/);
-  const currentGuideId = guideMatch?.[1];
+  // ------------------------------------------------------------------
+  // Label resolution with 3-tier fallback
+  // ------------------------------------------------------------------
+  function resolveLabel(spec: ActionSpec): string {
+    // 1. Prefer spec.label
+    if (spec.label?.en && spec.label?.es) return t(spec.label.en, spec.label.es);
+    // 2. Fallback to CTA_CONFIG category label
+    const cfg = CTA_CONFIG[category];
+    if (cfg) return t(cfg.labelEn, cfg.labelEs);
+    // 3. Hard fallback
+    return t('Continue', 'Continuar');
+  }
 
-  const handleCTAClick = () => {
-    logEvent('guide_cta_clicked', {
-      guideId: currentGuideId,
-      cta_id: `authority_cta_${category}`,
-      category,
-      guide_title: guideTitle,
-      destination: cta.link,
-    });
-    
-    // Route through Selena for non-cash categories — pass full guide context
-    if (cta.routeThruSelena) {
-      logCTAClick({
-        cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
-        destination: 'selena_chat',
-        page_path: currentPath,
-        intent: category === 'buying' ? 'buy' : 'sell',
-      });
-      openChat({
-        source: 'guide_handoff',
+  // ------------------------------------------------------------------
+  // Render a single action button
+  // ------------------------------------------------------------------
+  function renderActionButton(
+    spec: ActionSpec,
+    variant: 'primary' | 'secondary',
+    key?: string,
+  ) {
+    if (!isActionValid(spec)) return null;
+
+    const Icon = iconForSpec(spec);
+    const label = resolveLabel(spec);
+    const isPrimary = variant === 'primary';
+
+    const handleClick = (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      logEvent('guide_cta_clicked', {
         guideId: currentGuideId,
-        guideTitle,
-        guideCategory: category,
-        intent: category === 'buying' ? 'buy' : category === 'cash' ? 'cash' : 'sell',
+        cta_id: `authority_cta_${category}_${spec.type}`,
+        category,
+        guide_title: guideTitle,
+        destination: spec.type,
+        source: 'registry',
       });
-    }
-  };
+
+      if (spec.type === 'open_chat') {
+        logCTAClick({
+          cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
+          destination: 'selena_chat',
+          page_path: currentPath,
+          intent: category === 'buying' ? 'buy' : 'sell',
+        });
+      }
+
+      resolveAction(
+        spec,
+        navigate,
+        (payload) => openChat(payload as any),
+      );
+    };
+
+    return (
+      <Button
+        key={key}
+        type="button"
+        size="lg"
+        className={
+          isPrimary
+            ? 'bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full'
+            : 'border-2 border-white/30 bg-transparent text-white font-medium rounded-full px-6 sm:px-8 py-5 text-sm sm:text-base hover:bg-white/10 hover:border-white/50 max-w-full'
+        }
+        onClick={handleClick}
+      >
+        <Icon className="w-5 h-5 flex-shrink-0 mr-2 sm:mr-3" />
+        <span className="text-center">{label}</span>
+      </Button>
+    );
+  }
+
+  // ------------------------------------------------------------------
+  // Fallback CTA (old CTA_CONFIG path — used when no registryDestinations)
+  // ------------------------------------------------------------------
+  function renderFallbackCTA() {
+    const cfg = CTA_CONFIG[category];
+    const label = t(cfg.labelEn, cfg.labelEs);
+    const Icon = cfg.routeThruSelena ? MessageCircle : DollarSign;
+
+    const handleClick = (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      logEvent('guide_cta_clicked', {
+        guideId: currentGuideId,
+        cta_id: `authority_cta_${category}`,
+        category,
+        guide_title: guideTitle,
+        destination: cfg.link,
+        source: 'cta_config',
+      });
+
+      if (cfg.routeThruSelena) {
+        logCTAClick({
+          cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
+          destination: 'selena_chat',
+          page_path: currentPath,
+          intent: category === 'buying' ? 'buy' : 'sell',
+        });
+        openChat({
+          source: 'guide_handoff',
+          guideId: currentGuideId,
+          guideTitle,
+          guideCategory: category,
+          intent: category === 'buying' ? 'buy' : category === 'cash' ? 'cash' : 'sell',
+        });
+      } else {
+        navigate(cfg.link);
+      }
+    };
+
+    return (
+      <Button
+        type="button"
+        size="lg"
+        className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full"
+        onClick={handleClick}
+      >
+        <Icon className="w-5 h-5 flex-shrink-0 mr-2 sm:mr-3" />
+        <span className="text-center">{label}</span>
+      </Button>
+    );
+  }
+
+  // ------------------------------------------------------------------
+  // Determine which CTAs to render
+  // ------------------------------------------------------------------
+  const hasRegistryPrimary =
+    registryDestinations?.primaryAction &&
+    isActionValid(registryDestinations.primaryAction);
+
+  const validSecondaries = (registryDestinations?.secondaryActions ?? [])
+    .filter(isActionValid)
+    .slice(0, 2);
 
   return (
     <section ref={ref} className="bg-cc-navy py-16">
@@ -237,41 +309,26 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
           <p className="text-white/90 text-lg md:text-xl leading-relaxed mb-6">
             {t(bridge.en, bridge.es)}
           </p>
-          
+
           {/* Market Insight (cash guides only) */}
           {insight && (
             <p className="text-white/70 text-base leading-relaxed mb-8">
               {t(insight.en, insight.es)}
             </p>
           )}
-          
-          {/* Single Primary CTA - Selena routing for most, direct link for cash */}
-          {cta.routeThruSelena ? (
-            <Button 
-              size="lg" 
-              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full"
-              onClick={handleCTAClick}
-            >
-              <Icon className="w-5 h-5 flex-shrink-0 mr-2 sm:mr-3" />
-              <span className="text-center">{t(cta.labelEn, cta.labelEs)}</span>
-            </Button>
-          ) : (
-            <Button 
-              asChild 
-              size="lg" 
-              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full"
-              onClick={handleCTAClick}
-            >
-              <Link 
-                to={cta.link} 
-                className="inline-flex items-center gap-2 sm:gap-3 flex-wrap justify-center"
-              >
-                <Icon className="w-5 h-5 flex-shrink-0" />
-                <span className="text-center">{t(cta.labelEn, cta.labelEs)}</span>
-              </Link>
-            </Button>
-          )}
-          
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col items-center gap-4">
+            {hasRegistryPrimary
+              ? renderActionButton(registryDestinations!.primaryAction, 'primary')
+              : renderFallbackCTA()
+            }
+
+            {validSecondaries.map((spec, i) =>
+              renderActionButton(spec, 'secondary', `secondary-${i}`)
+            )}
+          </div>
+
           {/* Subtext */}
           <p className="text-white/50 text-sm mt-4">
             {t(SUBTEXT.en, SUBTEXT.es)}
