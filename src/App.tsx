@@ -18,10 +18,10 @@ import V2Podcast from "./pages/v2/V2Podcast";
 import V2Community from "./pages/v2/V2Community";
 import V2Book from "./pages/v2/V2Book";
 import V2BuyerReadiness from "./pages/v2/V2BuyerReadiness";
-import V2HomePathQuiz from "./pages/v2/V2HomePathQuiz";
+
 import V2PrivateCashReview from "./pages/v2/V2PrivateCashReview";
 import V2ThankYou from "./pages/v2/V2ThankYou";
-import V2SellerQuiz from "./pages/v2/V2SellerQuiz";
+
 import V2SellerDecision from "./pages/v2/V2SellerDecision";
 import V2SellerReadiness from "./pages/v2/V2SellerReadiness";
 import V2CashReadiness from "./pages/v2/V2CashReadiness";
@@ -59,10 +59,10 @@ const App = () => (
             <Route path="/v2/community" element={<V2Community />} />
             <Route path="/v2/book" element={<V2Book />} />
             <Route path="/v2/buyer-readiness" element={<V2BuyerReadiness />} />
-            <Route path="/v2/quiz" element={<V2HomePathQuiz />} />
+            
             <Route path="/v2/private-cash-review" element={<V2PrivateCashReview />} />
             <Route path="/v2/thank-you" element={<V2ThankYou />} />
-            <Route path="/v2/seller-quiz" element={<V2SellerQuiz />} />
+            
             <Route path="/v2/seller-decision" element={<V2SellerDecision />} />
             <Route path="/v2/seller-readiness" element={<V2SellerReadiness />} />
             <Route path="/v2/cash-readiness" element={<V2CashReadiness />} />
