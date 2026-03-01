@@ -234,7 +234,7 @@ function StartHerePanel({
           {(isIntentLocked && effectiveIntent ? intentNextSteps[effectiveIntent] ?? [] : []).map((step) => (
             <OptionCard
               key={step.en}
-              onClick={() => onIntentMessage(t(step.en, step.es))}
+              onClick={() => onIntentMessage(step.en)}
               label={t(step.en, step.es)}
               description=""
             />
