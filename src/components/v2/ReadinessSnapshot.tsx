@@ -2,6 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, DollarSign, Home, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -215,9 +216,14 @@ const ReadinessSnapshot = ({
   const NextIcon = nextStep.icon;
 
   return (
-    <div className="animate-fade-in text-center">
+    <div className="text-center">
       {/* Score Badge */}
-      <div className="mb-6">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="mb-6"
+      >
         <div
           className={`w-24 h-24 rounded-full ring-4 ${getBadgeRing(band)} flex flex-col items-center justify-center mx-auto`}
         >
@@ -231,36 +237,47 @@ const ReadinessSnapshot = ({
         <p className={`text-sm font-semibold mt-3 ${getBandColor(band)}`}>
           {bandLabel}
         </p>
-      </div>
+      </motion.div>
 
       {/* Insight Bullets */}
-      <div className="space-y-3 max-w-sm mx-auto mb-8 text-left">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.35, ease: "easeOut" }}
+        className="space-y-3 max-w-sm mx-auto mb-8 text-left"
+      >
         {insights.map((insight, i) => (
           <div key={i} className="flex gap-3 items-start">
             <div className="w-1.5 h-1.5 rounded-full bg-cc-gold mt-2 shrink-0" />
             <p className="text-sm text-cc-charcoal leading-relaxed">{insight}</p>
           </div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Recommended Next Step */}
-      <Button
-        onClick={() => navigate(nextStep.path)}
-        className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base min-h-[44px] active:scale-[0.98] transition-all"
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.65, ease: "easeOut" }}
       >
-        {t(nextStep.label.en, nextStep.label.es)}
-        <NextIcon className="w-4 h-4 ml-2" />
-      </Button>
-
-      {/* Browse guides fallback */}
-      <div className="mt-4">
-        <button
-          onClick={() => navigate("/v2/guides")}
-          className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-4 min-h-[44px] inline-flex items-center"
+        <Button
+          onClick={() => navigate(nextStep.path)}
+          className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base min-h-[44px] active:scale-[0.98] transition-all"
         >
-          {t("Browse all guides", "Ver todas las guías")}
-        </button>
-      </div>
+          {t(nextStep.label.en, nextStep.label.es)}
+          <NextIcon className="w-4 h-4 ml-2" />
+        </Button>
+
+        {/* Browse guides fallback */}
+        <div className="mt-4">
+          <button
+            onClick={() => navigate("/v2/guides")}
+            className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-4 min-h-[44px] inline-flex items-center"
+          >
+            {t("Browse all guides", "Ver todas las guías")}
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 };
