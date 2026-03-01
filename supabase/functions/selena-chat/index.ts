@@ -417,11 +417,11 @@ function getGovernedChips(
   // PHASE 2: Intent known — MAX 2 chips, no guides unless first time
   if (hasIntent) {
     if (intent === 'sell' || intent === 'cash') {
-      // If user already asked value → offer compare next
+      // If user already asked value → offer compare + decision
       if (engagement.hasAskedValue) {
         const chips = language === 'es'
-          ? ["Comparar efectivo vs. listado", "Tomar el check de preparación en efectivo"]
-          : ["Compare cash vs. listing", "Take the cash readiness check"];
+          ? ["Comparar efectivo vs. listado", "Ver mis opciones de venta"]
+          : ["Compare cash vs. listing", "Get my selling options"];
         return { chips, phase: 2, escalated: false };
       }
       // Default seller/cash Phase 2
@@ -430,14 +430,14 @@ function getGovernedChips(
           ? ["Tomar el check de preparación en efectivo", "Comparar efectivo vs. listado"]
           : ["Take the cash readiness check", "Compare cash vs. listing"])
         : (language === 'es'
-          ? ["¿Cuánto vale mi casa?", "Comparar efectivo vs. listado"]
-          : ["What's my home worth?", "Compare cash vs. listing"]);
+          ? ["Ver mis opciones de venta", "Comparar efectivo vs. listado"]
+          : ["Get my selling options", "Compare cash vs. listing"]);
       return { chips, phase: 2, escalated: false };
     }
     if (intent === 'buy') {
       const chips = language === 'es'
-        ? ["Tomar la evaluación de preparación", "Explorar guías del comprador"]
-        : ["Take the readiness check", "Browse buyer guides"];
+        ? ["Tomar la evaluación de preparación", "Explorar guías"]
+        : ["Take the readiness check", "Browse guides"];
       return { chips, phase: 2, escalated: false };
     }
   }
@@ -1725,10 +1725,10 @@ serve(async (req) => {
       if (effectiveChipPhase >= 3 && isPhase2Question && effectiveChipPhase - 1 >= 2) {
         // Allow Phase 2 chips for Phase-2-type questions even at floor 3
         const phase2Chips = effectiveIntent === 'buy'
-          ? (language === 'es' ? ["Tomar la evaluación de preparación", "Explorar guías del comprador"] : ["Take the readiness check", "Browse buyer guides"])
+          ? (language === 'es' ? ["Tomar la evaluación de preparación", "Explorar guías"] : ["Take the readiness check", "Browse guides"])
           : effectiveIntent === 'cash'
           ? (language === 'es' ? ["Tomar el check de preparación en efectivo", "Comparar efectivo vs. listado"] : ["Take the cash readiness check", "Compare cash vs. listing"])
-          : (language === 'es' ? ["¿Cuánto vale mi casa?", "Comparar efectivo vs. listado"] : ["What's my home worth?", "Compare cash vs. listing"]);
+          : (language === 'es' ? ["Ver mis opciones de venta", "Comparar efectivo vs. listado"] : ["Get my selling options", "Compare cash vs. listing"]);
         chips = phase2Chips;
         phase = 2;
         escalated = false;
@@ -1741,9 +1741,9 @@ serve(async (req) => {
         if (effectiveIntent === 'cash') {
           chips = language === 'es' ? ["Tomar el check de preparación en efectivo", "Comparar efectivo vs. listado"] : ["Take the cash readiness check", "Compare cash vs. listing"];
         } else if (effectiveIntent === 'sell') {
-          chips = language === 'es' ? ["¿Cuánto vale mi casa?", "Comparar efectivo vs. listado"] : ["What's my home worth?", "Compare cash vs. listing"];
+          chips = language === 'es' ? ["Ver mis opciones de venta", "Comparar efectivo vs. listado"] : ["Get my selling options", "Compare cash vs. listing"];
         } else if (effectiveIntent === 'buy') {
-          chips = language === 'es' ? ["Tomar la evaluación de preparación", "Explorar guías del comprador"] : ["Take the readiness check", "Browse buyer guides"];
+          chips = language === 'es' ? ["Tomar la evaluación de preparación", "Explorar guías"] : ["Take the readiness check", "Browse guides"];
         } else {
           chips = rawGoverned.chips; // fallback
         }

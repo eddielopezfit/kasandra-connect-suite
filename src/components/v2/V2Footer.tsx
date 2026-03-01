@@ -1,5 +1,5 @@
 import { Instagram, Linkedin, Phone, Mail, Home, Facebook, MessageCircle } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
@@ -7,7 +7,6 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 const V2Footer = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
-  const location = useLocation();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -38,18 +37,18 @@ const V2Footer = () => {
           <div className="text-center">
             <h4 className="font-semibold mb-4">{t("Quick Links", "Enlaces Rápidos")}</h4>
             <div className="space-y-2 text-sm text-white/80">
-              <a href="/v2/buy" className="block hover:text-white transition-colors">
+              <Link to="/v2/buy" className="block hover:text-white transition-colors">
                 {t("Buy a Home", "Comprar una Casa")}
-              </a>
-              <a href="/v2/sell" className="block hover:text-white transition-colors">
+              </Link>
+              <Link to="/v2/sell" className="block hover:text-white transition-colors">
                 {t("Sell Your Home", "Vender su Casa")}
-              </a>
-              <a href="/v2/cash-offer-options" className="block hover:text-white transition-colors">
+              </Link>
+              <Link to="/v2/cash-offer-options" className="block hover:text-white transition-colors">
                 {t("Cash Offer Options", "Opciones de Oferta en Efectivo")}
-              </a>
-              <a href="/v2/podcast" className="block hover:text-white transition-colors">
+              </Link>
+              <Link to="/v2/podcast" className="block hover:text-white transition-colors">
                 {t("Podcast", "Podcast")}
-              </a>
+              </Link>
             </div>
           </div>
 

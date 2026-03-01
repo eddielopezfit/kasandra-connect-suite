@@ -9,8 +9,14 @@
 import { getGuideById } from '@/lib/guides/guideRegistry';
 
 // Known tools and calculators — semantic IDs only
-export const KNOWN_TOOLS = ['buyer-readiness', 'cash-readiness'] as const;
+export const KNOWN_TOOLS = ['buyer-readiness', 'cash-readiness', 'seller-readiness', 'seller-decision'] as const;
 export const KNOWN_CALCULATORS = ['cash-comparison'] as const;
+
+// Whitelisted hub paths for the 'navigate' ActionSpec type
+const NAVIGATE_WHITELIST = [
+  '/v2/guides', '/v2/community', '/v2/podcast',
+  '/v2/buy', '/v2/sell', '/v2/book',
+] as const;
 
 // Valid entry sources for open_chat
 const VALID_ENTRY_SOURCES = [
@@ -27,6 +33,7 @@ export type ActionSpec =
   | { type: 'open_tool'; toolId: ToolId; label: { en: string; es: string } }
   | { type: 'run_calculator'; calculatorId: CalculatorId; label: { en: string; es: string } }
   | { type: 'open_chat'; payload: { source: string; guideId?: string; lifeEvent?: string; calculatorId?: string }; label: { en: string; es: string } }
+  | { type: 'navigate'; path: string; label: { en: string; es: string } }
   | { type: 'book'; label: { en: string; es: string } }
   | { type: 'call_contact'; phone: string; label: { en: string; es: string } }
   | { type: 'external_link'; url: string; label: { en: string; es: string } };
@@ -35,6 +42,8 @@ export type ActionSpec =
 const TOOL_ROUTES: Record<ToolId, string> = {
   'buyer-readiness': '/v2/buyer-readiness',
   'cash-readiness': '/v2/cash-readiness',
+  'seller-readiness': '/v2/seller-readiness',
+  'seller-decision': '/v2/seller-decision',
 };
 
 const CALC_ROUTES: Record<CalculatorId, string> = {
@@ -54,6 +63,8 @@ export function isActionValid(spec: ActionSpec): boolean {
       return (KNOWN_CALCULATORS as readonly string[]).includes(spec.calculatorId);
     case 'open_chat':
       return (VALID_ENTRY_SOURCES as readonly string[]).includes(spec.payload.source);
+    case 'navigate':
+      return (NAVIGATE_WHITELIST as readonly string[]).includes(spec.path);
     case 'book':
       return true;
     case 'call_contact':
@@ -86,6 +97,9 @@ export function resolveAction(
       break;
     case 'open_chat':
       openChat?.(spec.payload);
+      break;
+    case 'navigate':
+      navigate(spec.path);
       break;
     case 'book':
       navigate('/v2/book');

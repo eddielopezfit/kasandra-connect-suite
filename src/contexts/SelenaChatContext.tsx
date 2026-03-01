@@ -82,6 +82,42 @@ const CHIP_ACTION_MAP: Array<{ pattern: string; actionSpec: ActionSpec }> = [
     pattern: 'tomar el check de preparacion en efectivo',
     actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' } },
   },
+  // Seller decision (primary sell chip)
+  {
+    pattern: 'get my selling options',
+    actionSpec: { type: 'open_tool', toolId: 'seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+  },
+  {
+    pattern: 'ver mis opciones de venta',
+    actionSpec: { type: 'open_tool', toolId: 'seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+  },
+  // Seller readiness (alternate/Phase 3 chip)
+  {
+    pattern: 'quick seller readiness check',
+    actionSpec: { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' } },
+  },
+  {
+    pattern: 'check rapido de preparacion para vender',
+    actionSpec: { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' } },
+  },
+  // Navigate: guides hub
+  {
+    pattern: 'browse guides',
+    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+  },
+  {
+    pattern: 'explorar guias',
+    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+  },
+  // Legacy mapping: "Browse buyer guides" → guides hub
+  {
+    pattern: 'browse buyer guides',
+    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+  },
+  {
+    pattern: 'explorar guias del comprador',
+    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+  },
 ];
 
 function normalizeChipLabel(label: string): string {
@@ -145,16 +181,16 @@ function getPhaseAwareChips(
     ]);
   }
   if (floor >= 2 && (intent === 'sell' || intent === 'cash')) {
-    return [
+    return mapChipsToActionSpecs([
+      t("Get my selling options", "Ver mis opciones de venta"),
       t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
-      t("What's my home worth?", "¿Cuánto vale mi casa?"),
-    ];
+    ]);
   }
   if (floor >= 2 && intent === 'buy') {
-    return [
+    return mapChipsToActionSpecs([
       t("Take the readiness check", "Tomar la evaluación de preparación"),
-      t("Browse buyer guides", "Explorar guías de comprador"),
-    ];
+      t("Browse guides", "Explorar guías"),
+    ]);
   }
   if (floor >= 2 && intent) {
     // intent is known but not sell/buy/cash — generic Phase 2
