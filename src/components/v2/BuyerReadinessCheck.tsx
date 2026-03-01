@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, ArrowLeft, CheckCircle, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
+import ReadinessSnapshot from "@/components/v2/ReadinessSnapshot";
 import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 
@@ -103,6 +104,7 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [isComplete, setIsComplete] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [scoreData, setScoreData] = useState<{ readiness_score: number; primary_priority: string } | null>(null);
 
   // Guards
   const hasLoggedToolStart = useRef(false);
@@ -210,6 +212,7 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
 
     // Delayed reveal
     const timer = setTimeout(() => {
+      setScoreData({ readiness_score, primary_priority });
       setIsComplete(true);
       if (!hasFiredRef.current) {
         hasFiredRef.current = true;
@@ -326,9 +329,9 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
 
       {/* ── Step 5: Completion ── */}
       {currentStep === 5 && (
-        <div className="text-center animate-fade-in py-10 sm:py-12">
-          {!isComplete ? (
-            <>
+        <div className="animate-fade-in py-10 sm:py-12">
+          {!isComplete || !scoreData ? (
+            <div className="text-center">
               <div className="flex justify-center gap-2 mb-6">
                 <div className="w-3 h-3 bg-cc-gold rounded-full animate-pulse" />
                 <div className="w-3 h-3 bg-cc-gold rounded-full animate-pulse [animation-delay:200ms]" />
@@ -340,22 +343,13 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
                   "Preparando tus resultados…"
                 )}
               </p>
-            </>
+            </div>
           ) : (
-            <>
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-cc-gold/20 rounded-full flex items-center justify-center mx-auto mb-5">
-                <CheckCircle className="w-7 h-7 sm:w-8 sm:h-8 text-cc-gold" />
-              </div>
-              <h3 className="font-serif text-2xl font-bold text-cc-navy mb-2">
-                {t("All set.", "Listo.")}
-              </h3>
-              <p className="text-cc-slate text-sm">
-                {t(
-                  "Your readiness snapshot is ready.",
-                  "Tu resumen de preparación está listo."
-                )}
-              </p>
-            </>
+            <ReadinessSnapshot
+              readiness_score={scoreData.readiness_score}
+              primary_priority={scoreData.primary_priority}
+              intent="buy"
+            />
           )}
         </div>
       )}
