@@ -93,6 +93,10 @@ interface ChatRequest {
     // Mode persistence — client sends back the server's last reported mode
     current_mode?: 1 | 2 | 3 | 4;
     timeline?: string;
+    // Seller Decision Receipt fields
+    seller_decision_recommended_path?: string;
+    seller_goal_priority?: string;
+    property_condition_raw?: string;
     // Phase governance fields (monotonic)
     chip_phase_floor?: number;
     greeting_phase_seen?: number;
@@ -1702,6 +1706,17 @@ serve(async (req) => {
         }
       }
     }
+
+    // --- Seller Decision Receipt context ---
+    let sellerDecisionHint = "";
+    if (context.tool_used === "seller_decision" || context.seller_decision_recommended_path) {
+      const s = context.situation || "unknown";
+      const p = context.seller_goal_priority || "unknown";
+      const c = context.property_condition_raw || "unknown";
+      const r = context.seller_decision_recommended_path || "unknown";
+
+      sellerDecisionHint = `\n\nDECISION RECEIPT CONTEXT: User completed the Seller Decision tool. Situation: ${s}. Priority: ${p}. Condition: ${c}. Recommended path: ${r}. Acknowledge this progress and continue forward. Do NOT re-ask information they already provided.`;
+    }
     
     // ============= CHIP GOVERNANCE: AI PROMPT INJECTION =============
     // Tell the AI what phase we're in so response text matches chip direction
@@ -1859,7 +1874,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt + reflectionHint + governanceHint + guideModeHint + modeHint + guardRules.guardHints }, 
+          { role: "system", content: systemPrompt + reflectionHint + sellerDecisionHint + governanceHint + guideModeHint + modeHint + guardRules.guardHints }, 
           ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],

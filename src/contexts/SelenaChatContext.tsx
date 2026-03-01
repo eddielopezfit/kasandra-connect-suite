@@ -602,8 +602,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       entryContext.source === 'proactive';
     
     // Allowed greeting sources (can inject if signature is new + phase matches)
-    const isAllowedGreetingSource = entryContext && [
-      'calculator', 'guide_handoff', 'synthesis', 'hero', 'quiz_result', 'post_booking'
+    const isAllowedGreetingSource = !!entryContext && [
+      'calculator', 'guide_handoff', 'synthesis', 'hero', 'quiz_result', 'post_booking', 'seller_decision'
     ].includes(entryContext.source);
 
     // Core decision: should we inject a greeting?
@@ -697,6 +697,34 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           t("What would my home net?", "¿Cuánto me daría mi casa?"),
           t("I'm deciding: cash vs list", "Estoy decidiendo: efectivo vs venta"),
         ];
+      }
+      // Priority 1.5: Seller Decision Receipt continuity
+      else if (entryContext?.source === 'seller_decision') {
+        const ctx = getSessionContext();
+        const situation = ctx?.situation?.replace(/_/g, ' ') || t('your situation', 'su situación');
+        const goal = ctx?.seller_goal_priority?.replace(/_/g, ' ') || t('your priority', 'su prioridad');
+        const condition = ctx?.property_condition_raw?.replace(/_/g, ' ') || t('the condition', 'la condición');
+        const path = ctx?.seller_decision_recommended_path;
+
+        const pathLine = path === 'cash'
+          ? t("Based on that, it's worth comparing a cash offer to a traditional listing.",
+              "Basado en eso, vale la pena comparar una oferta en efectivo con un listado tradicional.")
+          : path === 'traditional'
+          ? t("Based on that, many sellers start with the traditional path to maximize value.",
+              "Basado en eso, muchos vendedores empiezan con el camino tradicional para maximizar valor.")
+          : t("Based on that, we can compare both paths calmly.",
+              "Basado en eso, podemos comparar ambos caminos con calma.");
+
+        greetingContent = t(
+          `I've reviewed your Seller Decision Receipt. You're ${situation}, your priority is ${goal}, and the home is ${condition}. ${pathLine} What would you like to do next?`,
+          `Ya revisé su Recibo de Decisión de Venta. Veo que está en ${situation}, su prioridad es ${goal}, y la casa está ${condition}. ${pathLine} ¿Qué le gustaría hacer ahora?`
+        );
+
+        suggestedReplies = mapChipsToActionSpecs([
+          t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
+          t("Get my selling options", "Ver mis opciones de venta"),
+          t("Talk with Kasandra", "Hablar con Kasandra"),
+        ]);
       }
       // Priority 2: Synthesis footer context
       else if (entryContext?.source === 'synthesis') {
@@ -1052,6 +1080,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               quiz_completed: context?.quiz_completed ?? false,
               guides_read: context?.guides_read ?? (context?.last_guide_id ? 1 : 0),
               situation: context?.situation,
+              seller_decision_recommended_path: context?.seller_decision_recommended_path,
+              seller_goal_priority: context?.seller_goal_priority,
+              property_condition_raw: context?.property_condition_raw,
               // from provider state
               calculator_advantage: lastCalculatorAdvantage ?? undefined,
               // Mode persistence — authoritative server mode signal, survives across turns
