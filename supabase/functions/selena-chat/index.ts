@@ -528,13 +528,13 @@ const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
       es: ["¿Qué debo preparar?", "Preguntar sobre financiamiento", "Verificar mi preparación"]
     },
     // Seller path progressions
-    "what's my home worth": {
-      en: ["Get a detailed estimate", "Compare cash vs. listing", "What factors affect value?"],
-      es: ["Obtener estimación detallada", "Comparar efectivo vs. listado", "¿Qué factores afectan el valor?"]
+    "get my selling options": {
+      en: ["Compare cash vs. listing", "Quick seller readiness check", "Talk with Kasandra"],
+      es: ["Comparar efectivo vs. listado", "Check rápido de preparación para vender", "Hablar con Kasandra"]
     },
-    'compare cash vs. traditional': {
-      en: ["Request my net sheet", "See cash timeline", "What are the trade-offs?"],
-      es: ["Solicitar mi análisis", "Ver línea de tiempo en efectivo", "¿Cuáles son las ventajas?"]
+    'compare cash vs. listing': {
+      en: ["Estimate my net proceeds", "Quick seller readiness check", "Talk with Kasandra"],
+      es: ["Estimar mis ganancias netas", "Check rápido de preparación para vender", "Hablar con Kasandra"]
     },
     'request a net sheet': {
       en: ["Review my estimate", "What costs are included?", "Ask a question"],
@@ -585,12 +585,12 @@ function getSuggestedReplies(
   // Step 2: Fall back to intent-based static replies
   const staticReplies: Record<IntentKey, { en: string[]; es: string[] }> = {
     sell: {
-      en: ["What's my home worth?", "Compare cash vs. traditional", "Request a net sheet"],
-      es: ["¿Cuánto vale mi casa?", "Comparar efectivo vs. tradicional", "Solicitar análisis de ganancias"]
+      en: ["Get my selling options", "Compare cash vs. listing", "Quick seller readiness check"],
+      es: ["Ver mis opciones de venta", "Comparar efectivo vs. listado", "Check rápido de preparación para vender"]
     },
     cash: {
-      en: ["What's my home worth?", "How fast can I close?", "Request a cash offer"],
-      es: ["¿Cuánto vale mi casa?", "¿Qué tan rápido puedo cerrar?", "Solicitar oferta en efectivo"]
+      en: ["Compare cash vs. listing", "Quick seller readiness check", "Estimate my net proceeds"],
+      es: ["Comparar efectivo vs. listado", "Check rápido de preparación para vender", "Estimar mis ganancias netas"]
     },
     buy: {
       en: ["Take readiness check", "View first-time buyer guide", "What should I prepare?"],
