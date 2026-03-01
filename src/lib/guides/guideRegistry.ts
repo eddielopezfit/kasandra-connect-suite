@@ -33,15 +33,8 @@ export type DisclaimerType = 'legal' | 'financial' | 'general';
 export type DecisionIntent = 'buy' | 'sell' | 'value' | 'cash' | 'life_event' | 'trust';
 export type DecisionStage = 'explore' | 'compare' | 'decide';
 
-// Mid-guide CTA prompt keys — typed union prevents drift
-export type MidGuidePromptKey =
-  | 'valuation_confusion'
-  | 'selling_options'
-  | 'cash_vs_list'
-  | 'life_event_support'
-  | 'first_time_confidence'
-  | 'bilingual_support'
-  | 'trust_story_followup';
+/** @deprecated Removed as part of Guide-First Restructure. Mid-guide CTAs are no longer rendered. */
+export type MidGuidePromptKey = never;
 
 // Asset slot configuration — render nothing when undefined
 // Governance: fields are optional per tier. No console warnings for missing optional slots.
@@ -90,10 +83,10 @@ export interface GuideRegistryEntry {
   decisionStage: DecisionStage;
   // Stable sort order for grid display
   sortOrder: number;
-  // Mid-guide CTA slot
-  midGuideCTA?: { afterSection: number; promptKey: MidGuidePromptKey };
-  // Soft exit ramp under hero
-  exitRampCopy?: { en: string; es: string };
+  /** @deprecated Removed in Guide-First Restructure. Do not use. */
+  midGuideCTA?: never;
+  /** @deprecated Removed in Guide-First Restructure. Do not use. */
+  exitRampCopy?: never;
   // Authority metadata for decision-compression guides
   authorityTheme?: AuthorityTheme;
   isCashGuide?: boolean;
@@ -132,11 +125,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'buy',
     decisionStage: 'explore',
     sortOrder: 10,
-    midGuideCTA: { afterSection: 1, promptKey: 'first_time_confidence' },
-    exitRampCopy: {
-      en: "If you'd rather talk this through than read, Selena can help.",
-      es: "Si prefieres hablarlo en vez de leer, Selena puede ayudarte.",
-    },
     authorityTheme: 'buyer_strategy',
     isCashGuide: false,
   },
@@ -168,11 +156,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'sell',
     decisionStage: 'explore',
     sortOrder: 20,
-    midGuideCTA: { afterSection: 1, promptKey: 'selling_options' },
-    exitRampCopy: {
-      en: "If you'd rather talk this through than read, Selena can help.",
-      es: "Si prefieres hablarlo en vez de leer, Selena puede ayudarte.",
-    },
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
   },
@@ -204,11 +187,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'cash',
     decisionStage: 'compare',
     sortOrder: 30,
-    midGuideCTA: { afterSection: 2, promptKey: 'cash_vs_list' },
-    exitRampCopy: {
-      en: "If you'd rather talk this through than read, Selena can help.",
-      es: "Si prefieres hablarlo en vez de leer, Selena puede ayudarte.",
-    },
     authorityTheme: 'cash_structure',
     isCashGuide: true,
     authorityBridge: {
@@ -249,11 +227,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'life_event',
     decisionStage: 'explore',
     sortOrder: 40,
-    midGuideCTA: { afterSection: 1, promptKey: 'life_event_support' },
-    exitRampCopy: {
-      en: "If this feels heavy, you don't have to sort it out alone.",
-      es: "Si esto se siente pesado, no tienes que resolverlo solo.",
-    },
     authorityTheme: 'probate_clarity',
     isCashGuide: false,
     authorityBridge: {
@@ -291,11 +264,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'value',
     decisionStage: 'explore',
     sortOrder: 50,
-    midGuideCTA: { afterSection: 1, promptKey: 'valuation_confusion' },
-    exitRampCopy: {
-      en: "If you'd rather talk this through than read, Selena can help.",
-      es: "Si prefieres hablarlo en vez de leer, Selena puede ayudarte.",
-    },
     authorityTheme: 'valuation_insight',
     isCashGuide: false,
   },
@@ -327,7 +295,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'trust',
     decisionStage: 'explore',
     sortOrder: 70,
-    midGuideCTA: { afterSection: 1, promptKey: 'trust_story_followup' },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -357,7 +324,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'trust',
     decisionStage: 'explore',
     sortOrder: 80,
-    midGuideCTA: { afterSection: 1, promptKey: 'trust_story_followup' },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -387,7 +353,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'trust',
     decisionStage: 'explore',
     sortOrder: 90,
-    midGuideCTA: { afterSection: 1, promptKey: 'trust_story_followup' },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -417,7 +382,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'trust',
     decisionStage: 'explore',
     sortOrder: 100,
-    midGuideCTA: { afterSection: 1, promptKey: 'bilingual_support' },
     authorityTheme: 'story_empathy',
     isCashGuide: false,
   },
@@ -452,11 +416,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'cash',
     decisionStage: 'compare',
     sortOrder: 35,
-    midGuideCTA: { afterSection: 2, promptKey: 'cash_vs_list' },
-    exitRampCopy: {
-      en: "Want to skip the reading and just see your numbers? Selena can walk you through it.",
-      es: "¿Quieres saltarte la lectura y ver tus números? Selena puede guiarte.",
-    },
     authorityTheme: 'cash_structure',
     isCashGuide: true,
     authorityBridge: {
@@ -499,11 +458,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'sell',
     decisionStage: 'compare',
     sortOrder: 32,
-    midGuideCTA: { afterSection: 1, promptKey: 'selling_options' },
-    exitRampCopy: {
-      en: "If you'd rather talk this through than read, Selena can help.",
-      es: 'Si prefieres hablarlo en vez de leer, Selena puede ayudarte.',
-    },
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
   },
@@ -537,11 +491,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'life_event',
     decisionStage: 'decide',
     sortOrder: 34,
-    midGuideCTA: { afterSection: 0, promptKey: 'life_event_support' },
-    exitRampCopy: {
-      en: "If you'd rather talk this through than read, Selena can help.",
-      es: 'Si prefieres hablarlo en vez de leer, Selena puede ayudarte.',
-    },
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
   },
