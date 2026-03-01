@@ -315,11 +315,25 @@ const V2SellContent = () => {
               <Button
                 asChild
                 className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
-                onClick={() => handleCTAClick('seller_decision_path', '/v2/seller-decision')}
               >
-                <Link to="/v2/seller-decision">
+                <Link 
+                  to="/v2/seller-decision"
+                  onClick={() => handleCTAClick('seller_decision_path', '/v2/seller-decision')}
+                >
                   {t("Start the Decision Tool", "Iniciar la Herramienta de Decisión")}
                   <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="border-cc-gold/50 text-cc-navy font-medium rounded-full px-8 mt-3"
+              >
+                <Link
+                  to="/v2/seller-readiness"
+                  onClick={() => handleCTAClick('seller_readiness_check', '/v2/seller-readiness')}
+                >
+                  {t("Quick Readiness Check", "Check Rápido de Preparación")}
                 </Link>
               </Button>
             </div>

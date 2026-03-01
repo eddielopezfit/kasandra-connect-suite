@@ -132,8 +132,8 @@ function generateQuizResultGreeting(context: EntryContext): GreetingResult {
       return {
         content: `Completaste tu camino — y parece que vender está en tu mente.\n\nBasado en lo que compartiste, hay dos cosas que te ayudarán a avanzar: entender el valor actual de tu casa y saber qué opciones tienes antes de comprometerte con algo.`,
         suggestedReplies: [
-          "¿Cuánto vale mi casa?",
-          "Comparar efectivo vs. venta tradicional",
+          "Ver mis opciones de venta",
+          "Comparar efectivo vs. listado",
           "Hablar con Kasandra",
         ],
       };
@@ -142,8 +142,8 @@ function generateQuizResultGreeting(context: EntryContext): GreetingResult {
       return {
         content: `Completaste tu camino — y las opciones de oferta en efectivo llamaron tu atención. Vale la pena explorarlo.\n\nDéjame ayudarte a entender qué significa realmente una oferta en efectivo para tu situación específica.`,
         suggestedReplies: [
-          "¿Cuánto vale mi casa?",
-          "Comparar efectivo vs. venta tradicional",
+          "Comparar efectivo vs. listado",
+          "Check rápido de preparación para vender",
           "Hablar con Kasandra",
         ],
       };
@@ -174,8 +174,8 @@ function generateQuizResultGreeting(context: EntryContext): GreetingResult {
     return {
       content: `You've just completed your path — and it looks like selling is on your mind.\n\nBased on what you shared, here are two things that will help you move forward: understanding your home's current value and knowing what options you have before committing to anything.`,
       suggestedReplies: [
-        "What's my home worth?",
-        "Compare cash vs. traditional",
+        "Get my selling options",
+        "Compare cash vs. listing",
         "Talk with Kasandra",
       ],
     };
@@ -184,8 +184,8 @@ function generateQuizResultGreeting(context: EntryContext): GreetingResult {
     return {
       content: `You've just completed your path — and cash offer options caught your attention. That's worth exploring.\n\nLet me help you understand what a cash offer actually means for your specific situation.`,
       suggestedReplies: [
-        "What's my home worth?",
-        "Compare cash vs. traditional",
+        "Compare cash vs. listing",
+        "Quick seller readiness check",
         "Talk with Kasandra",
       ],
     };
@@ -395,9 +395,9 @@ function generateQuestionGreeting(language: 'en' | 'es', intent?: string): Greet
     return {
       content: `Estoy aquí para ayudarte. ¿Qué pregunta tienes en mente?`,
       suggestedReplies: [
-        "¿Cuánto vale mi casa?",
+        "Ver mis opciones de venta",
         "¿Cómo funciona el proceso?",
-        "¿Qué opciones tengo?",
+        "¿Cuáles son mis opciones?",
       ],
     };
   }
@@ -405,7 +405,7 @@ function generateQuestionGreeting(language: 'en' | 'es', intent?: string): Greet
   return {
     content: `I'm here to help. What question do you have in mind?`,
     suggestedReplies: [
-      "What's my home worth?",
+      "Get my selling options",
       "How does the process work?",
       "What are my options?",
     ],

@@ -118,6 +118,38 @@ const CHIP_ACTION_MAP: Array<{ pattern: string; actionSpec: ActionSpec }> = [
     pattern: 'explorar guias del comprador',
     actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
   },
+  // Legacy safety net: "What's my home worth?" → seller-decision (catch drifted chips)
+  {
+    pattern: "what's my home worth",
+    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+  },
+  {
+    pattern: 'cuanto vale mi casa',
+    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+  },
+  // Legacy safety net: "Compare cash vs. traditional" → cash-comparison calculator
+  {
+    pattern: 'compare cash vs traditional',
+    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
+  },
+  {
+    pattern: 'comparar efectivo vs tradicional',
+    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
+  },
+  // Legacy: "Comparar efectivo vs. venta tradicional"
+  {
+    pattern: 'comparar efectivo vs venta tradicional',
+    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
+  },
+  // Estimate net proceeds → cash-comparison calculator
+  {
+    pattern: 'estimate my net proceeds',
+    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
+  },
+  {
+    pattern: 'estimar mis ganancias netas',
+    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
+  },
 ];
 
 function normalizeChipLabel(label: string): string {
@@ -707,7 +739,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               `Estoy aquí para ayudarle. ¿Qué pregunta tiene en mente?`
             );
             suggestedReplies = [
-              t("What's my home worth?", "¿Cuánto vale mi casa?"),
+              t("Get my selling options", "Ver mis opciones de venta"),
               t("How does the process work?", "¿Cómo funciona el proceso?"),
               t("What are my options?", "¿Cuáles son mis opciones?"),
             ];
@@ -724,11 +756,11 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
             `You just completed your path — and it looks like ${quizIntent === 'cash' ? 'a cash offer' : 'selling'} is on your mind.\n\nBased on what you shared, here's where I can help most: understanding your home's current value and comparing what cash vs. a traditional listing actually means for your situation.`,
             `Acaba de completar su camino — y parece que ${quizIntent === 'cash' ? 'una oferta en efectivo' : 'vender'} está en su mente.\n\nBasado en lo que compartió, aquí es donde puedo ayudarle más: entender el valor actual de su casa y comparar lo que el efectivo vs. una venta tradicional significa para su situación.`
           );
-          suggestedReplies = [
-            t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
-            t("What's my home worth?", "¿Cuánto vale mi casa?"),
-            t("Book a call with Kasandra", "Reservar una llamada con Kasandra"),
-          ];
+            suggestedReplies = [
+              t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
+              t("Get my selling options", "Ver mis opciones de venta"),
+              t("Talk with Kasandra", "Hablar con Kasandra"),
+            ];
         } else if (quizIntent === 'buy') {
           greetingContent = t(
             `You just completed your path — and you're thinking about buying. That's a great place to start.\n\nThe most useful next step for you right now is the Buyer Readiness Check — it tells you exactly where you stand before committing to anything.`,
@@ -834,7 +866,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
             );
             suggestedReplies = [
               t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
-              t("What's my home worth?", "¿Cuánto vale mi casa?"),
+              t("Get my selling options", "Ver mis opciones de venta"),
               t("I have a question", "Tengo una pregunta"),
             ];
           } else {

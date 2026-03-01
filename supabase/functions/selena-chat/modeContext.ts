@@ -257,15 +257,15 @@ export function getModeSuggestedReplies(
     // MODE 2: Tools + guides
     2: {
       en: intent === 'buy' 
-        ? ["Take the readiness check", "View buyer guide", "What should I prepare?"]
+        ? ["Take the readiness check", "Browse guides", "What should I prepare?"]
         : intent === 'sell' || intent === 'cash'
-        ? ["What's my home worth?", "Compare my options", "View seller guide"]
-        : ["Explore selling options", "Explore buying options", "Show me guides"],
+        ? ["Quick seller readiness check", "Get my selling options", "Compare cash vs. listing"]
+        : ["Explore selling options", "Explore buying options", "Browse guides"],
       es: intent === 'buy'
-        ? ["Hacer la evaluación de preparación", "Ver guía del comprador", "¿Qué debo preparar?"]
+        ? ["Tomar la evaluación de preparación", "Explorar guías", "¿Qué debo preparar?"]
         : intent === 'sell' || intent === 'cash'
-        ? ["¿Cuánto vale mi casa?", "Comparar mis opciones", "Ver guía del vendedor"]
-        : ["Explorar opciones de venta", "Explorar opciones de compra", "Mostrar guías"],
+        ? ["Quick seller readiness check", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
+        : ["Explorar opciones de venta", "Explorar opciones de compra", "Explorar guías"],
     },
     // MODE 3: Synthesis + prep
     3: {

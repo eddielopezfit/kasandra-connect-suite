@@ -591,22 +591,13 @@ export const getGuideDestinations = (guideId: string): GuideDestinations | undef
 };
 
 /**
- * Dev-only: Warn if a Tier 1 guide is missing required asset slots
+ * Dev-only: Warn if a Tier 1/2 guide is missing required orientation media slot.
+ * videoOverview, infographic, pdfGuide are optional-by-tier — never warned.
  */
 const _validatedIds = new Set<string>();
 export const validateTierAssets = (entry: GuideRegistryEntry): void => {
   if (import.meta.env.PROD || _validatedIds.has(entry.id)) return;
   _validatedIds.add(entry.id);
-  if (entry.tier === 1) {
-    const missing: string[] = [];
-    if (!entry.assetSlots.videoOverview) missing.push('videoOverview');
-    if (!entry.assetSlots.infographic) missing.push('infographic');
-    if (!entry.assetSlots.pdfGuide) missing.push('pdfGuide');
-    if (missing.length > 0) {
-      console.warn(`[GuideRegistry] Tier 1 guide "${entry.id}" missing asset slots: ${missing.join(', ')}`);
-    }
-  }
-  if (entry.tier === 2 && !entry.assetSlots.infographic) {
-    console.warn(`[GuideRegistry] Tier 2 guide "${entry.id}" missing required infographic asset slot`);
-  }
+  // No warnings for optional asset slots (videoOverview, infographic, pdfGuide)
+  // Orientation media slot validation is handled by guideMediaSlots.ts validateMediaSlots()
 };
