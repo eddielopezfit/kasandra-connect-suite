@@ -4,7 +4,7 @@
  * Uses global language prop for consistent UI chrome
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowRight, 
@@ -35,15 +35,14 @@ const CONTEXT_KEY = 'selena_context_v2';
  */
 function resetJourneyIntent(): void {
   const raw = localStorage.getItem(CONTEXT_KEY);
-  const ctx = raw ? JSON.parse(raw) : {};
+  let ctx: any = {};
+  try { ctx = raw ? JSON.parse(raw) : {}; } catch { ctx = {}; }
 
-  // Delete keys (handles both undefined and null stored values)
   delete ctx.intent;
   delete ctx.timeline;
   if (ctx.intent === null) delete ctx.intent;
   if (ctx.timeline === null) delete ctx.timeline;
 
-  // Reset progression
   ctx.chip_phase_floor = 1;
   ctx.current_mode = 1;
 
@@ -80,6 +79,10 @@ export function ConciergeTabPanels({
   const [effectiveIntent, setEffectiveIntent] = useState<Intent | undefined>(() => {
     return getSessionContext()?.intent as Intent | undefined;
   });
+
+  useEffect(() => {
+    setEffectiveIntent(getSessionContext()?.intent as Intent | undefined);
+  }, [activeTab, currentIntent]);
 
   if (!activeTab) return null;
 
@@ -228,7 +231,7 @@ function StartHerePanel({
 
       {isIntentLocked ? (
         <div className="space-y-2">
-          {(intentNextSteps[effectiveIntent!] || []).map((step) => (
+          {(isIntentLocked && effectiveIntent ? intentNextSteps[effectiveIntent] ?? [] : []).map((step) => (
             <OptionCard
               key={step.en}
               onClick={() => onIntentMessage(t(step.en, step.es))}
