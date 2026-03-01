@@ -12,44 +12,52 @@ const data: GuideContentData = {
     'Si no estás seguro(a) si vender ahora o esperar, no estás solo(a). Esta guía te ayuda a comparar el momento, el mercado y tus factores personales—con calma y claridad—para elegir lo que se alinea con tu vida.',
   sections: [
     {
-      heading: 'The real question: What are you optimizing for?',
-      headingEs: 'La pregunta real: ¿Qué estás optimizando?',
+      heading: 'What This Guide Helps You Decide',
+      headingEs: 'Lo Que Esta Gu\u00eda Te Ayuda a Decidir',
       content:
-        'Most sellers are balancing two things: financial outcome and emotional/operational simplicity. Start by naming your priority—price, timing, certainty, or reduced stress. Once you know what you\'re optimizing for, the "right time" becomes much clearer.',
+        'This guide helps you decide whether selling now or waiting better fits your situation. The goal isn\u2019t to predict the market\u2014it\u2019s to weigh your timeline, your home\u2019s readiness, and your personal priorities so the decision feels deliberate instead of reactive.',
       contentEs:
-        'La mayoría de los vendedores están equilibrando dos cosas: resultado financiero y simplicidad emocional/operativa. Empieza por definir tu prioridad—precio, tiempo, certeza o menos estrés. Una vez que sabes qué estás optimizando, el "momento correcto" se vuelve mucho más claro.',
+        'Esta gu\u00eda te ayuda a decidir si vender ahora o esperar se adapta mejor a tu situaci\u00f3n. La meta no es predecir el mercado\u2014es sopesar tu l\u00ednea de tiempo, la condici\u00f3n de tu casa y tus prioridades personales para que la decisi\u00f3n se sienta deliberada en vez de reactiva.',
     },
     {
-      heading: '3 signals it may be smart to sell now',
-      headingEs: '3 señales de que podría ser inteligente vender ahora',
+      heading: 'Why This Matters Right Now',
+      headingEs: 'Por Qu\u00e9 Esto Importa Ahora',
       content:
-        'If your timeline is non-negotiable (job change, family need), your home is in strong condition and doesn\'t need major prep, or you want certainty over "perfect timing," selling now can reduce risk and decision fatigue. In Tucson, waiting for a "better market" often costs more in carrying costs than the price difference.',
+        'In Tucson, waiting for a \u201cbetter market\u201d often costs more in carrying expenses\u2014mortgage, insurance, maintenance\u2014than the price difference you\u2019d gain. On a median-priced home, two to three months of holding costs can erase a modest price increase. That makes timing less about the market and more about your personal readiness.',
       contentEs:
-        'Si tu tiempo es innegociable (cambio de trabajo, necesidad familiar), tu casa está en buena condición sin necesitar preparación mayor, o prefieres certeza en lugar de "el momento perfecto," vender ahora puede reducir riesgo y fatiga de decisión. En Tucson, esperar un "mejor mercado" a menudo cuesta más en gastos de mantenimiento que la diferencia de precio.',
+        'En Tucson, esperar un \u201cmejor mercado\u201d a menudo cuesta m\u00e1s en gastos de mantenimiento\u2014hipoteca, seguro, reparaciones\u2014que la diferencia de precio que ganar\u00edas. En una casa de precio medio, dos o tres meses de gastos fijos pueden borrar un aumento modesto de precio. Eso hace que el momento dependa menos del mercado y m\u00e1s de tu preparaci\u00f3n personal.',
     },
     {
-      heading: '3 signals waiting could be the right move',
-      headingEs: '3 señales de que esperar podría ser lo correcto',
+      heading: 'Your Realistic Options',
+      headingEs: 'Tus Opciones Realistas',
       content:
-        'If you\'re not emotionally ready, your next move isn\'t clear, or your home needs targeted prep to command top value, a short "prep window" of 30–60 days can be strategic. The key is making the wait intentional—with a clear plan and deadline—not open-ended.',
+        'Option A \u2014 Sell now: You prioritize certainty and momentum. Your home is market-ready or close to it, and your timeline is clear. Tradeoff: you accept today\u2019s price instead of speculating on tomorrow\u2019s.\n\nOption B \u2014 Wait and prepare: You use a defined window (30\u201360 days) to make targeted improvements, clarify your next move, or align personal logistics. Tradeoff: carrying costs continue, and the market may shift in either direction.\n\nOption C \u2014 Soft launch: You test the market with limited exposure while preparing fully. Tradeoff: requires discipline to set a clear go/no-go deadline so it doesn\u2019t drift into indefinite waiting.',
       contentEs:
-        'Si no estás listo(a) emocionalmente, tu siguiente paso no está claro o tu casa necesita preparación específica para maximizar valor, una "ventana de preparación" de 30–60 días puede ser estratégica. La clave es hacer la espera intencional—con un plan claro y fecha límite—no indefinida.',
+        'Opci\u00f3n A \u2014 Vender ahora: Priorizas certeza e impulso. Tu casa est\u00e1 lista para el mercado o casi, y tu l\u00ednea de tiempo es clara. Compensaci\u00f3n: aceptas el precio de hoy en vez de especular sobre el de ma\u00f1ana.\n\nOpci\u00f3n B \u2014 Esperar y preparar: Usas una ventana definida (30\u201360 d\u00edas) para hacer mejoras espec\u00edficas, aclarar tu siguiente paso o alinear la log\u00edstica personal. Compensaci\u00f3n: los gastos fijos contin\u00faan y el mercado puede moverse en cualquier direcci\u00f3n.\n\nOpci\u00f3n C \u2014 Lanzamiento suave: Pruebas el mercado con exposici\u00f3n limitada mientras te preparas completamente. Compensaci\u00f3n: requiere disciplina para fijar una fecha l\u00edmite clara de avance o pausa, para no caer en una espera indefinida.',
     },
     {
-      heading: 'A simple decision framework (no spreadsheets required)',
-      headingEs: 'Un marco simple para decidir (sin hojas de cálculo)',
+      heading: 'Common Mistakes to Avoid',
+      headingEs: 'Errores Comunes Que Conviene Evitar',
       content:
-        'Pick a timeframe (30/60/90 days). Identify your "must-haves" (minimum price, move-out date, next home secured) and "dealbreakers." Then compare two paths side by side: sell now vs wait and prepare—using the same criteria. The path that checks more boxes wins.',
+        '\u2022 Waiting without a plan: Open-ended \u201cI\u2019ll sell when the market is better\u201d often leads to higher carrying costs and decision fatigue.\n\u2022 Over-improving before listing: Spending on upgrades that don\u2019t return their cost delays your timeline and eats into proceeds.\n\u2022 Ignoring personal signals: Financial pressure, life transitions, or emotional readiness matter as much as market conditions.',
       contentEs:
-        'Elige un marco de tiempo (30/60/90 días). Define tus "imprescindibles" (precio mínimo, fecha de mudanza, próximo hogar asegurado) y "no negociables." Luego compara dos caminos lado a lado: vender ahora vs esperar y preparar—con los mismos criterios. El camino que cumple más requisitos gana.',
+        '\u2022 Esperar sin plan: Un \u201cvoy a vender cuando el mercado mejore\u201d indefinido suele generar m\u00e1s gastos fijos y fatiga de decisi\u00f3n.\n\u2022 Mejorar de m\u00e1s antes de listar: Gastar en mejoras que no devuelven su costo retrasa tu l\u00ednea de tiempo y reduce tus ganancias.\n\u2022 Ignorar se\u00f1ales personales: La presi\u00f3n financiera, las transiciones de vida o la disposici\u00f3n emocional importan tanto como las condiciones del mercado.',
     },
     {
-      heading: 'Next step: Get clarity on your position',
-      headingEs: 'Siguiente paso: Obtén claridad sobre tu posición',
+      heading: 'What Most People Do Next',
+      headingEs: 'Lo Que La Mayor\u00eda Hace Despu\u00e9s',
       content:
-        'If you\'d like, Selena can help you compare the two paths for your specific home and timeline. Or if you\'re ready, you can book a calm seller consult with Kasandra—no obligation, just clarity.',
+        'Most homeowners compare the two paths with their own numbers\u2014carrying costs versus likely net proceeds\u2014before committing. When you see the real difference side by side, the decision usually becomes clear and much calmer.',
       contentEs:
-        'Si quieres, Selena puede ayudarte a comparar ambos caminos para tu casa y tu tiempo específicos. O si estás listo(a), puedes agendar una consulta tranquila con Kasandra—sin compromiso, solo claridad.',
+        'La mayor\u00eda de los propietarios comparan ambos caminos con sus propios n\u00fameros\u2014gastos fijos versus ganancias netas probables\u2014antes de comprometerse. Cuando ves la diferencia real lado a lado, la decisi\u00f3n normalmente se vuelve m\u00e1s clara y mucho m\u00e1s tranquila.',
+    },
+    {
+      heading: 'Your Next Step',
+      headingEs: 'Tu Siguiente Paso',
+      content:
+        'If you want clarity without pressure, the next step below will help you choose with confidence.',
+      contentEs:
+        'Si quieres claridad sin presi\u00f3n, el siguiente paso de abajo te ayudar\u00e1 a elegir con confianza.',
     },
   ],
 };
