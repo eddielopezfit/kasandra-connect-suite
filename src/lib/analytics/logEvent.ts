@@ -106,6 +106,7 @@ export type EventType =
   // Tool lifecycle events (Sprint Opus 4.6)
   | 'tool_started'
   | 'tool_completed'
+  | 'tool_abandoned'
   // Booking lifecycle events (Sprint Opus 4.6)
   | 'booking_started'
   | 'booking_submitted'
