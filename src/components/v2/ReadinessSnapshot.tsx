@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 interface ReadinessSnapshotProps {
   readiness_score: number;
   primary_priority: string;
-  intent: "buy" | "sell";
+  intent: "buy" | "sell" | "cash";
 }
 
 type ScoreBand = "early" | "building" | "ready";
@@ -50,7 +50,7 @@ function getBadgeRing(band: ScoreBand): string {
 // ─── Dynamic Insights ────────────────────────────────────────────────────────
 
 function useInsights(
-  intent: "buy" | "sell",
+  intent: "buy" | "sell" | "cash",
   priority: string,
   band: ScoreBand
 ) {
@@ -108,6 +108,15 @@ function useInsights(
       en: "Keeping options open is smart — let's explore all your paths.",
       es: "Mantener opciones abiertas es inteligente — exploremos todos tus caminos.",
     },
+    // Cash priorities
+    certainty: {
+      en: "A guaranteed close matters most — cash offers remove the uncertainty.",
+      es: "Un cierre garantizado es lo más importante — las ofertas en efectivo eliminan la incertidumbre.",
+    },
+    no_repairs: {
+      en: "Selling as-is is your priority — no showings, no fix-up costs.",
+      es: "Vender como está es tu prioridad — sin visitas, sin costos de reparación.",
+    },
   };
 
   const insights: string[] = [];
@@ -129,7 +138,22 @@ interface NextStep {
   icon: typeof ArrowRight;
 }
 
-function getNextStep(intent: "buy" | "sell", priority: string, band: ScoreBand): NextStep {
+function getNextStep(intent: "buy" | "sell" | "cash", priority: string, band: ScoreBand): NextStep {
+  if (intent === "cash") {
+    if (band === "ready") {
+      return {
+        label: { en: "Get Your Cash Offer", es: "Obtén Tu Oferta en Efectivo" },
+        path: "/v2/private-cash-review",
+        icon: DollarSign,
+      };
+    }
+    return {
+      label: { en: "Compare Cash vs. Listing", es: "Compara Efectivo vs. Listado" },
+      path: "/v2/cash-offer-options",
+      icon: DollarSign,
+    };
+  }
+
   if (intent === "sell") {
     if (priority === "speed" || priority === "simplicity") {
       return {
