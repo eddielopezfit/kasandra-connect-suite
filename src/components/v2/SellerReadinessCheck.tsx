@@ -223,7 +223,7 @@ const SellerReadinessCheck = ({ onScoreRevealed }: SellerReadinessCheckProps) =>
   // ─── Render ──────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-[500px] flex flex-col">
+    <div className="min-h-[420px] flex flex-col mb-6 sm:mb-8">
       {/* Progress bar — visible during questions */}
       {currentStep >= 1 && currentStep <= 4 && (
         <div className="mb-8">
@@ -249,20 +249,20 @@ const SellerReadinessCheck = ({ onScoreRevealed }: SellerReadinessCheckProps) =>
               "¿Qué Tan Listo/a Estás para Vender?"
             )}
           </h3>
-          <p className="text-cc-charcoal mb-6 max-w-md mx-auto">
+          <p className="text-cc-charcoal mb-2 max-w-md mx-auto">
             {t(
-              "Hi, I'm Selena — I'll walk you through a few quick questions to understand your selling situation. Tap what fits best. No right or wrong answers.",
-              "Hola, soy Selena — te guiaré con unas preguntas rápidas para entender tu situación de venta. Toca lo que mejor te describa. No hay respuestas correctas ni incorrectas."
+              "4 quick taps — no typing needed",
+              "4 toques rápidos — sin escribir"
             )}
           </p>
           <p className="text-sm text-cc-slate mb-8">
-            {t("Takes about 1 minute · Tap-only", "Toma ~1 minuto · Solo toques")}
+            {t("~1 min · Tap only · No wrong answers", "~1 min · Solo toques · Sin respuestas incorrectas")}
           </p>
           <Button
             onClick={handleStart}
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base min-h-[44px] active:scale-[0.98] transition-all"
           >
-            {t("Start Quick Check", "Comenzar Evaluación")}
+            {t("Let's Go", "Empecemos")}
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
@@ -274,20 +274,20 @@ const SellerReadinessCheck = ({ onScoreRevealed }: SellerReadinessCheckProps) =>
           <div className="flex items-center justify-between mb-6">
             <button
               onClick={handleBack}
-              className="text-cc-slate hover:text-cc-navy transition-colors flex items-center gap-1 text-sm"
+              className="text-cc-slate hover:text-cc-navy transition-colors flex items-center gap-1 text-sm min-h-[44px] active:scale-[0.98]"
             >
               <ArrowLeft className="w-4 h-4" />
               {t("Back", "Atrás")}
             </button>
             <button
               onClick={handleFinishLater}
-              className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-2"
+              className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-2 min-h-[44px] active:scale-[0.98]"
             >
               {t("I'll finish later", "Termino después")}
             </button>
           </div>
 
-          <h3 className="font-serif text-xl md:text-2xl font-bold text-cc-navy mb-6 text-center">
+          <h3 className="font-serif text-xl md:text-2xl font-bold text-cc-navy mb-6 text-center leading-snug">
             {currentQuestion.question}
           </h3>
 
@@ -297,7 +297,7 @@ const SellerReadinessCheck = ({ onScoreRevealed }: SellerReadinessCheckProps) =>
                 key={index}
                 disabled={isTransitioning}
                 onClick={() => handleAnswer(index)}
-                className={`w-full py-5 px-6 min-h-[56px] text-left rounded-xl border-2 transition-all text-base ${
+                className={`w-full py-5 px-6 min-h-[60px] text-left rounded-xl border-2 transition-all active:scale-[0.98] text-base ${
                   selectedAnswer?.answerIndex === index
                     ? "border-cc-gold bg-cc-gold/10"
                     : "border-cc-sand-dark hover:border-cc-gold/50 bg-white"
@@ -315,7 +315,7 @@ const SellerReadinessCheck = ({ onScoreRevealed }: SellerReadinessCheckProps) =>
             <button
               onClick={handleSkip}
               disabled={isTransitioning}
-              className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-2 disabled:opacity-60"
+              className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-2 disabled:opacity-60 min-h-[44px] active:scale-[0.98]"
             >
               {t("Skip this question", "Saltar esta pregunta")}
             </button>
