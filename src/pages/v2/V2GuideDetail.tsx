@@ -300,6 +300,7 @@ function GuideDetailContent() {
 
         {/* Authority CTA Block (Decision-Compression) */}
         <AuthorityCTABlock 
+          guideId={guideId || 'unknown'}
           category={safeCategory}
           guideTitle={guideTitle}
           isCashGuide={!!registryEntry?.isCashGuide}
