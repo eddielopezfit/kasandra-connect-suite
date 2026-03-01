@@ -82,14 +82,14 @@ const CHIP_ACTION_MAP: Array<{ pattern: string; actionSpec: ActionSpec }> = [
     pattern: 'tomar el check de preparacion en efectivo',
     actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' } },
   },
-  // Seller decision (primary sell chip)
+  // Seller decision (primary sell chip — navigate, not tool)
   {
     pattern: 'get my selling options',
-    actionSpec: { type: 'open_tool', toolId: 'seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
   },
   {
     pattern: 'ver mis opciones de venta',
-    actionSpec: { type: 'open_tool', toolId: 'seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
   },
   // Seller readiness (alternate/Phase 3 chip)
   {

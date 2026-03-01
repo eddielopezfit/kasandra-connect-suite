@@ -9,13 +9,14 @@
 import { getGuideById } from '@/lib/guides/guideRegistry';
 
 // Known tools and calculators — semantic IDs only
-export const KNOWN_TOOLS = ['buyer-readiness', 'cash-readiness', 'seller-readiness', 'seller-decision'] as const;
+export const KNOWN_TOOLS = ['buyer-readiness', 'cash-readiness', 'seller-readiness'] as const;
 export const KNOWN_CALCULATORS = ['cash-comparison'] as const;
 
 // Whitelisted hub paths for the 'navigate' ActionSpec type
 const NAVIGATE_WHITELIST = [
   '/v2/guides', '/v2/community', '/v2/podcast',
   '/v2/buy', '/v2/sell', '/v2/book',
+  '/v2/seller-decision', '/v2/cash-offer-options',
 ] as const;
 
 // Valid entry sources for open_chat
@@ -43,7 +44,6 @@ const TOOL_ROUTES: Record<ToolId, string> = {
   'buyer-readiness': '/v2/buyer-readiness',
   'cash-readiness': '/v2/cash-readiness',
   'seller-readiness': '/v2/seller-readiness',
-  'seller-decision': '/v2/seller-decision',
 };
 
 const CALC_ROUTES: Record<CalculatorId, string> = {

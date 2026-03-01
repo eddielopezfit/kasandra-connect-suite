@@ -15,7 +15,7 @@ import { GUIDE_REGISTRY, getGuideById } from '@/lib/guides/guideRegistry';
 import { isActionValid, type ActionSpec } from '@/lib/actions/actionSpec';
 
 // Internal route maps (duplicated read-only for display — no behavior change)
-const TOOL_ROUTES: Record<string, string> = { 'buyer-readiness': '/v2/buyer-readiness', 'cash-readiness': '/v2/cash-readiness', 'seller-readiness': '/v2/seller-readiness', 'seller-decision': '/v2/seller-decision' };
+const TOOL_ROUTES: Record<string, string> = { 'buyer-readiness': '/v2/buyer-readiness', 'cash-readiness': '/v2/cash-readiness', 'seller-readiness': '/v2/seller-readiness' };
 const CALC_ROUTES: Record<string, string> = { 'cash-comparison': '/v2/cash-offer-options' };
 
 /** Describe what resolveAction would do — without executing it */
