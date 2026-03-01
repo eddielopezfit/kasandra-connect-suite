@@ -12,44 +12,52 @@ const data: GuideContentData = {
     'Cuando la vida cambia rápido, las decisiones de bienes raíces pueden sentirse pesadas. Esta guía te da un camino práctico y tranquilo para proteger tu paz, tu tiempo y tu resultado—sin presión.',
   sections: [
     {
-      heading: 'Start with safety and clarity',
-      headingEs: 'Empieza con seguridad y claridad',
+      heading: 'What This Guide Helps You Decide',
+      headingEs: 'Lo Que Esta Gu\u00eda Te Ayuda a Decidir',
       content:
-        'In life transitions, the goal is often "stable next steps"—not maximizing every dollar. We start by clarifying three things: your timeline (how soon do you need to move?), decision-makers (is anyone else involved?), and what "low-stress" looks like for you specifically.',
+        'This guide helps you decide how to approach selling your home when a major life change\u2014divorce, relocation, or downsizing\u2014is driving the timeline. The goal isn\u2019t to rush you into action. It\u2019s to help you see which path protects your peace, your finances, and your next chapter at the same time.',
       contentEs:
-        'En transiciones de vida, la meta suele ser "pasos estables"—no maximizar cada dólar. Empezamos aclarando tres cosas: tu tiempo (¿qué tan pronto necesitas mudarte?), quién decide (¿hay alguien más involucrado?) y qué significa "bajo estrés" para ti específicamente.',
+        'Esta gu\u00eda te ayuda a decidir c\u00f3mo abordar la venta de tu casa cuando un cambio de vida importante\u2014divorcio, mudanza o reducci\u00f3n\u2014est\u00e1 marcando el ritmo. La meta no es apurarte. Es ayudarte a ver qu\u00e9 camino protege tu paz, tus finanzas y tu siguiente cap\u00edtulo al mismo tiempo.',
     },
     {
-      heading: 'Divorce: protect privacy, process, and fairness',
-      headingEs: 'Divorcio: protege privacidad, proceso y equidad',
+      heading: 'Why This Matters Right Now',
+      headingEs: 'Por Qu\u00e9 Esto Importa Ahora',
       content:
-        'If divorce is involved, you may need a plan that respects privacy and reduces conflict. A structured timeline, clear roles, and a neutral pricing strategy help avoid re-litigating decisions. In Tucson, many families benefit from a pre-listing agreement that both parties sign off on before the home hits the market.',
+        'In Tucson, life-change sellers who move without a structured plan often absorb two to four months of unnecessary carrying costs\u2014mortgage, insurance, utilities\u2014while the decision stays unresolved. A clear, situation-specific approach typically saves both money and emotional energy compared to waiting for things to \u201csettle on their own.\u201d',
       contentEs:
-        'Si hay divorcio, podrías necesitar un plan que respete privacidad y reduzca conflicto. Un calendario estructurado, roles claros y una estrategia de precio neutral ayudan a evitar decisiones repetidas. En Tucson, muchas familias se benefician de un acuerdo pre-listado que ambas partes firman antes de que la casa salga al mercado.',
+        'En Tucson, los vendedores por cambio de vida que avanzan sin un plan estructurado suelen absorber dos a cuatro meses de gastos innecesarios\u2014hipoteca, seguro, servicios\u2014mientras la decisi\u00f3n queda sin resolver. Un enfoque claro y espec\u00edfico para la situaci\u00f3n generalmente ahorra dinero y energ\u00eda emocional comparado con esperar que las cosas \u201cse resuelvan solas.\u201d',
     },
     {
-      heading: 'Relocation: certainty matters more than "perfect timing"',
-      headingEs: 'Mudanza: la certeza importa más que "el momento perfecto"',
+      heading: 'Your Realistic Options',
+      headingEs: 'Tus Opciones Realistas',
       content:
-        'When you\'re relocating, timing and logistics become real costs—every month of carrying two homes or storing belongings adds up. The best plan often prioritizes certainty: clear prep scope, aggressive but fair pricing strategy, and a clean handoff so you can focus on your new chapter.',
+        'Option A \u2014 Sell quickly with minimal prep: You prioritize speed, certainty, and emotional closure. Best when the timeline is non-negotiable or the property is already in showing condition. Tradeoff: you may leave some value on the table.\n\nOption B \u2014 Short prep window then list: You take 30\u201360 days for targeted improvements and logistical planning before going to market. Tradeoff: carrying costs continue, but a well-prepared home typically commands a stronger price.\n\nOption C \u2014 Structured dual-track: You begin marketing while simultaneously preparing\u2014testing market interest early and adjusting as needed. Tradeoff: requires coordination and clear decision points so the process doesn\u2019t stall.',
       contentEs:
-        'Cuando te mudas, el tiempo y la logística son costos reales—cada mes manteniendo dos casas o almacenando pertenencias suma. El mejor plan suele priorizar certeza: preparación clara, estrategia de precio agresiva pero justa, y una entrega ordenada para que puedas enfocarte en tu nuevo capítulo.',
+        'Opci\u00f3n A \u2014 Vender r\u00e1pido con preparaci\u00f3n m\u00ednima: Priorizas velocidad, certeza y cierre emocional. Ideal cuando el tiempo no es negociable o la propiedad ya est\u00e1 en condici\u00f3n de mostrar. Compensaci\u00f3n: podr\u00edas dejar algo de valor sobre la mesa.\n\nOpci\u00f3n B \u2014 Ventana corta de preparaci\u00f3n y luego listar: Tomas 30\u201360 d\u00edas para mejoras espec\u00edficas y planificaci\u00f3n log\u00edstica antes de salir al mercado. Compensaci\u00f3n: los gastos fijos contin\u00faan, pero una casa bien preparada generalmente obtiene un mejor precio.\n\nOpci\u00f3n C \u2014 Doble v\u00eda estructurada: Comienzas a comercializar mientras preparas simult\u00e1neamente\u2014probando el inter\u00e9s del mercado temprano y ajustando seg\u00fan sea necesario. Compensaci\u00f3n: requiere coordinaci\u00f3n y puntos de decisi\u00f3n claros para que el proceso no se detenga.',
     },
     {
-      heading: 'Downsizing: simplify without losing value',
-      headingEs: 'Reducir: simplifica sin perder valor',
+      heading: 'Common Mistakes to Avoid',
+      headingEs: 'Errores Comunes Que Conviene Evitar',
       content:
-        'Downsizing is emotional and practical at the same time. We focus on what makes the move easier—targeted prep and staging scope that doesn\'t overwhelm—while still protecting value and buyer confidence. In many Tucson neighborhoods, a well-presented downsizer home sells faster than average.',
+        '\u2022 Letting the transition stall the decision: Unresolved timelines create compounding costs and emotional weight.\n\u2022 Over-investing in prep during a crisis: Spending heavily on upgrades when speed matters more can delay relief without meaningful return.\n\u2022 Skipping role clarity in shared decisions: When multiple decision-makers are involved (divorce, estate), undefined roles lead to re-litigation and delays.',
       contentEs:
-        'Reducir es emocional y práctico al mismo tiempo. Nos enfocamos en lo que facilita el cambio—preparación y alcance de presentación que no abrume—mientras protegemos valor y confianza del comprador. En muchos vecindarios de Tucson, una casa bien presentada para reducción se vende más rápido que el promedio.',
+        '\u2022 Dejar que la transici\u00f3n paralice la decisi\u00f3n: L\u00edneas de tiempo sin resolver generan costos acumulados y peso emocional.\n\u2022 Invertir demasiado en preparaci\u00f3n durante una crisis: Gastar mucho en mejoras cuando la velocidad importa m\u00e1s puede retrasar el alivio sin retorno significativo.\n\u2022 Omitir claridad de roles en decisiones compartidas: Cuando hay m\u00faltiples personas decidiendo (divorcio, herencia), los roles indefinidos generan repetici\u00f3n y retrasos.',
     },
     {
-      heading: 'Next step: talk it through, calmly',
-      headingEs: 'Siguiente paso: hablarlo con calma',
+      heading: 'What Most People Do Next',
+      headingEs: 'Lo Que La Mayor\u00eda Hace Despu\u00e9s',
       content:
-        'If you want, Selena can help you outline the simplest path for your specific situation—no forms, no pressure. Or if you\'re ready, you can book a calm consult with Kasandra to map out your timeline and options.',
+        'Most homeowners in transition start by mapping their timeline and identifying which path reduces both financial drain and emotional friction. When you see the options clearly\u2014with your own situation as the lens\u2014the right next move usually becomes obvious.',
       contentEs:
-        'Si quieres, Selena puede ayudarte a trazar el camino más simple según tu situación—sin formularios, sin presión. O si estás listo(a), puedes agendar una consulta tranquila con Kasandra para planear tu tiempo y opciones.',
+        'La mayor\u00eda de los propietarios en transici\u00f3n empiezan mapeando su l\u00ednea de tiempo e identificando qu\u00e9 camino reduce tanto el desgaste financiero como la fricci\u00f3n emocional. Cuando ves las opciones claramente\u2014con tu propia situaci\u00f3n como lente\u2014el siguiente paso correcto generalmente se vuelve obvio.',
+    },
+    {
+      heading: 'Your Next Step',
+      headingEs: 'Tu Siguiente Paso',
+      content:
+        'If you want clarity without pressure, the next step below will help you choose with confidence.',
+      contentEs:
+        'Si quieres claridad sin presi\u00f3n, el siguiente paso de abajo te ayudar\u00e1 a elegir con confianza.',
     },
   ],
 };
