@@ -11,6 +11,7 @@
  */
 
 import React, { useEffect, useCallback } from 'react';
+import type { EntryContext } from '@/contexts/SelenaChatContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -162,9 +163,9 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
   const bridge = authorityBridge ?? DEFAULT_AUTHORITY_BRIDGE[category];
   const insight = isCashGuide ? (marketInsight ?? DEFAULT_CASH_MARKET_INSIGHT) : null;
 
-  // Stable bridge from openChat (EntryContext | MouseEvent) → OpenChatFn (Record<string, unknown>)
+  // Stable bridge: ActionSpec's OpenChatFn (Record) → SelenaChatContext's openChat (EntryContext)
   const openChatForAction: OpenChatFn = useCallback(
-    (payload: Record<string, unknown>) => openChat(payload as unknown as Parameters<typeof openChat>[0]),
+    (payload) => openChat(payload as unknown as EntryContext),
     [openChat],
   );
 
@@ -220,7 +221,7 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
           cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
           destination: 'selena_chat',
           page_path: `/v2/guides/${guideId}`,
-          intent: category === 'buying' ? 'buy' : 'sell',
+          intent: category === 'buying' ? 'buy' : category === 'cash' ? 'cash' : 'sell',
         });
       }
 
@@ -267,7 +268,7 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
           cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
           destination: 'selena_chat',
           page_path: `/v2/guides/${guideId}`,
-          intent: category === 'buying' ? 'buy' : 'sell',
+          intent: category === 'buying' ? 'buy' : category === 'cash' ? 'cash' : 'sell',
         });
         openChat({
           source: 'guide_handoff' as const,
