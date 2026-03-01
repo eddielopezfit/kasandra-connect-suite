@@ -4,6 +4,7 @@
  * Uses global language prop for consistent UI chrome
  */
 
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowRight, 
@@ -20,6 +21,34 @@ import { ConciergeTab, JourneyIntent } from './ConciergeTabBar';
 import { ChatAction } from '@/contexts/SelenaChatContext';
 import { logEvent, EventType } from '@/lib/analytics/logEvent';
 import { getLiveGuides } from '@/lib/guides/guideRegistry';
+import { 
+  getSessionContext, 
+  setFieldIfEmpty, 
+  type Intent,
+} from '@/lib/analytics/selenaSession';
+
+const CONTEXT_KEY = 'selena_context_v2';
+
+/**
+ * Truly delete intent + timeline keys from localStorage context,
+ * reset progression to early state. Works even if localStorage is empty.
+ */
+function resetJourneyIntent(): void {
+  const raw = localStorage.getItem(CONTEXT_KEY);
+  const ctx = raw ? JSON.parse(raw) : {};
+
+  // Delete keys (handles both undefined and null stored values)
+  delete ctx.intent;
+  delete ctx.timeline;
+  if (ctx.intent === null) delete ctx.intent;
+  if (ctx.timeline === null) delete ctx.timeline;
+
+  // Reset progression
+  ctx.chip_phase_floor = 1;
+  ctx.current_mode = 1;
+
+  localStorage.setItem(CONTEXT_KEY, JSON.stringify(ctx));
+}
 
 interface ConciergeTabPanelsProps {
   activeTab: ConciergeTab | null;
@@ -47,6 +76,11 @@ export function ConciergeTabPanels({
   const navigate = useNavigate();
   const t = (en: string, es: string) => language === 'es' ? es : en;
 
+  // effectiveIntent is the single source of truth for all child panels
+  const [effectiveIntent, setEffectiveIntent] = useState<Intent | undefined>(() => {
+    return getSessionContext()?.intent as Intent | undefined;
+  });
+
   if (!activeTab) return null;
 
   const handleNavigate = (path: string, eventType?: EventType) => {
@@ -67,6 +101,17 @@ export function ConciergeTabPanels({
     logEvent('priority_call_click', { source: 'concierge_tabs' });
     closeDrawer();
     navigate('/v2/book');
+  };
+
+  const handleResetIntent = () => {
+    resetJourneyIntent();
+    setEffectiveIntent(undefined);
+  };
+
+  const handleInstantIntentSet = (canonicalIntent: Intent) => {
+    setFieldIfEmpty('intent', canonicalIntent);
+    // Re-read actual stored value (respects write-once guard)
+    setEffectiveIntent(getSessionContext()?.intent as Intent | undefined);
   };
 
   return (
@@ -93,7 +138,9 @@ export function ConciergeTabPanels({
             t={t} 
             onIntentMessage={handleIntentMessage}
             onNavigate={handleNavigate}
-            currentIntent={currentIntent}
+            effectiveIntent={effectiveIntent}
+            onResetIntent={handleResetIntent}
+            onInstantIntentSet={handleInstantIntentSet}
           />
         )}
 
@@ -101,7 +148,7 @@ export function ConciergeTabPanels({
           <GuidesPanel 
             t={t} 
             onNavigate={handleNavigate}
-            currentIntent={currentIntent}
+            effectiveIntent={effectiveIntent}
           />
         )}
 
@@ -114,7 +161,7 @@ export function ConciergeTabPanels({
             onClose={onClose}
             onSendMessage={onSendMessage}
             onNavigate={handleNavigate}
-            currentIntent={currentIntent}
+            effectiveIntent={effectiveIntent}
           />
         )}
 
@@ -134,14 +181,18 @@ function StartHerePanel({
   t, 
   onIntentMessage,
   onNavigate,
-  currentIntent,
+  effectiveIntent,
+  onResetIntent,
+  onInstantIntentSet,
 }: { 
   t: (en: string, es: string) => string;
   onIntentMessage: (msg: string) => void;
   onNavigate: (path: string, eventType?: EventType) => void;
-  currentIntent?: JourneyIntent;
+  effectiveIntent?: Intent;
+  onResetIntent: () => void;
+  onInstantIntentSet: (intent: Intent) => void;
 }) {
-  const isIntentLocked = !!currentIntent && currentIntent !== 'exploring';
+  const isIntentLocked = !!effectiveIntent && effectiveIntent !== 'explore';
 
   // Intent-specific next steps using exact CHIP_ACTION_MAP strings
   const intentNextSteps: Record<string, { en: string; es: string }[]> = {
@@ -177,7 +228,7 @@ function StartHerePanel({
 
       {isIntentLocked ? (
         <div className="space-y-2">
-          {(intentNextSteps[currentIntent] || []).map((step) => (
+          {(intentNextSteps[effectiveIntent!] || []).map((step) => (
             <OptionCard
               key={step.en}
               onClick={() => onIntentMessage(t(step.en, step.es))}
@@ -185,22 +236,40 @@ function StartHerePanel({
               description=""
             />
           ))}
+          {/* Change my goal — explicit reset */}
+          <div className="text-center mt-3">
+            <button
+              onClick={onResetIntent}
+              className="text-xs text-muted-foreground hover:text-foreground underline transition-colors"
+            >
+              {t("Change my goal", "Cambiar mi objetivo")}
+            </button>
+          </div>
         </div>
       ) : (
         <div className="space-y-2">
           <IntentButton
             icon={Home}
-            onClick={() => onIntentMessage(t("I'm thinking about selling", "Estoy pensando en vender"))}
+            onClick={() => {
+              onInstantIntentSet('sell');
+              onIntentMessage(t("I'm thinking about selling", "Estoy pensando en vender"));
+            }}
             label={t("I'm thinking about selling", "Estoy pensando en vender")}
           />
           <IntentButton
             icon={ShoppingBag}
-            onClick={() => onIntentMessage(t("I'm looking to buy", "Estoy buscando comprar"))}
+            onClick={() => {
+              onInstantIntentSet('buy');
+              onIntentMessage(t("I'm looking to buy", "Estoy buscando comprar"));
+            }}
             label={t("I'm looking to buy", "Estoy buscando comprar")}
           />
           <IntentButton
             icon={Compass}
-            onClick={() => onIntentMessage(t("Just exploring for now", "Solo estoy explorando"))}
+            onClick={() => {
+              onInstantIntentSet('explore');
+              onIntentMessage(t("Just exploring for now", "Solo estoy explorando"));
+            }}
             label={t("Just exploring for now", "Solo estoy explorando")}
             variant="outline"
           />
@@ -212,13 +281,13 @@ function StartHerePanel({
           {t("Quick reads:", "Lecturas rápidas:")}
         </p>
         <div className="flex flex-wrap gap-2">
-          {(!isIntentLocked || currentIntent === 'buy') && (
+          {(!isIntentLocked || effectiveIntent === 'buy') && (
             <QuickLink 
               label={t("First-Time Buyer Guide", "Guía del Comprador Primerizo")}
               onClick={() => onNavigate('/v2/guides/first-time-buyer-guide', 'guide_cta_click')}
             />
           )}
-          {(!isIntentLocked || currentIntent === 'sell' || currentIntent === 'cash') && (
+          {(!isIntentLocked || effectiveIntent === 'sell' || effectiveIntent === 'cash') && (
             <QuickLink 
               label={t("Selling Your Home", "Vender Su Casa")}
               onClick={() => onNavigate('/v2/guides/selling-for-top-dollar', 'guide_cta_click')}
@@ -234,24 +303,24 @@ function StartHerePanel({
 function GuidesPanel({ 
   t, 
   onNavigate,
-  currentIntent,
+  effectiveIntent,
 }: { 
   t: (en: string, es: string) => string;
   onNavigate: (path: string, eventType?: EventType) => void;
-  currentIntent?: JourneyIntent;
+  effectiveIntent?: Intent;
 }) {
   const BUYER_CATEGORIES = new Set(['buying', 'stories']);
   const BUYER_INTENTS = new Set(['buy', 'trust']);
   const SELLER_CATEGORIES = new Set(['selling', 'cash', 'valuation', 'probate', 'stories']);
   const SELLER_INTENTS = new Set(['sell', 'cash', 'value', 'life_event', 'trust']);
 
-  const isIntentLocked = !!currentIntent && currentIntent !== 'exploring';
+  const isIntentLocked = !!effectiveIntent && effectiveIntent !== 'explore';
 
   const featuredGuides = getLiveGuides()
     .filter(g => g.tier <= 2)
     .filter(g => {
       if (!isIntentLocked) return true;
-      if (currentIntent === 'buy') {
+      if (effectiveIntent === 'buy') {
         return BUYER_CATEGORIES.has(g.category) || BUYER_INTENTS.has(g.decisionIntent || '');
       }
       // sell or cash
@@ -307,7 +376,7 @@ function MyOptionsPanel({
   onClose,
   onSendMessage,
   onNavigate,
-  currentIntent,
+  effectiveIntent,
 }: { 
   t: (en: string, es: string) => string;
   leadId?: string | null;
@@ -316,7 +385,7 @@ function MyOptionsPanel({
   onClose: () => void;
   onSendMessage: (message: string) => void;
   onNavigate: (path: string, eventType?: EventType) => void;
-  currentIntent?: JourneyIntent;
+  effectiveIntent?: Intent;
 }) {
   const handleViewLastReport = () => {
     logEvent('report_view_click', { source: 'concierge_tabs' });
@@ -330,7 +399,7 @@ function MyOptionsPanel({
 
   // Valuation card → Trigger Selena chat to ask for property address
   const handleValuationClick = () => {
-    logEvent('concierge_valuation_click', { source: 'my_options', intent: currentIntent });
+    logEvent('concierge_valuation_click', { source: 'my_options', intent: effectiveIntent });
     onSendMessage(t(
       "I'd like to know what I might walk away with if I sell.",
       "Me gustaría saber cuánto podría recibir si vendo."
@@ -339,19 +408,19 @@ function MyOptionsPanel({
 
   // Cash vs Listing → Navigate to Decision Room
   const handleCashComparisonClick = () => {
-    logEvent('concierge_cash_comparison_click', { source: 'my_options', intent: currentIntent });
+    logEvent('concierge_cash_comparison_click', { source: 'my_options', intent: effectiveIntent });
     onNavigate('/v2/cash-offer-options', 'decision_room_visit');
   };
 
   // Buyer Readiness → Navigate to Readiness Check
   const handleBuyerReadinessClick = () => {
-    logEvent('concierge_buyer_readiness_click', { source: 'my_options', intent: currentIntent });
+    logEvent('concierge_buyer_readiness_click', { source: 'my_options', intent: effectiveIntent });
     onNavigate('/v2/buyer-readiness', 'decision_room_visit');
   };
 
   // Intent-based filtering and ordering
-  const isBuyer = currentIntent === 'buy';
-  const isSeller = currentIntent === 'sell' || currentIntent === 'cash';
+  const isBuyer = effectiveIntent === 'buy';
+  const isSeller = effectiveIntent === 'sell' || effectiveIntent === 'cash';
 
   return (
     <>
