@@ -17,6 +17,7 @@ import V2GuideDetail from "./pages/v2/V2GuideDetail";
 import V2Podcast from "./pages/v2/V2Podcast";
 import V2Community from "./pages/v2/V2Community";
 import V2Book from "./pages/v2/V2Book";
+import V2BookConfirmed from "./pages/v2/V2BookConfirmed";
 import V2BuyerReadiness from "./pages/v2/V2BuyerReadiness";
 
 import V2PrivateCashReview from "./pages/v2/V2PrivateCashReview";
@@ -58,6 +59,7 @@ const App = () => (
             <Route path="/v2/podcast" element={<V2Podcast />} />
             <Route path="/v2/community" element={<V2Community />} />
             <Route path="/v2/book" element={<V2Book />} />
+            <Route path="/v2/book/confirmed" element={<V2BookConfirmed />} />
             <Route path="/v2/buyer-readiness" element={<V2BuyerReadiness />} />
             
             <Route path="/v2/private-cash-review" element={<V2PrivateCashReview />} />
