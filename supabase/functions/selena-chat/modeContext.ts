@@ -260,12 +260,12 @@ export function getModeSuggestedReplies(
         ? ["Take the readiness check", "Browse guides", "What should I prepare?"]
         : intent === 'sell' || intent === 'cash'
         ? ["Quick seller readiness check", "Get my selling options", "Compare cash vs. listing"]
-        : ["Explore selling options", "Explore buying options", "Browse guides"],
+        : ["Get my selling options", "Take the readiness check", "Browse guides"],
       es: intent === 'buy'
         ? ["Tomar la evaluación de preparación", "Explorar guías", "¿Qué debo preparar?"]
         : intent === 'sell' || intent === 'cash'
         ? ["Quick seller readiness check", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
-        : ["Explorar opciones de venta", "Explorar opciones de compra", "Explorar guías"],
+        : ["Ver mis opciones de venta", "Tomar la evaluación de preparación", "Explorar guías"],
     },
     // MODE 3: Synthesis + prep
     3: {
