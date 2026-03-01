@@ -93,6 +93,7 @@ export function ConciergeTabPanels({
             t={t} 
             onIntentMessage={handleIntentMessage}
             onNavigate={handleNavigate}
+            currentIntent={currentIntent}
           />
         )}
 
@@ -100,6 +101,7 @@ export function ConciergeTabPanels({
           <GuidesPanel 
             t={t} 
             onNavigate={handleNavigate}
+            currentIntent={currentIntent}
           />
         )}
 
@@ -131,55 +133,97 @@ export function ConciergeTabPanels({
 function StartHerePanel({ 
   t, 
   onIntentMessage,
-  onNavigate
+  onNavigate,
+  currentIntent,
 }: { 
   t: (en: string, es: string) => string;
   onIntentMessage: (msg: string) => void;
   onNavigate: (path: string, eventType?: EventType) => void;
+  currentIntent?: JourneyIntent;
 }) {
+  const isIntentLocked = !!currentIntent && currentIntent !== 'exploring';
+
+  // Intent-specific next steps using exact CHIP_ACTION_MAP strings
+  const intentNextSteps: Record<string, { en: string; es: string }[]> = {
+    buy: [
+      { en: "Take the readiness check", es: "Tomar la evaluación de preparación" },
+      { en: "Browse guides", es: "Explorar guías" },
+    ],
+    sell: [
+      { en: "Get my selling options", es: "Ver mis opciones de venta" },
+      { en: "Compare cash vs. listing", es: "Comparar efectivo vs. listado" },
+      { en: "Quick seller readiness check", es: "Check rápido de preparación para vender" },
+    ],
+    cash: [
+      { en: "Compare cash vs. listing", es: "Comparar efectivo vs. listado" },
+      { en: "Take the cash readiness check", es: "Tomar el check de preparación en efectivo" },
+    ],
+  };
+
   return (
     <>
       <div className="text-center mb-4">
         <h3 className="font-serif text-lg font-semibold text-foreground">
-          {t("Let's find your starting point", "Encontremos su punto de partida")}
+          {isIntentLocked
+            ? t("Your Next Steps", "Sus Próximos Pasos")
+            : t("Let's find your starting point", "Encontremos su punto de partida")}
         </h3>
-        <p className="text-sm text-muted-foreground mt-1">
-          {t("Tell me what brings you here today.", "Cuénteme qué le trae hoy.")}
-        </p>
+        {!isIntentLocked && (
+          <p className="text-sm text-muted-foreground mt-1">
+            {t("Tell me what brings you here today.", "Cuénteme qué le trae hoy.")}
+          </p>
+        )}
       </div>
 
-      <div className="space-y-2">
-        <IntentButton
-          icon={Home}
-          onClick={() => onIntentMessage(t("I'm thinking about selling", "Estoy pensando en vender"))}
-          label={t("I'm thinking about selling", "Estoy pensando en vender")}
-        />
-        <IntentButton
-          icon={ShoppingBag}
-          onClick={() => onIntentMessage(t("I'm looking to buy", "Estoy buscando comprar"))}
-          label={t("I'm looking to buy", "Estoy buscando comprar")}
-        />
-        <IntentButton
-          icon={Compass}
-          onClick={() => onIntentMessage(t("Just exploring for now", "Solo estoy explorando"))}
-          label={t("Just exploring for now", "Solo estoy explorando")}
-          variant="outline"
-        />
-      </div>
+      {isIntentLocked ? (
+        <div className="space-y-2">
+          {(intentNextSteps[currentIntent] || []).map((step) => (
+            <OptionCard
+              key={step.en}
+              onClick={() => onIntentMessage(t(step.en, step.es))}
+              label={t(step.en, step.es)}
+              description=""
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <IntentButton
+            icon={Home}
+            onClick={() => onIntentMessage(t("I'm thinking about selling", "Estoy pensando en vender"))}
+            label={t("I'm thinking about selling", "Estoy pensando en vender")}
+          />
+          <IntentButton
+            icon={ShoppingBag}
+            onClick={() => onIntentMessage(t("I'm looking to buy", "Estoy buscando comprar"))}
+            label={t("I'm looking to buy", "Estoy buscando comprar")}
+          />
+          <IntentButton
+            icon={Compass}
+            onClick={() => onIntentMessage(t("Just exploring for now", "Solo estoy explorando"))}
+            label={t("Just exploring for now", "Solo estoy explorando")}
+            variant="outline"
+          />
+        </div>
+      )}
 
       <div className="mt-4 pt-4 border-t border-border/50">
         <p className="text-xs text-muted-foreground mb-2">
           {t("Quick reads:", "Lecturas rápidas:")}
         </p>
         <div className="flex flex-wrap gap-2">
-          <QuickLink 
-            label={t("First-Time Buyer Guide", "Guía del Comprador Primerizo")}
-            onClick={() => onNavigate('/v2/guides/first-time-buyer-guide', 'guide_cta_click')}
-          />
-          <QuickLink 
-            label={t("Selling Your Home", "Vender Su Casa")}
-            onClick={() => onNavigate('/v2/guides/selling-for-top-dollar', 'guide_cta_click')}
-          />
+          {(!isIntentLocked || currentIntent === 'buy') && (
+            <QuickLink 
+              label={t("First-Time Buyer Guide", "Guía del Comprador Primerizo")}
+              onClick={() => onNavigate('/v2/guides/first-time-buyer-guide', 'guide_cta_click')}
+            />
+          )}
+          {(!isIntentLocked || currentIntent === 'sell' || currentIntent === 'cash') && (
+            <QuickLink 
+              label={t("Selling Your Home", "Vender Su Casa")}
+              onClick={() => onNavigate('/v2/guides/selling-for-top-dollar', 'guide_cta_click')}
+            />
+          )}
         </div>
       </div>
     </>
@@ -189,13 +233,30 @@ function StartHerePanel({
 // === GUIDES PANEL ===
 function GuidesPanel({ 
   t, 
-  onNavigate 
+  onNavigate,
+  currentIntent,
 }: { 
   t: (en: string, es: string) => string;
   onNavigate: (path: string, eventType?: EventType) => void;
+  currentIntent?: JourneyIntent;
 }) {
+  const BUYER_CATEGORIES = new Set(['buying', 'stories']);
+  const BUYER_INTENTS = new Set(['buy', 'trust']);
+  const SELLER_CATEGORIES = new Set(['selling', 'cash', 'valuation', 'probate', 'stories']);
+  const SELLER_INTENTS = new Set(['sell', 'cash', 'value', 'life_event', 'trust']);
+
+  const isIntentLocked = !!currentIntent && currentIntent !== 'exploring';
+
   const featuredGuides = getLiveGuides()
     .filter(g => g.tier <= 2)
+    .filter(g => {
+      if (!isIntentLocked) return true;
+      if (currentIntent === 'buy') {
+        return BUYER_CATEGORIES.has(g.category) || BUYER_INTENTS.has(g.decisionIntent || '');
+      }
+      // sell or cash
+      return SELLER_CATEGORIES.has(g.category) || SELLER_INTENTS.has(g.decisionIntent || '');
+    })
     .map(g => ({ id: g.id, labelEn: g.labelEn, labelEs: g.labelEs }));
 
   return (
@@ -318,23 +379,11 @@ function MyOptionsPanel({
       <div className="space-y-2">
         {/* Buyer-first ordering: Readiness → Valuation → Cash Comparison */}
         {isBuyer && (
-          <>
-            <OptionCard
-              onClick={handleBuyerReadinessClick}
-              label={t("Buyer Readiness Check", "Verificación de Preparación")}
-              description={t("See where you stand", "Vea en qué punto está")}
-            />
-            <OptionCard
-              onClick={handleValuationClick}
-              label={t("See what I might walk away with", "Ver lo que podría recibir")}
-              description={t("Selling your current home?", "¿Vendiendo su casa actual?")}
-            />
-            <OptionCard
-              onClick={handleCashComparisonClick}
-              label={t("Cash vs Listing Comparison", "Comparación: Efectivo vs Listado")}
-              description={t("Compare your options", "Compare sus opciones")}
-            />
-          </>
+          <OptionCard
+            onClick={handleBuyerReadinessClick}
+            label={t("Buyer Readiness Check", "Verificación de Preparación")}
+            description={t("See where you stand", "Vea en qué punto está")}
+          />
         )}
 
         {/* Seller-first ordering: Valuation → Cash Comparison (hide Buyer Readiness) */}
