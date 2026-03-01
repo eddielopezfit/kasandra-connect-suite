@@ -34,9 +34,9 @@ const getNextSteps = (category: string): NextStep[] => {
   // Cash offers
   if (category.includes("Cash")) {
     return [
-      { en: "Consider your timeline and flexibility", es: "Considera tu cronograma y flexibilidad" },
-      { en: "Understand the trade-offs of different options", es: "Comprende las compensaciones de diferentes opciones" },
-      { en: "Review your cash offer options", es: "Revisa tus opciones de oferta en efectivo" },
+      { en: "Take the Cash Offer Readiness Check (~1 min)", es: "Toma el Check de Preparación para Oferta en Efectivo (~1 min)" },
+      { en: "Compare cash vs. traditional net proceeds", es: "Compara ganancias netas en efectivo vs. tradicional" },
+      { en: "Review your options with Kasandra", es: "Revisa tus opciones con Kasandra" },
     ];
   }
   

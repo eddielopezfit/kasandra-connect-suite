@@ -6,7 +6,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, MessageCircle } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, MessageCircle, Sparkles } from "lucide-react";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-cash-calm.png";
 
@@ -259,7 +259,30 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
-      {/* Cash Offer Review Service */}
+      {/* Cash Readiness Diagnostic CTA */}
+      <section className="py-12 bg-cc-navy">
+        <div className="container mx-auto px-4 text-center">
+          <div className="max-w-xl mx-auto">
+            <Sparkles className="w-8 h-8 text-cc-gold mx-auto mb-4" />
+            <h3 className="font-serif text-2xl md:text-3xl font-bold text-white mb-3">
+              {t("Not Sure Which Path Fits?", "¿No Estás Seguro/a Qué Camino Te Conviene?")}
+            </h3>
+            <p className="text-white/80 mb-6">
+              {t(
+                "Take a 1-minute readiness check to see how well a cash offer fits your situation.",
+                "Toma un check de preparación de 1 minuto para ver qué tan bien se ajusta una oferta en efectivo a tu situación."
+              )}
+            </p>
+            <Link
+              to="/v2/cash-readiness"
+              className="inline-flex items-center bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3 shadow-gold transition-all active:scale-[0.98]"
+            >
+              {t("Take the Cash Readiness Check", "Toma el Check de Preparación")}
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          </div>
+        </div>
+      </section>
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">

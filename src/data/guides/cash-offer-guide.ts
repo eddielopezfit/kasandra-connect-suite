@@ -54,8 +54,8 @@ const data: GuideContentData = {
     {
       heading: "Your Next Step",
       headingEs: "Su Próximo Paso",
-      content: "If you'd like to explore whether a cash offer makes sense for your situation, you can request a no-obligation review to see what's possible.",
-      contentEs: "Si le gustaría explorar si una oferta en efectivo tiene sentido para su situación, puede solicitar una revisión sin compromiso para ver lo que es posible.",
+      content: "Not sure if a cash offer is the right fit? Take the Cash Offer Readiness Check — it's a quick, 1-minute diagnostic that helps you see how well a cash offer matches your timeline, property condition, and priorities.\n\nIf you'd like to explore further, you can also request a no-obligation review to see what's possible.",
+      contentEs: "¿No está seguro si una oferta en efectivo es la opción correcta? Tome el Check de Preparación para Oferta en Efectivo — es un diagnóstico rápido de 1 minuto que le ayuda a ver qué tan bien se ajusta una oferta en efectivo a su cronograma, condición de la propiedad y prioridades.\n\nSi desea explorar más, también puede solicitar una revisión sin compromiso para ver lo que es posible.",
     },
   ],
 };
