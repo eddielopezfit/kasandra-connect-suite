@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { supabase } from "@/integrations/supabase/client";
-import { getOrCreateSessionId } from "@/lib/analytics/selenaSession";
+import { getOrCreateSessionId, updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -301,6 +301,28 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
           <button
             onClick={() => {
               logEvent("cta_click", { cta: "receipt_talk_to_selena", source: "decision_receipt" });
+
+              const timelineCanonical =
+                rd.timeline === "soon" ? ("asap" as const) :
+                rd.timeline === "considering" ? ("30_days" as const) :
+                undefined;
+
+              // Write-once intent guard
+              setFieldIfEmpty('intent', 'sell');
+
+              // Merge receipt fields into session context BEFORE opening chat
+              const situationSafe = rd.situation ?? undefined;
+              const conditionSafe = conditionKey ?? undefined;
+              updateSessionContext({
+                tool_used: 'seller_decision',
+                seller_decision_step: 7,
+                seller_decision_recommended_path: rd.recommended_path,
+                seller_goal_priority: rd.goal_priority as any,
+                ...(situationSafe ? { situation: situationSafe as any } : {}),
+                ...(conditionSafe ? { property_condition_raw: conditionSafe as any } : {}),
+                ...(timelineCanonical ? { timeline: timelineCanonical } : {}),
+              });
+
               openChat({ source: "seller_decision", intent: "sell" });
             }}
             className="flex items-center gap-3 bg-cc-navy text-white rounded-xl px-5 py-4 text-left hover:bg-cc-navy-dark transition-colors"
