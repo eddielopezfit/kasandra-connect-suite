@@ -15,7 +15,7 @@ import { GUIDE_REGISTRY, getGuideById } from '@/lib/guides/guideRegistry';
 import { isActionValid, type ActionSpec } from '@/lib/actions/actionSpec';
 
 // Internal route maps (duplicated read-only for display — no behavior change)
-const TOOL_ROUTES: Record<string, string> = { 'buyer-readiness': '/v2/buyer-readiness' };
+const TOOL_ROUTES: Record<string, string> = { 'buyer-readiness': '/v2/buyer-readiness', 'cash-readiness': '/v2/cash-readiness', 'seller-readiness': '/v2/seller-readiness', 'seller-decision': '/v2/seller-decision' };
 const CALC_ROUTES: Record<string, string> = { 'cash-comparison': '/v2/cash-offer-options' };
 
 /** Describe what resolveAction would do — without executing it */
@@ -25,6 +25,7 @@ function describeResolution(spec: ActionSpec): string {
     case 'open_tool': return `Navigate to ${TOOL_ROUTES[spec.toolId] ?? `[unknown tool: ${spec.toolId}]`}`;
     case 'run_calculator': return `Navigate to ${CALC_ROUTES[spec.calculatorId] ?? `[unknown calc: ${spec.calculatorId}]`}`;
     case 'open_chat': return `Open Selena chat (source: ${spec.payload.source})`;
+    case 'navigate': return `Navigate to ${spec.path}`;
     case 'book': return 'Navigate to /v2/book';
     case 'call_contact': return `Open tel:${spec.phone}`;
     case 'external_link': return `Open ${spec.url} (new tab)`;

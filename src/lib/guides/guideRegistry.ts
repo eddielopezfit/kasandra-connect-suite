@@ -44,10 +44,14 @@ export type MidGuidePromptKey =
   | 'trust_story_followup';
 
 // Asset slot configuration — render nothing when undefined
+// Governance: fields are optional per tier. No console warnings for missing optional slots.
+//   Tier 1: videoOverview, infographic, pdfGuide encouraged but not enforced at runtime
+//   Tier 2: infographic encouraged
+//   Tier 3: no assets expected (text-only, stripped by getGovernedMediaSlots)
 export interface GuideAssetSlots {
-  videoOverview?: string;    // URL to hosted video (required for Tier 1)
-  infographic?: string;      // URL/path to infographic image (required for Tier 1-2)
-  pdfGuide?: string;         // URL to downloadable PDF (required for Tier 1 only)
+  videoOverview?: string;    // URL to hosted video
+  infographic?: string;      // URL/path to infographic image
+  pdfGuide?: string;         // URL to downloadable PDF
   disclaimer?: DisclaimerType; // Type of disclaimer needed
 }
 
