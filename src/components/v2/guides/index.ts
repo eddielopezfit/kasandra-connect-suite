@@ -17,6 +17,8 @@ export { GuideCardBadge } from './GuideCardBadge';
 
 // Guide Library v2 Components
 export { StartHereLane } from './StartHereLane';
+export { default as DecisionLane } from './DecisionLane';
+export { default as TrustStoriesSection } from './TrustStoriesSection';
 
 export { CognitiveProgressBar } from './CognitiveProgressBar';
 export { ContextualSelenaPrompt } from './ContextualSelenaPrompt';

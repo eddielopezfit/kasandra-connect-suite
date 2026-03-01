@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, Heart, DollarSign } from "lucide-react";
+import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, DollarSign } from "lucide-react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,12 @@ import {
   PersonalizedHero,
   RecommendedGuidesCarousel,
   GuideCardBadge,
-  StartHereLane,
   SelenaSynthesisFooter,
   ResponsiveCategoryNav,
+  DecisionLane,
+  TrustStoriesSection,
 } from "@/components/v2/guides";
+import type { DecisionLaneIntent } from "@/components/v2/guides/DecisionLane";
 import {
   getGuidesRead,
   markGuideOpened,
@@ -33,10 +35,10 @@ import { getLiveGuides } from "@/lib/guides/guideRegistry";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { useCognitiveStage } from "@/hooks/useCognitiveStage";
 import { useRecommendationEngine } from "@/hooks/useRecommendationEngine";
-import type { StartHereIntent } from "@/components/v2/guides/StartHereLane";
 
 import { cn } from "@/lib/utils";
 
+// Categories for filter nav — stories removed (they have their own section now)
 const categories = [
   { 
     id: "all", 
@@ -79,14 +81,6 @@ const categories = [
     descEs: "Conoce cuánto vale tu casa"
   },
   { 
-    id: "stories", 
-    label: "Client Stories", 
-    labelEs: "Historias de Clientes", 
-    icon: Heart,
-    desc: "Real journeys, real results",
-    descEs: "Historias reales, resultados reales"
-  },
-  { 
     id: "probate", 
     label: "Inherited Property", 
     labelEs: "Propiedad Heredada", 
@@ -109,15 +103,33 @@ function getGuideCards(): Guide[] {
   }));
 }
 
+// Intent-aware CTA labels
+function getBookingCTA(intent: DecisionLaneIntent | null, t: (en: string, es: string) => string) {
+  switch (intent) {
+    case 'sell':
+    case 'cash':
+      return t("Book a Seller Consult", "Agendar Consulta de Vendedor");
+    case 'buy':
+      return t("Book a Buyer Consult", "Agendar Consulta de Comprador");
+    default:
+      return t("Book a Consultation", "Agendar una Cita");
+  }
+}
+
 // Inner component that uses Selena context (rendered inside V2Layout which provides SelenaChatProvider)
 function GuidesContent() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { openChat, sendMessage } = useSelenaChat();
   const [activeCategory, setActiveCategory] = useState("all");
+  const [activeIntent, setActiveIntent] = useState<DecisionLaneIntent | null>(null);
   
   // Derive guides from registry
-  const guides = useMemo(() => getGuideCards(), []);
+  const allGuides = useMemo(() => getGuideCards(), []);
+  
+  // Separate stories from educational guides
+  const educationalGuides = useMemo(() => allGuides.filter(g => g.category !== 'stories'), [allGuides]);
+  const storyGuides = useMemo(() => allGuides.filter(g => g.category === 'stories'), [allGuides]);
   
   useDocumentHead({
     titleEn: "Real Estate Guides | Tucson Home Buying & Selling Education",
@@ -126,15 +138,12 @@ function GuidesContent() {
     descriptionEs: "Guías bilingües gratuitas sobre compra, venta, ofertas en efectivo y propiedad heredada en Tucson.",
   });
   
-  // Personalization state - refreshed on mount
+  // Personalization state
   const [guidesRead, setGuidesReadState] = useState<string[]>([]);
   const [lastGuideId, setLastGuideIdState] = useState<string | null>(null);
   
-  // Cognitive stage hook
-  const { stage, stageId, shouldShowProgressBar, guidesReadCount, isFirstVisit } = useCognitiveStage();
-  
-  // Recommendation engine
-  const { hasEngaged } = useRecommendationEngine(guides);
+  const { stage, stageId, shouldShowProgressBar, guidesReadCount } = useCognitiveStage();
+  const { hasEngaged } = useRecommendationEngine(allGuides);
   
   useEffect(() => {
     setGuidesReadState(getGuidesRead());
@@ -144,11 +153,12 @@ function GuidesContent() {
   
   const isReturning = guidesRead.length > 0 || lastGuideId !== null;
   const currentIntent = getIntent();
-  const recommendedItems = useMemo(() => getRecommendedGuides(guides), [guidesRead, lastGuideId, guides]);
+  const recommendedItems = useMemo(() => getRecommendedGuides(allGuides), [guidesRead, lastGuideId, allGuides]);
 
+  // Filter educational guides by active category
   const filteredGuides = activeCategory === "all" 
-    ? guides 
-    : guides.filter(guide => guide.category === activeCategory);
+    ? educationalGuides 
+    : educationalGuides.filter(guide => guide.category === activeCategory);
 
   const getCategoryLabel = (categoryId: string) => {
     const category = categories.find(c => c.id === categoryId);
@@ -188,21 +198,15 @@ function GuidesContent() {
   }, [recommendedItems, handleGuideClick]);
   
   const handleBookConsultation = useCallback(() => {
-    logEvent('consultation_cta_clicked', { stage: stageId, source: 'footer' });
+    logEvent('consultation_cta_clicked', { stage: stageId, source: 'footer', intent: activeIntent });
     trackJourneyAction('book');
-    openChat({ source: 'hero', intent: 'explore' });
-  }, [openChat, stageId]);
+    const intentPayload = activeIntent === 'buy' ? 'buy' : activeIntent === 'cash' ? 'cash' : 'sell';
+    openChat({ source: 'hero', intent: intentPayload });
+  }, [openChat, stageId, activeIntent]);
   
   const handleAskSelena = useCallback((prefillMessage?: string) => {
-    logEvent('ask_selena_clicked', { 
-      source: 'prompt', 
-      stage: stageId, 
-      hasPrefill: !!prefillMessage 
-    });
-    openChat({
-      source: 'synthesis',
-      guidesReadCount,
-    });
+    logEvent('ask_selena_clicked', { source: 'prompt', stage: stageId, hasPrefill: !!prefillMessage });
+    openChat({ source: 'synthesis', guidesReadCount });
     if (prefillMessage) {
       setTimeout(() => sendMessage(prefillMessage), 500);
     }
@@ -213,11 +217,13 @@ function GuidesContent() {
     logEvent('guide_category_selected', { category: categoryId });
   }, []);
   
-  const handleStartHereIntent = useCallback((intentType: StartHereIntent) => {
-    logEvent('start_here_intent_selected', { intent: intentType });
-    setIntent(intentType === 'explore' ? 'explore' : intentType);
+  // Decision Lane handler — sets intent, maps to category, scrolls to grid
+  const handleDecisionLaneIntent = useCallback((intent: DecisionLaneIntent) => {
+    logEvent('decision_lane_selected', { intent });
+    setActiveIntent(intent);
+    setIntent(intent === 'buy' ? 'buy' : intent === 'cash' ? 'cash' : 'sell');
     
-    switch (intentType) {
+    switch (intent) {
       case 'buy':
         setActiveCategory('buying');
         break;
@@ -227,22 +233,12 @@ function GuidesContent() {
       case 'cash':
         setActiveCategory('cash');
         break;
-      case 'explore':
-        openChat({ source: 'hero' });
-        sendMessage(t(
-          "I'm just exploring my options. Can you help me understand what's possible?",
-          "Solo estoy explorando mis opciones. ¿Puedes ayudarme a entender qué es posible?"
-        ));
-        return;
     }
     document.getElementById('guides-section')?.scrollIntoView({ behavior: 'smooth' });
-  }, [openChat, sendMessage, t]);
+  }, []);
   
   const handleRequestSummary = useCallback(() => {
-    logEvent('personalized_summary_offered', { 
-      guidesReadCount,
-      stage: stageId 
-    });
+    logEvent('personalized_summary_offered', { guidesReadCount, stage: stageId });
   }, [guidesReadCount, stageId]);
   
   useEffect(() => {
@@ -263,6 +259,7 @@ function GuidesContent() {
           { "@type": "Question", name: "How do I sell an inherited property in Pima County?", acceptedAnswer: { "@type": "Answer", text: "Inherited property may require probate. Understanding your options—keep, sell, or rent—starts with knowing the property's current value and legal status." } },
         ],
       }} />
+
       {/* Layer 1: Personalized Hero */}
       <PersonalizedHero
         isReturning={isReturning}
@@ -273,12 +270,13 @@ function GuidesContent() {
         onBrowse={handleBrowse}
       />
       
-      {/* Layer 2: Start Here Lane - Only for first-time visitors without intent */}
-      {isFirstVisit && !currentIntent && (
-        <StartHereLane onIntentSelect={handleStartHereIntent} />
-      )}
+      {/* Layer 2: Decision Lane — always visible */}
+      <DecisionLane
+        activeIntent={activeIntent}
+        onIntentSelect={handleDecisionLaneIntent}
+      />
       
-      {/* Layer 4: Recommended For You Carousel */}
+      {/* Layer 3: Recommended For You Carousel */}
       {recommendedItems.length > 0 && (
         <RecommendedGuidesCarousel
           items={recommendedItems}
@@ -288,7 +286,7 @@ function GuidesContent() {
         />
       )}
 
-      {/* Category Filter with Color-Coding - Responsive Nav */}
+      {/* Category Filter — Responsive Nav (stories removed from filter) */}
       <section 
         id="guides-section" 
         className="bg-cc-sand py-6 md:py-8 border-b border-cc-sand-dark sticky top-16 z-40 w-full"
@@ -311,7 +309,7 @@ function GuidesContent() {
         </div>
       </section>
 
-      {/* Guides Grid — no readTime on cards */}
+      {/* Educational Guides Grid — stories excluded */}
       <section className="bg-cc-ivory py-16 pb-24 md:pb-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -373,7 +371,13 @@ function GuidesContent() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Trust Stories Section — separated from main grid */}
+      <TrustStoriesSection
+        stories={storyGuides}
+        onStoryClick={handleGuideClick}
+      />
+
+      {/* Intent-Aware CTA Section */}
       <section className="bg-cc-navy py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-3xl md:text-4xl text-white mb-4">
@@ -387,13 +391,13 @@ function GuidesContent() {
           </p>
           <Button 
             onClick={() => {
-              logEvent('consultation_cta_clicked', { source: 'footer', stage: stageId });
+              logEvent('consultation_cta_clicked', { source: 'footer', stage: stageId, intent: activeIntent });
               handleBookConsultation();
             }}
             size="lg" 
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold max-w-full"
           >
-            {t("Book a Consultation", "Agendar una Cita")}
+            {getBookingCTA(activeIntent, t)}
           </Button>
         </div>
       </section>
@@ -401,7 +405,7 @@ function GuidesContent() {
   );
 }
 
-// Main component - wraps content in V2Layout which provides SelenaChatProvider
+// Main component
 const V2Guides = () => {
   return (
     <V2Layout>
