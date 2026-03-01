@@ -10,7 +10,7 @@
  * Tone: Calm, Adult, Inevitable, Earned
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -18,7 +18,7 @@ import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { logEvent } from '@/lib/analytics/logEvent';
 import { logCTAClick, CTA_NAMES } from '@/lib/analytics/ctaDefaults';
 import type { GuideCategory, GuideDestinations } from '@/lib/guides/guideRegistry';
-import type { ActionSpec } from '@/lib/actions/actionSpec';
+import type { ActionSpec, OpenChatFn } from '@/lib/actions/actionSpec';
 import { isActionValid, resolveAction } from '@/lib/actions/actionSpec';
 import { DollarSign, MessageCircle, ArrowRight, Calendar } from 'lucide-react';
 
@@ -27,8 +27,10 @@ import { DollarSign, MessageCircle, ArrowRight, Calendar } from 'lucide-react';
 // ---------------------------------------------------------------------------
 
 interface AuthorityCTABlockProps {
-  category: GuideCategory;
+  /** Guide slug — passed from V2GuideDetail, never parsed from window.location */
+  guideId: string;
   guideTitle: string;
+  category: GuideCategory;
   isCashGuide?: boolean;
   authorityBridge?: { en: string; es: string };
   marketInsight?: { en: string; es: string };
@@ -130,12 +132,23 @@ function iconForSpec(spec: ActionSpec) {
 }
 
 // ---------------------------------------------------------------------------
+// Shared button styles
+// ---------------------------------------------------------------------------
+
+const PRIMARY_CTA_CLASS =
+  'bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full min-h-[52px] active:scale-[0.98] transition-transform';
+
+const SECONDARY_CTA_CLASS =
+  'border-2 border-white/30 bg-transparent text-white font-medium rounded-full px-6 sm:px-8 py-5 text-sm sm:text-base hover:bg-white/10 hover:border-white/50 max-w-full min-h-[44px] active:scale-[0.98] transition-transform';
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
 const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(({
-  category,
+  guideId,
   guideTitle,
+  category,
   isCashGuide = false,
   authorityBridge,
   marketInsight,
@@ -149,30 +162,29 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
   const bridge = authorityBridge ?? DEFAULT_AUTHORITY_BRIDGE[category];
   const insight = isCashGuide ? (marketInsight ?? DEFAULT_CASH_MARKET_INSIGHT) : null;
 
-  // Extract guideId from URL for analytics context
-  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
-  const guideMatch = currentPath.match(/^\/v2\/guides\/(.+)$/);
-  const currentGuideId = guideMatch?.[1];
+  // Stable bridge from openChat (EntryContext | MouseEvent) → OpenChatFn (Record<string, unknown>)
+  const openChatForAction: OpenChatFn = useCallback(
+    (payload: Record<string, unknown>) => openChat(payload as unknown as Parameters<typeof openChat>[0]),
+    [openChat],
+  );
 
   useEffect(() => {
     logEvent('guide_authority_cta_view', {
       category,
       guide_title: guideTitle,
+      guide_id: guideId,
       is_cash_guide: isCashGuide,
       source: registryDestinations ? 'registry' : 'cta_config',
     });
-  }, [category, guideTitle, isCashGuide, registryDestinations]);
+  }, [category, guideTitle, guideId, isCashGuide, registryDestinations]);
 
   // ------------------------------------------------------------------
   // Label resolution with 3-tier fallback
   // ------------------------------------------------------------------
   function resolveLabel(spec: ActionSpec): string {
-    // 1. Prefer spec.label
     if (spec.label?.en && spec.label?.es) return t(spec.label.en, spec.label.es);
-    // 2. Fallback to CTA_CONFIG category label
     const cfg = CTA_CONFIG[category];
     if (cfg) return t(cfg.labelEn, cfg.labelEs);
-    // 3. Hard fallback
     return t('Continue', 'Continuar');
   }
 
@@ -195,7 +207,7 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
       e.stopPropagation();
 
       logEvent('guide_cta_clicked', {
-        guideId: currentGuideId,
+        guideId,
         cta_id: `authority_cta_${category}_${spec.type}`,
         category,
         guide_title: guideTitle,
@@ -207,16 +219,12 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
         logCTAClick({
           cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
           destination: 'selena_chat',
-          page_path: currentPath,
+          page_path: `/v2/guides/${guideId}`,
           intent: category === 'buying' ? 'buy' : 'sell',
         });
       }
 
-      resolveAction(
-        spec,
-        navigate,
-        (payload) => openChat(payload as any),
-      );
+      resolveAction(spec, navigate, openChatForAction);
     };
 
     return (
@@ -224,11 +232,7 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
         key={key}
         type="button"
         size="lg"
-        className={
-          isPrimary
-            ? 'bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full'
-            : 'border-2 border-white/30 bg-transparent text-white font-medium rounded-full px-6 sm:px-8 py-5 text-sm sm:text-base hover:bg-white/10 hover:border-white/50 max-w-full'
-        }
+        className={isPrimary ? PRIMARY_CTA_CLASS : SECONDARY_CTA_CLASS}
         onClick={handleClick}
       >
         <Icon className="w-5 h-5 flex-shrink-0 mr-2 sm:mr-3" />
@@ -250,7 +254,7 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
       e.stopPropagation();
 
       logEvent('guide_cta_clicked', {
-        guideId: currentGuideId,
+        guideId,
         cta_id: `authority_cta_${category}`,
         category,
         guide_title: guideTitle,
@@ -262,12 +266,12 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
         logCTAClick({
           cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
           destination: 'selena_chat',
-          page_path: currentPath,
+          page_path: `/v2/guides/${guideId}`,
           intent: category === 'buying' ? 'buy' : 'sell',
         });
         openChat({
-          source: 'guide_handoff',
-          guideId: currentGuideId,
+          source: 'guide_handoff' as const,
+          guideId,
           guideTitle,
           guideCategory: category,
           intent: category === 'buying' ? 'buy' : category === 'cash' ? 'cash' : 'sell',
@@ -281,7 +285,7 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
       <Button
         type="button"
         size="lg"
-        className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-10 py-6 text-base sm:text-lg shadow-gold max-w-full"
+        className={PRIMARY_CTA_CLASS}
         onClick={handleClick}
       >
         <Icon className="w-5 h-5 flex-shrink-0 mr-2 sm:mr-3" />

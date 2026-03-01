@@ -77,13 +77,19 @@ export function isActionValid(spec: ActionSpec): boolean {
 }
 
 /**
+ * Callback type for opening chat from an ActionSpec.
+ * Intentionally loose to bridge ActionSpec payloads → EntryContext.
+ */
+export type OpenChatFn = (payload: Record<string, unknown>) => void;
+
+/**
  * Resolves an ActionSpec to its side-effect.
  * Implementation details (paths, window.open) are encapsulated here.
  */
 export function resolveAction(
   spec: ActionSpec,
   navigate: (path: string) => void,
-  openChat?: (payload: Record<string, unknown>) => void,
+  openChat?: OpenChatFn,
 ): void {
   switch (spec.type) {
     case 'open_guide':
