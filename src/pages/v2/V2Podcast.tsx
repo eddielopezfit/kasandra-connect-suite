@@ -4,7 +4,7 @@ import JsonLd from "@/components/seo/JsonLd";
 import V2Layout from "@/components/v2/V2Layout";
 import { Radio, Youtube, Users, TrendingUp, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-bg.jpg";
+import heroImage from "@/assets/hero-podcast-dusk.png";
 
 const V2PodcastContent = () => {
   const { t } = useLanguage();

@@ -12,7 +12,7 @@ import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 import { NeighborhoodExplorer, NeighborhoodQuiz } from "@/components/v2/neighborhood";
-import heroImage from "@/assets/hero-bg.jpg";
+import heroImage from "@/assets/hero-neighborhood-road.png";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 
 const PAGE_PATH = '/v2/buy';

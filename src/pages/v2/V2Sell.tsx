@@ -12,7 +12,7 @@ import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, Mess
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
-import heroImage from "@/assets/hero-bg.jpg";
+import heroImage from "@/assets/hero-desert-home.png";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 
 const PAGE_PATH = '/v2/sell';
