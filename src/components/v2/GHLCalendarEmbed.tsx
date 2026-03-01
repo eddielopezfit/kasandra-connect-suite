@@ -27,7 +27,7 @@ const GHLCalendarEmbed = ({ name, email, phone, className = "" }: GHLCalendarEmb
   }, []);
 
   // Build calendar URL with pre-filled data
-  const baseUrl = "https://api.leadconnectorhq.com/widget/booking/CY3PNu8yhtEuNMWH5e1x";
+  const baseUrl = "https://api.leadconnectorhq.com/widget/booking/N7himS3BLf5KxaVbQPz6";
   const params = new URLSearchParams();
   
   if (name) params.append("name", name);
