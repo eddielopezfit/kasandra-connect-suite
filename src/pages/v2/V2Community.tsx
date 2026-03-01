@@ -10,7 +10,7 @@ import tucsonApplianceLogo from "@/assets/tucson-appliance-logo.jpg";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
 import GoogleSignInButton from "@/components/v2/GoogleSignInButton";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
-import heroImage from "@/assets/hero-bg.jpg";
+import heroImage from "@/assets/hero-community-neighborhood.png";
 
 const V2CommunityContent = () => {
   const { t } = useLanguage();

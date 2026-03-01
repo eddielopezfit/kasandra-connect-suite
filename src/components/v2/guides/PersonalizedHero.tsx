@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Sparkles, ArrowRight, BookOpen } from "lucide-react";
 import LanguageToggle from "@/components/v2/LanguageToggle";
 import type { Intent, JourneyStage } from "@/lib/guides/personalization";
+import downtownHeroImage from "@/assets/hero-downtown-tucson.png";
 
 interface PersonalizedHeroProps {
   isReturning: boolean;
@@ -115,7 +116,11 @@ export function PersonalizedHero({
   
   return (
     <section className="relative bg-cc-navy pt-32 pb-20 w-full max-w-full overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-cc-navy via-cc-navy-dark to-cc-navy opacity-95" />
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${downtownHeroImage})` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-cc-navy/85 via-cc-navy/75 to-cc-navy/90" />
       <div className="container mx-auto px-4 relative z-10 w-full max-w-full">
         {/* Language Toggle */}
         <div className="flex justify-end mb-6">

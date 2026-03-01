@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroBg from "@/assets/hero-downtown-tucson.png";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const HeroSection = () => {
