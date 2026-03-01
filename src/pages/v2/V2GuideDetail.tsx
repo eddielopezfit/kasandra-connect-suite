@@ -240,7 +240,7 @@ function GuideDetailContent() {
         {/* Media slots after intro (afterSection === -1) */}
         {(() => {
           const slots = guideId ? getGovernedMediaSlots(guideId) : [];
-          if (slots.length && guideId) validateMediaSlots(slots, guideId);
+          if (slots.length && guideId) validateMediaSlots(slots, guideId, registryEntry?.tier);
           const introSlots = slots.filter((s) => s.afterSection === -1);
           return introSlots.map((slot) => <MediaSlotRenderer key={slot.id} slot={slot} />);
         })()}
