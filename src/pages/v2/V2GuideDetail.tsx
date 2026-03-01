@@ -305,6 +305,7 @@ function GuideDetailContent() {
           isCashGuide={!!registryEntry?.isCashGuide}
           authorityBridge={registryEntry?.authorityBridge}
           marketInsight={registryEntry?.marketInsight}
+          registryDestinations={registryEntry?.destinations}
         />
         <SelenaGuideHandoff 
           guideId={guideId || 'unknown'}
