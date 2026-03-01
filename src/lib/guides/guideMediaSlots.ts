@@ -29,7 +29,7 @@ export interface MediaSlot {
   quoteEs?: string;
 }
 
-export function validateMediaSlots(slots: MediaSlot[], guideId: string): void {
+export function validateMediaSlots(slots: MediaSlot[], guideId: string, tier?: number): void {
   if (import.meta.env.PROD) return;
   const humanSlots = slots.filter(
     (s) => (s.type === 'video' || s.type === 'pull-quote-image') && (s.src || s.quote)
@@ -38,6 +38,16 @@ export function validateMediaSlots(slots: MediaSlot[], guideId: string): void {
     console.warn(
       `[GuideMedia] Guide "${guideId}" has ${humanSlots.length} human elements. IDs: ${humanSlots.map((s) => s.id).join(', ')}`
     );
+  }
+
+  // Tier 1/2 guides require an orientation slot with a src
+  if (tier !== undefined && (tier === 1 || tier === 2)) {
+    const orientationSlot = slots.find((s) => s.variant === 'orientation');
+    if (!orientationSlot || !orientationSlot.src) {
+      console.warn(
+        `[GuideMedia] Tier ${tier} guide "${guideId}" is missing required orientation image asset`
+      );
+    }
   }
 }
 
