@@ -1,46 +1,32 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Clock, User, Sparkles } from "lucide-react";
+import { ArrowLeft, Clock, User } from "lucide-react";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import LanguageToggle from "@/components/v2/LanguageToggle";
-import { AuthorityCTABlock, SelenaGuideHandoff, GuideComplianceFooter } from "@/components/v2/guides";
+import { AuthorityCTABlock, GuideComplianceFooter } from "@/components/v2/guides";
 import GuideImage from "@/components/v2/guides/GuideImage";
 import GuideVideo from "@/components/v2/guides/GuideVideo";
 import GuidePullQuote from "@/components/v2/guides/GuidePullQuote";
-// SelenaAnchorPrompt used inline as mid-guide CTA
 import { getGovernedMediaSlots, validateMediaSlots, type MediaSlot } from "@/lib/guides/guideMediaSlots";
 import { useGuideScrollTracking } from "@/hooks/useGuideScrollTracking";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { markGuideOpened, setLastGuideId } from '@/lib/guides/personalization';
-import { getGuideById, type GuideCategory, type MidGuidePromptKey } from "@/lib/guides/guideRegistry";
+import { getGuideById, type GuideCategory } from "@/lib/guides/guideRegistry";
 import { getSessionContext, updateSessionContext } from "@/lib/analytics/selenaSession";
 import { GUIDE_DATA_LOADERS, type GuideContentData } from "@/data/guides";
 import { validateRegistryLoadersOnce } from "@/lib/guides/validate";
-import { useSelenaChat } from "@/contexts/SelenaChatContext";
-
-// Mid-guide CTA prompt copy — keyed by MidGuidePromptKey union
-const MID_GUIDE_PROMPTS: Record<MidGuidePromptKey, { en: string; es: string }> = {
-  first_time_confidence: { en: "Have a question about any of these steps? Selena can walk you through it.", es: "¿Tienes alguna pregunta sobre estos pasos? Selena puede guiarte." },
-  valuation_confusion: { en: "If you're seeing different numbers online, Selena can help explain why.", es: "Si ves diferentes números en línea, Selena puede ayudarte a entender por qué." },
-  selling_options: { en: "Not sure which path is right? Selena can help you compare.", es: "¿No sabes qué camino es el correcto? Selena puede ayudarte a comparar." },
-  cash_vs_list: { en: "Want to see what both options look like for your home? Ask Selena.", es: "¿Quieres ver cómo se ven ambas opciones para tu casa? Pregúntale a Selena." },
-  life_event_support: { en: "If this feels heavy, you don't have to sort it out alone.", es: "Si esto se siente pesado, no tienes que resolverlo solo." },
-  bilingual_support: { en: "¿Prefieres continuar en español? Selena habla tu idioma.", es: "¿Prefieres continuar en español? Selena habla tu idioma." },
-  trust_story_followup: { en: "Does this sound like your situation? Selena can help you take the next step.", es: "¿Esto suena como tu situación? Selena puede ayudarte a dar el siguiente paso." },
-};
 
 // Inner component — must be rendered inside V2Layout (which provides SelenaChatProvider)
 function GuideDetailContent() {
   const { guideId } = useParams<{ guideId: string }>();
   const { t, language } = useLanguage();
-  const { openChat } = useSelenaChat();
   const [guide, setGuide] = useState<GuideContentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Registry entry for metadata (readTime, midGuideCTA, exitRamp, etc.)
+  // Registry entry for metadata (readTime, tier, destinations, etc.)
   const registryEntry = guideId ? getGuideById(guideId) : undefined;
 
   // Dev-only: validate registry ↔ loaders on first mount
@@ -56,7 +42,6 @@ function GuideDetailContent() {
     }
     const loader = GUIDE_DATA_LOADERS[guideId];
     if (!loader) {
-      // Load fallback
       import('@/data/guides/fallback').then(mod => {
         setGuide(mod.default);
         setIsLoading(false);
@@ -106,7 +91,7 @@ function GuideDetailContent() {
     }
   }, [guideId, guide, guideTitle]);
 
-  // Renders a single media slot — returns null if no content
+  // Renders a single media slot
   const MediaSlotRenderer = ({ slot }: { slot: MediaSlot }) => {
     if (slot.type === 'pull-quote-image') {
       return <GuidePullQuote quote={slot.quote} quoteEs={slot.quoteEs} />;
@@ -115,34 +100,6 @@ function GuideDetailContent() {
       return <GuideVideo src={slot.src} posterSrc={slot.posterSrc} alt={slot.alt} altEs={slot.altEs} />;
     }
     return <GuideImage src={slot.src} alt={slot.alt} altEs={slot.altEs} />;
-  };
-
-  // Handle exit ramp click — opens Selena with guide context
-  const handleExitRampClick = () => {
-    if (!registryEntry) return;
-    const mappedIntent = registryEntry.decisionIntent === 'buy' ? 'buy' : 'sell';
-    openChat({
-      source: 'guide_exit_ramp',
-      guideId: registryEntry.id,
-      intent: mappedIntent,
-    });
-    logEvent('guide_exit_ramp_clicked', {
-      guide_id: registryEntry.id,
-      intent: mappedIntent,
-    });
-  };
-
-  // Handle mid-guide CTA click
-  const handleMidGuideCTA = () => {
-    if (!registryEntry) return;
-    openChat({
-      source: 'guide_mid_cta',
-      guideId: registryEntry.id,
-    });
-    logEvent('guide_mid_cta_clicked', {
-      guide_id: registryEntry.id,
-      prompt_key: registryEntry.midGuideCTA?.promptKey,
-    });
   };
 
   useDocumentHead({
@@ -216,23 +173,13 @@ function GuideDetailContent() {
 
       {/* Article Content */}
       <article className="bg-cc-sand">
-        {/* Intro */}
+        {/* Intro — clean, no exit ramp */}
         <section className="bg-white py-12 border-b border-cc-sand-dark">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
               <p className="text-xl text-cc-charcoal leading-relaxed">
                 {t(guide.intro, guide.introEs)}
               </p>
-              
-              {/* Exit Ramp — soft text link under intro */}
-              {registryEntry?.exitRampCopy && (
-                <button
-                  onClick={handleExitRampClick}
-                  className="mt-6 text-sm text-cc-slate/70 hover:text-cc-gold transition-colors underline underline-offset-2 decoration-dotted"
-                >
-                  {t(registryEntry.exitRampCopy.en, registryEntry.exitRampCopy.es)}
-                </button>
-              )}
             </div>
           </div>
         </section>
@@ -245,12 +192,10 @@ function GuideDetailContent() {
           return introSlots.map((slot) => <MediaSlotRenderer key={slot.id} slot={slot} />);
         })()}
 
-        {/* Content Sections with Per-Guide Media Slots + Mid-Guide CTA */}
+        {/* Content Sections with Per-Guide Media Slots — no mid-guide interruptions */}
         {guide.sections.map((section, index) => {
           const slots = guideId ? getGovernedMediaSlots(guideId) : [];
           const sectionSlots = slots.filter((s) => s.afterSection === index);
-          const showMidCTA = registryEntry?.midGuideCTA?.afterSection === index;
-          const midPromptKey = registryEntry?.midGuideCTA?.promptKey;
 
           return (
             <div key={index}>
@@ -269,28 +214,6 @@ function GuideDetailContent() {
                 </div>
               </section>
               {sectionSlots.map((slot) => <MediaSlotRenderer key={slot.id} slot={slot} />)}
-              
-              {/* Mid-Guide CTA — contextual Selena anchor */}
-              {showMidCTA && midPromptKey && (
-                <div className="container mx-auto px-4 py-6">
-                  <div className="max-w-3xl mx-auto">
-                    <div
-                      className="bg-gradient-to-r from-cc-navy/5 to-cc-gold/5 rounded-xl p-5 border border-cc-sand-dark/50 flex items-center gap-4 cursor-pointer hover:border-cc-gold/30 transition-colors"
-                      onClick={() => handleMidGuideCTA()}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => e.key === 'Enter' && handleMidGuideCTA()}
-                    >
-                      <div className="w-10 h-10 rounded-full bg-cc-gold/20 flex items-center justify-center flex-shrink-0">
-                        <Sparkles className="w-5 h-5 text-cc-gold" />
-                      </div>
-                      <p className="text-sm text-cc-slate flex-1">
-                        {t(MID_GUIDE_PROMPTS[midPromptKey].en, MID_GUIDE_PROMPTS[midPromptKey].es)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           );
         })}
@@ -298,20 +221,18 @@ function GuideDetailContent() {
         {/* Compliance Footer */}
         <GuideComplianceFooter />
 
-        {/* Authority CTA Block (Decision-Compression) */}
-        <AuthorityCTABlock 
-          guideId={guideId || 'unknown'}
-          category={safeCategory}
-          guideTitle={guideTitle}
-          isCashGuide={!!registryEntry?.isCashGuide}
-          authorityBridge={registryEntry?.authorityBridge}
-          marketInsight={registryEntry?.marketInsight}
-          registryDestinations={registryEntry?.destinations}
-        />
-        <SelenaGuideHandoff 
-          guideId={guideId || 'unknown'}
-          category={safeCategory}
-        />
+        {/* Authority CTA Block — Tier 1 + Tier 2 only. Tier 3 stories end in silence. */}
+        {registryEntry?.tier !== 3 && (
+          <AuthorityCTABlock 
+            guideId={guideId || 'unknown'}
+            category={safeCategory}
+            guideTitle={guideTitle}
+            isCashGuide={!!registryEntry?.isCashGuide}
+            authorityBridge={registryEntry?.authorityBridge}
+            marketInsight={registryEntry?.marketInsight}
+            registryDestinations={registryEntry?.destinations}
+          />
+        )}
       </article>
     </>
   );
