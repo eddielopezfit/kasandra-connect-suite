@@ -31,7 +31,7 @@ import {
   CheckCircle,
   ArrowRight,
 } from "lucide-react";
-import heroImage from "@/assets/hero-downtown-tucson.png";
+import heroImage from "@/assets/hero-bg.jpg";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";

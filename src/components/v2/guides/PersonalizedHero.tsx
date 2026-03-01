@@ -3,7 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Sparkles, ArrowRight, BookOpen } from "lucide-react";
 import LanguageToggle from "@/components/v2/LanguageToggle";
 import type { Intent, JourneyStage } from "@/lib/guides/personalization";
-import downtownHeroImage from "@/assets/hero-downtown-tucson.png";
+import downtownHeroImage from "@/assets/hero-guides-downtown.png";
 
 interface PersonalizedHeroProps {
   isReturning: boolean;
