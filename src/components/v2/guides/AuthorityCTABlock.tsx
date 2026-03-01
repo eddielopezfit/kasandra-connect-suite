@@ -307,7 +307,7 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
     .slice(0, 2);
 
   return (
-    <section ref={ref} className="bg-cc-navy py-16">
+    <section ref={ref} data-cta-block="authority" className="bg-cc-navy py-16">
       <div className="container mx-auto px-4">
         <div className="max-w-xl mx-auto text-center">
           {/* Authority Bridge */}

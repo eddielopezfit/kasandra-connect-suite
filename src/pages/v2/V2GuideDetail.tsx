@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ArrowLeft, Clock, User } from "lucide-react";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -233,9 +233,53 @@ function GuideDetailContent() {
             registryDestinations={registryEntry?.destinations}
           />
         )}
+
+        {/* QA Guardrail: warn in dev if >1 CTA component rendered */}
+        <GuideCTAGuardrail guideId={guideId} />
       </article>
     </>
   );
+}
+
+/**
+ * DEV-ONLY QA Guardrail: Counts CTA-class elements on the guide page.
+ * Warns in console if >1 CTA component is detected, preventing regression
+ * into the old multi-CTA pattern.
+ */
+function GuideCTAGuardrail({ guideId }: { guideId?: string }) {
+  const warned = useRef(false);
+
+  useEffect(() => {
+    if (import.meta.env.PROD || warned.current) return;
+
+    // Run after paint so all components have mounted
+    const timer = setTimeout(() => {
+      const ctaSelectors = [
+        '[data-cta-block="authority"]',
+        '[data-cta-block="handoff"]',
+        '[data-cta-block="mid-guide"]',
+        '[data-cta-block="exit-ramp"]',
+      ];
+      const found = ctaSelectors
+        .map(sel => ({ sel, count: document.querySelectorAll(sel).length }))
+        .filter(r => r.count > 0);
+
+      const totalCTAs = found.reduce((sum, r) => sum + r.count, 0);
+
+      if (totalCTAs > 1) {
+        warned.current = true;
+        console.warn(
+          `[Guide CTA Guardrail] ⚠️ Guide "${guideId}" has ${totalCTAs} CTA blocks. ` +
+          `Policy: max 1 terminal CTA (Tier 1/2) or 0 (Tier 3). ` +
+          `Found: ${found.map(r => `${r.sel} ×${r.count}`).join(', ')}`
+        );
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [guideId]);
+
+  return null;
 }
 
 const V2GuideDetail = () => (
