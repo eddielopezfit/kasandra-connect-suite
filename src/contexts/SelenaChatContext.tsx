@@ -1206,6 +1206,13 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       saveHistory(updatedMessages);
       logSelenaMessageAI(data.reply || '', location.pathname, (data.actions?.length || 0) > 0);
 
+      // DEV-only: capture guard telemetry for QA panel
+      if (import.meta.env.DEV) {
+        import('@/lib/analytics/guardTelemetry').then(({ pushGuardTelemetry }) => {
+          pushGuardTelemetry(data);
+        }).catch(() => {});
+      }
+
     } catch (error) {
       console.error('[Selena] Chat error:', error);
       

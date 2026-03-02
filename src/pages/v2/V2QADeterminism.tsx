@@ -24,6 +24,7 @@ import LastEventsPanel from '@/components/v2/qa/LastEventsPanel';
 import GuardrailChecklistPanel from '@/components/v2/qa/GuardrailChecklistPanel';
 import GuideRegistryValidationPanel from '@/components/v2/qa/GuideRegistryValidationPanel';
 import ActionSpecSmokeTestPanel from '@/components/v2/qa/ActionSpecSmokeTestPanel';
+import GuardOverlayPanel from '@/components/v2/qa/GuardOverlayPanel';
 
 const V2QADeterminism = () => {
   // All hooks must be called before the gate
@@ -96,6 +97,15 @@ const V2QADeterminism = () => {
               </AccordionTrigger>
               <AccordionContent>
                 <ActionSpecSmokeTestPanel />
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="guard-overlay" className="rounded-lg border bg-card px-4">
+              <AccordionTrigger className="text-base font-semibold">
+                Panel F: Guard Overlay Telemetry
+              </AccordionTrigger>
+              <AccordionContent>
+                <GuardOverlayPanel />
               </AccordionContent>
             </AccordionItem>
           </Accordion>
