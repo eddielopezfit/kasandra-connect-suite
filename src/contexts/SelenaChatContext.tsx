@@ -624,7 +624,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       // contextual greetings (guide_handoff, calculator, synthesis), NEVER full
       // identity greetings (hero, default). Prevents mid-thread re-introductions.
       if (messages.length > 3 && hasContextualEntry && isAllowedGreetingSource) {
-        const contextualSources = ['guide_handoff', 'calculator', 'synthesis', 'quiz_result'];
+        const contextualSources = ['guide_handoff', 'calculator', 'synthesis', 'quiz_result', 'seller_decision'];
         return contextualSources.includes(entryContext?.source || '');
       }
       
