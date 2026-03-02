@@ -109,6 +109,9 @@ export interface SessionContext {
   seller_decision_recommended_path?: 'cash' | 'traditional' | 'consult';
   seller_goal_priority?: 'speed' | 'price' | 'least_stress' | 'privacy' | 'not_sure';
   property_condition_raw?: 'needs_work' | 'mostly_original' | 'standard' | 'updated' | 'like_new';
+  // Chip Governance: Last-Chance Recovery (Feature 3)
+  booking_chips_shown_at?: string;  // ISO timestamp when booking chips were last shown
+  recovery_shown?: boolean;         // Prevents recovery greeting loop within session
 }
 
 /**
