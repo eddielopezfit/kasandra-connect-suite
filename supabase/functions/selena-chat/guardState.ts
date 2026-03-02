@@ -1,11 +1,13 @@
 /**
  * ═══════════════════════════════════════════════════════════════════════════════
- * SELENA AI — CONVERSATION STATE GUARD v1.0
+ * SELENA AI — CONVERSATION STATE GUARD v1.1
  * ═══════════════════════════════════════════════════════════════════════════════
  *
  * Deterministic governance layer between intent detection and AI generation.
  * Prevents behavioral drift: re-introductions, looping, assumed urgency,
  * guide spam, and premature escalation.
+ *
+ * v1.1: Added KB-9 Containment Overlay (emotional containment + trust preservation)
  *
  * This is infrastructure, not prompt tuning.
  *
@@ -36,6 +38,9 @@ export interface ConversationGuardState {
   last_system_action: SystemAction;
   reentry_flag: boolean;
   consecutive_similar_turns: number;
+  // KB-9 Containment Overlay
+  containment_active: boolean;
+  vulnerability_signal_count: number;
 }
 
 export interface GuardRulesResult {
@@ -87,6 +92,53 @@ const GUIDE_REFERENCE_PATTERN = /guide(?:\s+on)?\s+[""]([^""]+)[""]|guía\s+(?:s
 /** Urgency assumption words — blocked when timeline is unknown */
 const URGENCY_WORDS = /\b(tight timeline|quickly|fast|soon|urgent|right away|immediately|asap|pronto|rápido|urgente|inmediato|de inmediato|cuanto antes)\b/i;
 
+// ─── KB-9 Vulnerability Detection Patterns ───────────────────────────────────
+
+/**
+ * Normalize text for vulnerability matching:
+ * lowercase, strip apostrophes so "don't" → "dont", "can't" → "cant"
+ */
+function normalizeForVulnerability(text: string): string {
+  return text.toLowerCase().replace(/['']/g, '');
+}
+
+/**
+ * EN vulnerability keywords — anchored with non-letter boundaries for robustness.
+ * Apostrophe-normalized: "dont trust", "cant trust"
+ */
+const VULNERABILITY_EN = /(^|[^a-z])(scam|ripoff|ripped off|lowball|screwed|get screwed|taken advantage|dont trust|cant trust|are you ai)([^a-z]|$)/;
+
+/**
+ * ES vulnerability keywords — includes multi-word phrases
+ */
+const VULNERABILITY_ES = /(^|[^a-záéíóúñü])(estafa|engañ|timo|timar|no confío|aprovecharse)([^a-záéíóúñü]|$)|me están viendo la cara|me quieren ver la cara/;
+
+/**
+ * High-severity instant triggers — any ONE of these activates containment immediately.
+ * These represent acute trust rupture or fear of fraud.
+ */
+const HIGH_SEVERITY_EN = /(^|[^a-z])(scam|ripoff|ripped off|lowball|dont trust|cant trust|are you ai)([^a-z]|$)/;
+const HIGH_SEVERITY_ES = /(^|[^a-záéíóúñü])(estafa|timo|no confío)([^a-záéíóúñü]|$)|me están viendo la cara|me quieren ver la cara/;
+
+/**
+ * Kasandra-buyer confusion pattern — triggers Rule 15 (role separation)
+ */
+const KASANDRA_BUYER_PATTERN = /kasandra.*buy|can she buy|puede.*comprar|kasandra.*compra|does kasandra.*purchase|kasandra.*offer/i;
+
+/**
+ * Checks if a normalized message contains vulnerability signals
+ */
+function hasVulnerabilitySignal(normalizedText: string): boolean {
+  return VULNERABILITY_EN.test(normalizedText) || VULNERABILITY_ES.test(normalizedText);
+}
+
+/**
+ * Checks if a normalized message contains high-severity instant triggers
+ */
+function hasHighSeveritySignal(normalizedText: string): boolean {
+  return HIGH_SEVERITY_EN.test(normalizedText) || HIGH_SEVERITY_ES.test(normalizedText);
+}
+
 // ─── Guard State Builder ─────────────────────────────────────────────────────
 
 /**
@@ -133,6 +185,11 @@ export function buildGuardState(
   // ── Consecutive Similar Turns ──
   const consecutive_similar_turns = countSimilarTurns(userMessages, message);
 
+  // ── KB-9: Vulnerability Detection & Containment ──
+  const { containment_active, vulnerability_signal_count } = detectContainment(
+    userMessages, message
+  );
+
   return {
     identity_disclosed,
     intent,
@@ -146,6 +203,8 @@ export function buildGuardState(
     last_system_action,
     reentry_flag,
     consecutive_similar_turns,
+    containment_active,
+    vulnerability_signal_count,
   };
 }
 
@@ -157,7 +216,8 @@ export function buildGuardState(
  */
 export function applyGuardRules(
   state: ConversationGuardState,
-  language: 'en' | 'es'
+  language: 'en' | 'es',
+  message: string = ''
 ): GuardRulesResult {
   const hints: string[] = [];
   const violations: GuardRulesResult['violations'] = [];
@@ -214,11 +274,10 @@ export function applyGuardRules(
   }
 
   // ── RULE 7: OVERWHELM GATE ──
-  if (state.emotional_posture === 'overwhelmed') {
+  if (state.emotional_posture === 'overwhelmed' && !state.containment_active) {
     hints.push(language === 'es'
       ? 'GUARDIA CRITICA: El usuario está abrumado. NO recomiendes herramientas, guías, ni preguntas de calificación. Solo empatía + oferta de conexión humana con Kasandra.'
       : 'GUARD CRITICAL: User is overwhelmed. Do NOT recommend tools, guides, or qualification questions. Empathy only + offer human connection with Kasandra.');
-    // Override chips to human handoff only
     chipOverrides = language === 'es'
       ? ['Conectar con Kasandra', 'Seguir conversando']
       : ['Connect with Kasandra', 'Keep chatting'];
@@ -226,8 +285,7 @@ export function applyGuardRules(
   }
 
   // ── RULE 7b: ANXIETY GATE (surgical note #2) ──
-  // If anxious + anti-loop triggers, escalation must be human_takeover only
-  if (state.emotional_posture === 'anxious' && state.consecutive_similar_turns >= 2) {
+  if (state.emotional_posture === 'anxious' && state.consecutive_similar_turns >= 2 && !state.containment_active) {
     hints.push(language === 'es'
       ? 'GUARDIA: Usuario ansioso en bucle. Escalación solo a conexión humana, nunca a herramientas ni reservas.'
       : 'GUARD: Anxious user looping. Escalation must be human connection only, never tools or booking.');
@@ -271,16 +329,45 @@ export function applyGuardRules(
   }
 
   // ── RULE 12: GUIDE LOOP ESCALATION ──
-  // If 2+ guides have been surfaced AND the last system action was a guide,
-  // force escalation to a decisive action (calculator/booking) instead of another guide.
-  // Aligns with: "If a user repeats the same choice twice, she must escalate."
   if (state.guide_history.length >= 2 && state.last_system_action === 'guide') {
-    const ACCEPTANCE_PATTERNS = /^(yes|yeah|sure|ok|guide|show me|send it|sí|si|claro|muéstrame|muestrame|envía|envia|dale)/i;
-    // Only trigger if current turn looks like an acceptance (checked upstream via message param)
     hints.push(language === 'es'
       ? 'GUARDIA ESCALACIÓN: Ya se han sugerido 2+ guías. NO ofrezcas otra guía. Recomienda una acción decisiva: la calculadora de ganancias netas o una conversación con Kasandra.'
       : 'GUARD ESCALATION: 2+ guides have been surfaced. Do NOT offer another guide. Recommend a decisive action: the net proceeds estimator or a conversation with Kasandra.');
     violations.push({ rule: 'guide_loop_escalation', action: 'modified' });
+  }
+
+  // ── RULE 13: KB-9 CONTAINMENT OVERLAY ──
+  // When containment_active, this overrides Rules 7/7b with stricter behavior.
+  // Priority: higher than chip governance, lower than KB-0.
+  if (state.containment_active) {
+    hints.push(language === 'es'
+      ? 'CONTENCIÓN ACTIVA (KB-9): 1-2 oraciones máximo. Sin guías, sin estadísticas, sin datos de plataforma, sin claims de volumen. Ofrezca como opción tranquila hablar con Kasandra. Si declinan, haga UNA sola pregunta estabilizadora: "¿Qué parte le genera más preocupación?" No haga más de una pregunta.'
+      : 'CONTAINMENT ACTIVE (KB-9): 1-2 sentences max. No guides, no stats, no platform data, no volume claims. Offer a calm option to talk with Kasandra. If they decline, ask ONE stabilizing question only: "What feels riskiest right now?" Do not ask more than one question.');
+    chipOverrides = language === 'es'
+      ? ['Hablar con Kasandra', 'Seguir conversando con Selena']
+      : ['Talk with Kasandra', 'Keep chatting with Selena'];
+    maxTokensOverride = 120;
+    violations.push({ rule: 'containment_active', action: 'modified' });
+  }
+
+  // ── RULE 14: NO OVER-JUSTIFYING (containment + scam concern) ──
+  if (state.containment_active) {
+    const normalizedMsg = normalizeForVulnerability(message);
+    const isScamConcern = /(^|[^a-z])(scam|ripoff|estafa|timo)([^a-z]|$)/.test(normalizedMsg);
+    if (isScamConcern) {
+      hints.push(language === 'es'
+        ? 'GUARDIA KB-9: El usuario pregunta sobre legitimidad. UNA oración corta de legitimidad + un próximo paso. NO intentes probar legitimidad con claims largos.'
+        : 'GUARD KB-9: User is questioning legitimacy. ONE short legitimacy sentence + one next step only. Do NOT prove legitimacy with long claims.');
+      violations.push({ rule: 'no_over_justifying', action: 'modified' });
+    }
+  }
+
+  // ── RULE 15: KASANDRA ROLE SEPARATION ──
+  if (KASANDRA_BUYER_PATTERN.test(message)) {
+    hints.push(language === 'es'
+      ? 'GUARDIA CRÍTICA (Separación de Roles): Kasandra NO compra casas personalmente como fuente del efectivo. Ella ayuda a evaluar opciones basadas en efectivo. Cualquier oferta requiere revisión humana. NUNCA digas "Kasandra comprándola", "nuestros compradores" ni "podemos comprar".'
+      : 'GUARD CRITICAL (Role Separation): Kasandra does NOT personally buy homes as the cash source. She helps evaluate cash-based options. Any offer requires human review. NEVER say "Kasandra buying it," "our buyers," or "we can purchase."');
+    violations.push({ rule: 'kasandra_role_separation', action: 'modified' });
   }
 
   return {
@@ -290,6 +377,56 @@ export function applyGuardRules(
     blockGeneration,
     violations,
   };
+}
+
+// ─── KB-9 Containment Detection ──────────────────────────────────────────────
+
+/**
+ * Detects containment state from conversation history.
+ * 
+ * Trigger logic:
+ * - INSTANT: Any single message matches high-severity patterns (scam, ripoff, dont trust, etc.)
+ * - CUMULATIVE: 2+ vulnerability signals across last 6 user messages
+ * 
+ * Cooldown logic:
+ * - If the last 2 user messages have zero vulnerability hits, containment deactivates
+ *   (even if earlier messages had signals). Uses the same detection function for consistency.
+ */
+function detectContainment(
+  userHistory: ChatMessage[],
+  currentMessage: string
+): { containment_active: boolean; vulnerability_signal_count: number } {
+  const normalizedCurrent = normalizeForVulnerability(currentMessage);
+
+  // Instant trigger: high-severity signal in current message
+  if (hasHighSeveritySignal(normalizedCurrent)) {
+    return { containment_active: true, vulnerability_signal_count: 1 };
+  }
+
+  // Scan last 6 user messages (including current) for vulnerability signals
+  const recentMessages = userHistory.slice(-5); // last 5 from history
+  const allRecent = [...recentMessages.map(m => normalizeForVulnerability(m.content)), normalizedCurrent];
+
+  let totalSignals = 0;
+  for (const normalized of allRecent) {
+    if (hasVulnerabilitySignal(normalized)) {
+      totalSignals++;
+    }
+  }
+
+  // Cooldown: if last 2 user messages (including current) have zero hits, deactivate
+  const last2 = allRecent.slice(-2);
+  const last2Hits = last2.filter(t => hasVulnerabilitySignal(t)).length;
+  if (last2Hits === 0) {
+    return { containment_active: false, vulnerability_signal_count: totalSignals };
+  }
+
+  // Cumulative trigger: 2+ signals in window
+  if (totalSignals >= 2) {
+    return { containment_active: true, vulnerability_signal_count: totalSignals };
+  }
+
+  return { containment_active: false, vulnerability_signal_count: totalSignals };
 }
 
 // ─── Internal Helpers ────────────────────────────────────────────────────────
