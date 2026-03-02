@@ -404,9 +404,10 @@ function detectContainment(
     return { containment_active: true, vulnerability_signal_count: 1 };
   }
 
-  // Scan last 6 user messages (including current) for vulnerability signals
-  const recentMessages = userHistory.slice(-5); // last 5 from history
-  const allRecent = [...recentMessages.map(m => normalizeForVulnerability(m.content)), normalizedCurrent];
+  // Scan last 6 USER messages (including current) for vulnerability signals
+  const userOnlyHistory = userHistory.filter(m => m.role === 'user');
+  const recentUserMessages = userOnlyHistory.slice(-5); // last 5 user messages from history
+  const allRecent = [...recentUserMessages.map(m => normalizeForVulnerability(m.content)), normalizedCurrent];
 
   let totalSignals = 0;
   for (const normalized of allRecent) {
