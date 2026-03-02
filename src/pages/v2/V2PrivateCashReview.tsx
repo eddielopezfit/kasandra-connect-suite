@@ -161,8 +161,8 @@ const PrivateCashReviewContent = () => {
               </h3>
               <p className="text-cc-gold font-medium mb-4">
                 {t(
-                  "Cash Sale Advisor | Tucson",
-                  "Asesora de Ventas en Efectivo | Tucson"
+                  "Associate Broker | Tucson",
+                  "Associate Broker | Tucson"
                 )}
               </p>
               <p className="text-cc-charcoal/80 text-lg mb-6 max-w-xl">
