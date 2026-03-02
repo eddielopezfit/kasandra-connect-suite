@@ -22,7 +22,7 @@ export function SelenaDrawerMessagesArea({
     // NEVER wrap in conditional rendering or add key={...} that changes during chat.
     // The bottomRef at the end anchors scroll position after new messages.
     <ScrollArea
-      className="flex-1 p-4"
+      className="flex-1 min-h-0 p-4"
       ref={scrollRef}
       onClick={onMessagesAreaClick}
     >

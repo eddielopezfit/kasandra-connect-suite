@@ -291,7 +291,7 @@ export function SelenaChatDrawer() {
     return (
       <>
         <Drawer open={isOpen} onOpenChange={(open) => !open && closeChat()}>
-          <DrawerContent className="h-[85vh] max-h-[700px] flex flex-col">
+          <DrawerContent className="h-[85vh] max-h-[700px] flex flex-col overflow-hidden">
             <DrawerHeader className="border-b border-border px-4 py-3 shrink-0">
               <div className="flex items-center justify-between">
                 <DrawerTitle className="flex items-center gap-2 text-lg">
