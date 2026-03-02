@@ -49,7 +49,7 @@ const V2SellContent = () => {
       {/* Hero — Gold italic accent word */}
       <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>
-          <div className="absolute inset-0 bg-gradient-to-r from-cc-blue/90 to-cc-blue/75" />
+          <div className="absolute inset-0 bg-gradient-to-r from-cc-navy/90 to-cc-navy/80" />
         </div>
         <div className="relative container mx-auto px-4 pt-32 pb-16">
           <div className="max-w-3xl">
