@@ -701,9 +701,45 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       // Priority 1.5: Seller Decision Receipt continuity
       else if (entryContext?.source === 'seller_decision') {
         const ctx = getSessionContext();
-        const situation = ctx?.situation?.replace(/_/g, ' ') || t('your situation', 'su situación');
-        const goal = ctx?.seller_goal_priority?.replace(/_/g, ' ') || t('your priority', 'su prioridad');
-        const condition = ctx?.property_condition_raw?.replace(/_/g, ' ') || t('the condition', 'la condición');
+
+        // Bilingual label maps for human-readable greeting values
+        const situationLabels: Record<string, { en: string; es: string }> = {
+          inherited: { en: 'dealing with an inherited property', es: 'lidiando con una propiedad heredada' },
+          divorce: { en: 'going through a life change', es: 'pasando por un cambio de vida' },
+          tired_landlord: { en: 'a tired landlord', es: 'un propietario cansado' },
+          upgrading: { en: 'upgrading', es: 'buscando mejorar' },
+          relocating: { en: 'relocating', es: 'reubicándose' },
+          other: { en: 'exploring your options', es: 'explorando sus opciones' },
+        };
+        const goalLabels: Record<string, { en: string; es: string }> = {
+          speed: { en: 'speed', es: 'rapidez' },
+          price: { en: 'getting the highest price', es: 'obtener el mejor precio' },
+          least_stress: { en: 'least stress', es: 'menos estrés' },
+          privacy: { en: 'privacy', es: 'privacidad' },
+          not_sure: { en: 'still deciding', es: 'aún decidiendo' },
+        };
+        const conditionLabels: Record<string, { en: string; es: string }> = {
+          needs_work: { en: 'needs work', es: 'necesita trabajo' },
+          mostly_original: { en: 'mostly original', es: 'mayormente original' },
+          standard: { en: 'standard condition', es: 'condición estándar' },
+          updated: { en: 'recently updated', es: 'recientemente actualizada' },
+          like_new: { en: 'like new', es: 'como nueva' },
+        };
+
+        const rawSituation = ctx?.situation || '';
+        const rawGoal = ctx?.seller_goal_priority || '';
+        const rawCondition = ctx?.property_condition_raw || '';
+
+        const situation = situationLabels[rawSituation]
+          ? t(situationLabels[rawSituation].en, situationLabels[rawSituation].es)
+          : rawSituation.replace(/_/g, ' ') || t('your situation', 'su situación');
+        const goal = goalLabels[rawGoal]
+          ? t(goalLabels[rawGoal].en, goalLabels[rawGoal].es)
+          : rawGoal.replace(/_/g, ' ') || t('your priority', 'su prioridad');
+        const condition = conditionLabels[rawCondition]
+          ? t(conditionLabels[rawCondition].en, conditionLabels[rawCondition].es)
+          : rawCondition.replace(/_/g, ' ') || t('the condition', 'la condición');
+
         const path = ctx?.seller_decision_recommended_path;
 
         const pathLine = path === 'cash'
@@ -717,7 +753,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
 
         greetingContent = t(
           `I've reviewed your Seller Decision Receipt. You're ${situation}, your priority is ${goal}, and the home is ${condition}. ${pathLine} What would you like to do next?`,
-          `Ya revisé su Recibo de Decisión de Venta. Veo que está en ${situation}, su prioridad es ${goal}, y la casa está ${condition}. ${pathLine} ¿Qué le gustaría hacer ahora?`
+          `Ya revisé su Recibo de Decisión de Venta. Veo que está ${situation}, su prioridad es ${goal}, y la casa está ${condition}. ${pathLine} ¿Qué le gustaría hacer ahora?`
         );
 
         suggestedReplies = mapChipsToActionSpecs([
