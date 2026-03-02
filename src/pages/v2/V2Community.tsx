@@ -8,7 +8,6 @@ import arizonaDiaperBankLogo from "@/assets/arizona-diaper-bank-logo.jpg";
 import rumboAlExitoLogo from "@/assets/rumbo-al-exito-logo.jpg";
 import tucsonApplianceLogo from "@/assets/tucson-appliance-logo.jpg";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-import GoogleSignInButton from "@/components/v2/GoogleSignInButton";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-community-neighborhood.png";
 
@@ -211,13 +210,6 @@ const V2CommunityContent = () => {
             {t("Work With Me", "Trabaje Conmigo")}
           </Button>
           
-          {/* Google Sign-In CTA */}
-          <div className="mt-8 flex flex-col items-center gap-3 max-w-sm mx-auto">
-            <span className="text-sm text-cc-muted">
-              {t("Or get started instantly:", "O comience al instante:")}
-            </span>
-            <GoogleSignInButton />
-          </div>
         </div>
       </section>
     </>

@@ -124,9 +124,9 @@ const V2BuyContent = () => {
                 asChild 
                 variant="outline" 
                 className="bg-white/15 border-white/40 text-white hover:bg-white/20 hover:border-white/50 rounded-full px-6 sm:px-8 text-sm sm:text-base"
-                onClick={() => handleCTAClick(CTA_NAMES.HERO_VALUATION_GUIDE, '/v2/guides/understanding-home-valuation')}
+                onClick={() => handleCTAClick('hero_buyer_guide', '/v2/guides/first-time-buyer-guide')}
               >
-                <Link to="/v2/guides/understanding-home-valuation">{t("Understand Home Values", "Entienda los Valores")}</Link>
+                <Link to="/v2/guides/first-time-buyer-guide">{t("Read the Buyer's Guide", "Leer la Guía del Comprador")}</Link>
               </Button>
             </div>
           </div>
@@ -253,13 +253,13 @@ const V2BuyContent = () => {
             <div className="space-y-6">
               {/* Featured Guide: Understanding Home Valuation */}
               <FeaturedGuideCard
-                guideId="understanding-home-valuation"
-                titleEn="Understanding Your Home's True Value"
-                titleEs="Entendiendo el Verdadero Valor de Su Casa"
-                descriptionEn="Learn what factors affect home values before your search—knowledge that helps you spot good deals and negotiate with confidence."
-                descriptionEs="Aprenda qué factores afectan los valores de las casas antes de su búsqueda—conocimiento que le ayuda a identificar buenas ofertas y negociar con confianza."
-                readTimeEn="6 min read"
-                readTimeEs="6 min de lectura"
+                guideId="first-time-buyer-guide"
+                titleEn="First-Time Home Buyer's Complete Guide"
+                titleEs="Guía Completa para Compradores de Primera Vivienda"
+                descriptionEn="Everything you need to know about buying your first home in Tucson—from pre-approval to closing day, with clarity at every step."
+                descriptionEs="Todo lo que necesita saber sobre comprar su primera casa en Tucson—desde la pre-aprobación hasta el día de cierre, con claridad en cada paso."
+                readTimeEn=""
+                readTimeEs=""
                 ctaSource="v2_buy_featured"
               />
               

@@ -66,8 +66,8 @@ const data: GuideContentData = {
     {
       heading: "Your Next Step",
       headingEs: "Su Próximo Paso",
-      content: "If you've inherited a property and want to understand your options, you're welcome to have a calm, no-pressure conversation about your situation. Whether you're leaning toward keeping, selling, or simply need clarity on what comes next—support is available when you're ready.",
-      contentEs: "Si ha heredado una propiedad y desea entender sus opciones, es bienvenido(a) a tener una conversación tranquila, sin presión, sobre su situación. Ya sea que se incline hacia conservar, vender, o simplemente necesite claridad sobre qué viene después—el apoyo está disponible cuando esté listo(a).",
+      content: "If you'd like clarity on your options for an inherited property, the next step below is a good place to begin—at your own pace, with no obligation.",
+      contentEs: "Si le gustaría tener claridad sobre sus opciones para una propiedad heredada, el siguiente paso de abajo es un buen lugar para comenzar—a su propio ritmo, sin obligación.",
     },
   ],
 };

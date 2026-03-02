@@ -76,7 +76,7 @@ function calculateGuideScore(
 
   // 5. New visitors - boost foundational guides (+25 points)
   if (signals.guidesRead.length === 0) {
-    const foundationalGuides = ['first-time-buyer-guide', 'selling-for-top-dollar', 'understanding-home-valuation'];
+    const foundationalGuides = ['first-time-buyer-guide', 'selling-for-top-dollar'];
     if (foundationalGuides.includes(guide.id)) {
       score += 25;
       reasons.push('Foundational for new visitors');

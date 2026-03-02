@@ -30,7 +30,7 @@ export interface RecommendedGuide {
 }
 
 // Define foundational "start here" guides per category
-const START_HERE_GUIDES = ['first-time-buyer-guide', 'selling-for-top-dollar', 'understanding-home-valuation'];
+const START_HERE_GUIDES = ['first-time-buyer-guide', 'selling-for-top-dollar'];
 
 // Map categories to intents
 const CATEGORY_INTENT_MAP: Record<string, Intent> = {

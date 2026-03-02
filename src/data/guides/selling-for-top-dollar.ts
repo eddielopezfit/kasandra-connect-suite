@@ -54,8 +54,8 @@ const data: GuideContentData = {
     {
       heading: "Your Next Step",
       headingEs: "Su Próximo Paso",
-      content: "If you'd like to understand what your home might be worth in today's market, you can request a complimentary home value review.\n\nThis is simply a starting point—information to help you decide, with no obligation attached.",
-      contentEs: "Si le gustaría entender cuánto podría valer su casa en el mercado actual, puede solicitar una revisión de valor de vivienda complementaria.\n\nEsto es simplemente un punto de partida—información para ayudarle a decidir, sin ninguna obligación adjunta.",
+      content: "If you'd like clarity on where you stand and what your options look like, the next step below is a good place to begin—at your own pace, with no obligation.",
+      contentEs: "Si le gustaría tener claridad sobre dónde se encuentra y cómo lucen sus opciones, el siguiente paso de abajo es un buen lugar para comenzar—a su propio ritmo, sin obligación.",
     },
   ],
 };
