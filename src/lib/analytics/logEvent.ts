@@ -138,7 +138,9 @@ export type EventType =
   | 'guide_exit_ramp_clicked'
   | 'guide_mid_cta_clicked'
   // Phase 3: Decision Lane
-  | 'decision_lane_selected';
+  | 'decision_lane_selected'
+  // Chip Governance Analytics
+  | 'selena_chip_clicked';
 
 export interface EventPayload {
   [key: string]: unknown;

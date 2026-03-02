@@ -273,6 +273,12 @@ export interface EntryContext {
   prefillMessage?: string;
 }
 
+export interface ChipMeta {
+  phase: number;
+  mode: number;
+  containment: boolean;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -280,6 +286,7 @@ export interface ChatMessage {
   timestamp: string;
   actions?: ChatAction[];
   suggestedReplies?: (string | { label: string; actionSpec: import('@/lib/actions/actionSpec').ActionSpec })[];
+  chipMeta?: ChipMeta;
   metadata?: {
     report_id?: string;
     report_type?: string;
@@ -652,6 +659,24 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           t("Can I reschedule if needed?", "¿Puedo reprogramar si es necesario?"),
           t("Thanks, Selena", "Gracias, Selena"),
         ];
+      }
+      // Priority 0.5: Last-Chance Recovery — user was shown booking chips but didn't click
+      else if (!entryContext && !sessionContext?.recovery_shown && sessionContext?.booking_chips_shown_at) {
+        const shownAt = new Date(sessionContext.booking_chips_shown_at).getTime();
+        const now = Date.now();
+        const isWithin24h = (now - shownAt) < 24 * 60 * 60 * 1000;
+        if (isWithin24h) {
+          greetingContent = t(
+            "You were close to connecting with Kasandra. Would you like to continue?",
+            "Estaba cerca de conectarse con Kasandra. ¿Le gustaría continuar?"
+          );
+          suggestedReplies = mapChipsToActionSpecs([
+            t("Talk with Kasandra", "Hablar con Kasandra"),
+          ]);
+          // Add a plain-text "keep exploring" chip (not booking)
+          suggestedReplies.push(t("Keep exploring", "Seguir explorando"));
+          updateSessionContext({ recovery_shown: true });
+        }
       }
       // Priority 1: Calculator completion context
       else if (entryContext?.source === 'calculator' && entryContext.calculatorAdvantage) {
@@ -1189,6 +1214,22 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       // sending a user message (which would trigger an AI round-trip).
       const mappedReplies = mapChipsToActionSpecs(data.suggestedReplies || []);
 
+      // ============= CHIP META EXTRACTION =============
+      // Persist phase/mode/containment from edge function for visual weighting
+      const chipMeta: import('./SelenaChatContext').ChipMeta = {
+        phase: data.chip_phase ?? data.chip_phase_floor ?? 0,
+        mode: data.current_mode ?? 0,
+        containment: !!data.containment_active,
+      };
+
+      // ============= BOOKING CHIPS SHOWN TRACKING (Feature 3) =============
+      const hasBookingChip = mappedReplies.some((r) => 
+        typeof r !== 'string' && r.actionSpec.type === 'book'
+      );
+      if (hasBookingChip && (chipMeta.phase >= 3 || chipMeta.mode >= 4 || data.booking_cta_shown)) {
+        updateSessionContext({ booking_chips_shown_at: new Date().toISOString() });
+      }
+
       const assistantMessage: ChatMessage = {
         id: generateMessageId(),
         role: 'assistant',
@@ -1199,6 +1240,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         timestamp: new Date().toISOString(),
         actions: data.actions || [],
         suggestedReplies: mappedReplies,
+        chipMeta,
       };
 
       const updatedMessages = [...newMessages, assistantMessage];

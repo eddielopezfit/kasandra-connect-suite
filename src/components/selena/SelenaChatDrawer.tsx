@@ -209,6 +209,7 @@ export function SelenaChatDrawer() {
     activeTab,
     messages,
     onSuggestedReplyClick: handleSuggestedReplyClick,
+    chipMeta: messages.length > 0 ? messages[messages.length - 1].chipMeta : undefined,
   };
 
   const sharedBottomProps = {
