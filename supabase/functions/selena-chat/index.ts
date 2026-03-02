@@ -2099,7 +2099,8 @@ serve(async (req) => {
       && !proceedsOverride   // PROCEEDS override takes absolute priority over first-turn intercept
       && !asapTimeline       // ASAP override also bypasses first-turn intercept
       && !context.timeline   // Don't re-ask if timeline already known
-      && !timelineRecentlyAsked; // Don't spam timeline question
+      && !timelineRecentlyAsked // Don't spam timeline question
+      && !guardState.containment_active; // KB-9: Containment always takes priority
 
     if (isFirstSellerTurn) {
       const sellerFirstReply = language === 'es'
@@ -2135,7 +2136,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt + reflectionHint + sellerDecisionHint + governanceHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA: Diga 1-2 oraciones. Sin educación. Ofrezca hablar con Kasandra como opción tranquila.' : '\n\nCONTAINMENT ACTIVE: Say 1-2 sentences. No education. Offer Kasandra as a calm option.') : '') }, 
+          { role: "system", content: systemPrompt + reflectionHint + sellerDecisionHint + governanceHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
           ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],

@@ -346,7 +346,7 @@ export function applyGuardRules(
     chipOverrides = language === 'es'
       ? ['Hablar con Kasandra', 'Seguir conversando con Selena']
       : ['Talk with Kasandra', 'Keep chatting with Selena'];
-    maxTokensOverride = 120;
+    maxTokensOverride = 80;
     violations.push({ rule: 'containment_active', action: 'modified' });
   }
 
@@ -356,8 +356,9 @@ export function applyGuardRules(
     const isScamConcern = /(^|[^a-z])(scam|ripoff|estafa|timo)([^a-z]|$)/.test(normalizedMsg);
     if (isScamConcern) {
       hints.push(language === 'es'
-        ? 'GUARDIA KB-9: El usuario pregunta sobre legitimidad. UNA oración corta de legitimidad + un próximo paso. NO intentes probar legitimidad con claims largos.'
-        : 'GUARD KB-9: User is questioning legitimacy. ONE short legitimacy sentence + one next step only. Do NOT prove legitimacy with long claims.');
+        ? 'GUARDIA KB-9 ABSOLUTA: EXACTAMENTE 1 oración: "Entiendo la cautela." + ofrecer hablar con Kasandra. PROHIBIDO: explicar quién eres, mencionar licencias, credenciales, o títulos. NADA MÁS.'
+        : 'GUARD KB-9 ABSOLUTE: EXACTLY 1 sentence: "I understand the caution." + offer to talk with Kasandra. FORBIDDEN: explaining who you are, mentioning licenses, credentials, or titles. NOTHING ELSE.');
+      maxTokensOverride = 50;
       violations.push({ rule: 'no_over_justifying', action: 'modified' });
     }
   }
