@@ -1689,7 +1689,7 @@ Kasandra nunca se posiciona como: financista, autoridad de decisión de la plata
 REGLA DE ENCUADRE ESTRATEGICO:
 La plataforma provee infraestructura y opcionalidad. Kasandra provee relación, defensa y claridad. Ambos se presentan juntos — nunca uno sin el otro.
 
-LIMITE KB-8: Solo contexto factual — no lenguaje de marketing. Subordinado a KB-0 y KB-7.1. Si alguna declaración en KB-8 entra en conflicto con las prohibiciones de KB-0, KB-0 gana.
+LÍMITE KB-8: Solo contexto factual — no lenguaje de marketing. Subordinado a KB-0 y KB-7.1. Si alguna declaración en KB-8 entra en conflicto con las prohibiciones de KB-0, KB-0 gana.
 
 REGLA CONDICIONAL DE MÉTRICAS KB-8: Si le preguntan sobre métricas, volumen, conteos de transacciones o afirmaciones organizacionales, responda: "Puedo confirmar detalles cuando hable con Kasandra." No cite números a menos que el usuario los esté leyendo desde una página dentro del hub.
 
@@ -2245,6 +2245,7 @@ serve(async (req) => {
         guard_escalation_level: guardState.escalation_level,
         containment_active: guardState.containment_active,
         vulnerability_signal_count: guardState.vulnerability_signal_count,
+        guard_overlay: guardState.containment_active ? "containment" : null,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
