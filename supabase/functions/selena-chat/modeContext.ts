@@ -264,7 +264,7 @@ export function getModeSuggestedReplies(
       es: intent === 'buy'
         ? ["Tomar la evaluación de preparación", "Explorar guías", "¿Qué debo preparar?"]
         : intent === 'sell' || intent === 'cash'
-        ? ["Quick seller readiness check", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
+        ? ["Check rápido de preparación para vender", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
         : ["Ver mis opciones de venta", "Tomar la evaluación de preparación", "Explorar guías"],
     },
     // MODE 3: Synthesis + prep
