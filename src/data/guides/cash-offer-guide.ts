@@ -1,13 +1,13 @@
 import type { GuideContentData } from './types';
 
 const data: GuideContentData = {
-  title: "Cash Offers Explained: Is It Right for You?",
-  titleEs: "Ofertas en Efectivo Explicadas: ¿Es Lo Correcto para Usted?",
+  title: "Cash Offers Explained: What Homeowners Should Know",
+  titleEs: "Ofertas en Efectivo Explicadas: Lo Que Los Propietarios Deben Saber",
   category: "Cash Offers",
   categoryEs: "Ofertas en Efectivo",
   author: "Kasandra Prieto",
-  intro: "You may have heard about cash offers as a way to sell your home faster and with less hassle. But what does that actually mean—and is it right for you? This guide explains the process clearly, so you can decide with confidence.",
-  introEs: "Puede haber escuchado sobre ofertas en efectivo como una forma de vender su casa más rápido y con menos complicaciones. Pero, ¿qué significa eso realmente—y es lo correcto para usted? Esta guía explica el proceso claramente, para que pueda decidir con confianza.",
+  intro: "If you're exploring whether a cash offer makes sense for your home, you're asking the right question. This guide explains how cash offers work, when they fit, and how to weigh them against other options—clearly and without pressure.",
+  introEs: "Si está explorando si una oferta en efectivo tiene sentido para su casa, está haciendo la pregunta correcta. Esta guía explica cómo funcionan las ofertas en efectivo, cuándo encajan, y cómo compararlas con otras opciones—con claridad y sin presión.",
   sections: [
     {
       heading: "If You're Feeling Overwhelmed",
@@ -54,8 +54,8 @@ const data: GuideContentData = {
     {
       heading: "Your Next Step",
       headingEs: "Su Próximo Paso",
-      content: "Not sure if a cash offer is the right fit? Take the Cash Offer Readiness Check — it's a quick, 1-minute diagnostic that helps you see how well a cash offer matches your timeline, property condition, and priorities.\n\nIf you'd like to explore further, you can also request a no-obligation review to see what's possible.",
-      contentEs: "¿No está seguro si una oferta en efectivo es la opción correcta? Tome el Check de Preparación para Oferta en Efectivo — es un diagnóstico rápido de 1 minuto que le ayuda a ver qué tan bien se ajusta una oferta en efectivo a su cronograma, condición de la propiedad y prioridades.\n\nSi desea explorar más, también puede solicitar una revisión sin compromiso para ver lo que es posible.",
+      content: "If you'd like clarity on whether a cash offer fits your situation, the next step below is a good place to begin—at your own pace, with no obligation.",
+      contentEs: "Si le gustaría tener claridad sobre si una oferta en efectivo se ajusta a su situación, el siguiente paso de abajo es un buen lugar para comenzar—a su propio ritmo, sin obligación.",
     },
   ],
 };

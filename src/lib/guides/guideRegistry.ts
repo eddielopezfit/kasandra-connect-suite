@@ -451,7 +451,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'sell-now-or-wait', lifeEvent: 'sell_timing' }, label: { en: 'Help me decide', es: 'Ayúdame a decidir' } },
       secondaryActions: [
-        { type: 'book', label: { en: 'Book a seller consult', es: 'Agendar consulta de vendedor' } },
+        { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Check my readiness', es: 'Verificar mi preparación' } },
       ],
       relatedGuideIds: ['selling-for-top-dollar', 'understanding-home-valuation', 'cash-vs-traditional-sale'],
     },
@@ -484,7 +484,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'life-change-selling', lifeEvent: 'life_event_selling' }, label: { en: 'Talk it through with Selena', es: 'Hablarlo con Selena' } },
       secondaryActions: [
-        { type: 'book', label: { en: 'Book a calm consult', es: 'Agendar consulta tranquila' } },
+        { type: 'open_chat', payload: { source: 'guide', guideId: 'life-change-selling', lifeEvent: 'life_event_selling' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
       ],
       relatedGuideIds: ['sell-now-or-wait', 'selling-for-top-dollar', 'cash-vs-traditional-sale'],
     },

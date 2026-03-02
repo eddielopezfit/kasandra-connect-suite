@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { ArrowLeft, Clock, User } from "lucide-react";
+import { ArrowLeft, User } from "lucide-react";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
@@ -61,7 +61,7 @@ function GuideDetailContent() {
   }, [guideId]);
 
   const guideTitle = guide ? (language === 'es' ? guide.titleEs : guide.title) : '';
-  const readTime = registryEntry ? (language === 'es' ? registryEntry.readTimeEs : registryEntry.readTime) : '';
+  
 
   // Track scroll depth for analytics
   useGuideScrollTracking({
@@ -161,12 +161,6 @@ function GuideDetailContent() {
               <User className="w-4 h-4" />
               {guide.author}
             </div>
-            {readTime && (
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                {readTime}
-              </div>
-            )}
           </div>
         </div>
       </section>
