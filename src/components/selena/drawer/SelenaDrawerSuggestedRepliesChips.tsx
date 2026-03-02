@@ -56,8 +56,8 @@ export function SelenaDrawerSuggestedRepliesChips({
   if (filteredReplies.length === 0) return null;
 
   // ============= VISUAL WEIGHTING HELPERS =============
-  const isHot = chipMeta && (chipMeta.mode >= 4 || chipMeta.containment || (chipMeta.phase >= 3 && getSessionContext()?.timeline === 'asap'));
-  const isWarm = chipMeta && chipMeta.phase >= 3 && !isHot;
+  const isHot = !!chipMeta && (chipMeta.mode >= 4 || chipMeta.containment || !!chipMeta.bookingCtaShown);
+  const isWarm = !!chipMeta && chipMeta.phase >= 3 && !isHot;
 
   function isBookingChip(reply: SuggestedReply): boolean {
     return typeof reply !== 'string' && reply.actionSpec.type === 'book';
@@ -80,9 +80,9 @@ export function SelenaDrawerSuggestedRepliesChips({
       is_booking_chip: isBooking,
     });
 
-    // Clear recovery state if booking chip is clicked
+    // Clear recovery state if booking chip is clicked (use null, not undefined, for reliable clearing)
     if (isBooking && ctx?.booking_chips_shown_at) {
-      updateSessionContext({ booking_chips_shown_at: undefined });
+      updateSessionContext({ booking_chips_shown_at: null } as any);
     }
 
     if (typeof reply === 'string') {

@@ -277,6 +277,7 @@ export interface ChipMeta {
   phase: number;
   mode: number;
   containment: boolean;
+  bookingCtaShown?: boolean;
 }
 
 export interface ChatMessage {
@@ -1220,6 +1221,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         phase: data.chip_phase ?? data.chip_phase_floor ?? 0,
         mode: data.current_mode ?? 0,
         containment: !!data.containment_active,
+        bookingCtaShown: !!data.booking_cta_shown,
       };
 
       // ============= BOOKING CHIPS SHOWN TRACKING (Feature 3) =============
