@@ -7,7 +7,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
 import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, MessageCircle, Sparkles } from "lucide-react";
-import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
+import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-cash-calm.png";
 
 const V2CashOfferOptionsContent = () => {
@@ -302,14 +302,18 @@ const V2CashOfferOptionsContent = () => {
               )}
             </p>
             <Button 
-              onClick={() => {
-                logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2/cash-offer-options', intent: 'cash' });
-                openChat({ source: 'question', intent: 'cash' });
-              }}
+              asChild
               className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
             >
-              <MessageCircle className="w-5 h-5 mr-2" />
-              {t("Request a Review", "Solicitar una Revisión")}
+              <Link
+                to="/v2/book?intent=sell&entry_offer=cash_offer_review&source=hub_cash_offer_options"
+                onClick={() => {
+                  logCTAClick({ cta_name: 'cash_offer_request_review', destination: '/v2/book?intent=sell&entry_offer=cash_offer_review&source=hub_cash_offer_options', page_path: '/v2/cash-offer-options', intent: 'sell' });
+                }}
+              >
+                <MessageCircle className="w-5 h-5 mr-2" />
+                {t("Request a Review", "Solicitar una Revisión")}
+              </Link>
             </Button>
           </div>
         </div>
