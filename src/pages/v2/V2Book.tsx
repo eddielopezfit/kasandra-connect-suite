@@ -7,6 +7,21 @@ import GHLBookingCalendar from "@/components/v2/GHLBookingCalendar";
 import { Calendar } from "lucide-react";
 import { logEvent } from "@/lib/analytics/logEvent";
 
+const CALL_TYPE_SUBTITLES: Record<string, { en: string; es: string }> = {
+  'clarity-call': {
+    en: "A focused 15-minute call to get clear on your options — no obligation.",
+    es: "Una llamada enfocada de 15 minutos para aclarar sus opciones — sin compromiso.",
+  },
+  'virtual-walkthrough': {
+    en: "A virtual walkthrough so you can explore your property's potential from anywhere.",
+    es: "Un recorrido virtual para que explore el potencial de su propiedad desde cualquier lugar.",
+  },
+  'no-pressure-review': {
+    en: "A relaxed, no-pressure review of your situation — just honest guidance.",
+    es: "Una revisión relajada y sin presión de su situación — solo orientación honesta.",
+  },
+};
+
 const V2BookContent = () => {
   const { t } = useLanguage();
   const [searchParams] = useSearchParams();
@@ -16,6 +31,8 @@ const V2BookContent = () => {
     descriptionEn: "Schedule a conversation with Kasandra Prieto. Bilingual real estate consultation for buyers and sellers in Tucson.",
     descriptionEs: "Agende una conversación con Kasandra Prieto. Consulta bilingüe de bienes raíces para compradores y vendedores en Tucson.",
   });
+
+  const callType = searchParams.get("callType");
 
   // Condition 1: lightweight analytics — log page view + intent + UTMs
   useEffect(() => {
@@ -28,13 +45,14 @@ const V2BookContent = () => {
 
     logEvent('booking_started', {
       intent,
+      ...(callType && { call_type: callType }),
       ...(utm_source && { utm_source }),
       ...(utm_campaign && { utm_campaign }),
       ...(utm_medium && { utm_medium }),
       ...(utm_content && { utm_content }),
       ...(utm_term && { utm_term }),
     });
-  }, [searchParams]);
+  }, [searchParams, callType]);
 
   return (
     <>
@@ -50,9 +68,16 @@ const V2BookContent = () => {
               )}
             </h1>
             <p className="text-white/80 text-lg max-w-xl mx-auto">
-              {t(
-                "Choose a time that works best for you. Kasandra personally reviews each situation before your conversation.",
-                "Elija un horario que le funcione mejor. Kasandra revisa personalmente cada situación antes de la conversación."
+              {callType ? (
+                t(
+                  CALL_TYPE_SUBTITLES[callType]?.en || "Choose a time that works best for you. Kasandra personally reviews each situation before your conversation.",
+                  CALL_TYPE_SUBTITLES[callType]?.es || "Elija un horario que le funcione mejor. Kasandra revisa personalmente cada situación antes de la conversación."
+                )
+              ) : (
+                t(
+                  "Choose a time that works best for you. Kasandra personally reviews each situation before your conversation.",
+                  "Elija un horario que le funcione mejor. Kasandra revisa personalmente cada situación antes de la conversación."
+                )
               )}
             </p>
           </div>

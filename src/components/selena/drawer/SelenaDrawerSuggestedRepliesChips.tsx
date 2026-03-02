@@ -3,10 +3,18 @@ import { cn } from "@/lib/utils";
 import type { ChatMessage, ChipMeta } from "@/contexts/SelenaChatContext";
 import { type ActionSpec, isActionValid, resolveAction } from "@/lib/actions/actionSpec";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { getSessionContext, updateSessionContext } from "@/lib/analytics/selenaSession";
 
 type SuggestedReply = string | { label: string; actionSpec: ActionSpec };
+
+// Sub-chip definitions for warm leads (booking engagement variants)
+const SUB_CHIPS = [
+  { labelEn: '15-min clarity call', labelEs: 'Llamada de 15 min', callType: 'clarity-call' },
+  { labelEn: 'Virtual walkthrough', labelEs: 'Recorrido virtual', callType: 'virtual-walkthrough' },
+  { labelEn: 'No-pressure review', labelEs: 'Revisión sin presión', callType: 'no-pressure-review' },
+] as const;
 
 export function SelenaDrawerSuggestedRepliesChips({
   suggestedReplies,
@@ -25,6 +33,7 @@ export function SelenaDrawerSuggestedRepliesChips({
 }) {
   const navigate = useNavigate();
   const { openChat } = useSelenaChat();
+  const { language } = useLanguage();
 
   if (!suggestedReplies || suggestedReplies.length === 0 || isLoading || activeTab) {
     return null;
@@ -94,8 +103,31 @@ export function SelenaDrawerSuggestedRepliesChips({
     }
   };
 
+  // Show sub-chips only for warm leads (not hot — hot keeps single bold CTA)
+  const hasBookingChips = filteredReplies.some(isBookingChip);
+  const showSubChips = isWarm && hasBookingChips && !isHot;
+
+  const handleSubChipClick = (subChip: typeof SUB_CHIPS[number]) => {
+    const label = language === 'es' ? subChip.labelEs : subChip.labelEn;
+    const ctx = getSessionContext();
+
+    logEvent('selena_chip_clicked', {
+      chip_label: label,
+      chip_type: 'sub_chip',
+      action_type: 'book',
+      phase: chipMeta?.phase ?? 0,
+      intent: ctx?.intent ?? 'unknown',
+      containment_active: chipMeta?.containment ?? false,
+      is_booking_chip: true,
+      call_type: subChip.callType,
+    });
+
+    navigate(`/v2/book?callType=${subChip.callType}`);
+  };
+
   return (
     <div className="border-t border-border px-4 py-2.5 shrink-0 bg-background/95 backdrop-blur-sm">
+      {/* Primary chips */}
       <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide max-w-full">
         {filteredReplies.map((reply, index) => {
           const booking = isBookingChip(reply);
@@ -122,6 +154,28 @@ export function SelenaDrawerSuggestedRepliesChips({
           );
         })}
       </div>
+
+      {/* Sub-chips for warm leads — secondary booking engagement options */}
+      {showSubChips && (
+        <div className="flex gap-1.5 overflow-x-auto pt-1.5 scrollbar-hide max-w-full">
+          {SUB_CHIPS.map((sub) => (
+            <button
+              key={sub.callType}
+              onClick={() => handleSubChipClick(sub)}
+              className={cn(
+                "shrink-0 text-[11px] px-2.5 py-1.5 rounded-full",
+                "active:scale-95",
+                "transition-all duration-200",
+                "whitespace-nowrap",
+                "border border-cc-gold/30 text-cc-navy/80",
+                "bg-cc-ivory hover:bg-cc-sand hover:border-cc-gold/50",
+              )}
+            >
+              {language === 'es' ? sub.labelEs : sub.labelEn}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
