@@ -616,11 +616,17 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
 
     // Core decision: should we inject a greeting?
     const shouldInjectGreeting = (() => {
-      // If stored history exists and source is blocked → silent open
-      if (storedHistoryExists && isBlockedSource) return false;
+      // Recovery exception: if booking chips were shown but not clicked, allow greeting even for blocked sources
+      const recoveryCtx = getSessionContext();
+      const hasRecoveryCandidate = !recoveryCtx?.recovery_shown && !!recoveryCtx?.booking_chips_shown_at;
+      
+      // If stored history exists and source is blocked → silent open (UNLESS recovery candidate)
+      if (storedHistoryExists && isBlockedSource && !hasRecoveryCandidate) return false;
       
       // Post-booking always injects (identity reinforcement)
       if (isPostBooking) return true;
+      // Recovery greeting — blocked source but has abandoned booking chips
+      if (isBlockedSource && hasRecoveryCandidate) return true;
       
       // If stored history exists and source is NOT in allowed set → silent open
       if (storedHistoryExists && !isAllowedGreetingSource) return false;
@@ -662,7 +668,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         ];
       }
       // Priority 0.5: Last-Chance Recovery — user was shown booking chips but didn't click
-      else if (!entryContext && !sessionContext?.recovery_shown && sessionContext?.booking_chips_shown_at) {
+      // Triggers on non-contextual opens (FAB, footer_nudge, no context) when booking was abandoned
+      else if (isBlockedSource && !sessionContext?.recovery_shown && sessionContext?.booking_chips_shown_at) {
         const shownAt = new Date(sessionContext.booking_chips_shown_at).getTime();
         const now = Date.now();
         const isWithin24h = (now - shownAt) < 24 * 60 * 60 * 1000;
