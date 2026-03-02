@@ -7,6 +7,7 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Sparkles, FileText, Loader2, MessageCircle } from 'lucide-react';
+import { useKeyboardInset } from '@/hooks/useKeyboardInset';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { logEvent } from '@/lib/analytics/logEvent';
@@ -87,6 +88,7 @@ export function SelenaChatDrawer() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const { keyboardInset, isKeyboardOpen } = useKeyboardInset();
   
   // Compute journey context for tab bar
   const journeyContext = useMemo(() => {
@@ -101,11 +103,10 @@ export function SelenaChatDrawer() {
   const lastMessage = messages[messages.length - 1];
   const suggestedReplies = lastMessage?.role === 'assistant' ? lastMessage.suggestedReplies : undefined;
 
-  // Scroll to bottom when messages change or loading state changes
+  // Scroll to bottom when messages change, loading state changes, or keyboard opens
   useEffect(() => {
-    // Use bottomRef for reliable scroll anchoring
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [messages.length, isLoading]);
+  }, [messages.length, isLoading, isKeyboardOpen]);
 
 
   // Close tab panel when drawer closes
@@ -291,7 +292,10 @@ export function SelenaChatDrawer() {
     return (
       <>
         <Drawer open={isOpen} onOpenChange={(open) => !open && closeChat()}>
-          <DrawerContent className="h-[85vh] max-h-[700px] flex flex-col overflow-hidden">
+          <DrawerContent 
+            className="h-[85dvh] max-h-[700px] flex flex-col overflow-hidden"
+            style={{ paddingBottom: keyboardInset > 0 ? `${keyboardInset}px` : undefined }}
+          >
             <DrawerHeader className="border-b border-border px-4 py-3 shrink-0">
               <div className="flex items-center justify-between">
                 <DrawerTitle className="flex items-center gap-2 text-lg">
