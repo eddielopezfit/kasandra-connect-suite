@@ -89,7 +89,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Calm visual after intro to reduce cognitive load before financial section',
       alt: 'A welcoming Tucson home exterior',
       altEs: 'Exterior acogedor de una casa en Tucson',
-      src: `${STORAGE_BASE}/guides/first-time-buyer-guide/orientation.jpg`,
+      src: `${STORAGE_BASE}/guides/first-time-buyer-guide/hero.webp`,
     },
     {
       id: 'ftb-trust',
@@ -123,7 +123,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Warm image after emotional validation section to transition into process',
       alt: 'A Tucson home ready for sale',
       altEs: 'Una casa en Tucson lista para la venta',
-      src: `${STORAGE_BASE}/guides/selling-for-top-dollar/orientation.jpg`,
+      src: `${STORAGE_BASE}/guides/selling-for-top-dollar/hero.webp`,
     },
     {
       id: 'sell-trust',
@@ -155,7 +155,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Calming image after emotional grounding intro',
       alt: 'A calm Tucson landscape',
       altEs: 'Un paisaje tranquilo de Tucson',
-      src: `${STORAGE_BASE}/guides/cash-offer-guide/orientation.jpg`,
+      src: `${STORAGE_BASE}/guides/cash-offer-guide/hero.webp`,
     },
     {
       id: 'cash-trust',
@@ -187,7 +187,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Calm Tucson neighborhood to ground emotional state after loss',
       alt: 'A quiet Tucson neighborhood at golden hour',
       altEs: 'Un vecindario tranquilo de Tucson al atardecer',
-      src: `${STORAGE_BASE}/guides/inherited-probate-property/orientation.jpg`,
+      src: `${STORAGE_BASE}/guides/inherited-probate-property/hero.webp`,
     },
     {
       id: 'inh-trust',
@@ -223,7 +223,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Ground the reader visually after empathy-forward opening',
       alt: 'A Tucson neighborhood street view',
       altEs: 'Vista de una calle de vecindario en Tucson',
-      src: `${STORAGE_BASE}/guides/understanding-home-valuation/orientation.jpg`,
+      src: `${STORAGE_BASE}/guides/understanding-home-valuation/hero.webp`,
     },
     {
       id: 'val-trust',
@@ -237,6 +237,48 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       quoteEs: 'Las herramientas en línea son convenientes, pero no pueden recorrer su casa ni conocer su vecindario como lo hace un profesional local.',
     },
     // val-clarity REMOVED: Tier 2 governance = max 1 image
+  ],
+
+  'cash-vs-traditional-sale': [
+    {
+      id: 'cvt-orientation',
+      variant: 'orientation',
+      afterSection: -1,
+      type: 'image',
+      purpose: 'Ground the reader visually with contrasting home styles',
+      alt: 'Two contrasting Tucson homes side by side',
+      altEs: 'Dos casas contrastantes de Tucson lado a lado',
+      src: `${STORAGE_BASE}/guides/cash-vs-traditional-sale/hero.webp`,
+    },
+    // Tier 2 governance = max 1 image
+  ],
+
+  'sell-now-or-wait': [
+    {
+      id: 'snw-orientation',
+      variant: 'orientation',
+      afterSection: -1,
+      type: 'image',
+      purpose: 'Symbolic fork-in-the-road to ground the timing decision',
+      alt: 'A desert road at sunset with saguaro silhouettes',
+      altEs: 'Un camino del desierto al atardecer con siluetas de saguaro',
+      src: `${STORAGE_BASE}/guides/sell-now-or-wait/hero.webp`,
+    },
+    // Tier 2 governance = max 1 image
+  ],
+
+  'life-change-selling': [
+    {
+      id: 'lcs-orientation',
+      variant: 'orientation',
+      afterSection: -1,
+      type: 'image',
+      purpose: 'Calm residential street to ground emotional transition theme',
+      alt: 'A quiet Tucson residential street at golden hour',
+      altEs: 'Una calle residencial tranquila de Tucson al atardecer',
+      src: `${STORAGE_BASE}/guides/life-change-selling/hero.webp`,
+    },
+    // Tier 2 governance = max 1 image
   ],
 
   // === TIER 3 STORIES (slots exist for structure, but src is stripped by getGovernedMediaSlots) ===
