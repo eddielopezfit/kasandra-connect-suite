@@ -42,7 +42,6 @@ export type MidGuidePromptKey = never;
 //   Tier 2: infographic encouraged
 //   Tier 3: no assets expected (text-only, stripped by getGovernedMediaSlots)
 export interface GuideAssetSlots {
-  thumbnail?: string;        // URL to card thumbnail image (Phase 1: fallback to hero.webp)
   videoOverview?: string;    // URL to hosted video
   infographic?: string;      // URL/path to infographic image
   pdfGuide?: string;         // URL to downloadable PDF
