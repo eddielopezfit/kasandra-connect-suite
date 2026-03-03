@@ -5,7 +5,16 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 import { GuideCardBadge } from "./GuideCardBadge";
 import type { RecommendedGuide } from "@/lib/guides/personalization";
+import { getGuideById, type GuideRegistryEntry } from "@/lib/guides/guideRegistry";
 import { useRef, useState } from "react";
+
+const SUPABASE_PUBLIC = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/storage/v1/object/public`;
+
+function resolveCarouselThumbnail(entry: GuideRegistryEntry | undefined): string | null {
+  if (!entry || entry.tier === 3) return null;
+  if (entry.assetSlots?.thumbnail) return entry.assetSlots.thumbnail;
+  return `${SUPABASE_PUBLIC}/guide-assets/guides/${entry.id}/hero.webp`;
+}
 
 interface RecommendedGuidesCarouselProps {
   items: RecommendedGuide[];
@@ -34,7 +43,7 @@ export function RecommendedGuidesCarousel({
   
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return;
-    const scrollAmount = 320; // Card width + gap
+    const scrollAmount = 320;
     scrollRef.current.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
       behavior: 'smooth',
@@ -50,35 +59,20 @@ export function RecommendedGuidesCarousel({
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-          <h2 className="font-serif text-2xl md:text-3xl text-cc-navy mb-2">
+            <h2 className="font-serif text-2xl md:text-3xl text-cc-navy mb-2">
               {t(headingEn, headingEs)}
             </h2>
             <p className="text-cc-slate text-sm">
-              {t(
-                "Based on what you've explored…",
-                "Basado en lo que has explorado…"
-              )}
+              {t("Based on what you've explored…", "Basado en lo que has explorado…")}
             </p>
           </div>
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full border-cc-sand-dark hover:bg-white"
-              onClick={() => scroll('left')}
-              disabled={!canScrollLeft}
-            >
+            <Button variant="outline" size="icon" className="rounded-full border-cc-sand-dark hover:bg-white" onClick={() => scroll('left')} disabled={!canScrollLeft}>
               <ChevronLeft className="w-5 h-5" />
             </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full border-cc-sand-dark hover:bg-white"
-              onClick={() => scroll('right')}
-              disabled={!canScrollRight}
-            >
+            <Button variant="outline" size="icon" className="rounded-full border-cc-sand-dark hover:bg-white" onClick={() => scroll('right')} disabled={!canScrollRight}>
               <ChevronRight className="w-5 h-5" />
             </Button>
           </div>
@@ -90,42 +84,60 @@ export function RecommendedGuidesCarousel({
           onScroll={checkScroll}
           className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4 -mx-4 px-4"
         >
-          {items.map(({ guide, badgeType }) => (
-            <Link
-              key={guide.id}
-              to={`/v2/guides/${guide.id}`}
-              onClick={() => onGuideClick(guide.id)}
-              className={cn(
-                "group flex-shrink-0 w-[280px] sm:w-[300px] bg-white rounded-xl p-5 border border-cc-sand-dark/50 snap-start",
-                "hover:border-cc-gold/50 hover:shadow-elevated transition-all duration-300",
-                // Soft gold glow for recommended badge
-                badgeType === 'recommended' && "ring-2 ring-cc-gold/20 shadow-[0_0_20px_-5px_rgba(227,178,60,0.3)]"
-              )}
-            >
-              {/* Badge */}
-              <div className="mb-3">
-                <GuideCardBadge badgeType={badgeType} />
-              </div>
-              
-              {/* Title */}
-              <h3 className="font-serif text-lg text-cc-charcoal mb-2 line-clamp-2 group-hover:text-cc-navy transition-colors">
-                {t(guide.title, guide.titleEs)}
-              </h3>
-              
-              {/* Description */}
-              <p className="text-cc-slate text-sm leading-relaxed mb-4 line-clamp-2">
-                {t(guide.description, guide.descriptionEs)}
-              </p>
-              
-              {/* CTA */}
-              <div className="flex items-center justify-end mt-auto">
-                <span className="flex items-center text-cc-gold font-medium text-sm group-hover:gap-2 transition-all">
-                  {t("Get Clarity", "Obtener Claridad")}
-                  <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </div>
-            </Link>
-          ))}
+          {items.map(({ guide, badgeType }) => {
+            const entry = getGuideById(guide.id);
+            const thumbSrc = resolveCarouselThumbnail(entry);
+
+            return (
+              <Link
+                key={guide.id}
+                to={`/v2/guides/${guide.id}`}
+                onClick={() => onGuideClick(guide.id)}
+                className={cn(
+                  "group flex-shrink-0 w-[280px] sm:w-[300px] bg-white rounded-xl border border-cc-sand-dark/50 snap-start overflow-hidden flex flex-col",
+                  "hover:border-cc-gold/50 hover:shadow-elevated transition-all duration-300",
+                  badgeType === 'recommended' && "ring-2 ring-cc-gold/20 shadow-[0_0_20px_-5px_rgba(227,178,60,0.3)]"
+                )}
+              >
+                {/* Thumbnail — Tier 1–2 only */}
+                {thumbSrc && (
+                  <div className="aspect-video overflow-hidden">
+                    <img
+                      src={thumbSrc}
+                      alt={t(guide.title, guide.titleEs)}
+                      loading="eager"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                )}
+
+                <div className="p-5 flex flex-col flex-1">
+                  {/* Badge */}
+                  <div className="mb-3">
+                    <GuideCardBadge badgeType={badgeType} />
+                  </div>
+                  
+                  {/* Title */}
+                  <h3 className="font-serif text-lg text-cc-charcoal mb-2 line-clamp-2 group-hover:text-cc-navy transition-colors">
+                    {t(guide.title, guide.titleEs)}
+                  </h3>
+                  
+                  {/* Description */}
+                  <p className="text-cc-slate text-sm leading-relaxed mb-4 line-clamp-2">
+                    {t(guide.description, guide.descriptionEs)}
+                  </p>
+                  
+                  {/* CTA */}
+                  <div className="flex items-center justify-end mt-auto">
+                    <span className="flex items-center text-cc-gold font-medium text-sm group-hover:gap-2 transition-all">
+                      {t("Get Clarity", "Obtener Claridad")}
+                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
