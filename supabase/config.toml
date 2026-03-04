@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.get-session-snapshot]
 verify_jwt = false
+
+[functions.scrape-market-pulse]
+verify_jwt = false
