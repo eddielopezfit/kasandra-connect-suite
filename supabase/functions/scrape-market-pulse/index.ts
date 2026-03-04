@@ -37,14 +37,29 @@ function parseMarketData(markdown: string): MarketData {
   // Sale-to-List Ratio: look for patterns like "Sale-to-List Price 98.5%" or "98.5% sale-to-list"
   let negotiationGap: number | null = null;
   const saleToListPatterns = [
-    /sale[- ]to[- ]list[^0-9]*(\d{2,3}(?:\.\d+)?)\s*%/i,
-    /(\d{2,3}(?:\.\d+)?)\s*%\s*sale[- ]to[- ]list/i,
-    /list[- ]price[^0-9]*(\d{2,3}(?:\.\d+)?)\s*%/i,
+    // Flexible: any text with "sale" and "list" near a percentage
+    /sale.*?list[^0-9]*(\d{2,3}(?:\.\d+)?)\s*%/i,
+    /(\d{2,3}(?:\.\d+)?)\s*%\s*sale.*?list/i,
+    // Redfin-style: "Sale-to-List Price" header then a percentage on next line
+    /sale[- ]to[- ]list[^%]*?(\d{2,3}(?:\.\d+)?)%/is,
+    // Percentage followed by context about list price
+    /(\d{2,3}(?:\.\d+)?)\s*%[^.]*list\s*price/i,
+    // Standalone pattern: number% near "of list" or "of asking"
+    /(\d{2,3}(?:\.\d+)?)\s*%\s*(?:of\s+)?(?:list|asking)/i,
+    // Fallback: look for ratio as decimal (e.g., "0.985")
+    /sale.*?list.*?(0\.\d{2,4})/i,
   ];
   for (const pattern of saleToListPatterns) {
     const match = markdown.match(pattern);
     if (match) {
-      const ratio = parseFloat(match[1]) / 100;
+      let ratio: number;
+      const raw = parseFloat(match[1]);
+      // If value < 2, it's already a decimal ratio (e.g., 0.985)
+      if (raw < 2) {
+        ratio = raw;
+      } else {
+        ratio = raw / 100;
+      }
       negotiationGap = parseFloat((1 - ratio).toFixed(4));
       log.sale_to_list_raw = match[0];
       log.sale_to_list_ratio = ratio;

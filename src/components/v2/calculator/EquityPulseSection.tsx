@@ -10,16 +10,16 @@ import { Button } from "@/components/ui/button";
 import { Bookmark, Share2, TrendingUp, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
-import { saveSnapshot } from "@/lib/analytics/sessionSnapshot";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 
 interface EquityPulseSectionProps {
   estimatedValue: number;
+  mortgageBalance?: number;
   recommendation: string;
 }
 
-const EquityPulseSection = ({ estimatedValue, recommendation }: EquityPulseSectionProps) => {
+const EquityPulseSection = ({ estimatedValue, mortgageBalance, recommendation }: EquityPulseSectionProps) => {
   const { t } = useLanguage();
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -28,15 +28,34 @@ const EquityPulseSection = ({ estimatedValue, recommendation }: EquityPulseSecti
     setIsSaving(true);
 
     try {
-      // Enrich session context with save intent
+      // Enrich session context with save intent + full results
       updateSessionContext({
         equity_pulse_saved: true,
         equity_pulse_value: estimatedValue,
         equity_pulse_recommendation: recommendation,
+        mortgage_balance: mortgageBalance ?? 0,
       });
 
-      // Persist to backend via session snapshot
-      saveSnapshot();
+      // Direct upsert to saved_scenarios via edge function
+      const { supabase } = await import('@/integrations/supabase/client');
+      const leadId = localStorage.getItem('selena_lead_id');
+
+      await supabase.functions.invoke('upsert-session-snapshot', {
+        body: {
+          session_id: (await import('@/lib/analytics/selenaSession')).getOrCreateSessionId(),
+          intent: 'cash',
+          calculator_data: {
+            estimated_value: estimatedValue,
+            mortgage_balance: mortgageBalance ?? 0,
+          },
+          context_json: {
+            equity_pulse_saved: true,
+            equity_pulse_value: estimatedValue,
+            equity_pulse_recommendation: recommendation,
+          },
+          ...(leadId ? { lead_id: leadId } : {}),
+        },
+      });
 
       logEvent('equity_pulse_saved', {
         estimated_value: estimatedValue,
@@ -63,7 +82,7 @@ const EquityPulseSection = ({ estimatedValue, recommendation }: EquityPulseSecti
     } finally {
       setIsSaving(false);
     }
-  }, [estimatedValue, recommendation, t]);
+  }, [estimatedValue, mortgageBalance, recommendation, t]);
 
   const handleShare = useCallback(() => {
     const shareText = t(
