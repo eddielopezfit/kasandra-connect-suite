@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useGoogleReviews, GoogleReview } from "@/hooks/useGoogleReviews";
+import { useGoogleReviews, GoogleReview, type ReviewsSource } from "@/hooks/useGoogleReviews";
 import { Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import React, { useRef, useState, useEffect } from "react";
@@ -65,7 +65,10 @@ const LoadingSkeleton = () => (
 
 const GoogleReviewsSection = () => {
   const { t } = useLanguage();
-  const { data: reviews, isLoading } = useGoogleReviews();
+  const { data, isLoading } = useGoogleReviews();
+  const reviews = data?.reviews;
+  const reviewsSource: ReviewsSource = data?.source ?? 'fallback';
+  const isVerifiedGoogle = reviewsSource === 'live' || reviewsSource === 'cache';
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
@@ -102,16 +105,22 @@ const GoogleReviewsSection = () => {
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mt-2">
             {t("What Clients Are Saying", "Lo Que Dicen los Clientes")}
           </h2>
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <img
-              src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png"
-              alt="Google"
-              className="h-5 w-5"
-            />
-            <span className="text-sm text-cc-muted">
-              {t("Verified Google Reviews", "Reseñas Verificadas de Google")}
-            </span>
-          </div>
+          {isVerifiedGoogle ? (
+            <div className="flex items-center justify-center gap-2 mt-4">
+              <img
+                src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png"
+                alt="Google"
+                className="h-5 w-5"
+              />
+              <span className="text-sm text-cc-muted">
+                {t("Verified Google Reviews", "Reseñas Verificadas de Google")}
+              </span>
+            </div>
+          ) : (
+            <p className="text-sm text-cc-muted mt-4">
+              {t("Client Reviews", "Reseñas de Clientes")}
+            </p>
+          )}
         </div>
 
         {isLoading ? (

@@ -306,13 +306,13 @@ const V2CashOfferOptionsContent = () => {
               className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
             >
               <Link
-                to="/v2/book?intent=sell&entry_offer=cash_offer_review&source=hub_cash_offer_options"
+                to="/v2/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options"
                 onClick={() => {
-                  logCTAClick({ cta_name: 'cash_offer_request_review', destination: '/v2/book?intent=sell&entry_offer=cash_offer_review&source=hub_cash_offer_options', page_path: '/v2/cash-offer-options', intent: 'sell' });
+                  logCTAClick({ cta_name: 'cash_offer_book_review', destination: '/v2/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options', page_path: '/v2/cash-offer-options', intent: 'sell' });
                 }}
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
-                {t("Request a Review", "Solicitar una Revisión")}
+                {t("Book a Cash Offer Review", "Agendar una Revisión de Oferta en Efectivo")}
               </Link>
             </Button>
           </div>

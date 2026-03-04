@@ -26,150 +26,38 @@ import {
   logEvent,
 } from '@/lib/analytics/logEvent';
 import { getGuideById } from '@/lib/guides/guideRegistry';
-import type { ActionSpec } from '@/lib/actions/actionSpec';
+// ActionSpec type used transitively via MappedReply from chipsRegistry
 
-// ============= CHIP → ACTIONSPEC MAPPING =============
-// Converts known action-bearing string labels to structured ActionSpec objects.
-// Uses normalized lowercase matching with whitespace/punctuation tolerance.
-type MappedReply = string | { label: string; actionSpec: ActionSpec };
+// ============= CHIP → ACTIONSPEC MAPPING (Registry-backed) =============
+// Imports from centralized Chips Registry (OS Lock P1.3a).
+// mapChipsToActionSpecs stays local because it needs logEvent access.
+import { type MappedReply, normalizeChipLabel, findChipByNormalizedKey } from '@/lib/registry/chipsRegistry';
+export type { MappedReply };
 
-const CHIP_ACTION_MAP: Array<{ pattern: string; actionSpec: ActionSpec }> = [
-  {
-    pattern: 'estimate my net proceeds',
-    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
-  },
-  {
-    pattern: 'estimar mis ganancias netas',
-    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
-  },
-  {
-    pattern: 'compare cash vs listing',
-    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
-  },
-  {
-    pattern: 'comparar efectivo vs listado',
-    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
-  },
-  {
-    pattern: 'talk with kasandra',
-    actionSpec: { type: 'book', label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
-  },
-  {
-    pattern: 'hablar con kasandra',
-    actionSpec: { type: 'book', label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
-  },
-  {
-    pattern: 'find a time with kasandra',
-    actionSpec: { type: 'book', label: { en: 'Find a time with Kasandra', es: 'Encontrar un horario con Kasandra' } },
-  },
-  {
-    pattern: 'encontrar un horario con kasandra',
-    actionSpec: { type: 'book', label: { en: 'Find a time with Kasandra', es: 'Encontrar un horario con Kasandra' } },
-  },
-  {
-    pattern: 'take the readiness check',
-    actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
-  },
-  {
-    pattern: 'tomar la evaluacion de preparacion',
-    actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
-  },
-  {
-    pattern: 'take the cash readiness check',
-    actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' } },
-  },
-  {
-    pattern: 'tomar el check de preparacion en efectivo',
-    actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' } },
-  },
-  // Seller decision (primary sell chip — navigate, not tool)
-  {
-    pattern: 'get my selling options',
-    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
-  },
-  {
-    pattern: 'ver mis opciones de venta',
-    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
-  },
-  // Seller readiness (alternate/Phase 3 chip)
-  {
-    pattern: 'quick seller readiness check',
-    actionSpec: { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' } },
-  },
-  {
-    pattern: 'check rapido de preparacion para vender',
-    actionSpec: { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' } },
-  },
-  // Navigate: guides hub
-  {
-    pattern: 'browse guides',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
-  },
-  {
-    pattern: 'explorar guias',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
-  },
-  // Legacy mapping: "Browse buyer guides" → guides hub
-  {
-    pattern: 'browse buyer guides',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
-  },
-  {
-    pattern: 'explorar guias del comprador',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
-  },
-  // Legacy safety net: "What's my home worth?" → seller-decision (catch drifted chips)
-  {
-    pattern: "what's my home worth",
-    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
-  },
-  {
-    pattern: 'cuanto vale mi casa',
-    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
-  },
-  // Legacy safety net: "Compare cash vs. traditional" → cash-comparison calculator
-  {
-    pattern: 'compare cash vs traditional',
-    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
-  },
-  {
-    pattern: 'comparar efectivo vs tradicional',
-    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
-  },
-  // Legacy: "Comparar efectivo vs. venta tradicional"
-  {
-    pattern: 'comparar efectivo vs venta tradicional',
-    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
-  },
-  // Estimate net proceeds → cash-comparison calculator
-  {
-    pattern: 'estimate my net proceeds',
-    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
-  },
-  {
-    pattern: 'estimar mis ganancias netas',
-    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
-  },
-];
+function mapChipsToActionSpecs(
+  replies: string[],
+  opts?: { phase?: number; intent?: string },
+): MappedReply[] {
+  const phase = opts?.phase;
+  const intent = opts?.intent;
 
-function normalizeChipLabel(label: string): string {
-  return label
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // strip diacritics
-    .toLowerCase()
-    .trim()
-    .replace(/[.,!?¿¡]/g, '')
-    .replace(/\s+/g, ' ');
-}
+  return replies.map((label) => {
+    const entry = findChipByNormalizedKey(label);
 
-function mapChipsToActionSpecs(replies: string[]): MappedReply[] {
-  return replies.map((reply) => {
-    const normalized = normalizeChipLabel(reply);
-    const match = CHIP_ACTION_MAP.find((entry) => normalizeChipLabel(entry.pattern) === normalized);
-    if (match) {
-      return { label: reply, actionSpec: match.actionSpec };
+    if (entry?.actionSpec) {
+      return { label, actionSpec: entry.actionSpec };
     }
-    return reply; // plain string — stays conversational
+
+    // Drift detection: log unmatched chip for telemetry
+    logEvent('selena_chip_unmatched', {
+      chip_label_raw: label,
+      chip_label_normalized: normalizeChipLabel(label),
+      phase,
+      intent,
+    });
+
+    // IMPORTANT: still return MappedReply shape (not plain string)
+    return { label };
   });
 }
 
@@ -202,7 +90,7 @@ function hasStoredChatHistory(): boolean {
 function getPhaseAwareChips(
   t: (en: string, es: string) => string,
   ctx?: SessionContext | null,
-): (string | { label: string; actionSpec: import('@/lib/actions/actionSpec').ActionSpec })[] {
+): MappedReply[] {
   const floor = ctx?.chip_phase_floor ?? 0;
   const intent = ctx?.intent;
 
@@ -286,7 +174,7 @@ export interface ChatMessage {
   content: string;
   timestamp: string;
   actions?: ChatAction[];
-  suggestedReplies?: (string | { label: string; actionSpec: import('@/lib/actions/actionSpec').ActionSpec })[];
+  suggestedReplies?: MappedReply[];
   chipMeta?: ChipMeta;
   metadata?: {
     report_id?: string;
@@ -652,7 +540,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       const sessionContext = getSessionContext();
       const currentFloor = sessionContext?.chip_phase_floor ?? 0;
       let greetingContent: string = '';
-      let suggestedReplies: (string | { label: string; actionSpec: import('@/lib/actions/actionSpec').ActionSpec })[];
+      let suggestedReplies: MappedReply[];
       
       // Priority 0: Post-booking identity reinforcement (HIGHEST - seals the decision)
       if (isPostBooking) {
@@ -901,7 +789,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           // Build destination-backed chips from guide registry
           const destinations = guideEntry.destinations;
           const primaryChip = destinations?.primaryAction;
-          const actionChip: string | { label: string; actionSpec: import('@/lib/actions/actionSpec').ActionSpec } | undefined = 
+          const actionChip: MappedReply | undefined = 
             primaryChip ? { label: language === 'es' ? primaryChip.label.es : primaryChip.label.en, actionSpec: primaryChip } : undefined;
           
           suggestedReplies = [
@@ -1233,7 +1121,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
 
       // ============= BOOKING CHIPS SHOWN TRACKING (Feature 3) =============
       const hasBookingChip = mappedReplies.some((r) => 
-        typeof r !== 'string' && r.actionSpec.type === 'book'
+        typeof r !== 'string' && r.actionSpec?.type === 'book'
       );
       if (hasBookingChip && (chipMeta.phase >= 3 || chipMeta.mode >= 4 || data.booking_cta_shown)) {
         updateSessionContext({ booking_chips_shown_at: new Date().toISOString() });

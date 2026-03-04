@@ -140,7 +140,9 @@ export type EventType =
   // Phase 3: Decision Lane
   | 'decision_lane_selected'
   // Chip Governance Analytics
-  | 'selena_chip_clicked';
+  | 'selena_chip_clicked'
+  // Chip Governance Drift Detection
+  | 'selena_chip_unmatched';
 
 export interface EventPayload {
   [key: string]: unknown;
