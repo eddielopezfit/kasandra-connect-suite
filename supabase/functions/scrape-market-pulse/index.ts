@@ -54,7 +54,6 @@ function parseMarketData(markdown: string): MarketData {
     if (match) {
       let ratio: number;
       const raw = parseFloat(match[1]);
-      // If value < 2, it's already a decimal ratio (e.g., 0.985)
       if (raw < 2) {
         ratio = raw;
       } else {
@@ -63,7 +62,31 @@ function parseMarketData(markdown: string): MarketData {
       negotiationGap = parseFloat((1 - ratio).toFixed(4));
       log.sale_to_list_raw = match[0];
       log.sale_to_list_ratio = ratio;
+      log.sale_to_list_method = 'direct_ratio';
       break;
+    }
+  }
+
+  // Redfin "Over/Under List Price" format: the metric appears as
+  // "Over List Price\n\n3%" or "Under List Price\n\n2%"
+  if (negotiationGap === null) {
+    const overMatch = markdown.match(/over\s+list\s+price[\s\S]{0,20}?(\d{1,3}(?:\.\d+)?)\s*%/i);
+    const underMatch = markdown.match(/under\s+list\s+price[\s\S]{0,20}?(\d{1,3}(?:\.\d+)?)\s*%/i);
+
+    if (overMatch) {
+      const overPct = parseFloat(overMatch[1]);
+      // "Over List Price 3%" means sale-to-list = 1.03, gap = -0.03
+      negotiationGap = parseFloat((-overPct / 100).toFixed(4));
+      log.sale_to_list_raw = overMatch[0];
+      log.sale_to_list_ratio = 1 + overPct / 100;
+      log.sale_to_list_method = 'over_list_price';
+    } else if (underMatch) {
+      const underPct = parseFloat(underMatch[1]);
+      // "Under List Price 2%" means sale-to-list = 0.98, gap = 0.02
+      negotiationGap = parseFloat((underPct / 100).toFixed(4));
+      log.sale_to_list_raw = underMatch[0];
+      log.sale_to_list_ratio = 1 - underPct / 100;
+      log.sale_to_list_method = 'under_list_price';
     }
   }
 
