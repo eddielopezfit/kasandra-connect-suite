@@ -123,6 +123,7 @@ export interface SessionContext {
   equity_pulse_saved?: boolean;
   equity_pulse_value?: number;
   equity_pulse_recommendation?: string;
+  mortgage_balance?: number;
 }
 
 /**

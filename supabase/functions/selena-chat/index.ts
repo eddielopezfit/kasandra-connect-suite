@@ -2256,8 +2256,19 @@ serve(async (req) => {
         ? `\n\nCONTEXTO DE RECIBO DE DECISIÓN: El usuario completó la herramienta de Decisión del Vendedor. Situación: ${s}. Prioridad: ${p}. Condición: ${c}. Camino recomendado: ${r}. Reconozca este progreso y continúe adelante. NO vuelva a preguntar información que ya proporcionaron.`
         : `\n\nDECISION RECEIPT CONTEXT: User completed the Seller Decision tool. Situation: ${s}. Priority: ${p}. Condition: ${c}. Recommended path: ${r}. Acknowledge this progress and continue forward. Do NOT re-ask information they already provided.`;
     }
+
+    // --- Market Pulse / Wait Penalty context ---
+    let marketPulseHint = "";
+    const equityPulseSaved = context.tool_used === 'tucson_alpha_calculator' || 
+      (context.tools_completed && context.tools_completed.includes('tucson_alpha_calculator'));
     
-    // ============= CHIP GOVERNANCE: AI PROMPT INJECTION =============
+    if (equityPulseSaved) {
+      const estValue = context.calculator_difference ? `$${context.calculator_difference.toLocaleString()}` : 'significant';
+      marketPulseHint = language === 'es'
+        ? `\n\nCONTEXTO DE MERCADO TUCSON: El tiempo promedio de espera actual en Tucson es de 145 días (115 días en mercado + 30 de cierre). Eso equivale a más de $2,600 en costos de mantención para una propiedad vacante. Si el usuario guardó un escenario de Equity Pulse, reconózcalo: "He guardado tu pulso. Con la espera actual de 145 días en Tucson, estás viendo más de $2,600 en costos de mantención si listas de manera tradicional. ¿Quiero que el escritorio de Kasandra verifique si nuestros compradores en efectivo pueden saltar esa espera para ti?" NO invente números — use solo 145 días y $2,600 como referencia factual del mercado.`
+        : `\n\nTUCSON MARKET CONTEXT: The current average wait penalty in Tucson is 145 days (115 days on market + 30 closing). That translates to over $2,600 in holding costs for a vacant property. If the user saved an Equity Pulse scenario, acknowledge it: "I've locked your pulse. With the current 145-day wait in Tucson, you're looking at over $2,600 in holding costs if you list traditionally. Shall I have Kasandra's desk verify if our cash buyers can skip that wait for you?" Do NOT invent numbers — use only 145 days and $2,600 as factual market reference.`;
+    }
+    
     // Tell the AI what phase we're in so response text matches chip direction
     const rawGoverned = getGovernedChips(effectiveIntent, timeline, engagement, language);
     
@@ -2449,7 +2460,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt + reflectionHint + sellerDecisionHint + governanceHint + journeyHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
+          { role: "system", content: systemPrompt + reflectionHint + sellerDecisionHint + marketPulseHint + governanceHint + journeyHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
           ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],

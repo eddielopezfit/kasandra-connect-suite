@@ -35,6 +35,7 @@ const TucsonAlphaCalculator = () => {
   
   // Form inputs
   const [estimatedValue, setEstimatedValue] = useState(350000);
+  const [mortgageBalance, setMortgageBalance] = useState(0);
   const [motivation, setMotivation] = useState<Motivation>('uncertain');
   const [timeline, setTimeline] = useState<Timeline>('flexible');
   
@@ -249,6 +250,7 @@ const TucsonAlphaCalculator = () => {
               {/* Equity Pulse — Saved Utility hook */}
               <EquityPulseSection
                 estimatedValue={estimatedValue}
+                mortgageBalance={mortgageBalance}
                 recommendation={results.recommendation}
               />
 
