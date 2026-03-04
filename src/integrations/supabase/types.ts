@@ -264,6 +264,48 @@ export type Database = {
           },
         ]
       }
+      market_pulse_settings: {
+        Row: {
+          days_to_close: number
+          holding_cost_per_day: number
+          id: string
+          last_verified_date: string | null
+          market_name: string
+          market_ready_prep_avg: number
+          negotiation_gap: number
+          scrape_log: Json | null
+          source_type: string
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          days_to_close?: number
+          holding_cost_per_day?: number
+          id?: string
+          last_verified_date?: string | null
+          market_name?: string
+          market_ready_prep_avg?: number
+          negotiation_gap?: number
+          scrape_log?: Json | null
+          source_type?: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          days_to_close?: number
+          holding_cost_per_day?: number
+          id?: string
+          last_verified_date?: string | null
+          market_name?: string
+          market_ready_prep_avg?: number
+          negotiation_gap?: number
+          scrape_log?: Json | null
+          source_type?: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       neighborhood_profiles: {
         Row: {
           created_at: string
