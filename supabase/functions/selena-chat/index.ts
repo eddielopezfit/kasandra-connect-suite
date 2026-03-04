@@ -520,72 +520,130 @@ function filterSuggestionsForEarnedAccess(suggestions: string[], hasEarned: bool
   );
 }
 
-// ============= JOURNEY AWARENESS: TOOL COMPLETION CHIP FILTER =============
-// Maps canonical tool IDs → chip patterns that route TO those tools.
-// When a tool is completed, any chip that would re-route to it is removed.
-// Filtering is by DESTINATION (ActionSpec route), not by label text.
-const TOOL_CHIP_PATTERNS: Record<string, RegExp> = {
-  'buyer_readiness': /readiness\s*check|evaluaci[oó]n\s*de\s*preparaci[oó]n|check\s*de\s*preparaci[oó]n\s*para\s*comprar/i,
-  'seller_readiness': /seller\s*readiness|opciones\s*de\s*venta|check\s*r[aá]pido.*preparaci[oó]n.*vender|check\s*r[aá]pido\s*de\s*preparaci[oó]n/i,
-  'cash_readiness': /cash\s*readiness|preparaci[oó]n\s*en\s*efectivo|check.*preparaci[oó]n\s*en\s*efectivo/i,
-  'tucson_alpha_calculator': /net\s*proceeds|ganancias\s*netas|cash\s*vs\.?\s*listing|efectivo\s*vs\.?\s*listado|compare\s*cash|comparar\s*efectivo/i,
+// ============= JOURNEY AWARENESS: DESTINATION-BASED CHIP FILTER =============
+// Deterministic filtering by ActionSpec destination, not label text.
+// All Phase 2+ chips are hardcoded → exact-match map is exhaustive.
+
+// Chip label → canonical destination route (server-side mirror of chipsRegistry)
+const CHIP_DESTINATION: Record<string, string> = {
+  // EN Phase 2 chips
+  'Take the readiness check': '/v2/buyer-readiness',
+  'Browse guides': '/v2/guides',
+  'Take the cash readiness check': '/v2/cash-readiness',
+  'Compare cash vs. listing': '/v2/cash-offer-options',
+  'Get my selling options': '/v2/seller-readiness',
+  'Quick seller readiness check': '/v2/seller-readiness',
+  // EN Phase 3 chips
+  'Estimate my net proceeds': '/v2/cash-offer-options',
+  'Talk with Kasandra': '/v2/book',
+  // ES Phase 2 chips
+  'Tomar la evaluación de preparación': '/v2/buyer-readiness',
+  'Explorar guías': '/v2/guides',
+  'Tomar el check de preparación en efectivo': '/v2/cash-readiness',
+  'Comparar efectivo vs. listado': '/v2/cash-offer-options',
+  'Ver mis opciones de venta': '/v2/seller-readiness',
+  'Check rápido de preparación para vender': '/v2/seller-readiness',
+  // ES Phase 3 chips
+  'Estimar mis ganancias netas': '/v2/cash-offer-options',
+  'Hablar con Kasandra': '/v2/book',
 };
 
-// Replacement chips when a tool is removed — deterministic, registry-backed destinations
-const TOOL_REPLACEMENT_CHIPS: Record<string, { en: string; es: string }> = {
-  'buyer_readiness': { en: 'Browse guides', es: 'Explorar guías' },
-  'seller_readiness': { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' },
-  'cash_readiness': { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
-  'tucson_alpha_calculator': { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' },
+// Tool ID → destination paths it blocks (the routes the tool lives on)
+const TOOL_BLOCKED_DESTINATIONS: Record<string, string[]> = {
+  'buyer_readiness': ['/v2/buyer-readiness'],
+  'seller_readiness': ['/v2/seller-readiness'],
+  'cash_readiness': ['/v2/cash-readiness'],
+  'tucson_alpha_calculator': ['/v2/cash-offer-options'],
 };
+
+// Replacement destinations when a tool is completed — ordered by progression
+const TOOL_REPLACEMENT_DESTINATION: Record<string, string> = {
+  'buyer_readiness': '/v2/guides',
+  'seller_readiness': '/v2/cash-offer-options',
+  'cash_readiness': '/v2/cash-offer-options',
+  'tucson_alpha_calculator': '/v2/book',
+};
+
+// Reverse lookup: destination → chip label (by language)
+const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
+  '/v2/guides': { en: 'Browse guides', es: 'Explorar guías' },
+  '/v2/buyer-readiness': { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
+  '/v2/seller-readiness': { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
+  '/v2/cash-readiness': { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' },
+  '/v2/cash-offer-options': { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
+  '/v2/book': { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' },
+};
+
+interface ChipSuppressionEvent {
+  tool_id: string;
+  chip_label: string;
+  destination: string;
+  reason: 'completed';
+}
 
 function filterChipsForCompletedTools(
   chips: string[],
   toolsCompleted: string[],
   language: 'en' | 'es',
   hasEarnedBooking: boolean,
-): string[] {
-  if (!toolsCompleted?.length) return chips;
-  
-  let filtered = chips;
-  const replacements: string[] = [];
-  
+): { filtered: string[]; suppressions: ChipSuppressionEvent[] } {
+  if (!toolsCompleted?.length) return { filtered: chips, suppressions: [] };
+
+  // Build set of blocked destinations from completed tools
+  const blockedDests = new Set<string>();
   for (const toolId of toolsCompleted) {
-    const pattern = TOOL_CHIP_PATTERNS[toolId];
-    if (!pattern) continue;
-    
-    const before = filtered.length;
-    filtered = filtered.filter(chip => !pattern.test(chip));
-    
-    if (filtered.length < before) {
-      const replacement = TOOL_REPLACEMENT_CHIPS[toolId];
-      if (replacement) {
-        const chipText = language === 'es' ? replacement.es : replacement.en;
-        // Only add booking chip if earned; skip duplicates
-        const isBookingChip = /kasandra|hablar con/i.test(chipText);
-        if ((!isBookingChip || hasEarnedBooking) && !filtered.includes(chipText) && !replacements.includes(chipText)) {
-          replacements.push(chipText);
-        }
-      }
-    }
+    const dests = TOOL_BLOCKED_DESTINATIONS[toolId];
+    if (dests) dests.forEach(d => blockedDests.add(d));
   }
-  
-  // Add replacements (don't exceed 3 total chips)
-  for (const r of replacements) {
+
+  const suppressions: ChipSuppressionEvent[] = [];
+  const filtered: string[] = [];
+
+  for (const chip of chips) {
+    const dest = CHIP_DESTINATION[chip];
+    if (dest && blockedDests.has(dest)) {
+      // Find which tool blocked this chip
+      const blockingTool = toolsCompleted.find(tid =>
+        TOOL_BLOCKED_DESTINATIONS[tid]?.includes(dest)
+      );
+      suppressions.push({
+        tool_id: blockingTool || 'unknown',
+        chip_label: chip,
+        destination: dest,
+        reason: 'completed',
+      });
+      continue; // Remove this chip
+    }
+    filtered.push(chip);
+  }
+
+  // Add replacement chips for suppressed tools (by destination, not by label)
+  const existingDests = new Set(filtered.map(c => CHIP_DESTINATION[c]).filter(Boolean));
+  for (const toolId of toolsCompleted) {
+    const replacementDest = TOOL_REPLACEMENT_DESTINATION[toolId];
+    if (!replacementDest) continue;
+    // Don't add if destination is also blocked or already present
+    if (blockedDests.has(replacementDest)) continue;
+    if (existingDests.has(replacementDest)) continue;
     if (filtered.length >= 3) break;
-    // Don't add replacement if it also matches a completed tool pattern
-    const replacementAlsoCompleted = toolsCompleted.some(tid => TOOL_CHIP_PATTERNS[tid]?.test(r));
-    if (!replacementAlsoCompleted) {
-      filtered.push(r);
-    }
+
+    const chipEntry = DESTINATION_TO_CHIP[replacementDest];
+    if (!chipEntry) continue;
+    const chipLabel = language === 'es' ? chipEntry.es : chipEntry.en;
+
+    // Booking chips require earned access
+    if (replacementDest === '/v2/book' && !hasEarnedBooking) continue;
+
+    filtered.push(chipLabel);
+    existingDests.add(replacementDest);
   }
-  
+
   // Fallback: if all chips were filtered, provide a neutral progression chip
   if (filtered.length === 0) {
     filtered.push(language === 'es' ? 'Explorar guías' : 'Browse guides');
   }
-  
-  return filtered;
+
+  return { filtered, suppressions };
 }
 
 // ============= PROGRESSION MAP =============
@@ -2338,8 +2396,14 @@ serve(async (req) => {
     const isPhase3 = phase === 3 || proceedsOverride || asapTimeline;
     suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3);
 
-    // Apply journey awareness filter: remove chips for already-completed tools
-    suggestedReplies = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3);
+    // Apply journey awareness filter: remove chips for already-completed tools (destination-based)
+    const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3);
+    suggestedReplies = journeyFilter.filtered;
+
+    // Telemetry: log suppressions for audit trail
+    if (journeyFilter.suppressions.length > 0) {
+      console.log('[JourneyAwareness] Suppressed chips:', JSON.stringify(journeyFilter.suppressions));
+    }
 
     // EMAIL-ASKING SUPPRESSION: If Selena is actively collecting email, clear chips
     // so users can't click stale Phase 3 chips instead of typing their address.
@@ -2392,6 +2456,8 @@ serve(async (req) => {
         containment_active: guardState.containment_active,
         vulnerability_signal_count: guardState.vulnerability_signal_count,
         guard_overlay: guardState.containment_active ? "containment" : null,
+        // Journey awareness telemetry
+        tools_suppressed: journeyFilter.suppressions.length > 0 ? journeyFilter.suppressions : undefined,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
