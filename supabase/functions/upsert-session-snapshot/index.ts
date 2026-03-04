@@ -87,8 +87,52 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ── Equity Pulse: Insert saved_scenario when equity_pulse_saved ──
+    let scenarioSaved = false;
+    const ctxJson = incomingContextJson as Record<string, unknown>;
+    if (ctxJson?.equity_pulse_saved === true) {
+      const calcData = incomingCalcData as Record<string, unknown>;
+      const estimatedValue = typeof calcData?.estimated_value === 'number' ? calcData.estimated_value : null;
+      const mortgageBalance = typeof calcData?.mortgage_balance === 'number' ? calcData.mortgage_balance : null;
+      const zipCode = typeof ctxJson?.zip_code === 'string' ? ctxJson.zip_code : null;
+
+      // Build results_json from available calculator data
+      const resultsJson: Record<string, unknown> = { ...calcData };
+      if (ctxJson?.equity_pulse_recommendation) {
+        resultsJson.recommendation = ctxJson.equity_pulse_recommendation;
+      }
+      if (ctxJson?.equity_pulse_value) {
+        resultsJson.equity_pulse_value = ctxJson.equity_pulse_value;
+      }
+
+      const scenarioRow: Record<string, unknown> = {
+        scenario_type: 'net_to_seller',
+        results_json: resultsJson,
+        is_monitoring: true,
+        estimated_value: estimatedValue,
+        mortgage_balance: mortgageBalance,
+        zip_code: zipCode,
+      };
+
+      // Link to lead if available
+      if (body.lead_id && UUID_RE.test(body.lead_id)) {
+        scenarioRow.lead_id = body.lead_id;
+      }
+
+      const { error: scenarioError } = await supabase
+        .from('saved_scenarios')
+        .insert(scenarioRow);
+
+      if (scenarioError) {
+        console.error('[upsert-session-snapshot] saved_scenarios insert error:', scenarioError);
+        // Non-fatal — snapshot was already saved successfully
+      } else {
+        scenarioSaved = true;
+      }
+    }
+
     return new Response(
-      JSON.stringify({ ok: true }),
+      JSON.stringify({ ok: true, scenario_saved: scenarioSaved }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (e) {
