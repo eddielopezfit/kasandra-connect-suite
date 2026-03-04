@@ -29,6 +29,8 @@ const V2CashReadinessContent = () => {
         readiness_score: data.readiness_score,
         primary_priority: data.primary_priority,
       });
+      // P1.1: Persist snapshot after quiz completion
+      import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
 
       trackCustom("CashReadinessCompleted", {
         readiness_score_band: getScoreBand(data.readiness_score),

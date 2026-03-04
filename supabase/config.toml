@@ -11,3 +11,9 @@ verify_jwt = false
 
 [functions.get-decision-receipt]
 verify_jwt = false
+
+[functions.upsert-session-snapshot]
+verify_jwt = false
+
+[functions.get-session-snapshot]
+verify_jwt = false

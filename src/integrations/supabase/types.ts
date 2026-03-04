@@ -363,6 +363,54 @@ export type Database = {
         }
         Relationships: []
       }
+      session_snapshots: {
+        Row: {
+          calculator_data: Json | null
+          context_json: Json | null
+          created_at: string | null
+          guides_read: string[] | null
+          id: string
+          intent: string | null
+          last_page: string | null
+          lead_id: string | null
+          primary_priority: string | null
+          readiness_score: number | null
+          session_id: string
+          tools_used: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          calculator_data?: Json | null
+          context_json?: Json | null
+          created_at?: string | null
+          guides_read?: string[] | null
+          id?: string
+          intent?: string | null
+          last_page?: string | null
+          lead_id?: string | null
+          primary_priority?: string | null
+          readiness_score?: number | null
+          session_id: string
+          tools_used?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          calculator_data?: Json | null
+          context_json?: Json | null
+          created_at?: string | null
+          guides_read?: string[] | null
+          id?: string
+          intent?: string | null
+          last_page?: string | null
+          lead_id?: string | null
+          primary_priority?: string | null
+          readiness_score?: number | null
+          session_id?: string
+          tools_used?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

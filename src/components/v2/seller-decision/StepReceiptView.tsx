@@ -322,6 +322,8 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
                 ...(conditionSafe ? { property_condition_raw: conditionSafe as any } : {}),
                 ...(timelineCanonical ? { timeline: timelineCanonical } : {}),
               });
+              // P1.1: Persist snapshot after seller decision completion
+              import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
 
               openChat({ source: "seller_decision", intent: "sell" });
             }}

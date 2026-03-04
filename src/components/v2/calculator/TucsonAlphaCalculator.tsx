@@ -100,6 +100,8 @@ const TucsonAlphaCalculator = () => {
       calculator_motivation: motivation,
       calculator_run_id: runId,
     });
+    // P1.1: Persist snapshot after calculator completion
+    import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
 
   }, [estimatedValue, motivation, timeline, setCalculatorResult]);
 

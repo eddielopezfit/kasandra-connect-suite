@@ -574,6 +574,37 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           updateSessionContext({ recovery_shown: true });
         }
       }
+      // Priority 0.75: P1.1 Resume greeting — restored from server snapshot
+      else if (sessionContext?.restored_from_snapshot && !storedHistoryExists) {
+        const intentLabel = sessionContext.intent && sessionContext.intent !== 'explore'
+          ? sessionContext.intent
+          : '';
+        const intentFragment = intentLabel
+          ? t(` Last time we were looking at ${intentLabel} options.`, ` La última vez estábamos viendo opciones de ${intentLabel}.`)
+          : '';
+        greetingContent = t(
+          `Welcome back — I saved your place.${intentFragment} Want to continue where you left off?`,
+          `Bienvenido/a de nuevo — guardé tu progreso.${intentFragment} ¿Quieres continuar donde lo dejamos?`
+        );
+
+        // Build deterministic chips (Guard 4)
+        const resumeChips: string[] = [];
+        const lastPage = sessionContext.last_page;
+        // "Continue" — safe route or plain text
+        if (lastPage && lastPage.startsWith('/v2/')) {
+          resumeChips.push(t("Continue where I left off", "Continuar donde lo dejé"));
+        }
+        // "Show my results" — only if data exists
+        if (sessionContext.readiness_score || sessionContext.estimated_value) {
+          resumeChips.push(t("Show my results", "Ver mis resultados"));
+        }
+        resumeChips.push(t("Start fresh", "Empezar de nuevo"));
+
+        suggestedReplies = resumeChips.map(label => ({ label }));
+
+        // Clear flag after greeting shown
+        updateSessionContext({ restored_from_snapshot: false });
+      }
       // Priority 1: Calculator completion context
       else if (entryContext?.source === 'calculator' && entryContext.calculatorAdvantage) {
         // Pull enriched data from SessionContext for specific numbers
@@ -1143,6 +1174,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       const updatedMessages = [...newMessages, assistantMessage];
       setMessages(updatedMessages);
       saveHistory(updatedMessages);
+      // P1.1: Persist session snapshot after each successful AI response
+      import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
       logSelenaMessageAI(data.reply || '', location.pathname, (data.actions?.length || 0) > 0);
 
       // DEV-only: capture guard telemetry for QA panel
