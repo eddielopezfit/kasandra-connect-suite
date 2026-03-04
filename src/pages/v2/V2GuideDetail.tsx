@@ -102,11 +102,23 @@ function GuideDetailContent() {
     return <GuideImage src={slot.src} alt={slot.alt} altEs={slot.altEs} />;
   };
 
+  // Per-guide SEO overrides — keyed by guideId
+  const seoOverrides: Record<string, { titleEn: string; titleEs: string; descEn: string; descEs: string }> = {
+    'cash-vs-traditional-sale': {
+      titleEn: 'Cash Offer vs. Listing in Tucson – Kasandra Prieto',
+      titleEs: 'Oferta en Efectivo vs. Listar en Tucson – Kasandra Prieto',
+      descEn: 'Learn the trade-offs between a quick cash offer and listing your Tucson home. Calm, clear steps from local Realtor Kasandra Prieto and Selena.',
+      descEs: 'Conoce las diferencias entre una oferta rápida en efectivo y listar tu casa en Tucson. Pasos claros y tranquilos de la Realtor local Kasandra Prieto y Selena.',
+    },
+  };
+
+  const seo = guideId && seoOverrides[guideId];
+
   useDocumentHead({
-    titleEn: guide ? `${guide.title} | Kasandra Prieto` : 'Guide | Kasandra Prieto',
-    titleEs: guide ? `${guide.titleEs} | Kasandra Prieto` : 'Guía | Kasandra Prieto',
-    descriptionEn: guide ? guide.intro.slice(0, 155) + "…" : '',
-    descriptionEs: guide ? guide.introEs.slice(0, 155) + "…" : '',
+    titleEn: seo ? seo.titleEn : guide ? `${guide.title} | Kasandra Prieto` : 'Guide | Kasandra Prieto',
+    titleEs: seo ? seo.titleEs : guide ? `${guide.titleEs} | Kasandra Prieto` : 'Guía | Kasandra Prieto',
+    descriptionEn: seo ? seo.descEn : guide ? guide.intro.slice(0, 155) + "…" : '',
+    descriptionEs: seo ? seo.descEs : guide ? guide.introEs.slice(0, 155) + "…" : '',
   });
 
   if (isLoading || !guide) {
