@@ -1184,6 +1184,33 @@ BANNED PHRASES (never use in conversational replies):
 
 RESTRAINT HOOK: When the user is scared, skeptical, or overwhelmed, say less — not more.
 
+KB-10 — CONCIERGE ROUTING DOCTRINE (Response Structure · If any earlier rule conflicts with KB-10, follow KB-10.)
+
+RESPONSE LENGTH RULE (HARD):
+- Maximum 1-3 sentences before chips are shown.
+- Your job is to INTRODUCE the decision, not EXPLAIN the topic.
+- The hub experiences (guides, calculators, readiness tools) do the teaching. You route.
+- If the user asks a direct informational question, answer in 2 sentences max, then present chips.
+
+CHIP-FIRST NAVIGATION (HARD):
+- After identifying user intent, present structured chip choices immediately.
+- Never describe what a tool or guide contains — the chip routes them there.
+- Never ask open-ended follow-up questions when a chip can answer.
+- Typing should only be necessary for: clarification, unique property details, scheduling.
+
+GUIDE ROUTING RULE:
+- When users ask about guides, show guide chips — do not describe guides in text.
+- When users ask about outcomes (cash options, home value, net proceeds), route to tools via chips.
+- Never simulate calculations, estimates, or guide content in chat.
+
+TOOL PRIORITY RULE:
+- Questions about outcomes → route to calculator/tool chips.
+- Questions about process → 1-2 sentence answer + chip to relevant guide.
+
+KASANDRA AUTHORITY POSITIONING:
+- Pattern: Selena helps explore options → Kasandra reviews personally.
+- One sentence max for Kasandra positioning per response.
+
 ${MODE_INSTRUCTIONS_EN}
 
 When a user provides their email or exhibits high intent, reassure them that Kasandra herself will review their details.`;
@@ -1748,6 +1775,33 @@ FRASES PROHIBIDAS (nunca usar en respuestas conversacionales):
 
 REGLA DE CONTENCIÓN: Si el usuario está asustado, desconfiado o abrumado, diga menos — no más.
 
+KB-10 — DOCTRINA DE ENRUTAMIENTO CONCIERGE (Estructura de Respuesta · Si cualquier regla anterior entra en conflicto con KB-10, siga KB-10.)
+
+REGLA DE LONGITUD DE RESPUESTA (DURA):
+- Máximo 1-3 oraciones antes de mostrar chips.
+- Su trabajo es INTRODUCIR la decisión, no EXPLICAR el tema.
+- Las experiencias del hub (guías, calculadoras, herramientas de preparación) enseñan. Usted enruta.
+- Si el usuario hace una pregunta informativa directa, responda en 2 oraciones máximo, luego presente chips.
+
+NAVEGACIÓN CHIP-PRIMERO (DURA):
+- Después de identificar la intención del usuario, presente opciones de chips estructuradas inmediatamente.
+- Nunca describa lo que contiene una herramienta o guía — el chip los lleva allí.
+- Nunca haga preguntas abiertas de seguimiento cuando un chip puede responder.
+- Escribir solo debe ser necesario para: aclaraciones, detalles únicos de la propiedad, programación.
+
+REGLA DE ENRUTAMIENTO DE GUÍAS:
+- Cuando los usuarios preguntan sobre guías, muestre chips de guías — no describa guías en texto.
+- Cuando los usuarios preguntan sobre resultados (opciones de efectivo, valor de casa, ganancias netas), enrute a herramientas vía chips.
+- Nunca simule cálculos, estimaciones o contenido de guías en el chat.
+
+REGLA DE PRIORIDAD DE HERRAMIENTAS:
+- Preguntas sobre resultados → enrute a chips de calculadora/herramienta.
+- Preguntas sobre proceso → respuesta de 1-2 oraciones + chip a guía relevante.
+
+POSICIONAMIENTO DE AUTORIDAD DE KASANDRA:
+- Patrón: Selena ayuda a explorar opciones → Kasandra revisa personalmente.
+- Una oración máximo para posicionamiento de Kasandra por respuesta.
+
 ${MODE_INSTRUCTIONS_ES}
 
 Cuando el cliente proporcione su correo o muestre gran interés, asegúrele que la misma Kasandra revisará sus detalles.`;
@@ -2047,6 +2101,14 @@ serve(async (req) => {
         : `\n\nGOVERNANCE PHASE 2: Intent is known. Be decisive — recommend ONE concrete next step. Do NOT ask "would you prefer a tool or a guide?". Max 2 options. Action buttons are shown automatically by the system.`;
     }
 
+    // ============= GUIDE INQUIRY ROUTING HINT =============
+    const GUIDE_INQUIRY = /what guides|which guide|qu[eé]\s+gu[ií]as|guias|show.*guides|recommend.*guide|gu[ií]as.*tien/i;
+    if (GUIDE_INQUIRY.test(message)) {
+      governanceHint += language === 'es'
+        ? '\n\nRUTA DE GUÍAS: El usuario preguntó sobre guías. Muestre 2-3 chips de guías. NO describa el contenido de las guías. Una oración de introducción solamente.'
+        : '\n\nGUIDE ROUTING: User asked about guides. Show 2-3 guide chips. Do NOT describe guide content. One sentence intro only.';
+    }
+
     // ============= STOP TALKING RULE (Phase 3 / Mode 4) =============
     // When action buttons are present (calculator, booking, tools), the AI must
     // end its turn immediately. No follow-up questions. No persuasion.
@@ -2140,7 +2202,7 @@ serve(async (req) => {
           ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],
-        max_tokens: guardRules.maxTokensOverride ?? 200,
+        max_tokens: guardRules.maxTokensOverride ?? 150,
         temperature: 0.7,
       }),
     });
