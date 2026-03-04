@@ -573,7 +573,16 @@ function filterChipsForCompletedTools(
   // Add replacements (don't exceed 3 total chips)
   for (const r of replacements) {
     if (filtered.length >= 3) break;
-    filtered.push(r);
+    // Don't add replacement if it also matches a completed tool pattern
+    const replacementAlsoCompleted = toolsCompleted.some(tid => TOOL_CHIP_PATTERNS[tid]?.test(r));
+    if (!replacementAlsoCompleted) {
+      filtered.push(r);
+    }
+  }
+  
+  // Fallback: if all chips were filtered, provide a neutral progression chip
+  if (filtered.length === 0) {
+    filtered.push(language === 'es' ? 'Explorar guías' : 'Browse guides');
   }
   
   return filtered;
