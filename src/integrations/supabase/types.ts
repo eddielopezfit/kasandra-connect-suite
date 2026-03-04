@@ -318,6 +318,53 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_scenarios: {
+        Row: {
+          created_at: string
+          estimated_value: number | null
+          id: string
+          is_monitoring: boolean | null
+          lead_id: string | null
+          mortgage_balance: number | null
+          results_json: Json
+          scenario_type: string
+          updated_at: string
+          zip_code: string | null
+        }
+        Insert: {
+          created_at?: string
+          estimated_value?: number | null
+          id?: string
+          is_monitoring?: boolean | null
+          lead_id?: string | null
+          mortgage_balance?: number | null
+          results_json: Json
+          scenario_type?: string
+          updated_at?: string
+          zip_code?: string | null
+        }
+        Update: {
+          created_at?: string
+          estimated_value?: number | null
+          id?: string
+          is_monitoring?: boolean | null
+          lead_id?: string | null
+          mortgage_balance?: number | null
+          results_json?: Json
+          scenario_type?: string
+          updated_at?: string
+          zip_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_scenarios_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "lead_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       seller_leads: {
         Row: {
           calculated_cash_offer: number | null
