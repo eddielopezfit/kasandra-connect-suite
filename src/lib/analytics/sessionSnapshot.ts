@@ -60,6 +60,10 @@ async function _doSave(): Promise<void> {
   if (ctx.property_condition_raw) contextJson.property_condition_raw = ctx.property_condition_raw;
   if (ctx.language) contextJson.language = ctx.language;
   if (ctx.journey_state) contextJson.journey_state = ctx.journey_state;
+  // Equity Pulse fields
+  if (ctx.equity_pulse_saved) contextJson.equity_pulse_saved = ctx.equity_pulse_saved;
+  if (ctx.equity_pulse_value) contextJson.equity_pulse_value = ctx.equity_pulse_value;
+  if (ctx.equity_pulse_recommendation) contextJson.equity_pulse_recommendation = ctx.equity_pulse_recommendation;
 
   const payload: Record<string, unknown> = {
     session_id: ctx.session_id,
