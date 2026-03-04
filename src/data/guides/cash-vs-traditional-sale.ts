@@ -18,14 +18,59 @@ const data: GuideContentData = {
     {
       heading: "Key Pieces You Need to Understand: Speed vs. Top Dollar",
       headingEs: "Piezas Clave Que Necesitas Entender: Velocidad vs. Máximo Precio",
+      variant: 'comparison',
       content: "**The Cash Offer Path (Certainty)**\n\n• Sold as-is — no repairs, no staging\n• Closes in 10–14 days (vs. 30–45+ traditional)\n• Buyer covers most closing costs\n• Offer is typically lower than open-market value\n• Arizona SPDS disclosure still required\n\nBest for: speed, simplicity, guaranteed close date.\n\n**The Traditional Listing Path (Equity)**\n\n• Exposes your home to the widest buyer pool\n• Multiple offers can drive price above asking\n• Requires showings, prep, and \"parade-ready\" condition\n• Closing costs include commissions, Pima County tax prorations, and title fees\n• Timeline: 30–45+ days after finding a buyer\n\nBest for: maximizing your net, homes in good condition, flexible timelines.",
       contentEs: "**El Camino de la Oferta en Efectivo (Certeza)**\n\n• Vendido como está — sin reparaciones, sin preparación\n• Cierra en 10–14 días (vs. 30–45+ tradicional)\n• El comprador cubre la mayoría de costos de cierre\n• La oferta es típicamente más baja que el valor de mercado abierto\n• La divulgación SPDS de Arizona sigue siendo requerida\n\nMejor para: velocidad, simplicidad, fecha de cierre garantizada.\n\n**El Camino del Listado Tradicional (Equidad)**\n\n• Expone tu casa al grupo más amplio de compradores\n• Múltiples ofertas pueden impulsar el precio por encima de lo pedido\n• Requiere visitas, preparación y condición \"lista para desfile\"\n• Los costos de cierre incluyen comisiones, prorrateos de impuestos del Condado de Pima y tarifas de título\n• Cronograma: 30–45+ días después de encontrar comprador\n\nMejor para: maximizar tu neto, casas en buenas condiciones, cronogramas flexibles.",
+      comparisonData: {
+        left: {
+          label: "The Certainty Lever (Cash)",
+          labelEs: "La Palanca de Certeza (Efectivo)",
+          items: [
+            { bold: '"As-Is" Sale:', boldEs: 'Venta "Como Está":', text: "No repairs, no staging required.", textEs: "Sin reparaciones ni preparación." },
+            { bold: "Speed:", boldEs: "Velocidad:", text: "Close in 10–14 days instead of 45+.", textEs: "Cierra en 10–14 días en vez de 45+." },
+            { bold: "Trade-off:", boldEs: "Compromiso:", text: "Offer is typically lower to account for buyer risk.", textEs: "La oferta suele ser menor para compensar el riesgo del comprador." },
+          ],
+        },
+        right: {
+          label: "The Equity Lever (Listing)",
+          labelEs: "La Palanca de Equidad (Listar)",
+          items: [
+            { bold: "Maximum Price:", boldEs: "Precio Máximo:", text: "Exposure to the widest buyer pool.", textEs: "Exposición al grupo más amplio de compradores." },
+            { bold: "Costs:", boldEs: "Costos:", text: "Factor in commissions and Pima County tax prorations.", textEs: "Incluye comisiones y prorrateos de impuestos del Condado de Pima." },
+            { bold: "Timeline:", boldEs: "Cronograma:", text: "30–45+ days after finding a buyer, plus showings.", textEs: "30–45+ días después de encontrar comprador, más visitas." },
+          ],
+        },
+      },
     },
     {
       heading: "Simple Paths You Can Take",
       headingEs: "Caminos Simples Que Puedes Tomar",
+      variant: 'path-selector',
       content: "Which scenario sounds most like you?\n\n**Path A — The Seamless Exit**\nYou've inherited a property, you're relocating, or you don't want the stress of renovation and months of carrying two mortgages. You value a guaranteed \"done\" date.\n\n**Path B — The Equity Max**\nYour home is in good shape and you have time. You want the largest possible check for your next chapter.\n\n**Path C — The Comparison**\nYou aren't sure yet. You want to see a firm cash offer alongside a realistic market-value estimate before deciding.",
       contentEs: "¿Cuál escenario se parece más a ti?\n\n**Camino A — La Salida Sin Complicaciones**\nHeredaste una propiedad, te estás reubicando, o no quieres el estrés de renovar y meses pagando dos hipotecas. Valoras una fecha garantizada de \"listo.\"\n\n**Camino B — El Máximo de Equidad**\nTu casa está en buenas condiciones y tienes tiempo. Quieres el cheque más grande posible para tu siguiente capítulo.\n\n**Camino C — La Comparación**\nAún no estás seguro. Quieres ver una oferta firme en efectivo junto a una estimación realista de valor de mercado antes de decidir.",
+      pathData: [
+        {
+          id: 'A',
+          title: 'The Seamless Exit',
+          titleEs: 'La Salida Sin Complicaciones',
+          desc: 'You value speed and certainty. Perfect for inherited homes or quick relocations.',
+          descEs: 'Valoras velocidad y certeza. Perfecto para propiedades heredadas o reubicaciones rápidas.',
+        },
+        {
+          id: 'B',
+          title: 'The Equity Max',
+          titleEs: 'El Máximo de Equidad',
+          desc: 'You want top dollar and have time to manage showings and minor repairs.',
+          descEs: 'Quieres el mejor precio y tienes tiempo para manejar visitas y reparaciones menores.',
+        },
+        {
+          id: 'C',
+          title: 'The Strategic Hybrid',
+          titleEs: 'El Híbrido Estratégico',
+          desc: 'You want to see a firm cash offer side-by-side with a market estimate first.',
+          descEs: 'Quieres ver una oferta firme en efectivo junto a una estimación de mercado primero.',
+        },
+      ],
     },
     {
       heading: "How Selena and Kasandra Fit In",
