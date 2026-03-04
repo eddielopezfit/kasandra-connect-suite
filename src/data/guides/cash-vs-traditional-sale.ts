@@ -10,9 +10,22 @@ const data: GuideContentData = {
   introEs: "Si te preguntas si aceptar una oferta en efectivo o listar tu casa en Tucson en el mercado, estás haciendo la pregunta correcta. Esta guía te da un marco claro para decidir qué camino encaja con tu vida ahora mismo — según lo que más valores: certeza, equidad, o una combinación de ambos.",
   sections: [
     {
+      heading: "The 2026 Tucson Market: A Return to Balance",
+      headingEs: "El Mercado de Tucson 2026: Un Regreso al Equilibrio",
+      variant: 'stats-grid',
+      content: "The Tucson market has stabilized. Median home prices in Pima County sit between $361,000 and $379,000. Average time on market is 78 days, 60% of listings see price adjustments, and negotiations average 2.5% below asking price. This balanced leverage means sellers have real choices.",
+      contentEs: "El mercado de Tucson se ha estabilizado. Los precios medios de casas en el Condado de Pima están entre $361,000 y $379,000. El tiempo promedio en mercado es 78 días, 60% de los listados ven ajustes de precio, y las negociaciones promedian 2.5% por debajo del precio pedido. Este equilibrio significa que los vendedores tienen opciones reales.",
+      statsData: [
+        { value: "78 days", valueEs: "78 días", label: "Avg. time on market", labelEs: "Tiempo promedio en mercado" },
+        { value: "60%", valueEs: "60%", label: "Of listings see price adjustments", labelEs: "De los listados ven ajustes de precio" },
+        { value: "2.5%", valueEs: "2.5%", label: "Avg. negotiation below ask", labelEs: "Negociación promedio bajo precio pedido" },
+        { value: "Balanced", valueEs: "Equilibrado", label: "Leverage for both parties", labelEs: "Equilibrio para ambas partes" },
+      ],
+    },
+    {
       heading: "What's Really Going On in the Tucson Market",
       headingEs: "Qué Está Pasando Realmente en el Mercado de Tucson",
-      content: "Tucson homes vary widely, which means the best selling strategy varies too.\n\nCommon situations sellers face:\n\n• Inherited property with multiple heirs\n• Relocation for work on a tight timeline\n• Older homes needing repairs you'd rather not fund\n• Maximizing equity before your next chapter\n\nThat's why two paths usually emerge — and neither is wrong. They just solve different problems.\n\nIt is okay to prioritize peace of mind over every last dollar.\nIt is okay to want to test the open market.\nThe right answer depends on your situation, not a generic rule.",
+      content: "Tucson homes vary widely, which means the best selling strategy varies too.\n\nCommon situations sellers face:\n\n• Inherited property with multiple heirs\n• Relocation for work on a tight timeline\n• Older homes needing repairs you'd rather not fund\n• Maximizing equity before your next chapter\n\nThat's why two paths usually emerge — and neither is wrong. They just solve different problems.\n\nIt is okay to prioritize peace of mind over every last dollar.\nIt is okay to want to open market.\nThe right answer depends on your situation, not a generic rule.",
       contentEs: "Las casas en Tucson varían mucho, lo que significa que la mejor estrategia de venta también varía.\n\nSituaciones comunes que enfrentan los vendedores:\n\n• Propiedad heredada con múltiples herederos\n• Reubicación por trabajo con poco tiempo\n• Casas antiguas que necesitan reparaciones que prefieres no financiar\n• Maximizar equidad antes de tu siguiente capítulo\n\nPor eso generalmente surgen dos caminos — y ninguno es incorrecto. Simplemente resuelven problemas diferentes.\n\nEstá bien priorizar tu tranquilidad sobre cada último dólar.\nEstá bien querer probar el mercado abierto.\nLa respuesta correcta depende de tu situación, no de una regla genérica.",
     },
     {

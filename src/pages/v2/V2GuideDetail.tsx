@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import LanguageToggle from "@/components/v2/LanguageToggle";
-import { AuthorityCTABlock, GuideComplianceFooter, GuideComparisonCards, GuidePathSelector } from "@/components/v2/guides";
+import { AuthorityCTABlock, GuideComplianceFooter, GuideComparisonCards, GuidePathSelector, GuideStatsGrid } from "@/components/v2/guides";
 import GuideImage from "@/components/v2/guides/GuideImage";
 import GuideVideo from "@/components/v2/guides/GuideVideo";
 import GuidePullQuote from "@/components/v2/guides/GuidePullQuote";
@@ -227,6 +227,9 @@ function GuideDetailContent() {
                 )}
                 {section.variant === 'path-selector' && section.pathData && (
                   <GuidePathSelector data={section.pathData} />
+                )}
+                {section.variant === 'stats-grid' && section.statsData && (
+                  <GuideStatsGrid data={section.statsData} />
                 )}
               </section>
               {sectionSlots.map((slot) => <MediaSlotRenderer key={slot.id} slot={slot} />)}
