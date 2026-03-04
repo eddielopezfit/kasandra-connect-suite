@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import ReadinessSnapshot from "@/components/v2/ReadinessSnapshot";
-import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { updateSessionContext, setFieldIfEmpty, getSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -209,7 +209,14 @@ const CashReadinessCheck = ({ onScoreRevealed }: CashReadinessCheckProps) => {
 
     // Session persistence
     setFieldIfEmpty("intent", "cash");
-    updateSessionContext({ readiness_score, primary_priority });
+    const ctx = getSessionContext();
+    updateSessionContext({
+      readiness_score,
+      primary_priority,
+      tool_used: 'cash_readiness',
+      last_tool_completed: 'cash_readiness',
+      tools_completed: [...new Set([...(ctx?.tools_completed ?? []), 'cash_readiness'])],
+    });
 
     // Analytics
     logEvent("quiz_complete", {

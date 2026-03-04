@@ -97,6 +97,8 @@ interface ChatRequest {
     seller_decision_recommended_path?: string;
     seller_goal_priority?: string;
     property_condition_raw?: string;
+    // Journey awareness: completed tools
+    tools_completed?: string[];
     // Phase governance fields (monotonic)
     chip_phase_floor?: number;
     greeting_phase_seen?: number;
@@ -516,6 +518,65 @@ function filterSuggestionsForEarnedAccess(suggestions: string[], hasEarned: bool
   return suggestions.filter(s => 
     !BOOKING_KEYWORDS.test(s) && !BOOKING_PHRASES.test(s)
   );
+}
+
+// ============= JOURNEY AWARENESS: TOOL COMPLETION CHIP FILTER =============
+// Maps canonical tool IDs → chip patterns that route TO those tools.
+// When a tool is completed, any chip that would re-route to it is removed.
+// Filtering is by DESTINATION (ActionSpec route), not by label text.
+const TOOL_CHIP_PATTERNS: Record<string, RegExp> = {
+  'buyer_readiness': /readiness\s*check|evaluaci[oó]n\s*de\s*preparaci[oó]n|check\s*de\s*preparaci[oó]n\s*para\s*comprar/i,
+  'seller_readiness': /seller\s*readiness|opciones\s*de\s*venta|check\s*r[aá]pido.*preparaci[oó]n.*vender|check\s*r[aá]pido\s*de\s*preparaci[oó]n/i,
+  'cash_readiness': /cash\s*readiness|preparaci[oó]n\s*en\s*efectivo|check.*preparaci[oó]n\s*en\s*efectivo/i,
+  'tucson_alpha_calculator': /net\s*proceeds|ganancias\s*netas|cash\s*vs\.?\s*listing|efectivo\s*vs\.?\s*listado|compare\s*cash|comparar\s*efectivo/i,
+};
+
+// Replacement chips when a tool is removed — deterministic, registry-backed destinations
+const TOOL_REPLACEMENT_CHIPS: Record<string, { en: string; es: string }> = {
+  'buyer_readiness': { en: 'Browse guides', es: 'Explorar guías' },
+  'seller_readiness': { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' },
+  'cash_readiness': { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
+  'tucson_alpha_calculator': { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' },
+};
+
+function filterChipsForCompletedTools(
+  chips: string[],
+  toolsCompleted: string[],
+  language: 'en' | 'es',
+  hasEarnedBooking: boolean,
+): string[] {
+  if (!toolsCompleted?.length) return chips;
+  
+  let filtered = chips;
+  const replacements: string[] = [];
+  
+  for (const toolId of toolsCompleted) {
+    const pattern = TOOL_CHIP_PATTERNS[toolId];
+    if (!pattern) continue;
+    
+    const before = filtered.length;
+    filtered = filtered.filter(chip => !pattern.test(chip));
+    
+    if (filtered.length < before) {
+      const replacement = TOOL_REPLACEMENT_CHIPS[toolId];
+      if (replacement) {
+        const chipText = language === 'es' ? replacement.es : replacement.en;
+        // Only add booking chip if earned; skip duplicates
+        const isBookingChip = /kasandra|hablar con/i.test(chipText);
+        if ((!isBookingChip || hasEarnedBooking) && !filtered.includes(chipText) && !replacements.includes(chipText)) {
+          replacements.push(chipText);
+        }
+      }
+    }
+  }
+  
+  // Add replacements (don't exceed 3 total chips)
+  for (const r of replacements) {
+    if (filtered.length >= 3) break;
+    filtered.push(r);
+  }
+  
+  return filtered;
 }
 
 // ============= PROGRESSION MAP =============
@@ -2086,6 +2147,16 @@ serve(async (req) => {
       escalated = rawGoverned.escalated;
     }
     
+    // ============= JOURNEY STATE GOVERNANCE HINT =============
+    const toolsCompleted = context.tools_completed ?? [];
+    let journeyHint = "";
+    if (toolsCompleted.length > 0) {
+      const toolList = toolsCompleted.join(', ');
+      journeyHint = language === 'es'
+        ? `\n\nESTADO DEL RECORRIDO: El usuario ya completó: [${toolList}]. NO sugiera estas herramientas de nuevo. Avance al siguiente paso.`
+        : `\n\nJOURNEY STATE: User has completed: [${toolList}]. Do NOT suggest these tools again. Advance to next step.`;
+    }
+
     let governanceHint = "";
     if (proceedsOverride || asapTimeline) {
       governanceHint = language === 'es'
@@ -2198,7 +2269,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt + reflectionHint + sellerDecisionHint + governanceHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
+          { role: "system", content: systemPrompt + reflectionHint + sellerDecisionHint + governanceHint + journeyHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
           ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],
@@ -2257,6 +2328,9 @@ serve(async (req) => {
     // EXCEPTION: Phase 3 chips always include "Talk with Kasandra" — the escalation IS the earned signal.
     const isPhase3 = phase === 3 || proceedsOverride || asapTimeline;
     suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3);
+
+    // Apply journey awareness filter: remove chips for already-completed tools
+    suggestedReplies = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3);
 
     // EMAIL-ASKING SUPPRESSION: If Selena is actively collecting email, clear chips
     // so users can't click stale Phase 3 chips instead of typing their address.

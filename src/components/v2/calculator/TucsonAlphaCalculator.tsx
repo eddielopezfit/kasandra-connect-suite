@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { trackJourneyAction } from "@/lib/guides/personalization";
-import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { updateSessionContext, setFieldIfEmpty, getSessionContext } from "@/lib/analytics/selenaSession";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, Calculator, Sparkles } from "lucide-react";
 
@@ -86,9 +86,12 @@ const TucsonAlphaCalculator = () => {
 
     // Enrich SessionContext with decision-grade fields for Selena
     setFieldIfEmpty('intent', 'cash');
+    const ctx = getSessionContext();
     const runId = crypto.randomUUID();
     updateSessionContext({
       tool_used: 'tucson_alpha_calculator',
+      last_tool_completed: 'tucson_alpha_calculator',
+      tools_completed: [...new Set([...(ctx?.tools_completed ?? []), 'tucson_alpha_calculator'])],
       last_tool_result: calculationResults.recommendation,
       estimated_value: estimatedValue,
       calculator_difference: Math.abs(

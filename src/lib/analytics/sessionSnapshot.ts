@@ -30,9 +30,10 @@ async function _doSave(): Promise<void> {
 
   const leadId = typeof window !== 'undefined' ? localStorage.getItem('selena_lead_id') : null;
 
-  // Build tools_used array from single tool_used field
-  const toolsUsed: string[] = [];
-  if (ctx.tool_used) toolsUsed.push(ctx.tool_used);
+  // Use tools_completed array directly; fallback to single tool_used for backward compat
+  const toolsUsed = ctx.tools_completed?.length
+    ? ctx.tools_completed
+    : (ctx.tool_used ? [ctx.tool_used] : []);
 
   // Build guides_read array from last_guide_id
   const guidesRead: string[] = [];
