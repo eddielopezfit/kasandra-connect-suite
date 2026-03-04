@@ -59,6 +59,7 @@ async function _doSave(): Promise<void> {
   if (ctx.seller_goal_priority) contextJson.seller_goal_priority = ctx.seller_goal_priority;
   if (ctx.property_condition_raw) contextJson.property_condition_raw = ctx.property_condition_raw;
   if (ctx.language) contextJson.language = ctx.language;
+  if (ctx.journey_state) contextJson.journey_state = ctx.journey_state;
 
   const payload: Record<string, unknown> = {
     session_id: ctx.session_id,

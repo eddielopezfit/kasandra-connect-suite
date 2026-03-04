@@ -117,6 +117,8 @@ export interface SessionContext {
   recovery_shown?: boolean;                // Prevents recovery greeting loop within session
   // P1.1: Session Snapshot restoration flag
   restored_from_snapshot?: boolean;        // True when context was restored from server snapshot
+  // Journey State Engine (TOFU/MOFU/BOFU)
+  journey_state?: 'explore' | 'evaluate' | 'decide';
 }
 
 /**
