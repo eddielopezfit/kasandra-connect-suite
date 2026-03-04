@@ -106,12 +106,18 @@ async function fetchGoogleReviews(): Promise<{ reviews: GoogleReview[]; source: 
   return { reviews: FALLBACK_REVIEWS, source: 'fallback' };
 }
 
+export type ReviewsSource = 'live' | 'cache' | 'fallback';
+
+export interface GoogleReviewsResult {
+  reviews: GoogleReview[];
+  source: ReviewsSource;
+}
+
 export const useGoogleReviews = () => {
   return useQuery({
     queryKey: ["google-reviews"],
-    queryFn: async (): Promise<GoogleReview[]> => {
-      const { reviews } = await fetchGoogleReviews();
-      return reviews;
+    queryFn: async (): Promise<GoogleReviewsResult> => {
+      return fetchGoogleReviews();
     },
     staleTime: 1000 * 60 * 60, // 1 hour
     retry: 1, // Only 1 retry since we have fallback

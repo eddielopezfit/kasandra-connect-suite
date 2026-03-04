@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { getSessionContext, updateSessionContext } from "@/lib/analytics/selenaSession";
 
-type SuggestedReply = string | { label: string; actionSpec: ActionSpec };
+type SuggestedReply = string | { label: string; actionSpec?: ActionSpec };
 
 // Sub-chip definitions for warm leads (booking engagement variants)
 const SUB_CHIPS = [
@@ -69,7 +69,7 @@ export function SelenaDrawerSuggestedRepliesChips({
   const isWarm = !!chipMeta && chipMeta.phase >= 3 && !isHot;
 
   function isBookingChip(reply: SuggestedReply): boolean {
-    return typeof reply !== 'string' && reply.actionSpec.type === 'book';
+    return typeof reply !== 'string' && reply.actionSpec?.type === 'book';
   }
 
   const handleClick = (reply: SuggestedReply) => {
@@ -81,8 +81,8 @@ export function SelenaDrawerSuggestedRepliesChips({
     // ============= ANALYTICS: selena_chip_clicked =============
     logEvent('selena_chip_clicked', {
       chip_label: label,
-      chip_type: isAction ? 'action_spec' : 'text',
-      action_type: isAction ? reply.actionSpec.type : undefined,
+      chip_type: isAction ? (reply.actionSpec ? 'action_spec' : 'text') : 'text',
+      action_type: isAction && reply.actionSpec ? reply.actionSpec.type : undefined,
       phase: chipMeta?.phase ?? 0,
       intent: ctx?.intent ?? 'unknown',
       containment_active: chipMeta?.containment ?? false,
@@ -96,10 +96,13 @@ export function SelenaDrawerSuggestedRepliesChips({
 
     if (typeof reply === 'string') {
       onSuggestedReplyClick(reply);
-    } else {
+    } else if (reply.actionSpec) {
       resolveAction(reply.actionSpec, navigate, (payload) => {
         openChat(payload as any);
       });
+    } else {
+      // Unmatched chip with label only — treat as conversational text
+      onSuggestedReplyClick(reply.label);
     }
   };
 
