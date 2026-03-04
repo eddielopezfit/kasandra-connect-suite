@@ -3,9 +3,10 @@
  * Multi-step form: Intro → Inputs → Results → Next Steps
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
+import { supabase } from "@/integrations/supabase/client";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { trackJourneyAction } from "@/lib/guides/personalization";
 import { updateSessionContext, setFieldIfEmpty, getSessionContext } from "@/lib/analytics/selenaSession";
@@ -24,6 +25,7 @@ import {
   type CalculatorResults as ResultsType,
   type Motivation,
   type Timeline,
+  type MarketOverrides,
 } from "@/lib/calculator/netToSellerAlgorithm";
 
 const TucsonAlphaCalculator = () => {
@@ -41,6 +43,21 @@ const TucsonAlphaCalculator = () => {
   
   // Results
   const [results, setResults] = useState<ResultsType | null>(null);
+  
+  // Live market overrides from market_pulse_settings
+  const [marketOverrides, setMarketOverrides] = useState<MarketOverrides | undefined>();
+
+  useEffect(() => {
+    supabase.functions.invoke('get-market-pulse').then(({ data, error }) => {
+      if (!error && data) {
+        setMarketOverrides({
+          holdingCostPerDay: data.holding_cost_per_day ?? undefined,
+          traditionalClosingDays: data.days_to_close ?? undefined,
+          negotiationGap: data.negotiation_gap ?? undefined,
+        });
+      }
+    });
+  }, []);
 
   // Map step to progress stage
   const getProgressStage = (): CalculatorStage => {
@@ -61,7 +78,7 @@ const TucsonAlphaCalculator = () => {
       timeline,
     };
 
-    const calculationResults = calculateNetToSellerComparison(inputs);
+    const calculationResults = calculateNetToSellerComparison(inputs, marketOverrides);
     setResults(calculationResults);
     setCurrentStep(2);
 
@@ -108,7 +125,7 @@ const TucsonAlphaCalculator = () => {
     // P1.1: Persist snapshot after calculator completion
     import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
 
-  }, [estimatedValue, motivation, timeline, setCalculatorResult]);
+  }, [estimatedValue, motivation, timeline, setCalculatorResult, marketOverrides]);
 
   // Handle going to next steps
   const handleViewNextSteps = useCallback(() => {

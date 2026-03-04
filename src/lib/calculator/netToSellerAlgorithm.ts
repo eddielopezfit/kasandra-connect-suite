@@ -9,7 +9,8 @@
 
 // ============= Market Constants =============
 
-export const TUCSON_MARKET = {
+/** Default fallback values — used when live market data is unavailable */
+export const TUCSON_MARKET_DEFAULTS = {
   /** Annual appreciation rate for Tucson market */
   appreciationRate: 0.042,
   /** Daily holding cost (utilities, insurance, taxes, maintenance avg) */
@@ -24,7 +25,29 @@ export const TUCSON_MARKET = {
   cashClosingDays: 10,
   /** Typical traditional closing timeline (days) */
   traditionalClosingDays: 45,
+  /** Negotiation gap (sale-to-list delta) */
+  negotiationGap: 0.0236,
 } as const;
+
+/** Live market overrides fetched from market_pulse_settings */
+export interface MarketOverrides {
+  holdingCostPerDay?: number;
+  traditionalClosingDays?: number;
+  negotiationGap?: number;
+}
+
+/** Resolved market constants (defaults merged with any live overrides) */
+export function resolveMarket(overrides?: MarketOverrides) {
+  return {
+    ...TUCSON_MARKET_DEFAULTS,
+    holdingCostPerDay: overrides?.holdingCostPerDay ?? TUCSON_MARKET_DEFAULTS.holdingCostPerDay,
+    traditionalClosingDays: overrides?.traditionalClosingDays ?? TUCSON_MARKET_DEFAULTS.traditionalClosingDays,
+    negotiationGap: overrides?.negotiationGap ?? TUCSON_MARKET_DEFAULTS.negotiationGap,
+  };
+}
+
+/** @deprecated Use TUCSON_MARKET_DEFAULTS + resolveMarket() */
+export const TUCSON_MARKET = TUCSON_MARKET_DEFAULTS;
 
 // ============= Type Definitions =============
 
@@ -99,12 +122,13 @@ export function calculateTraditionalNet(
   estimatedValue: number,
   mortgageBalance: number = 0,
   repairEstimate: number = 0,
-  daysOnMarket: number = TUCSON_MARKET.traditionalClosingDays
+  daysOnMarket: number = TUCSON_MARKET_DEFAULTS.traditionalClosingDays,
+  market = resolveMarket()
 ): PathBreakdown {
   const grossAmount = estimatedValue;
-  const commission = estimatedValue * TUCSON_MARKET.traditionalCommission;
-  const closingCosts = estimatedValue * TUCSON_MARKET.traditionalClosingCosts;
-  const holdingCost = daysOnMarket * TUCSON_MARKET.holdingCostPerDay;
+  const commission = estimatedValue * market.traditionalCommission;
+  const closingCosts = estimatedValue * market.traditionalClosingCosts;
+  const holdingCost = daysOnMarket * market.holdingCostPerDay;
   
   const netProceeds = grossAmount - commission - closingCosts - holdingCost - repairEstimate;
   const equityAfterMortgage = mortgageBalance > 0 
@@ -127,13 +151,14 @@ export function calculateTraditionalNet(
  */
 export function calculateCashNet(
   estimatedValue: number,
-  mortgageBalance: number = 0
+  mortgageBalance: number = 0,
+  market = resolveMarket()
 ): PathBreakdown {
   // Cash offers typically come at a discount
-  const grossAmount = estimatedValue * (1 - TUCSON_MARKET.cashDiscountRate);
+  const grossAmount = estimatedValue * (1 - market.cashDiscountRate);
   const commission = 0; // No agent commission in direct cash sale
   const closingCosts = 0; // Cash buyers typically pay closing costs
-  const holdingCost = TUCSON_MARKET.cashClosingDays * TUCSON_MARKET.holdingCostPerDay;
+  const holdingCost = market.cashClosingDays * market.holdingCostPerDay;
   
   const netProceeds = grossAmount - holdingCost;
   const equityAfterMortgage = mortgageBalance > 0 
@@ -146,7 +171,7 @@ export function calculateCashNet(
     closingCosts,
     holdingCost,
     netProceeds,
-    daysToClose: TUCSON_MARKET.cashClosingDays,
+    daysToClose: market.cashClosingDays,
     equityAfterMortgage,
   };
 }
@@ -317,8 +342,12 @@ export function shouldTriggerPriorityHandoff(
 /**
  * Calculate full comparison between traditional and cash paths
  */
-export function calculateNetToSellerComparison(inputs: CalculatorInputs): CalculatorResults {
+export function calculateNetToSellerComparison(
+  inputs: CalculatorInputs,
+  overrides?: MarketOverrides
+): CalculatorResults {
   const { estimatedValue, mortgageBalance = 0, timeline, repairEstimate = 0 } = inputs;
+  const market = resolveMarket(overrides);
   
   // Get days on market based on timeline
   const daysOnMarket = getTimelineDays(timeline);
@@ -328,10 +357,11 @@ export function calculateNetToSellerComparison(inputs: CalculatorInputs): Calcul
     estimatedValue,
     mortgageBalance,
     repairEstimate,
-    daysOnMarket
+    daysOnMarket,
+    market
   );
   
-  const cash = calculateCashNet(estimatedValue, mortgageBalance);
+  const cash = calculateCashNet(estimatedValue, mortgageBalance, market);
 
   // Calculate cost of time
   const costOfTime = calculateCostOfTime(
@@ -350,7 +380,7 @@ export function calculateNetToSellerComparison(inputs: CalculatorInputs): Calcul
     costOfTime,
     recommendation,
     recommendationReason: reason,
-    shouldTriggerHandoff: false, // Will be set below
+    shouldTriggerHandoff: false,
   };
 
   // Check for priority handoff
