@@ -2,11 +2,12 @@
  * Session Snapshot — P1.1
  * Persists session context to backend for cross-device/cross-session restoration.
  * Save is debounced (5s trailing, fire-and-forget).
- * Restore is called once on mount when localStorage context is missing.
+ * Restore is called once on mount when localStorage context is missing/uninitialized.
  */
 
 import { supabase } from '@/integrations/supabase/client';
 import { getSessionContext, getOrCreateSessionId, type SessionContext } from './selenaSession';
+import { logEvent } from './logEvent';
 
 // ============= DEBOUNCE =============
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -72,7 +73,10 @@ async function _doSave(): Promise<void> {
 
   if (leadId) payload.lead_id = leadId;
 
-  await supabase.functions.invoke('upsert-session-snapshot', { body: payload });
+  const { error } = await supabase.functions.invoke('upsert-session-snapshot', { body: payload });
+  if (!error) {
+    logEvent('session_snapshot_saved', { intent: ctx.intent, has_score: !!ctx.readiness_score });
+  }
 }
 
 // ============= RESTORE =============
