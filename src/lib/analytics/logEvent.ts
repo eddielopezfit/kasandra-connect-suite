@@ -145,7 +145,10 @@ export type EventType =
   | 'selena_chip_unmatched'
   // P1.1: Session Snapshot observability
   | 'session_snapshot_saved'
-  | 'session_snapshot_restored';
+  | 'session_snapshot_restored'
+  // Equity Pulse (Saved Utility)
+  | 'equity_pulse_saved'
+  | 'equity_pulse_shared';
 
 export interface EventPayload {
   [key: string]: unknown;

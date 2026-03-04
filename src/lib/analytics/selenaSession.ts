@@ -119,6 +119,10 @@ export interface SessionContext {
   restored_from_snapshot?: boolean;        // True when context was restored from server snapshot
   // Journey State Engine (TOFU/MOFU/BOFU)
   journey_state?: 'explore' | 'evaluate' | 'decide';
+  // Equity Pulse (Saved Utility)
+  equity_pulse_saved?: boolean;
+  equity_pulse_value?: number;
+  equity_pulse_recommendation?: string;
 }
 
 /**
