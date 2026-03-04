@@ -58,7 +58,7 @@ export function SelenaDrawerSuggestedRepliesChips({
     if (union > 0 && intersection / union >= 0.7) return false;
     return true;
   }).filter((reply) => {
-    if (typeof reply !== 'string' && !isActionValid(reply.actionSpec)) return false;
+    if (typeof reply !== 'string' && reply.actionSpec && !isActionValid(reply.actionSpec)) return false;
     return true;
   });
 
