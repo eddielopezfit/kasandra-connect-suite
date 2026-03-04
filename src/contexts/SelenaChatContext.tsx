@@ -1071,6 +1071,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               seller_decision_recommended_path: context?.seller_decision_recommended_path,
               seller_goal_priority: context?.seller_goal_priority,
               property_condition_raw: context?.property_condition_raw,
+              // Journey awareness: completed tools array
+              tools_completed: context?.tools_completed ?? [],
               // from provider state
               calculator_advantage: lastCalculatorAdvantage ?? undefined,
               // Mode persistence — authoritative server mode signal, survives across turns

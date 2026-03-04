@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import ReadinessSnapshot from "@/components/v2/ReadinessSnapshot";
-import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { updateSessionContext, setFieldIfEmpty, getSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -194,7 +194,14 @@ const SellerReadinessCheck = ({ onScoreRevealed }: SellerReadinessCheckProps) =>
 
     // Session persistence
     setFieldIfEmpty("intent", "sell");
-    updateSessionContext({ readiness_score, primary_priority });
+    const ctx = getSessionContext();
+    updateSessionContext({
+      readiness_score,
+      primary_priority,
+      tool_used: 'seller_readiness',
+      last_tool_completed: 'seller_readiness',
+      tools_completed: [...new Set([...(ctx?.tools_completed ?? []), 'seller_readiness'])],
+    });
 
     // Analytics
     logEvent("quiz_complete", {

@@ -104,6 +104,9 @@ export interface SessionContext {
   neighborhood_explored?: boolean;
   // Neighborhood Quiz (Phase 2)
   neighborhood_quiz_top_zip?: string | null;
+  // Tool completion tracking (real-time journey awareness)
+  tools_completed?: string[];           // Canonical tool IDs completed this session
+  last_tool_completed?: string;         // Most recent tool finished
   // Seller Decision Path
   seller_decision_step?: number;
   seller_decision_recommended_path?: 'cash' | 'traditional' | 'consult';
