@@ -1082,6 +1082,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               greeting_phase_seen: context?.greeting_phase_seen ?? 0,
               timeline_last_asked_turn: context?.timeline_last_asked_turn,
               turn_count: (context?.turn_count ?? 0) + 1,
+              // Journey State Engine: readiness_score (Guard 1 — numeric-safe)
+              readiness_score: Number.isFinite(context?.readiness_score) ? context!.readiness_score : 0,
             },
             history,
           }),
@@ -1131,6 +1133,11 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       // Persist timeline_last_asked_turn if server reports it
       if (data.timeline_last_asked_turn !== undefined) {
         updateSessionContext({ timeline_last_asked_turn: data.timeline_last_asked_turn });
+      }
+
+      // Persist journey_state from Journey State Engine
+      if (data.journey_state) {
+        updateSessionContext({ journey_state: data.journey_state });
       }
 
       // Increment turn_count

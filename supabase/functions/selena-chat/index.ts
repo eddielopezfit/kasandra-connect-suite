@@ -54,6 +54,7 @@ import {
   type ConversationState,
 } from "./modeContext.ts";
 import { buildGuardState, applyGuardRules } from "./guardState.ts";
+import { classifyJourneyState } from "./journeyState.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -104,6 +105,8 @@ interface ChatRequest {
     greeting_phase_seen?: number;
     timeline_last_asked_turn?: number;
     turn_count?: number;
+    // Journey State Engine
+    readiness_score?: number;
   };
   history?: ChatMessage[];
 }
@@ -2228,6 +2231,20 @@ serve(async (req) => {
         : `\n\nJOURNEY STATE: User has completed: [${toolList}]. Do NOT suggest these tools again. Advance to next step.`;
     }
 
+    // ============= JOURNEY STATE ENGINE =============
+    // Guard 1: Coerce readiness_score to safe number
+    const rawReadiness = Number(context.readiness_score);
+    const safeReadinessScore = Number.isFinite(rawReadiness) ? rawReadiness : 0;
+    const guidesReadCount = typeof context.guides_read === 'number' ? context.guides_read : 0;
+
+    const journey = classifyJourneyState({
+      readiness_score: safeReadinessScore,
+      tools_completed: toolsCompleted,
+      guides_read_count: guidesReadCount,
+      intent: effectiveIntent,
+      language,
+    });
+
     let governanceHint = "";
     if (proceedsOverride || asapTimeline) {
       governanceHint = language === 'es'
@@ -2242,6 +2259,9 @@ serve(async (req) => {
         ? `\n\nGOBERNANZA FASE 2: La intención está clara. Sea decisivo — recomiende UN paso concreto. No pregunte "¿preferiría una herramienta o una guía?". Máximo 2 opciones. Los botones se muestran automáticamente.`
         : `\n\nGOVERNANCE PHASE 2: Intent is known. Be decisive — recommend ONE concrete next step. Do NOT ask "would you prefer a tool or a guide?". Max 2 options. Action buttons are shown automatically by the system.`;
     }
+
+    // Append Journey State Engine governance hint to system prompt
+    governanceHint += journey.governanceHint;
 
     // ============= GUIDE INQUIRY ROUTING HINT =============
     const GUIDE_INQUIRY = /what guides|which guide|qu[eé]\s+gu[ií]as|guias|show.*guides|recommend.*guide|gu[ií]as.*tien/i;
@@ -2369,30 +2389,56 @@ serve(async (req) => {
 
     // ============= CHIP GOVERNANCE: FINAL CHIP SELECTION =============
     // Priority hierarchy:
-    // 1. Stall recovery (highest override)
-    // 2. Proceeds / ASAP override → Phase 3 chips
-    // 3. Governed phase chips (Phase 1, 2, or 3)
-    // 4. Mode-based replies (fallback)
+    // 1. Guard overrides (containment/overwhelm/human_takeover) — handled below via guardRules.chipOverrides
+    // 2. Mode 4 HANDOFF chips
+    // 3. Stall recovery
+    // 4. Proceeds / ASAP override → Phase 3 chips
+    // 5. Journey State chips (NEW)
+    // 6. Governed phase chips (Phase 1, 2, or 3)
     let suggestedReplies: string[];
     
-    if (currentMode === 4) {
+    // Guard 3: Journey chips only when higher-priority systems are NOT active
+    const isMode4Handoff = currentMode === 4;
+    const isStallRecovery = stalled;
+    const isProceedsOverride = proceedsOverride || asapTimeline;
+    const canApplyJourneyChips =
+      !guardState.containment_active &&
+      !guardState.overwhelm_active &&
+      !guardState.human_takeover &&
+      !isProceedsOverride &&
+      !isStallRecovery &&
+      !isMode4Handoff;
+
+    if (isMode4Handoff) {
       // HANDOFF mode: bypass all chip governance — chips must align with reply text
       suggestedReplies = language === "es"
         ? ["Encontrar un horario con Kasandra", "Seguir conversando con Selena"]
         : ["Find a time with Kasandra", "Keep chatting with Selena"];
-    } else if (stalled) {
+    } else if (isStallRecovery) {
       // Stall recovery — 3 options to re-anchor
       suggestedReplies = language === "es"
         ? ["Sí, resume dónde estoy", "Prefiero seguir explorando", "Tengo una pregunta específica"]
         : ["Yes, summarize where I am", "I'd rather keep exploring", "I have a specific question"];
-    } else if (proceedsOverride || asapTimeline) {
+    } else if (isProceedsOverride) {
       // PROCEEDS / ASAP override — hard lock to Phase 3 chips
       suggestedReplies = language === 'es'
         ? ["Estimar mis ganancias netas", "Hablar con Kasandra"]
         : ["Estimate my net proceeds", "Talk with Kasandra"];
+    } else if (canApplyJourneyChips && journey.stageChips.length > 0) {
+      // Journey State Engine chips (Layer 5)
+      suggestedReplies = journey.stageChips;
     } else {
-      // Use governed phase chips
+      // Use governed phase chips (fallback)
       suggestedReplies = chips;
+    }
+
+    // Guard 4: If journey_state !== 'decide', strip booking-only chips/actions
+    // (but keep navigate, open_tool, run_calculator, open_guide)
+    // Skip if higher-priority overrides (Mode 4, proceeds, stall) intentionally include booking
+    if (journey.journey_state !== 'decide' && canApplyJourneyChips) {
+      suggestedReplies = suggestedReplies.filter(s =>
+        !BOOKING_KEYWORDS.test(s) && !BOOKING_PHRASES.test(s)
+      );
     }
 
     // Apply earned-access filter (strips booking language if not earned)
@@ -2427,7 +2473,8 @@ serve(async (req) => {
 
     const actions: Array<{ label: string; href: string; eventType: string }> = [];
     
-    if (hasEarned) {
+    // Guard 4 (actions): Only add booking action if earned AND journey_state is 'decide'
+    if (hasEarned && journey.journey_state === 'decide') {
       actions.push({
         label: language === "es" ? "Revisar Estrategia con Kasandra" : "Review Strategy with Kasandra",
         href: "/v2/book",
@@ -2462,6 +2509,8 @@ serve(async (req) => {
         guard_overlay: guardState.containment_active ? "containment" : null,
         // Journey awareness telemetry
         tools_suppressed: journeyFilter.suppressions.length > 0 ? journeyFilter.suppressions : undefined,
+        // Journey State Engine telemetry
+        journey_state: journey.journey_state,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
