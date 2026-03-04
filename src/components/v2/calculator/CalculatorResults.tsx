@@ -4,14 +4,16 @@
  */
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import { CheckCircle, Clock, Calendar, DollarSign, Info } from "lucide-react";
+import { CheckCircle, Clock, Calendar, DollarSign, Info, Signal, SignalZero } from "lucide-react";
 import type { CalculatorResults as ResultsType } from "@/lib/calculator/netToSellerAlgorithm";
 
 interface CalculatorResultsProps {
   results: ResultsType;
+  marketSource?: 'live' | 'fallback';
+  lastVerifiedDate?: string | null;
 }
 
-const CalculatorResults = ({ results }: CalculatorResultsProps) => {
+const CalculatorResults = ({ results, marketSource = 'fallback', lastVerifiedDate }: CalculatorResultsProps) => {
   const { t, language } = useLanguage();
   const { traditional, cash, costOfTime, recommendationReason } = results;
 
@@ -234,8 +236,28 @@ const CalculatorResults = ({ results }: CalculatorResultsProps) => {
         </div>
       </div>
 
-      {/* Educational Disclaimer */}
-      <div className="bg-cc-sand rounded-lg p-4 border border-cc-sand-dark/30">
+      {/* Data Source Indicator + Disclaimer */}
+      <div className="bg-cc-sand rounded-lg p-4 border border-cc-sand-dark/30 space-y-3">
+        {/* Market Data Source Badge */}
+        <div className="flex items-center justify-center gap-2">
+          {marketSource === 'live' ? (
+            <Signal className="w-3.5 h-3.5 text-green-600" />
+          ) : (
+            <SignalZero className="w-3.5 h-3.5 text-cc-slate" />
+          )}
+          <span className={`text-xs font-medium ${marketSource === 'live' ? 'text-green-700' : 'text-cc-slate'}`}>
+            {marketSource === 'live'
+              ? t("Live Tucson Market Data", "Datos del Mercado de Tucson en Vivo")
+              : t("Market Averages (Fallback)", "Promedios del Mercado (Respaldo)")
+            }
+          </span>
+          {lastVerifiedDate && (
+            <span className="text-[10px] text-cc-slate/70 border-l border-cc-sand-dark/40 pl-2">
+              {t("Verified", "Verificado")} {new Date(lastVerifiedDate).toLocaleDateString(language === 'es' ? 'es-US' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </span>
+          )}
+        </div>
+
         <p className="text-xs text-cc-slate text-center">
           {t(
             "These are estimates based on Tucson market averages. Actual results will vary based on your specific property, condition, location, and market conditions. For a personalized analysis, review your strategy with Kasandra.",
