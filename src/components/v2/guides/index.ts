@@ -28,3 +28,7 @@ export { ResponsiveCategoryNav } from './ResponsiveCategoryNav';
 export { default as GuideImage } from './GuideImage';
 export { default as GuideVideo } from './GuideVideo';
 export { default as GuidePullQuote } from './GuidePullQuote';
+
+// Rich Section Variants
+export { default as GuideComparisonCards } from './GuideComparisonCards';
+export { default as GuidePathSelector } from './GuidePathSelector';

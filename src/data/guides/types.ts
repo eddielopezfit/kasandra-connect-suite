@@ -3,11 +3,43 @@
  * readTime lives in guideRegistry only (not duplicated here).
  */
 
+export interface ComparisonItem {
+  bold: string;
+  boldEs: string;
+  text: string;
+  textEs: string;
+}
+
+export interface ComparisonSide {
+  label: string;
+  labelEs: string;
+  items: ComparisonItem[];
+}
+
+export interface ComparisonData {
+  left: ComparisonSide;
+  right: ComparisonSide;
+}
+
+export interface PathOption {
+  id: string;
+  title: string;
+  titleEs: string;
+  desc: string;
+  descEs: string;
+}
+
 export interface GuideSection {
   heading: string;
   headingEs: string;
   content: string;
   contentEs: string;
+  /** Optional rich variant renderer. Falls back to plain text if omitted. */
+  variant?: 'default' | 'comparison' | 'path-selector';
+  /** Structured data for side-by-side comparison cards. */
+  comparisonData?: ComparisonData;
+  /** Structured data for interactive path-selector cards. */
+  pathData?: PathOption[];
 }
 
 export interface GuideContentData {

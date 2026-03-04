@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import LanguageToggle from "@/components/v2/LanguageToggle";
-import { AuthorityCTABlock, GuideComplianceFooter } from "@/components/v2/guides";
+import { AuthorityCTABlock, GuideComplianceFooter, GuideComparisonCards, GuidePathSelector } from "@/components/v2/guides";
 import GuideImage from "@/components/v2/guides/GuideImage";
 import GuideVideo from "@/components/v2/guides/GuideVideo";
 import GuidePullQuote from "@/components/v2/guides/GuidePullQuote";
@@ -213,11 +213,21 @@ function GuideDetailContent() {
                     <h2 className="font-serif text-2xl md:text-3xl text-cc-navy mb-6">
                       {t(section.heading, section.headingEs)}
                     </h2>
-                    <div className="text-cc-charcoal leading-relaxed text-lg whitespace-pre-line">
-                      {t(section.content, section.contentEs)}
-                    </div>
+                    {/* Default: plain text. Variants rendered below heading. */}
+                    {(!section.variant || section.variant === 'default') && (
+                      <div className="text-cc-charcoal leading-relaxed text-lg whitespace-pre-line">
+                        {t(section.content, section.contentEs)}
+                      </div>
+                    )}
                   </div>
                 </div>
+                {/* Rich variant renderers */}
+                {section.variant === 'comparison' && section.comparisonData && (
+                  <GuideComparisonCards data={section.comparisonData} />
+                )}
+                {section.variant === 'path-selector' && section.pathData && (
+                  <GuidePathSelector data={section.pathData} />
+                )}
               </section>
               {sectionSlots.map((slot) => <MediaSlotRenderer key={slot.id} slot={slot} />)}
             </div>
