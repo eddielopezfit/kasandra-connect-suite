@@ -25,12 +25,30 @@ const V2Layout = ({ children }: V2LayoutProps) => {
     initSessionContext(language);
   }, [language]);
 
-  // P1.1: Restore from snapshot if localStorage context is missing/empty (Guard 3)
+  // P1.1: Restore from snapshot if localStorage context is missing or uninitialized (Guard 3)
   useEffect(() => {
     const CONTEXT_KEY = 'selena_context_v2';
     const stored = localStorage.getItem(CONTEXT_KEY);
-    // Only restore when localStorage context is completely missing or empty
-    if (stored) return;
+
+    // Determine if context is "uninitialized" — either missing or has no meaningful data
+    let isUninitialized = !stored;
+    if (stored && !isUninitialized) {
+      try {
+        const parsed = JSON.parse(stored);
+        // Context exists but is effectively empty — no tool usage, no last_page, intent is default/missing
+        const hasNoMeaningfulData =
+          !parsed.last_page &&
+          !parsed.tool_used &&
+          (!parsed.intent || parsed.intent === 'explore') &&
+          !parsed.readiness_score &&
+          !parsed.estimated_value;
+        isUninitialized = hasNoMeaningfulData;
+      } catch {
+        isUninitialized = true; // Corrupted JSON → treat as missing
+      }
+    }
+
+    if (!isUninitialized) return;
 
     const ctx = getSessionContext();
     if (!ctx?.session_id) return;
@@ -66,6 +84,11 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         if (cj.property_condition_raw) merged.property_condition_raw = cj.property_condition_raw;
       }
       updateSessionContext(merged as any);
+      logEvent('session_snapshot_restored', {
+        intent: snapshot.intent,
+        has_score: typeof snapshot.readiness_score === 'number',
+        last_page: snapshot.last_page,
+      });
       console.log('[P1.1] Session restored from snapshot');
     }).catch(() => {});
   }, []); // Run once on mount

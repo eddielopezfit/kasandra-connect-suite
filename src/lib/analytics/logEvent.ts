@@ -142,7 +142,10 @@ export type EventType =
   // Chip Governance Analytics
   | 'selena_chip_clicked'
   // Chip Governance Drift Detection
-  | 'selena_chip_unmatched';
+  | 'selena_chip_unmatched'
+  // P1.1: Session Snapshot observability
+  | 'session_snapshot_saved'
+  | 'session_snapshot_restored';
 
 export interface EventPayload {
   [key: string]: unknown;
