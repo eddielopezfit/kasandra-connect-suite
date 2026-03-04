@@ -2433,9 +2433,9 @@ serve(async (req) => {
     }
 
     // Guard 4: If journey_state !== 'decide', strip booking-only chips/actions
-    // (but keep navigate, open_tool, run_calculator, open_guide)
-    // Skip if higher-priority overrides (Mode 4, proceeds, stall) intentionally include booking
-    if (journey.journey_state !== 'decide' && canApplyJourneyChips) {
+    // This is a HARD GATE — applies even when proceeds/ASAP override is active
+    // Only exception: Mode 4 HANDOFF (human-directed) and guard chip overrides
+    if (journey.journey_state !== 'decide' && !isMode4Handoff) {
       suggestedReplies = suggestedReplies.filter(s =>
         !BOOKING_KEYWORDS.test(s) && !BOOKING_PHRASES.test(s)
       );
