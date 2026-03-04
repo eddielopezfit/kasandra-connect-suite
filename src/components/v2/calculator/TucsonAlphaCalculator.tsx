@@ -16,6 +16,7 @@ import CashOfferProgressBar, { type CalculatorStage } from "./CashOfferProgressB
 import CalculatorInputs from "./CalculatorInputs";
 import CalculatorResults from "./CalculatorResults";
 import CalculatorNextSteps from "./CalculatorNextSteps";
+import EquityPulseSection from "./EquityPulseSection";
 
 import {
   calculateNetToSellerComparison,
@@ -244,6 +245,12 @@ const TucsonAlphaCalculator = () => {
               </div>
 
               <CalculatorResults results={results} />
+
+              {/* Equity Pulse — Saved Utility hook */}
+              <EquityPulseSection
+                estimatedValue={estimatedValue}
+                recommendation={results.recommendation}
+              />
 
               <div className="mt-6">
                 <Button
