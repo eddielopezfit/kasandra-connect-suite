@@ -46,6 +46,8 @@ const TucsonAlphaCalculator = () => {
   
   // Live market overrides from market_pulse_settings
   const [marketOverrides, setMarketOverrides] = useState<MarketOverrides | undefined>();
+  const [marketSource, setMarketSource] = useState<'live' | 'fallback'>('fallback');
+  const [lastVerifiedDate, setLastVerifiedDate] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.functions.invoke('get-market-pulse').then(({ data, error }) => {
@@ -55,6 +57,8 @@ const TucsonAlphaCalculator = () => {
           traditionalClosingDays: data.days_to_close ?? undefined,
           negotiationGap: data.negotiation_gap ?? undefined,
         });
+        setMarketSource('live');
+        setLastVerifiedDate(data.last_verified_date ?? data.updated_at ?? null);
       }
     });
   }, []);
@@ -262,7 +266,7 @@ const TucsonAlphaCalculator = () => {
                 </span>
               </div>
 
-              <CalculatorResults results={results} />
+              <CalculatorResults results={results} marketSource={marketSource} lastVerifiedDate={lastVerifiedDate} />
 
               {/* Equity Pulse — Saved Utility hook */}
               <EquityPulseSection
