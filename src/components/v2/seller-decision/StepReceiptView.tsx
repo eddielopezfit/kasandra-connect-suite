@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { supabase } from "@/integrations/supabase/client";
-import { getOrCreateSessionId, updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { getOrCreateSessionId, getSessionContext, updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -85,6 +85,14 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
         setReceipt(data.receipt as Receipt);
         logEvent("decision_receipt_viewed", { receipt_id: data.receipt.id });
         logEvent("seller_decision_step_completed", { step: 7, receipt_id: data.receipt.id });
+
+        // Mark seller_decision as completed tool for journey awareness
+        const ctx = getSessionContext();
+        updateSessionContext({
+          tool_used: 'seller_decision',
+          last_tool_completed: 'seller_decision',
+          tools_completed: [...new Set([...(ctx?.tools_completed ?? []), 'seller_decision'])],
+        });
       } catch (e) {
         console.error("[StepReceiptView] Load error:", e);
         setError(true);

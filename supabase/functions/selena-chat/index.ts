@@ -554,14 +554,17 @@ const TOOL_BLOCKED_DESTINATIONS: Record<string, string[]> = {
   'seller_readiness': ['/v2/seller-readiness'],
   'cash_readiness': ['/v2/cash-readiness'],
   'tucson_alpha_calculator': ['/v2/cash-offer-options'],
+  'seller_decision': ['/v2/seller-decision'],
 };
 
 // Replacement destinations when a tool is completed — ordered by progression
+// This is the "Next Best Step" selector: tool completed → where to go next
 const TOOL_REPLACEMENT_DESTINATION: Record<string, string> = {
-  'buyer_readiness': '/v2/guides',
-  'seller_readiness': '/v2/cash-offer-options',
-  'cash_readiness': '/v2/cash-offer-options',
-  'tucson_alpha_calculator': '/v2/book',
+  'buyer_readiness': '/v2/guides',          // TOFU→MOFU: education
+  'seller_readiness': '/v2/cash-offer-options', // readiness→calculator
+  'cash_readiness': '/v2/cash-offer-options',   // readiness→calculator
+  'tucson_alpha_calculator': '/v2/book',        // calculator→booking (earned)
+  'seller_decision': '/v2/book',                // decision→booking (earned)
 };
 
 // Reverse lookup: destination → chip label (by language)
@@ -572,6 +575,7 @@ const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
   '/v2/cash-readiness': { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' },
   '/v2/cash-offer-options': { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
   '/v2/book': { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' },
+  '/v2/seller-decision': { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
 };
 
 interface ChipSuppressionEvent {
