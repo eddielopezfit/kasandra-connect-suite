@@ -240,6 +240,70 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     normalized_key: 'comparar efectivo vs venta tradicional',
     actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
   },
+
+  // --- Guide: Cash vs. Listing Guide ---
+  {
+    id: 'guide-cash-vs-listing-en',
+    label_en: 'Cash vs. Listing Guide',
+    label_es: 'Guía Efectivo vs. Listado',
+    normalized_key: 'cash vs listing guide',
+    actionSpec: { type: 'open_guide', guideId: 'cash-vs-traditional-sale', label: { en: 'Cash vs. Listing Guide', es: 'Guía Efectivo vs. Listado' } },
+  },
+  {
+    id: 'guide-cash-vs-listing-es',
+    label_en: 'Cash vs. Listing Guide',
+    label_es: 'Guía Efectivo vs. Listado',
+    normalized_key: 'guia efectivo vs listado',
+    actionSpec: { type: 'open_guide', guideId: 'cash-vs-traditional-sale', label: { en: 'Cash vs. Listing Guide', es: 'Guía Efectivo vs. Listado' } },
+  },
+
+  // --- Guide: First-Time Buyer Guide ---
+  {
+    id: 'guide-ftb-en',
+    label_en: 'First-Time Buyer Guide',
+    label_es: 'Guía para Compradores Primerizos',
+    normalized_key: 'first-time buyer guide',
+    actionSpec: { type: 'open_guide', guideId: 'first-time-buyer-guide', label: { en: 'First-Time Buyer Guide', es: 'Guía para Compradores Primerizos' } },
+  },
+  {
+    id: 'guide-ftb-es',
+    label_en: 'First-Time Buyer Guide',
+    label_es: 'Guía para Compradores Primerizos',
+    normalized_key: 'guia para compradores primerizos',
+    actionSpec: { type: 'open_guide', guideId: 'first-time-buyer-guide', label: { en: 'First-Time Buyer Guide', es: 'Guía para Compradores Primerizos' } },
+  },
+
+  // --- Navigate: Selling Guides hub ---
+  {
+    id: 'nav-selling-guides-en',
+    label_en: 'Selling Guides',
+    label_es: 'Guías de Venta',
+    normalized_key: 'selling guides',
+    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Selling Guides', es: 'Guías de Venta' } },
+  },
+  {
+    id: 'nav-selling-guides-es',
+    label_en: 'Selling Guides',
+    label_es: 'Guías de Venta',
+    normalized_key: 'guias de venta',
+    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Selling Guides', es: 'Guías de Venta' } },
+  },
+
+  // --- Calculator: Estimate Net Proceeds (semantically honest) ---
+  {
+    id: 'calc-estimate-net-en',
+    label_en: 'Estimate Net Proceeds',
+    label_es: 'Estimar Ganancias Netas',
+    normalized_key: 'estimate net proceeds',
+    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate Net Proceeds', es: 'Estimar Ganancias Netas' } },
+  },
+  {
+    id: 'calc-estimate-net-es',
+    label_en: 'Estimate Net Proceeds',
+    label_es: 'Estimar Ganancias Netas',
+    normalized_key: 'estimar ganancias netas',
+    actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate Net Proceeds', es: 'Estimar Ganancias Netas' } },
+  },
 ] as const;
 
 // ============= LOOKUP =============
