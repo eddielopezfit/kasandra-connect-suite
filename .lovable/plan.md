@@ -1,6 +1,4 @@
-
-
-## Plan: Chip Governance Enhancements (3 Features)
+## Plan: Chip Governance Enhancements (3 Features) — ✅ COMPLETE
 
 ### Feature 1: Confidence-Based Chip Visual Weighting
 
@@ -67,3 +65,32 @@
 2. Feature 1 (chip weighting) — visual layer, depends on meta propagation
 3. Feature 3 (recovery pattern) — greeting logic, depends on analytics signal
 
+## Plan: P1.1 Session Snapshots — ✅ IMPLEMENTED
+
+### What Was Built
+A persistent memory layer so Selena remembers visitors across sessions via server-side snapshots.
+
+### Components Delivered
+
+1. **Database:** `session_snapshots` table with UUID session_id, RLS deny-all, service-role only
+2. **Edge Functions:** `upsert-session-snapshot` (Guard 1: UUID validation, Guard 2: shallow merge `{...existing, ...incoming}`, no empty overwrite) and `get-session-snapshot` (session_id + lead_id fallback)
+3. **Rate Limits:** 10/hr upsert, 30/hr get
+4. **Client Module:** `src/lib/analytics/sessionSnapshot.ts` — debounced 5s save, restore
+5. **V2Layout Restore:** Guard 3 — only restores when `selena_context_v2` localStorage is completely missing
+6. **Resume Greeting:** Priority 0.75 between Recovery and Calculator — "Welcome back" with intent-aware message, deterministic chips (Continue/Show results/Start fresh), no booking chips
+7. **Tool Completion Hooks (Guard 5):** `saveSnapshot()` after calculator, all 3 readiness quizzes, and seller decision receipt
+
+### Files Changed
+- `supabase/functions/upsert-session-snapshot/index.ts` (new)
+- `supabase/functions/get-session-snapshot/index.ts` (new)
+- `supabase/functions/_shared/rateLimit.ts` (2 entries)
+- `supabase/config.toml` (2 function configs)
+- `src/lib/analytics/sessionSnapshot.ts` (new)
+- `src/lib/analytics/selenaSession.ts` (restored_from_snapshot field)
+- `src/components/v2/V2Layout.tsx` (restore on mount)
+- `src/contexts/SelenaChatContext.tsx` (save trigger + resume greeting)
+- `src/components/v2/calculator/TucsonAlphaCalculator.tsx` (save hook)
+- `src/pages/v2/V2SellerReadiness.tsx` (save hook)
+- `src/pages/v2/V2BuyerReadiness.tsx` (save hook)
+- `src/pages/v2/V2CashReadiness.tsx` (save hook)
+- `src/components/v2/seller-decision/StepReceiptView.tsx` (save hook)

@@ -112,6 +112,8 @@ export interface SessionContext {
   // Chip Governance: Last-Chance Recovery (Feature 3)
   booking_chips_shown_at?: string | null;  // ISO timestamp when booking chips were last shown (null = cleared)
   recovery_shown?: boolean;                // Prevents recovery greeting loop within session
+  // P1.1: Session Snapshot restoration flag
+  restored_from_snapshot?: boolean;        // True when context was restored from server snapshot
 }
 
 /**
