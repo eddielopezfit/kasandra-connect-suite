@@ -33,6 +33,7 @@ export type EventType =
   | 'report_generate_error'
   | 'report_empty_state_shown'
   | 'report_error'
+  | 'report_download'
   | 'handoff_offer_shown'
   | 'handoff_booking_click'
   | 'handoff_slot_select'
