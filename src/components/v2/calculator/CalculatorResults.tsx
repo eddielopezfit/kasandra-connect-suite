@@ -9,13 +9,15 @@ import type { CalculatorResults as ResultsType } from "@/lib/calculator/netToSel
 
 interface CalculatorResultsProps {
   results: ResultsType;
+  mortgageBalance?: number;
   marketSource?: 'live' | 'fallback';
   lastVerifiedDate?: string | null;
 }
 
-const CalculatorResults = ({ results, marketSource = 'fallback', lastVerifiedDate }: CalculatorResultsProps) => {
+const CalculatorResults = ({ results, mortgageBalance = 0, marketSource = 'fallback', lastVerifiedDate }: CalculatorResultsProps) => {
   const { t, language } = useLanguage();
   const { traditional, cash, costOfTime, recommendationReason } = results;
+  const hasMortgage = mortgageBalance > 0;
 
   const formatAmount = (amount: number) => {
     return new Intl.NumberFormat(language === 'es' ? 'es-US' : 'en-US', {
@@ -41,15 +43,35 @@ const CalculatorResults = ({ results, marketSource = 'fallback', lastVerifiedDat
             </p>
           </div>
           <div className="p-5 space-y-4 bg-white">
-            {/* Net Proceeds - Prominent */}
-            <div className="text-center py-4 bg-cc-gold/10 rounded-lg">
-              <p className="text-sm text-cc-slate mb-1">
-                {t("Estimated Net Proceeds", "Ganancia Neta Estimada")}
-              </p>
-              <p className="text-3xl font-serif font-bold text-cc-navy">
-                {formatAmount(cash.netProceeds)}
-              </p>
-            </div>
+            {/* Equity After Payoff — dominant when mortgage entered */}
+            {hasMortgage && cash.equityAfterMortgage !== undefined ? (
+              <div className="text-center py-4 bg-cc-gold/10 rounded-lg space-y-1">
+                <p className="text-xs text-cc-slate uppercase tracking-wide">
+                  {t("Estimated Cash to You", "Efectivo Estimado Para Ti")}
+                </p>
+                <p className="text-3xl font-serif font-bold text-cc-navy">
+                  {formatAmount(cash.equityAfterMortgage)}
+                </p>
+                <p className="text-xs text-cc-slate">
+                  {t("after paying off your mortgage", "después de pagar tu hipoteca")}
+                </p>
+                <div className="pt-1 border-t border-cc-gold/20 mt-2">
+                  <p className="text-xs text-cc-slate">
+                    {t("Net proceeds:", "Ganancia neta:")}{" "}
+                    <span className="font-medium text-cc-charcoal">{formatAmount(cash.netProceeds)}</span>
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-4 bg-cc-gold/10 rounded-lg">
+                <p className="text-sm text-cc-slate mb-1">
+                  {t("Estimated Net Proceeds", "Ganancia Neta Estimada")}
+                </p>
+                <p className="text-3xl font-serif font-bold text-cc-navy">
+                  {formatAmount(cash.netProceeds)}
+                </p>
+              </div>
+            )}
 
             {/* Breakdown */}
             <div className="space-y-2 text-sm">
@@ -109,15 +131,35 @@ const CalculatorResults = ({ results, marketSource = 'fallback', lastVerifiedDat
             </p>
           </div>
           <div className="p-5 space-y-4 bg-white">
-            {/* Net Proceeds - Prominent */}
-            <div className="text-center py-4 bg-cc-navy/5 rounded-lg">
-              <p className="text-sm text-cc-slate mb-1">
-                {t("Estimated Net Proceeds", "Ganancia Neta Estimada")}
-              </p>
-              <p className="text-3xl font-serif font-bold text-cc-navy">
-                {formatAmount(traditional.netProceeds)}
-              </p>
-            </div>
+            {/* Equity After Payoff — dominant when mortgage entered */}
+            {hasMortgage && traditional.equityAfterMortgage !== undefined ? (
+              <div className="text-center py-4 bg-cc-navy/5 rounded-lg space-y-1">
+                <p className="text-xs text-cc-slate uppercase tracking-wide">
+                  {t("Estimated Cash to You", "Efectivo Estimado Para Ti")}
+                </p>
+                <p className="text-3xl font-serif font-bold text-cc-navy">
+                  {formatAmount(traditional.equityAfterMortgage)}
+                </p>
+                <p className="text-xs text-cc-slate">
+                  {t("after paying off your mortgage", "después de pagar tu hipoteca")}
+                </p>
+                <div className="pt-1 border-t border-cc-navy/10 mt-2">
+                  <p className="text-xs text-cc-slate">
+                    {t("Net proceeds:", "Ganancia neta:")}{" "}
+                    <span className="font-medium text-cc-charcoal">{formatAmount(traditional.netProceeds)}</span>
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-4 bg-cc-navy/5 rounded-lg">
+                <p className="text-sm text-cc-slate mb-1">
+                  {t("Estimated Net Proceeds", "Ganancia Neta Estimada")}
+                </p>
+                <p className="text-3xl font-serif font-bold text-cc-navy">
+                  {formatAmount(traditional.netProceeds)}
+                </p>
+              </div>
+            )}
 
             {/* Breakdown */}
             <div className="space-y-2 text-sm">

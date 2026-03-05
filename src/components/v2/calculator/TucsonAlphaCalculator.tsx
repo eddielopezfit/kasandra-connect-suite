@@ -240,9 +240,11 @@ const TucsonAlphaCalculator = () => {
 
               <CalculatorInputs
                 estimatedValue={estimatedValue}
+                mortgageBalance={mortgageBalance}
                 motivation={motivation}
                 timeline={timeline}
                 onValueChange={setEstimatedValue}
+                onMortgageBalanceChange={setMortgageBalance}
                 onMotivationChange={setMotivation}
                 onTimelineChange={setTimeline}
                 onCalculate={handleCalculate}
@@ -266,7 +268,7 @@ const TucsonAlphaCalculator = () => {
                 </span>
               </div>
 
-              <CalculatorResults results={results} marketSource={marketSource} lastVerifiedDate={lastVerifiedDate} />
+              <CalculatorResults results={results} mortgageBalance={mortgageBalance} marketSource={marketSource} lastVerifiedDate={lastVerifiedDate} />
 
               {/* Equity Pulse — Saved Utility hook */}
               <EquityPulseSection

@@ -3,19 +3,22 @@
  * Collects property value, motivation, and timeline
  */
 
+import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Home, Target, Clock } from "lucide-react";
+import { ArrowRight, Home, Target, Clock, Landmark } from "lucide-react";
 import type { Motivation, Timeline } from "@/lib/calculator/netToSellerAlgorithm";
 
 interface CalculatorInputsProps {
   estimatedValue: number;
+  mortgageBalance: number;
   motivation: Motivation;
   timeline: Timeline;
   onValueChange: (value: number) => void;
+  onMortgageBalanceChange: (value: number) => void;
   onMotivationChange: (motivation: Motivation) => void;
   onTimelineChange: (timeline: Timeline) => void;
   onCalculate: () => void;
@@ -23,14 +26,17 @@ interface CalculatorInputsProps {
 
 const CalculatorInputs = ({
   estimatedValue,
+  mortgageBalance,
   motivation,
   timeline,
   onValueChange,
+  onMortgageBalanceChange,
   onMotivationChange,
   onTimelineChange,
   onCalculate,
 }: CalculatorInputsProps) => {
   const { t, language } = useLanguage();
+  const [showMortgageField, setShowMortgageField] = useState(mortgageBalance > 0);
 
   const motivationOptions: { value: Motivation; labelEn: string; labelEs: string }[] = [
     { value: 'speed', labelEn: 'I need to sell quickly', labelEs: 'Necesito vender rápido' },
@@ -99,6 +105,60 @@ const CalculatorInputs = ({
             />
           </div>
         </div>
+      </div>
+
+      {/* Mortgage Balance — optional */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <Label className="text-cc-charcoal font-medium flex items-center gap-2 text-base">
+            <Landmark className="w-5 h-5 text-cc-gold" />
+            {t("Remaining Mortgage Balance", "Saldo Restante de Hipoteca")}
+          </Label>
+          <button
+            onClick={() => {
+              setShowMortgageField(!showMortgageField);
+              if (showMortgageField) onMortgageBalanceChange(0);
+            }}
+            className="text-xs text-cc-gold hover:text-cc-gold-dark underline underline-offset-2 transition-colors"
+          >
+            {showMortgageField
+              ? t("Remove", "Quitar")
+              : t("I have a mortgage", "Tengo hipoteca")}
+          </button>
+        </div>
+
+        {showMortgageField && (
+          <div className="bg-cc-sand rounded-xl p-5 space-y-3">
+            <p className="text-xs text-cc-slate">
+              {t(
+                "This shows what you'd actually walk away with after paying off your loan.",
+                "Esto muestra lo que realmente recibirías después de pagar tu préstamo."
+              )}
+            </p>
+            <Input
+              type="number"
+              placeholder={t("e.g. 245000", "ej. 245000")}
+              value={mortgageBalance || ""}
+              onChange={(e) => {
+                const val = parseInt(e.target.value) || 0;
+                onMortgageBalanceChange(Math.max(0, val));
+              }}
+              className="text-center font-semibold border-cc-sand-dark bg-white text-lg"
+            />
+            {mortgageBalance > 0 && (
+              <p className="text-xs text-center text-cc-slate">
+                {t("Payoff balance:", "Saldo a pagar:")}{" "}
+                <span className="font-semibold text-cc-navy">
+                  {new Intl.NumberFormat(language === "es" ? "es-US" : "en-US", {
+                    style: "currency",
+                    currency: "USD",
+                    maximumFractionDigits: 0,
+                  }).format(mortgageBalance)}
+                </span>
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Motivation */}
