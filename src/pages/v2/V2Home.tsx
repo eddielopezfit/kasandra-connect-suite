@@ -175,7 +175,7 @@ const V2HomeContent = () => {
               // ── Cold visitor hero (unchanged) ────────────────────────────
               <>
                 <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-up">
-                  {t("Your Best Friend in Real Estate.", "Su Mejor Guía en Bienes Raíces.")}
+                  {t("Your Best Friend in Real Estate.", "Tu Mejor Amiga en Bienes Raíces.")}
                 </h1>
                 <p className="text-lg md:text-xl text-white/90 mb-4 animate-fade-up animation-delay-200">
                   {t(
