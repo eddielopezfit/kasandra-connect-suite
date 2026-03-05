@@ -107,6 +107,10 @@ interface ChatRequest {
     turn_count?: number;
     // Journey State Engine
     readiness_score?: number;
+    // Calculator enrichment — sent from client when available (Fix 2)
+    estimated_value?: number;
+    calculator_difference?: number;
+    mortgage_balance?: number;
   };
   history?: ChatMessage[];
 }
@@ -2127,6 +2131,94 @@ serve(async (req) => {
       if (!rl.allowed) return rateLimitResponse(corsHeaders);
     }
 
+    // ============= CONTEXT AUDIT (Concierge Memory Fallback) =============
+    // Fires ONLY when client signals it has no context (localStorage cleared,
+    // new device, returning user). Parallel fetch — single round-trip (~20ms).
+    const needsAudit = !context.intent && !context.tool_used && context.session_id;
+    let serverName: string | null = null;
+
+    if (needsAudit && rlUrl && rlKey) {
+      try {
+        const auditClient = createClient(rlUrl, rlKey);
+        const leadId = context.lead_id;
+
+        const [snapRes, leadRes, receiptRes] = await Promise.allSettled([
+          auditClient
+            .from('session_snapshots')
+            .select('intent, tools_completed, readiness_score, calculator_data, context_json')
+            .eq('session_id', context.session_id)
+            .maybeSingle(),
+          leadId
+            ? auditClient
+                .from('lead_profiles')
+                .select('name, situation, timeline, intent')
+                .eq('id', leadId)
+                .maybeSingle()
+            : Promise.resolve({ status: 'fulfilled', value: { data: null } }),
+          auditClient
+            .from('decision_receipts')
+            .select('receipt_data')
+            .eq('session_id', context.session_id)
+            .eq('receipt_type', 'seller_decision')
+            .maybeSingle(),
+        ]);
+
+        // Helper: treats null, undefined, and '' as "no value"
+        const filled = (v: unknown): boolean =>
+          v !== null && v !== undefined && v !== '';
+
+        // Merge session snapshot — client wins, server fills nulls only
+        if (snapRes.status === 'fulfilled' && snapRes.value?.data) {
+          const snap = snapRes.value.data as Record<string, unknown>;
+          if (!filled(context.intent) && filled(snap.intent))
+            context.intent = snap.intent as string;
+          if (!context.tools_completed?.length && Array.isArray(snap.tools_completed))
+            context.tools_completed = snap.tools_completed as string[];
+          if (!filled(context.readiness_score) && filled(snap.readiness_score))
+            context.readiness_score = snap.readiness_score as number;
+          const calcData = snap.calculator_data as Record<string, unknown> | null;
+          if (calcData) {
+            if (!filled(context.estimated_value) && filled(calcData.estimated_value))
+              context.estimated_value = calcData.estimated_value as number;
+            if (!filled(context.calculator_difference) && filled(calcData.calculator_difference))
+              context.calculator_difference = calcData.calculator_difference as number;
+          }
+          const ctxJson = snap.context_json as Record<string, unknown> | null;
+          if (ctxJson) {
+            if (!filled(context.situation) && filled(ctxJson.situation))
+              context.situation = ctxJson.situation as string;
+            if (!filled(context.timeline) && filled(ctxJson.timeline))
+              context.timeline = ctxJson.timeline as string;
+          }
+        }
+
+        // Merge lead profile
+        if (leadRes.status === 'fulfilled' && (leadRes.value as { data: unknown })?.data) {
+          const lead = (leadRes.value as { data: Record<string, unknown> }).data;
+          if (filled(lead.name)) serverName = lead.name as string;
+          if (!filled(context.situation) && filled(lead.situation))
+            context.situation = lead.situation as string;
+          if (!filled(context.timeline) && filled(lead.timeline))
+            context.timeline = lead.timeline as string;
+          if (!filled(context.intent) && filled(lead.intent))
+            context.intent = lead.intent as string;
+        }
+
+        // Merge decision receipt
+        if (receiptRes.status === 'fulfilled' && receiptRes.value?.data) {
+          const rd = (receiptRes.value.data as { receipt_data: Record<string, unknown> }).receipt_data;
+          if (!filled(context.seller_decision_recommended_path) && filled(rd?.recommended_path))
+            context.seller_decision_recommended_path = rd.recommended_path as string;
+          if (!filled(context.seller_goal_priority) && filled(rd?.goal_priority))
+            context.seller_goal_priority = rd.goal_priority as string;
+          if (!filled(context.property_condition_raw) && filled(rd?.condition))
+            context.property_condition_raw = rd.condition as string;
+        }
+      } catch (_auditErr) {
+        // Non-fatal — context audit failure never blocks the chat response
+      }
+    }
+
     const language = context.language || "en";
     let leadId = context.lead_id;
 
@@ -2217,7 +2309,22 @@ serve(async (req) => {
 
     // Build system prompt with mode context
     const systemPrompt = language === "es" ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN;
-    
+
+    // ============= CONCIERGE MEMORY SUMMARY (max 3 lines, ~30 tokens) =============
+    // Only injected when context audit ran and surfaced useful data.
+    let memorySummary = "";
+    if (needsAudit) {
+      const parts: string[] = [];
+      if (serverName) parts.push(`Name: ${serverName}`);
+      if (context.estimated_value) parts.push(`Property: $${Number(context.estimated_value).toLocaleString()}`);
+      if (context.situation) parts.push(`Situation: ${context.situation}`);
+      if (parts.length) {
+        memorySummary = language === "es"
+          ? `\n\nMEMORIA DE CONCIERGE:\n${parts.join(' | ')}\nHaz referencia a estos datos específicos cuando sea relevante. NUNCA digas 'No sé a qué te refieres.'`
+          : `\n\nCONCIERGE MEMORY:\n${parts.join(' | ')}\nReference these specifics when relevant. NEVER say "I don't know what you're referring to."`;
+      }
+    }
+
     // Add reflection context for Modes 2 & 3
     let reflectionHint = "";
     if (modeContext.reflectionRequired) {
@@ -2480,7 +2587,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt + reflectionHint + sellerDecisionHint + marketPulseHint + governanceHint + journeyHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
+          { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + governanceHint + journeyHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
           ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],

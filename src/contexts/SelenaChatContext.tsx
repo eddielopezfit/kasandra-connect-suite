@@ -1075,6 +1075,10 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               tools_completed: context?.tools_completed ?? [],
               // from provider state
               calculator_advantage: lastCalculatorAdvantage ?? undefined,
+              // Calculator enrichment — decision-grade fields for Selena memory
+              estimated_value: context?.estimated_value,
+              calculator_difference: context?.calculator_difference,
+              mortgage_balance: context?.mortgage_balance,
               // Mode persistence — authoritative server mode signal, survives across turns
               current_mode: context?.current_mode,
               // Phase governance fields

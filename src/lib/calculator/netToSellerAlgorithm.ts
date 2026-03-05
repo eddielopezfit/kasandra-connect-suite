@@ -203,21 +203,20 @@ export function calculateCostOfTime(
 }
 
 /**
- * Get days on market based on timeline selection
+ * Get days on market based on timeline selection, scaled to live market baseline.
+ * Uses multipliers against market.traditionalClosingDays so holding costs
+ * reflect real Tucson market conditions rather than hardcoded values.
+ *   asap=0.33, 30days=0.50, 60days=0.70, flexible=1.00
+ * Example: 145-day baseline → ASAP=48, 30days=73, 60days=102, flexible=145
  */
-function getTimelineDays(timeline: Timeline): number {
-  switch (timeline) {
-    case 'asap':
-      return 30; // Aggressive pricing for fast sale
-    case '30days':
-      return 45; // Standard timeline
-    case '60days':
-      return 60; // More relaxed
-    case 'flexible':
-      return 90; // No rush, maximize exposure
-    default:
-      return 45;
-  }
+function getTimelineDays(timeline: Timeline, marketBaseline: number): number {
+  const multipliers: Record<Timeline, number> = {
+    asap: 0.33,
+    '30days': 0.50,
+    '60days': 0.70,
+    flexible: 1.00,
+  };
+  return Math.round(marketBaseline * (multipliers[timeline] ?? 0.50));
 }
 
 /**
@@ -350,7 +349,7 @@ export function calculateNetToSellerComparison(
   const market = resolveMarket(overrides);
   
   // Get days on market based on timeline
-  const daysOnMarket = getTimelineDays(timeline);
+  const daysOnMarket = getTimelineDays(timeline, market.traditionalClosingDays);
 
   // Calculate both paths
   const traditional = calculateTraditionalNet(
