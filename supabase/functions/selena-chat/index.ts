@@ -104,7 +104,6 @@ interface ChatRequest {
     readiness_score?: number;
     // Calculator enrichment — sent from client when available (Fix 2)
     estimated_value?: number;
-    calculator_difference?: number;
     mortgage_balance?: number;
   };
   history?: ChatMessage[];
@@ -287,7 +286,7 @@ function detectIntent(message: string, route: string): string[] {
   }
   
   // Normalize and dedupe, filter out nulls
-  const normalized = intents.map(normalizeIntent).filter((i): i is string => i !== null);
+  const normalized = intents.map(normalizeIntent).filter((i): i is CanonicalIntent => i !== null);
   
   // Priority order for primaryIntent: cash > dual > sell > buy > explore
   // This ensures Router decisions are consistent
@@ -2629,8 +2628,8 @@ serve(async (req) => {
     const isProceedsOverride = proceedsOverride || asapTimeline;
     const canApplyJourneyChips =
       !guardState.containment_active &&
-      !guardState.overwhelm_active &&
-      !guardState.human_takeover &&
+      guardState.emotional_posture !== 'overwhelmed' &&
+      guardState.escalation_level !== 'human_takeover' &&
       !isProceedsOverride &&
       !isStallRecovery &&
       !isMode4Handoff;

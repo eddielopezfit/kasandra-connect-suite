@@ -81,7 +81,7 @@ serve(async (req) => {
           guideId: slot.guideId,
           slotName: slot.slotName,
           status: "failed",
-          error: slotError.message,
+          error: slotError instanceof Error ? slotError.message : String(slotError),
         });
       }
     }
@@ -99,7 +99,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("generate-all-guide-images error:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : String(error) }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

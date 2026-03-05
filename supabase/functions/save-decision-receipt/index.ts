@@ -100,9 +100,9 @@ Deno.serve(async (req) => {
 
     // ── Branch: Attach (receipt_id + lead_id) vs Create ──
     if (isAttachPayload(body)) {
-      return await handleAttach(supabase, body as AttachPayload);
+      return await handleAttach(supabase, body as AttachPayload, corsHeaders);
     } else {
-      return await handleCreate(supabase, body as unknown as CreatePayload);
+      return await handleCreate(supabase, body as unknown as CreatePayload, corsHeaders);
     }
   } catch (error) {
     console.error('[save-decision-receipt] Unexpected error:', error);
@@ -116,7 +116,8 @@ Deno.serve(async (req) => {
 /** INSERT or UPSERT a new decision receipt */
 async function handleCreate(
   supabase: ReturnType<typeof createClient>,
-  payload: CreatePayload
+  payload: CreatePayload,
+  corsHeaders: Record<string, string>
 ): Promise<Response> {
   // Default receipt_type to 'seller_decision' if omitted
   const receiptType = payload.receipt_type || 'seller_decision';
@@ -205,7 +206,8 @@ async function handleCreate(
 /** Attach a lead_id to an existing receipt (anti-hijack: session_id must match) */
 async function handleAttach(
   supabase: ReturnType<typeof createClient>,
-  payload: AttachPayload
+  payload: AttachPayload,
+  corsHeaders: Record<string, string>
 ): Promise<Response> {
   // UUID format validation
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
