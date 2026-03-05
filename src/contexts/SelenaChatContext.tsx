@@ -83,9 +83,43 @@ function hasStoredChatHistory(): boolean {
   }
 }
 
+// Tool ID → chip labels it blocks (client-side mirror of server TOOL_BLOCKED_DESTINATIONS).
+// Used by getPhaseAwareChips so the client fallback stays consistent with server chip governance.
+const CLIENT_TOOL_BLOCKED_CHIPS: Record<string, { en: string; es: string }[]> = {
+  buyer_readiness: [
+    { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
+    { en: 'Take readiness check',     es: 'Tomar evaluación de preparación' },
+    { en: 'Check my readiness',       es: 'Verificar mi preparación' },
+  ],
+  seller_readiness: [
+    { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' },
+  ],
+  cash_readiness: [
+    { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' },
+  ],
+  seller_decision: [
+    { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
+  ],
+  tucson_alpha_calculator: [
+    { en: 'Estimate my net proceeds',   es: 'Estimar mis ganancias netas' },
+    { en: 'Compare cash vs. listing',   es: 'Comparar efectivo vs. listado' },
+  ],
+};
+
+// Replacement chip for each tool once completed — mirrors server TOOL_REPLACEMENT_DESTINATION.
+const CLIENT_TOOL_REPLACEMENT: Record<string, { en: string; es: string }> = {
+  buyer_readiness:          { en: 'Browse guides',         es: 'Explorar guías' },
+  seller_readiness:         { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
+  cash_readiness:           { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
+  seller_decision:          { en: 'Talk with Kasandra',    es: 'Hablar con Kasandra' },
+  tucson_alpha_calculator:  { en: 'Talk with Kasandra',    es: 'Hablar con Kasandra' },
+};
+
 /**
  * Derives phase-appropriate fallback chips from chip_phase_floor + intent.
  * Used for error fallback and soft-resume when no chips are available from server.
+ *
+ * Respects tools_completed so completed-tool chips never re-appear even on error paths.
  */
 function getPhaseAwareChips(
   t: (en: string, es: string) => string,
@@ -93,27 +127,77 @@ function getPhaseAwareChips(
 ): MappedReply[] {
   const floor = ctx?.chip_phase_floor ?? 0;
   const intent = ctx?.intent;
+  const toolsDone = new Set(ctx?.tools_completed ?? []);
+  const lang = (ctx as any)?._lang ?? 'en'; // injected by callers that have language access
+
+  // Build a flat set of chip labels blocked by completed tools
+  const blockedLabels = new Set<string>();
+  for (const toolId of toolsDone) {
+    for (const entry of CLIENT_TOOL_BLOCKED_CHIPS[toolId] ?? []) {
+      blockedLabels.add(entry.en.toLowerCase());
+      blockedLabels.add(entry.es.toLowerCase());
+    }
+  }
+
+  function isBlocked(en: string, es: string): boolean {
+    return blockedLabels.has(en.toLowerCase()) || blockedLabels.has(es.toLowerCase());
+  }
+
+  function pickLabel(en: string, es: string): string {
+    return t(en, es);
+  }
+
+  function filterAndReplace(candidates: { en: string; es: string }[]): string[] {
+    const out: string[] = [];
+    const addedDests = new Set<string>();
+
+    for (const c of candidates) {
+      if (!isBlocked(c.en, c.es)) {
+        out.push(pickLabel(c.en, c.es));
+        addedDests.add(c.en);
+      }
+    }
+
+    // Append replacement chips for completed tools that blocked something in this set
+    for (const toolId of toolsDone) {
+      const blocked = CLIENT_TOOL_BLOCKED_CHIPS[toolId] ?? [];
+      const wasBlocked = blocked.some(b => candidates.some(c => c.en === b.en));
+      if (!wasBlocked) continue;
+
+      const replacement = CLIENT_TOOL_REPLACEMENT[toolId];
+      if (!replacement) continue;
+      if (addedDests.has(replacement.en)) continue;
+      if (isBlocked(replacement.en, replacement.es)) continue;
+
+      out.push(pickLabel(replacement.en, replacement.es));
+      addedDests.add(replacement.en);
+    }
+
+    return out;
+  }
 
   if (floor >= 3) {
-    return mapChipsToActionSpecs([
-      t("Estimate my net proceeds", "Estimar mis ganancias netas"),
-      t("Talk with Kasandra", "Hablar con Kasandra"),
+    const chips = filterAndReplace([
+      { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
+      { en: 'Talk with Kasandra',       es: 'Hablar con Kasandra' },
     ]);
+    return mapChipsToActionSpecs(chips.length ? chips : [t('Talk with Kasandra', 'Hablar con Kasandra')]);
   }
   if (floor >= 2 && (intent === 'sell' || intent === 'cash')) {
-    return mapChipsToActionSpecs([
-      t("Get my selling options", "Ver mis opciones de venta"),
-      t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
+    const chips = filterAndReplace([
+      { en: 'Get my selling options',   es: 'Ver mis opciones de venta' },
+      { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' },
     ]);
+    return mapChipsToActionSpecs(chips.length ? chips : [t('Talk with Kasandra', 'Hablar con Kasandra')]);
   }
   if (floor >= 2 && intent === 'buy') {
-    return mapChipsToActionSpecs([
-      t("Take the readiness check", "Tomar la evaluación de preparación"),
-      t("Browse guides", "Explorar guías"),
+    const chips = filterAndReplace([
+      { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
+      { en: 'Browse guides',            es: 'Explorar guías' },
     ]);
+    return mapChipsToActionSpecs(chips.length ? chips : [t('Browse guides', 'Explorar guías')]);
   }
   if (floor >= 2 && intent) {
-    // intent is known but not sell/buy/cash — generic Phase 2
     return [
       t("What are my options?", "¿Cuáles son mis opciones?"),
       t("I have a question", "Tengo una pregunta"),

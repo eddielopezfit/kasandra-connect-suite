@@ -533,7 +533,9 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Browse guides': '/v2/guides',
   'Take the cash readiness check': '/v2/cash-readiness',
   'Compare cash vs. listing': '/v2/cash-offer-options',
-  'Get my selling options': '/v2/seller-readiness',
+  // 'Get my selling options' → seller-DECISION (wizard), not seller-READINESS (tool).
+  // 'Quick seller readiness check' is the chip that goes to the tool directly.
+  'Get my selling options': '/v2/seller-decision',
   'Quick seller readiness check': '/v2/seller-readiness',
   // EN Phase 3 chips
   'Estimate my net proceeds': '/v2/cash-offer-options',
@@ -543,7 +545,7 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Explorar guías': '/v2/guides',
   'Tomar el check de preparación en efectivo': '/v2/cash-readiness',
   'Comparar efectivo vs. listado': '/v2/cash-offer-options',
-  'Ver mis opciones de venta': '/v2/seller-readiness',
+  'Ver mis opciones de venta': '/v2/seller-decision',
   'Check rápido de preparación para vender': '/v2/seller-readiness',
   // ES Phase 3 chips
   'Estimar mis ganancias netas': '/v2/cash-offer-options',
@@ -573,7 +575,8 @@ const TOOL_REPLACEMENT_DESTINATION: Record<string, string> = {
 const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
   '/v2/guides': { en: 'Browse guides', es: 'Explorar guías' },
   '/v2/buyer-readiness': { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
-  '/v2/seller-readiness': { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
+  // seller-readiness replacement chip uses the tool-direct label (not the wizard label)
+  '/v2/seller-readiness': { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' },
   '/v2/cash-readiness': { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' },
   '/v2/cash-offer-options': { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
   '/v2/book': { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' },

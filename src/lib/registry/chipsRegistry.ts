@@ -304,6 +304,78 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     normalized_key: 'estimar ganancias netas',
     actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate Net Proceeds', es: 'Estimar Ganancias Netas' } },
   },
+  // --- Guide: Selling for Top Dollar ---
+  {
+    id: 'guide-selling-top-dollar-en',
+    label_en: 'Selling for Top Dollar Guide',
+    label_es: 'Guía para Vender al Mejor Precio',
+    normalized_key: 'selling for top dollar guide',
+    actionSpec: { type: 'open_guide', guideId: 'selling-for-top-dollar', label: { en: 'Selling for Top Dollar Guide', es: 'Guía para Vender al Mejor Precio' } },
+  },
+
+  // --- Tool alias: "Take readiness check" (truncated, no "the") → buyer-readiness ---
+  {
+    id: 'tool-buyer-readiness-short-en',
+    label_en: 'Take readiness check',
+    label_es: 'Tomar evaluación de preparación',
+    normalized_key: 'take readiness check',
+    actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+  },
+  {
+    id: 'tool-buyer-readiness-short-es',
+    label_en: 'Take readiness check',
+    label_es: 'Tomar evaluación de preparación',
+    normalized_key: 'tomar evaluacion de preparacion',
+    actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+  },
+
+  // --- Tool alias: "Check my readiness" → buyer-readiness ---
+  {
+    id: 'tool-buyer-readiness-check-en',
+    label_en: 'Check my readiness',
+    label_es: 'Verificar mi preparación',
+    normalized_key: 'check my readiness',
+    actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+  },
+  {
+    id: 'tool-buyer-readiness-check-es',
+    label_en: 'Check my readiness',
+    label_es: 'Verificar mi preparación',
+    normalized_key: 'verificar mi preparacion',
+    actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+  },
+
+  // --- Tool alias: "Start now" (shown after buyer readiness click) → buyer-readiness ---
+  {
+    id: 'tool-buyer-readiness-start-en',
+    label_en: 'Start now',
+    label_es: 'Comenzar ahora',
+    normalized_key: 'start now',
+    actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+  },
+  {
+    id: 'tool-buyer-readiness-start-es',
+    label_en: 'Start now',
+    label_es: 'Comenzar ahora',
+    normalized_key: 'comenzar ahora',
+    actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+  },
+
+  // --- Guide: "View first-time buyer guide" → first-time-buyer-guide ---
+  {
+    id: 'guide-ftb-view-en',
+    label_en: 'View first-time buyer guide',
+    label_es: 'Ver guía para compradores',
+    normalized_key: 'view first-time buyer guide',
+    actionSpec: { type: 'open_guide', guideId: 'first-time-buyer-guide', label: { en: 'First-Time Buyer Guide', es: 'Guía para Compradores Primerizos' } },
+  },
+  {
+    id: 'guide-ftb-view-es',
+    label_en: 'View first-time buyer guide',
+    label_es: 'Ver guía para compradores',
+    normalized_key: 'ver guia para compradores',
+    actionSpec: { type: 'open_guide', guideId: 'first-time-buyer-guide', label: { en: 'First-Time Buyer Guide', es: 'Guía para Compradores Primerizos' } },
+  },
 ] as const;
 
 // ============= LOOKUP =============

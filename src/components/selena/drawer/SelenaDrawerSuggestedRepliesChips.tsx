@@ -110,6 +110,13 @@ export function SelenaDrawerSuggestedRepliesChips({
   const hasBookingChips = filteredReplies.some(isBookingChip);
   const showSubChips = isWarm && hasBookingChips && !isHot;
 
+  // When sub-chips are showing, suppress the primary booking chip — sub-chips ARE the booking
+  // options and having "Talk with Kasandra" + three specific call types is redundant + noisy.
+  // Keep all non-booking chips in the primary row so the user still has content paths.
+  const primaryReplies = showSubChips
+    ? filteredReplies.filter(r => !isBookingChip(r))
+    : filteredReplies;
+
   const handleSubChipClick = (subChip: typeof SUB_CHIPS[number]) => {
     const label = language === 'es' ? subChip.labelEs : subChip.labelEn;
     const ctx = getSessionContext();
@@ -130,37 +137,45 @@ export function SelenaDrawerSuggestedRepliesChips({
 
   return (
     <div className="border-t border-border px-4 py-2.5 shrink-0 bg-background/95 backdrop-blur-sm">
-      {/* Primary chips */}
-      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide max-w-full">
-        {filteredReplies.map((reply, index) => {
-          const booking = isBookingChip(reply);
-          return (
-            <button
-              key={index}
-              onClick={() => handleClick(reply)}
-              className={cn(
-                "shrink-0 text-xs font-medium px-3 py-2 rounded-full",
-                "active:scale-95",
-                "transition-all duration-200",
-                "whitespace-nowrap",
-                "max-w-[200px] truncate",
-                // Booking chip visual weighting
-                booking && isHot
-                  ? "bg-cc-gold text-cc-navy font-semibold border border-cc-gold shadow-sm"
-                  : booking && isWarm
-                  ? "bg-cc-sand text-cc-navy border border-cc-gold/60 hover:bg-cc-navy hover:text-white"
-                  : "bg-cc-sand text-cc-navy border border-cc-navy/20 hover:bg-cc-navy hover:text-white",
-              )}
-            >
-              {typeof reply === 'string' ? reply : reply.label}
-            </button>
-          );
-        })}
-      </div>
+      {/* Primary chips — booking chip removed when sub-chips are active */}
+      {primaryReplies.length > 0 && (
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide max-w-full">
+          {primaryReplies.map((reply, index) => {
+            const booking = isBookingChip(reply);
+            return (
+              <button
+                key={index}
+                onClick={() => handleClick(reply)}
+                className={cn(
+                  "shrink-0 text-xs font-medium px-3 py-2 rounded-full",
+                  "active:scale-95",
+                  "transition-all duration-200",
+                  "whitespace-nowrap",
+                  "max-w-[200px] truncate",
+                  // Booking chip visual weighting
+                  booking && isHot
+                    ? "bg-cc-gold text-cc-navy font-semibold border border-cc-gold shadow-sm"
+                    : booking && isWarm
+                    ? "bg-cc-sand text-cc-navy border border-cc-gold/60 hover:bg-cc-navy hover:text-white"
+                    : "bg-cc-sand text-cc-navy border border-cc-navy/20 hover:bg-cc-navy hover:text-white",
+                )}
+              >
+                {typeof reply === 'string' ? reply : reply.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
-      {/* Sub-chips for warm leads — secondary booking engagement options */}
+      {/* Sub-chips for warm leads — specific booking engagement options */}
       {showSubChips && (
-        <div className="flex gap-1.5 overflow-x-auto pt-1.5 scrollbar-hide max-w-full">
+        <div className={cn("flex gap-1.5 overflow-x-auto scrollbar-hide max-w-full", primaryReplies.length > 0 ? "pt-1.5" : "pt-0")}>
+          {/* Label only when primary row is empty so sub-chips aren't orphaned */}
+          {primaryReplies.length === 0 && (
+            <span className="shrink-0 self-center text-[11px] text-cc-navy/50 pr-1">
+              {language === 'es' ? 'Cómo conectar:' : 'How to connect:'}
+            </span>
+          )}
           {SUB_CHIPS.map((sub) => (
             <button
               key={sub.callType}
