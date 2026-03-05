@@ -101,7 +101,7 @@ const V2HomeContent = () => {
         description: "Bilingual REALTOR® serving the Tucson community with integrity, heart, and expertise.",
         url: "https://kasandraprieto.com/v2",
         image: "https://kasandraprieto.com/og-kasandra.jpg",
-        telephone: "+1-520-261-2628",
+        telephone: "+1-520-349-3248",
         address: { "@type": "PostalAddress", addressLocality: "Tucson", addressRegion: "AZ", addressCountry: "US" },
         areaServed: { "@type": "City", name: "Tucson" },
         knowsLanguage: ["en", "es"],
@@ -199,6 +199,15 @@ const V2HomeContent = () => {
                   >
                     <MessageCircle className="w-5 h-5 mr-2" />
                     {t("Chat with Selena", "Hablar con Selena")}
+                  </Button>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="border-white/40 text-white hover:bg-white/10 rounded-full px-8 py-6 text-lg"
+                  >
+                    <Link to="/v2/guides">
+                      {t("Explore Free Guides", "Ver Guías Gratis")}
+                    </Link>
                   </Button>
                 </div>
               </>

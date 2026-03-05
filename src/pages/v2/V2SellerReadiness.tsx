@@ -8,6 +8,7 @@ import { getStoredEmail } from "@/lib/analytics/bridgeLeadIdToV2";
 import { supabase } from "@/integrations/supabase/client";
 import { Save } from "lucide-react";
 import { track, trackCustom, getScoreBand } from "@/lib/metaPixel";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 
 const LEAD_ID_KEY = "selena_lead_id";
 
@@ -17,6 +18,7 @@ const V2SellerReadinessContent = () => {
   const [showSaveLink, setShowSaveLink] = useState(false);
   const [captured, setCaptured] = useState(false);
   const autoOpenFired = useRef(false);
+  const { openChat } = useSelenaChat();
 
   const handleScoreRevealed = useCallback(
     (data: { readiness_score: number; primary_priority: string }) => {
@@ -88,6 +90,7 @@ const V2SellerReadinessContent = () => {
     trackCustom("SellerReadinessLeadCaptured", { content_category: "seller_readiness" });
     setCaptured(true);
     setShowSaveLink(false);
+    setTimeout(() => openChat({ source: "seller_readiness_capture", intent: "sell" }), 400);
   };
 
   return (

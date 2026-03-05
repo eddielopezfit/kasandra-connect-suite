@@ -1,19 +1,16 @@
-import { useSelenaWidget } from "@/contexts/SelenaWidgetContext";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const SelenaTextTrigger = () => {
-  const { handleWidgetClick, isConnecting } = useSelenaWidget();
+  const { openChat } = useSelenaChat();
   const { t } = useLanguage();
 
   return (
-    <button 
-      onClick={handleWidgetClick}
-      disabled={isConnecting}
-      className="text-cc-gold hover:text-cc-gold/80 underline underline-offset-2 transition-colors disabled:opacity-50"
+    <button
+      onClick={() => openChat({ source: "ad_funnel_text_trigger", intent: "sell" })}
+      className="text-cc-gold hover:text-cc-gold/80 underline underline-offset-2 transition-colors"
     >
-      {isConnecting
-        ? t("Connecting...", "Conectando...")
-        : t("Chat with Selena AI", "Chatea con Selena AI")}
+      {t("Chat with Selena AI", "Chatea con Selena AI")}
     </button>
   );
 };

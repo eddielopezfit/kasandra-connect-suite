@@ -8,6 +8,7 @@ import { getStoredEmail } from "@/lib/analytics/bridgeLeadIdToV2";
 import { supabase } from "@/integrations/supabase/client";
 import { Save } from "lucide-react";
 import { track, trackCustom, getScoreBand } from "@/lib/metaPixel";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 
 const LEAD_ID_KEY = "selena_lead_id";
 
@@ -17,6 +18,7 @@ const V2BuyerReadinessContent = () => {
   const [showSaveLink, setShowSaveLink] = useState(false);
   const [captured, setCaptured] = useState(false);
   const autoOpenFired = useRef(false);
+  const { openChat } = useSelenaChat();
 
   const handleScoreRevealed = useCallback(
     (data: { readiness_score: number; primary_priority: string }) => {
@@ -96,6 +98,9 @@ const V2BuyerReadinessContent = () => {
     trackCustom("BuyerReadinessLeadCaptured", { content_category: "buyer_readiness" });
     setCaptured(true);
     setShowSaveLink(false);
+    // Open Selena with buyer context after identity capture — gives the lead
+    // somewhere to go immediately rather than stranding them on the tool page.
+    setTimeout(() => openChat({ source: "buyer_readiness_capture", intent: "buy" }), 400);
   };
 
   return (

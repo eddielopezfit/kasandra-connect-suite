@@ -1,9 +1,7 @@
 import { ReactNode } from "react";
 import { Home } from "lucide-react";
-import { SelenaWidgetProvider } from "@/contexts/SelenaWidgetContext";
 import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
-import SelenaVoiceWidget from "./SelenaVoiceWidget";
 import LanguageToggle from "@/components/v2/LanguageToggle";
 
 interface SellerFunnelLayoutProps {
@@ -13,8 +11,7 @@ interface SellerFunnelLayoutProps {
 const SellerFunnelLayout = ({ children }: SellerFunnelLayoutProps) => {
   return (
     <SelenaChatProvider>
-      <SelenaWidgetProvider>
-        <div className="min-h-screen bg-cc-navy flex flex-col">
+      <div className="min-h-screen bg-cc-navy flex flex-col">
         {/* Language Toggle Header */}
         <header className="flex justify-end px-4 py-3">
           <LanguageToggle variant="dark" />
@@ -47,15 +44,11 @@ const SellerFunnelLayout = ({ children }: SellerFunnelLayoutProps) => {
           </div>
         </footer>
 
-        {/* Selena AI Voice Widget */}
-        <SelenaVoiceWidget />
-        
-        {/* Selena Chat - Site Wide */}
+        {/* Selena Chat */}
         <SelenaFloatingButton />
         <SelenaChatDrawer />
       </div>
-    </SelenaWidgetProvider>
-  </SelenaChatProvider>
+    </SelenaChatProvider>
   );
 };
 
