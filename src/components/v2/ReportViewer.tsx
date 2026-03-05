@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Calculator, MessageCircle, X, Sparkles } from 'lucide-react';
+import { FileText, Calculator, MessageCircle, X, Sparkles, Download } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -96,6 +96,152 @@ export function ReportViewer({
     }
   };
 
+  const handleDownload = () => {
+    logEvent('report_download', {
+      report_id: reportId,
+      report_type: reportType,
+    });
+
+    // Convert markdown to clean HTML for print
+    const markdownToHtml = (md: string): string => {
+      return md
+        .split('\n')
+        .map((line) => {
+          const t = line.trim();
+          if (!t) return '<br/>';
+          if (t.startsWith('### ')) return `<h3>${t.slice(4)}</h3>`;
+          if (t.startsWith('## '))  return `<h2>${t.slice(3)}</h2>`;
+          if (t.startsWith('# '))   return `<h1>${t.slice(2)}</h1>`;
+          if (t.startsWith('- ') || t.startsWith('* '))
+            return `<li>${t.slice(2).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')}</li>`;
+          return `<p>${t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/\*([^*]+)\*/g, '<em>$1</em>')}</p>`;
+        })
+        .join('\n')
+        // Wrap consecutive <li> items in <ul>
+        .replace(/(<li>.*<\/li>\n?)+/g, (match) => `<ul>${match}</ul>`);
+    };
+
+    const date = new Date().toLocaleDateString('en-US', {
+      month: 'long', day: 'numeric', year: 'numeric',
+    });
+
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>${title}</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 12pt;
+      color: #1a1a2e;
+      line-height: 1.6;
+      padding: 0;
+    }
+    .page { padding: 0.75in 0.85in; }
+    .header {
+      border-bottom: 2px solid #c9a84c;
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .header-brand { font-size: 11pt; color: #1a1a2e; }
+    .header-brand strong { display: block; font-size: 13pt; letter-spacing: 0.02em; }
+    .header-brand span { font-size: 9pt; color: #888; font-style: italic; font-family: Arial, sans-serif; }
+    .header-date { font-size: 9pt; color: #888; font-family: Arial, sans-serif; text-align: right; }
+    .report-title {
+      font-size: 18pt;
+      font-weight: bold;
+      color: #1a1a2e;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e8e0d0;
+    }
+    h1 { font-size: 15pt; color: #1a1a2e; margin: 20px 0 8px; }
+    h2 { font-size: 13pt; color: #1a1a2e; margin: 16px 0 6px; }
+    h3 { font-size: 11pt; color: #444; margin: 12px 0 4px; }
+    p  { margin: 6px 0; font-family: Arial, sans-serif; font-size: 11pt; color: #333; }
+    ul { margin: 6px 0 6px 20px; }
+    li { margin: 4px 0; font-family: Arial, sans-serif; font-size: 11pt; color: #333; }
+    strong { color: #1a1a2e; }
+    br { display: block; margin: 4px 0; }
+    .footer {
+      position: fixed;
+      bottom: 0.4in;
+      left: 0.85in;
+      right: 0.85in;
+      border-top: 1px solid #e8e0d0;
+      padding-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 8pt;
+      color: #aaa;
+      font-family: Arial, sans-serif;
+    }
+    .disclaimer {
+      margin-top: 32px;
+      padding: 12px 16px;
+      background: #f8f5ee;
+      border-left: 3px solid #c9a84c;
+      font-size: 9pt;
+      color: #666;
+      font-family: Arial, sans-serif;
+      font-style: italic;
+    }
+    @media print {
+      body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .footer { position: fixed; bottom: 0.4in; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div class="header-brand">
+        <strong>Kasandra Prieto</strong>
+        <span>Your Best Friend in Real Estate · Corner Connect</span>
+      </div>
+      <div class="header-date">Prepared ${date}</div>
+    </div>
+    <div class="report-title">${title}</div>
+    ${markdownToHtml(markdown)}
+    <div class="disclaimer">
+      This report is an educational estimate based on Tucson market averages. 
+      Actual results will vary based on your specific property, condition, location, and market conditions. 
+      This is not a formal appraisal or legal/financial advice. 
+      For a personalized analysis, connect with Kasandra directly.
+    </div>
+  </div>
+  <div class="footer">
+    <span>KasandraPrieto.com · Corner Connect brokered by Realty Executives Arizona Territory</span>
+    <span>Tu Mejor Amiga en Bienes Raíces</span>
+  </div>
+</body>
+</html>`;
+
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) { document.body.removeChild(iframe); return; }
+
+    doc.open();
+    doc.write(html);
+    doc.close();
+
+    // Give the iframe a moment to render fonts/styles before printing
+    setTimeout(() => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      // Clean up after the print dialog closes
+      setTimeout(() => document.body.removeChild(iframe), 1000);
+    }, 400);
+  };
+
   // Empty State Content - Premium, no dead ends
   const emptyContent = (
     <div className="flex flex-col items-center justify-center min-h-[50vh] px-6 py-8 text-center">
@@ -178,11 +324,21 @@ export function ReportViewer({
             <MessageCircle className="w-4 h-4 mr-2" />
             {t('Schedule a Call', 'Agendar una Llamada')}
           </Button>
+
+          <Button
+            onClick={handleDownload}
+            variant="outline"
+            className="w-full border-cc-gold text-cc-gold hover:bg-cc-gold/10"
+            size="lg"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            {t('Download Report', 'Descargar Reporte')}
+          </Button>
           
           <Button
             onClick={() => handleCTAClick('run_net_sheet', '/ad/seller')}
             variant="outline"
-            className="w-full border-cc-gold text-cc-gold hover:bg-cc-gold/10"
+            className="w-full border-cc-sand-dark text-cc-charcoal hover:bg-cc-sand"
             size="lg"
           >
             <Calculator className="w-4 h-4 mr-2" />
