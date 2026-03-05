@@ -2257,16 +2257,33 @@ serve(async (req) => {
         : `\n\nDECISION RECEIPT CONTEXT: User completed the Seller Decision tool. Situation: ${s}. Priority: ${p}. Condition: ${c}. Recommended path: ${r}. Acknowledge this progress and continue forward. Do NOT re-ask information they already provided.`;
     }
 
-    // --- Market Pulse / Wait Penalty context ---
+    // --- Market Pulse / Wait Penalty context (dynamic from DB) ---
     let marketPulseHint = "";
     const equityPulseSaved = context.tool_used === 'tucson_alpha_calculator' || 
       (context.tools_completed && context.tools_completed.includes('tucson_alpha_calculator'));
     
     if (equityPulseSaved) {
-      const estValue = context.calculator_difference ? `$${context.calculator_difference.toLocaleString()}` : 'significant';
+      // Fetch live market data for dynamic prompt injection
+      let daysToClose = 145;
+      let holdingCostPerDay = 18;
+      try {
+        const { data: pulse } = await supabase
+          .from("market_pulse_settings")
+          .select("days_to_close, holding_cost_per_day")
+          .eq("market_name", "Tucson_Overall")
+          .single();
+        if (pulse) {
+          daysToClose = pulse.days_to_close ?? daysToClose;
+          holdingCostPerDay = Number(pulse.holding_cost_per_day) || holdingCostPerDay;
+        }
+      } catch (_e) { /* fallback to defaults */ }
+
+      const totalHoldingCost = Math.round(daysToClose * holdingCostPerDay);
+      const formattedCost = `$${totalHoldingCost.toLocaleString()}`;
+
       marketPulseHint = language === 'es'
-        ? `\n\nCONTEXTO DE MERCADO TUCSON: El tiempo promedio de espera actual en Tucson es de 145 días (115 días en mercado + 30 de cierre). Eso equivale a más de $2,600 en costos de mantención para una propiedad vacante. Si el usuario guardó un escenario de Equity Pulse, reconózcalo: "He guardado tu pulso. Con la espera actual de 145 días en Tucson, estás viendo más de $2,600 en costos de mantención si listas de manera tradicional. ¿Quiero que el escritorio de Kasandra verifique si nuestros compradores en efectivo pueden saltar esa espera para ti?" NO invente números — use solo 145 días y $2,600 como referencia factual del mercado.`
-        : `\n\nTUCSON MARKET CONTEXT: The current average wait penalty in Tucson is 145 days (115 days on market + 30 closing). That translates to over $2,600 in holding costs for a vacant property. If the user saved an Equity Pulse scenario, acknowledge it: "I've locked your pulse. With the current 145-day wait in Tucson, you're looking at over $2,600 in holding costs if you list traditionally. Shall I have Kasandra's desk verify if our cash buyers can skip that wait for you?" Do NOT invent numbers — use only 145 days and $2,600 as factual market reference.`;
+        ? `\n\nCONTEXTO DE MERCADO TUCSON: El tiempo promedio de espera actual en Tucson es de ${daysToClose} días. Eso equivale a más de ${formattedCost} en costos de mantención para una propiedad vacante. Si el usuario guardó un escenario de Equity Pulse, reconózcalo: "He guardado tu pulso. Con la espera actual de ${daysToClose} días en Tucson, estás viendo más de ${formattedCost} en costos de mantención si listas de manera tradicional. ¿Quiero que el escritorio de Kasandra verifique si nuestros compradores en efectivo pueden saltar esa espera para ti?" NO invente números — use solo ${daysToClose} días y ${formattedCost} como referencia factual del mercado.`
+        : `\n\nTUCSON MARKET CONTEXT: The current average wait penalty in Tucson is ${daysToClose} days. That translates to over ${formattedCost} in holding costs for a vacant property. If the user saved an Equity Pulse scenario, acknowledge it: "I've locked your pulse. With the current ${daysToClose}-day wait in Tucson, you're looking at over ${formattedCost} in holding costs if you list traditionally. Shall I have Kasandra's desk verify if our cash buyers can skip that wait for you?" Do NOT invent numbers — use only ${daysToClose} days and ${formattedCost} as factual market reference.`;
     }
     
     // Tell the AI what phase we're in so response text matches chip direction
