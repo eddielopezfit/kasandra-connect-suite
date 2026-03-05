@@ -6,12 +6,12 @@ const data: GuideContentData = {
   category: "Selling Your Home",
   categoryEs: "Vender Su Casa",
   author: "Kasandra Prieto",
-  intro: "If you're thinking about selling your home, you probably have questions—about timing, pricing, and what to expect. That's completely normal. Selling is a significant decision, and it's okay to feel uncertain. This guide is here to help you understand the process clearly, so you can decide your next step with confidence.",
-  introEs: "Si está pensando en vender su casa, probablemente tenga preguntas—sobre el momento, el precio y qué esperar. Eso es completamente normal. Vender es una decisión importante, y está bien sentir incertidumbre. Esta guía está aquí para ayudarle a entender el proceso claramente, para que pueda decidir su próximo paso con confianza.",
+  intro: "If you're thinking about selling, you probably have more questions than answers right now — about timing, pricing, what it all costs, and whether it's even the right move. That's completely normal. I've been through this with hundreds of people in Tucson, and the ones who feel most confident at the end are the ones who understood the process before they were in the middle of it. That's what this guide is for.",
+  introEs: "Si está pensando en vender, probablemente tiene más preguntas que respuestas ahora mismo — sobre el momento, el precio, qué cuesta todo y si siquiera es la decisión correcta. Eso es completamente normal. He acompañado a cientos de personas en Tucson en este proceso, y las que se sienten más seguras al final son las que entendieron el proceso antes de estar en medio de él. Para eso es esta guía.",
   sections: [
     {
-      heading: "You're Not Alone in This Decision",
-      headingEs: "No Está Solo en Esta Decisión",
+      heading: "You Don't Have to Have This Figured Out Yet",
+      headingEs: "Todavía No Tienes Que Tener Todo Resuelto",
       content: "Many homeowners feel overwhelmed when considering a sale. Questions about timing, pricing, and whether it's the right move are common.\n\nThis guide won't tell you what to do. It will give you a clear picture of how the selling process works in Arizona, so you can make an informed choice—whatever direction feels right for you.",
       contentEs: "Muchos propietarios se sienten abrumados al considerar una venta. Las preguntas sobre el momento, el precio y si es la decisión correcta son comunes.\n\nEsta guía no le dirá qué hacer. Le dará una imagen clara de cómo funciona el proceso de venta en Arizona, para que pueda tomar una decisión informada—cualquiera que sea la dirección que sienta correcta para usted.",
     },

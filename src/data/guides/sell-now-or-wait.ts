@@ -7,9 +7,9 @@ const data: GuideContentData = {
   categoryEs: 'Venta',
   author: 'Kasandra Prieto',
   intro:
-    'If you\'re unsure whether to sell now or wait, you\'re not alone. This guide helps you compare timing, market conditions, and personal factors—calmly and clearly—so you can choose the path that fits your life.',
+    'The timing question is the one I hear most often. And honestly, there\'s no universal right answer — it depends entirely on your situation, not the headlines. This guide walks through the real factors so you can think it through clearly, without pressure from anyone\'s agenda — including mine.',
   introEs:
-    'Si no estás seguro(a) si vender ahora o esperar, no estás solo(a). Esta guía te ayuda a comparar el momento, el mercado y tus factores personales—con calma y claridad—para elegir lo que se alinea con tu vida.',
+    'La pregunta del momento es la que escucho con más frecuencia. Y honestamente, no hay una respuesta universal correcta — depende completamente de tu situación, no de los titulares. Esta guía recorre los factores reales para que puedas pensarlo con claridad, sin presión de la agenda de nadie — incluyendo la mía.',
   sections: [
     {
       heading: 'What This Guide Helps You Decide',

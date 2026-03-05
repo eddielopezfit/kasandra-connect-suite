@@ -6,12 +6,12 @@ const data: GuideContentData = {
   category: "Home Valuation",
   categoryEs: "Valoración de Vivienda",
   author: "Kasandra Prieto",
-  intro: "Wondering what your home is worth? You're not alone—and it's a smart question to ask, whether you're thinking about selling, refinancing, or simply curious. This guide will help you understand how home valuation works, without any pressure or sales talk.",
-  introEs: "¿Se pregunta cuánto vale su casa? No está solo—y es una pregunta inteligente, ya sea que esté pensando en vender, refinanciar, o simplemente tenga curiosidad. Esta guía le ayudará a entender cómo funciona la valoración de viviendas, sin presión ni lenguaje de ventas.",
+  intro: "Most homeowners have no idea what their home is actually worth right now — and that's not a problem, it's just information you haven't needed yet. Whether you're thinking about selling, refinancing, or just want to understand where you stand, this guide walks through how valuation actually works in the real world. No pressure. No sales talk. Just clarity.",
+  introEs: "La mayoría de los propietarios no saben exactamente cuánto vale su casa ahora mismo — y eso no es un problema, es simplemente información que todavía no habías necesitado. Ya sea que estés pensando en vender, refinanciar, o simplemente quieras saber dónde estás parado, esta guía explica cómo funciona realmente la valoración. Sin presión. Sin argumentos de venta. Solo claridad.",
   sections: [
     {
-      heading: "It's Okay to Have Questions",
-      headingEs: "Está Bien Tener Preguntas",
+      heading: "You Don't Have to Know This Already",
+      headingEs: "No Tienes Que Saber Esto de Antemano",
       content: "You may have seen different numbers from websites, neighbors, or past conversations—and it can feel confusing.\n\nThis guide is designed to bring clarity. You'll learn how valuations work, what factors matter, and how to take a clear next step when you're ready.",
       contentEs: "Puede haber visto diferentes números de sitios web, vecinos o conversaciones pasadas—y puede sentirse confuso.\n\nEsta guía está diseñada para traer claridad. Aprenderá cómo funcionan las valoraciones, qué factores importan, y cómo dar un siguiente paso claro cuando esté listo.",
     },

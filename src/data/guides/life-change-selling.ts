@@ -7,9 +7,9 @@ const data: GuideContentData = {
   categoryEs: 'Venta',
   author: 'Kasandra Prieto',
   intro:
-    'When life changes fast, real estate decisions can feel heavy. This guide offers a calm, practical path to protect your peace, your timeline, and your outcome—without pressure.',
+    'When life changes fast, real estate decisions can feel like the last thing you want to deal with. This guide walks you through it calmly — protecting your timeline, your finances, and your peace of mind — without rushing you toward any particular answer.',
   introEs:
-    'Cuando la vida cambia rápido, las decisiones de bienes raíces pueden sentirse pesadas. Esta guía te da un camino práctico y tranquilo para proteger tu paz, tu tiempo y tu resultado—sin presión.',
+    'Cuando la vida cambia rápido, las decisiones de bienes raíces pueden sentirse como lo último que quieres atender. Esta guía te acompaña con calma — protegiendo tu cronograma, tus finanzas y tu tranquilidad — sin apresurarte hacia ninguna respuesta en particular.',
   sections: [
     {
       heading: 'What This Guide Helps You Decide',

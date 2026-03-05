@@ -6,8 +6,8 @@ const data: GuideContentData = {
   category: "Cash Offers",
   categoryEs: "Ofertas en Efectivo",
   author: "Kasandra Prieto, REALTOR®",
-  intro: "If you're wondering whether to take a cash offer or list your Tucson home on the market, you're asking the right question. This guide gives you a clear framework to decide which path fits your life right now — based on what you value most: certainty, equity, or a combination of both.",
-  introEs: "Si te preguntas si aceptar una oferta en efectivo o listar tu casa en Tucson en el mercado, estás haciendo la pregunta correcta. Esta guía te da un marco claro para decidir qué camino encaja con tu vida ahora mismo — según lo que más valores: certeza, equidad, o una combinación de ambos.",
+  intro: "I get this question constantly: should I take the cash offer or go to the open market? The answer is almost never obvious — it depends on your timeline, your home's condition, and what actually matters to you right now. This guide lays out both paths honestly so you can decide for yourself.",
+  introEs: "Me hacen esta pregunta constantemente: ¿acepto la oferta en efectivo o salgo al mercado abierto? La respuesta casi nunca es obvia — depende de tu cronograma, la condición de tu casa y lo que realmente importa para ti ahora mismo. Esta guía presenta ambos caminos honestamente para que puedas decidir por ti mismo.",
   sections: [
     {
       heading: "The 2026 Tucson Market: A Return to Balance",

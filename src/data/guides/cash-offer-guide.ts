@@ -6,8 +6,8 @@ const data: GuideContentData = {
   category: "Cash Offers",
   categoryEs: "Ofertas en Efectivo",
   author: "Kasandra Prieto",
-  intro: "If you're exploring whether a cash offer makes sense for your home, you're asking the right question. This guide explains how cash offers work, when they fit, and how to weigh them against other options—clearly and without pressure.",
-  introEs: "Si está explorando si una oferta en efectivo tiene sentido para su casa, está haciendo la pregunta correcta. Esta guía explica cómo funcionan las ofertas en efectivo, cuándo encajan, y cómo compararlas con otras opciones—con claridad y sin presión.",
+  intro: "A cash offer can feel like a lifeline or a lowball — and the difference is usually just information. If you're wondering whether it's the right move for your home, this guide will help you see it clearly. No pressure. No sales pitch. Just a real picture of how it works and when it actually makes sense.",
+  introEs: "Una oferta en efectivo puede sentirse como un salvavidas o como una oferta baja — y la diferencia generalmente es solo información. Si te preguntas si es la decisión correcta para tu casa, esta guía te ayudará a verlo claramente. Sin presión. Sin argumentos de venta. Solo un panorama real de cómo funciona y cuándo tiene sentido.",
   sections: [
     {
       heading: "If You're Feeling Overwhelmed",
