@@ -36,7 +36,7 @@ const TIMELINE_MAP: Record<string, Timeline> = {
 // while main calculator used market.cashDiscountRate (12%). Now both use 12%.
 const calculateNetProceeds = (estimatedValue: number, quizTimeline?: string) => {
   const timeline: Timeline = TIMELINE_MAP[quizTimeline ?? ""] ?? "30days";
-  const results = calculateNetToSellerComparison({ estimatedValue, timeline });
+  const results = calculateNetToSellerComparison({ estimatedValue, timeline, motivation: 'uncertain' });
   const cashOffer = Math.round(results.cash.netProceeds);
   const listingNet = Math.round(results.traditional.netProceeds);
   const difference = listingNet - cashOffer;

@@ -19,15 +19,28 @@
 
 export type EntrySource = 
   | 'calculator' 
-  | 'guide_handoff' 
+  | 'guide_handoff'
+  | 'guide_exit_ramp'
+  | 'guide_mid_cta'
   | 'synthesis' 
-  | 'hero' 
+  | 'hero'
+  | 'hero_returning'
   | 'floating'
-  | 'footer_nudge' // Blocked from greeting injection; aliased to floating behavior
+  | 'footer_nudge'
   | 'proactive'
   | 'question'
-  | 'post_booking' // After successful booking - identity reinforcement
-  | 'quiz_result'; // After completing the path quiz — intent-specific routing
+  | 'post_booking'
+  | 'quiz_result'
+  | 'seller_decision'
+  | 'ad_funnel_text_trigger'
+  | '404_page'
+  | 'post_funnel_unlock'
+  | 'pre_unlock'
+  | 'buyer_readiness_capture'
+  | 'cash_readiness_capture'
+  | 'community_mid_page'
+  | 'podcast_page'
+  | 'seller_readiness_capture';
 
 export interface EntryContext {
   source: EntrySource;
