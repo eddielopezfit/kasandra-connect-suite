@@ -1,6 +1,8 @@
 /**
  * Shared rate limiter for Edge Functions.
- * Uses the rate_limits table (service-role only) to track request counts per key+endpoint.
+ * Primary: rate_limits DB table (service-role).
+ * Fallback: In-memory Map per isolate — activates on DB error so the limiter
+ * NEVER silently fails open. Resets on cold start (acceptable for a fallback).
  */
 
 interface RateLimitConfig {
@@ -23,8 +25,33 @@ const ENDPOINT_LIMITS: Record<string, RateLimitConfig> = {
   'get-session-snapshot': { maxRequests: 30, windowSeconds: 3600 },
 };
 
+// ─── In-memory fallback store ─────────────────────────────────────────────────
+// Activates only when the DB rate_limits table is unreachable.
+// Provides real protection instead of silently allowing all traffic.
+interface MemEntry { count: number; windowStart: number }
+const _memStore = new Map<string, MemEntry>();
+
+function memCheck(key: string, endpoint: string, config: RateLimitConfig): boolean {
+  const storeKey = `${endpoint}:${key}`;
+  const now = Date.now();
+  const windowMs = config.windowSeconds * 1000;
+  const entry = _memStore.get(storeKey);
+
+  if (!entry || now - entry.windowStart > windowMs) {
+    _memStore.set(storeKey, { count: 1, windowStart: now });
+    return true;
+  }
+
+  if (entry.count >= config.maxRequests) return false;
+
+  entry.count += 1;
+  return true;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
  * Check and enforce rate limit. Returns true if request is allowed.
+ * Falls back to in-memory rate limiting if DB is unavailable.
  * @param supabase - Service-role Supabase client
  * @param key - Rate limit key (email, session_id, or IP)
  * @param endpoint - Edge function name
@@ -47,8 +74,9 @@ export async function checkRateLimit(
       .gte('window_start', windowStart);
 
     if (error) {
-      console.error('[rateLimit] Query error:', error);
-      return { allowed: true }; // Fail open on DB errors
+      // DB unavailable — fall back to in-memory limiter (never fail open)
+      console.warn('[rateLimit] DB error, using in-memory fallback:', error.message);
+      return { allowed: memCheck(key, endpoint, config) };
     }
 
     const totalRequests = (data || []).reduce(
@@ -70,8 +98,9 @@ export async function checkRateLimit(
 
     return { allowed: true, remaining: config.maxRequests - totalRequests - 1 };
   } catch (err) {
-    console.error('[rateLimit] Unexpected error:', err);
-    return { allowed: true }; // Fail open
+    // Unexpected error — fall back to in-memory limiter (never fail open)
+    console.warn('[rateLimit] Unexpected error, using in-memory fallback:', err);
+    return { allowed: memCheck(key, endpoint, config) };
   }
 }
 
