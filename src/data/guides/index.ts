@@ -21,4 +21,15 @@ export const GUIDE_DATA_LOADERS: Record<string, () => Promise<{ default: GuideCo
   'cash-vs-traditional-sale': () => import('./cash-vs-traditional-sale'),
   'sell-now-or-wait': () => import('./sell-now-or-wait'),
   'life-change-selling': () => import('./life-change-selling'),
+  // Phase 3 — Local Domination Guides
+  'military-pcs-guide': () => import('./military-pcs-guide'),
+  'divorce-selling': () => import('./divorce-selling'),
+  'senior-downsizing': () => import('./senior-downsizing'),
+  'distressed-preforeclosure': () => import('./distressed-preforeclosure'),
+  'move-up-buyer': () => import('./move-up-buyer'),
+  'relocating-to-tucson': () => import('./relocating-to-tucson'),
+  'home-prep-staging': () => import('./home-prep-staging'),
+  'pricing-strategy': () => import('./pricing-strategy'),
+  'tucson-neighborhoods': () => import('./tucson-neighborhoods'),
+  'pima-county-property-taxes': () => import('./pima-county-property-taxes'),
 };

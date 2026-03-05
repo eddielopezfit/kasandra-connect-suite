@@ -88,6 +88,38 @@ const categories = [
     desc: "Guidance for life's most sensitive transitions",
     descEs: "Orientación para las transiciones más sensibles"
   },
+  {
+    id: "military",
+    label: "Military & VA",
+    labelEs: "Militares y VA",
+    icon: BookOpen,
+    desc: "VA loans, PCS, and Davis-Monthan resources",
+    descEs: "Préstamos VA, PCS y recursos de DMAFB"
+  },
+  {
+    id: "divorce",
+    label: "Divorce & Separation",
+    labelEs: "Divorcio y Separación",
+    icon: BookOpen,
+    desc: "Selling jointly-owned property in Arizona",
+    descEs: "Vender propiedad conjunta en Arizona"
+  },
+  {
+    id: "senior",
+    label: "Senior & Downsizing",
+    labelEs: "Mayores y Reducción",
+    icon: BookOpen,
+    desc: "55+ communities, Green Valley, right-sizing",
+    descEs: "Comunidades 55+, Green Valley y ajuste de tamaño"
+  },
+  {
+    id: "distressed",
+    label: "Hardship & Foreclosure",
+    labelEs: "Dificultad y Ejecución",
+    icon: BookOpen,
+    desc: "Options when payments are at risk",
+    descEs: "Opciones cuando los pagos están en riesgo"
+  },
 ];
 
 // Derive guide cards from registry — single source of truth
