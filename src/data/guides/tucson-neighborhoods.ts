@@ -6,8 +6,8 @@ const data: GuideContentData = {
   category: 'Buying a Home',
   categoryEs: 'Comprar una Casa',
   author: 'Kasandra Prieto',
-  intro: "Tucson is not one city — it's a collection of distinct communities, each with its own character, price point, and lifestyle. The right neighborhood depends on your commute, your budget, your family situation, and what kind of community you want around you. This guide breaks down Tucson's major residential areas so you can start making informed comparisons.",
-  introEs: "Tucson no es una sola ciudad — es una colección de comunidades distintas, cada una con su propio carácter, precio y estilo de vida. El vecindario correcto depende de tu viaje al trabajo, tu presupuesto, tu situación familiar y qué tipo de comunidad quieres a tu alrededor. Esta guía desglosa las principales áreas residenciales de Tucson para que puedas comenzar a hacer comparaciones informadas.",
+  intro: "One of the most common things I hear from buyers is: 'We just don't know the neighborhoods yet.' That's completely normal, especially if you're new to Tucson or coming from out of state. This guide walks through the city's major residential areas honestly — what each one actually feels like, who tends to be drawn there, and what the numbers look like — so you can start narrowing down with real information instead of guessing.",
+  introEs: "Una de las cosas más comunes que escucho de los compradores es: 'Simplemente no conocemos los vecindarios todavía.' Eso es completamente normal, especialmente si eres nuevo en Tucson o vienes de otro estado. Esta guía recorre las principales áreas residenciales de la ciudad honestamente — cómo se siente cada una, quién tiende a ser atraído hacia allí y cómo se ven los números — para que puedas empezar a reducir opciones con información real en vez de adivinar.",
   sections: [
     {
       heading: "Tucson's 2026 Market Context",

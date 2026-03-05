@@ -6,8 +6,8 @@ const data: GuideContentData = {
   category: 'Military & VA',
   categoryEs: 'Militares y VA',
   author: 'Kasandra Prieto',
-  intro: "Permanent Change of Station orders don't wait for the right market. Whether you're arriving at Davis-Monthan AFB, departing after a tour, or navigating a VA loan for the first time, this guide gives you a clear picture of what to expect — and how to move efficiently without leaving money on the table.",
-  introEs: "Las órdenes de Cambio Permanente de Estación no esperan el momento ideal del mercado. Ya sea que llegues a la Base de la Fuerza Aérea Davis-Monthan, te vayas después de un turno, o navegues un préstamo VA por primera vez, esta guía te da un panorama claro de qué esperar — y cómo moverte eficientemente sin dejar dinero sobre la mesa.",
+  intro: "If you've just received PCS orders — or know they're coming — you're probably running through a dozen decisions at once. Real estate is one of the most time-sensitive, and it can feel like there's no room to slow down and think. This guide gives you a clear picture of your options in Tucson so you can move with confidence instead of just moving fast.",
+  introEs: "Si acabas de recibir órdenes de PCS — o sabes que vienen en camino — probablemente estás tomando docenas de decisiones a la vez. Los bienes raíces son una de las más urgentes, y puede sentirse que no hay espacio para reducir la velocidad y pensar. Esta guía te da un panorama claro de tus opciones en Tucson para que puedas moverte con confianza en vez de solo moverte rápido.",
   sections: [
     {
       heading: 'What Davis-Monthan Means for the Tucson Market',

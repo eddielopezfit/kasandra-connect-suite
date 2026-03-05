@@ -6,8 +6,8 @@ const data: GuideContentData = {
   category: 'Divorce & Life Transition',
   categoryEs: 'Divorcio y Transición de Vida',
   author: 'Kasandra Prieto',
-  intro: "Selling a home during a divorce is one of the most emotionally and logistically complex transactions in real estate. Arizona's community property laws shape every decision — and the home is often the largest shared asset. This guide is designed to give you clarity on the process without adding pressure. Take it one section at a time.",
-  introEs: "Vender una casa durante un divorcio es una de las transacciones más emocional y logísticamente complejas en bienes raíces. Las leyes de propiedad comunitaria de Arizona moldean cada decisión — y la casa es a menudo el activo compartido más grande. Esta guía está diseñada para darte claridad sobre el proceso sin agregar presión. Tómalo una sección a la vez.",
+  intro: "If you're in this situation, you already know it's hard. The home is often tied to everything — finances, memories, the life you built together. This guide is here to give you clarity on how the process works in Arizona, without adding any more pressure to what you're already carrying. Take it one section at a time.",
+  introEs: "Si estás en esta situación, ya sabes que es difícil. La casa a menudo está ligada a todo — finanzas, recuerdos, la vida que construyeron juntos. Esta guía está aquí para darte claridad sobre cómo funciona el proceso en Arizona, sin agregar más presión a lo que ya estás cargando. Tómalo una sección a la vez.",
   sections: [
     {
       heading: 'Arizona Is a Community Property State — What That Means',

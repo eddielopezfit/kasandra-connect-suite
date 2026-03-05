@@ -6,8 +6,8 @@ const data: GuideContentData = {
   category: 'Senior & Downsizing',
   categoryEs: 'Mayores y Reducción de Tamaño',
   author: 'Kasandra Prieto',
-  intro: "Downsizing is rarely just about square footage. It's about moving into a lifestyle that fits where you are now — with less maintenance, more flexibility, and the right community around you. Tucson offers more options for this transition than most people realize. This guide walks through the key decisions without rushing you toward any of them.",
-  introEs: "Reducir el tamaño rara vez se trata solo de metros cuadrados. Se trata de mudarte a un estilo de vida que se adapte a donde estás ahora — con menos mantenimiento, más flexibilidad y la comunidad adecuada a tu alrededor. Tucson ofrece más opciones para esta transición de las que la mayoría de la gente se da cuenta. Esta guía recorre las decisiones clave sin apresurarte hacia ninguna de ellas.",
+  intro: "Downsizing is rarely just about square footage. It's about moving into a life that fits where you are now — with less to maintain, more flexibility, and the right people around you. There's no single right answer, and no urgency unless you create one. This guide walks through the key decisions at whatever pace works for you.",
+  introEs: "Reducir el tamaño rara vez se trata solo de metros cuadrados. Se trata de mudarte a una vida que encaje con donde estás ahora — con menos que mantener, más flexibilidad y las personas correctas a tu alrededor. No hay una sola respuesta correcta, y no hay urgencia a menos que tú la crees. Esta guía recorre las decisiones clave al ritmo que mejor te funcione.",
   sections: [
     {
       heading: 'Why Tucson Is a Top Destination for 55+ Homebuyers',

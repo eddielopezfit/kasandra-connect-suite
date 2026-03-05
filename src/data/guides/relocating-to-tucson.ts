@@ -6,8 +6,8 @@ const data: GuideContentData = {
   category: 'Buying a Home',
   categoryEs: 'Comprar una Casa',
   author: 'Kasandra Prieto',
-  intro: "Tucson is attracting a new wave of residents — University of Arizona faculty and staff, Davis-Monthan military families, remote workers seeking affordability, and snowbirds making the permanent move. If you're buying from out of state, this guide gives you a realistic picture of the market, the neighborhoods, and how to buy a home here without making expensive mistakes.",
-  introEs: "Tucson está atrayendo una nueva ola de residentes — facultad y personal de la Universidad de Arizona, familias militares de Davis-Monthan, trabajadores remotos que buscan asequibilidad, y snowbirds haciendo el traslado permanente. Si estás comprando desde fuera del estado, esta guía te da un panorama realista del mercado, los vecindarios y cómo comprar una casa aquí sin cometer errores costosos.",
+  intro: "Moving to a city you don't fully know yet — sometimes on a timeline you didn't choose — is one of the more disorienting things to navigate. You're not just buying a house. You're choosing a community, a commute, a daily life. I've been in Tucson for over 20 years, and it's a genuinely good place to land. This guide gives you an honest picture of the market and the neighborhoods so you can make that decision clearly, without pressure.",
+  introEs: "Mudarse a una ciudad que todavía no conoces del todo — a veces con un cronograma que no elegiste — es una de las cosas más desconcertantes de navegar. No solo estás comprando una casa. Estás eligiendo una comunidad, un trayecto diario, una vida cotidiana. He estado en Tucson por más de 20 años, y es un lugar genuinamente bueno para llegar. Esta guía te da un panorama honesto del mercado y los vecindarios para que puedas tomar esa decisión claramente, sin presión.",
   sections: [
     {
       heading: 'Why People Are Moving to Tucson in 2026',

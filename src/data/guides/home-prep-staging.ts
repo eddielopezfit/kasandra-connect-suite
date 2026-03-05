@@ -6,8 +6,8 @@ const data: GuideContentData = {
   category: 'Selling a Home',
   categoryEs: 'Vender una Casa',
   author: 'Kasandra Prieto',
-  intro: "The difference between a home that sells in 15 days at list price and one that sits for 60 days with price reductions often comes down to preparation — not location or market conditions. This guide gives you a realistic, prioritized checklist so you know where to spend time and money, and where not to.",
-  introEs: "La diferencia entre una casa que se vende en 15 días al precio de lista y una que permanece 60 días con reducciones de precio a menudo se reduce a la preparación — no a la ubicación o las condiciones del mercado. Esta guía te da una lista de verificación realista y priorizada para que sepas dónde invertir tiempo y dinero, y dónde no.",
+  intro: "Most sellers feel some version of this: I don't know what to fix, and I don't want to spend money on the wrong things. That's a reasonable worry — it's possible to over-prepare just as much as under-prepare. This guide tells you what actually moves buyers in Tucson, what you can skip, and how to make your home feel ready without spending on things that won't matter.",
+  introEs: "La mayoría de los vendedores sienten algo parecido a esto: no sé qué reparar, y no quiero gastar dinero en las cosas equivocadas. Es una preocupación razonable — es posible prepararse de más igual que de menos. Esta guía te dice qué mueve realmente a los compradores en Tucson, qué puedes omitir y cómo hacer que tu casa se sienta lista sin gastar en cosas que no van a importar.",
   sections: [
     {
       heading: 'What Buyers in Tucson Actually React To',

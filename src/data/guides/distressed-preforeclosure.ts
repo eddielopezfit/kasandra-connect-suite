@@ -6,8 +6,8 @@ const data: GuideContentData = {
   category: 'Distressed & Pre-Foreclosure',
   categoryEs: 'Propiedades en Dificultad',
   author: 'Kasandra Prieto',
-  intro: "If you're behind on mortgage payments — or worried you might fall behind — you have more options than you may realize. And the earlier you start exploring them, the more options you have. This guide is written plainly, without pressure, and with your best outcome as the goal.",
-  introEs: "Si estás atrasado en los pagos de tu hipoteca — o preocupado de que podrías atrasarte — tienes más opciones de las que quizás te das cuenta. Y cuanto antes empieces a explorarlas, más opciones tendrás. Esta guía está escrita claramente, sin presión, y con tu mejor resultado como objetivo.",
+  intro: "If you're behind on mortgage payments — or worried you might fall behind — you're probably not looking for a lecture right now. You need to know what's actually possible, and what to do first. This guide is written plainly, without pressure, and with your best outcome as the goal.",
+  introEs: "Si estás atrasado en los pagos de tu hipoteca — o preocupado de que podrías atrasarte — probablemente no estás buscando una clase magistral ahora mismo. Necesitas saber qué es realmente posible, y qué hacer primero. Esta guía está escrita claramente, sin presión, y con tu mejor resultado como objetivo.",
   sections: [
     {
       heading: 'Understanding the Timeline: From Missed Payment to Foreclosure',

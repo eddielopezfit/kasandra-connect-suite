@@ -6,12 +6,12 @@ const data: GuideContentData = {
   category: 'Buying a Home',
   categoryEs: 'Comprar una Casa',
   author: 'Kasandra Prieto',
-  intro: "You've outgrown your current home — or your situation has changed. Now you need to sell what you have and buy something that fits where you're going. Doing both at once is the most common and most stressful move in residential real estate. This guide breaks it down into a clear decision framework so you can move forward with confidence.",
-  introEs: "Has superado tu casa actual — o tu situación ha cambiado. Ahora necesitas vender lo que tienes y comprar algo que se adapte a donde vas. Hacer ambas cosas a la vez es el movimiento más común y más estresante en bienes raíces residenciales. Esta guía lo desglosa en un marco de decisión claro para que puedas avanzar con confianza.",
+  intro: "You've outgrown your current home — or life has shifted in a way that calls for something different. Doing both at once, selling and buying, is genuinely one of the more complicated moves in real estate. It's okay to feel like there are too many pieces. This guide gives you a clear picture of how the sequence works so you can move forward without the feeling that you're guessing.",
+  introEs: "Has superado tu casa actual — o la vida ha cambiado de una manera que pide algo diferente. Hacer ambas cosas a la vez, vender y comprar, es uno de los movimientos más complicados en bienes raíces. Está bien sentir que hay demasiadas piezas. Esta guía te da un panorama claro de cómo funciona la secuencia para que puedas avanzar sin la sensación de que estás adivinando.",
   sections: [
     {
-      heading: 'The Core Dilemma: Sell First or Buy First?',
-      headingEs: 'El Dilema Central: ¿Vender Primero o Comprar Primero?',
+      heading: 'The Real Question: Sell First or Buy First?',
+      headingEs: 'La Pregunta Real: ¿Vender Primero o Comprar Primero?',
       variant: 'comparison',
       content: "There is no universally right answer — it depends on your financial position, risk tolerance, and the specific Tucson market conditions at the time you're moving.",
       contentEs: "No hay una respuesta universalmente correcta — depende de tu posición financiera, tolerancia al riesgo y las condiciones específicas del mercado de Tucson en el momento en que te estás mudando.",

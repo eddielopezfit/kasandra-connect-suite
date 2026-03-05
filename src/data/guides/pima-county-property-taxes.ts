@@ -6,8 +6,8 @@ const data: GuideContentData = {
   category: 'Buying a Home',
   categoryEs: 'Comprar una Casa',
   author: 'Kasandra Prieto',
-  intro: "Property taxes are one of the most common questions Tucson homebuyers and sellers ask — and one of the most misunderstood. Arizona's property tax system works differently than most states, and Pima County has specific programs that can significantly reduce your tax burden if you qualify. This guide explains it clearly.",
-  introEs: "Los impuestos de propiedad son una de las preguntas más comunes que hacen los compradores y vendedores de Tucson — y una de las más malentendidas. El sistema de impuestos de propiedad de Arizona funciona de manera diferente a la mayoría de los estados, y el Condado de Pima tiene programas específicos que pueden reducir significativamente tu carga fiscal si calificas. Esta guía lo explica claramente.",
+  intro: "Property taxes come up in almost every conversation I have with Tucson buyers, and there's almost always some confusion about how Arizona's system actually works. That's okay — it's genuinely different from most states, and the jargon doesn't help. This guide explains it plainly, including the programs that can reduce what you owe if you qualify.",
+  introEs: "Los impuestos de propiedad surgen en casi todas las conversaciones que tengo con compradores de Tucson, y casi siempre hay algo de confusión sobre cómo funciona realmente el sistema de Arizona. Eso está bien — es genuinamente diferente a la mayoría de los estados, y la jerga no ayuda. Esta guía lo explica claramente, incluyendo los programas que pueden reducir lo que debes si calificas.",
   sections: [
     {
       heading: "How Arizona's Property Tax System Works",
