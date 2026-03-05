@@ -287,9 +287,12 @@ function GuidesContent() {
       )}
 
       {/* Category Filter — Responsive Nav (stories removed from filter) */}
+      {/* top-14 (56px) matches the scrolled nav height (py-3 + content).        */}
+      {/* The guides section is always below the fold so the nav is always        */}
+      {/* in scrolled state when this bar becomes sticky — no overlap.            */}
       <section 
         id="guides-section" 
-        className="bg-cc-sand py-6 md:py-8 border-b border-cc-sand-dark sticky top-16 z-40 w-full"
+        className="bg-cc-sand py-6 md:py-8 border-b border-cc-sand-dark sticky top-14 z-40 w-full"
       >
         <div className="container mx-auto px-4">
           <ResponsiveCategoryNav

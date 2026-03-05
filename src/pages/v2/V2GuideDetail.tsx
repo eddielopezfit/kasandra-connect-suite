@@ -13,9 +13,9 @@ import GuidePullQuote from "@/components/v2/guides/GuidePullQuote";
 import { getGovernedMediaSlots, validateMediaSlots, type MediaSlot } from "@/lib/guides/guideMediaSlots";
 import { useGuideScrollTracking } from "@/hooks/useGuideScrollTracking";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { markGuideOpened, setLastGuideId } from '@/lib/guides/personalization';
+import { markGuideOpened, setLastGuideId, getGuidesRead } from '@/lib/guides/personalization';
 import { getGuideById, type GuideCategory } from "@/lib/guides/guideRegistry";
-import { getSessionContext, updateSessionContext } from "@/lib/analytics/selenaSession";
+import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { GUIDE_DATA_LOADERS, type GuideContentData } from "@/data/guides";
 import { validateRegistryLoadersOnce } from "@/lib/guides/validate";
 
@@ -77,17 +77,21 @@ function GuideDetailContent() {
         guide_id: guideId,
         guide_title: guideTitle,
       });
+
+      // markGuideOpened deduplicates in localStorage (Set semantics).
+      // Must be called BEFORE getGuidesRead() so the current guide is included.
       markGuideOpened(guideId);
       setLastGuideId(guideId);
 
-      const ctx = getSessionContext();
-      const prevGuideId = ctx?.last_guide_id;
-      if (prevGuideId !== guideId) {
-        updateSessionContext({
-          last_guide_id: guideId,
-          guides_read: (ctx?.guides_read ?? 0) + 1,
-        });
-      }
+      // Derive guides_read from the unique localStorage array — not a naive
+      // increment. Previous bug: `prevGuideId !== guideId` only blocked same-
+      // guide consecutive re-entry; returning to any earlier guide re-counted it.
+      // Now: length of the deduped array is always the canonical unique count.
+      const uniqueCount = getGuidesRead().length;
+      updateSessionContext({
+        last_guide_id: guideId,
+        guides_read: uniqueCount,
+      });
     }
   }, [guideId, guide, guideTitle]);
 
