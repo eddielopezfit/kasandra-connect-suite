@@ -15,6 +15,10 @@ import {
   ResponsiveCategoryNav,
   DecisionLane,
   TrustStoriesSection,
+  CognitiveProgressBar,
+  ContextualSelenaPrompt,
+  ContinueReadingCard,
+  IntentJourneyMap,
 } from "@/components/v2/guides";
 import type { DecisionLaneIntent } from "@/components/v2/guides/DecisionLane";
 import {
@@ -31,7 +35,8 @@ import {
   type Guide,
 } from "@/lib/guides/personalization";
 import { getCategoryColor, getDecisionLabel } from "@/lib/guides/categoryColors";
-import { getLiveGuides } from "@/lib/guides/guideRegistry";
+import { getLiveGuides, GUIDE_REGISTRY } from "@/lib/guides/guideRegistry";
+import { getGovernedMediaSlots } from "@/lib/guides/guideMediaSlots";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { useCognitiveStage } from "@/hooks/useCognitiveStage";
 import { useRecommendationEngine } from "@/hooks/useRecommendationEngine";
@@ -132,7 +137,22 @@ function getGuideCards(): Guide[] {
     descriptionEs: entry.descriptionEs,
     category: entry.category,
     isFeatured: entry.isFeatured,
+    tier: entry.tier,
+    readTime: entry.readTime,
+    readTimeEs: entry.readTimeEs,
   }));
+}
+
+/** Get orientation thumbnail src for a guide (Tier 1/2 only) */
+function getGuideThumbnail(guideId: string): string | null {
+  const slots = getGovernedMediaSlots(guideId);
+  const orientation = slots.find(s => s.variant === 'orientation' && s.src);
+  return orientation?.src ?? null;
+}
+
+/** Get guide tier from registry for visual hierarchy */
+function getGuideTier(guideId: string): number {
+  return GUIDE_REGISTRY.find(g => g.id === guideId)?.tier ?? 2;
 }
 
 // Intent-aware CTA labels
@@ -301,12 +321,51 @@ function GuidesContent() {
         onContinue={handleContinue}
         onBrowse={handleBrowse}
       />
+
+      {/* BLUE OCEAN — Feature 1: Cognitive Progress Bar */}
+      {/* Shows stage label + affirmation only after first guide read. No CTA — pure context. */}
+      <CognitiveProgressBar
+        stage={stage}
+        isVisible={shouldShowProgressBar}
+      />
       
-      {/* Layer 2: Decision Lane — always visible */}
+      {/* Layer 2: Decision Lane — enriched with guide counts + top guide preview */}
       <DecisionLane
         activeIntent={activeIntent}
         onIntentSelect={handleDecisionLaneIntent}
       />
+
+      {/* BLUE OCEAN — Feature 6: Intent Journey Map */}
+      {/* Appears only when intent is set. Visual 4-step path with guide + tool previews. */}
+      {activeIntent && (
+        <IntentJourneyMap
+          intent={activeIntent}
+          currentStep={Math.min(4, Math.max(1, stage.level - 1)) as 1 | 2 | 3 | 4}
+        />
+      )}
+
+      {/* BLUE OCEAN — Feature 4: Contextual Selena Prompt */}
+      {/* Stage-aware message between Decision Lane and grid. Uses getSelenaPromptForStage(). */}
+      <div className="bg-cc-ivory pt-2 pb-4 border-b border-cc-sand-dark/30">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <ContextualSelenaPrompt
+            stageId={stageId}
+            guidesReadCount={guidesReadCount}
+            onAskSelena={handleAskSelena}
+            onRequestSummary={handleRequestSummary}
+            variant="compact"
+          />
+        </div>
+      </div>
+
+      {/* BLUE OCEAN — Feature 3: Continue Reading Card */}
+      {/* Netflix-style prominent card when user has a guide in progress */}
+      {lastGuideId && (
+        <ContinueReadingCard
+          guideId={lastGuideId}
+          onClick={handleGuideClick}
+        />
+      )}
       
       {/* Layer 3: Recommended For You Carousel */}
       {recommendedItems.length > 0 && (
@@ -347,11 +406,14 @@ function GuidesContent() {
       {/* Educational Guides Grid — stories excluded */}
       <section className="bg-cc-ivory py-16 pb-24 md:pb-16">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {filteredGuides.map((guide) => {
               const gridBadge = getGridBadge(guide.id, guide.category);
               const colors = getCategoryColor(guide.category);
               const decisionLabel = getDecisionLabel(guide.id);
+              const tier = guide.tier ?? 2;
+              const thumbnail = tier < 3 ? getGuideThumbnail(guide.id) : null;
+              const isTier1 = tier === 1;
               
               return (
                 <Link
@@ -359,37 +421,68 @@ function GuidesContent() {
                   to={`/v2/guides/${guide.id}`}
                   onClick={() => handleGuideClick(guide.id)}
                   className={cn(
-                    "group bg-white rounded-xl p-6 shadow-soft hover:shadow-elevated transition-all duration-300 border border-cc-sand-dark/50 hover:border-cc-gold/30",
-                    colors.accent
+                    "group bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-elevated transition-all duration-300 border border-cc-sand-dark/50 hover:border-cc-gold/30 flex flex-col",
+                    colors.accent,
+                    isTier1 && "ring-1 ring-cc-navy/8",
+                    isTier1 && guide.isFeatured && "md:col-span-2 lg:col-span-1"
                   )}
                 >
-                  <div className="flex items-center gap-2 mb-3 flex-wrap">
-                    <span className={cn("px-3 py-1 rounded-full text-xs font-medium border", colors.subtle)}>
-                      {getCategoryLabel(guide.category)}
-                    </span>
-                    {gridBadge && gridBadge !== 'read' && (
-                      <GuideCardBadge badgeType={gridBadge} />
-                    )}
-                    {gridBadge === 'read' && (
-                      <span className="w-2 h-2 rounded-full bg-emerald-400" title={t("Read", "Leído")} />
-                    )}
-                  </div>
-                  
-                  {decisionLabel && (
-                    <span className="text-xs text-cc-slate/70 font-medium mb-2 block">
-                      {t(decisionLabel.en, decisionLabel.es)}
-                    </span>
+                  {/* Tier 1: hero thumbnail image strip */}
+                  {thumbnail && isTier1 && (
+                    <div className="relative h-36 overflow-hidden bg-cc-sand flex-shrink-0">
+                      <img
+                        src={thumbnail}
+                        alt={t(guide.title, guide.titleEs)}
+                        loading="lazy"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                      {/* Pillar badge overlaid on image */}
+                      <span className="absolute top-3 left-3 px-2 py-0.5 bg-cc-navy/90 text-white text-[10px] font-semibold uppercase tracking-wider rounded-full">
+                        {t("Pillar Guide", "Guía Principal")}
+                      </span>
+                    </div>
                   )}
-                  
-                  <h3 className="font-serif text-xl text-cc-charcoal mb-3 group-hover:text-cc-navy transition-colors">
-                    {t(guide.title, guide.titleEs)}
-                  </h3>
-                  <p className="text-cc-slate text-sm leading-relaxed mb-4">
-                    {t(guide.description, guide.descriptionEs)}
-                  </p>
-                  <div className="flex items-center text-cc-gold font-medium text-sm group-hover:gap-2 transition-all">
-                    {t("Get Clarity", "Obtener Claridad")}
-                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+
+                  <div className="p-6 flex flex-col flex-1">
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      <span className={cn("px-3 py-1 rounded-full text-xs font-medium border", colors.subtle)}>
+                        {getCategoryLabel(guide.category)}
+                      </span>
+                      {gridBadge && gridBadge !== 'read' && (
+                        <GuideCardBadge badgeType={gridBadge} />
+                      )}
+                      {gridBadge === 'read' && (
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0" title={t("Read", "Leído")} />
+                      )}
+                    </div>
+                    
+                    {decisionLabel && (
+                      <span className="text-xs text-cc-slate/70 font-medium mb-2 block">
+                        {t(decisionLabel.en, decisionLabel.es)}
+                      </span>
+                    )}
+                    
+                    <h3 className={cn(
+                      "font-serif text-cc-charcoal mb-3 group-hover:text-cc-navy transition-colors",
+                      isTier1 ? "text-xl leading-snug" : "text-lg"
+                    )}>
+                      {t(guide.title, guide.titleEs)}
+                    </h3>
+                    <p className="text-cc-slate text-sm leading-relaxed mb-4 flex-1">
+                      {t(guide.description, guide.descriptionEs)}
+                    </p>
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className="flex items-center text-cc-gold font-medium text-sm group-hover:gap-2 transition-all">
+                        {t("Get Clarity", "Obtener Claridad")}
+                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                      {guide.readTime && (
+                        <span className="text-xs text-cc-slate/50 flex-shrink-0 ml-3">
+                          {t(guide.readTime, guide.readTimeEs ?? guide.readTime)}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </Link>
               );

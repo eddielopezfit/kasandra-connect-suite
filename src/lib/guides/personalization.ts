@@ -22,6 +22,9 @@ export interface Guide {
   descriptionEs: string;
   category: string;
   isFeatured?: boolean;
+  tier?: number;
+  readTime?: string;
+  readTimeEs?: string;
 }
 
 export interface RecommendedGuide {

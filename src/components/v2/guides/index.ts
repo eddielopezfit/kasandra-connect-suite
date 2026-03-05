@@ -23,6 +23,8 @@ export { default as TrustStoriesSection } from './TrustStoriesSection';
 export { CognitiveProgressBar } from './CognitiveProgressBar';
 export { ContextualSelenaPrompt } from './ContextualSelenaPrompt';
 export { ResponsiveCategoryNav } from './ResponsiveCategoryNav';
+export { ContinueReadingCard } from './ContinueReadingCard';
+export { IntentJourneyMap } from './IntentJourneyMap';
 
 // Guide Media Components
 export { default as GuideImage } from './GuideImage';
