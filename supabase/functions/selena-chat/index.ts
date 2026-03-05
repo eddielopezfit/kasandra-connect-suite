@@ -2267,14 +2267,17 @@ serve(async (req) => {
       let daysToClose = 145;
       let holdingCostPerDay = 18;
       try {
-        const { data: pulse } = await supabase
-          .from("market_pulse_settings")
-          .select("days_to_close, holding_cost_per_day")
-          .eq("market_name", "Tucson_Overall")
-          .single();
-        if (pulse) {
-          daysToClose = pulse.days_to_close ?? daysToClose;
-          holdingCostPerDay = Number(pulse.holding_cost_per_day) || holdingCostPerDay;
+        if (rlUrl && rlKey) {
+          const pulseClient = createClient(rlUrl, rlKey);
+          const { data: pulse } = await pulseClient
+            .from("market_pulse_settings")
+            .select("days_to_close, holding_cost_per_day")
+            .eq("market_name", "Tucson_Overall")
+            .single();
+          if (pulse) {
+            daysToClose = pulse.days_to_close ?? daysToClose;
+            holdingCostPerDay = Number(pulse.holding_cost_per_day) || holdingCostPerDay;
+          }
         }
       } catch (_e) { /* fallback to defaults */ }
 
