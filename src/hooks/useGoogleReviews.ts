@@ -93,7 +93,7 @@ async function fetchGoogleReviews(): Promise<{ reviews: GoogleReview[]; source: 
     if (cached) {
       const { reviews, cachedAt }: CachedReviews = JSON.parse(cached);
       if (Date.now() - cachedAt < CACHE_TTL_MS && reviews.length > 0) {
-        console.log('[GoogleReviews] Using cached reviews');
+        if (import.meta.env.DEV) console.log('[GoogleReviews] Using cached reviews');
         return { reviews, source: 'cache' };
       }
     }
@@ -102,7 +102,7 @@ async function fetchGoogleReviews(): Promise<{ reviews: GoogleReview[]; source: 
   }
 
   // Strategy 3: Return fallback
-  console.log('[GoogleReviews] Using fallback reviews');
+  if (import.meta.env.DEV) console.log('[GoogleReviews] Using fallback reviews');
   return { reviews: FALLBACK_REVIEWS, source: 'fallback' };
 }
 

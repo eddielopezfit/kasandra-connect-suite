@@ -37,7 +37,7 @@ export async function bridgeAuthToLead(user: User): Promise<string | null> {
         had_existing_id: !!existingLeadId,
       });
       
-      console.log('[bridgeAuthToLead] Lead ID bridged:', data.lead_id);
+      if (import.meta.env.DEV) console.log('[bridgeAuthToLead] Lead ID bridged:', data.lead_id);
       return data.lead_id;
     }
 

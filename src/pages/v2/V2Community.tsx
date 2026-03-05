@@ -49,6 +49,38 @@ const V2CommunityContent = () => {
       {/* Google Reviews Section */}
       <GoogleReviewsSection />
 
+      {/* Selena mid-page trust prompt — trust formed here → action */}
+      <section className="py-10 bg-cc-navy">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+            <div className="flex-1">
+              <p className="text-white font-semibold text-lg leading-snug">
+                {t(
+                  "Ready to talk about buying or selling in Tucson?",
+                  "¿Listo/a para hablar sobre comprar o vender en Tucson?"
+                )}
+              </p>
+              <p className="text-white/60 text-sm mt-1">
+                {t(
+                  "Selena is available 24/7 — no pressure, bilingual, completely free.",
+                  "Selena está disponible 24/7 — sin presión, bilingüe, completamente gratis."
+                )}
+              </p>
+            </div>
+            <Button
+              onClick={() => {
+                logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2/community', intent: 'explore' });
+                openChat({ source: 'community_mid_page', intent: 'explore' });
+              }}
+              className="shrink-0 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-7 shadow-gold"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              {t("Chat with Selena", "Hablar con Selena")}
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Arizona Diaper Bank */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">

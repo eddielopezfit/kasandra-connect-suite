@@ -33,17 +33,17 @@ export const SelenaWidgetProvider = ({ children }: SelenaWidgetProviderProps) =>
 
   const conversation = useConversation({
     onConnect: () => {
-      console.log("Connected to Selena AI");
+      if (import.meta.env.DEV) console.log("Connected to Selena AI");
       toast.success("Connected to Selena AI", {
         description: "You can start speaking now.",
       });
     },
     onDisconnect: () => {
-      console.log("Disconnected from Selena AI");
+      if (import.meta.env.DEV) console.log("Disconnected from Selena AI");
       setIsOpen(false);
     },
     onMessage: (message) => {
-      console.log("Message from Selena:", message);
+      if (import.meta.env.DEV) console.log("Message from Selena:", message);
     },
     onError: (error) => {
       console.error("Selena AI error:", error);

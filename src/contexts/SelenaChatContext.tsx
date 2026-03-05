@@ -1104,7 +1104,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       if (data.lead_id && data.lead_id !== leadId) {
         setLeadId(data.lead_id);
         saveLeadId(data.lead_id);
-        console.log('[Selena] Lead identity captured:', data.lead_id);
+        if (import.meta.env.DEV) console.log('[Selena] Lead identity captured:', data.lead_id);
       }
       
       // Sync detected intent to SessionContext (Intent-Aware Filtering)
@@ -1112,9 +1112,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       if (data.detected_intent) {
         const applied = setFieldIfEmpty('intent', data.detected_intent);
         if (applied) {
-          console.log('[Selena] Intent set to SessionContext:', data.detected_intent);
+          if (import.meta.env.DEV) console.log('[Selena] Intent set to SessionContext:', data.detected_intent);
         } else {
-          console.log('[Selena] Intent detection skipped (already declared):', data.detected_intent);
+          if (import.meta.env.DEV) console.log('[Selena] Intent detection skipped (already declared):', data.detected_intent);
         }
       }
 
@@ -1507,7 +1507,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     if (newLeadId && newLeadId !== leadId) {
       setLeadId(newLeadId);
       saveLeadId(newLeadId);
-      console.log('[Selena] Lead identity set externally:', newLeadId);
+      if (import.meta.env.DEV) console.log('[Selena] Lead identity set externally:', newLeadId);
     }
   }, [leadId]);
 
@@ -1595,7 +1595,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
   const setCalculatorResult = useCallback((advantage: CalculatorAdvantage) => {
     setHasUsedCalculator(true);
     setLastCalculatorAdvantage(advantage);
-    console.log('[Selena] Calculator result set:', advantage);
+    if (import.meta.env.DEV) console.log('[Selena] Calculator result set:', advantage);
   }, []);
 
   return (

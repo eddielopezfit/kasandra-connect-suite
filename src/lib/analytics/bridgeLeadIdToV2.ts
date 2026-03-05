@@ -30,7 +30,7 @@ export function bridgeLeadIdToV2(leadId: string, source?: string): void {
     source: source || 'native_form',
   });
 
-  console.log('[LeadBridge] Lead ID persisted:', leadId);
+  if (import.meta.env.DEV) console.log('[LeadBridge] Lead ID persisted:', leadId);
 }
 
 /**

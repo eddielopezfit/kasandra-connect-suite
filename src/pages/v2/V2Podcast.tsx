@@ -2,12 +2,15 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import V2Layout from "@/components/v2/V2Layout";
-import { Radio, Youtube, Users, TrendingUp, Heart } from "lucide-react";
+import { Radio, Youtube, Users, TrendingUp, Heart, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-podcast-homes.png";
 
 const V2PodcastContent = () => {
   const { t } = useLanguage();
+  const { openChat } = useSelenaChat();
   useDocumentHead({
     titleEn: "Lifting You Up Podcast | Tucson Real Estate & Community",
     titleEs: "Podcast Lifting You Up | Bienes Raíces y Comunidad en Tucson",
@@ -124,6 +127,39 @@ const V2PodcastContent = () => {
                 {t("Episodes available on YouTube", "Episodios disponibles en YouTube")}
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Selena Trust Bridge — listeners thinking about real estate */}
+      <section className="py-14 bg-cc-sand">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl p-8 border border-cc-sand-dark/30 shadow-soft text-center">
+            <div className="w-12 h-12 rounded-full bg-cc-gold/15 flex items-center justify-center mx-auto mb-4">
+              <MessageCircle className="w-6 h-6 text-cc-gold" />
+            </div>
+            <h3 className="font-serif text-2xl font-bold text-cc-navy mb-3">
+              {t(
+                "Heard something on the show that got you thinking?",
+                "¿Escuchaste algo en el programa que te hizo pensar?"
+              )}
+            </h3>
+            <p className="text-cc-charcoal text-sm mb-6 max-w-md mx-auto">
+              {t(
+                "Ask Selena any real estate question — buying, selling, cash offers, or just exploring your options. Free, confidential, available 24/7.",
+                "Pregúntale a Selena cualquier pregunta de bienes raíces — comprar, vender, ofertas en efectivo, o solo explorar tus opciones. Gratis, confidencial, disponible 24/7."
+              )}
+            </p>
+            <Button
+              onClick={() => {
+                logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2/podcast', intent: 'explore' });
+                openChat({ source: 'podcast_page', intent: 'explore' });
+              }}
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              {t("Ask Selena a Question", "Hazle una Pregunta a Selena")}
+            </Button>
           </div>
         </div>
       </section>

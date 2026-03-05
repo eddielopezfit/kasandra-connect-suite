@@ -62,7 +62,7 @@ const V2SellerReadinessContent = () => {
           },
         }).then((res) => {
           if (res.data?.ok) {
-            console.log("[SellerReadiness] Re-scored returning lead:", res.data.lead_score);
+            if (import.meta.env.DEV) console.log("[SellerReadiness] Re-scored returning lead:", res.data.lead_score);
           }
         }).catch((err) => console.error("[SellerReadiness] Re-score error:", err));
       }

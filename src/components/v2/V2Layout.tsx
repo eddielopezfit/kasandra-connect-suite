@@ -1,5 +1,6 @@
 import { ReactNode, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
+import { Calendar } from "lucide-react";
 import V2Navigation from "./V2Navigation";
 import V2Footer from "./V2Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -89,7 +90,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         has_score: typeof snapshot.readiness_score === 'number',
         last_page: snapshot.last_page,
       });
-      console.log('[P1.1] Session restored from snapshot');
+      if (import.meta.env.DEV) console.log('[P1.1] Session restored from snapshot');
     }).catch(() => {});
   }, []); // Run once on mount
   
@@ -113,6 +114,11 @@ const V2Layout = ({ children }: V2LayoutProps) => {
     return () => subscription.unsubscribe();
   }, []);
   
+  // Pages where the sticky book bar should be suppressed —
+  // the booking CTA is already the primary action on these pages.
+  const SUPPRESS_STICKY_BOOK = ['/v2/book', '/v2/thank-you', '/v2/book/confirmed', '/ad/'];
+  const showStickyBook = !SUPPRESS_STICKY_BOOK.some(p => location.pathname.startsWith(p));
+
   return (
     <SelenaChatProvider>
       {/* IMPORTANT: Do NOT add key={language} here - it causes full tree remount */}
@@ -125,6 +131,26 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         {/* Selena Chat - Site Wide */}
         <SelenaFloatingButton />
         <SelenaChatDrawer />
+
+        {/* Sticky mobile Book CTA — lg:hidden so desktop nav button handles it */}
+        {showStickyBook && (
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 pointer-events-none">
+            {/* Gradient fade so content beneath isn't hard-cut */}
+            <div className="h-6 bg-gradient-to-t from-white/60 to-transparent" />
+            <div className="bg-white/95 backdrop-blur-sm border-t border-cc-sand-dark/30 px-4 py-3 pointer-events-auto
+                            pb-[max(12px,env(safe-area-inset-bottom))]">
+              <Link
+                to="/v2/book"
+                className="flex items-center justify-center gap-2 w-full bg-cc-gold hover:bg-cc-gold-dark
+                           text-cc-navy font-semibold rounded-full py-3 text-sm shadow-gold
+                           transition-all active:scale-95"
+              >
+                <Calendar className="w-4 h-4" />
+                Book a Free Consultation
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </SelenaChatProvider>
   );
