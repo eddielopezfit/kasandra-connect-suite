@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import SellerFunnelLayout from "@/components/ad/SellerFunnelLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -392,34 +392,99 @@ const SellerResultContent = () => {
         )}
 
         {/* Success State CTA */}
-        {isUnlocked && (
-          <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-6 text-center">
-            <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
-            <h3 className="font-serif text-xl text-white mb-2">
-              {t("Your Net Sheet is Ready", "Tu reporte está listo")}
-            </h3>
-            <p className="text-white/60 text-sm mb-4">
-              {t(
-                `We've sent a detailed breakdown to ${email}. Kasandra will personally reach out shortly.`,
-                `Hemos enviado un desglose detallado a ${email}. Kasandra se comunicará contigo pronto.`
-              )}
-            </p>
-            <Button
-              onClick={openChat}
-              variant="outline"
-              className="border-white/30 text-white hover:bg-white/10"
-            >
-              {t("Chat with Selena to Schedule", "Chatea con Selena para agendar")}
-            </Button>
-          </div>
-        )}
+        {isUnlocked && (() => {
+          // Build pre-population params for the Seller Decision Wizard.
+          // Passes situation + timeline so Step 1 chips are pre-selected —
+          // the user skips re-entering what they already told us.
+          const wizardParams = new URLSearchParams({
+            from: "ad_funnel",
+            ...(quizAnswers.situation && { situation: quizAnswers.situation }),
+            ...(quizAnswers.timeline && { timeline: quizAnswers.timeline }),
+          }).toString();
+
+          return (
+            <div className="space-y-4">
+              {/* Confirmation strip */}
+              <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-5 text-center">
+                <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
+                <p className="text-white font-medium">
+                  {t("Your Net Sheet is on its way", "Tu reporte está en camino")}
+                </p>
+                <p className="text-white/50 text-sm mt-1">
+                  {t(`Sent to ${email}`, `Enviado a ${email}`)}
+                </p>
+              </div>
+
+              {/* Primary next step — Seller Decision Wizard */}
+              <div className="bg-cc-gold/10 border border-cc-gold/40 rounded-2xl p-6">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-cc-gold/20 flex items-center justify-center shrink-0">
+                    <ArrowRight className="w-5 h-5 text-cc-gold" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-lg text-white font-semibold leading-tight">
+                      {t(
+                        "Now get your personalized selling recommendation",
+                        "Ahora obtén tu recomendación personalizada de venta"
+                      )}
+                    </h3>
+                    <p className="text-white/60 text-sm mt-1">
+                      {t(
+                        "Answer 4 more questions. Kasandra reviews your full picture before your call — no surprises.",
+                        "Responde 4 preguntas más. Kasandra revisa tu situación completa antes de tu llamada — sin sorpresas."
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2 mb-5 text-xs text-white/50">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3 text-cc-gold" />
+                    {t("Your situation pre-filled", "Tu situación pre-llenada")}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3 text-cc-gold" />
+                    {t("Takes about 2 minutes", "Tarda unos 2 minutos")}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3 text-cc-gold" />
+                    {t("Get a written receipt", "Obtén un recibo escrito")}
+                  </span>
+                </div>
+
+                <Button
+                  asChild
+                  className="w-full bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold py-6 rounded-full text-base shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
+                >
+                  <Link to={`/v2/seller-decision?${wizardParams}`}>
+                    {t("Get My Selling Recommendation", "Obtener Mi Recomendación de Venta")}
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Secondary — Selena chat */}
+              <div className="text-center">
+                <button
+                  onClick={() => openChat({ source: "post_funnel_unlock", intent: "sell" })}
+                  className="text-white/50 text-sm hover:text-white/80 underline underline-offset-2 transition-colors"
+                >
+                  {t(
+                    "Prefer to talk first? Chat with Selena →",
+                    "¿Prefieres hablar primero? Chatea con Selena →"
+                  )}
+                </button>
+              </div>
+            </div>
+          );
+        })()}
 
         {!isUnlocked && (
           <div className="text-center">
             <p className="text-white/50 text-sm">
               {t("Prefer to talk to a human?", "¿Prefieres hablar con una persona?")}{" "}
               <button 
-                onClick={openChat}
+                onClick={() => openChat({ source: 'pre_unlock', intent: 'sell' })}
                 className="text-cc-gold hover:text-cc-gold/80 underline underline-offset-2"
               >
                 {t("Chat with Selena to schedule", "Chatea con Selena para agendar")}

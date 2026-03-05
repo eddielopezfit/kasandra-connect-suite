@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSearchParams } from "react-router-dom";
 import QuizFunnelLayout from "@/components/v2/QuizFunnelLayout";
 import { Progress } from "@/components/ui/progress";
 import { StepSituation, StepPropertySnapshot, StepCondition, StepNeighborhood, StepDualPath, StepContact } from "@/components/v2/seller-decision";
@@ -14,7 +15,35 @@ import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSes
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
 
+// ─── Ad-funnel pre-population helpers ───────────────────────────────────────
+// Maps quiz answer strings (ad funnel) to wizard type values.
+// Quiz situation: inherited | relocating | downsizing | other
+// Wizard Situation: inherited | relocating | downsizing | divorce | tired_landlord | exploring
+const AD_SITUATION_MAP: Record<string, Situation> = {
+  inherited: "inherited",
+  relocating: "relocating",
+  downsizing: "downsizing",
+  other: "exploring",
+};
 
+// Quiz timeline: asap | soon | flexible | no-rush
+// Wizard Timeline: soon | considering | exploring
+const AD_TIMELINE_MAP: Record<string, Timeline> = {
+  asap: "soon",
+  soon: "soon",
+  flexible: "considering",
+  "no-rush": "exploring",
+};
+
+function seedWizardFromParams(params: URLSearchParams): WizardState {
+  const rawSituation = params.get("situation") ?? "";
+  const rawTimeline = params.get("timeline") ?? "";
+  const seed: WizardState = {};
+  if (AD_SITUATION_MAP[rawSituation]) seed.situation = AD_SITUATION_MAP[rawSituation];
+  if (AD_TIMELINE_MAP[rawTimeline]) seed.timeline = AD_TIMELINE_MAP[rawTimeline];
+  return seed;
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 const TOTAL_STEPS = 7;
 
@@ -32,8 +61,11 @@ interface WizardState {
 
 const V2SellerDecision = () => {
   const { t } = useLanguage();
+  const [searchParams] = useSearchParams();
   const [step, setStep] = useState(1);
-  const [wizardData, setWizardData] = useState<WizardState>({});
+  // Seed wizardData from URL params when arriving from the ad funnel.
+  // Falls back to empty state for direct navigation — no behavior change.
+  const [wizardData, setWizardData] = useState<WizardState>(() => seedWizardFromParams(searchParams));
 
   useDocumentHead({
     titleEn: "Discover Your Best Selling Path | Tucson Home Seller Decision Tool",
@@ -48,7 +80,8 @@ const V2SellerDecision = () => {
   useEffect(() => {
     logEvent('seller_decision_step_viewed', { step });
     if (step === 1) {
-      logEvent('seller_decision_started', {});
+      const source = searchParams.get("from") ?? "direct";
+      logEvent('seller_decision_started', { source, preseeded: !!searchParams.get("situation") });
     }
   }, [step]);
 
