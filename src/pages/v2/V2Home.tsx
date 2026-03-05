@@ -79,7 +79,7 @@ const V2HomeContent = () => {
         description: "Bilingual REALTOR® serving the Tucson community with integrity, heart, and expertise.",
         url: "https://kasandraprieto.com/v2",
         image: "https://kasandraprieto.com/og-kasandra.jpg",
-        telephone: "+1-520-000-0000",
+        telephone: "+1-520-261-2628",
         address: { "@type": "PostalAddress", addressLocality: "Tucson", addressRegion: "AZ", addressCountry: "US" },
         areaServed: { "@type": "City", name: "Tucson" },
         knowsLanguage: ["en", "es"],

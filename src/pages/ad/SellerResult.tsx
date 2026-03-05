@@ -12,8 +12,9 @@ import { bridgeQuizResultsToV2, bridgeLeadIdToV2, setStoredUserName, setStoredEm
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { track, trackCustom, getDifferenceBand } from "@/lib/metaPixel";
+import { calculateNetToSellerComparison, type Timeline } from "@/lib/calculator/netToSellerAlgorithm";
 
-// Value ranges - midpoints for calculation
+// Value ranges - midpoints for calculation (single source of truth)
 const VALUE_RANGES: Record<string, number> = {
   "under-200k": 175000,
   "200-350k": 275000,
@@ -21,10 +22,23 @@ const VALUE_RANGES: Record<string, number> = {
   "over-500k": 600000,
 };
 
-// Calculator function
-const calculateNetProceeds = (estimatedValue: number) => {
-  const cashOffer = Math.round(estimatedValue * 0.75);
-  const listingNet = Math.round(estimatedValue * 0.94 - 5000);
+// Map quiz timeline IDs → calculator Timeline type
+// Keeps ad funnel and main calculator in sync via shared algorithm
+const TIMELINE_MAP: Record<string, Timeline> = {
+  asap: "asap",
+  soon: "30days",
+  flexible: "60days",
+  "no-rush": "flexible",
+};
+
+// Unified calculator — uses the same algorithm as the main Tucson calculator
+// Eliminates the prior discrepancy where ad funnel showed cashOffer = value * 0.75
+// while main calculator used market.cashDiscountRate (12%). Now both use 12%.
+const calculateNetProceeds = (estimatedValue: number, quizTimeline?: string) => {
+  const timeline: Timeline = TIMELINE_MAP[quizTimeline ?? ""] ?? "30days";
+  const results = calculateNetToSellerComparison({ estimatedValue, timeline });
+  const cashOffer = Math.round(results.cash.netProceeds);
+  const listingNet = Math.round(results.traditional.netProceeds);
   const difference = listingNet - cashOffer;
   return { estimatedValue, cashOffer, listingNet, difference };
 };
@@ -58,11 +72,12 @@ const SellerResultContent = () => {
     address: searchParams.get("address") || "",
   };
 
-  // Calculate net proceeds
+  // Calculate net proceeds using unified algorithm (same as main Tucson calculator)
+  // quizAnswers.timeline is passed so timeline-based holding costs are accurate
   const calculations = useMemo(() => {
     const estimatedValue = VALUE_RANGES[quizAnswers.value] || 275000;
-    return calculateNetProceeds(estimatedValue);
-  }, [quizAnswers.value]);
+    return calculateNetProceeds(estimatedValue, quizAnswers.timeline);
+  }, [quizAnswers.value, quizAnswers.timeline]);
   
   // Store difference for booking page context continuity
   useEffect(() => {
