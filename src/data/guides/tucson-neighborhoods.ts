@@ -64,6 +64,45 @@ const data: GuideContentData = {
       content: "The best way to narrow down neighborhoods is a combination of knowing your priorities and talking to someone who has worked in all of them.\n\nKasandra knows Tucson's residential markets from direct transaction experience — not just statistics. If you'd like to talk through what area makes sense for your situation, or take our neighborhood quiz to get a personalized recommendation, Selena can help you get started.",
       contentEs: "La mejor manera de reducir los vecindarios es una combinación de conocer tus prioridades y hablar con alguien que haya trabajado en todos ellos.\n\nKasandra conoce los mercados residenciales de Tucson desde la experiencia directa en transacciones — no solo estadísticas.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "What is the most desirable neighborhood in Tucson?",
+          questionEs: "¿Cuál es el vecindario más deseable en Tucson?",
+          answer: "Depends entirely on what desirable means to you — and I mean that honestly, not as a dodge. The Catalina Foothills (85718, 85750) consistently command the highest prices because of the mountain views, larger lots, and top-rated schools, but they're the furthest from downtown energy. Oro Valley and Marana appeal to buyers who want newer construction and suburban amenities. Midtown Tucson near the university corridor attracts buyers who want walkability, culture, and character in older homes. There's no single answer — let's talk about what your daily life looks like and I can tell you exactly where you'd be happiest.",
+          answerEs: "Depende completamente de lo que deseable significa para usted — y lo digo honestamente, no como una evasión. Las Catalina Foothills (85718, 85750) consistentemente tienen los precios más altos debido a las vistas a la montaña, lotes más grandes y escuelas de alta calificación. Oro Valley y Marana atraen a compradores que quieren construcción más nueva y comodidades suburbanas.",
+        },
+        {
+          question: "What are the safest neighborhoods in Tucson?",
+          questionEs: "¿Cuáles son los vecindarios más seguros en Tucson?",
+          answer: "The northwest Tucson suburbs — Marana (85741, 85742), Oro Valley (85737, 85755), and the Catalina Foothills (85718) — consistently rank among the lowest crime areas in the Pima County region. On the east side, Rita Ranch (85730) and the Vail school district area (85641) are also well-regarded for safety. Like any city, Tucson has significant variation by ZIP and even by block. I always recommend pulling current crime data for the specific areas you're considering — I can walk you through that research for any neighborhood.",
+          answerEs: "Los suburbios del noroeste de Tucson — Marana, Oro Valley y las Catalina Foothills — constantemente clasifican entre las áreas de menor crimen en la región del Condado de Pima. En el lado este, Rita Ranch y el área del distrito escolar de Vail también son bien considerados por su seguridad.",
+        },
+        {
+          question: "Which Tucson neighborhoods have the best schools?",
+          questionEs: "¿Qué vecindarios de Tucson tienen las mejores escuelas?",
+          answer: "The Vail Unified School District (serving Rita Ranch and the southeast corridor) and Amphitheater School District (serving parts of northwest Tucson and Oro Valley) both have strong reputations. Catalina Foothills School District covers 85718 and is one of the highest-rated districts in Arizona. For charter and private options, Basis Schools have multiple Tucson locations and are nationally recognized. School ratings change year to year — I always recommend checking GreatSchools.org for current ratings and looking at the specific schools that serve any address you're considering.",
+          answerEs: "El Distrito Escolar Unificado de Vail (que sirve a Rita Ranch y el corredor sureste) y el Distrito Escolar Amphitheater (que sirve partes del noroeste de Tucson y Oro Valley) tienen sólidas reputaciones. El Distrito Escolar de Catalina Foothills cubre el 85718 y es uno de los distritos mejor calificados en Arizona.",
+        },
+        {
+          question: "Is Marana or Oro Valley better to live in?",
+          questionEs: "¿Es mejor vivir en Marana o Oro Valley?",
+          answer: "Both are excellent — they appeal to slightly different buyers. Marana (especially the Dove Mountain and Gladden Farms areas) offers more new construction at slightly lower price points and is attracting a lot of families and first-time buyers moving up. Oro Valley is more established, has a stronger downtown dining and retail scene along Oracle Road, slightly higher home prices, and is closer to the Catalina Mountains. For commuters, Marana has faster freeway access to Phoenix; Oro Valley feels more self-contained. I've helped buyers in both and they each have real strengths depending on your priorities.",
+          answerEs: "Ambos son excelentes — atraen a compradores ligeramente diferentes. Marana ofrece más construcción nueva a precios ligeramente más bajos y está atrayendo a muchas familias. Oro Valley es más establecido, tiene una escena de restaurantes y comercio más sólida, precios de vivienda ligeramente más altos, y está más cerca de las Montañas Catalina.",
+        },
+        {
+          question: "What ZIP codes in Tucson are the most affordable for first-time buyers?",
+          questionEs: "¿Qué códigos postales en Tucson son los más asequibles para compradores primerizos?",
+          answer: "The most affordable Tucson ZIP codes for buyers right now tend to be in south and southwest Tucson — 85706, 85713, 85745, and 85746 — where you can often find homes in the $220,000–$300,000 range. Sahuarita (85629), about 15 miles south, also offers good value with newer inventory. The trade-offs for affordability in some areas include older housing stock, longer commutes, and less proximity to top-rated schools. I can help you find the balance between budget, location, and what you actually need day-to-day — that conversation is always worth having before you narrow your search.",
+          answerEs: "Los códigos postales de Tucson más asequibles para compradores ahora mismo tienden a estar en el sur y suroeste de Tucson — 85706, 85713, 85745 y 85746 — donde a menudo puede encontrar casas en el rango de $220,000–$300,000. Sahuarita, a unas 15 millas al sur, también ofrece buen valor con inventario más nuevo.",
+        },
+      ],
+    },
   ],
 };
 

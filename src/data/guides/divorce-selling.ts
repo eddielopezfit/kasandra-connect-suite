@@ -69,6 +69,45 @@ const data: GuideContentData = {
       content: "If you're in this situation, the most helpful first step is a no-pressure conversation about where you are in the process and what the home is realistically worth in today's market.\n\nKasandra works with divorcing sellers with patience and discretion. Both parties are treated with equal respect throughout. When you're ready to talk — or if you just have questions — Selena can help you get oriented.",
       contentEs: "Si estás en esta situación, el primer paso más útil es una conversación sin presión sobre dónde estás en el proceso y cuánto vale realmente la casa en el mercado actual.\n\nKasandra trabaja con vendedores en proceso de divorcio con paciencia y discreción. Ambas partes son tratadas con igual respeto durante todo el proceso.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "Do both spouses have to agree to sell the home during a divorce in Arizona?",
+          questionEs: "¿Ambos cónyuges tienen que estar de acuerdo para vender la casa durante un divorcio en Arizona?",
+          answer: "In most cases, yes — both spouses need to sign the listing agreement and closing documents for a jointly-owned property. Arizona is a community property state, which means the home acquired during marriage is typically owned equally. If one spouse refuses to cooperate, the other can petition the court to force a sale, but that process is costly and adversarial. I've worked with couples in various stages of separation and often the most practical path is finding enough common ground on the sale to avoid prolonged legal proceedings.",
+          answerEs: "En la mayoría de los casos, sí — ambos cónyuges necesitan firmar el contrato de listado y los documentos de cierre para una propiedad de propiedad conjunta. Arizona es un estado de propiedad comunitaria, lo que significa que la casa adquirida durante el matrimonio es típicamente propiedad por igual.",
+        },
+        {
+          question: "Should we sell the house before or after the divorce is finalized in Arizona?",
+          questionEs: "¿Debemos vender la casa antes o después de que se finalice el divorcio en Arizona?",
+          answer: "There's no universal right answer, and this is worth discussing with your family law attorney. Selling before the decree is finalized simplifies the asset division — proceeds get split and both parties move forward cleanly. Selling after can be complicated by the need for ongoing cooperation between two people who are no longer together. The longer a home sits jointly owned post-separation, the more complicated practical decisions (repairs, showings, pricing) tend to become. I can work with both parties, or with each party's counsel, to keep the transaction moving professionally.",
+          answerEs: "No hay una respuesta correcta universal, y esto vale la pena discutirlo con su abogado de derecho familiar. Vender antes de que se finalice el decreto simplifica la división de activos — los ingresos se dividen y ambas partes avanzan limpiamente.",
+        },
+        {
+          question: "How is the equity split when selling a home during a divorce in Arizona?",
+          questionEs: "¿Cómo se divide el capital al vender una casa durante un divorcio en Arizona?",
+          answer: "Arizona community property law generally means an equal 50/50 split of equity for property acquired during the marriage, though the divorce decree can specify other arrangements. Equity is calculated as the sale price minus closing costs, any mortgage payoff, and agreed-upon expenses. If one spouse contributed separate property (pre-marital funds, inheritance) toward the home, that may be traceable and treated differently. Your attorney will help document the correct split — I make sure the escrow and closing process reflects exactly what the decree specifies.",
+          answerEs: "La ley de propiedad comunitaria de Arizona generalmente significa una división equitativa del 50/50 del capital para propiedades adquiridas durante el matrimonio, aunque el decreto de divorcio puede especificar otros arreglos. El capital se calcula como el precio de venta menos costos de cierre, cualquier pago de hipoteca y gastos acordados.",
+        },
+        {
+          question: "What if one spouse wants to keep the house after the divorce?",
+          questionEs: "¿Qué pasa si un cónyuge quiere quedarse con la casa después del divorcio?",
+          answer: "It's a common path and it can work — but it requires the keeping spouse to qualify for refinancing on their own income, buy out the other spouse's equity share, and have the other spouse's name removed from the mortgage. In Tucson's current market with mid-6% rates, this is a higher bar than it was a few years ago. I can connect you with lenders who handle post-divorce refinances regularly so you can find out if the numbers work before committing to this path in the divorce agreement.",
+          answerEs: "Es un camino común y puede funcionar — pero requiere que el cónyuge que se queda califique para refinanciar con sus ingresos propios, compre la parte del capital del otro cónyuge y elimine el nombre del otro cónyuge de la hipoteca.",
+        },
+        {
+          question: "Can we sell the house during a divorce if we can barely communicate with each other?",
+          questionEs: "¿Podemos vender la casa durante un divorcio si apenas podemos comunicarnos el uno con el otro?",
+          answer: "Yes — and this is actually something I help facilitate regularly. When communication between spouses is difficult, I can coordinate with each party separately, keep both informed in parallel, and serve as the neutral point of contact for all showing feedback, offers, and transaction milestones. Many decisions (pricing adjustments, counter offers) can be handled through each party's attorney if direct contact isn't workable. The goal is to get the transaction done in a way that's professional and fair to both sides — whatever the personal dynamic is.",
+          answerEs: "Sí — y esto es algo que ayudo a facilitar regularmente. Cuando la comunicación entre cónyuges es difícil, puedo coordinar con cada parte por separado, mantener a ambos informados en paralelo y servir como el punto de contacto neutral para todos los comentarios de visitas, ofertas e hitos de transacciones.",
+        },
+      ],
+    },
   ],
 };
 

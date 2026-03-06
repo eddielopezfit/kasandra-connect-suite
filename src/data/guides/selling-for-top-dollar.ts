@@ -57,6 +57,45 @@ const data: GuideContentData = {
       content: "If you'd like clarity on where you stand and what your options look like, the next step below is a good place to begin—at your own pace, with no obligation.",
       contentEs: "Si le gustaría tener claridad sobre dónde se encuentra y cómo lucen sus opciones, el siguiente paso de abajo es un buen lugar para comenzar—a su propio ritmo, sin obligación.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "What adds the most value when selling a home in Tucson?",
+          questionEs: "¿Qué agrega más valor al vender una casa en Tucson?",
+          answer: "I've seen this play out hundreds of times — the highest-ROI moves in Tucson are almost always the same: deep clean, fresh neutral paint, and landscaping that handles our desert climate. Buyers in Pima County are practical. They notice curb appeal and clean surfaces more than granite countertops. Save the big renovation budget and spend it on the things that actually move the needle at showing.",
+          answerEs: "Lo he visto suceder cientos de veces — los movimientos de mayor ROI en Tucson son casi siempre los mismos: limpieza profunda, pintura neutra fresca y paisajismo que maneje nuestro clima desértico. Los compradores en el Condado de Pima son prácticos. Notan el atractivo exterior y las superficies limpias más que las encimeras de granito.",
+        },
+        {
+          question: "Should I stage my home before selling in Arizona?",
+          questionEs: "¿Debo hacer staging de mi casa antes de vender en Arizona?",
+          answer: "Yes — but staging in Tucson doesn't have to mean renting furniture. Most of my clients get strong results from decluttering aggressively, removing personal photos, and making the space feel open and light. Our market moves fast when a home is priced right and shows well. A staged home photographs better, which matters enormously because most buyers decide whether to schedule a showing based on the photos alone.",
+          answerEs: "Sí — pero el staging en Tucson no tiene que significar alquilar muebles. La mayoría de mis clientes obtienen resultados sólidos desordennando agresivamente, quitando fotos personales y haciendo que el espacio se sienta abierto y luminoso. Nuestro mercado se mueve rápido cuando una casa tiene el precio correcto y se ve bien.",
+        },
+        {
+          question: "How do I price my home to sell fast in Tucson?",
+          questionEs: "¿Cómo fijo el precio de mi casa para vender rápido en Tucson?",
+          answer: "Real talk: the sellers who net the most in Tucson are almost never the ones who start highest. Homes priced correctly sell in 15–20 days at close to full ask. Homes that start high and reduce sit 60–75 days, carry $4,000–$6,000 in additional holding costs, and still close lower because buyers see the price cut history. I'll pull a CMA that shows you exactly where to price it — that conversation is always worth having before you list.",
+          answerEs: "La verdad es: los vendedores que obtienen más en Tucson casi nunca son los que empiezan más alto. Las casas con precio correcto se venden en 15–20 días cerca del precio de lista. Las que empiezan alto y reducen permanecen 60–75 días y aún así cierran más bajo.",
+        },
+        {
+          question: "What is a CMA and why do I need one before listing?",
+          questionEs: "¿Qué es un CMA y por qué lo necesito antes de listar?",
+          answer: "A Comparative Market Analysis is the document that tells you what your home is actually worth right now based on what similar homes nearby have sold for in the last 90 days. Without it, you're guessing — and in Tucson's current market, guessing wrong costs you real money. I provide CMAs at no charge and no obligation. It's the first thing we should do together before any decision gets made.",
+          answerEs: "Un Análisis Comparativo de Mercado es el documento que le dice lo que su casa realmente vale ahora mismo basado en lo que casas similares cercanas han vendido en los últimos 90 días. Sin él, está adivinando — y en el mercado actual de Tucson, adivinar mal le cuesta dinero real.",
+        },
+        {
+          question: "How long does it take to sell a home in Tucson right now?",
+          questionEs: "¿Cuánto tiempo tarda vender una casa en Tucson ahora mismo?",
+          answer: "The Tucson median days on market is 38 days right now (January 2026). Priced-right homes in good condition often go faster — sometimes in under 2 weeks. Overpriced homes or those needing significant repairs can sit 60–90 days. Timeline also depends on your neighborhood, price range, and time of year. Spring is historically our strongest season in Pima County. I'll give you an honest estimate based on your specific property.",
+          answerEs: "La mediana de días en el mercado en Tucson es de 38 días ahora mismo (enero 2026). Las casas con precio correcto y buena condición a menudo se van más rápido — a veces en menos de 2 semanas. Las sobrevaloradas o que necesitan reparaciones significativas pueden permanecer 60–90 días.",
+        },
+      ],
+    },
   ],
 };
 

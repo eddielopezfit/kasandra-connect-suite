@@ -52,6 +52,39 @@ const data: GuideContentData = {
       content: "Understanding property taxes is part of running your real numbers before making a purchase decision. If you'd like help calculating the annual carrying costs on a specific home you're considering, Selena and Kasandra can walk you through it — including tax, insurance, HOA, and mortgage — so you know exactly what you're committing to.",
       contentEs: "Entender los impuestos de propiedad es parte de calcular tus números reales antes de tomar una decisión de compra. Si deseas ayuda para calcular los costos anuales de tenencia de una casa específica que estás considerando, Selena y Kasandra pueden guiarte — incluyendo impuestos, seguro, HOA e hipoteca.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "How are property taxes calculated in Pima County Arizona?",
+          questionEs: "¿Cómo se calculan los impuestos a la propiedad en el Condado de Pima Arizona?",
+          answer: "Pima County property taxes start with the county assessor's determination of your property's full cash value (FCV), which is meant to approximate market value. From there, the limited property value (LPV) is calculated — this is what's actually taxed, and Arizona law limits how much it can increase each year. The LPV is multiplied by an assessment ratio (10% for residential owner-occupied) to get the assessed value, and then the applicable tax rate is applied. The formula sounds complex but the practical result is that your effective tax rate in Pima County typically runs 0.5–1% of market value annually.",
+          answerEs: "Los impuestos a la propiedad del Condado de Pima comienzan con la determinación del tasador del condado del valor en efectivo total (FCV) de su propiedad, que está destinado a aproximar el valor de mercado. De ahí, se calcula el valor de propiedad limitado (LPV), que es lo que realmente se grava.",
+        },
+        {
+          question: "What property tax exemptions are available in Arizona for homeowners?",
+          questionEs: "¿Qué exenciones de impuestos a la propiedad están disponibles en Arizona para propietarios de vivienda?",
+          answer: "Arizona offers several exemptions worth knowing. The Senior Property Valuation Protection Program (Senior Freeze) locks in property value for eligible homeowners 65+ who meet income limits — this is a significant benefit in appreciating markets. The Disabled Veterans Exemption provides property tax relief for veterans with service-connected disabilities. The Widows/Widowers Exemption offers modest relief for surviving spouses. All exemptions require application through the Pima County Assessor's office. If you or a family member might qualify, it's worth applying — the savings compound over time.",
+          answerEs: "Arizona ofrece varias exenciones que vale la pena conocer. El Programa de Protección de Valoración de Propiedad para Personas Mayores (Congelamiento para Personas Mayores) fija el valor de propiedad para propietarios elegibles de 65+ que cumplen los límites de ingresos. La Exención de Veteranos Discapacitados proporciona alivio del impuesto a la propiedad para veteranos con discapacidades relacionadas con el servicio.",
+        },
+        {
+          question: "How do I appeal my property tax assessment in Pima County?",
+          questionEs: "¿Cómo apelo mi evaluación de impuesto a la propiedad en el Condado de Pima?",
+          answer: "You have the right to appeal if you believe the assessor's full cash value is higher than your home's actual market value. The window is narrow — appeals must be filed with the Pima County Assessor by September 1st for the following tax year. Your strongest argument is recent comparable sales showing homes like yours sold for less than the assessed value. I can pull those comps for you as part of a CMA — many homeowners find they have legitimate grounds for an appeal but don't know it because they haven't looked at the actual market data.",
+          answerEs: "Tiene derecho a apelar si cree que el valor en efectivo total del tasador es más alto que el valor de mercado real de su casa. La ventana es estrecha — las apelaciones deben presentarse ante el Tasador del Condado de Pima antes del 1 de septiembre para el año fiscal siguiente.",
+        },
+        {
+          question: "Do property taxes in Tucson go up when I buy a home?",
+          questionEs: "¿Suben los impuestos a la propiedad en Tucson cuando compro una casa?",
+          answer: "Yes — and this catches some buyers off guard. When a property sells, the assessor can reassess it at the current market value, which may be higher than the previous owner's assessed value. Arizona's limited property value rules cap annual increases for existing owners, but a sale can trigger a reset. This means the tax amount shown on current county records may not reflect what you'll pay after purchase. I always recommend buyers check with the Pima County Assessor's office or a local CPA to estimate post-purchase taxes, especially for homes that haven't sold in many years.",
+          answerEs: "Sí — y esto sorprende a algunos compradores. Cuando una propiedad se vende, el tasador puede reevaluarla al valor de mercado actual, que puede ser más alto que el valor evaluado del propietario anterior. Las reglas de valor de propiedad limitada de Arizona limitan los aumentos anuales para los propietarios existentes, pero una venta puede desencadenar un restablecimiento.",
+        },
+      ],
+    },
   ],
 };
 

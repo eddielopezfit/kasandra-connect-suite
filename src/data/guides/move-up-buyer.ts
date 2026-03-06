@@ -62,6 +62,39 @@ const data: GuideContentData = {
       content: "Move-up transactions are manageable when the sequencing is clear. The best place to start is knowing what your current home is worth and what your equity position actually is.\n\nKasandra handles both sides of this transaction and can help you build a realistic timeline from day one. If you'd like to start the conversation, Selena can help you get oriented.",
       contentEs: "Las transacciones de avance son manejables cuando la secuencia es clara. El mejor lugar para comenzar es saber cuánto vale tu casa actual y cuál es realmente tu posición de capital.\n\nKasandra maneja ambos lados de esta transacción y puede ayudarte a construir un cronograma realista desde el primer día.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "Should I sell my current Tucson home before buying a larger one?",
+          questionEs: "¿Debo vender mi casa actual en Tucson antes de comprar una más grande?",
+          answer: "This is the central question for every move-up buyer and the answer genuinely depends on your financial cushion and risk tolerance. Selling first gives you a firm budget and eliminates carrying two mortgages — but it may mean a gap in housing and pressure to accept whatever's available when you buy. Buying first eliminates that gap but means managing two payments until your current home sells. In Tucson's current market where homes are moving in about 38 days when priced right, I can often help move-up buyers coordinate both transactions close enough together that the gap is minimal either way.",
+          answerEs: "Esta es la pregunta central para cada comprador que quiere mejorar de vivienda y la respuesta genuinamente depende de su colchón financiero y tolerancia al riesgo. Vender primero le da un presupuesto firme y elimina llevar dos hipotecas. Comprar primero elimina ese vacío pero significa administrar dos pagos hasta que su casa actual se venda.",
+        },
+        {
+          question: "Can I use equity from my current home as a down payment on a larger home in Tucson?",
+          questionEs: "¿Puedo usar el capital de mi casa actual como pago inicial en una casa más grande en Tucson?",
+          answer: "Yes — and this is typically how move-up buyers fund their next purchase. The equity from your sale proceeds goes directly toward the down payment on the next home. The timing challenge is that you usually need to close on the sale before you can access that equity for the purchase. Bridge loans and home equity lines of credit (HELOCs) exist to bridge that gap if you're buying before you sell, but they come with costs and qualification requirements. I'll help you map the sequence so you know exactly when and how the equity transfers.",
+          answerEs: "Sí — y así es típicamente como los compradores que quieren mejorar de vivienda financian su próxima compra. El capital de los ingresos de su venta va directamente hacia el pago inicial de la próxima casa. El desafío de tiempo es que generalmente necesita cerrar la venta antes de poder acceder a ese capital para la compra.",
+        },
+        {
+          question: "What is a contingent offer and should I make one when moving up in Tucson?",
+          questionEs: "¿Qué es una oferta contingente y debo hacer una cuando mejoro de vivienda en Tucson?",
+          answer: "A contingent offer means your purchase is conditional on your current home selling first. Sellers often accept them but sometimes with a 'kick-out' clause that lets them keep marketing and bump you if a non-contingent buyer appears. In a competitive market, contingent offers are weaker — sellers prefer certainty. In Tucson's current balanced market, contingencies are more accepted than they were in 2021, but it still depends heavily on the property and the seller's situation. I'll advise you on whether a contingent offer makes sense for each specific home you're interested in.",
+          answerEs: "Una oferta contingente significa que su compra está condicionada a que su casa actual se venda primero. Los vendedores a menudo las aceptan pero a veces con una cláusula de 'expulsión' que les permite seguir comercializando. En el mercado equilibrado actual de Tucson, las contingencias son más aceptadas que en 2021.",
+        },
+        {
+          question: "How much more home can I afford if I upgrade in the Tucson market?",
+          questionEs: "¿Cuánta más casa puedo pagar si mejoro en el mercado de Tucson?",
+          answer: "This calculation depends on four things: your current equity, your income and debt-to-income ratio, the interest rate you qualify for, and what you're comfortable paying monthly. With Tucson's median at $365,000 and rates in the mid-6% range, moving from a $300,000 home to a $450,000 home typically means an additional $700–$900/month in principal and interest on the incremental amount financed. A good local lender can pre-approve you for your move-up budget quickly. I always recommend getting that number before you start touring homes so you're shopping in a range that's actually achievable.",
+          answerEs: "Este cálculo depende de cuatro cosas: su capital actual, sus ingresos y relación deuda-ingreso, la tasa de interés para la que califica, y lo que está cómodo pagando mensualmente. Con la mediana de Tucson en $365,000 y tasas en el rango del 6% medio, pasar de una casa de $300,000 a una de $450,000 típicamente significa $700–$900/mes adicional.",
+        },
+      ],
+    },
   ],
 };
 

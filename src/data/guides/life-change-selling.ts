@@ -59,6 +59,39 @@ const data: GuideContentData = {
       contentEs:
         'Si quieres claridad sin presi\u00f3n, el siguiente paso de abajo te ayudar\u00e1 a elegir con confianza.',
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "How do I sell my house quickly due to a job relocation from Tucson?",
+          questionEs: "¿Cómo vendo mi casa rápidamente por una reubicación laboral desde Tucson?",
+          answer: "A relocation sale is one I help with often, and the key is starting as early as possible. Even if your report date is 90 days out, getting a CMA, making a pricing decision, and preparing the home now gives you the best chance at a clean sale before you leave. In Tucson's current market, a correctly priced home moves in about 38 days — meaning if we list within the next few weeks, you could close before you need to be gone. I also have relationships with relocation specialists and employers who have standard packages that can help with costs.",
+          answerEs: "Una venta de reubicación es algo con lo que ayudo con frecuencia, y la clave es comenzar lo antes posible. Incluso si su fecha de informe es 90 días después, obtener un CMA, tomar una decisión de precio y preparar la casa ahora le da la mejor oportunidad de una venta limpia antes de que se vaya.",
+        },
+        {
+          question: "Can I sell my home after a divorce is finalized in Arizona?",
+          questionEs: "¿Puedo vender mi casa después de que se finalice el divorcio en Arizona?",
+          answer: "Yes — and in many cases, the divorce decree will actually specify the sale terms, timeline, and how proceeds are to be divided. If one spouse has been awarded the home outright, they can sell independently once title is transferred. If both names remain on the deed post-divorce, cooperation is still required for the transaction. I've helped sellers in both situations — the key is getting clear on what the decree actually says about the property before we start, and I can work with both parties' attorneys to keep the process clean.",
+          answerEs: "Sí — y en muchos casos, el decreto de divorcio en realidad especificará los términos de venta, el cronograma y cómo se deben dividir los ingresos. Si a un cónyuge se le ha otorgado la casa directamente, puede vender independientemente una vez que se transfiera el título.",
+        },
+        {
+          question: "What do I do with my home if I need to move into assisted living?",
+          questionEs: "¿Qué hago con mi casa si necesito mudarme a una vivienda asistida?",
+          answer: "This is a transition I help families navigate with a lot of care, because the emotional weight of it is real. The practical path usually involves a CMA to understand what the home is worth, a decision on timing relative to the move-in date, and — if the family member has a Power of Attorney or is working through a family member's estate — making sure the legal authority to sell is clearly established. I can work directly with families and their attorneys to move at a pace that respects both the financial and emotional reality of the situation.",
+          answerEs: "Esta es una transición que ayudo a las familias a navegar con mucho cuidado, porque el peso emocional es real. El camino práctico generalmente involucra un CMA para entender el valor de la casa, una decisión sobre el tiempo en relación con la fecha de entrada, y — si el familiar tiene un Poder Notarial — asegurarse de que la autoridad legal para vender esté claramente establecida.",
+        },
+        {
+          question: "How do I sell a home I inherited in Tucson that I live out of state?",
+          questionEs: "¿Cómo vendo una casa heredada en Tucson si vivo fuera del estado?",
+          answer: "Out-of-state inherited properties are something I handle regularly. The entire process — pricing, preparation, listing, offers, and closing — can be managed remotely with the right coordination. You'll need to work with an Arizona estate attorney to establish the authority to sell (if probate is involved), and I can handle all the on-the-ground work: accessing the property, coordinating any prep or cleanout, managing showings, and keeping you fully informed at every step. Most out-of-state sellers I work with never need to fly to Tucson — we handle it all.",
+          answerEs: "Las propiedades heredadas fuera del estado son algo que manejo regularmente. Todo el proceso — precio, preparación, listado, ofertas y cierre — puede gestionarse de forma remota con la coordinación correcta. Deberá trabajar con un abogado de patrimonio de Arizona para establecer la autoridad para vender.",
+        },
+      ],
+    },
   ],
 };
 

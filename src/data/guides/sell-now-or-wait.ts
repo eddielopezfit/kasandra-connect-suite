@@ -59,6 +59,39 @@ const data: GuideContentData = {
       contentEs:
         'Si quieres claridad sin presi\u00f3n, el siguiente paso de abajo te ayudar\u00e1 a elegir con confianza.',
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "Is now a good time to sell a house in Tucson?",
+          questionEs: "¿Es ahora un buen momento para vender una casa en Tucson?",
+          answer: "The honest answer is: it depends more on your situation than on the market. Tucson's market in early 2026 is balanced — not the seller frenzy of 2021, but not a buyer's market either. Homes priced correctly are selling in around 38 days at 97.64% of list price. If you have a compelling reason to sell — a life change, a relocation, pulling equity for another investment — the market will support a good sale right now. If you're waiting purely for the market to peak again, that's a harder bet to make and I'll always tell you that honestly.",
+          answerEs: "La respuesta honesta es: depende más de su situación que del mercado. El mercado de Tucson en principios de 2026 está equilibrado — no la locura de vendedores de 2021, pero tampoco un mercado de compradores. Las casas con precio correcto se están vendiendo en alrededor de 38 días al 97.64% del precio de lista.",
+        },
+        {
+          question: "Will Tucson home prices go up or down in 2026?",
+          questionEs: "¿Subirán o bajarán los precios de las casas en Tucson en 2026?",
+          answer: "I'll be straight with you: nobody knows for certain, including economists who do this full-time. What the current data suggests is stability, not a crash and not a surge. Tucson has 4.92 months of supply, which is close to the 5–6 month balanced market threshold. Mortgage rates in the mid-6% range are dampening demand but not killing it. The factors that would meaningfully push prices up (rate drops, major employer announcements) or down (significant job losses, oversupply) aren't clearly in motion right now. The more useful question is whether waiting one or two years changes your personal financial picture — and that we can actually calculate.",
+          answerEs: "Seré directa con usted: nadie sabe con certeza, incluyendo economistas que hacen esto a tiempo completo. Lo que los datos actuales sugieren es estabilidad, no un colapso ni un aumento. Tucson tiene 4.92 meses de oferta, que está cerca del umbral de mercado equilibrado de 5–6 meses.",
+        },
+        {
+          question: "How much equity do I need before it makes sense to sell my Tucson home?",
+          questionEs: "¿Cuánto capital necesito antes de que tenga sentido vender mi casa en Tucson?",
+          answer: "A rough rule of thumb: you need enough equity to cover the costs of selling (agent commission, closing costs, any repairs — typically 8–10% of the sale price) and still walk away with enough for your next move to make financial sense. On a $350,000 home that's $28,000–$35,000 in costs before you clear anything. If you bought recently at a high price point with low down payment, you may be close to break-even. I can run your specific numbers quickly — just knowing your purchase price, current balance, and what you think the home is worth gets us most of the way there.",
+          answerEs: "Una regla general aproximada: necesita suficiente capital para cubrir los costos de venta (comisión de agente, costos de cierre, cualquier reparación — típicamente 8–10% del precio de venta) y aún salir con suficiente para que su próximo movimiento tenga sentido financiero.",
+        },
+        {
+          question: "What happens to my home value if mortgage rates drop in 2026?",
+          questionEs: "¿Qué pasa con el valor de mi casa si las tasas hipotecarias bajan en 2026?",
+          answer: "If rates drop meaningfully — say from the mid-6% range to the high 5% range — you'd likely see a wave of buyer demand that has been sitting on the sidelines enter the market. That tends to push prices up and reduce days on market, which is good news for sellers. The flip side: more sellers who have been reluctant to give up their low-rate mortgages would also come to market, adding supply. The net effect on prices depends on which wave is bigger. What I can say is that if rates drop and you've been waiting, you'll be competing with more sellers — moving a bit earlier sometimes means cleaner positioning.",
+          answerEs: "Si las tasas bajan significativamente — digamos del rango del 6% medio al rango alto del 5% — probablemente vería una ola de demanda de compradores que ha estado al margen entrar al mercado. Eso tiende a empujar los precios hacia arriba y reducir los días en el mercado, lo que es buena noticia para los vendedores.",
+        },
+      ],
+    },
   ],
 };
 

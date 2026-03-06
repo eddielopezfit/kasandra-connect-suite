@@ -51,6 +51,45 @@ const data: GuideContentData = {
       content: "If you'd like clarity on what your home might be worth, the next step below is a good place to begin—at your own pace, with no obligation.",
       contentEs: "Si le gustaría tener claridad sobre cuánto podría valer su casa, el siguiente paso de abajo es un buen lugar para comenzar—a su propio ritmo, sin obligación.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "How do I find out what my Tucson home is worth right now?",
+          questionEs: "¿Cómo averiguo cuánto vale mi casa en Tucson ahora mismo?",
+          answer: "The most accurate way is a Comparative Market Analysis — a CMA — done by a local agent who knows Pima County. Online estimates (Zillow's Zestimate, Redfin's estimate) can be useful as a starting point but they're working from public data and algorithms that can't account for your specific upgrades, condition, or the micro-market dynamics of your block. I provide CMAs at no charge and no obligation. It's 20 minutes of your time and you walk away knowing your actual number — not a range that's $50,000 wide.",
+          answerEs: "La forma más precisa es un Análisis Comparativo de Mercado — un CMA — realizado por un agente local que conoce el Condado de Pima. Las estimaciones en línea pueden ser útiles como punto de partida pero trabajan con datos públicos y algoritmos que no pueden tener en cuenta sus mejoras específicas, condición o la dinámica del micro-mercado de su cuadra.",
+        },
+        {
+          question: "Why is my Zillow estimate different from what my agent says my home is worth?",
+          questionEs: "¿Por qué mi estimación de Zillow es diferente de lo que mi agente dice que vale mi casa?",
+          answer: "This comes up constantly and it's a fair question. Zillow's algorithm pulls from public records — assessed value, recent sales within a radius, square footage — but it can't see inside your home. It doesn't know you renovated the kitchen, that your lot backs up to a wash (which buyers either love or avoid), or that your specific street had an outlier sale that skewed the data. In my experience, Zestimates in Tucson are often off by 5–15% in either direction for individual properties. The CMA process closes that gap.",
+          answerEs: "Esto surge constantemente y es una pregunta justa. El algoritmo de Zillow extrae datos de registros públicos — valor evaluado, ventas recientes dentro de un radio, pies cuadrados — pero no puede ver dentro de su casa. No sabe que renovó la cocina, que su lote linda con un arroyo, o que su calle específica tuvo una venta atípica que sesgó los datos.",
+        },
+        {
+          question: "What factors affect home value the most in Pima County?",
+          questionEs: "¿Qué factores afectan más el valor de la casa en el Condado de Pima?",
+          answer: "In Tucson specifically, the factors that move the needle most are: location and school district (Catalina Foothills and Vail consistently command premiums), lot size and usability (a functional backyard with some shade in our climate is genuinely valuable), condition and updating, square footage and bedroom count, and proximity to the mountains or Saguaro National Park. Pool presence is a bigger factor in Tucson than in most markets — buyers expect it at higher price points and it adds perceived value more reliably here than national averages suggest.",
+          answerEs: "En Tucson específicamente, los factores que más marcan la diferencia son: ubicación y distrito escolar (Catalina Foothills y Vail consistentemente tienen primas), tamaño y utilidad del lote, condición y actualización, pies cuadrados y número de habitaciones, y proximidad a las montañas. La presencia de piscina es un factor mayor en Tucson que en la mayoría de los mercados.",
+        },
+        {
+          question: "How often do home values change in the Tucson market?",
+          questionEs: "¿Con qué frecuencia cambian los valores de las casas en el mercado de Tucson?",
+          answer: "Tucson's market moves more slowly and predictably than Phoenix, which is actually a feature for many buyers and sellers. Broad value shifts happen over months, not days — though individual blocks can see faster movement when a highly renovated home sells and resets comps in the area. Right now the market is roughly balanced with 4.92 months of supply. Values have been relatively stable after the appreciation run of 2020–2022. I track the market weekly and can give you an accurate read on what's happening specifically in your neighborhood right now.",
+          answerEs: "El mercado de Tucson se mueve más lentamente y predeciblemente que Phoenix, lo cual es realmente una característica para muchos compradores y vendedores. Los cambios amplios de valor ocurren en meses, no en días. Ahora mismo el mercado está aproximadamente equilibrado con 4.92 meses de oferta.",
+        },
+        {
+          question: "Does a pool add value to a home in Tucson?",
+          questionEs: "¿Una piscina agrega valor a una casa en Tucson?",
+          answer: "Generally yes — and more reliably in Tucson than in most U.S. markets, because the climate makes pools genuinely useful 8–9 months of the year. At price points above $350,000, buyer expectations often include a pool or spa. Studies suggest pools add 5–8% of home value in desert Southwest markets, though the actual impact depends heavily on pool condition, age, and the buyer profile in your price range. A cracked, dated pool with old equipment is less of an asset than a maintained pool with updated finishes. I can help you assess whether a pool investment makes sense before selling.",
+          answerEs: "Generalmente sí — y de manera más confiable en Tucson que en la mayoría de los mercados de EE.UU., porque el clima hace que las piscinas sean genuinamente útiles 8–9 meses del año. En precios por encima de $350,000, las expectativas de los compradores a menudo incluyen una piscina o spa. Los estudios sugieren que las piscinas agregan un 5–8% del valor de la casa en mercados del Suroeste desértico.",
+        },
+      ],
+    },
   ],
 };
 

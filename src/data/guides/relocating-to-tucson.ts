@@ -46,6 +46,45 @@ const data: GuideContentData = {
       content: "Tucson is a genuinely good market for buyers right now — affordable relative to other Western metros, with stable inventory and room to negotiate. The best way to get oriented quickly is a conversation with someone who knows every neighborhood.\n\nKasandra works with relocation buyers regularly and can make the remote process feel manageable. Selena is available in English and Spanish whenever you're ready to start.",
       contentEs: "Tucson es un mercado genuinamente bueno para los compradores ahora mismo — asequible en relación con otras áreas metropolitanas occidentales, con inventario estable y espacio para negociar.\n\nKasandra trabaja con compradores de reubicación regularmente y puede hacer que el proceso remoto se sienta manejable. Selena está disponible en inglés y español cuando estés listo para comenzar.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "Is Tucson a good place to live in 2025 and 2026?",
+          questionEs: "¿Es Tucson un buen lugar para vivir en 2025 y 2026?",
+          answer: "Tucson has been one of the more stable mid-size markets in the Southwest — lower cost of living than Phoenix, Scottsdale, or anything in California, a genuinely diverse and arts-forward culture, University of Arizona energy, and access to outdoor recreation that people who move here consistently say they underestimated. The summers are hot and that's real — July and August average over 100°F. But the winters are exceptional, the monsoon season in July is dramatic and beautiful, and the housing market has been far more affordable than most comparable Western cities.",
+          answerEs: "Tucson ha sido uno de los mercados medianos más estables del Suroeste — menor costo de vida que Phoenix, Scottsdale, o cualquier lugar en California, una cultura genuinamente diversa y orientada a las artes, la energía de la Universidad de Arizona, y acceso a recreación al aire libre que las personas que se mudan aquí consistentemente dicen que subestimaron.",
+        },
+        {
+          question: "What is the cost of living in Tucson compared to Phoenix or California?",
+          questionEs: "¿Cuál es el costo de vida en Tucson comparado con Phoenix o California?",
+          answer: "Tucson's median home price is around $365,000 — significantly less than Phoenix metro ($430,000+) and a fraction of most California coastal markets. Property taxes in Pima County are modest compared to Texas and California. Groceries, utilities, and general living costs run 10–15% below the national average. The trade-off is that Tucson is a smaller job market, so if your income depends on local employment (rather than remote work or a transferred position), it's worth researching your specific field before committing.",
+          answerEs: "El precio medio de vivienda en Tucson es alrededor de $365,000 — significativamente menos que el metro de Phoenix ($430,000+) y una fracción de la mayoría de los mercados costeros de California. Los impuestos a la propiedad en el Condado de Pima son modestos comparados con Texas y California.",
+        },
+        {
+          question: "What are the best Tucson neighborhoods for families relocating from out of state?",
+          questionEs: "¿Cuáles son los mejores vecindarios de Tucson para familias que se reubican desde fuera del estado?",
+          answer: "For families with kids, the areas I recommend most consistently are the Marana and Oro Valley suburbs (85741, 85742, 85737, 85755) for newer construction, strong schools, and a suburban feel with easy freeway access to Tucson proper. Rita Ranch (85730) on the southeast side is popular with military families and offers great community feel. For families who want more walkability and culture, midtown Tucson (85716, 85719) near the U of A corridor has older homes with more character and proximity to museums, restaurants, and parks.",
+          answerEs: "Para familias con hijos, las áreas que más recomiendo consistentemente son los suburbios de Marana y Oro Valley para construcción más nueva, escuelas sólidas y un ambiente suburbano con fácil acceso a la autopista. Rita Ranch en el lado sureste es popular con familias militares. Para familias que quieren más transitabilidad y cultura, el centro-norte de Tucson cerca del corredor de U of A.",
+        },
+        {
+          question: "Can I buy a home in Tucson before I physically move there?",
+          questionEs: "¿Puedo comprar una casa en Tucson antes de mudarme físicamente?",
+          answer: "Yes — and this is something I help relocation buyers navigate all the time. I can do detailed video walkthroughs of properties, provide honest neighborhood context (not just the highlight reel), and coordinate the full transaction remotely. Most out-of-state buyers I work with do one focused 2–3 day trip to see 6–8 shortlisted properties, then make a decision. We handle everything else virtually. Getting pre-approved with a lender before that trip is essential — it means you can move immediately when the right home appears.",
+          answerEs: "Sí — y esto es algo que ayudo a compradores de reubicación a navegar todo el tiempo. Puedo hacer recorridos detallados en video de propiedades, proporcionar contexto honesto del vecindario, y coordinar toda la transacción de forma remota. La mayoría de los compradores fuera del estado con quienes trabajo hacen un viaje enfocado de 2–3 días para ver 6–8 propiedades preseleccionadas.",
+        },
+        {
+          question: "What should I know about Tucson weather before relocating?",
+          questionEs: "¿Qué debo saber sobre el clima de Tucson antes de reubicarme?",
+          answer: "I'll be honest about this because I want you to come and love it here. Tucson summers are genuinely hot — June through early September regularly sees 100°F+ days. Most locals structure summer life around early mornings, evenings, and staying cool midday. The monsoon season (July–September) brings dramatic afternoon thunderstorms that cool things down and fill the desert with color. From October through May, the weather is exceptional — mild, sunny, and perfect for outdoor living. If you're coming from a cold climate, the winters alone are often life-changing for people.",
+          answerEs: "Seré honesta sobre esto porque quiero que vengan y amen vivir aquí. Los veranos en Tucson son genuinamente calurosos — de junio a principios de septiembre regularmente se ven días de 38°C+. La mayoría de los locales estructuran la vida de verano alrededor de las mañanas temprano, las noches y mantenerse frescos al mediodía.",
+        },
+      ],
+    },
   ],
 };
 

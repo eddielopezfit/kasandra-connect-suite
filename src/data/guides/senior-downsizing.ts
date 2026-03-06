@@ -75,6 +75,45 @@ const data: GuideContentData = {
       content: "Downsizing is one of the most personal real estate decisions there is. There's no urgency here — only the right timing for your situation.\n\nIf you'd like to understand what your current home is worth in today's Tucson market, or explore what options exist in Green Valley, Oro Valley, or other 55+ communities, Kasandra and Selena are here to help you get oriented — at whatever pace works for you.",
       contentEs: "Reducir el tamaño es una de las decisiones inmobiliarias más personales que existen. No hay urgencia aquí — solo el momento adecuado para tu situación.\n\nSi deseas entender cuánto vale tu casa actual en el mercado actual de Tucson, o explorar qué opciones existen en Green Valley, Oro Valley u otras comunidades 55+, Kasandra y Selena están aquí para ayudarte a orientarte — al ritmo que te funcione.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "What is the capital gains exclusion when seniors sell their home?",
+          questionEs: "¿Cuál es la exclusión de ganancias de capital cuando los mayores venden su casa?",
+          answer: "If you've lived in the home as your primary residence for at least 2 of the last 5 years, you can exclude up to $250,000 in capital gains from taxation if you're single, or $500,000 if you're married filing jointly. In Tucson, where many long-time homeowners have seen significant appreciation over the past decade, this exclusion is often the difference between a comfortable move and a large unexpected tax bill. I always recommend confirming the details with a CPA before closing — it's worth the conversation.",
+          answerEs: "Si ha vivido en la casa como su residencia principal durante al menos 2 de los últimos 5 años, puede excluir hasta $250,000 en ganancias de capital de impuestos si es soltero, o $500,000 si está casado declarando conjuntamente. En Tucson, donde muchos propietarios de largo plazo han visto una apreciación significativa, esta exclusión a menudo marca la diferencia.",
+        },
+        {
+          question: "Is Green Valley Arizona a good place to retire and downsize to?",
+          questionEs: "¿Es Green Valley Arizona un buen lugar para jubilarse y reducir el tamaño de vivienda?",
+          answer: "Green Valley is genuinely one of the most well-designed retirement communities in the Southwest and I've helped many clients move there. It's about 25 miles south of Tucson with lower home prices than the city (typically $250,000–$450,000), an active recreation center system, golf, and a quiet pace of life. The trade-off is that it's more isolated — you'll drive to Tucson for most medical specialists, major shopping, and family visits. For people who want community, amenities, and Arizona sunshine without Tucson's urban energy, it fits very well.",
+          answerEs: "Green Valley es genuinamente una de las comunidades de jubilación mejor diseñadas en el Suroeste y he ayudado a muchos clientes a mudarse allí. Está a unas 25 millas al sur de Tucson con precios de vivienda más bajos que la ciudad, un sistema de centro de recreación activo, golf y un ritmo de vida tranquilo.",
+        },
+        {
+          question: "How do I decide between downsizing and selling to move into a retirement community?",
+          questionEs: "¿Cómo decido entre reducir el tamaño de vivienda y vender para mudarse a una comunidad de jubilación?",
+          answer: "This is one of the most personal decisions I help people work through, and there's no single right answer. The key questions are: How much does maintaining your current home cost you in time, money, and energy? Do you want to stay near your current community and relationships? Are you looking for built-in social connection or privacy? What does your health picture suggest about future care needs? I've had this conversation with dozens of Tucson seniors — it often helps to talk it through with someone who's seen many different outcomes. No pressure, no agenda.",
+          answerEs: "Esta es una de las decisiones más personales que ayudo a las personas a trabajar, y no hay una sola respuesta correcta. Las preguntas clave son: ¿Cuánto le cuesta mantener su casa actual en tiempo, dinero y energía? ¿Quiere permanecer cerca de su comunidad y relaciones actuales?",
+        },
+        {
+          question: "What are the best 55+ communities in Tucson?",
+          questionEs: "¿Cuáles son las mejores comunidades 55+ en Tucson?",
+          answer: "Tucson has excellent options across different price points and lifestyles. La Cholla Villas and Saddlebrooke (just north in Marana) are active adult communities with resort-style amenities and strong HOA governance. Robson Ranch in Eloy (about 45 min north) is a larger planned community with a golf course and full activity calendar. For those who want to stay in Tucson proper, many 55+ condos and patio home developments exist in the Foothills and midtown. I work with buyers across all of these and can help you figure out which environment actually fits your lifestyle.",
+          answerEs: "Tucson tiene excelentes opciones en diferentes rangos de precios y estilos de vida. La Cholla Villas y Saddlebrooke (justo al norte en Marana) son comunidades de adultos activos con amenidades tipo resort. Para quienes quieren permanecer en Tucson propiamente, existen muchos condominios 55+ y desarrollos de casas patio.",
+        },
+        {
+          question: "Should I sell my Tucson home before or after I find somewhere to move?",
+          questionEs: "¿Debo vender mi casa en Tucson antes o después de encontrar dónde mudarme?",
+          answer: "This is the timing puzzle most downsizers face, and there's no perfect answer. Selling first gives you a firm budget and more negotiating power as a non-contingent buyer — but it may mean a gap period in temporary housing. Buying first eliminates that gap but carries the stress of carrying two properties and mortgage payments. In Tucson's current market (38 days median DOM), a well-priced home sells predictably enough that we can often coordinate both transactions on the same timeline. I can help you map out both scenarios with real numbers so you can choose the path that fits your comfort level.",
+          answerEs: "Este es el rompecabezas de tiempo que enfrenta la mayoría de quienes reducen el tamaño de vivienda. Vender primero le da un presupuesto firme y más poder de negociación como comprador sin contingencias. Comprar primero elimina ese período de transición pero conlleva el estrés de llevar dos propiedades.",
+        },
+      ],
+    },
   ],
 };
 

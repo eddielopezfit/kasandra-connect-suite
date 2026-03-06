@@ -69,6 +69,45 @@ const data: GuideContentData = {
       content: "When you're ready — and there's no rush — the next step below is a good place to start getting clarity. At your own pace, no obligation.",
       contentEs: "Cuando esté listo — y no hay prisa — el siguiente paso de abajo es un buen lugar para comenzar a aclarar las cosas. A su propio ritmo, sin obligación.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "Do I have to go through probate to sell an inherited home in Arizona?",
+          questionEs: "¿Tengo que pasar por probate para vender una casa heredada en Arizona?",
+          answer: "Not always — and this is one of the first things worth figuring out. If the property was held in a living trust, had a beneficiary deed recorded, or passed through joint tenancy with right of survivorship, you may be able to sell without probate at all. Arizona's small estate affidavit process also applies to properties under a certain value threshold. The answer depends on how title was held, which an estate attorney can confirm quickly. I work with families through this regularly and can point you to the right resources.",
+          answerEs: "No siempre — y esto es una de las primeras cosas que vale la pena determinar. Si la propiedad estaba en un fideicomiso en vida, tenía una escritura de beneficiario registrada, o pasó a través de tenencia conjunta con derecho de supervivencia, es posible que pueda vender sin probate. El proceso de declaración jurada de pequeño patrimonio de Arizona también aplica a propiedades bajo cierto umbral de valor.",
+        },
+        {
+          question: "How long does probate take in Arizona before I can sell?",
+          questionEs: "¿Cuánto tiempo tarda el probate en Arizona antes de que pueda vender?",
+          answer: "Arizona's informal probate process typically takes 4–6 months from filing to when the Personal Representative has authority to sell. Formal probate or contested estates can take 12–18 months or longer. The good news: in most cases you can list and market the property during probate — you just need court confirmation before you can close. I've helped families navigate selling during active probate many times. Starting the process early, including getting a property valuation, gives you more control over timing.",
+          answerEs: "El proceso de probate informal de Arizona típicamente toma 4–6 meses desde la presentación hasta cuando el Representante Personal tiene autoridad para vender. El probate formal o patrimonios disputados pueden tomar 12–18 meses o más. La buena noticia: en la mayoría de los casos puede listar y comercializar la propiedad durante el probate.",
+        },
+        {
+          question: "What is a stepped-up basis and does it affect what I owe in taxes?",
+          questionEs: "¿Qué es una base escalonada y afecta lo que debo en impuestos?",
+          answer: "This is genuinely one of the most valuable things to understand when you inherit property. The stepped-up basis means your cost basis for capital gains purposes resets to the property's fair market value at the date of death — not what the original owner paid for it. If your parent bought the home in 1975 for $40,000 and it's worth $350,000 when they pass, your basis is $350,000. Selling it quickly for $360,000 means you'd only owe capital gains on $10,000. This is worth discussing with a CPA before you decide anything.",
+          answerEs: "Esta es genuinamente una de las cosas más valiosas que debe entender cuando hereda una propiedad. La base escalonada significa que su base de costo para fines de ganancias de capital se restablece al valor justo de mercado de la propiedad en la fecha de fallecimiento. Si su padre compró la casa en 1975 por $40,000 y vale $350,000 cuando fallece, su base es $350,000.",
+        },
+        {
+          question: "What if there are multiple heirs who disagree about selling the inherited property?",
+          questionEs: "¿Qué pasa si hay múltiples herederos que no están de acuerdo sobre vender la propiedad heredada?",
+          answer: "This is one of the most emotionally difficult situations I work through with families. When heirs disagree, communication is almost always the first step — and sometimes having a neutral third party (a mediator, estate attorney, or even a trusted agent) facilitate that conversation helps. If agreement truly can't be reached, Arizona law allows any co-owner to petition the court for a partition action, which can force a sale. But that process is costly and adversarial. I always try to help families find a path that preserves relationships alongside the transaction.",
+          answerEs: "Esta es una de las situaciones emocionalmente más difíciles por las que trabajo con familias. Cuando los herederos no están de acuerdo, la comunicación es casi siempre el primer paso. Si realmente no se puede llegar a un acuerdo, la ley de Arizona permite a cualquier copropietario solicitar al tribunal una acción de partición.",
+        },
+        {
+          question: "Should I sell an inherited Tucson property as-is or fix it up first?",
+          questionEs: "¿Debo vender una propiedad heredada en Tucson tal como está o arreglarla primero?",
+          answer: "Honestly, it depends on the condition gap and your timeline. For a home that needs $30,000+ in work, selling as-is to a cash buyer often makes more financial sense than managing a renovation you didn't plan for from out of state or during grief. For a home in decent shape that needs cosmetic updates, a light refresh can meaningfully increase the sale price. I can walk through the property with you and give you an honest read on which path nets you more — that conversation is always free and never pressured.",
+          answerEs: "Honestamente, depende de la diferencia de condición y su cronograma. Para una casa que necesita $30,000+ en trabajo, vender tal como está a un comprador en efectivo a menudo tiene más sentido financiero que gestionar una renovación que no planeó. Para una casa en buena forma que necesita actualizaciones cosméticas, un refresco ligero puede aumentar significativamente el precio de venta.",
+        },
+      ],
+    },
   ],
 };
 

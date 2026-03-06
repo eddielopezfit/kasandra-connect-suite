@@ -97,6 +97,39 @@ const data: GuideContentData = {
       content: "Choose the step that fits your situation right now.\n\n**Option 1 — Compare real offers**\nSee what different types of offers look like with your numbers.\n\n**Option 2 — Clarify your timeline**\nA quick readiness check to see where you stand.\n\n**Option 3 — Build a selling plan**\nIf you're moving in the next few months, let's talk.",
       contentEs: "Elige el paso que encaja con tu situación ahora mismo.\n\n**Opción 1 — Comparar ofertas reales**\nVe cómo se ven diferentes tipos de ofertas con tus números.\n\n**Opción 2 — Clarificar tu cronograma**\nUn check rápido de preparación para ver dónde estás.\n\n**Opción 3 — Crear un plan de venta**\nSi te mudarás en los próximos meses, hablemos.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "How much more money will I get from a traditional sale vs a cash offer?",
+          questionEs: "¿Cuánto más dinero obtendré de una venta tradicional vs una oferta en efectivo?",
+          answer: "In Tucson, traditional sales typically net 7–17% more than cash offers on gross price — but that gap narrows significantly when you factor in commission (5–6%), holding costs during the 38+ day marketing period, any repairs or staging required, and the risk of a buyer's financing falling through. I run a full side-by-side net sheet for every seller considering both paths. The gross price difference is rarely the same as the net-to-seller difference, and the net number is the one that actually matters.",
+          answerEs: "En Tucson, las ventas tradicionales típicamente producen un 7–17% más que las ofertas en efectivo en precio bruto — pero esa brecha se reduce significativamente cuando se consideran la comisión (5–6%), los costos de tenencia durante el período de mercadeo de 38+ días, cualquier reparación o staging requerida, y el riesgo de que el financiamiento del comprador falle.",
+        },
+        {
+          question: "What are the main risks of accepting a cash offer in Tucson?",
+          questionEs: "¿Cuáles son los principales riesgos de aceptar una oferta en efectivo en Tucson?",
+          answer: "The primary risk is leaving money on the table if your home would perform well on the open market. Cash buyers price in their profit margin and the cost of uncertainty — that discount is real. The other risk is working with an unvetted buyer who makes a cash offer but doesn't actually have immediate funds available. Legitimate cash offers should come with proof of funds and close through a title company — never outside of escrow. I can help you evaluate any cash offer you receive to make sure it's legitimate and competitive before you say yes.",
+          answerEs: "El riesgo principal es dejar dinero en la mesa si su casa funcionaría bien en el mercado abierto. Los compradores en efectivo ponen precio a su margen de ganancia y al costo de la incertidumbre — ese descuento es real. El otro riesgo es trabajar con un comprador no verificado. Las ofertas en efectivo legítimas deben venir con prueba de fondos y cerrar a través de una compañía de títulos.",
+        },
+        {
+          question: "How do I know if a cash offer is fair in the Tucson market?",
+          questionEs: "¿Cómo sé si una oferta en efectivo es justa en el mercado de Tucson?",
+          answer: "A fair cash offer in Tucson typically comes in at 85–92% of market value for a home in good condition, or lower for homes needing significant work. The benchmark is: what would a properly priced traditional listing net you after commission, repairs, carrying costs, and the time value of uncertainty? If a cash offer is within 5–8% of that net number, it's often competitive when you factor in the certainty and speed. I'll run those numbers for you side by side so you can make an informed decision rather than reacting to the headline price.",
+          answerEs: "Una oferta en efectivo justa en Tucson típicamente llega al 85–92% del valor de mercado para una casa en buena condición, o más baja para casas que necesitan trabajo significativo. El referente es: ¿qué produciría neto un listado tradicional correctamente valorado después de comisión, reparaciones, costos de tenencia e incertidumbre?",
+        },
+        {
+          question: "Can I get a cash offer and still list on the MLS in Tucson?",
+          questionEs: "¿Puedo obtener una oferta en efectivo y aún listar en el MLS en Tucson?",
+          answer: "Yes — and this is actually one of the smartest approaches for many sellers. Getting a cash offer first gives you a guaranteed floor price and real leverage in MLS negotiations. If the traditional sale produces a higher net, you take it. If it doesn't perform as expected, you have the cash offer as a backup. Corner Connect's program is specifically designed this way — you get a competitive cash offer in hand while we simultaneously prepare and list your home on the open market.",
+          answerEs: "Sí — y este es en realidad uno de los enfoques más inteligentes para muchos vendedores. Obtener una oferta en efectivo primero le da un precio mínimo garantizado y apalancamiento real en las negociaciones del MLS. Si la venta tradicional produce un neto más alto, la toma. Si no funciona como se esperaba, tiene la oferta en efectivo como respaldo.",
+        },
+      ],
+    },
   ],
 };
 

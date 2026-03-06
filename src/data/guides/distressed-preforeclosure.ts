@@ -76,6 +76,45 @@ const data: GuideContentData = {
       content: "If you're in a difficult situation, the most important thing is to start talking — to your lender, to a housing counselor, or to a Realtor who can help you understand what your home is worth and what options you have.\n\nKasandra handles these conversations with complete confidentiality and no judgment. If you'd like to understand your options without any commitment, Selena can help you get started.",
       contentEs: "Si estás en una situación difícil, lo más importante es comenzar a hablar — con tu prestamista, con un consejero de vivienda, o con un Realtor que pueda ayudarte a entender cuánto vale tu casa y qué opciones tienes.\n\nKasandra maneja estas conversaciones con total confidencialidad y sin juicios. Si deseas entender tus opciones sin ningún compromiso, Selena puede ayudarte a comenzar.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "How long does the foreclosure process take in Arizona?",
+          questionEs: "¿Cuánto tiempo tarda el proceso de ejecución hipotecaria en Arizona?",
+          answer: "Arizona is a non-judicial foreclosure state, which means lenders don't have to go through the courts — the process can move faster than most people expect. Once a Notice of Trustee's Sale is recorded, you typically have 91 days until the auction date. That said, most lenders don't record that notice the moment you miss a payment. There's usually a 90–120 day window of missed payments before that clock starts. If you're behind right now, you likely have more time than you think — but less than you'd want. Call me before you assume it's too late.",
+          answerEs: "Arizona es un estado de ejecución hipotecaria no judicial, lo que significa que los prestamistas no tienen que ir a través de los tribunales — el proceso puede moverse más rápido de lo que la mayoría espera. Una vez que se registra un Aviso de Venta del Fideicomisario, generalmente tiene 91 días hasta la fecha de subasta.",
+        },
+        {
+          question: "Can I sell my home to avoid foreclosure in Arizona?",
+          questionEs: "¿Puedo vender mi casa para evitar la ejecución hipotecaria en Arizona?",
+          answer: "Yes — and this is often the best outcome available when you have equity in the home. Selling before the foreclosure auction lets you pay off the mortgage, protect your credit (a foreclosure stays on your record for 7 years), and potentially walk away with cash in your pocket. Even if you're behind on payments, a quick sale in Tucson's market — where homes are moving in 38 days on average — can often be completed before the Trustee's Sale date. Time is the critical variable. The earlier we start, the more options you have.",
+          answerEs: "Sí — y esto es a menudo el mejor resultado disponible cuando tiene capital en la casa. Vender antes de la subasta de ejecución hipotecaria le permite pagar la hipoteca, proteger su crédito (una ejecución hipotecaria permanece en su historial por 7 años), y potencialmente salir con dinero en el bolsillo.",
+        },
+        {
+          question: "What is a short sale and when does it make sense in Arizona?",
+          questionEs: "¿Qué es una venta corta y cuándo tiene sentido en Arizona?",
+          answer: "A short sale is when you sell the home for less than what you owe on the mortgage, and the lender agrees to accept that lower amount as payment in full — or partial settlement. It requires lender approval, which adds time and paperwork to the process. In Arizona, a short sale is typically better than foreclosure for your credit and your future borrowing ability. But it's not the right fit for everyone — if you have equity, a regular sale is almost always a better path. I can look at your specific situation and tell you honestly which option makes the most sense.",
+          answerEs: "Una venta corta es cuando vende la casa por menos de lo que debe en la hipoteca, y el prestamista acepta esa cantidad menor como pago completo — o liquidación parcial. Requiere aprobación del prestamista, lo que agrega tiempo y papeleo al proceso. En Arizona, una venta corta es típicamente mejor que la ejecución hipotecaria para su crédito.",
+        },
+        {
+          question: "Will foreclosure affect my credit score and for how long?",
+          questionEs: "¿Afectará la ejecución hipotecaria mi puntaje de crédito y por cuánto tiempo?",
+          answer: "A foreclosure stays on your credit report for 7 years and can drop your score by 100–160 points depending on where it starts. The impact is most severe in the first 2–3 years. After foreclosure, most conventional loan programs require a 7-year waiting period before you can buy again — though FHA has a 3-year window and VA loans have a 2-year window in many cases. Avoiding foreclosure through a sale, even a short sale, carries meaningfully shorter credit recovery timelines. This is worth protecting if there's any path to do so.",
+          answerEs: "Una ejecución hipotecaria permanece en su informe de crédito por 7 años y puede reducir su puntaje en 100–160 puntos dependiendo de dónde comience. El impacto es más severo en los primeros 2–3 años. Después de una ejecución hipotecaria, la mayoría de los programas de préstamos convencionales requieren un período de espera de 7 años antes de que pueda comprar nuevamente.",
+        },
+        {
+          question: "What resources are available in Tucson if I can't make my mortgage payments?",
+          questionEs: "¿Qué recursos están disponibles en Tucson si no puedo hacer mis pagos de hipoteca?",
+          answer: "There are real options before it reaches foreclosure. First, contact your lender immediately — forbearance agreements, loan modifications, and repayment plans are all tools lenders would rather use than foreclose. The Arizona Department of Housing's Save Our Home AZ program has historically provided assistance for qualified homeowners facing hardship. HUD-approved housing counseling is available free of charge through several Tucson nonprofits. And if selling is the path that makes the most sense, I can help you move quickly without pressure. You don't have to figure this out alone.",
+          answerEs: "Hay opciones reales antes de que llegue a la ejecución hipotecaria. Primero, contacte a su prestamista inmediatamente — los acuerdos de indulgencia, modificaciones de préstamos y planes de pago son herramientas que los prestamistas preferirían usar antes que ejecutar. El programa Save Our Home AZ del Departamento de Vivienda de Arizona ha proporcionado asistencia históricamente.",
+        },
+      ],
+    },
   ],
 };
 

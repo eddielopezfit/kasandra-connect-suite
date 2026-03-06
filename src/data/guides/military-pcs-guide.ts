@@ -52,6 +52,45 @@ const data: GuideContentData = {
       content: "Whether you're arriving, departing, or exploring options for a second tour in Tucson — the process works better when you start early and work with someone who understands military timelines.\n\nKasandra has worked with military buyers and sellers in Tucson and understands the urgency, the VA loan process, and the DMAFB commute patterns firsthand. No pressure. Just clarity when you're ready.",
       contentEs: "Ya sea que llegues, te vayas, o explores opciones para un segundo turno en Tucson — el proceso funciona mejor cuando comienzas temprano y trabajas con alguien que entiende los tiempos militares.\n\nKasandra ha trabajado con compradores y vendedores militares en Tucson y entiende la urgencia, el proceso de préstamo VA y los patrones de viaje de DMAFB de primera mano. Sin presión. Solo claridad cuando estés listo.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "Can I use a VA loan to buy a home near Davis-Monthan AFB?",
+          questionEs: "¿Puedo usar un préstamo VA para comprar una casa cerca de Davis-Monthan AFB?",
+          answer: "Absolutely — and the VA loan is one of the strongest buying tools available in Tucson. No down payment, no PMI, competitive interest rates. The Pima County VA loan limit is $832,750 with full entitlement, which covers the vast majority of homes near DMAFB. I work with buyers using VA financing regularly, and I can connect you with lenders who specialize in VA loans and understand the military timeline and certificate of eligibility process.",
+          answerEs: "Absolutamente — y el préstamo VA es una de las herramientas de compra más sólidas disponibles en Tucson. Sin pago inicial, sin PMI, tasas de interés competitivas. El límite del préstamo VA del Condado de Pima es $832,750 con derecho completo, lo que cubre la gran mayoría de las casas cerca de DMAFB.",
+        },
+        {
+          question: "What are the best neighborhoods near Davis-Monthan AFB for military families?",
+          questionEs: "¿Cuáles son los mejores vecindarios cerca de Davis-Monthan AFB para familias militares?",
+          answer: "The ZIP codes I recommend most for DMAFB families are 85730 (Rita Ranch — great schools, family-oriented, 15 min to base), 85747 (south Tucson suburbs, newer construction, affordable), and 85711/85706 (closer to base, quicker commute, more established neighborhoods). Rita Ranch is consistently the most popular with military families because of the community feel and school quality. I know these areas well and can help you narrow down what fits your family's priorities.",
+          answerEs: "Los códigos postales que más recomiendo para familias de DMAFB son 85730 (Rita Ranch — excelentes escuelas, orientado a familias, 15 min a la base), 85747 (suburbios del sur de Tucson, construcción más nueva, asequible), y 85711/85706 (más cerca de la base, trayecto más rápido).",
+        },
+        {
+          question: "What happens to my home if I get PCS orders and still have a mortgage?",
+          questionEs: "¿Qué pasa con mi casa si recibo órdenes de PCS y todavía tengo una hipoteca?",
+          answer: "You have real options and this is a situation I help military families navigate often. If you have equity, selling before your report date is usually the cleanest path — we can often move quickly in Tucson's market. If you're underwater or the timeline is tight, renting the property is a legitimate option that keeps the asset while covering your mortgage. The VA's Interest Rate Reduction Refinance Loan (IRRRL) can also help lower payments if you're holding onto the property. Let's look at your specific numbers and I'll give you an honest assessment of which path makes the most sense.",
+          answerEs: "Tiene opciones reales y esta es una situación que ayudo a familias militares a navegar con frecuencia. Si tiene capital acumulado, vender antes de su fecha de presentación es generalmente el camino más limpio. Si está bajo el agua o el cronograma es ajustado, alquilar la propiedad es una opción legítima que mantiene el activo mientras cubre su hipoteca.",
+        },
+        {
+          question: "How quickly can I close on a home in Tucson with a VA loan?",
+          questionEs: "¿Qué tan rápido puedo cerrar en una casa en Tucson con un préstamo VA?",
+          answer: "With a VA loan and a prepared buyer, 30 days is achievable. 45 days is more typical and gives everyone — lender, appraiser, title — reasonable breathing room. The VA appraisal is often cited as a potential delay, but with an experienced lender who orders it immediately, it usually comes back within 10–14 days in Tucson. The key is getting your Certificate of Eligibility and pre-approval locked in before you start shopping so you can move fast when the right home appears.",
+          answerEs: "Con un préstamo VA y un comprador preparado, 30 días es alcanzable. 45 días es más típico y le da a todos — prestamista, tasador, título — un margen razonable. La tasación VA a menudo se cita como un posible retraso, pero con un prestamista experimentado que la solicita inmediatamente, generalmente regresa en 10–14 días en Tucson.",
+        },
+        {
+          question: "Can I buy a home in Tucson before my PCS arrival date?",
+          questionEs: "¿Puedo comprar una casa en Tucson antes de mi fecha de llegada de PCS?",
+          answer: "Yes — and buying before arrival is something I help military buyers do regularly. VA loans allow purchases before you physically relocate, and I can do video walkthroughs, detailed neighborhood reports, and coordinate with your lender remotely. Many military families do their neighborhood research, narrow to 3–4 areas, and then fly out for a focused 2–3 day house hunting trip. I'll build an itinerary in advance so every hour of that trip is productive.",
+          answerEs: "Sí — y comprar antes de llegar es algo que ayudo a compradores militares a hacer regularmente. Los préstamos VA permiten compras antes de que se reubique físicamente, y puedo hacer recorridos en video, informes detallados de vecindarios y coordinar con su prestamista de forma remota.",
+        },
+      ],
+    },
   ],
 };
 

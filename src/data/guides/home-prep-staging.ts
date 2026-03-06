@@ -52,6 +52,39 @@ const data: GuideContentData = {
       content: "The best prep strategy depends on your specific home, timeline, and budget. A conversation about what to prioritize — and what to skip — is the most valuable 30 minutes you can spend before listing.\n\nKasandra will walk through your home and give you a prioritized list, not a sales pitch. No pressure, no obligation. When you're ready, Selena can help you get started.",
       contentEs: "La mejor estrategia de preparación depende de tu casa específica, cronograma y presupuesto. Una conversación sobre qué priorizar — y qué omitir — es los 30 minutos más valiosos que puedes pasar antes de listar.\n\nKasandra recorrerá tu casa y te dará una lista priorizada, no un argumento de venta.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "How much does it cost to stage a home for sale in Tucson?",
+          questionEs: "¿Cuánto cuesta hacer staging de una casa para vender en Tucson?",
+          answer: "Full professional staging — furniture rental, décor, a stager's design fee — typically runs $1,500–$4,000 for a Tucson home, depending on size and how furnished it currently is. But full staging isn't always necessary or the best use of your money. For occupied homes, strategic decluttering and depersonalizing (which costs almost nothing) often produces 80% of the benefit. I'll walk through the property with you and give you an honest assessment of whether professional staging would add more value than it costs for your specific situation.",
+          answerEs: "El staging profesional completo — alquiler de muebles, decoración, tarifa de diseño del stager — típicamente cuesta $1,500–$4,000 para una casa en Tucson, dependiendo del tamaño y qué tan amueblada está actualmente. Pero el staging completo no siempre es necesario. Para casas ocupadas, el desorden estratégico y despersonalización (que cuesta casi nada) a menudo produce el 80% del beneficio.",
+        },
+        {
+          question: "What repairs should I make before listing my Tucson home?",
+          questionEs: "¿Qué reparaciones debo hacer antes de listar mi casa en Tucson?",
+          answer: "The repairs that matter most are the ones that show up in an inspection and the ones that are visible in photos. Leaking faucets, broken fixtures, obvious cracks, non-functional HVAC, and any roof issues should be addressed. Cosmetic updates with high visibility — fresh interior paint in neutral tones, new light fixtures, updated cabinet hardware — have good return on investment. What to skip: major kitchen or bathroom renovations, new flooring throughout, or anything structural unless it's a required disclosure item. I'll help you prioritize what actually moves the needle vs. what just costs money.",
+          answerEs: "Las reparaciones que más importan son las que aparecen en una inspección y las que son visibles en las fotos. Grifos que gotean, accesorios rotos, grietas obvias, HVAC no funcional y cualquier problema de techo deben abordarse. Las actualizaciones cosméticas de alta visibilidad tienen buen retorno de inversión.",
+        },
+        {
+          question: "How important are listing photos when selling a home in Tucson?",
+          questionEs: "¿Qué tan importantes son las fotos del listado cuando se vende una casa en Tucson?",
+          answer: "They're the single most important marketing element — full stop. Most buyers in Tucson (and everywhere) decide whether to schedule a showing based entirely on the listing photos. Bad photos of a great home mean fewer showings. Great photos of a well-prepared home mean more competition and stronger offers. I always use professional photography with every listing I take. It's not optional. The difference between phone photos and professional real estate photography in Tucson's desert light is significant and completely visible to buyers.",
+          answerEs: "Son el elemento de marketing más importante — sin duda. La mayoría de los compradores en Tucson (y en todas partes) deciden si programar una visita basándose completamente en las fotos del listado. Fotos malas de una gran casa significan menos visitas. Siempre uso fotografía profesional con cada listado que tomo.",
+        },
+        {
+          question: "What exterior updates matter most for curb appeal in Tucson?",
+          questionEs: "¿Qué actualizaciones exteriores importan más para el atractivo exterior en Tucson?",
+          answer: "In our desert climate, landscaping condition matters enormously — dead plants, overgrown mesquite, and dried-up grass are among the first things buyers notice in photos and in person. Fresh gravel or decomposed granite, trimmed desert plants, and a clean front entry make a strong first impression at low cost. The front door color is also surprisingly impactful — a freshly painted front door with updated hardware signals care and attention. In Tucson's intense sun, paint fades faster than in other climates, so if the exterior paint looks weathered, even a partial repaint of the front elevation is worth considering.",
+          answerEs: "En nuestro clima desértico, la condición del paisajismo importa enormemente — las plantas muertas, el mezquite excrecido y el pasto seco son de las primeras cosas que los compradores notan en fotos y en persona. Grava fresca o granito descompuesto, plantas desérticas recortadas y una entrada delantera limpia generan una fuerte primera impresión a bajo costo.",
+        },
+      ],
+    },
   ],
 };
 

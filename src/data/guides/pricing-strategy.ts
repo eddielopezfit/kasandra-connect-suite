@@ -69,6 +69,39 @@ const data: GuideContentData = {
       content: "Pricing your home correctly is not a guess — it's an analysis. The best way to know your number is a CMA from someone who knows your specific Tucson neighborhood, not just the metro average.\n\nKasandra will prepare a full CMA for your home at no cost or commitment. If you'd like to understand what your home is worth in today's market, start that conversation with Selena.",
       contentEs: "Fijar el precio correcto de tu casa no es una suposición — es un análisis. La mejor manera de conocer tu número es un CMA de alguien que conoce tu vecindario específico de Tucson, no solo el promedio del metro.\n\nKasandra preparará un CMA completo para tu casa sin costo ni compromiso.",
     },
+  {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "What happens if I price my home too high in Tucson?",
+          questionEs: "¿Qué pasa si fijo el precio de mi casa demasiado alto en Tucson?",
+          answer: "Overpricing is one of the most expensive mistakes you can make in a sale — and I say that because I've watched it play out many times. A home that sits too long in Tucson starts to carry a stigma. Buyers ask 'what's wrong with it?' Days on market become a negotiating tool against you. You eventually reduce, but buyers who've been watching now have leverage. The homes that net the most almost always price correctly from day one and sell in the first 2–3 weeks with competition. There's a real cost to starting too high.",
+          answerEs: "Sobrevalorar es uno de los errores más costosos que puede cometer en una venta. Una casa que permanece demasiado tiempo en Tucson empieza a tener un estigma. Los compradores preguntan '¿qué tiene de malo?' Los días en el mercado se convierten en una herramienta de negociación en su contra.",
+        },
+        {
+          question: "How do real estate agents determine the listing price of a home?",
+          questionEs: "¿Cómo determinan los agentes de bienes raíces el precio de listado de una casa?",
+          answer: "A good listing price comes from a Comparative Market Analysis — looking at what similar homes in your area have actually sold for in the last 60–90 days, adjusted for differences in size, condition, features, and location. The key word is sold — not listed. What sellers are asking for is irrelevant; what buyers are paying is what matters. I look at active competition, expired listings (homes that didn't sell at their asking price), and recent closed sales to find the range where your home should live. Then we decide together whether to price at, slightly below, or slightly above market based on your goals.",
+          answerEs: "Un buen precio de listado proviene de un Análisis Comparativo de Mercado — mirando lo que casas similares en su área realmente han vendido en los últimos 60–90 días, ajustado por diferencias en tamaño, condición, características y ubicación. La palabra clave es vendido — no listado.",
+        },
+        {
+          question: "Should I price my Tucson home below market to create a bidding war?",
+          questionEs: "¿Debo fijar el precio de mi casa en Tucson por debajo del mercado para crear una guerra de ofertas?",
+          answer: "This strategy works in strong seller's markets with low inventory — and Tucson has seen it work well during 2020–2022. In today's more balanced market (4.92 months supply), intentionally underpricing carries real risk: you might get fewer offers than you expected and end up accepting less than market value. The smarter move in the current environment is pricing at market, presenting the home well, and letting genuine competition develop naturally. I'll tell you honestly when the conditions are right for an aggressive pricing strategy and when they're not.",
+          answerEs: "Esta estrategia funciona en mercados de vendedores fuertes con bajo inventario — y Tucson la ha visto funcionar bien durante 2020–2022. En el mercado más equilibrado de hoy (4.92 meses de oferta), subvalorar intencionalmente conlleva riesgo real: podría obtener menos ofertas de las esperadas.",
+        },
+        {
+          question: "How do I handle a lowball offer on my Tucson home?",
+          questionEs: "¿Cómo manejo una oferta baja en mi casa de Tucson?",
+          answer: "Don't reject it — counter it. A lowball offer is at least a buyer who's engaged and interested. Your counter should be at or near your asking price, with a brief explanation of the comps that support your value. Sometimes lowball buyers are testing; sometimes they have a real budget constraint you can work around with creative terms (closing cost assistance, a later possession date). The goal is to keep the conversation alive without showing desperation. I'll help you craft a counter that signals strength without burning the bridge.",
+          answerEs: "No la rechace — contraoferte. Una oferta baja es al menos un comprador que está comprometido e interesado. Su contraoferta debe estar en o cerca de su precio de venta, con una breve explicación de las comparables que respaldan su valor. El objetivo es mantener la conversación viva sin mostrar desesperación.",
+        },
+      ],
+    },
   ],
 };
 
