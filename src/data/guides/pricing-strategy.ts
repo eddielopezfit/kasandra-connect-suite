@@ -70,6 +70,13 @@ const data: GuideContentData = {
       contentEs: "Fijar el precio correcto de tu casa no es una suposición — es un análisis. La mejor manera de conocer tu número es un CMA de alguien que conoce tu vecindario específico de Tucson, no solo el promedio del metro.\n\nKasandra preparará un CMA completo para tu casa sin costo ni compromiso.",
     },
   {
+      heading: "",
+      headingEs: "",
+      content: "",
+      contentEs: "",
+      variant: 'tool-bridge' as const,
+    },
+  {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

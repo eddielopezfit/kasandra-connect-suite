@@ -64,6 +64,13 @@ const data: GuideContentData = {
       contentEs: "Si está listo para explorar opciones que se ajusten a su situación—o si simplemente le gustaría claridad sobre por dónde empezar—es bienvenido(a) a dar el siguiente paso a su propio ritmo.\n\nNo hay presión. Solo apoyo cuando esté listo.",
     },
     {
+      heading: "",
+      headingEs: "",
+      content: "",
+      contentEs: "",
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: "First-Time Buyer Questions We Hear Most",
       headingEs: "Preguntas Más Frecuentes de Compradores Primerizos",
       content: "",

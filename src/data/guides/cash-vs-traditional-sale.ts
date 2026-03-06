@@ -98,6 +98,13 @@ const data: GuideContentData = {
       contentEs: "Elige el paso que encaja con tu situación ahora mismo.\n\n**Opción 1 — Comparar ofertas reales**\nVe cómo se ven diferentes tipos de ofertas con tus números.\n\n**Opción 2 — Clarificar tu cronograma**\nUn check rápido de preparación para ver dónde estás.\n\n**Opción 3 — Crear un plan de venta**\nSi te mudarás en los próximos meses, hablemos.",
     },
   {
+      heading: "",
+      headingEs: "",
+      content: "",
+      contentEs: "",
+      variant: 'tool-bridge' as const,
+    },
+  {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

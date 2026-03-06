@@ -65,6 +65,13 @@ const data: GuideContentData = {
       contentEs: "La mejor manera de reducir los vecindarios es una combinación de conocer tus prioridades y hablar con alguien que haya trabajado en todos ellos.\n\nKasandra conoce los mercados residenciales de Tucson desde la experiencia directa en transacciones — no solo estadísticas.",
     },
   {
+      heading: "",
+      headingEs: "",
+      content: "",
+      contentEs: "",
+      variant: 'tool-bridge' as const,
+    },
+  {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

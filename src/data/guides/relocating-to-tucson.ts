@@ -47,6 +47,13 @@ const data: GuideContentData = {
       contentEs: "Tucson es un mercado genuinamente bueno para los compradores ahora mismo — asequible en relación con otras áreas metropolitanas occidentales, con inventario estable y espacio para negociar.\n\nKasandra trabaja con compradores de reubicación regularmente y puede hacer que el proceso remoto se sienta manejable. Selena está disponible en inglés y español cuando estés listo para comenzar.",
     },
   {
+      heading: "",
+      headingEs: "",
+      content: "",
+      contentEs: "",
+      variant: 'tool-bridge' as const,
+    },
+  {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

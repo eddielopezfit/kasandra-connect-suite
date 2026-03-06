@@ -53,6 +53,13 @@ const data: GuideContentData = {
       contentEs: "Ya sea que llegues, te vayas, o explores opciones para un segundo turno en Tucson — el proceso funciona mejor cuando comienzas temprano y trabajas con alguien que entiende los tiempos militares.\n\nKasandra ha trabajado con compradores y vendedores militares en Tucson y entiende la urgencia, el proceso de préstamo VA y los patrones de viaje de DMAFB de primera mano. Sin presión. Solo claridad cuando estés listo.",
     },
   {
+      heading: "",
+      headingEs: "",
+      content: "",
+      contentEs: "",
+      variant: 'tool-bridge' as const,
+    },
+  {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

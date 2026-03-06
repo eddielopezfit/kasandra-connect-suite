@@ -70,6 +70,13 @@ const data: GuideContentData = {
       contentEs: "Si estás en esta situación, el primer paso más útil es una conversación sin presión sobre dónde estás en el proceso y cuánto vale realmente la casa en el mercado actual.\n\nKasandra trabaja con vendedores en proceso de divorcio con paciencia y discreción. Ambas partes son tratadas con igual respeto durante todo el proceso.",
     },
   {
+      heading: "",
+      headingEs: "",
+      content: "",
+      contentEs: "",
+      variant: 'tool-bridge' as const,
+    },
+  {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",
