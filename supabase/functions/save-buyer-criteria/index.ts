@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
 
     // Rate limit
     const body: SaveBuyerCriteriaInput = await req.json();
-    const rlKey = extractRateLimitKey(req, body as Record<string, unknown>);
+    const rlKey = extractRateLimitKey(req, body as unknown as Record<string, unknown>);
     const { allowed } = await checkRateLimit(supabase, rlKey, "save-buyer-criteria");
     if (!allowed) return rateLimitResponse(corsHeaders);
 
