@@ -94,7 +94,7 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
     case 'cash_offer_options_hero':
       return generateQuestionGreeting(language, 'cash');
     case 'off_market_capture':
-      return generateQuestionGreeting(language, 'buy');
+      return generateOffMarketGreeting(language);
     case 'floating':
     default:
       return generateDefaultGreeting(language);
@@ -111,11 +111,9 @@ function generatePostBookingGreeting(context: EntryContext): GreetingResult {
   
   if (language === 'es') {
     return {
-      content: `${name}Listo. Ya hiciste lo más difícil — pensar esto con cuidado.
+      content: `${name}Todo listo. Kasandra revisará personalmente lo que compartiste antes de tu llamada — para que llegues preparado/a, no con dudas.
 
-Kasandra revisará personalmente lo que compartiste antes de tu llamada para que tengas claridad completa en 10 minutos.
-
-Si gustas, dime una cosa sobre la que quieras estar 100% seguro/a cuando hablen.`,
+¿Hay algo sobre lo que quieras tener total claridad antes de hablar con ella?`,
       suggestedReplies: [
         "¿Qué debo preparar para la llamada?",
         "¿Puedo reprogramar si es necesario?",
@@ -126,11 +124,9 @@ Si gustas, dime una cosa sobre la que quieras estar 100% seguro/a cuando hablen.
   
   // English
   return {
-    content: `${name}You're all set. You've already done the hard part — thinking this through carefully.
+    content: `${name}You're all set. Kasandra will personally review what you shared before your call — so you'll walk in prepared, not scrambling.
 
-Kasandra will personally review what you shared before your call so you get complete clarity in 10 minutes.
-
-If you'd like, tell me one thing you want to be 100% certain about when you two talk.`,
+Is there one thing you want to be completely clear on before you two talk?`,
     suggestedReplies: [
       "What should I prepare for the call?",
       "Can I reschedule if needed?",
@@ -239,11 +235,9 @@ function generateCalculatorGreeting(context: EntryContext): GreetingResult {
     let content = 'Veo que completaste el análisis.';
     
     if (calculatorAdvantage === 'cash') {
-      content = `Excelente trabajo con el análisis. El efectivo parece ser una buena opción para ti — velocidad y certeza sin los costos de preparación.`;
+      content = `Analizaste los números. El camino en efectivo muestra menos costos iniciales y cierre más rápido — si eso es lo correcto depende de lo que más te importa en este momento.`;
     } else if (calculatorAdvantage === 'traditional') {
-      content = diff 
-        ? `Buen trabajo con los números. Parece que una venta tradicional podría darte ${diff} más — si tienes el tiempo para maximizar el valor.`
-        : `Buen trabajo con los números. Una venta tradicional podría darte más — si tienes el tiempo para maximizar el valor.`;
+      content = `Analizaste los números — y hay una diferencia que vale entender. El camino correcto depende de tu cronograma, tu situación y lo que te dé más certeza ahora mismo.`;
     } else {
       content = `Has dado un gran paso al analizar tus números. La diferencia es sutil — lo cual significa que la decisión correcta depende de tu situación.`;
     }
@@ -262,11 +256,9 @@ function generateCalculatorGreeting(context: EntryContext): GreetingResult {
   let content = 'I see you completed the analysis.';
   
   if (calculatorAdvantage === 'cash') {
-    content = `Nice work on the analysis. Cash looks like a strong option for you — speed and certainty without the prep costs.`;
+    content = `You ran the numbers. The cash path shows fewer upfront costs and a faster close — whether that's the right fit depends on what matters most to you right now.`;
   } else if (calculatorAdvantage === 'traditional') {
-    content = diff 
-      ? `Great job on the numbers. It looks like a traditional sale could net you ${diff} more — if you have the time to maximize value.`
-      : `Great job on the numbers. A traditional sale could net you more — if you have the time to maximize value.`;
+    content = `You ran the numbers — and there's a gap worth understanding. The right path depends on your timeline, your situation, and what feels most certain to you right now.`;
   } else {
     content = `You've taken a great step by running your numbers. The difference is subtle — which means the right choice depends on your situation.`;
   }
@@ -295,7 +287,7 @@ function generateGuideHandoffGreeting(context: EntryContext): GreetingResult {
     if (guideCategory === 'buying') {
       content += ` Es un excelente recurso para compradores. ¿Tienes alguna pregunta específica sobre el proceso de compra?`;
     } else if (guideCategory === 'selling' || guideCategory === 'valuation') {
-      content += ` Gran paso para entender tus opciones de venta. ¿Te gustaría una lista personalizada basada en lo que has leído?`;
+      content += ` ¿Qué pregunta surgió — o te ayudaría hablar de tu situación específica?`;
     } else {
       content += ` ¿Hay algo específico que te gustaría explorar más?`;
     }
@@ -317,7 +309,7 @@ function generateGuideHandoffGreeting(context: EntryContext): GreetingResult {
   if (guideCategory === 'buying') {
     content += ` It's a great resource for buyers. Do you have any specific questions about the buying process?`;
   } else if (guideCategory === 'selling' || guideCategory === 'valuation') {
-    content += ` Great step toward understanding your selling options. Would you like a personalized checklist based on what you've read?`;
+    content += ` What question came up for you — or would it help to talk through your specific situation?`;
   } else {
     content += ` Is there anything specific you'd like to explore further?`;
   }
@@ -368,7 +360,7 @@ function generateSynthesisGreeting(context: EntryContext): GreetingResult {
 function generateHeroGreeting(language: 'en' | 'es'): GreetingResult {
   if (language === 'es') {
     return {
-      content: `Hola, soy Selena — la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarte a explorar tus opciones con calma y sin presión. Ya sea que estés pensando en comprar, vender, o simplemente entendiendo lo que es posible — estoy aquí para ayudarte.\n\n¿Qué te trae por aquí hoy?`,
+      content: `Hola — soy Selena, la concierge digital de bienes raíces de Kasandra Prieto en Tucson.\n\nYa sea que estés pensando en comprar, vender, o simplemente entender qué es posible, aquí no hay presión.\n\n¿Qué te trae por aquí hoy?`,
       suggestedReplies: [
         "Estoy pensando en vender",
         "Estoy buscando comprar",
@@ -378,7 +370,7 @@ function generateHeroGreeting(language: 'en' | 'es'): GreetingResult {
   }
 
   return {
-    content: `Hello, I'm Selena — Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure. Whether you're thinking about buying, selling, or just understanding what's possible — I'm here to help.\n\nWhat brings you here today?`,
+    content: `Hi — I'm Selena, Kasandra Prieto's digital real estate concierge in Tucson.\n\nWhether you're thinking about buying, selling, or just understanding what's possible, there's no pressure here.\n\nWhat brings you here today?`,
     suggestedReplies: [
       "I'm thinking about selling",
       "I'm looking to buy",
@@ -436,7 +428,7 @@ function generateProactiveGreeting(language: 'en' | 'es'): GreetingResult {
   // This is a fallback if no specific context is provided
   if (language === 'es') {
     return {
-      content: `Noté que has estado explorando tus opciones. ¿Hay algo en lo que pueda ayudarte?`,
+      content: `Has estado explorando un rato — eso normalmente significa que algo está en tu mente. ¿Cuál es la pregunta que todavía no has hecho?`,
       suggestedReplies: [
         "Sí, tengo una pregunta",
         "¿Cuáles son mis opciones?",
@@ -446,7 +438,7 @@ function generateProactiveGreeting(language: 'en' | 'es'): GreetingResult {
   }
 
   return {
-    content: `I noticed you've been exploring your options. Is there anything I can help you with?`,
+    content: `You've been exploring for a bit — that usually means something is on your mind. What's the question you haven't asked yet?`,
     suggestedReplies: [
       "Yes, I have a question",
       "What are my options?",
@@ -455,10 +447,32 @@ function generateProactiveGreeting(language: 'en' | 'es'): GreetingResult {
   };
 }
 
+
+function generateOffMarketGreeting(language: 'en' | 'es'): GreetingResult {
+  if (language === 'es') {
+    return {
+      content: `Estás en la lista. Kasandra se comunicará personalmente cuando algo que coincida con tus criterios aparezca — antes de que llegue al mercado.\n\n¿Hay algo sobre el proceso de compra o algún vecindario que te gustaría entender mejor mientras tanto?`,
+      suggestedReplies: [
+        "Explorar vecindarios de Tucson",
+        "¿Cómo funciona el proceso de compra?",
+        "Programas para compradores",
+      ],
+    };
+  }
+  return {
+    content: `You're on the list. Kasandra will personally reach out when something matching your criteria comes up — before it hits the market.\n\nWhile you wait, is there anything about the buying process or Tucson neighborhoods you'd like to understand better?`,
+    suggestedReplies: [
+      "Explore Tucson neighborhoods",
+      "How does the buying process work?",
+      "First-Time Buyer Programs",
+    ],
+  };
+}
+
 function generateDefaultGreeting(language: 'en' | 'es'): GreetingResult {
   if (language === 'es') {
     return {
-      content: `Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarte a explorar tus opciones con calma y sin presión.\n\n¿Estás pensando en comprar, vender, o solo explorar qué es posible?`,
+      content: `Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nYa sea que estés pensando en comprar, vender, o simplemente entender qué es posible, aquí no hay presión.\n\n¿Qué te trae por aquí hoy?`,
       suggestedReplies: [
         "Estoy pensando en vender",
         "Estoy buscando comprar",
@@ -468,7 +482,7 @@ function generateDefaultGreeting(language: 'en' | 'es'): GreetingResult {
   }
 
   return {
-    content: `Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?`,
+    content: `Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nWhether you're thinking about buying, selling, or just understanding what's possible, there's no pressure here.\n\nWhat brings you here today?`,
     suggestedReplies: [
       "I'm thinking about selling",
       "I'm looking to buy",
