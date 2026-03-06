@@ -16,7 +16,7 @@ import {
 const V2MarketIntelligenceContent = () => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
-  const { stats, isLive, loading } = useMarketPulse();
+  const { stats: pulseStats, isLive, loading } = useMarketPulse();
 
   useDocumentHead({
     titleEn: "Tucson Real Estate Market Intelligence | Current Market Data",
@@ -30,11 +30,11 @@ const V2MarketIntelligenceContent = () => {
     logEvent('page_view', { page: '/v2/market', tool: 'market_intelligence' });
   }, []);
 
-  const dom = stats.daysOnMarket;
-  const saleToListPct = stats.saleToListRatio;
-  const holdingCost = stats.holdingCostPerDay;
-  const prepCost = stats.prepAvg;
-  const verifiedDate = stats.verifiedDate;
+  const dom = pulseStats.daysOnMarket;
+  const saleToListPct = pulseStats.saleToListRatio;
+  const holdingCost = pulseStats.holdingCostPerDay;
+  const prepCost = pulseStats.prepAvg;
+  const verifiedDate = pulseStats.verifiedDate;
 
   const sellerImplication =
     dom <= 20 ? t("Fast-moving market — well-priced homes are moving quickly.", "Mercado activo — casas bien valuadas se están vendiendo rápido.")
