@@ -237,7 +237,10 @@ export type EntrySource =
   | 'cash_readiness_capture'
   | 'community_mid_page'
   | 'podcast_page'
-  | 'seller_readiness_capture';
+  | 'seller_readiness_capture'
+  | 'market_intelligence'
+  | 'neighborhood_compare'
+  | 'buyer_closing_costs';
 
 export interface EntryContext {
   source: EntrySource;
@@ -595,7 +598,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     
     // Allowed greeting sources (can inject if signature is new + phase matches)
     const isAllowedGreetingSource = !!entryContext && [
-      'calculator', 'guide_handoff', 'synthesis', 'hero', 'quiz_result', 'post_booking', 'seller_decision'
+      'calculator', 'guide_handoff', 'synthesis', 'hero', 'quiz_result', 'post_booking', 'seller_decision',
+      'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs'
     ].includes(entryContext.source);
 
     // Core decision: should we inject a greeting?
@@ -622,7 +626,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       // contextual greetings (guide_handoff, calculator, synthesis), NEVER full
       // identity greetings (hero, default). Prevents mid-thread re-introductions.
       if (messages.length > 3 && hasContextualEntry && isAllowedGreetingSource) {
-        const contextualSources = ['guide_handoff', 'calculator', 'synthesis', 'quiz_result', 'seller_decision'];
+        const contextualSources = ['guide_handoff', 'calculator', 'synthesis', 'quiz_result', 'seller_decision',
+          'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs'];
         return contextualSources.includes(entryContext?.source || '');
       }
       
@@ -946,6 +951,42 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
             ];
           }
         }
+      }
+      // Priority 4.5: Market Intelligence page context
+      else if (entryContext?.source === 'market_intelligence') {
+        greetingContent = t(
+          `You're looking at live Tucson market data — days on market, sale-to-list ratio, and daily holding costs.\n\nWant to understand what these numbers mean for your specific situation?`,
+          `Estás viendo los datos reales del mercado de Tucson — días en el mercado, ratio de venta a precio de lista, y costos de mantenimiento diarios.\n\n¿Quieres entender qué significan estos números para tu situación específica?`
+        );
+        suggestedReplies = [
+          t("Is it a good time to sell?", "¿Es buen momento para vender?"),
+          t("What do these numbers mean?", "¿Qué significan estos números?"),
+          t("Talk with Kasandra", "Hablar con Kasandra"),
+        ];
+      }
+      // Priority 4.6: Neighborhood Compare context
+      else if (entryContext?.source === 'neighborhood_compare') {
+        greetingContent = t(
+          `You're comparing Tucson neighborhoods — that's a smart way to narrow things down. Kasandra knows these communities personally.\n\nIs there something specific you're looking for in a neighborhood?`,
+          `Estás comparando vecindarios de Tucson — excelente forma de reducir opciones. Kasandra conoce estas comunidades personalmente.\n\n¿Hay algo específico que estés buscando en un vecindario?`
+        );
+        suggestedReplies = [
+          t("Which area is best for families?", "¿Qué área es mejor para familias?"),
+          t("Compare schools by area", "Comparar escuelas por zona"),
+          t("Talk with Kasandra", "Hablar con Kasandra"),
+        ];
+      }
+      // Priority 4.7: Buyer Closing Costs context
+      else if (entryContext?.source === 'buyer_closing_costs') {
+        greetingContent = t(
+          `You're estimating your closing costs — that's one of the most important questions buyers don't ask until it's too late.\n\nHave any questions about specific line items?`,
+          `Estás estimando tus costos de cierre — es una de las preguntas más importantes que los compradores no hacen hasta que es demasiado tarde.\n\n¿Tienes alguna duda sobre alguno de los ítems de línea?`
+        );
+        suggestedReplies = [
+          t("What is title insurance?", "¿Qué es el seguro de título?"),
+          t("How much do I need total?", "¿Cuánto necesito en total?"),
+          t("Talk with Kasandra", "Hablar con Kasandra"),
+        ];
       }
       // Priority 5: Hero CTA context
       else if (entryContext?.source === 'hero') {
