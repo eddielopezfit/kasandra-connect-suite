@@ -144,6 +144,7 @@ export type Database = {
       }
       lead_profiles: {
         Row: {
+          buyer_criteria: Json | null
           condition: string | null
           created_at: string
           email: string
@@ -170,6 +171,7 @@ export type Database = {
           verification_token: string | null
         }
         Insert: {
+          buyer_criteria?: Json | null
           condition?: string | null
           created_at?: string
           email: string
@@ -196,6 +198,7 @@ export type Database = {
           verification_token?: string | null
         }
         Update: {
+          buyer_criteria?: Json | null
           condition?: string | null
           created_at?: string
           email?: string
