@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import LanguageToggle from "@/components/v2/LanguageToggle";
-import { AuthorityCTABlock, GuideComplianceFooter, GuideComparisonCards, GuidePathSelector, GuideStatsGrid } from "@/components/v2/guides";
+import { AuthorityCTABlock, GuideComplianceFooter, GuideComparisonCards, GuidePathSelector, GuideStatsGrid, GuideFaqAccordion } from "@/components/v2/guides";
 import GuideImage from "@/components/v2/guides/GuideImage";
 import GuideVideo from "@/components/v2/guides/GuideVideo";
 import GuidePullQuote from "@/components/v2/guides/GuidePullQuote";
@@ -135,17 +135,48 @@ function GuideDetailContent() {
 
   const safeCategory: GuideCategory = registryEntry?.category ?? 'stories';
 
+  // Collect all faqItems across all sections for FAQPage schema
+  const allFaqItems = guide.sections.flatMap(s => s.faqItems ?? []);
+
   return (
     <>
+      {/* Article schema — authorship + description */}
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "Article",
         headline: t(guide.title, guide.titleEs),
-        author: { "@type": "Person", name: guide.author },
-        publisher: { "@type": "Person", name: "Kasandra Prieto" },
+        author: {
+          "@type": "Person",
+          name: guide.author,
+          jobTitle: "REALTOR®",
+          worksFor: { "@type": "Organization", name: "Corner Connect brokered by Realty Executives Arizona Territory" },
+          url: "https://kasandraprieto.com",
+        },
+        publisher: {
+          "@type": "Person",
+          name: "Kasandra Prieto",
+        },
         description: t(guide.intro, guide.introEs).slice(0, 200),
         inLanguage: language,
+        areaServed: { "@type": "City", name: "Tucson", containedInPlace: { "@type": "State", name: "Arizona" } },
       }} />
+
+      {/* FAQPage schema — injected only when guide has faqItems */}
+      {allFaqItems.length > 0 && (
+        <JsonLd data={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: allFaqItems.map(item => ({
+            "@type": "Question",
+            name: language === 'es' ? item.questionEs : item.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: language === 'es' ? item.answerEs : item.answer,
+            },
+          })),
+        }} />
+      )}
+
       {/* Hero Section */}
       <section className="relative bg-cc-navy pt-32 pb-16">
         <div className="absolute inset-0 bg-gradient-to-br from-cc-navy via-cc-navy-dark to-cc-navy opacity-95" />
@@ -234,6 +265,17 @@ function GuideDetailContent() {
                 )}
                 {section.variant === 'stats-grid' && section.statsData && (
                   <GuideStatsGrid data={section.statsData} />
+                )}
+                {section.variant === 'faq' && section.faqItems && section.faqItems.length > 0 && (
+                  <div className="container mx-auto px-4">
+                    <div className="max-w-3xl mx-auto">
+                      <GuideFaqAccordion
+                        items={section.faqItems}
+                        intro={section.content || undefined}
+                        introEs={section.contentEs || undefined}
+                      />
+                    </div>
+                  </div>
                 )}
               </section>
               {sectionSlots.map((slot) => <MediaSlotRenderer key={slot.id} slot={slot} />)}

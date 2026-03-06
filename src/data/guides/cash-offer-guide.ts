@@ -57,6 +57,45 @@ const data: GuideContentData = {
       content: "If you'd like clarity on whether a cash offer fits your situation, the next step below is a good place to begin—at your own pace, with no obligation.",
       contentEs: "Si le gustaría tener claridad sobre si una oferta en efectivo se ajusta a su situación, el siguiente paso de abajo es un buen lugar para comenzar—a su propio ritmo, sin obligación.",
     },
+    {
+      heading: "Frequently Asked Questions",
+      headingEs: "Preguntas Frecuentes",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "How much less is a cash offer compared to listing my home?",
+          questionEs: "¿Cuánto menos es una oferta en efectivo comparada con listar mi casa?",
+          answer: "In Tucson, cash offers typically come in at 80–90% of market value, depending on property condition, location, and the buyer's investment model. Traditional listings in Pima County currently close at about 97.64% of list price (January 2026 data). The tradeoff is speed and certainty — a cash sale can close in 7–21 days with no repairs, no showings, and no financing contingencies.",
+          answerEs: "En Tucson, las ofertas en efectivo típicamente llegan al 80–90% del valor de mercado, dependiendo de la condición de la propiedad, ubicación y el modelo de inversión del comprador. Las ventas tradicionales en el Condado de Pima actualmente cierran alrededor del 97.64% del precio de lista (datos de enero 2026). La compensación es velocidad y certeza — una venta en efectivo puede cerrar en 7–21 días sin reparaciones, sin visitas y sin contingencias de financiamiento.",
+        },
+        {
+          question: "How fast can I close on a cash offer in Arizona?",
+          questionEs: "¿Qué tan rápido puedo cerrar una oferta en efectivo en Arizona?",
+          answer: "Most cash transactions in Arizona close in 7 to 21 days once the offer is accepted. The title company handles escrow, and because there's no lender involved, there's no appraisal wait or loan underwriting. If you need to close in under 2 weeks for a job relocation or estate situation, a cash buyer is usually the only path that makes that possible.",
+          answerEs: "La mayoría de las transacciones en efectivo en Arizona cierran en 7 a 21 días una vez que se acepta la oferta. La compañía de títulos maneja el fideicomiso, y como no hay un prestamista involucrado, no hay espera de tasación ni suscripción de préstamo. Si necesita cerrar en menos de 2 semanas por una reubicación laboral o situación de herencia, un comprador en efectivo es generalmente el único camino que hace eso posible.",
+        },
+        {
+          question: "Do I have to pay commission on a cash offer sale?",
+          questionEs: "¿Tengo que pagar comisión en una venta de oferta en efectivo?",
+          answer: "Typically, no. Most direct cash buyers do not charge seller commissions. However, you should confirm this in writing before signing anything. Closing costs (title fees, transfer taxes) still apply but are often lower than in a traditional sale. Corner Connect's cash offer program charges no commission — you keep more of what you net.",
+          answerEs: "Típicamente, no. La mayoría de los compradores directos en efectivo no cobran comisiones al vendedor. Sin embargo, debe confirmar esto por escrito antes de firmar cualquier cosa. Los costos de cierre (tarifas de título, impuestos de transferencia) aún aplican pero a menudo son más bajos que en una venta tradicional.",
+        },
+        {
+          question: "What if my home needs major repairs — can I still get a cash offer?",
+          questionEs: "¿Qué pasa si mi casa necesita reparaciones importantes — aún puedo obtener una oferta en efectivo?",
+          answer: "Yes — and this is one of the primary reasons people choose cash offers. Investors and cash buyers in Tucson purchase homes as-is, in any condition. You don't need to fix the roof, update the kitchen, or deal with the HVAC before selling. The offer will reflect the repair costs, but you avoid the stress, expense, and time of managing renovations before a sale.",
+          answerEs: "Sí — y esta es una de las razones principales por las que las personas eligen ofertas en efectivo. Los inversores y compradores en efectivo en Tucson compran casas en su estado actual, en cualquier condición. No necesita arreglar el techo, actualizar la cocina o lidiar con el HVAC antes de vender. La oferta reflejará los costos de reparación, pero evita el estrés, gasto y tiempo de gestionar renovaciones antes de una venta.",
+        },
+        {
+          question: "Is a cash offer legitimate or is it a scam?",
+          questionEs: "¿Es legítima una oferta en efectivo o es una estafa?",
+          answer: "Legitimate cash buyers close through a licensed Arizona title company and never ask for upfront fees. Red flags include: requests for wire transfers before closing, pressure to skip the title company, or offers that seem unusually high. Working with a licensed REALTOR® like Kasandra who has relationships with vetted local investors protects you from predatory practices.",
+          answerEs: "Los compradores en efectivo legítimos cierran a través de una compañía de títulos de Arizona licenciada y nunca solicitan honorarios por adelantado. Las señales de alerta incluyen: solicitudes de transferencias bancarias antes del cierre, presión para omitir la compañía de títulos, u ofertas que parecen inusualmente altas. Trabajar con una REALTOR® licenciada como Kasandra que tiene relaciones con inversores locales verificados le protege de prácticas predatorias.",
+        },
+      ],
+    },
   ],
 };
 

@@ -63,6 +63,45 @@ const data: GuideContentData = {
       content: "If you're ready to explore options that fit your situation—or if you'd simply like clarity on where to begin—you're welcome to take the next step at your own pace.\n\nThere's no pressure. Just support when you're ready.",
       contentEs: "Si está listo para explorar opciones que se ajusten a su situación—o si simplemente le gustaría claridad sobre por dónde empezar—es bienvenido(a) a dar el siguiente paso a su propio ritmo.\n\nNo hay presión. Solo apoyo cuando esté listo.",
     },
+    {
+      heading: "First-Time Buyer Questions We Hear Most",
+      headingEs: "Preguntas Más Frecuentes de Compradores Primerizos",
+      content: "",
+      contentEs: "",
+      variant: 'faq' as const,
+      faqItems: [
+        {
+          question: "How much do I need for a down payment in Tucson?",
+          questionEs: "¿Cuánto necesito para el pago inicial en Tucson?",
+          answer: "In Tucson, you don't need 20% down. FHA loans require as little as 3.5% down with a 580+ credit score. Conventional loans can go as low as 3% for first-time buyers. On a $300,000 home, that's $9,000–$10,500. Arizona also has down payment assistance programs — the HOME Plus program offers 3–5% in assistance. Kasandra can connect you with local lenders who specialize in first-time buyer programs specific to Pima County.",
+          answerEs: "En Tucson, no necesita el 20% de inicial. Los préstamos FHA requieren tan solo el 3.5% de inicial con una puntuación de crédito de 580+. Los préstamos convencionales pueden ir tan bajo como el 3% para compradores primerizos. En una casa de $300,000, eso es $9,000–$10,500. Arizona también tiene programas de asistencia para pago inicial — el programa HOME Plus ofrece 3–5% en asistencia.",
+        },
+        {
+          question: "What credit score do I need to buy a home in Arizona?",
+          questionEs: "¿Qué puntuación de crédito necesito para comprar una casa en Arizona?",
+          answer: "For an FHA loan, the minimum is 580. For conventional financing, most lenders want 620 or higher, though 680+ gets you better rates. VA loans (for military) have no official minimum but most lenders look for 620+. If your score is below 580, you can still work toward homeownership — many Tucson lenders offer credit counseling and 6–12 month improvement plans that Kasandra can refer you to.",
+          answerEs: "Para un préstamo FHA, el mínimo es 580. Para financiamiento convencional, la mayoría de los prestamistas quieren 620 o más, aunque 680+ le da mejores tasas. Los préstamos VA (para militares) no tienen un mínimo oficial pero la mayoría de los prestamistas buscan 620+. Si su puntuación está por debajo de 580, aún puede trabajar hacia la propiedad de vivienda.",
+        },
+        {
+          question: "How long does it take to buy a house in Tucson?",
+          questionEs: "¿Cuánto tiempo tarda comprar una casa en Tucson?",
+          answer: "From first conversation to keys, most Tucson buyers take 60–90 days. Pre-approval takes 3–7 business days. House hunting varies — some buyers find their home in 2 weeks, others take 2 months. Once under contract, closing typically takes 30–45 days for financed purchases. Cash buyers can close in 7–21 days. The current Tucson median days on market is 38 days (January 2026).",
+          answerEs: "Desde la primera conversación hasta las llaves, la mayoría de los compradores de Tucson tardan 60–90 días. La preaprobación tarda 3–7 días hábiles. La búsqueda de casa varía — algunos compradores encuentran su casa en 2 semanas, otros tardan 2 meses. Una vez bajo contrato, el cierre típicamente toma 30–45 días para compras financiadas.",
+        },
+        {
+          question: "What are closing costs for a buyer in Arizona?",
+          questionEs: "¿Cuáles son los costos de cierre para un comprador en Arizona?",
+          answer: "Buyers in Arizona typically pay 2–3% of the purchase price in closing costs. On a $300,000 home that's $6,000–$9,000. This covers loan origination fees, title insurance, escrow fees, appraisal, home inspection, and prepaid items (homeowner's insurance, property tax reserves). You can sometimes negotiate for the seller to cover a portion — this is called a seller concession and is common in Tucson when homes sit longer on market.",
+          answerEs: "Los compradores en Arizona típicamente pagan del 2–3% del precio de compra en costos de cierre. En una casa de $300,000 eso es $6,000–$9,000. Esto cubre honorarios de originación del préstamo, seguro de título, honorarios de fideicomiso, tasación, inspección de la casa y artículos prepagados. A veces puede negociar que el vendedor cubra una parte — esto se llama concesión del vendedor.",
+        },
+        {
+          question: "Should I buy a home in Tucson now or wait?",
+          questionEs: "¿Debo comprar una casa en Tucson ahora o esperar?",
+          answer: "Tucson's median home price is around $365,000 (January 2026) with mortgage rates in the mid-6% range. Waiting is a personal financial decision — but there's no clear signal that prices will drop significantly in Pima County. With 4.92 months of supply, the market is roughly balanced. If you can qualify and plan to stay 3+ years, buying now builds equity over time. If rates drop, you can refinance. The question isn't really timing — it's readiness.",
+          answerEs: "El precio medio de vivienda en Tucson es alrededor de $365,000 (enero 2026) con tasas hipotecarias en el rango del 6% medio. Esperar es una decisión financiera personal — pero no hay una señal clara de que los precios caigan significativamente en el Condado de Pima. Si puede calificar y planea quedarse 3+ años, comprar ahora acumula patrimonio con el tiempo.",
+        },
+      ],
+    },
   ],
 };
 
