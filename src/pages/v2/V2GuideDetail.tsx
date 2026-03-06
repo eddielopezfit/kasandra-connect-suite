@@ -299,7 +299,7 @@ function GuideDetailContent() {
       {/* HowTo schema — injected for process guides (cost-to-sell, home-prep, pricing, timeline) */}
       {guideId && (() => {
         const howToData = getHowToSchema(guideId, language);
-        return howToData ? <JsonLd data={howToData} /> : null;
+        return howToData ? <JsonLd data={howToData as Record<string, unknown>} /> : null;
       })()}
 
       {/* Hero Section */}
