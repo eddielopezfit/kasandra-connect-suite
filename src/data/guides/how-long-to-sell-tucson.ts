@@ -42,6 +42,13 @@ const data: GuideContentData = {
       contentEs: "Si necesitas vender rápido, esto es lo que realmente mueve la aguja:\n\n**Ponle el precio correcto desde el primer día.** La venta más rápida es una casa con precio correcto.\n\n**Completa tu preparación previa al listado antes de publicar.** Las casas que están limpias, fotografiadas y listas para mostrar desde el primer día obtienen más tráfico de visitas.\n\n**Inspección previa al listado.** Conoce lo que hay antes de que lo hagan los compradores.\n\n**Acepta una oferta en efectivo.** Las ofertas en efectivo pueden cerrar en 7–21 días.\n\n**Sé flexible con la posesión.** Los vendedores que pueden ofrecer fechas de mudanza flexibles o arreglos de arrendamiento-recompra dan a los compradores opciones que a veces cierran los tratos más rápido.",
     },
     {
+      heading: "",
+      headingEs: "",
+      content: "",
+      contentEs: "",
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

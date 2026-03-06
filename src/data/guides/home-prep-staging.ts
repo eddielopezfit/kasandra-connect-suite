@@ -60,6 +60,13 @@ const data: GuideContentData = {
       content: "The best prep strategy depends on your specific home, timeline, and budget. A conversation about what to prioritize — and what to skip — is the most valuable 30 minutes you can spend before listing.\n\nKasandra will walk through your home and give you a prioritized list, not a sales pitch. No pressure, no obligation. When you're ready, Selena can help you get started.",
       contentEs: "La mejor estrategia de preparación depende de tu casa específica, cronograma y presupuesto. Una conversación sobre qué priorizar — y qué omitir — es los 30 minutos más valiosos que puedes pasar antes de listar.\n\nKasandra recorrerá tu casa y te dará una lista priorizada, no un argumento de venta.",
     },
+    {
+      heading: "",
+      headingEs: "",
+      content: "",
+      contentEs: "",
+      variant: 'tool-bridge' as const,
+    },
   {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",

@@ -54,6 +54,13 @@ const data: GuideContentData = {
       contentEs: "Para una casa de $365,000 en Tucson en condición promedio, con precio correcto:\n\nPrecio de venta:               $365,000\nComisión agente (5.5%):       -$20,075\nTítulo + fideicomiso:          -$4,200\nImpuesto de transferencia:       -$730\nPreparación previa a la venta: -$3,500\nCostos de tenencia (38 días):  -$2,100\nVarios/impuestos prorrateados: -$1,500\n─────────────────────────────────────\nNeto estimado al vendedor:    ~$332,895",
     },
     {
+      heading: "",
+      headingEs: "",
+      content: "",
+      contentEs: "",
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

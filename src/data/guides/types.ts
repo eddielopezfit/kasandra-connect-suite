@@ -51,7 +51,7 @@ export interface GuideSection {
   content: string;
   contentEs: string;
   /** Optional rich variant renderer. Falls back to plain text if omitted. */
-  variant?: 'default' | 'comparison' | 'path-selector' | 'stats-grid' | 'faq' | 'market-stats';
+  variant?: 'default' | 'comparison' | 'path-selector' | 'stats-grid' | 'faq' | 'market-stats' | 'tool-bridge';
   /** Structured data for side-by-side comparison cards. */
   comparisonData?: ComparisonData;
   /** Structured data for interactive path-selector cards. */
