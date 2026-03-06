@@ -891,7 +891,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     },
     decisionIntent: 'sell',
     decisionStage: 'compare',
-    sortOrder: 30,
+    sortOrder: 31,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
   },
