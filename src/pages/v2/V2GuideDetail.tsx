@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import LanguageToggle from "@/components/v2/LanguageToggle";
-import { AuthorityCTABlock, GuideComplianceFooter, GuideComparisonCards, GuidePathSelector, GuideStatsGrid, GuideFaqAccordion, GuideReadNext } from "@/components/v2/guides";
+import { AuthorityCTABlock, GuideComplianceFooter, GuideComparisonCards, GuidePathSelector, GuideStatsGrid, GuideFaqAccordion, GuideReadNext, GuideMarketStats } from "@/components/v2/guides";
 import GuideImage from "@/components/v2/guides/GuideImage";
 import GuideVideo from "@/components/v2/guides/GuideVideo";
 import GuidePullQuote from "@/components/v2/guides/GuidePullQuote";
@@ -383,6 +383,13 @@ function GuideDetailContent() {
                 )}
                 {section.variant === 'stats-grid' && section.statsData && (
                   <GuideStatsGrid data={section.statsData} />
+                )}
+                {section.variant === 'market-stats' && (
+                  <div className="container mx-auto px-4">
+                    <div className="max-w-3xl mx-auto">
+                      <GuideMarketStats variant={section.marketStatsVariant ?? 'seller-full'} />
+                    </div>
+                  </div>
                 )}
                 {section.variant === 'faq' && section.faqItems && section.faqItems.length > 0 && (
                   <div className="container mx-auto px-4">

@@ -16,6 +16,14 @@ const data: GuideContentData = {
       contentEs: "La mayoría de los vendedores en Tucson reciben neto del 88–91% de su precio de venta después de que se contabilicen todos los costos. En una casa de $365,000 — la mediana actual de Tucson — eso es aproximadamente $322,000–$332,000 en tu bolsillo.\n\nAquí es donde va la diferencia:\n\n• Comisión del agente: 5–6% (el costo individual más grande)\n• Costos de cierre pagados por el vendedor: 1–2%\n• Reparaciones/preparación previas a la venta: 0–2%\n• Costos de tenencia durante el listado: 0.5–1%",
     },
     {
+      heading: "Current Tucson Market Numbers",
+      headingEs: "Números Actuales del Mercado de Tucson",
+      content: "These are the live market stats that affect your net sheet calculation.",
+      contentEs: "Estos son los datos en vivo del mercado que afectan el cálculo de tu hoja de neto.",
+      variant: 'market-stats' as const,
+      marketStatsVariant: 'seller-full' as const,
+    },
+    {
       heading: "Commission: What You Actually Pay and Why",
       headingEs: "Comisión: Lo Que Realmente Pagas y Por Qué",
       content: "Commission in Tucson has historically run 5–6% of the sale price, split between the listing agent and the buyer's agent. On a $365,000 sale, that's $18,250–$21,900.\n\nImportant context: the NAR settlement changes that took effect in 2024 mean buyer agent compensation is now negotiated separately — you're not necessarily on the hook for the full buyer's agent fee in every transaction. This is worth discussing specifically when you interview agents.\n\nWhat commission buys you: professional photography, MLS access, marketing, negotiation expertise, contract management, and the agent's liability. What it costs you if you skip it: statistically, FSBO homes in Arizona sell for 5–15% less than agent-listed homes, often wiping out the commission savings entirely.",

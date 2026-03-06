@@ -38,3 +38,4 @@ export { default as GuideStatsGrid } from './GuideStatsGrid';
 
 export { default as GuideFaqAccordion } from './GuideFaqAccordion';
 export { GuideReadNext } from './GuideReadNext';
+export { GuideMarketStats } from './GuideMarketStats';

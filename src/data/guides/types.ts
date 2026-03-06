@@ -51,13 +51,18 @@ export interface GuideSection {
   content: string;
   contentEs: string;
   /** Optional rich variant renderer. Falls back to plain text if omitted. */
-  variant?: 'default' | 'comparison' | 'path-selector' | 'stats-grid' | 'faq';
+  variant?: 'default' | 'comparison' | 'path-selector' | 'stats-grid' | 'faq' | 'market-stats';
   /** Structured data for side-by-side comparison cards. */
   comparisonData?: ComparisonData;
   /** Structured data for interactive path-selector cards. */
   pathData?: PathOption[];
   /** Structured data for 2x2 market stats grid. */
   statsData?: StatItem[];
+  /**
+   * Controls which stats are shown when variant === 'market-stats'.
+   * Defaults to 'seller-full' (all 4 stats) if omitted.
+   */
+  marketStatsVariant?: 'seller-full' | 'dom-only' | 'sale-to-list-only' | 'holding-cost-only';
   /**
    * Structured Q&A pairs.
    * Rendered as an accessible accordion on the page.
