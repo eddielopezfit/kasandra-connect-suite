@@ -15,6 +15,7 @@ import { useGuideScrollTracking } from "@/hooks/useGuideScrollTracking";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { markGuideOpened, setLastGuideId, getGuidesRead } from '@/lib/guides/personalization';
 import { getGuideById, type GuideCategory } from "@/lib/guides/guideRegistry";
+import { getHowToSchema } from "@/lib/guides/howToSchemas";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { GUIDE_DATA_LOADERS, type GuideContentData } from "@/data/guides";
 import { parseInlineMarkdown } from "@/lib/utils/parseInlineMarkdown";
@@ -294,6 +295,12 @@ function GuideDetailContent() {
           })),
         }} />
       )}
+
+      {/* HowTo schema — injected for process guides (cost-to-sell, home-prep, pricing, timeline) */}
+      {guideId && (() => {
+        const howToData = getHowToSchema(guideId, language);
+        return howToData ? <JsonLd data={howToData} /> : null;
+      })()}
 
       {/* Hero Section */}
       <section className="relative bg-cc-navy pt-32 pb-16">
