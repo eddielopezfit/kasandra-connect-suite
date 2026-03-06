@@ -17,6 +17,7 @@ import {
   setFieldIfEmpty,
   type SessionContext,
 } from '@/lib/analytics/selenaSession';
+import { appendTrail, serializeTrailForSelena } from '@/lib/analytics/sessionTrail';
 import {
   logSelenaOpen,
   logSelenaClose,
@@ -440,10 +441,11 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     }
   }, [hasInitialized, language]);
 
-  // Update context when route changes
+  // Update context when route changes + append to session trail (Level 2 intelligence)
   useEffect(() => {
     if (hasInitialized) {
       updateSessionContext({ last_page: location.pathname });
+      appendTrail(location.pathname);
     }
   }, [location.pathname, hasInitialized]);
 
@@ -1225,6 +1227,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               turn_count: (context?.turn_count ?? 0) + 1,
               // Journey State Engine: readiness_score (Guard 1 — numeric-safe)
               readiness_score: Number.isFinite(context?.readiness_score) ? context!.readiness_score : 0,
+              // Level 2: Session trail — full page/tool journey this session
+              session_trail: serializeTrailForSelena(),
             },
             history,
           }),

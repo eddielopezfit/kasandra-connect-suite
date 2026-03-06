@@ -105,6 +105,12 @@ interface ChatRequest {
     // Calculator enrichment — sent from client when available (Fix 2)
     estimated_value?: number;
     mortgage_balance?: number;
+    // Level 2: Session trail — breadcrumb of pages/tools visited this session
+    session_trail?: Array<{
+      label: string;
+      type: 'guide' | 'tool' | 'quiz' | 'page';
+      minutes_ago: number;
+    }>;
   };
   history?: ChatMessage[];
 }
@@ -2547,6 +2553,25 @@ serve(async (req) => {
         : `\n\nJOURNEY STATE: User has completed: [${toolList}]. Do NOT suggest these tools again. Advance to next step.`;
     }
 
+    // ============= SESSION TRAIL HINT (Level 2 Intelligence) =============
+    // Gives Selena full breadcrumb context of what the user visited this session.
+    // Uses this to: reference prior exploration, avoid repetition, make connections.
+    let trailHint = "";
+    const sessionTrail = context.session_trail ?? [];
+    if (sessionTrail.length >= 2) {
+      const trailSummary = sessionTrail
+        .map(e => {
+          const mins = e.minutes_ago;
+          const ago = mins < 1 ? 'just now' : mins === 1 ? '1 min ago' : `${mins} min ago`;
+          return `${e.label} [${e.type}, ${ago}]`;
+        })
+        .join(' → ');
+
+      trailHint = language === 'es'
+        ? `\n\nRECORRIDO DE SESIÓN (cronológico): ${trailSummary}\n\nUsa este historial para: mencionar lo que ya exploró ("ya viste los costos de venta..."), conectar puntos entre páginas visitadas, y evitar repetir información que ya cubrió. Si el recorrido muestra una progresión natural (guía → herramienta), reconócela. No leas la lista — úsala como contexto implícito.`
+        : `\n\nSESSION TRAIL (chronological): ${trailSummary}\n\nUse this to: reference what they've already explored ("you've already looked at selling costs..."), connect dots between pages visited, and avoid repeating information they've covered. If the trail shows a natural progression (guide → tool), acknowledge it. Do NOT read the list aloud — use it as implicit context to inform your response.`;
+    }
+
     // ============= JOURNEY STATE ENGINE =============
     // Guard 1: Coerce readiness_score to safe number
     const rawReadiness = Number(context.readiness_score);
@@ -2676,7 +2701,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + governanceHint + journeyHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
+          { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + governanceHint + journeyHint + trailHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
           ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],
