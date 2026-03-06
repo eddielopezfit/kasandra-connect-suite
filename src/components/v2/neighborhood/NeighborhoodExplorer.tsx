@@ -10,6 +10,19 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import NeighborhoodCard, { type NeighborhoodProfile } from "./NeighborhoodCard";
 import { toast } from "sonner";
 
+export interface MarketPulseData {
+  negotiation_gap: number | null;   // sale-to-list ratio (e.g. 0.9764)
+  days_to_close: number | null;     // median DOM + ~30 day close
+  last_verified_date: string | null;
+}
+
+// Tucson market averages — used as fallback if live fetch fails
+const TUCSON_FALLBACK: MarketPulseData = {
+  negotiation_gap: 0.9764,
+  days_to_close: 68,  // 38 DOM + 30 close
+  last_verified_date: null,
+};
+
 interface NeighborhoodExplorerProps {
   /** External ZIP to auto-explore (e.g. from quiz results) */
   externalZip?: string | null;
@@ -22,8 +35,23 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
   const [profileEn, setProfileEn] = useState<NeighborhoodProfile | null>(null);
   const [profileEs, setProfileEs] = useState<NeighborhoodProfile | null>(null);
   const [resultZip, setResultZip] = useState("");
+  const [marketPulse, setMarketPulse] = useState<MarketPulseData>(TUCSON_FALLBACK);
   const sectionRef = useRef<HTMLElement>(null);
   const processedExternalZip = useRef<string | null>(null);
+
+  // Fetch live Tucson market data once on mount
+  useEffect(() => {
+    supabase.functions.invoke("get-market-pulse").then(({ data, error }) => {
+      if (!error && data?.negotiation_gap) {
+        setMarketPulse({
+          negotiation_gap: data.negotiation_gap,
+          days_to_close: data.days_to_close,
+          last_verified_date: data.last_verified_date ?? null,
+        });
+      }
+      // On error: silently keep TUCSON_FALLBACK — no toast, no broken UI
+    });
+  }, []);
 
   const handleExplore = async () => {
     const trimmed = zip.trim();
@@ -166,7 +194,12 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
         {/* Result */}
         {!loading && profileEn && profileEs && (
           <div className="max-w-2xl mx-auto">
-            <NeighborhoodCard profileEn={profileEn} profileEs={profileEs} zipCode={resultZip} />
+            <NeighborhoodCard
+              profileEn={profileEn}
+              profileEs={profileEs}
+              zipCode={resultZip}
+              marketPulse={marketPulse}
+            />
           </div>
         )}
       </div>
