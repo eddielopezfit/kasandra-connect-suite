@@ -1227,6 +1227,10 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               turn_count: (context?.turn_count ?? 0) + 1,
               // Journey State Engine: readiness_score (Guard 1 — numeric-safe)
               readiness_score: Number.isFinite(context?.readiness_score) ? context!.readiness_score : 0,
+              // Level 3: Tool output data — actual numbers/scores Selena can reference
+              primary_priority: context?.primary_priority,
+              quiz_result_path: context?.quiz_result_path,
+              calculator_motivation: context?.calculator_motivation,
               // Level 2: Session trail — full page/tool journey this session
               session_trail: serializeTrailForSelena(),
             },

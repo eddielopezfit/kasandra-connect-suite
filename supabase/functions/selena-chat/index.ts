@@ -102,6 +102,10 @@ interface ChatRequest {
     turn_count?: number;
     // Journey State Engine
     readiness_score?: number;
+    // Level 3: Tool output data — actual result numbers/scores Selena can reference
+    primary_priority?: string;
+    quiz_result_path?: string;
+    calculator_motivation?: string;
     // Calculator enrichment — sent from client when available (Fix 2)
     estimated_value?: number;
     mortgage_balance?: number;
@@ -2572,6 +2576,96 @@ serve(async (req) => {
         : `\n\nSESSION TRAIL (chronological): ${trailSummary}\n\nUse this to: reference what they've already explored ("you've already looked at selling costs..."), connect dots between pages visited, and avoid repeating information they've covered. If the trail shows a natural progression (guide → tool), acknowledge it. Do NOT read the list aloud — use it as implicit context to inform your response.`;
     }
 
+    // ============= TOOL OUTPUT HINT (Level 3 Intelligence) =============
+    // Surfaces actual tool result numbers/scores to Selena so she can reference
+    // specific data — not just "you used the calculator" but "your numbers show X."
+    // Fires only when a tool has been completed AND produced output data.
+    let toolOutputHint = "";
+
+    const toolUsed = context.tool_used;
+
+    // --- Seller Net Calculator output ---
+    if (
+      (toolUsed === 'tucson_alpha_calculator' || (context.tools_completed ?? []).includes('tucson_alpha_calculator'))
+      && context.estimated_value
+    ) {
+      const propValue = `$${Number(context.estimated_value).toLocaleString()}`;
+      const diff = context.calculator_difference
+        ? `$${Math.round(context.calculator_difference).toLocaleString()}`
+        : null;
+      const adv = context.calculator_advantage ?? 'consult';
+      const motivation = context.calculator_motivation ?? null;
+
+      const advLabel = adv === 'cash'
+        ? (language === 'es' ? 'efectivo' : 'cash offer')
+        : adv === 'traditional'
+        ? (language === 'es' ? 'listado tradicional' : 'traditional listing')
+        : (language === 'es' ? 'resultados similares (consultar)' : 'close call (consult)');
+
+      const diffLine = diff
+        ? (language === 'es'
+            ? `Diferencia neta: ${diff} más con ${advLabel}`
+            : `Net difference: ${diff} more with ${advLabel}`)
+        : '';
+
+      const motivLine = motivation
+        ? (language === 'es' ? `Motivación del vendedor: ${motivation}` : `Seller motivation: ${motivation}`)
+        : '';
+
+      if (language === 'es') {
+        toolOutputHint = `\n\nRESULTADO DE HERRAMIENTA — CALCULADORA DE NETO DEL VENDEDOR:\nValor de propiedad ingresado: ${propValue}\nCamino con ventaja: ${advLabel}${diffLine ? `\n${diffLine}` : ''}${motivLine ? `\n${motivLine}` : ''}\n\nUsa estos números exactos al referenciar la calculadora. Di "tus números muestran..." no "la calculadora dice...". ${adv === 'cash' ? 'El efectivo cierra más rápido Y genera más ganancias — reconócelo.' : adv === 'traditional' ? 'El listado tradicional puede generar más neto, pero toma más tiempo — mencionalo con contexto.' : 'La diferencia es pequeña — el timing y las prioridades importan más que el número.'}`;
+      } else {
+        toolOutputHint = `\n\nTOOL RESULT — SELLER NET CALCULATOR:\nProperty value entered: ${propValue}\nAdvantage path: ${advLabel}${diffLine ? `\n${diffLine}` : ''}${motivLine ? `\n${motivLine}` : ''}\n\nUse these exact numbers when referencing the calculator. Say "your numbers show..." not "the calculator says...". ${adv === 'cash' ? 'Cash closes faster AND nets more — acknowledge both.' : adv === 'traditional' ? 'Traditional may net more but takes longer — frame it with context.' : 'The difference is close — timing and priorities matter more than the number itself.'}`;
+      }
+    }
+
+    // --- Buyer / Seller Readiness score output ---
+    const isReadinessTool = toolUsed === 'buyer_readiness' || toolUsed === 'seller_readiness'
+      || (context.tools_completed ?? []).some(t => t === 'buyer_readiness' || t === 'seller_readiness');
+
+    if (isReadinessTool && context.readiness_score && context.readiness_score > 0) {
+      const score = context.readiness_score;
+      const band = score >= 75
+        ? (language === 'es' ? 'listo para avanzar' : 'ready to move forward')
+        : score >= 50
+        ? (language === 'es' ? 'casi listo' : 'nearly ready')
+        : (language === 'es' ? 'construyendo preparación' : 'building readiness');
+
+      const toolLabel = toolUsed === 'buyer_readiness'
+        ? (language === 'es' ? 'Evaluación de Preparación del Comprador' : 'Buyer Readiness Check')
+        : (language === 'es' ? 'Evaluación de Preparación del Vendedor' : 'Seller Readiness Check');
+
+      const priorityLine = context.primary_priority
+        ? (language === 'es'
+            ? `Prioridad principal declarada: ${context.primary_priority}`
+            : `Stated primary priority: ${context.primary_priority}`)
+        : '';
+
+      if (language === 'es') {
+        toolOutputHint += `\n\nRESULTADO DE HERRAMIENTA — ${toolLabel.toUpperCase()}:\nPuntuación: ${score}/100 (${band})${priorityLine ? `\n${priorityLine}` : ''}\n\nReferencia esta puntuación cuando sea relevante: "Tu puntuación de ${score} muestra que ${band}." La prioridad principal te dice qué les importa más — diríjete a eso directamente. No repitas la evaluación — avanza desde aquí.`;
+      } else {
+        toolOutputHint += `\n\nTOOL RESULT — ${toolLabel.toUpperCase()}:\nScore: ${score}/100 (${band})${priorityLine ? `\n${priorityLine}` : ''}\n\nReference this score when relevant: "Your score of ${score} shows you're ${band}." Primary priority tells you what they care most about — address it directly. Do NOT re-administer the check — move forward from here.`;
+      }
+    }
+
+    // --- Cash Readiness quiz result ---
+    if (context.quiz_result_path) {
+      const pathLabels: Record<string, { en: string; es: string }> = {
+        buying: { en: 'Buyer path', es: 'Camino de comprador' },
+        selling: { en: 'Seller path', es: 'Camino de vendedor' },
+        cash: { en: 'Cash offer path', es: 'Camino de oferta en efectivo' },
+        exploring: { en: 'Still exploring', es: 'Aún explorando' },
+        selling_compare: { en: 'Seller comparing options', es: 'Vendedor comparando opciones' },
+      };
+      const pathLabel = pathLabels[context.quiz_result_path]?.[language] ?? context.quiz_result_path;
+
+      if (language === 'es') {
+        toolOutputHint += `\n\nRESULTADO DE CUESTIONARIO — PREPARACIÓN EN EFECTIVO:\nCamino recomendado: ${pathLabel}\n\nEl cuestionario ya calificó su situación. No preguntes de nuevo qué está considerando — el camino está establecido.`;
+      } else {
+        toolOutputHint += `\n\nQUIZ RESULT — CASH READINESS:\nRecommended path: ${pathLabel}\n\nThe quiz already qualified their situation. Do NOT re-ask what they're considering — their path is established.`;
+      }
+    }
+
     // ============= JOURNEY STATE ENGINE =============
     // Guard 1: Coerce readiness_score to safe number
     const rawReadiness = Number(context.readiness_score);
@@ -2701,7 +2795,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + governanceHint + journeyHint + trailHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
+          { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
           ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],
