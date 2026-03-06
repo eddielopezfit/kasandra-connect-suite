@@ -443,8 +443,8 @@ function getGovernedChips(
     }
     if (intent === 'buy') {
       const chips = language === 'es'
-        ? ["Tomar la evaluación de preparación", "Explorar guías"]
-        : ["Take the readiness check", "Browse guides"];
+        ? ["Tomar la evaluación de preparación", "Explorar guías", "Encontrar casas fuera del mercado"]
+        : ["Take the readiness check", "Browse guides", "Find off-market homes"];
       return { chips, phase: 2, escalated: false };
     }
   }
@@ -540,12 +540,70 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Estimate my net proceeds': '/v2/cash-offer-options',
   'Find off-market homes': '/v2/off-market',
   'Get off-market access': '/v2/off-market',
+  // Guide chips — EN
+  'Browse buyer guides': '/v2/guides',
+  'Selling Guides': '/v2/guides',
+  'First-Time Buyer Guide': '/v2/guides/first-time-buyer-guide',
+  'View first-time buyer guide': '/v2/guides/first-time-buyer-guide',
+  'Cash vs. Listing Guide': '/v2/guides/cash-vs-traditional-sale',
+  'Selling for Top Dollar Guide': '/v2/guides/selling-for-top-dollar',
+  'Military & VA guide': '/v2/guides/military-pcs-guide',
+  'Selling during divorce': '/v2/guides/divorce-selling',
+  'Downsizing guide': '/v2/guides/senior-downsizing',
+  'Relocating to Tucson guide': '/v2/guides/relocating-to-tucson',
+  'How to price my home': '/v2/guides/pricing-strategy',
+  'Explore Tucson neighborhoods': '/v2/buy',
+  'Estimate Net Proceeds': '/v2/cash-offer-options',
+  'Compare cash vs. traditional': '/v2/cash-offer-options',
+  'Compare cash vs. traditional sale': '/v2/cash-offer-options',
+  // Phase 4 guide chips — EN
+  'Cost to Sell Guide': '/v2/guides/cost-to-sell-tucson',
+  'AZ Real Estate Glossary': '/v2/guides/arizona-real-estate-glossary',
+  'Tucson Suburb Comparison': '/v2/guides/tucson-suburb-comparison',
+  'First-Time Buyer Programs': '/v2/guides/arizona-first-time-buyer-programs',
+  'Capital Gains Guide': '/v2/guides/capital-gains-home-sale-arizona',
+  'Sell or Rent Guide': '/v2/guides/sell-or-rent-tucson',
+  'How Long to Sell Guide': '/v2/guides/how-long-to-sell-tucson',
+  'Non-Citizen Buyer Guide': '/v2/guides/buying-home-noncitizen-arizona',
+  // Phase 4 guide chips — ES
+  'Guía de Costos de Venta': '/v2/guides/cost-to-sell-tucson',
+  'Glosario de Bienes Raíces': '/v2/guides/arizona-real-estate-glossary',
+  'Comparación de Suburbios': '/v2/guides/tucson-suburb-comparison',
+  'Programas para Compradores': '/v2/guides/arizona-first-time-buyer-programs',
+  'Guía de Ganancias de Capital': '/v2/guides/capital-gains-home-sale-arizona',
+  'Guía Vender o Rentar': '/v2/guides/sell-or-rent-tucson',
+  'Cuánto Tarda Vender': '/v2/guides/how-long-to-sell-tucson',
+  'Guía para No Ciudadanos': '/v2/guides/buying-home-noncitizen-arizona',
+  // Floating conversation chips
+  'Check my readiness': '/v2/buyer-readiness',
+  'Take readiness check': '/v2/buyer-readiness',
+  'Start now': '/v2/buyer-readiness',
+  'Find a time with Kasandra': '/v2/book',
+  'Encontrar un horario con Kasandra': '/v2/book',
   'Talk with Kasandra': '/v2/book',
   // ES Phase 2 chips
   'Tomar la evaluación de preparación': '/v2/buyer-readiness',
   'Explorar guías': '/v2/guides',
   'Tomar el check de preparación en efectivo': '/v2/cash-readiness',
   'Encontrar casas fuera del mercado': '/v2/off-market',
+  // Phase 4 AEO Guides — EN
+  'Cost to Sell Guide': '/v2/guides/cost-to-sell-tucson',
+  'AZ Real Estate Glossary': '/v2/guides/arizona-real-estate-glossary',
+  'Tucson Suburb Comparison': '/v2/guides/tucson-suburb-comparison',
+  'First-Time Buyer Programs': '/v2/guides/arizona-first-time-buyer-programs',
+  'Capital Gains Guide': '/v2/guides/capital-gains-home-sale-arizona',
+  'Sell or Rent Guide': '/v2/guides/sell-or-rent-tucson',
+  'How Long to Sell Guide': '/v2/guides/how-long-to-sell-tucson',
+  'Non-Citizen Buyer Guide': '/v2/guides/buying-home-noncitizen-arizona',
+  // Phase 4 AEO Guides — ES
+  'Guía de Costos de Venta': '/v2/guides/cost-to-sell-tucson',
+  'Glosario de Bienes Raíces': '/v2/guides/arizona-real-estate-glossary',
+  'Comparación de Suburbios': '/v2/guides/tucson-suburb-comparison',
+  'Programas para Compradores': '/v2/guides/arizona-first-time-buyer-programs',
+  'Guía de Ganancias de Capital': '/v2/guides/capital-gains-home-sale-arizona',
+  'Guía Vender o Rentar': '/v2/guides/sell-or-rent-tucson',
+  'Cuánto Tarda Vender': '/v2/guides/how-long-to-sell-tucson',
+  'Guía para No Ciudadanos': '/v2/guides/buying-home-noncitizen-arizona',
   'Obtener acceso fuera del mercado': '/v2/off-market',
   'Comparar efectivo vs. listado': '/v2/cash-offer-options',
   'Ver mis opciones de venta': '/v2/seller-decision',
@@ -562,6 +620,7 @@ const TOOL_BLOCKED_DESTINATIONS: Record<string, string[]> = {
   'cash_readiness': ['/v2/cash-readiness'],
   'tucson_alpha_calculator': ['/v2/cash-offer-options'],
   'seller_decision': ['/v2/seller-decision'],
+  'off_market_buyer': ['/v2/off-market'],
 };
 
 // Replacement destinations when a tool is completed — ordered by progression
@@ -572,6 +631,7 @@ const TOOL_REPLACEMENT_DESTINATION: Record<string, string> = {
   'cash_readiness': '/v2/cash-offer-options',   // readiness→calculator
   'tucson_alpha_calculator': '/v2/book',        // calculator→booking (earned)
   'seller_decision': '/v2/book',                // decision→booking (earned)
+  'off_market_buyer': '/v2/guides',              // registered→educate while waiting
 };
 
 // Reverse lookup: destination → chip label (by language)
@@ -1223,10 +1283,24 @@ BUYER EDUCATION (high-level):
 - Representation awareness matters. Builder/on-site reps represent the builder; independent representation supports the buyer's perspective.
 - If asked about "how competitive is the market," respond generally and defer to Kasandra for current, specific insight.
 
+BUYER GUIDE RESOURCES (route users here when relevant — use chip labels):
+- "Down payment help / assistance programs?" → chip: 'First-Time Buyer Programs' (HOME Plus, FHA, VA, USDA, Pathway to Purchase)
+- "DACA / non-citizen / no SSN?" → chip: 'Non-Citizen Buyer Guide' (ITIN loans, Fannie Mae DACA, HUD 2021 rule)
+- "Which Tucson suburb is right for me?" → chip: 'Tucson Suburb Comparison' (Marana vs Oro Valley vs Sahuarita vs Vail)
+- "What does SPDS / BINSR / earnest money mean?" → chip: 'AZ Real Estate Glossary'
+- "Off-market / private listings?" → chip: 'Find off-market homes' → registers search criteria
+
 SELLER EDUCATION (high-level):
 - Sellers often consider multiple paths, commonly including: off-market/cash options vs. traditional listing/market exposure.
 - Cash/off-market options often emphasize simplicity and certainty; traditional listing often emphasizes broader market exposure.
 - Verification and clarity matter. Professional human review is required for contracts, terms, and any outcome-impacting decisions.
+
+SELLER GUIDE RESOURCES (route users here when relevant — use chip labels):
+- "What does it cost to sell?" → chip: 'Cost to Sell Guide' (covers commission, closing costs, net proceeds)
+- "Capital gains / tax implications?" → chip: 'Capital Gains Guide' (Section 121, Arizona flat tax)
+- "Should I sell or keep renting?" → chip: 'Sell or Rent Guide'
+- "How long will it take to sell?" → chip: 'How Long to Sell Guide' (Tucson DOM data)
+- "How do I price my home?" → chip: 'How to price my home'
 
 CONFIDENTIALITY (non-legal):
 - Off-market conversations are handled discreetly as a practice standard.
@@ -1856,10 +1930,23 @@ EDUCACION PARA COMPRADORES (alto nivel):
 - La representacion importa. En nueva construccion, representantes en sitio trabajan para el constructor; la representacion independiente apoya la perspectiva del comprador.
 - Si se pregunta sobre que tan competitivo esta el mercado, responder de forma general y referir a Kasandra para informacion actual y especifica.
 
+GUIAS PARA COMPRADORES (usar chips cuando sea relevante):
+- "¿Ayuda con el down payment / programas?" → chip: 'Programas para Compradores' (HOME Plus, FHA, VA, USDA)
+- "¿DACA / sin ciudadanía / sin SSN?" → chip: 'Guía para No Ciudadanos' (préstamos ITIN, Fannie Mae DACA)
+- "¿Qué suburbio de Tucson es mejor para mí?" → chip: 'Comparación de Suburbios'
+- "¿Qué significa SPDS / BINSR / earnest money?" → chip: 'Glosario de Bienes Raíces'
+- "¿Listados privados / fuera del mercado?" → chip: 'Encontrar casas fuera del mercado'
+
 EDUCACION PARA VENDEDORES (alto nivel):
 - Se suelen considerar varios caminos, comunmente: opciones fuera de mercado/en efectivo vs. listado tradicional/exposicion al mercado.
 - Fuera de mercado/en efectivo suele enfatizar simplicidad y certeza; listado tradicional suele enfatizar mayor exposicion.
 - La verificacion y claridad importan. Contratos, terminos y decisiones que afectan resultados requieren revision humana profesional.
+
+GUIAS PARA VENDEDORES (usar chips cuando sea relevante):
+- "¿Cuánto cuesta vender?" → chip: 'Guía de Costos de Venta'
+- "¿Impuestos / ganancias de capital?" → chip: 'Guía de Ganancias de Capital'
+- "¿Vender o seguir rentando?" → chip: 'Guía Vender o Rentar'
+- "¿Cuánto tarda vender?" → chip: 'Cuánto Tarda Vender'
 
 CONFIDENCIALIDAD (no legal):
 - Conversaciones fuera de mercado se manejan con discrecion como estandar de practica.

@@ -477,6 +477,93 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     normalized_key: 'get off-market access',
     actionSpec: { type: 'open_tool', toolId: 'off-market-buyer', label: { en: 'Get off-market access', es: 'Obtener acceso fuera del mercado' } },
   },
+
+  // --- Phase 4 AEO Guides — Seller ---
+  {
+    id: 'guide-cost-to-sell-en',
+    label_en: 'Cost to Sell Guide',
+    label_es: 'Guía de Costos de Venta',
+    normalized_key: 'cost to sell guide',
+    actionSpec: { type: 'open_guide', guideId: 'cost-to-sell-tucson', label: { en: 'Cost to Sell Guide', es: 'Guía de Costos de Venta' } },
+  },
+  {
+    id: 'guide-cost-to-sell-es',
+    label_en: 'Cost to Sell Guide',
+    label_es: 'Guía de Costos de Venta',
+    normalized_key: 'guia de costos de venta',
+    actionSpec: { type: 'open_guide', guideId: 'cost-to-sell-tucson', label: { en: 'Cost to Sell Guide', es: 'Guía de Costos de Venta' } },
+  },
+  {
+    id: 'guide-capital-gains-en',
+    label_en: 'Capital Gains Guide',
+    label_es: 'Guía de Ganancias de Capital',
+    normalized_key: 'capital gains guide',
+    actionSpec: { type: 'open_guide', guideId: 'capital-gains-home-sale-arizona', label: { en: 'Capital Gains Guide', es: 'Guía de Ganancias de Capital' } },
+  },
+  {
+    id: 'guide-capital-gains-es',
+    label_en: 'Capital Gains Guide',
+    label_es: 'Guía de Ganancias de Capital',
+    normalized_key: 'guia de ganancias de capital',
+    actionSpec: { type: 'open_guide', guideId: 'capital-gains-home-sale-arizona', label: { en: 'Capital Gains Guide', es: 'Guía de Ganancias de Capital' } },
+  },
+  {
+    id: 'guide-sell-or-rent-en',
+    label_en: 'Sell or Rent Guide',
+    label_es: 'Guía Vender o Rentar',
+    normalized_key: 'sell or rent guide',
+    actionSpec: { type: 'open_guide', guideId: 'sell-or-rent-tucson', label: { en: 'Sell or Rent Guide', es: 'Guía Vender o Rentar' } },
+  },
+  {
+    id: 'guide-how-long-en',
+    label_en: 'How Long to Sell Guide',
+    label_es: 'Cuánto Tarda Vender',
+    normalized_key: 'how long to sell guide',
+    actionSpec: { type: 'open_guide', guideId: 'how-long-to-sell-tucson', label: { en: 'How Long to Sell Guide', es: 'Cuánto Tarda Vender' } },
+  },
+  // --- Phase 4 AEO Guides — Buyer ---
+  {
+    id: 'guide-first-time-programs-en',
+    label_en: 'First-Time Buyer Programs',
+    label_es: 'Programas para Compradores',
+    normalized_key: 'first-time buyer programs',
+    actionSpec: { type: 'open_guide', guideId: 'arizona-first-time-buyer-programs', label: { en: 'First-Time Buyer Programs', es: 'Programas para Compradores' } },
+  },
+  {
+    id: 'guide-first-time-programs-es',
+    label_en: 'First-Time Buyer Programs',
+    label_es: 'Programas para Compradores',
+    normalized_key: 'programas para compradores',
+    actionSpec: { type: 'open_guide', guideId: 'arizona-first-time-buyer-programs', label: { en: 'First-Time Buyer Programs', es: 'Programas para Compradores' } },
+  },
+  {
+    id: 'guide-suburb-comparison-en',
+    label_en: 'Tucson Suburb Comparison',
+    label_es: 'Comparación de Suburbios',
+    normalized_key: 'tucson suburb comparison',
+    actionSpec: { type: 'open_guide', guideId: 'tucson-suburb-comparison', label: { en: 'Tucson Suburb Comparison', es: 'Comparación de Suburbios' } },
+  },
+  {
+    id: 'guide-noncitizen-en',
+    label_en: 'Non-Citizen Buyer Guide',
+    label_es: 'Guía para No Ciudadanos',
+    normalized_key: 'non-citizen buyer guide',
+    actionSpec: { type: 'open_guide', guideId: 'buying-home-noncitizen-arizona', label: { en: 'Non-Citizen Buyer Guide', es: 'Guía para No Ciudadanos' } },
+  },
+  {
+    id: 'guide-noncitizen-es',
+    label_en: 'Non-Citizen Buyer Guide',
+    label_es: 'Guía para No Ciudadanos',
+    normalized_key: 'guia para no ciudadanos',
+    actionSpec: { type: 'open_guide', guideId: 'buying-home-noncitizen-arizona', label: { en: 'Non-Citizen Buyer Guide', es: 'Guía para No Ciudadanos' } },
+  },
+  {
+    id: 'guide-glossary-en',
+    label_en: 'AZ Real Estate Glossary',
+    label_es: 'Glosario de Bienes Raíces',
+    normalized_key: 'az real estate glossary',
+    actionSpec: { type: 'open_guide', guideId: 'arizona-real-estate-glossary', label: { en: 'AZ Real Estate Glossary', es: 'Glosario de Bienes Raíces' } },
+  },
 ] as const;
 
 // ============= LOOKUP =============
