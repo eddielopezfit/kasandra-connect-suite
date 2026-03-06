@@ -26,6 +26,9 @@ import V2ThankYou from "./pages/v2/V2ThankYou";
 import V2SellerDecision from "./pages/v2/V2SellerDecision";
 import V2SellerReadiness from "./pages/v2/V2SellerReadiness";
 import V2CashReadiness from "./pages/v2/V2CashReadiness";
+import V2MarketIntelligence from "./pages/v2/V2MarketIntelligence";
+import V2NeighborhoodCompare from "./pages/v2/V2NeighborhoodCompare";
+import V2BuyerClosingCosts from "./pages/v2/V2BuyerClosingCosts";
 import V2CTAQualityAssurance from "./pages/v2/V2CTAQualityAssurance";
 import V2QADeterminism from "./pages/v2/V2QADeterminism";
 // Ad Funnel Pages
