@@ -29,6 +29,7 @@ import V2CashReadiness from "./pages/v2/V2CashReadiness";
 import V2CTAQualityAssurance from "./pages/v2/V2CTAQualityAssurance";
 import V2QADeterminism from "./pages/v2/V2QADeterminism";
 // Ad Funnel Pages
+import V2OffMarketBuyer from "./pages/v2/V2OffMarketBuyer";
 import SellerLanding from "./pages/ad/SellerLanding";
 import SellerQuiz from "./pages/ad/SellerQuiz";
 import SellerResult from "./pages/ad/SellerResult";
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="/v2/seller-decision" element={<V2SellerDecision />} />
             <Route path="/v2/seller-readiness" element={<V2SellerReadiness />} />
             <Route path="/v2/cash-readiness" element={<V2CashReadiness />} />
+            <Route path="/v2/off-market" element={<V2OffMarketBuyer />} />
             <Route path="/v2/qa-cta" element={<V2CTAQualityAssurance />} />
             <Route path="/v2/qa-determinism" element={<V2QADeterminism />} />
 

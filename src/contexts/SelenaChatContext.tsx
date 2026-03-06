@@ -232,6 +232,7 @@ export type EntrySource =
   | 'post_funnel_unlock'
   | 'pre_unlock'
   | 'buyer_readiness_capture'
+  | 'off_market_capture'
   | 'cash_readiness_capture'
   | 'community_mid_page'
   | 'podcast_page'

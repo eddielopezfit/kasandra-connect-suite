@@ -454,6 +454,29 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     normalized_key: 'como fijar el precio de mi casa',
     actionSpec: { type: 'open_guide', guideId: 'pricing-strategy', label: { en: 'Home Pricing Strategy', es: 'Estrategia de Precio' } },
   },
+
+  // --- Off-Market Buyer Capture ---
+  {
+    id: 'off-market-en',
+    label_en: 'Find off-market homes',
+    label_es: 'Encontrar casas fuera del mercado',
+    normalized_key: 'find off-market homes',
+    actionSpec: { type: 'run_tool', toolId: 'off-market-buyer', label: { en: 'Find off-market homes', es: 'Encontrar casas fuera del mercado' } },
+  },
+  {
+    id: 'off-market-es',
+    label_en: 'Find off-market homes',
+    label_es: 'Encontrar casas fuera del mercado',
+    normalized_key: 'encontrar casas fuera del mercado',
+    actionSpec: { type: 'run_tool', toolId: 'off-market-buyer', label: { en: 'Find off-market homes', es: 'Encontrar casas fuera del mercado' } },
+  },
+  {
+    id: 'off-market-access-en',
+    label_en: 'Get off-market access',
+    label_es: 'Obtener acceso fuera del mercado',
+    normalized_key: 'get off-market access',
+    actionSpec: { type: 'run_tool', toolId: 'off-market-buyer', label: { en: 'Get off-market access', es: 'Obtener acceso fuera del mercado' } },
+  },
 ] as const;
 
 // ============= LOOKUP =============

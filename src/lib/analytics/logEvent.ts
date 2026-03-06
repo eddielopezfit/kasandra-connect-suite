@@ -61,6 +61,8 @@ export type EventType =
   | 'concierge_intent_click'
   | 'guide_browse_click'
   | 'priority_call_click'
+  | 'off_market_registered'
+  | 'off_market_criteria_saved'
   | 'report_view_click'
   // My Options routing
   | 'concierge_valuation_click'

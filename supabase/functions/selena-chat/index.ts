@@ -538,11 +538,15 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Quick seller readiness check': '/v2/seller-readiness',
   // EN Phase 3 chips
   'Estimate my net proceeds': '/v2/cash-offer-options',
+  'Find off-market homes': '/v2/off-market',
+  'Get off-market access': '/v2/off-market',
   'Talk with Kasandra': '/v2/book',
   // ES Phase 2 chips
   'Tomar la evaluación de preparación': '/v2/buyer-readiness',
   'Explorar guías': '/v2/guides',
   'Tomar el check de preparación en efectivo': '/v2/cash-readiness',
+  'Encontrar casas fuera del mercado': '/v2/off-market',
+  'Obtener acceso fuera del mercado': '/v2/off-market',
   'Comparar efectivo vs. listado': '/v2/cash-offer-options',
   'Ver mis opciones de venta': '/v2/seller-decision',
   'Check rápido de preparación para vender': '/v2/seller-readiness',
@@ -577,6 +581,7 @@ const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
   // seller-readiness replacement chip uses the tool-direct label (not the wizard label)
   '/v2/seller-readiness': { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' },
   '/v2/cash-readiness': { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' },
+  '/v2/off-market': { en: 'Find off-market homes', es: 'Encontrar casas fuera del mercado' },
   '/v2/cash-offer-options': { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
   '/v2/book': { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' },
   '/v2/seller-decision': { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
@@ -1242,6 +1247,7 @@ Corner Connect is a real estate strategy platform operating in Southern Arizona,
 Corner Connect's value lies in optionality and certainty, not speed or hype.
 
 VERIFIED PLATFORM CAPABILITIES (Safe for Selena to Reference):
+- Off-Market Buyer Registry: Buyers can register their search criteria (areas, budget, bedrooms, timeline, must-haves) to be personally notified by Kasandra when a property matches before it hits the public market. This is available at /v2/off-market. Approved phrasing: "register your search criteria," "Kasandra will personally reach out when something fits," "before it hits the market." Never say "secret," "guaranteed," or "exclusive."
 - Corner Connect has participated in 6,000+ residential transactions in Pima County and surrounding areas.
 - The platform offers dual seller pathways: a direct cash offer option designed for certainty and convenience, and a structured market listing system (the S.M.A.R.T. Selling System).
 - Buyers represented within the platform may gain access to team-owned properties being remodeled prior to public market listing.
