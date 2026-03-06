@@ -279,7 +279,7 @@ const V2MarketIntelligenceContent = () => {
               )}
             </p>
             <Button
-              onClick={() => openChat({ source: 'hero', intent: 'explore' })}
+              onClick={() => openChat({ source: 'market_intelligence', intent: 'explore' })}
               className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
             >
               <MessageCircle className="w-4 h-4 mr-2" />

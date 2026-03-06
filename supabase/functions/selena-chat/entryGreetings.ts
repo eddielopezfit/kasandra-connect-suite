@@ -42,7 +42,10 @@ export type EntrySource =
   | 'off_market_capture'
   | 'community_mid_page'
   | 'podcast_page'
-  | 'seller_readiness_capture';
+  | 'seller_readiness_capture'
+  | 'market_intelligence'
+  | 'neighborhood_compare'
+  | 'buyer_closing_costs';
 
 export interface EntryContext {
   source: EntrySource;
@@ -95,6 +98,12 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
       return generateQuestionGreeting(language, 'cash');
     case 'off_market_capture':
       return generateOffMarketGreeting(language);
+    case 'market_intelligence':
+      return generateMarketIntelligenceGreeting(language);
+    case 'neighborhood_compare':
+      return generateNeighborhoodCompareGreeting(language);
+    case 'buyer_closing_costs':
+      return generateBuyerClosingCostsGreeting(language);
     case 'floating':
     default:
       return generateDefaultGreeting(language);
@@ -465,6 +474,69 @@ function generateOffMarketGreeting(language: 'en' | 'es'): GreetingResult {
       "Explore Tucson neighborhoods",
       "How does the buying process work?",
       "First-Time Buyer Programs",
+    ],
+  };
+}
+
+function generateMarketIntelligenceGreeting(language: 'en' | 'es'): GreetingResult {
+  if (language === 'es') {
+    return {
+      content: `Estás viendo los datos reales del mercado de Tucson — días en el mercado, ratio de venta a precio de lista, y costos de mantenimiento diarios.\n\n¿Quieres entender qué significan estos números para tu situación específica?`,
+      suggestedReplies: [
+        "¿Es buen momento para vender?",
+        "¿Qué significan estos números?",
+        "Hablar con Kasandra",
+      ],
+    };
+  }
+  return {
+    content: `You're looking at live Tucson market data — days on market, sale-to-list ratio, and daily holding costs.\n\nWant to understand what these numbers mean for your specific situation?`,
+    suggestedReplies: [
+      "Is it a good time to sell?",
+      "What do these numbers mean?",
+      "Talk with Kasandra",
+    ],
+  };
+}
+
+function generateNeighborhoodCompareGreeting(language: 'en' | 'es'): GreetingResult {
+  if (language === 'es') {
+    return {
+      content: `Estás comparando vecindarios de Tucson — excelente forma de reducir opciones. Kasandra conoce estas comunidades personalmente.\n\n¿Hay algo específico que estés buscando en un vecindario?`,
+      suggestedReplies: [
+        "¿Qué área es mejor para familias?",
+        "Comparar escuelas por zona",
+        "Hablar con Kasandra",
+      ],
+    };
+  }
+  return {
+    content: `You're comparing Tucson neighborhoods — that's a smart way to narrow things down. Kasandra knows these communities personally.\n\nIs there something specific you're looking for in a neighborhood?`,
+    suggestedReplies: [
+      "Which area is best for families?",
+      "Compare schools by area",
+      "Talk with Kasandra",
+    ],
+  };
+}
+
+function generateBuyerClosingCostsGreeting(language: 'en' | 'es'): GreetingResult {
+  if (language === 'es') {
+    return {
+      content: `Estás estimando tus costos de cierre — es una de las preguntas más importantes que los compradores no hacen hasta que es demasiado tarde.\n\n¿Tienes alguna duda sobre alguno de los ítems de línea?`,
+      suggestedReplies: [
+        "¿Qué es el seguro de título?",
+        "¿Cuánto necesito en total?",
+        "Hablar con Kasandra",
+      ],
+    };
+  }
+  return {
+    content: `You're estimating your closing costs — that's one of the most important questions buyers don't ask until it's too late.\n\nHave any questions about specific line items?`,
+    suggestedReplies: [
+      "What is title insurance?",
+      "How much do I need total?",
+      "Talk with Kasandra",
     ],
   };
 }

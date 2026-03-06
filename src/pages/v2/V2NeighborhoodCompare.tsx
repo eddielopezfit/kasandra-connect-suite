@@ -321,7 +321,7 @@ const V2NeighborhoodCompareContent = () => {
               )}
             </p>
             <Button
-              onClick={() => openChat({ source: 'hero', intent: 'buy' })}
+              onClick={() => openChat({ source: 'neighborhood_compare', intent: 'buy' })}
               className="bg-cc-navy text-white rounded-full px-8 font-semibold"
             >
               <MessageCircle className="w-4 h-4 mr-2" />

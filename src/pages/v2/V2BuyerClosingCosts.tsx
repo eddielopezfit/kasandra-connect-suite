@@ -437,7 +437,7 @@ const V2BuyerClosingCostsContent = () => {
                 )}
               </p>
               <Button
-                onClick={() => openChat({ source: 'calculator', intent: 'buy' })}
+                onClick={() => openChat({ source: 'buyer_closing_costs', intent: 'buy' })}
                 className="bg-cc-navy text-white rounded-full px-8 font-semibold"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
