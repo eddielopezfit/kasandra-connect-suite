@@ -474,7 +474,7 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
             intent_seller: normalizedIntent.canonical === 'sell' || normalizedIntent.canonical === 'cash' || normalizedIntent.raw === 'buy_and_sell',
             intent_buyer: normalizedIntent.canonical === 'buy' || normalizedIntent.raw === 'buy_and_sell',
             intent_cash: normalizedIntent.canonical === 'cash',
-            intent_dual: normalizedIntent.raw === 'buy_and_sell' || normalizedIntent.canonical === 'dual',
+            intent_dual: normalizedIntent.raw === 'buy_and_sell',
             pipeline_stage: getPipelineStage(normalizedIntent.canonical),
             last_declared_goal: getGoalLabel(normalizedIntent.raw, input.language),
             is_pre_approved: input.pre_approved === 'yes',

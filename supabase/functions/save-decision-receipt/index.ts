@@ -48,7 +48,7 @@ interface AttachPayload {
   lead_id: string;
 }
 
-function isAttachPayload(body: Record<string, unknown>): body is AttachPayload {
+function isAttachPayload(body: any): body is AttachPayload {
   return typeof body.receipt_id === 'string' && typeof body.lead_id === 'string';
 }
 
@@ -115,7 +115,7 @@ Deno.serve(async (req) => {
 
 /** INSERT or UPSERT a new decision receipt */
 async function handleCreate(
-  supabase: ReturnType<typeof createClient>,
+  supabase: any,
   payload: CreatePayload,
   corsHeaders: Record<string, string>
 ): Promise<Response> {
@@ -205,7 +205,7 @@ async function handleCreate(
 
 /** Attach a lead_id to an existing receipt (anti-hijack: session_id must match) */
 async function handleAttach(
-  supabase: ReturnType<typeof createClient>,
+  supabase: any,
   payload: AttachPayload,
   corsHeaders: Record<string, string>
 ): Promise<Response> {
