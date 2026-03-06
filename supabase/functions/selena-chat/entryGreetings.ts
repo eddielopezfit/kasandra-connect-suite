@@ -38,6 +38,8 @@ export type EntrySource =
   | 'pre_unlock'
   | 'buyer_readiness_capture'
   | 'cash_readiness_capture'
+  | 'cash_offer_options_hero'
+  | 'off_market_capture'
   | 'community_mid_page'
   | 'podcast_page'
   | 'seller_readiness_capture';
@@ -89,6 +91,10 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
     case 'footer_nudge':
     case 'proactive':
       return generateProactiveGreeting(language);
+    case 'cash_offer_options_hero':
+      return generateQuestionGreeting(language, 'cash');
+    case 'off_market_capture':
+      return generateQuestionGreeting(language, 'buy');
     case 'floating':
     default:
       return generateDefaultGreeting(language);
