@@ -57,18 +57,18 @@ const V2Footer = () => {
             <h4 className="font-semibold mb-4">{t("Contact", "Contacto")}</h4>
             <div className="space-y-2 min-w-0">
               <a
-                href="tel:520-349-3248"
+                href="tel:+15203493248"
                 className="flex items-center justify-center md:justify-end gap-2 text-white/80 hover:text-white transition-colors"
               >
                 <Phone className="w-4 h-4 flex-shrink-0" />
                 <span>520-349-3248</span>
               </a>
               <a
-                href="mailto:kasandra@prietorealestategroup.com"
+                href="mailto:kasandra@kasandraoasis.com"
                 className="flex items-center justify-center md:justify-end gap-2 text-white/80 hover:text-white transition-colors min-w-0"
               >
                 <Mail className="w-4 h-4 flex-shrink-0" />
-                <span className="break-all">kasandra@prietorealestategroup.com</span>
+                <span className="break-all">kasandra@kasandraoasis.com</span>
               </a>
             </div>
             {/* Social Links */}

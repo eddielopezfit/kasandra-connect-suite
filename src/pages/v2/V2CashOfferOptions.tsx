@@ -41,12 +41,29 @@ const V2CashOfferOptionsContent = () => {
                 "No todas las ofertas en efectivo son iguales. Permítame ayudarle a entender sus opciones para que pueda tomar una decisión informada—sin presión."
               )}
             </p>
+            <div className="flex flex-wrap gap-4 mt-2">
+              <button
+                onClick={() => {
+                  const el = document.getElementById('cash-calculator');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="inline-flex items-center gap-2 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold px-6 py-3 rounded-full shadow-gold transition-all active:scale-95"
+              >
+                {t("Run My Numbers", "Calcular Mis Números")}
+              </button>
+              <button
+                onClick={() => openChat({ source: 'cash_offer_options_hero', intent: 'cash' })}
+                className="inline-flex items-center gap-2 border-2 border-white/40 hover:border-white text-white font-medium px-6 py-3 rounded-full transition-all"
+              >
+                {t("Ask Selena a Question", "Preguntarle a Selena")}
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Interactive Calculator Section */}
-      <section className="py-12 lg:py-16 bg-cc-sand">
+      <section id="cash-calculator" className="py-12 lg:py-16 bg-cc-sand">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8">

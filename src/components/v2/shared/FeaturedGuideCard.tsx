@@ -58,10 +58,6 @@ const FeaturedGuideCard = ({
       </p>
       
       <div className="flex items-center justify-between">
-        <span className="text-xs text-cc-slate">
-          {t(readTimeEn, readTimeEs)}
-        </span>
-        
         <Link
           to={`/v2/guides/${guideId}`}
           onClick={handleClick}

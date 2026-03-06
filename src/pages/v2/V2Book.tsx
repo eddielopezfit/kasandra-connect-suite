@@ -84,6 +84,29 @@ const V2BookContent = () => {
         </div>
       </section>
 
+
+      {/* Trust signals — reduces cold feet at the booking moment */}
+      <section className="bg-cc-navy border-t border-white/10 pb-8">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-white/70">
+              <span className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cc-gold inline-block" />
+                {t("6,000+ Pima County transactions", "6,000+ transacciones en el condado de Pima")}
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cc-gold inline-block" />
+                {t("Bilingual · English & Spanish", "Bilingüe · Inglés y Español")}
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cc-gold inline-block" />
+                {t("No pressure · No obligation", "Sin presión · Sin compromiso")}
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Calendar Embed */}
       <section className="py-8 md:py-12 bg-cc-ivory w-full">
         <div className="container mx-auto px-4">

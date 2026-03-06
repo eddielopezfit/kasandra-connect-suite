@@ -301,7 +301,7 @@ const V2HomeContent = () => {
               </div>
               
               <p className="text-xs text-cc-text-muted text-center mt-4">
-                {t("🐾 Dog mom • 🎤 Karaoke lover • ❤️ Community-driven", "🐾 Mamá perruna • 🎤 Amante del karaoke • ❤️ Comprometida con la comunidad")}
+                {t("Dog mom · Karaoke lover · Community-driven", "Mamá perruna · Amante del karaoke · Comprometida con la comunidad")}
               </p>
             </div>
           </div>

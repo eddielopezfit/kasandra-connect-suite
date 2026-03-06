@@ -21,7 +21,7 @@ const V2Navigation = () => {
     { href: "/v2", label: t("Home", "Inicio") },
     { href: "/v2/buy", label: t("Buy", "Comprar") },
     { href: "/v2/sell", label: t("Sell", "Vender") },
-    { href: "/v2/cash-offer-options", label: t("Cash Offer Options", "Opciones de Oferta en Efectivo") },
+    { href: "/v2/cash-offer-options", label: t("Cash Options", "Opciones en Efectivo") },
     { href: "/v2/guides", label: t("Guides", "Guías") },
     { href: "/v2/podcast", label: t("Podcast", "Podcast") },
     { href: "/v2/community", label: t("Community", "Comunidad") },
@@ -85,8 +85,10 @@ const V2Navigation = () => {
         </div>
 
         {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className={`lg:hidden mt-4 pb-4 border-t pt-4 space-y-4 ${isScrolled ? "border-border bg-white" : "border-white/20 bg-cc-navy"}`}>
+        <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+            isMobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+          }`}>
+          <div className={`mt-4 pb-4 border-t pt-4 space-y-4 ${isScrolled ? "border-border bg-white" : "border-white/20 bg-cc-navy"}`}>
             <div className="flex justify-center mb-4">
               <LanguageToggle variant={isScrolled ? "light" : "dark"} />
             </div>
@@ -110,7 +112,7 @@ const V2Navigation = () => {
               </Link>
             </Button>
           </div>
-        )}
+        </div>
       </div>
     </nav>
   );

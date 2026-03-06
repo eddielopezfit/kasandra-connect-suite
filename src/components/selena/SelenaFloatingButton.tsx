@@ -54,7 +54,7 @@ export function SelenaFloatingButton() {
     <button
       onClick={handleClick}
       className={cn(
-        "fixed bottom-4 right-4 z-50",
+        "fixed bottom-24 right-4 z-50 lg:bottom-6",
         "w-14 h-14 rounded-full",
         "bg-cc-gold text-cc-navy",
         "shadow-lg hover:shadow-xl",
@@ -62,7 +62,7 @@ export function SelenaFloatingButton() {
         "transition-all duration-300 ease-out",
         "hover:scale-105 active:scale-95",
         "focus:outline-none focus:ring-2 focus:ring-cc-gold/50 focus:ring-offset-2",
-        "sm:bottom-6 sm:right-6"
+        "sm:right-6"
       )}
       aria-label={isOpen ? "Close chat" : "Open chat with Selena"}
     >
