@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
-import { supabase } from "@/integrations/supabase/client";
+import { useMarketPulse } from "@/hooks/useMarketPulse";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { getLeadId } from "@/lib/analytics/bridgeLeadIdToV2";
@@ -13,32 +13,10 @@ import {
   Signal, SignalZero, MessageCircle, ArrowRight, RefreshCw
 } from "lucide-react";
 
-interface MarketPulse {
-  market_name: string;
-  negotiation_gap: number | null;
-  days_to_close: number | null;
-  holding_cost_per_day: number | null;
-  market_ready_prep_avg: number | null;
-  last_verified_date: string | null;
-  updated_at: string;
-}
-
-const FALLBACK: MarketPulse = {
-  market_name: "Tucson_Overall",
-  negotiation_gap: 0.024,
-  days_to_close: 68,
-  holding_cost_per_day: 42,
-  market_ready_prep_avg: 4800,
-  last_verified_date: null,
-  updated_at: new Date().toISOString(),
-};
-
 const V2MarketIntelligenceContent = () => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
-  const [pulse, setPulse] = useState<MarketPulse>(FALLBACK);
-  const [isLive, setIsLive] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { stats, isLive, loading } = useMarketPulse();
 
   useDocumentHead({
     titleEn: "Tucson Real Estate Market Intelligence | Current Market Data",
@@ -50,29 +28,13 @@ const V2MarketIntelligenceContent = () => {
   useEffect(() => {
     setFieldIfEmpty('intent', 'explore');
     logEvent('page_view', { page: '/v2/market', tool: 'market_intelligence' });
-
-    supabase.functions.invoke("get-market-pulse").then(({ data, error }) => {
-      if (!error && data?.days_to_close) {
-        setPulse(data as MarketPulse);
-        setIsLive(true);
-      }
-      setLoading(false);
-    });
   }, []);
 
-  const dom = pulse.days_to_close ? Math.max(1, Math.round(pulse.days_to_close - 30)) : 38;
-  const saleToListPct = pulse.negotiation_gap
-    ? `${((1 - pulse.negotiation_gap) * 100).toFixed(1)}%`
-    : "97.6%";
-  const holdingCost = pulse.holding_cost_per_day ?? 42;
-  const prepCost = pulse.market_ready_prep_avg ?? 4800;
-
-  const verifiedDate = pulse.last_verified_date
-    ? new Date(pulse.last_verified_date).toLocaleDateString(
-        language === "es" ? "es-US" : "en-US",
-        { month: "long", year: "numeric" }
-      )
-    : null;
+  const dom = stats.daysOnMarket;
+  const saleToListPct = stats.saleToListRatio;
+  const holdingCost = stats.holdingCostPerDay;
+  const prepCost = stats.prepAvg;
+  const verifiedDate = stats.verifiedDate;
 
   const sellerImplication =
     dom <= 20 ? t("Fast-moving market — well-priced homes are moving quickly.", "Mercado activo — casas bien valuadas se están vendiendo rápido.")
