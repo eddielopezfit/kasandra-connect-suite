@@ -3,8 +3,21 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
 
-const CACHE_TTL_DAYS = 30;
+/**
+ * neighborhood-profile
+ *
+ * Generates bilingual (EN/ES) neighborhood intelligence profiles for any
+ * US ZIP code, with deep expertise on Tucson/Pima County.
+ *
+ * AI: Perplexity Sonar — real-time web search grounded responses.
+ *   Every profile is backed by current listings, recent sales activity,
+ *   school ratings, local news, and community data pulled at generation time.
+ *   This replaces the previous Gemini 2.5 Flash (training-data only) approach.
+ *
+ * Cache: 7 days (reduced from 30 — live data should refresh weekly)
+ */
 
+const CACHE_TTL_DAYS = 7;
 const TUCSON_PREFIXES = ["856", "857"];
 
 function isTucsonZip(zip: string): boolean {
@@ -21,6 +34,23 @@ function simpleHash(str: string): string {
   return Math.abs(hash).toString(36);
 }
 
+/** The JSON schema shape we require from Perplexity — embedded in the prompt */
+const PROFILE_SCHEMA = `{
+  "profile_en": {
+    "lifestyle_feel": "string (2-3 sentences — neighborhood vibe, feel, day-to-day life)",
+    "buyer_fit": ["string array — 3-5 buyer types ideal for this area"],
+    "seller_context": "string (2-3 sentences — seller demand, buyer expectations, pricing dynamics)",
+    "market_framing": "string (2-3 sentences — interpretive market context, not raw stats)",
+    "not_ideal_for": "string (1-2 sentences — honest about who this area may not suit)",
+    "fun_fact": "string (one memorable fact about this area)",
+    "confidence_level": "high | medium | exploratory",
+    "source_scope": ["string array — what current sources informed this profile"]
+  },
+  "profile_es": {
+    // Same fields as profile_en but in natural (not literal) Spanish
+  }
+}`;
+
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
@@ -31,7 +61,6 @@ serve(async (req) => {
     const body = await req.json();
     const zip_code = (body.zip_code || "").trim();
 
-    // Validate ZIP format
     if (!/^\d{5}$/.test(zip_code)) {
       return new Response(
         JSON.stringify({ ok: false, error: "Invalid ZIP code. Please enter a 5-digit ZIP." }),
@@ -48,7 +77,7 @@ serve(async (req) => {
     const { allowed } = await checkRateLimit(supabase, rlKey, "neighborhood-profile");
     if (!allowed) return rateLimitResponse(corsHeaders);
 
-    // Cache check
+    // Cache check — 7-day TTL
     const { data: cached } = await supabase
       .from("neighborhood_profiles")
       .select("*")
@@ -73,143 +102,46 @@ serve(async (req) => {
       }
     }
 
-    // Generate with AI
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+    // Generate with Perplexity Sonar (real-time web search grounded)
+    const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+    if (!PERPLEXITY_API_KEY) throw new Error("PERPLEXITY_API_KEY not configured");
 
     const isTucson = isTucsonZip(zip_code);
-    const regionContext = isTucson
-      ? `This ZIP code (${zip_code}) is in the Tucson, Arizona metropolitan area. Provide detailed, confident local insights.`
-      : `This ZIP code (${zip_code}) is outside the Tucson metro area. Provide general insights but note that Kasandra Corner specializes in Tucson. Set confidence_level to "exploratory".`;
 
-    const systemPrompt = `You are a bilingual (English/Spanish) real estate neighborhood intelligence analyst for Tucson, Arizona. You provide lifestyle-oriented neighborhood profiles that help home buyers and sellers make informed decisions. You never use MLS jargon or stat dumps — you write like a thoughtful local friend who knows the area deeply.
+    const regionContext = isTucson
+      ? `ZIP code ${zip_code} is in the Tucson, Arizona metropolitan area (Pima County). Provide detailed, confident local insights grounded in current data. Search for recent listings, sales activity, school ratings, and community developments specifically for this ZIP.`
+      : `ZIP code ${zip_code} is outside the Tucson metro area. Provide general insights based on current web data, but note that Kasandra Prieto specializes in Tucson/Pima County. Set confidence_level to "exploratory".`;
+
+    const systemPrompt = `You are a bilingual (English/Spanish) real estate neighborhood intelligence analyst for Tucson, Arizona, working for Kasandra Prieto at Corner Connect (brokered by Realty Executives Arizona Territory).
+
+Your job: generate accurate, grounded neighborhood profiles backed by current web sources — recent sales, active listings, school ratings, community news, local business presence, and buyer/seller market dynamics.
+
+Write like a thoughtful local friend who knows the area deeply. Never use MLS jargon or raw stat dumps. Surface insights buyers and sellers actually care about — commute feel, community vibe, who thrives here and who doesn't.
 
 ${regionContext}
 
-When calling the tool, provide BOTH English and Spanish versions. The Spanish should be a natural translation, not a literal one.`;
+You MUST respond with valid JSON only — no preamble, no markdown, no explanation. The response must match this exact schema:
+${PROFILE_SCHEMA}
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+Both profile_en and profile_es are required. The Spanish version should be a natural, idiomatic translation — not literal. confidence_level must be one of: "high", "medium", or "exploratory".`;
+
+    const userMessage = `Generate a current, web-grounded neighborhood intelligence profile for ZIP code ${zip_code}. Search for recent real estate activity, current listings, school ratings, local news, and community character. Return only the JSON profile.`;
+
+    const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "sonar",
         messages: [
           { role: "system", content: systemPrompt },
-          {
-            role: "user",
-            content: `Generate a neighborhood intelligence profile for ZIP code ${zip_code}. Call the generate_neighborhood_profile tool with both English and Spanish profiles.`,
-          },
+          { role: "user", content: userMessage },
         ],
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "generate_neighborhood_profile",
-              description:
-                "Generate a bilingual neighborhood intelligence profile for a given ZIP code.",
-              parameters: {
-                type: "object",
-                properties: {
-                  profile_en: {
-                    type: "object",
-                    properties: {
-                      lifestyle_feel: {
-                        type: "string",
-                        description:
-                          "2-3 sentence description of the neighborhood's lifestyle and vibe.",
-                      },
-                      buyer_fit: {
-                        type: "array",
-                        items: { type: "string" },
-                        description:
-                          "3-5 buyer types this area is ideal for (e.g. 'First-time buyers', 'Military families', 'Retirees').",
-                      },
-                      seller_context: {
-                        type: "string",
-                        description:
-                          "2-3 sentences about what sellers should know — demand, buyer expectations, pricing dynamics.",
-                      },
-                      market_framing: {
-                        type: "string",
-                        description:
-                          "2-3 sentences of interpretive market context (not raw stats).",
-                      },
-                      not_ideal_for: {
-                        type: "string",
-                        description:
-                          "1-2 sentences about who this area may NOT be the best fit for. Be honest but empathetic.",
-                      },
-                      fun_fact: {
-                        type: "string",
-                        description:
-                          "One interesting, memorable fact about this area.",
-                      },
-                      confidence_level: {
-                        type: "string",
-                        enum: ["high", "medium", "exploratory"],
-                        description:
-                          "high for well-known Tucson neighborhoods, medium for less-known areas, exploratory for outside Tucson.",
-                      },
-                      source_scope: {
-                        type: "array",
-                        items: { type: "string" },
-                        description:
-                          "Data sources used (e.g. 'local trends', 'buyer behavior patterns', 'general market knowledge').",
-                      },
-                    },
-                    required: [
-                      "lifestyle_feel",
-                      "buyer_fit",
-                      "seller_context",
-                      "market_framing",
-                      "not_ideal_for",
-                      "fun_fact",
-                      "confidence_level",
-                      "source_scope",
-                    ],
-                    additionalProperties: false,
-                  },
-                  profile_es: {
-                    type: "object",
-                    properties: {
-                      lifestyle_feel: { type: "string" },
-                      buyer_fit: { type: "array", items: { type: "string" } },
-                      seller_context: { type: "string" },
-                      market_framing: { type: "string" },
-                      not_ideal_for: { type: "string" },
-                      fun_fact: { type: "string" },
-                      confidence_level: {
-                        type: "string",
-                        enum: ["high", "medium", "exploratory"],
-                      },
-                      source_scope: { type: "array", items: { type: "string" } },
-                    },
-                    required: [
-                      "lifestyle_feel",
-                      "buyer_fit",
-                      "seller_context",
-                      "market_framing",
-                      "not_ideal_for",
-                      "fun_fact",
-                      "confidence_level",
-                      "source_scope",
-                    ],
-                    additionalProperties: false,
-                  },
-                },
-                required: ["profile_en", "profile_es"],
-                additionalProperties: false,
-              },
-            },
-          },
-        ],
-        tool_choice: {
-          type: "function",
-          function: { name: "generate_neighborhood_profile" },
-        },
+        response_format: { type: "json_object" },
+        temperature: 0.2,       // Low temp — factual, consistent
+        max_tokens: 1500,
       }),
     });
 
@@ -227,23 +159,31 @@ When calling the tool, provide BOTH English and Spanish versions. The Spanish sh
         );
       }
       const errText = await response.text();
-      console.error("[neighborhood-profile] AI error:", response.status, errText);
-      throw new Error(`AI gateway error: ${response.status}`);
+      console.error("[neighborhood-profile] Perplexity error:", response.status, errText);
+      throw new Error(`Perplexity API error: ${response.status}`);
     }
 
     const aiResult = await response.json();
-    const toolCall = aiResult.choices?.[0]?.message?.tool_calls?.[0];
-    if (!toolCall?.function?.arguments) {
-      console.error("[neighborhood-profile] No tool call in AI response:", JSON.stringify(aiResult));
-      throw new Error("AI did not return structured profile data");
+    const rawContent = aiResult.choices?.[0]?.message?.content;
+
+    if (!rawContent) {
+      console.error("[neighborhood-profile] No content in Perplexity response:", JSON.stringify(aiResult));
+      throw new Error("Perplexity did not return profile content");
     }
 
-    const profiles = JSON.parse(toolCall.function.arguments);
+    // Strip any accidental markdown fences before parsing
+    const cleanContent = rawContent.replace(/```json|```/g, "").trim();
+    const profiles = JSON.parse(cleanContent);
     const { profile_en, profile_es } = profiles;
+
+    if (!profile_en || !profile_es) {
+      throw new Error("Perplexity response missing profile_en or profile_es");
+    }
+
     const hash = simpleHash(JSON.stringify(profiles));
+    const now = new Date().toISOString();
 
     // Upsert into cache
-    const now = new Date().toISOString();
     if (cached) {
       await supabase
         .from("neighborhood_profiles")
@@ -259,12 +199,13 @@ When calling the tool, provide BOTH English and Spanish versions. The Spanish sh
       });
     }
 
-    console.log(`[neighborhood-profile] Generated profile for ${zip_code}`);
+    console.log(`[neighborhood-profile] Generated Perplexity profile for ${zip_code}`);
 
     return new Response(
       JSON.stringify({ ok: true, profile_en, profile_es, zip_code, cached: false }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
+
   } catch (err) {
     console.error("[neighborhood-profile] Error:", err);
     return new Response(
