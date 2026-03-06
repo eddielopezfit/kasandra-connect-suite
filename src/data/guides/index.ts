@@ -6,7 +6,16 @@
  */
 
 import type { GuideContentData } from './types';
-export type { GuideContentData };
+export type { GuideContentData   // Phase 4 — AEO Content Gap Guides
+  'cost-to-sell-tucson': () => import('./cost-to-sell-tucson'),
+  'arizona-real-estate-glossary': () => import('./arizona-real-estate-glossary'),
+  'tucson-suburb-comparison': () => import('./tucson-suburb-comparison'),
+  'arizona-first-time-buyer-programs': () => import('./arizona-first-time-buyer-programs'),
+  'capital-gains-home-sale-arizona': () => import('./capital-gains-home-sale-arizona'),
+  'sell-or-rent-tucson': () => import('./sell-or-rent-tucson'),
+  'how-long-to-sell-tucson': () => import('./how-long-to-sell-tucson'),
+  'buying-home-noncitizen-arizona': () => import('./buying-home-noncitizen-arizona'),
+};
 
 export const GUIDE_DATA_LOADERS: Record<string, () => Promise<{ default: GuideContentData }>> = {
   'first-time-buyer-guide': () => import('./first-time-buyer-guide'),
