@@ -65,6 +65,10 @@ const CATEGORY_COLORS: Record<GuideCategory, string> = {
   probate: 'bg-purple-50 text-purple-800 border-purple-200',
   valuation: 'bg-orange-50 text-orange-800 border-orange-200',
   stories: 'bg-gray-50 text-gray-700 border-gray-200',
+  distressed: 'bg-red-50 text-red-800 border-red-200',
+  divorce: 'bg-rose-50 text-rose-800 border-rose-200',
+  military: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+  senior: 'bg-teal-50 text-teal-800 border-teal-200',
 };
 
 const CATEGORY_LABELS: Record<GuideCategory, { en: string; es: string }> = {
@@ -74,6 +78,10 @@ const CATEGORY_LABELS: Record<GuideCategory, { en: string; es: string }> = {
   probate: { en: 'Probate', es: 'Sucesión' },
   valuation: { en: 'Valuation', es: 'Valuación' },
   stories: { en: 'Stories', es: 'Historias' },
+  distressed: { en: 'Distressed', es: 'En Dificultad' },
+  divorce: { en: 'Divorce', es: 'Divorcio' },
+  military: { en: 'Military', es: 'Militar' },
+  senior: { en: 'Senior', es: 'Adulto Mayor' },
 };
 
 interface GuideReadNextProps {
