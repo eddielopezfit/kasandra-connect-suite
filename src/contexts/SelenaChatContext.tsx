@@ -233,6 +233,7 @@ export type EntrySource =
   | 'pre_unlock'
   | 'buyer_readiness_capture'
   | 'off_market_capture'
+  | 'cash_offer_options_hero'
   | 'cash_readiness_capture'
   | 'community_mid_page'
   | 'podcast_page'
