@@ -861,14 +861,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     authorityTheme: 'valuation_insight',
     isCashGuide: false,
   },
-];
-
-// ============= HELPER FUNCTIONS =============
-
-export const getLiveGuides = (): GuideRegistryEntry[] => {
-  const live = GUIDE_REGISTRY.filter(g => g.status === 'live');
-  if (!import.meta.env.PROD) live.forEach(validateTierAssets);
-
   // ─── Phase 4: AEO Content Gap Guides ────────────────────────────────────
 
   {
@@ -890,7 +882,7 @@ export const getLiveGuides = (): GuideRegistryEntry[] => {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'cost-to-sell-tucson', lifeEvent: 'general_selling' }, label: { en: 'Run my net sheet', es: 'Calcular mi hoja de neto' } },
       secondaryAction: { type: 'navigate', payload: { path: '/v2/calculator' }, label: { en: 'Open Calculator', es: 'Abrir Calculadora' } },
     },
-    isLive: true,
+    status: 'live',
     sortOrder: 30,
     authorityTheme: 'seller_clarity',
     keywords: ['cost to sell', 'closing costs seller', 'commission tucson', 'net proceeds', 'what will I walk away with', 'cuánto cuesta vender casa tucson'],
@@ -914,7 +906,7 @@ export const getLiveGuides = (): GuideRegistryEntry[] => {
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'arizona-real-estate-glossary', lifeEvent: 'first_time_buyer' }, label: { en: 'Ask Selena a question', es: 'Preguntarle a Selena' } },
     },
-    isLive: true,
+    status: 'live',
     sortOrder: 56,
     authorityTheme: 'buyer_strategy',
     keywords: ['real estate glossary arizona', 'what is SPDS arizona', 'what is BINSR', 'earnest money arizona', 'what is escrow arizona'],
@@ -938,7 +930,7 @@ export const getLiveGuides = (): GuideRegistryEntry[] => {
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'tucson-suburb-comparison', lifeEvent: 'relocation_buying' }, label: { en: 'Which suburb fits me?', es: '¿Qué suburbio me conviene?' } },
     },
-    isLive: true,
+    status: 'live',
     sortOrder: 13,
     authorityTheme: 'buyer_strategy',
     keywords: ['marana vs oro valley', 'best suburbs tucson', 'tucson suburb comparison', 'sahuarita vs vail', 'where to live tucson'],
@@ -962,7 +954,7 @@ export const getLiveGuides = (): GuideRegistryEntry[] => {
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'arizona-first-time-buyer-programs', lifeEvent: 'first_time_buyer' }, label: { en: 'Find out what I qualify for', es: 'Averiguar para qué califico' } },
     },
-    isLive: true,
+    status: 'live',
     sortOrder: 14,
     authorityTheme: 'buyer_strategy',
     keywords: ['first time home buyer programs arizona 2025', 'down payment assistance tucson', 'HOME Plus arizona', 'pima county buyer assistance'],
@@ -986,7 +978,7 @@ export const getLiveGuides = (): GuideRegistryEntry[] => {
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'capital-gains-home-sale-arizona', lifeEvent: 'general_selling' }, label: { en: 'Talk through my tax situation', es: 'Hablar sobre mi situación fiscal' } },
     },
-    isLive: true,
+    status: 'live',
     sortOrder: 57,
     authorityTheme: 'seller_clarity',
     keywords: ['capital gains tax home sale arizona', 'do I pay capital gains selling my house', 'section 121 exclusion arizona', 'how to avoid capital gains tax arizona'],
@@ -1010,7 +1002,7 @@ export const getLiveGuides = (): GuideRegistryEntry[] => {
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'sell-or-rent-tucson', lifeEvent: 'general_selling' }, label: { en: 'Run the numbers with me', es: 'Calcular los números conmigo' } },
     },
-    isLive: true,
+    status: 'live',
     sortOrder: 58,
     authorityTheme: 'seller_clarity',
     keywords: ['sell or rent tucson', 'should I rent out my house tucson', 'tucson rental market 2025', 'rent vs sell calculator tucson'],
@@ -1034,7 +1026,7 @@ export const getLiveGuides = (): GuideRegistryEntry[] => {
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'how-long-to-sell-tucson', lifeEvent: 'general_selling' }, label: { en: 'Get a timeline for my home', es: 'Obtener un cronograma para mi casa' } },
     },
-    isLive: true,
+    status: 'live',
     sortOrder: 59,
     authorityTheme: 'seller_clarity',
     keywords: ['how long does it take to sell a house in tucson', 'tucson days on market 2025', 'how fast do homes sell in tucson', 'best time to sell house tucson'],
@@ -1058,12 +1050,19 @@ export const getLiveGuides = (): GuideRegistryEntry[] => {
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'buying-home-noncitizen-arizona', lifeEvent: 'first_time_buyer' }, label: { en: 'Talk through my options', es: 'Hablar sobre mis opciones' } },
     },
-    isLive: true,
+    status: 'live',
     sortOrder: 15,
     authorityTheme: 'buyer_strategy',
     keywords: ['can DACA recipients buy a house arizona', 'ITIN loan tucson', 'non citizen home buyer arizona', 'buying home without social security number'],
   },
 
+];
+
+// ============= HELPER FUNCTIONS =============
+
+export const getLiveGuides = (): GuideRegistryEntry[] => {
+  const live = GUIDE_REGISTRY.filter(g => g.status === 'live');
+  if (!import.meta.env.PROD) live.forEach(validateTierAssets);
   return live.sort((a, b) => a.sortOrder - b.sortOrder);
 };
 
