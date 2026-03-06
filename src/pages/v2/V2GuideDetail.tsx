@@ -337,7 +337,7 @@ function GuideDetailContent() {
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
               <p className="text-xl text-cc-charcoal leading-relaxed">
-                {t(guide.intro, guide.introEs)}
+                {parseInlineMarkdown(t(guide.intro, guide.introEs))}
               </p>
             </div>
           </div>
