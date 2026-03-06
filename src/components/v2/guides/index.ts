@@ -37,3 +37,4 @@ export { default as GuidePathSelector } from './GuidePathSelector';
 export { default as GuideStatsGrid } from './GuideStatsGrid';
 
 export { default as GuideFaqAccordion } from './GuideFaqAccordion';
+export { GuideReadNext } from './GuideReadNext';

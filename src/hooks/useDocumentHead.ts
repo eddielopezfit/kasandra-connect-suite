@@ -24,11 +24,15 @@ function upsertMeta(attr: string, key: string, content: string) {
   el.setAttribute("content", content);
 }
 
-function upsertLink(rel: string, href: string) {
-  let el = document.querySelector(`link[rel="${rel}"]`) as HTMLLinkElement | null;
+function upsertLink(rel: string, href: string, hreflang?: string) {
+  const selector = hreflang
+    ? `link[rel="${rel}"][hreflang="${hreflang}"]`
+    : `link[rel="${rel}"]`;
+  let el = document.querySelector(selector) as HTMLLinkElement | null;
   if (!el) {
     el = document.createElement("link");
     el.setAttribute("rel", rel);
+    if (hreflang) el.setAttribute("hreflang", hreflang);
     document.head.appendChild(el);
   }
   el.setAttribute("href", href);
@@ -54,10 +58,19 @@ export function useDocumentHead({
     upsertMeta("property", "og:title", title);
     upsertMeta("property", "og:description", description);
     upsertMeta("property", "og:image", image);
+    upsertMeta("property", "og:type", "article");
+    upsertMeta("property", "og:site_name", "Kasandra Prieto | Corner Connect");
+    upsertMeta("name", "twitter:card", "summary_large_image");
+    upsertMeta("name", "twitter:title", title);
+    upsertMeta("name", "twitter:description", description);
     upsertMeta("name", "twitter:image", image);
 
     if (canonical) {
       upsertLink("canonical", canonical);
+      // hreflang alternates for EN/ES
+      upsertLink("alternate", canonical, "en");
+      upsertLink("alternate", canonical.replace('/v2/', '/v2/').replace('?lang=en', '') + '?lang=es', "es");
+      upsertLink("alternate", canonical, "x-default");
     }
 
     return () => {

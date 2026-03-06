@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import LanguageToggle from "@/components/v2/LanguageToggle";
-import { AuthorityCTABlock, GuideComplianceFooter, GuideComparisonCards, GuidePathSelector, GuideStatsGrid, GuideFaqAccordion } from "@/components/v2/guides";
+import { AuthorityCTABlock, GuideComplianceFooter, GuideComparisonCards, GuidePathSelector, GuideStatsGrid, GuideFaqAccordion, GuideReadNext } from "@/components/v2/guides";
 import GuideImage from "@/components/v2/guides/GuideImage";
 import GuideVideo from "@/components/v2/guides/GuideVideo";
 import GuidePullQuote from "@/components/v2/guides/GuidePullQuote";
@@ -17,6 +17,7 @@ import { markGuideOpened, setLastGuideId, getGuidesRead } from '@/lib/guides/per
 import { getGuideById, type GuideCategory } from "@/lib/guides/guideRegistry";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { GUIDE_DATA_LOADERS, type GuideContentData } from "@/data/guides";
+import { parseInlineMarkdown } from "@/lib/utils/parseInlineMarkdown";
 import { validateRegistryLoadersOnce } from "@/lib/guides/validate";
 
 // Inner component — must be rendered inside V2Layout (which provides SelenaChatProvider)
@@ -111,18 +112,135 @@ function GuideDetailContent() {
     'cash-vs-traditional-sale': {
       titleEn: 'Cash Offer vs. Listing in Tucson – Kasandra Prieto',
       titleEs: 'Oferta en Efectivo vs. Listar en Tucson – Kasandra Prieto',
-      descEn: 'Learn the trade-offs between a quick cash offer and listing your Tucson home. Calm, clear steps from local Realtor Kasandra Prieto and Selena.',
-      descEs: 'Conoce las diferencias entre una oferta rápida en efectivo y listar tu casa en Tucson. Pasos claros y tranquilos de la Realtor local Kasandra Prieto y Selena.',
+      descEn: 'Learn the trade-offs between a quick cash offer and listing your Tucson home. Calm, clear steps from local Realtor Kasandra Prieto.',
+      descEs: 'Conoce las diferencias entre una oferta rápida en efectivo y listar tu casa en Tucson. Pasos claros de la Realtor Kasandra Prieto.',
+    },
+    'cost-to-sell-tucson': {
+      titleEn: 'What Does It Cost to Sell a House in Tucson? (2026) – Kasandra Prieto',
+      titleEs: '¿Cuánto Cuesta Vender una Casa en Tucson? (2026) – Kasandra Prieto',
+      descEn: 'Full breakdown of Tucson seller costs: agent commission, closing costs, pre-sale prep, and holding costs. Real numbers for 2026.',
+      descEs: 'Desglose completo de los costos de vender en Tucson: comisión, gastos de cierre, preparación y costos de tenencia. Números reales para 2026.',
+    },
+    'selling-for-loss': {
+      titleEn: 'Selling Your Home for Less Than You Owe in Tucson – Kasandra Prieto',
+      titleEs: 'Vender tu Casa por Menos de lo que Debes en Tucson – Kasandra Prieto',
+      descEn: 'Understand your options when you owe more than your Tucson home is worth. Short sales, forbearance, and honest guidance from Kasandra Prieto.',
+      descEs: 'Entiende tus opciones cuando debes más de lo que vale tu casa en Tucson. Ventas cortas y orientación honesta de Kasandra Prieto.',
+    },
+    'home-prep-staging': {
+      titleEn: 'How to Prepare Your Tucson Home for Sale (2026) – Kasandra Prieto',
+      titleEs: 'Cómo Preparar tu Casa en Tucson para Vender (2026) – Kasandra Prieto',
+      descEn: 'What Tucson buyers actually react to, what to skip, and the high-ROI prep list. Desert-specific staging tips from Kasandra Prieto.',
+      descEs: 'Lo que los compradores de Tucson realmente notan, qué omitir y la lista de preparación de alto retorno. Consejos específicos para el desierto.',
+    },
+    'pricing-strategy': {
+      titleEn: 'How to Price Your Tucson Home to Sell in 2026 – Kasandra Prieto',
+      titleEs: 'Cómo Fijar el Precio de tu Casa en Tucson para Vender en 2026 – Kasandra Prieto',
+      descEn: 'The real strategy behind Tucson home pricing — why overpricing costs more than it saves, and how to price correctly from day one.',
+      descEs: 'La estrategia real detrás de los precios de casas en Tucson — por qué sobrevalorar cuesta más de lo que ahorra.',
+    },
+    'military-pcs-guide': {
+      titleEn: 'Military PCS to Tucson: Buying a Home Near Davis-Monthan AFB – Kasandra Prieto',
+      titleEs: 'Mudanza Militar PCS a Tucson: Comprar Casa Cerca de Davis-Monthan – Kasandra Prieto',
+      descEn: 'VA loan guidance, neighborhood intel, and Tucson base proximity map for military families PCSing to Davis-Monthan AFB.',
+      descEs: 'Orientación sobre préstamos VA, información de vecindarios y mapa de proximidad a la base para familias militares en PCS a Tucson.',
+    },
+    'divorce-selling': {
+      titleEn: 'Selling a Home During Divorce in Arizona – Kasandra Prieto',
+      titleEs: 'Vender una Casa Durante un Divorcio en Arizona – Kasandra Prieto',
+      descEn: 'Arizona community property rules, timeline coordination, and how to sell your Tucson home during divorce without adding stress.',
+      descEs: 'Reglas de propiedad comunitaria en Arizona, coordinación de plazos y cómo vender tu casa en Tucson durante un divorcio sin añadir estrés.',
+    },
+    'senior-downsizing': {
+      titleEn: 'Senior Downsizing in Tucson: Selling and Moving Forward – Kasandra Prieto',
+      titleEs: 'Reducción de Vivienda para Mayores en Tucson – Kasandra Prieto',
+      descEn: 'A calm guide to downsizing your Tucson home — timing, what to do with possessions, and community options for Arizona seniors.',
+      descEs: 'Una guía tranquila para reducir tu vivienda en Tucson — tiempos, qué hacer con las pertenencias y opciones de comunidad para mayores en Arizona.',
+    },
+    'distressed-preforeclosure': {
+      titleEn: 'Facing Foreclosure in Tucson? Your Options in Arizona – Kasandra Prieto',
+      titleEs: '¿Enfrentando una Ejecución Hipotecaria en Tucson? Tus Opciones – Kasandra Prieto',
+      descEn: 'If you\'re behind on your mortgage in Tucson, here are your real options before foreclosure. Arizona-specific guidance from Kasandra Prieto.',
+      descEs: 'Si estás atrasado en tu hipoteca en Tucson, aquí están tus opciones reales antes de la ejecución hipotecaria.',
+    },
+    'relocating-to-tucson': {
+      titleEn: 'Moving to Tucson, Arizona in 2026 – Neighborhood Guide & Relocation Tips',
+      titleEs: 'Mudarse a Tucson, Arizona en 2026 – Guía de Vecindarios y Consejos',
+      descEn: 'Everything you need to know before relocating to Tucson — best neighborhoods, cost of living, climate, and buying your first home here.',
+      descEs: 'Todo lo que necesitas saber antes de mudarte a Tucson — mejores vecindarios, costo de vida, clima y cómo comprar tu primera casa aquí.',
+    },
+    'tucson-neighborhoods': {
+      titleEn: 'Best Neighborhoods in Tucson, AZ (2026) – Buyer\'s Guide – Kasandra Prieto',
+      titleEs: 'Los Mejores Vecindarios de Tucson, AZ (2026) – Guía para Compradores',
+      descEn: 'Foothills, Marana, Vail, Downtown Tucson and more — a neighborhood-by-neighborhood breakdown for buyers from local Realtor Kasandra Prieto.',
+      descEs: 'Foothills, Marana, Vail, Centro de Tucson y más — análisis vecindario por vecindario para compradores de la Realtor local Kasandra Prieto.',
+    },
+    'tucson-suburb-comparison': {
+      titleEn: 'Marana vs Vail vs Sahuarita: Tucson Suburb Comparison 2026 – Kasandra Prieto',
+      titleEs: 'Marana vs Vail vs Sahuarita: Comparación de Suburbios de Tucson 2026',
+      descEn: 'Side-by-side comparison of Tucson\'s fastest-growing suburbs. Schools, commute, home prices, and lifestyle from a local Realtor.',
+      descEs: 'Comparación lado a lado de los suburbios de más rápido crecimiento de Tucson. Escuelas, viaje al trabajo, precios de casas y estilo de vida.',
+    },
+    'arizona-first-time-buyer-programs': {
+      titleEn: 'Arizona First-Time Home Buyer Programs in 2026 – Kasandra Prieto',
+      titleEs: 'Programas para Compradores de Primera Vivienda en Arizona 2026 – Kasandra Prieto',
+      descEn: 'Down payment assistance, ADOH programs, HOME Plus, and how to qualify as a first-time buyer in Arizona and Tucson.',
+      descEs: 'Asistencia para el pago inicial, programas ADOH, HOME Plus y cómo calificar como comprador de primera vivienda en Arizona y Tucson.',
+    },
+    'buying-home-noncitizen-arizona': {
+      titleEn: 'Buying a Home in Arizona as a Non-Citizen or DACA Recipient – Kasandra Prieto',
+      titleEs: 'Comprar Casa en Arizona sin Ser Ciudadano o con DACA – Kasandra Prieto',
+      descEn: 'Yes, non-citizens can buy homes in Arizona. Mortgage options for ITIN, green card, and DACA buyers in Tucson — explained clearly.',
+      descEs: 'Sí, los no ciudadanos pueden comprar casas en Arizona. Opciones de hipoteca para compradores con ITIN, tarjeta verde y DACA en Tucson.',
+    },
+    'pima-county-property-taxes': {
+      titleEn: 'Pima County Property Taxes Explained (2026) – Kasandra Prieto',
+      titleEs: 'Impuestos a la Propiedad en el Condado de Pima Explicados (2026)',
+      descEn: 'How Pima County property taxes work, how to calculate your bill, and what exemptions are available for Tucson homeowners.',
+      descEs: 'Cómo funcionan los impuestos a la propiedad en el Condado de Pima, cómo calcular tu factura y qué exenciones están disponibles.',
+    },
+    'arizona-real-estate-glossary': {
+      titleEn: 'Arizona Real Estate Terms Glossary (2026) – Kasandra Prieto',
+      titleEs: 'Glosario de Términos de Bienes Raíces en Arizona (2026) – Kasandra Prieto',
+      descEn: 'Plain-language definitions of Arizona real estate terms — escrow, contingency, earnest money, title, and more for Tucson buyers and sellers.',
+      descEs: 'Definiciones en lenguaje sencillo de términos de bienes raíces en Arizona — depósito en garantía, contingencia, señal y más.',
+    },
+    'capital-gains-home-sale-arizona': {
+      titleEn: 'Capital Gains When Selling Your Home in Arizona (2026) – Kasandra Prieto',
+      titleEs: 'Ganancias de Capital al Vender tu Casa en Arizona (2026) – Kasandra Prieto',
+      descEn: 'Do you owe capital gains tax when selling your Tucson home? The $250K/$500K exclusion, Arizona rules, and what to ask your CPA.',
+      descEs: '¿Debes impuesto sobre ganancias de capital al vender tu casa en Tucson? La exclusión de $250K/$500K y las reglas de Arizona.',
+    },
+    'sell-or-rent-tucson': {
+      titleEn: 'Should I Sell or Rent My Tucson Home? (2026 Analysis) – Kasandra Prieto',
+      titleEs: '¿Debo Vender o Rentar mi Casa en Tucson? (Análisis 2026) – Kasandra Prieto',
+      descEn: 'Sell now or become a landlord? A clear financial and lifestyle comparison for Tucson homeowners deciding what to do with their property.',
+      descEs: '¿Vender ahora o convertirte en arrendador? Una comparación financiera y de estilo de vida clara para propietarios de Tucson.',
+    },
+    'how-long-to-sell-tucson': {
+      titleEn: 'How Long Does It Take to Sell a House in Tucson? (2026) – Kasandra Prieto',
+      titleEs: '¿Cuánto Tiempo Tarda en Venderse una Casa en Tucson? (2026)',
+      descEn: 'Current Tucson days on market, what slows down a sale, and how to sell faster with the right strategy — from a local Realtor.',
+      descEs: 'Días actuales en el mercado en Tucson, qué retrasa una venta y cómo vender más rápido con la estrategia correcta.',
+    },
+    'move-up-buyer': {
+      titleEn: 'Buying Up in Tucson: How to Buy and Sell at the Same Time – Kasandra Prieto',
+      titleEs: 'Comprar Casa Más Grande en Tucson: Comprar y Vender al Mismo Tiempo',
+      descEn: 'Bridge loans, contingent offers, and the timing strategy for Tucson homeowners who need to buy before or while selling their current home.',
+      descEs: 'Préstamos puente, ofertas contingentes y la estrategia de tiempo para propietarios de Tucson que necesitan comprar antes o mientras venden.',
     },
   };
 
   const seo = guideId && seoOverrides[guideId];
+  const canonicalBase = 'https://kasandraoasis.com';
+  const canonicalUrl = guideId ? `${canonicalBase}/v2/guides/${guideId}` : undefined;
 
   useDocumentHead({
     titleEn: seo ? seo.titleEn : guide ? `${guide.title} | Kasandra Prieto` : 'Guide | Kasandra Prieto',
     titleEs: seo ? seo.titleEs : guide ? `${guide.titleEs} | Kasandra Prieto` : 'Guía | Kasandra Prieto',
     descriptionEn: seo ? seo.descEn : guide ? guide.intro.slice(0, 155) + "…" : '',
     descriptionEs: seo ? seo.descEs : guide ? guide.introEs.slice(0, 155) + "…" : '',
+    canonical: canonicalUrl,
   });
 
   if (isLoading || !guide) {
@@ -248,10 +366,10 @@ function GuideDetailContent() {
                     <h2 className="font-serif text-2xl md:text-3xl text-cc-navy mb-6">
                       {t(section.heading, section.headingEs)}
                     </h2>
-                    {/* Default: plain text. Variants rendered below heading. */}
+                    {/* Default: inline-markdown parsed. Variants rendered below heading. */}
                     {(!section.variant || section.variant === 'default') && (
                       <div className="text-cc-charcoal leading-relaxed text-lg whitespace-pre-line">
-                        {t(section.content, section.contentEs)}
+                        {parseInlineMarkdown(t(section.content, section.contentEs))}
                       </div>
                     )}
                   </div>
@@ -285,6 +403,14 @@ function GuideDetailContent() {
 
         {/* Compliance Footer */}
         <GuideComplianceFooter />
+
+        {/* Read Next — guide-to-guide pathway. Keeps users in the hub. */}
+        {guideId && (
+          <GuideReadNext
+            currentGuideId={guideId}
+            currentCategory={safeCategory}
+          />
+        )}
 
         {/* Authority CTA Block — Tier 1 + Tier 2 only. Tier 3 stories end in silence. */}
         {registryEntry?.tier !== 3 && (
