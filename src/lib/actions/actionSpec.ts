@@ -17,6 +17,7 @@ const NAVIGATE_WHITELIST = [
   '/v2/guides', '/v2/community', '/v2/podcast',
   '/v2/buy', '/v2/sell', '/v2/book',
   '/v2/seller-decision', '/v2/cash-offer-options',
+  '/v2/market', '/v2/neighborhood-compare', '/v2/buyer-closing-costs',
 ] as const;
 
 // Valid entry sources for open_chat

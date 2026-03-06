@@ -564,6 +564,52 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     normalized_key: 'az real estate glossary',
     actionSpec: { type: 'open_guide', guideId: 'arizona-real-estate-glossary', label: { en: 'AZ Real Estate Glossary', es: 'Glosario de Bienes Raíces' } },
   },
+
+  // --- Market Intelligence ---
+  {
+    id: 'tool-market-intelligence-en',
+    label_en: 'Tucson Market Data',
+    label_es: 'Datos del Mercado Tucson',
+    normalized_key: 'tucson market data',
+    actionSpec: { type: 'navigate', path: '/v2/market', label: { en: 'Tucson Market Data', es: 'Datos del Mercado Tucson' } },
+  },
+  {
+    id: 'tool-market-intelligence-es',
+    label_en: 'Tucson Market Data',
+    label_es: 'Datos del Mercado Tucson',
+    normalized_key: 'datos del mercado tucson',
+    actionSpec: { type: 'navigate', path: '/v2/market', label: { en: 'Tucson Market Data', es: 'Datos del Mercado Tucson' } },
+  },
+  // --- Neighborhood Compare ---
+  {
+    id: 'tool-neighborhood-compare-en',
+    label_en: 'Compare Neighborhoods',
+    label_es: 'Comparar Vecindarios',
+    normalized_key: 'compare neighborhoods',
+    actionSpec: { type: 'navigate', path: '/v2/neighborhood-compare', label: { en: 'Compare Neighborhoods', es: 'Comparar Vecindarios' } },
+  },
+  {
+    id: 'tool-neighborhood-compare-es',
+    label_en: 'Compare Neighborhoods',
+    label_es: 'Comparar Vecindarios',
+    normalized_key: 'comparar vecindarios',
+    actionSpec: { type: 'navigate', path: '/v2/neighborhood-compare', label: { en: 'Compare Neighborhoods', es: 'Comparar Vecindarios' } },
+  },
+  // --- Buyer Closing Costs ---
+  {
+    id: 'tool-closing-costs-en',
+    label_en: 'Estimate Closing Costs',
+    label_es: 'Estimar Costos de Cierre',
+    normalized_key: 'estimate closing costs',
+    actionSpec: { type: 'navigate', path: '/v2/buyer-closing-costs', label: { en: 'Estimate Closing Costs', es: 'Estimar Costos de Cierre' } },
+  },
+  {
+    id: 'tool-closing-costs-es',
+    label_en: 'Estimate Closing Costs',
+    label_es: 'Estimar Costos de Cierre',
+    normalized_key: 'estimar costos de cierre',
+    actionSpec: { type: 'navigate', path: '/v2/buyer-closing-costs', label: { en: 'Estimate Closing Costs', es: 'Estimar Costos de Cierre' } },
+  },
 ] as const;
 
 // ============= LOOKUP =============

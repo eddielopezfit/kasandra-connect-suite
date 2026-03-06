@@ -70,6 +70,9 @@ const App = () => (
             <Route path="/v2/seller-readiness" element={<V2SellerReadiness />} />
             <Route path="/v2/cash-readiness" element={<V2CashReadiness />} />
             <Route path="/v2/off-market" element={<V2OffMarketBuyer />} />
+              <Route path="/v2/market" element={<V2MarketIntelligence />} />
+              <Route path="/v2/neighborhood-compare" element={<V2NeighborhoodCompare />} />
+              <Route path="/v2/buyer-closing-costs" element={<V2BuyerClosingCosts />} />
             <Route path="/v2/qa-cta" element={<V2CTAQualityAssurance />} />
             <Route path="/v2/qa-determinism" element={<V2QADeterminism />} />
 

@@ -580,6 +580,14 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Start now': '/v2/buyer-readiness',
   'Find a time with Kasandra': '/v2/book',
   'Encontrar un horario con Kasandra': '/v2/book',
+  // New tools — EN
+  'Tucson Market Data': '/v2/market',
+  'Compare Neighborhoods': '/v2/neighborhood-compare',
+  'Estimate Closing Costs': '/v2/buyer-closing-costs',
+  // New tools — ES
+  'Datos del Mercado Tucson': '/v2/market',
+  'Comparar Vecindarios': '/v2/neighborhood-compare',
+  'Estimar Costos de Cierre': '/v2/buyer-closing-costs',
   'Talk with Kasandra': '/v2/book',
   // ES Phase 2 chips
   'Tomar la evaluación de preparación': '/v2/buyer-readiness',

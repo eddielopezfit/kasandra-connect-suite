@@ -120,6 +120,12 @@ const V2BuyContent = () => {
               >
                 <Link to="/v2/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
               </Button>
+              <Button asChild variant="outline" className="rounded-full border-cc-navy/30 text-cc-navy">
+                <Link to="/v2/buyer-closing-costs">{t("Estimate Closing Costs", "Estimar Costos de Cierre")}</Link>
+              </Button>
+              <Button asChild variant="outline" className="rounded-full border-cc-navy/30 text-cc-navy">
+                <Link to="/v2/neighborhood-compare">{t("Compare Neighborhoods", "Comparar Vecindarios")}</Link>
+              </Button>
               <Button 
                 asChild 
                 variant="outline" 
