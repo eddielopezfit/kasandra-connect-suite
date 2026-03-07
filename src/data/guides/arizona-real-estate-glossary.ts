@@ -42,7 +42,7 @@ const data: GuideContentData = {
       statsData: [
         { value: '10 days', valueEs: '10 días', label: 'Standard inspection period in Arizona contracts', labelEs: 'Período de inspección estándar en contratos de Arizona' },
         { value: '1–3%', valueEs: '1–3%', label: 'Typical earnest money deposit (% of purchase price)', labelEs: 'Depósito de dinero en garantía típico (% del precio de compra)' },
-        { value: '0.4–0.6%', valueEs: '0.4–0.6%', label: 'Buyer's title insurance (% of purchase price)', labelEs: 'Seguro de título del comprador (% del precio de compra)' },
+        { value: '0.4–0.6%', valueEs: '0.4–0.6%', label: 'Buyer\'s title insurance (% of purchase price)', labelEs: 'Seguro de título del comprador (% del precio de compra)' },
         { value: '30–45 days', valueEs: '30–45 días', label: 'Standard escrow/closing period in Pima County', labelEs: 'Período estándar de cierre en el Condado de Pima' },
       ],
     },
