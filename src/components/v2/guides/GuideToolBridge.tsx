@@ -275,8 +275,6 @@ export const TOOL_BRIDGES: Record<string, ToolBridgeConfig> = {
   },
 };
 
-};
-
 const ICONS = {
   calculator: Calculator,
   map: MapPin,
