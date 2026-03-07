@@ -18,6 +18,10 @@ const REDFIN_TUCSON_URL = "https://www.redfin.com/city/18510/AZ/Tucson/housing-m
 interface MarketData {
   negotiation_gap: number | null;
   days_to_close: number | null;
+  median_dom: number | null;         // raw DOM before +30 padding
+  median_list_price: string | null;  // e.g. "$345,000"
+  active_listings: number | null;    // e.g. 4600
+  price_cut_pct: number | null;      // e.g. 0.28 (28%)
   source_url: string;
   scrape_log: Record<string, unknown>;
 }
@@ -105,9 +109,73 @@ function parseMarketData(markdown: string): MarketData {
   const daysToClose = daysOnMarket !== null ? daysOnMarket + 30 : null;
   log.days_to_close_calculated = daysToClose;
 
+  // Median List Price: "Median List Price $345,000" or "$345K" patterns
+  let medianListPrice: string | null = null;
+  const pricePatterns = [
+    /median\s+(?:list|sale|home|listing)\s+price[^$]*\$([\d,]+(?:K|M)?)/i,
+    /\$([\d,]+(?:K|M)?)\s+median\s+(?:list|sale|home)/i,
+    /(?:list|sale)\s+price\s+\$([\d,]+(?:K|M)?)/i,
+  ];
+  for (const p of pricePatterns) {
+    const m = markdown.match(p);
+    if (m) {
+      // Normalize K/M shorthand
+      let raw = m[1].replace(/,/g, '');
+      if (raw.endsWith('K')) raw = String(parseFloat(raw) * 1000);
+      if (raw.endsWith('M')) raw = String(parseFloat(raw) * 1000000);
+      medianListPrice = `$${Number(raw).toLocaleString()}`;
+      log.median_list_price_raw = m[0];
+      break;
+    }
+  }
+
+  // Active Listings: "4,600 homes for sale" or "Active listings: 4,600"
+  let activeListings: number | null = null;
+  const listingPatterns = [
+    /([\d,]+)\s+homes?\s+for\s+sale/i,
+    /active\s+listings?[:\s]+([\d,]+)/i,
+    /([\d,]+)\s+active\s+listings?/i,
+    /([\d,]+)\s+homes?\s+(?:available|listed)/i,
+  ];
+  for (const p of listingPatterns) {
+    const m = markdown.match(p);
+    if (m) {
+      const raw = parseInt(m[1].replace(/,/g, ''), 10);
+      if (!isNaN(raw) && raw > 0 && raw < 100000) {
+        activeListings = raw;
+        log.active_listings_raw = m[0];
+        break;
+      }
+    }
+  }
+
+  // Price Cut %: "28% of homes had a price cut" or "price reductions: 28%"
+  let priceCutPct: number | null = null;
+  const priceCutPatterns = [
+    /([\d]+(?:\.\d+)?)\s*%\s+(?:of\s+homes?|of\s+listings?)\s+(?:had|with)\s+(?:a\s+)?price\s+(?:cut|drop|reduction)/i,
+    /price\s+(?:cut|drop|reduction)s?[^%]*?([\d]+(?:\.\d+)?)\s*%/i,
+    /([\d]+(?:\.\d+)?)\s*%\s+price\s+(?:cut|drop|reduction)/i,
+    /price\s+reduced[^%]*?([\d]+(?:\.\d+)?)\s*%/i,
+  ];
+  for (const p of priceCutPatterns) {
+    const m = markdown.match(p);
+    if (m) {
+      const pct = parseFloat(m[1]);
+      if (pct > 0 && pct <= 100) {
+        priceCutPct = parseFloat((pct / 100).toFixed(4));
+        log.price_cut_raw = m[0];
+        break;
+      }
+    }
+  }
+
   return {
     negotiation_gap: negotiationGap,
     days_to_close: daysToClose,
+    median_dom: daysOnMarket,
+    median_list_price: medianListPrice,
+    active_listings: activeListings,
+    price_cut_pct: priceCutPct,
     source_url: REDFIN_TUCSON_URL,
     scrape_log: log,
   };
@@ -173,12 +241,19 @@ Deno.serve(async (req: Request) => {
     console.log("[scrape-market-pulse] Parsed data:", JSON.stringify(parsed));
 
     // Step 3: Build update payload (only update fields that were successfully parsed)
+    // Rich data (median_dom, median_list_price, active_listings, price_cut_pct) stored in scrape_log
+    // so no DB schema changes are needed — scrape_log is jsonb.
     const updatePayload: Record<string, unknown> = {
       source_type: "firecrawl_automated",
       source_url: parsed.source_url,
       scrape_log: {
         ...parsed.scrape_log,
         scraped_at: new Date().toISOString(),
+        // Extended fields — stored in scrape_log for Selena market hint enrichment
+        median_dom: parsed.median_dom,
+        median_list_price: parsed.median_list_price,
+        active_listings: parsed.active_listings,
+        price_cut_pct: parsed.price_cut_pct,
       },
       last_verified_date: new Date().toISOString().split("T")[0],
       updated_at: new Date().toISOString(),
@@ -210,6 +285,10 @@ Deno.serve(async (req: Request) => {
       updated_fields: {
         negotiation_gap: parsed.negotiation_gap,
         days_to_close: parsed.days_to_close,
+        median_dom: parsed.median_dom,
+        median_list_price: parsed.median_list_price,
+        active_listings: parsed.active_listings,
+        price_cut_pct: parsed.price_cut_pct,
       },
       source: REDFIN_TUCSON_URL,
       scraped_at: new Date().toISOString(),

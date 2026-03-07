@@ -2482,36 +2482,71 @@ serve(async (req) => {
         : `\n\nDECISION RECEIPT CONTEXT: User completed the Seller Decision tool. Situation: ${s}. Priority: ${p}. Condition: ${c}. Recommended path: ${r}. Acknowledge this progress and continue forward. Do NOT re-ask information they already provided.`;
     }
 
-    // --- Market Pulse / Wait Penalty context (dynamic from DB) ---
+    // --- Market Pulse (dynamic from DB — fires for any sell/cash intent) ---
+    // P1: Gate expanded from equityPulseSaved-only to all seller/cash intent.
+    //     Richer data (median_dom, median_list_price, active_listings, price_cut_pct)
+    //     read from scrape_log jsonb column — no schema change required.
     let marketPulseHint = "";
+    const isSellerIntent = effectiveIntent === 'sell' || effectiveIntent === 'cash' || effectiveIntent === 'dual';
     const equityPulseSaved = context.tool_used === 'tucson_alpha_calculator' || 
       (context.tools_completed && context.tools_completed.includes('tucson_alpha_calculator'));
-    
-    if (equityPulseSaved) {
-      // Fetch live market data for dynamic prompt injection
+
+    if (isSellerIntent || equityPulseSaved) {
       let daysToClose = 145;
       let holdingCostPerDay = 18;
+      let saleToListPct = "97.6%";
+      let medianListPrice: string | null = null;
+      let activeListings: number | null = null;
+      let priceCutPct: number | null = null;
+
       try {
         if (rlUrl && rlKey) {
           const pulseClient = createClient(rlUrl, rlKey);
           const { data: pulse } = await pulseClient
             .from("market_pulse_settings")
-            .select("days_to_close, holding_cost_per_day")
+            .select("days_to_close, holding_cost_per_day, negotiation_gap, scrape_log")
             .eq("market_name", "Tucson_Overall")
             .single();
           if (pulse) {
             daysToClose = pulse.days_to_close ?? daysToClose;
             holdingCostPerDay = Number(pulse.holding_cost_per_day) || holdingCostPerDay;
+            if (pulse.negotiation_gap != null) {
+              const ratio = 1 - pulse.negotiation_gap;
+              saleToListPct = `${(ratio * 100).toFixed(1)}%`;
+            }
+            // Extended fields from scrape_log (set by Firecrawl P1 expansion)
+            const log = pulse.scrape_log as Record<string, unknown> | null;
+            if (log) {
+              if (log.median_list_price) medianListPrice = log.median_list_price as string;
+              if (log.active_listings) activeListings = log.active_listings as number;
+              if (log.price_cut_pct) priceCutPct = log.price_cut_pct as number;
+            }
           }
         }
-      } catch (_e) { /* fallback to defaults */ }
+      } catch (_e) { /* fallback to defaults — non-blocking */ }
 
       const totalHoldingCost = Math.round(daysToClose * holdingCostPerDay);
       const formattedCost = `$${totalHoldingCost.toLocaleString()}`;
+      const medianDom = daysToClose - 30; // reverse the +30 padding used in scraper
 
-      marketPulseHint = language === 'es'
-        ? `\n\nCONTEXTO DE MERCADO TUCSON: El tiempo promedio de espera actual en Tucson es de ${daysToClose} días. Eso equivale a más de ${formattedCost} en costos de mantención para una propiedad vacante. Si el usuario guardó un escenario de Equity Pulse, reconózcalo: "He guardado tu pulso. Con la espera actual de ${daysToClose} días en Tucson, estás viendo más de ${formattedCost} en costos de mantención si listas de manera tradicional. ¿Quiero que el escritorio de Kasandra verifique si nuestros compradores en efectivo pueden saltar esa espera para ti?" NO invente números — use solo ${daysToClose} días y ${formattedCost} como referencia factual del mercado.`
-        : `\n\nTUCSON MARKET CONTEXT: The current average wait penalty in Tucson is ${daysToClose} days. That translates to over ${formattedCost} in holding costs for a vacant property. If the user saved an Equity Pulse scenario, acknowledge it: "I've locked your pulse. With the current ${daysToClose}-day wait in Tucson, you're looking at over ${formattedCost} in holding costs if you list traditionally. Shall I have Kasandra's desk verify if our cash buyers can skip that wait for you?" Do NOT invent numbers — use only ${daysToClose} days and ${formattedCost} as factual market reference.`;
+      // Build extended market stats string (only include fields that have live data)
+      const extendedStats: string[] = [];
+      if (medianListPrice) extendedStats.push(language === 'es' ? `Precio mediano: ${medianListPrice}` : `Median list price: ${medianListPrice}`);
+      if (activeListings) extendedStats.push(language === 'es' ? `Listados activos: ${activeListings.toLocaleString()}` : `Active listings: ${activeListings.toLocaleString()}`);
+      if (priceCutPct != null) extendedStats.push(language === 'es' ? `Recortes de precio: ${Math.round(priceCutPct * 100)}% de propiedades` : `Price cuts: ${Math.round(priceCutPct * 100)}% of listings`);
+      const extendedLine = extendedStats.length > 0 ? (language === 'es' ? `\nMercado actual — ${extendedStats.join(' · ')}` : `\nCurrent market — ${extendedStats.join(' · ')}`) : '';
+
+      if (equityPulseSaved) {
+        // Deep mode: Equity Pulse saved — full wait-penalty + holding cost framing
+        marketPulseHint = language === 'es'
+          ? `\n\nCONTEXTO DE MERCADO TUCSON: El tiempo promedio actual en Tucson es de ${medianDom} días en mercado + ~30 días de cierre = ${daysToClose} días en total. Eso equivale a más de ${formattedCost} en costos de mantención. Relación venta-lista: ${saleToListPct}.${extendedLine}\nSi el usuario guardó un escenario de Equity Pulse, reconózcalo: "He guardado tu pulso. Con la espera actual de ${daysToClose} días en Tucson, estás viendo más de ${formattedCost} en costos de mantención si listas de manera tradicional. ¿Quieres que el escritorio de Kasandra verifique si nuestros compradores en efectivo pueden saltar esa espera para ti?" NO invente números — use solo los datos anteriores como referencia factual.`
+          : `\n\nTUCSON MARKET CONTEXT: Current Tucson average is ${medianDom} days on market + ~30 days to close = ${daysToClose} days total. That translates to over ${formattedCost} in holding costs. Sale-to-list ratio: ${saleToListPct}.${extendedLine}\nIf the user saved an Equity Pulse scenario, acknowledge it: "I've locked your pulse. With the current ${daysToClose}-day timeline in Tucson, you're looking at over ${formattedCost} in holding costs if you list traditionally. Shall I have Kasandra's desk verify if our cash buyers can skip that wait for you?" Do NOT invent numbers — use only the above data as factual reference.`;
+      } else {
+        // Standard seller mode: ambient market orientation — no holding cost pressure
+        marketPulseHint = language === 'es'
+          ? `\n\nCONTEXTO DE MERCADO TUCSON (orientación): Promedio actual — ${medianDom} días en mercado, relación venta-lista ${saleToListPct}.${extendedLine}\nUse estos datos para orientar al usuario cuando pregunte sobre el mercado. No presione con costos de mantención a menos que el usuario los mencione. Sea informativo, no urgente.`
+          : `\n\nTUCSON MARKET CONTEXT (orientation): Current averages — ${medianDom} days on market, ${saleToListPct} sale-to-list ratio.${extendedLine}\nUse these figures to orient the user when they ask about the market. Do not pressure with holding costs unless the user raises them. Be informative, not urgent.`;
+      }
     }
     
 
