@@ -427,9 +427,9 @@ function GuidesContent() {
                     isTier1 && guide.isFeatured && "md:col-span-2 lg:col-span-1"
                   )}
                 >
-                  {/* Tier 1: hero thumbnail image strip */}
-                  {thumbnail && isTier1 && (
-                    <div className="relative h-36 overflow-hidden bg-cc-sand flex-shrink-0">
+                  {/* Tier 1 + Tier 2: hero thumbnail image strip */}
+                  {thumbnail && tier <= 2 && (
+                    <div className={cn("relative overflow-hidden bg-cc-sand flex-shrink-0", isTier1 ? "h-36" : "h-24")}>
                       <img
                         src={thumbnail}
                         alt={t(guide.title, guide.titleEs)}
@@ -437,10 +437,12 @@ function GuidesContent() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                      {/* Pillar badge overlaid on image */}
-                      <span className="absolute top-3 left-3 px-2 py-0.5 bg-cc-navy/90 text-white text-[10px] font-semibold uppercase tracking-wider rounded-full">
-                        {t("Pillar Guide", "Guía Principal")}
-                      </span>
+                      {/* Pillar badge — Tier 1 only */}
+                      {isTier1 && (
+                        <span className="absolute top-3 left-3 px-2 py-0.5 bg-cc-navy/90 text-white text-[10px] font-semibold uppercase tracking-wider rounded-full">
+                          {t("Pillar Guide", "Guía Principal")}
+                        </span>
+                      )}
                     </div>
                   )}
 
