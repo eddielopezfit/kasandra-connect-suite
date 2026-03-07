@@ -422,7 +422,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Grounds military PCS context — Davis-Monthan proximity, desert terrain',
       alt: 'Tucson desert landscape near Davis-Monthan Air Force Base',
       altEs: 'Paisaje desértico de Tucson cerca de la Base Aérea Davis-Monthan',
-      src: `${STORAGE_BASE}/guides/military-pcs-guide/hero.webp`,
+      src: `${STORAGE_BASE}/guides/military-pcs-guide/hero.jpg`,
     },
   ],
 
@@ -435,7 +435,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Quiet, neutral home exterior — calm visual for emotionally charged topic',
       alt: 'A quiet Tucson home at golden hour',
       altEs: 'Una casa tranquila en Tucson al atardecer',
-      src: `${STORAGE_BASE}/guides/divorce-selling/hero.webp`,
+      src: `${STORAGE_BASE}/guides/divorce-selling/hero.jpg`,
     },
   ],
 
@@ -448,7 +448,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Peaceful established neighborhood — dignity and calm for downsizing decision',
       alt: 'A peaceful Tucson neighborhood at golden hour',
       altEs: 'Un vecindario tranquilo de Tucson al atardecer',
-      src: `${STORAGE_BASE}/guides/senior-downsizing/hero.webp`,
+      src: `${STORAGE_BASE}/guides/senior-downsizing/hero.jpg`,
     },
   ],
 
@@ -461,7 +461,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Honest, non-sensational exterior — respects reader dignity in hardship',
       alt: 'A modest Tucson home in late afternoon light',
       altEs: 'Una casa modesta en Tucson con luz de tarde',
-      src: `${STORAGE_BASE}/guides/distressed-preforeclosure/hero.webp`,
+      src: `${STORAGE_BASE}/guides/distressed-preforeclosure/hero.jpg`,
     },
   ],
 
@@ -474,7 +474,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Wide Tucson arrival view — sense of horizon and possibility for newcomers',
       alt: 'Aerial view of Tucson with Catalina Mountains',
       altEs: 'Vista aérea de Tucson con las Montañas Catalina',
-      src: `${STORAGE_BASE}/guides/relocating-to-tucson/hero.webp`,
+      src: `${STORAGE_BASE}/guides/relocating-to-tucson/hero.jpg`,
     },
   ],
 
@@ -487,7 +487,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Street-level neighborhood view — helps buyers visualize the living environment',
       alt: 'A tree-lined Tucson residential street',
       altEs: 'Una calle residencial arbolada de Tucson',
-      src: `${STORAGE_BASE}/guides/tucson-neighborhoods/hero.webp`,
+      src: `${STORAGE_BASE}/guides/tucson-neighborhoods/hero.jpg`,
     },
   ],
 
@@ -500,7 +500,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Architectural detail — sets premium, precise tone for financial content',
       alt: 'Close-up of a Tucson home exterior with desert landscaping',
       altEs: 'Primer plano del exterior de una casa en Tucson con paisajismo desértico',
-      src: `${STORAGE_BASE}/guides/cost-to-sell-tucson/hero.webp`,
+      src: `${STORAGE_BASE}/guides/cost-to-sell-tucson/hero.jpg`,
     },
   ],
 
@@ -513,7 +513,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Wide panoramic — lets buyers grasp Tucson geography before comparison content',
       alt: 'Panoramic view of Tucson and surrounding suburbs',
       altEs: 'Vista panorámica de Tucson y sus suburbios',
-      src: `${STORAGE_BASE}/guides/tucson-suburb-comparison/hero.webp`,
+      src: `${STORAGE_BASE}/guides/tucson-suburb-comparison/hero.jpg`,
     },
   ],
 
@@ -526,7 +526,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Welcoming starter home — sense of attainability for first-time buyers',
       alt: 'A charming starter home in Tucson at golden hour',
       altEs: 'Una encantadora casa inicial en Tucson al atardecer',
-      src: `${STORAGE_BASE}/guides/arizona-first-time-buyer-programs/hero.webp`,
+      src: `${STORAGE_BASE}/guides/arizona-first-time-buyer-programs/hero.jpg`,
     },
   ],
 
@@ -539,7 +539,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Welcoming neighborhood — sense of belonging for non-citizen buyers',
       alt: 'A welcoming Tucson neighborhood street at golden hour',
       altEs: 'Una acogedora calle de vecindario de Tucson al atardecer',
-      src: `${STORAGE_BASE}/guides/buying-home-noncitizen-arizona/hero.webp`,
+      src: `${STORAGE_BASE}/guides/buying-home-noncitizen-arizona/hero.jpg`,
     },
   ],
 
@@ -554,7 +554,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Larger foothills home — visually anchors the upgrade aspiration',
       alt: 'A larger Tucson home in the foothills at golden hour',
       altEs: 'Una casa más grande en las laderas de Tucson al atardecer',
-      src: `${STORAGE_BASE}/guides/move-up-buyer/hero.webp`,
+      src: `${STORAGE_BASE}/guides/move-up-buyer/hero.jpg`,
     },
   ],
 
@@ -567,7 +567,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Polished prepped exterior — demonstrates what great prep looks like',
       alt: 'A beautifully prepared Tucson home exterior',
       altEs: 'El exterior de una hermosa casa preparada en Tucson',
-      src: `${STORAGE_BASE}/guides/home-prep-staging/hero.webp`,
+      src: `${STORAGE_BASE}/guides/home-prep-staging/hero.jpg`,
     },
   ],
 
@@ -580,7 +580,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Two adjacent homes for visual comparison — sets analytical tone',
       alt: 'Two adjacent Tucson homes on a quiet street',
       altEs: 'Dos casas adyacentes en Tucson en una calle tranquila',
-      src: `${STORAGE_BASE}/guides/pricing-strategy/hero.webp`,
+      src: `${STORAGE_BASE}/guides/pricing-strategy/hero.jpg`,
     },
   ],
 
@@ -593,7 +593,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Civic exterior — establishes authoritative, factual tone',
       alt: 'Pima County government building in Tucson',
       altEs: 'Edificio gubernamental del Condado Pima en Tucson',
-      src: `${STORAGE_BASE}/guides/pima-county-property-taxes/hero.webp`,
+      src: `${STORAGE_BASE}/guides/pima-county-property-taxes/hero.jpg`,
     },
   ],
 
@@ -606,7 +606,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Mixed Tucson housing stock — encyclopedic, comprehensive visual feel',
       alt: 'A quiet Tucson neighborhood intersection at golden hour',
       altEs: 'Una tranquila intersección en Tucson al atardecer',
-      src: `${STORAGE_BASE}/guides/arizona-real-estate-glossary/hero.webp`,
+      src: `${STORAGE_BASE}/guides/arizona-real-estate-glossary/hero.jpg`,
     },
   ],
 
@@ -619,7 +619,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Empty driveway after sale — quiet transition, time and consequence',
       alt: 'A Tucson home after sale with empty driveway at golden hour',
       altEs: 'Una casa en Tucson después de la venta con entrada vacía al atardecer',
-      src: `${STORAGE_BASE}/guides/capital-gains-home-sale-arizona/hero.webp`,
+      src: `${STORAGE_BASE}/guides/capital-gains-home-sale-arizona/hero.jpg`,
     },
   ],
 
@@ -632,7 +632,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Main home with casita — visually represents the sell vs rent decision',
       alt: 'A Tucson home with a casita at golden hour',
       altEs: 'Una casa en Tucson con una casita al atardecer',
-      src: `${STORAGE_BASE}/guides/sell-or-rent-tucson/hero.webp`,
+      src: `${STORAGE_BASE}/guides/sell-or-rent-tucson/hero.jpg`,
     },
   ],
 
@@ -645,7 +645,7 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       purpose: 'Long shadows on street — sense of time passing, timeline theme',
       alt: 'A Tucson street at dusk with long shadows',
       altEs: 'Una calle de Tucson al atardecer con largas sombras',
-      src: `${STORAGE_BASE}/guides/how-long-to-sell-tucson/hero.webp`,
+      src: `${STORAGE_BASE}/guides/how-long-to-sell-tucson/hero.jpg`,
     },
   ],
 };
