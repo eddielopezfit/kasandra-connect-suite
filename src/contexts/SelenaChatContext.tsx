@@ -222,7 +222,6 @@ export type EntrySource =
   | 'hero'
   | 'hero_returning'
   | 'floating' 
-  | 'footer_nudge'
   | 'proactive'
   | 'question'
   | 'post_booking'
@@ -573,7 +572,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     const isPostBooking = entryContext?.source === 'post_booking';
     const isMeaningfulSource = entryContext && 
       entryContext.source !== 'floating' && 
-      entryContext.source !== 'footer_nudge' &&
       entryContext.source !== 'proactive';
     
     // Compute entry signature to prevent duplicate greeting injection
@@ -596,7 +594,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     // Blocked sources: NEVER inject a greeting (even if messages.length===0)
     const isBlockedSource = !entryContext || 
       entryContext.source === 'floating' || 
-      entryContext.source === 'footer_nudge' || 
       entryContext.source === 'proactive';
     
     // Allowed greeting sources (can inject if signature is new + phase matches)
@@ -660,7 +657,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         ];
       }
       // Priority 0.5: Last-Chance Recovery — user was shown booking chips but didn't click
-      // Triggers on non-contextual opens (FAB, footer_nudge, no context) when booking was abandoned
+      // Triggers on non-contextual opens (FAB, no context) when booking was abandoned
       else if (isBlockedSource && !sessionContext?.recovery_shown && sessionContext?.booking_chips_shown_at) {
         const shownAt = new Date(sessionContext.booking_chips_shown_at).getTime();
         const now = Date.now();

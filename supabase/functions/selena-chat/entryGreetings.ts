@@ -26,7 +26,6 @@ export type EntrySource =
   | 'hero'
   | 'hero_returning'
   | 'floating'
-  | 'footer_nudge'
   | 'proactive'
   | 'question'
   | 'post_booking'
@@ -92,7 +91,6 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
       return generateHeroGreeting(language);
     case 'question':
       return generateQuestionGreeting(language, context.intent);
-    case 'footer_nudge':
     case 'proactive':
       return generateProactiveGreeting(language);
     case 'cash_offer_options_hero':

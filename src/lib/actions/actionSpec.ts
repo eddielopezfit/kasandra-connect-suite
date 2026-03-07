@@ -24,7 +24,7 @@ const NAVIGATE_WHITELIST = [
 // Valid entry sources for open_chat
 const VALID_ENTRY_SOURCES = [
   'calculator', 'guide_handoff', 'guide', 'synthesis', 'hero', 'floating',
-  'footer_nudge', 'proactive', 'question', 'post_booking', 'quiz_result',
+  'proactive', 'question', 'post_booking', 'quiz_result',
   'earned_access',
 ] as const;
 
