@@ -77,18 +77,6 @@ export function CognitiveProgressBar({
               ))}
             </div>
 
-            {/* Stage Label */}
-            <span
-              className={cn(
-                'px-3 py-1 rounded-full text-xs font-medium flex-shrink-0',
-                stage.level >= 5
-                  ? 'bg-cc-gold/20 text-cc-gold-dark'
-                  : 'bg-cc-navy/10 text-cc-navy'
-              )}
-            >
-              {t(stage.labelEn, stage.labelEs)}
-            </span>
-
             {/* Affirmation - hidden on mobile for space */}
             <p className="text-sm text-cc-slate hidden sm:block">
               {t(affirmation.en, affirmation.es)}
