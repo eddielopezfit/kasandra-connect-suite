@@ -484,7 +484,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'life-change-selling', lifeEvent: 'life_event_selling' }, label: { en: 'Talk it through with Selena', es: 'Hablarlo con Selena' } },
       secondaryActions: [
-        { type: 'open_chat', payload: { source: 'guide', guideId: 'life-change-selling', lifeEvent: 'life_event_selling' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
+        { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Check my seller readiness', es: 'Verificar mi preparación para vender' } },
       ],
       relatedGuideIds: ['sell-now-or-wait', 'selling-for-top-dollar', 'cash-vs-traditional-sale'],
     },
@@ -885,7 +885,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'cost-to-sell-tucson', lifeEvent: 'general_selling' }, label: { en: 'Run my net sheet', es: 'Calcular mi hoja de neto' } },
       secondaryActions: [
-        { type: 'navigate', path: '/v2/calculator', label: { en: 'Open Calculator', es: 'Abrir Calculadora' } },
+        { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Run the comparison', es: 'Ejecutar la comparación' } },
       ],
       relatedGuideIds: ['selling-for-top-dollar', 'cash-vs-traditional-sale'],
     },

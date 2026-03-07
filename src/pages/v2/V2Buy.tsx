@@ -112,6 +112,7 @@ const V2BuyContent = () => {
                 "Comprar una casa es una de las decisiones más grandes que tomará. Con orientación bilingüe y apoyo paso a paso, le ayudaré a navegar el proceso con confianza."
               )}
             </p>
+            {/* Hero CTAs — 2 max on mobile (governance rule) */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 asChild 
@@ -119,12 +120,6 @@ const V2BuyContent = () => {
                 onClick={() => handleCTAClick(CTA_NAMES.HERO_BUYER_READINESS, '/v2/buyer-readiness')}
               >
                 <Link to="/v2/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
-              </Button>
-              <Button asChild variant="outline" className="rounded-full border-cc-navy/30 text-cc-navy">
-                <Link to="/v2/buyer-closing-costs">{t("Estimate Closing Costs", "Estimar Costos de Cierre")}</Link>
-              </Button>
-              <Button asChild variant="outline" className="rounded-full border-cc-navy/30 text-cc-navy">
-                <Link to="/v2/neighborhood-compare">{t("Compare Neighborhoods", "Comparar Vecindarios")}</Link>
               </Button>
               <Button 
                 asChild 
@@ -135,6 +130,37 @@ const V2BuyContent = () => {
                 <Link to="/v2/guides/first-time-buyer-guide">{t("Read the Buyer's Guide", "Leer la Guía del Comprador")}</Link>
               </Button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sub-Hero Tools Strip — Closing Costs + Neighborhoods (demoted from hero) */}
+      <section className="bg-white border-b border-cc-sand-dark/20 py-6">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <p className="text-xs font-semibold text-cc-navy/50 uppercase tracking-wider text-center mb-4">
+            {t("Buyer Planning Tools", "Herramientas de Planificación")}
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <Link
+              to="/v2/buyer-closing-costs"
+              onClick={() => handleCTAClick('sub_hero_closing_costs', '/v2/buyer-closing-costs')}
+              className="flex items-center gap-3 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all group"
+            >
+              <DollarSign className="w-5 h-5 text-cc-gold flex-shrink-0" />
+              <span className="text-sm font-semibold text-cc-navy leading-tight">
+                {t("Estimate Closing Costs", "Estimar Costos de Cierre")}
+              </span>
+            </Link>
+            <Link
+              to="/v2/neighborhood-compare"
+              onClick={() => handleCTAClick('sub_hero_neighborhood_compare', '/v2/neighborhood-compare')}
+              className="flex items-center gap-3 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all group"
+            >
+              <Search className="w-5 h-5 text-cc-gold flex-shrink-0" />
+              <span className="text-sm font-semibold text-cc-navy leading-tight">
+                {t("Compare Neighborhoods", "Comparar Vecindarios")}
+              </span>
+            </Link>
           </div>
         </div>
       </section>

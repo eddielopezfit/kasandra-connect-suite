@@ -105,6 +105,8 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
       return generateNeighborhoodCompareGreeting(language);
     case 'buyer_closing_costs':
       return generateBuyerClosingCostsGreeting(language);
+    case 'seller_timeline':
+      return generateSellerTimelineGreeting(context);
     case 'floating':
     default:
       return generateDefaultGreeting(language);
@@ -538,6 +540,48 @@ function generateBuyerClosingCostsGreeting(language: 'en' | 'es'): GreetingResul
       "What is title insurance?",
       "How much do I need total?",
       "Talk with Kasandra",
+    ],
+  };
+}
+
+function generateSellerTimelineGreeting(context: EntryContext): GreetingResult {
+  const { language, timeline, seller_goal_priority, estimated_value } = context as any;
+
+  const hasValue = estimated_value && estimated_value > 0;
+  const valueStr = hasValue ? `$${Math.round(estimated_value / 1000)}K` : null;
+
+  if (language === 'es') {
+    const timelineMsg =
+      timeline === 'asap' ? 'quieres cerrar lo antes posible'
+      : timeline === '30_days' ? 'tienes ~2–3 meses para cerrar'
+      : timeline === '60_90' ? 'tienes ~4–5 meses'
+      : 'estás en modo de planificación a largo plazo';
+    return {
+      content: `Construiste tu cronograma — ${timelineMsg}.${valueStr ? ` Con una casa estimada en ${valueStr}, la preparación estratégica importa.` : ''}
+
+¿Quieres que revisemos las fases juntos, o tienes una pregunta específica sobre tu siguiente paso?`,
+      suggestedReplies: [
+        'Revisar la Fase 1 conmigo',
+        '¿Qué debería hacer primero?',
+        'Hablar con Kasandra',
+      ],
+    };
+  }
+
+  const timelineMsg =
+    timeline === 'asap' ? 'you want to close as soon as possible'
+    : timeline === '30_days' ? 'you have ~2–3 months to close'
+    : timeline === '60_90' ? 'you have ~4–5 months'
+    : "you're in long-range planning mode";
+
+  return {
+    content: `You built your timeline — ${timelineMsg}.${valueStr ? ` On a home estimated at ${valueStr}, strategic prep makes a real difference.` : ''}
+
+Want to walk through the phases together, or do you have a specific question about your next step?`,
+    suggestedReplies: [
+      'Walk me through Phase 1',
+      'What should I do first?',
+      'Talk with Kasandra',
     ],
   };
 }

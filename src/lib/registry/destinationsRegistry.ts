@@ -20,6 +20,11 @@ export type DestinationKey =
   | 'seller_readiness'
   | 'cash_readiness'
   | 'seller_decision'
+  | 'seller_timeline'
+  | 'neighborhood_compare'
+  | 'buyer_closing_costs'
+  | 'off_market'
+  | 'market_intelligence'
   | 'private_cash_review'
   | 'thank_you'
   | 'selena_open'
@@ -46,6 +51,11 @@ const DESTINATIONS: readonly DestinationEntry[] = [
   { key: 'seller_readiness', path: '/v2/seller-readiness', label_en: 'Seller Readiness', label_es: 'Preparación del Vendedor' },
   { key: 'cash_readiness', path: '/v2/cash-readiness', label_en: 'Cash Readiness', label_es: 'Preparación en Efectivo' },
   { key: 'seller_decision', path: '/v2/seller-decision', label_en: 'Seller Decision', label_es: 'Decisión del Vendedor' },
+  { key: 'seller_timeline', path: '/v2/seller-timeline', label_en: 'Seller Timeline', label_es: 'Cronograma del Vendedor' },
+  { key: 'neighborhood_compare', path: '/v2/neighborhood-compare', label_en: 'Neighborhood Compare', label_es: 'Comparar Vecindarios' },
+  { key: 'buyer_closing_costs', path: '/v2/buyer-closing-costs', label_en: 'Buyer Closing Costs', label_es: 'Costos de Cierre del Comprador' },
+  { key: 'off_market', path: '/v2/off-market', label_en: 'Off-Market Buyer', label_es: 'Comprador Fuera del Mercado' },
+  { key: 'market_intelligence', path: '/v2/market', label_en: 'Market Intelligence', label_es: 'Inteligencia de Mercado' },
   { key: 'private_cash_review', path: '/v2/private-cash-review', label_en: 'Private Cash Review', label_es: 'Revisión Privada de Efectivo' },
   { key: 'thank_you', path: '/v2/thank-you', label_en: 'Thank You', label_es: 'Gracias' },
   { key: 'selena_open', path: null, label_en: 'Open Selena', label_es: 'Abrir Selena' },
