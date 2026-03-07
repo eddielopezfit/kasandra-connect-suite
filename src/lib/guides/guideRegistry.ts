@@ -178,9 +178,9 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     lifeEvent: 'cash_vs_traditional',
     assetSlots: { disclaimer: 'financial' },
     destinations: {
-      primaryAction: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare my options', es: 'Comparar mis opciones' } },
+      primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'cash-offer-guide', lifeEvent: 'cash_vs_traditional' }, label: { en: 'Talk through my situation', es: 'Hablar sobre mi situación' } },
       secondaryActions: [
-        { type: 'open_chat', payload: { source: 'guide', guideId: 'cash-offer-guide', lifeEvent: 'cash_vs_traditional' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
+        { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare my options', es: 'Comparar mis opciones' } },
       ],
       relatedGuideIds: ['selling-for-top-dollar', 'understanding-home-valuation', 'cash-vs-traditional-sale'],
     },
@@ -407,9 +407,9 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     lifeEvent: 'cash_vs_traditional',
     assetSlots: { disclaimer: 'financial' },
     destinations: {
-      primaryAction: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Run my numbers', es: 'Calcular mis números' } },
+      primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'cash-vs-traditional-sale', lifeEvent: 'cash_vs_traditional' }, label: { en: 'Help me decide', es: 'Ayúdame a decidir' } },
       secondaryActions: [
-        { type: 'open_chat', payload: { source: 'guide', guideId: 'cash-vs-traditional-sale', lifeEvent: 'cash_vs_traditional' }, label: { en: 'Help me decide', es: 'Ayúdame a decidir' } },
+        { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Run my numbers', es: 'Calcular mis números' } },
       ],
       relatedGuideIds: ['cash-offer-guide', 'selling-for-top-dollar', 'understanding-home-valuation'],
     },
