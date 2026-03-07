@@ -1,30 +1,28 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-/**
- * Image inventory: Tier 1 + Tier 2 only.
- * Tier 3 stories = text-only per governance. No images generated.
- * Tier 2 = orientation only (max 1 image).
- */
 const IMAGE_SLOTS = [
-  // Tier 1: first-time-buyer-guide
-  { guideId: "first-time-buyer-guide", slotName: "orientation", variation: "A welcoming single-story home exterior with desert landscaping." },
-  { guideId: "first-time-buyer-guide", slotName: "checklist", variation: "A shaded porch in soft light with desert plants beside the entryway." },
+  // TIER 1: 10 guides
+  { guideId: "military-pcs-guide", slotName: "hero", variation: "Wide view near Davis-Monthan Air Force Base perimeter, Tucson Catalina Mountains visible in background, desert scrub brush and flat terrain, warm golden light across the landscape, no military vehicles or personnel." },
+  { guideId: "divorce-selling", slotName: "hero", variation: "Single-story adobe home with mature desert landscaping, front door closed, porch empty, late afternoon shadows creating stillness and transition, terracotta and sand tones." },
+  { guideId: "senior-downsizing", slotName: "hero", variation: "Quiet single-story ranch home in an established Tucson neighborhood, well-maintained front yard with trimmed desert plants, neat walkway, warm amber late-day light, peaceful atmosphere." },
+  { guideId: "distressed-preforeclosure", slotName: "hero", variation: "Modest residential home with slightly overgrown desert landscaping, paint slightly faded, mailbox visible, honest documentary style, warm dusty light, no sensationalism." },
+  { guideId: "relocating-to-tucson", slotName: "hero", variation: "Aerial-style wide view of Tucson Arizona at golden hour, Santa Catalina Mountains in the background, city grid visible below with warm amber desert light washing across the basin, sense of arrival." },
+  { guideId: "tucson-neighborhoods", slotName: "hero", variation: "Wide street-level view of a tree-lined Tucson residential neighborhood, midcentury homes visible on both sides, Catalina Mountains framing the background, warm golden tones, quiet neighborhood feel." },
+  { guideId: "cost-to-sell-tucson", slotName: "hero", variation: "Close-up architectural detail of a modern desert home exterior — clean stucco wall, dark window frame, desert landscaping in foreground with backlit saguaro, warm terracotta and gold tones." },
+  { guideId: "tucson-suburb-comparison", slotName: "hero", variation: "Wide panoramic view from a Tucson hillside at golden hour, multiple distinct neighborhood clusters visible across the basin, Catalina Mountains backdrop, sense of geography and comparison." },
+  { guideId: "arizona-first-time-buyer-programs", slotName: "hero", variation: "Charming small starter home with desert front yard, newly painted front door in navy or teal, clean landscaping with gravel and desert plants, warm welcoming light, sense of new beginning." },
+  { guideId: "buying-home-noncitizen-arizona", slotName: "hero", variation: "Welcoming modern Tucson neighborhood street, desert landscaping, warm amber light, sense of belonging and community, quiet residential setting." },
 
-  // Tier 1: selling-for-top-dollar
-  { guideId: "selling-for-top-dollar", slotName: "orientation", variation: "A well-maintained Tucson home with desert landscaping and a tidy yard." },
-  { guideId: "selling-for-top-dollar", slotName: "clarity", variation: "A quiet central Tucson residential street with mature trees." },
-
-  // Tier 1: cash-offer-guide
-  { guideId: "cash-offer-guide", slotName: "orientation", variation: "Desert foothills in the background behind a residential street." },
-  { guideId: "cash-offer-guide", slotName: "checklist", variation: "A modest single-story home with a tidy yard and stucco facade." },
-
-  // Tier 1: inherited-probate-property
-  { guideId: "inherited-probate-property", slotName: "orientation", variation: "A quiet Tucson neighborhood at golden hour with long shadows." },
-  { guideId: "inherited-probate-property", slotName: "checklist", variation: "A single-story home with mature trees and a shaded yard." },
-
-  // Tier 2: understanding-home-valuation (orientation only — governance: max 1 image)
-  { guideId: "understanding-home-valuation", slotName: "orientation", variation: "A Tucson neighborhood street view with foothills visible in the distance." },
+  // TIER 2: 8 guides
+  { guideId: "move-up-buyer", slotName: "hero", variation: "Larger two-story Tucson home in a foothills neighborhood, mature saguaro visible in yard, mountain views in background, sense of upgrade and space, clean lines, warm terracotta and desert tones." },
+  { guideId: "home-prep-staging", slotName: "hero", variation: "Beautifully prepped home exterior — fresh paint, clean desert landscaping, symmetric entry with potted desert plants, warm late-day light, crisp and polished." },
+  { guideId: "pricing-strategy", slotName: "hero", variation: "Two adjacent desert homes on a quiet street, different sizes and conditions visible for comparison, warm amber light, long shadows, documentary and analytical feel." },
+  { guideId: "pima-county-property-taxes", slotName: "hero", variation: "Exterior of a Tucson civic or government building, warm afternoon light, clean institutional architecture, factual and authoritative tone." },
+  { guideId: "arizona-real-estate-glossary", slotName: "hero", variation: "Wide shot of a classic Tucson neighborhood with mixed housing stock visible, ranch homes, desert landscaping, a quiet intersection, encyclopedic visual feel, warm amber tones." },
+  { guideId: "capital-gains-home-sale-arizona", slotName: "hero", variation: "Empty driveway of a well-maintained Tucson home, desert landscaping, late day light casting long shadows suggesting time and transition." },
+  { guideId: "sell-or-rent-tucson", slotName: "hero", variation: "Single-family home with a detached casita or guesthouse visible in the background, warm desert light, sense of optionality and decision, well-maintained yard, terracotta and sand palette." },
+  { guideId: "how-long-to-sell-tucson", slotName: "hero", variation: "A Tucson residential street at dusk with long shadows stretching across the road, sense of time passing, warm amber and gold tones fading to deep blue at the horizon." },
 ];
 
 serve(async (req) => {
@@ -62,27 +60,12 @@ serve(async (req) => {
         const data = await response.json();
 
         if (response.ok && data.success) {
-          results.push({
-            guideId: slot.guideId,
-            slotName: slot.slotName,
-            status: "success",
-            publicUrl: data.publicUrl,
-          });
+          results.push({ guideId: slot.guideId, slotName: slot.slotName, status: "success", publicUrl: data.publicUrl });
         } else {
-          results.push({
-            guideId: slot.guideId,
-            slotName: slot.slotName,
-            status: "failed",
-            error: data.error || "Unknown error",
-          });
+          results.push({ guideId: slot.guideId, slotName: slot.slotName, status: "failed", error: data.error || "Unknown error" });
         }
       } catch (slotError) {
-        results.push({
-          guideId: slot.guideId,
-          slotName: slot.slotName,
-          status: "failed",
-          error: slotError instanceof Error ? slotError.message : String(slotError),
-        });
+        results.push({ guideId: slot.guideId, slotName: slot.slotName, status: "failed", error: slotError instanceof Error ? slotError.message : String(slotError) });
       }
     }
 
@@ -90,10 +73,7 @@ serve(async (req) => {
     const failed = results.filter((r) => r.status === "failed").length;
 
     return new Response(
-      JSON.stringify({
-        summary: { total: IMAGE_SLOTS.length, succeeded, failed },
-        results,
-      }),
+      JSON.stringify({ summary: { total: IMAGE_SLOTS.length, succeeded, failed }, results }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
