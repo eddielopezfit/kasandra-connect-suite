@@ -2218,7 +2218,22 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { message, context, history = [] }: ChatRequest = body;
+    const { message: rawMessage, context, history: rawHistory = [] }: ChatRequest = body;
+
+    // ── Input guards: length-cap before anything touches the AI gateway ──────
+    const MAX_MESSAGE_CHARS = 2000;
+    const MAX_HISTORY_TURNS = 10;
+    const MAX_HISTORY_TURN_CHARS = 1000;
+
+    if (!rawMessage || typeof rawMessage !== 'string') {
+      return new Response(JSON.stringify({ ok: false, error: 'message is required' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const message = rawMessage.slice(0, MAX_MESSAGE_CHARS);
+    const history = (Array.isArray(rawHistory) ? rawHistory : [])
+      .slice(-MAX_HISTORY_TURNS)
+      .map(m => ({ role: m.role, content: String(m.content ?? '').slice(0, MAX_HISTORY_TURN_CHARS) }));
 
     // Rate limiting
     const rlUrl = Deno.env.get("SUPABASE_URL");
