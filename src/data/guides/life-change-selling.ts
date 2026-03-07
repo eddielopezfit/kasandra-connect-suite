@@ -28,6 +28,19 @@ const data: GuideContentData = {
         'En Tucson, los vendedores por cambio de vida que avanzan sin un plan estructurado suelen absorber dos a cuatro meses de gastos innecesarios\u2014hipoteca, seguro, servicios\u2014mientras la decisi\u00f3n queda sin resolver. Un enfoque claro y espec\u00edfico para la situaci\u00f3n generalmente ahorra dinero y energ\u00eda emocional comparado con esperar que las cosas \u201cse resuelvan solas.\u201d',
     },
     {
+      heading: 'What Delay Actually Costs in Tucson',
+      headingEs: 'Lo Que el Retraso Realmente Cuesta en Tucson',
+      content: '',
+      contentEs: '',
+      variant: 'stats-grid' as const,
+      statsData: [
+        { value: '$1,200–$1,800', valueEs: '$1,200–$1,800', label: 'Monthly holding cost (mortgage + taxes + insurance)', labelEs: 'Costo mensual de retención (hipoteca + impuestos + seguro)' },
+        { value: '38 days', valueEs: '38 días', label: 'Tucson median days on market', labelEs: 'Días medios en el mercado en Tucson' },
+        { value: '97.64%', valueEs: '97.64%', label: 'Sale-to-list ratio — homes selling close to asking', labelEs: 'Relación venta-lista — casas vendidas cerca del precio pedido' },
+        { value: '60–90 days', valueEs: '60–90 días', label: 'Average time from list to close in Tucson', labelEs: 'Tiempo promedio desde listado hasta cierre en Tucson' },
+      ],
+    },
+    {
       heading: 'Your Realistic Options',
       headingEs: 'Tus Opciones Realistas',
       content:

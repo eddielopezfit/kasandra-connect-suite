@@ -22,6 +22,19 @@ const data: GuideContentData = {
       contentEs: "Antes de sumergirse en los pasos legales, tómese un momento para considerar tres cosas:\n\n• ¿Cuál es la condición actual de la propiedad? ¿Está ocupada, vacía, o necesita reparaciones?\n• ¿Hay otros herederos o beneficiarios involucrados? ¿Todos están de acuerdo en qué hacer?\n• ¿Cuál es su situación personal? ¿Quiere conservarla, venderla, o transferirla?\n\nEstas tres preguntas darán forma a cada decisión que siga.",
     },
     {
+      heading: "Arizona Probate & Inheritance: Key Numbers",
+      headingEs: "Sucesión y Herencia en Arizona: Números Clave",
+      content: "",
+      contentEs: "",
+      variant: 'stats-grid' as const,
+      statsData: [
+        { value: '6–9 months', valueEs: '6–9 meses', label: 'Informal probate timeline (no disputes)', labelEs: 'Duración de la sucesión informal (sin disputas)' },
+        { value: '$100,000', valueEs: '$100,000', label: 'Arizona small estate threshold (real property)', labelEs: 'Límite de patrimonio pequeño en Arizona (bienes raíces)' },
+        { value: '4 months', valueEs: '4 meses', label: 'Mandatory creditor period — Arizona law minimum', labelEs: 'Período de acreedores obligatorio — mínimo legal en Arizona' },
+        { value: '0%', valueEs: '0%', label: 'Arizona estate or inheritance tax', labelEs: 'Impuesto sobre patrimonio o herencia en Arizona' },
+      ],
+    },
+    {
       heading: "How Does Property Transfer Work in Pima County?",
       headingEs: "¿Cómo Funciona la Transferencia de Propiedad en el Condado de Pima?",
       content: "Under current Arizona law (as of early 2026), property inherited in Pima County can transfer through one of four paths, listed from simplest to most complex:\n\n1. Beneficiary Deed (Transfer-on-Death): The simplest path. The deed was recorded during the owner's lifetime and transfers automatically upon death. You record the death certificate—no court involvement required.\n\n2. Living Trust: Property held in a trust passes directly to beneficiaries according to the trust terms, bypassing probate entirely.\n\n3. Joint Ownership with Right of Survivorship: Title transfers automatically to the surviving co-owner upon death.\n\n4. Probate: Required when the owner died without a will, or when the will must be validated by the court.\n   • Informal Probate: 6–9 months, used when there are no disputes.\n   • Formal Probate: 12–24 months, required when heirs disagree or the estate is complex.\n   • Mandatory Creditor Period: Arizona law requires probate to remain open for at least 4 months to allow creditor claims.\n\nAn attorney specializing in estate or probate law is the best resource for understanding which path applies to your situation.",

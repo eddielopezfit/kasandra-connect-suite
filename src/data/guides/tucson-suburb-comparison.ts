@@ -34,6 +34,19 @@ const data: GuideContentData = {
       contentEs: "**Precio mediano de vivienda:** $320,000–$420,000\n**Trayecto a Davis-Monthan AFB:** 15–20 min\n**Ambiente:** Fuerte identidad comunitaria, escuelas excepcionales, amigable con militares\n\nEl Distrito Escolar Unificado de Vail es uno de los mejores ejecutores en Arizona. Rita Ranch es la comunidad más desarrollada en el corredor sureste: parques, piscinas, eventos comunitarios y un ambiente de vecindario que los residentes elogian consistentemente.\n\nQuién prospera aquí: Familias militares cerca de DMAFB. Familias con hijos en edad escolar que priorizan la calidad del distrito. Compradores que quieren infraestructura comunitaria establecida a precios medios.",
     },
     {
+      heading: "Tucson Suburb Snapshot",
+      headingEs: "Panorama de los Suburbios de Tucson",
+      content: "",
+      contentEs: "",
+      variant: 'stats-grid' as const,
+      statsData: [
+        { value: '$290–$380K', valueEs: '$290–$380K', label: 'Sahuarita — most affordable median price range', labelEs: 'Sahuarita — rango de precio mediano más asequible' },
+        { value: '$430–$550K', valueEs: '$430–$550K', label: 'Oro Valley — highest median, top-rated schools', labelEs: 'Oro Valley — mediana más alta, escuelas mejor calificadas' },
+        { value: '20–35 min', valueEs: '20–35 min', label: 'Drive time to downtown Tucson from all four suburbs', labelEs: 'Tiempo en auto al centro de Tucson desde los cuatro suburbios' },
+        { value: '4 areas', valueEs: '4 áreas', label: 'Tucson suburbs compared — each with distinct tradeoffs', labelEs: 'Suburbios de Tucson comparados — cada uno con ventajas distintas' },
+      ],
+    },
+    {
       heading: "Side-by-Side: The Quick Decision Guide",
       headingEs: "Lado a Lado: La Guía de Decisión Rápida",
       content: "**Marana** — Median $380–420K · New construction abundant · Good schools · 25–35 min to downtown · No DMAFB proximity · Rincon/Tortolita mountain views\n**Oro Valley** — Median $430–550K · Moderate new construction · Excellent schools · 20–30 min to downtown · No DMAFB proximity · Catalina mountain views\n**Sahuarita** — Median $290–380K · New construction abundant · Good schools · 25–35 min to downtown · No DMAFB proximity · Santa Rita mountain views\n**Vail/Rita Ranch** — Median $320–420K · Moderate new construction · Excellent schools · 25–35 min to downtown · ✓ Near DMAFB · Rincon mountain views\n\nIf budget is the primary driver: Sahuarita.\nIf schools are the primary driver: Vail or Oro Valley.\nIf new construction matters most: Marana or Sahuarita.\nIf military base proximity is critical: Vail/Rita Ranch.\nIf you want the most complete suburban experience: Oro Valley.",

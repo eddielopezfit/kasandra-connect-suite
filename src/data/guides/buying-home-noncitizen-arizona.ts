@@ -16,6 +16,19 @@ const data: GuideContentData = {
       contentEs: "La ley de EE.UU. no prohíbe a los no ciudadanos comprar bienes raíces. No hay requisito de ciudadanía o estatus migratorio para poseer propiedad en Arizona.\n\nLo que varía según el estatus migratorio es tu acceso al financiamiento hipotecario — no tu derecho a poseer propiedad.\n\n**Residentes Permanentes (Tarjeta Verde):** Efectivamente el mismo acceso a préstamos que los ciudadanos de EE.UU.\n\n**Residentes No Permanentes con Visas Válidas:** Los préstamos convencionales y FHA están disponibles con el tipo de visa correcto (H-1B, L-1, O-1, TN y otros).\n\n**Beneficiarios de DACA:** Elegibles para préstamos FHA a partir del cambio de reglas HUD de 2021.\n\n**Personas Indocumentadas:** La compra en efectivo es posible. También existen préstamos ITIN.",
     },
     {
+      heading: "Arizona Non-Citizen Buyer Snapshot",
+      headingEs: "Panorama del Comprador No Ciudadano en Arizona",
+      content: "",
+      contentEs: "",
+      variant: 'stats-grid' as const,
+      statsData: [
+        { value: '0%', valueEs: '0%', label: 'Citizenship required to own property in Arizona', labelEs: 'Ciudadanía requerida para poseer propiedad en Arizona' },
+        { value: '3.5%', valueEs: '3.5%', label: 'Minimum down — FHA loan for DACA buyers (580+ score)', labelEs: 'Pago inicial mínimo — FHA para compradores DACA (580+ puntaje)' },
+        { value: '15–25%', valueEs: '15–25%', label: 'Typical ITIN loan down payment requirement', labelEs: 'Requisito típico de pago inicial para préstamo ITIN' },
+        { value: '$541,287', valueEs: '$541,287', label: 'Pima County FHA loan limit (2025)', labelEs: 'Límite de préstamo FHA en el Condado de Pima (2025)' },
+      ],
+    },
+    {
       heading: "DACA Recipients — What's Available",
       headingEs: "Beneficiarios de DACA — Qué Está Disponible",
       content: "A 2021 HUD policy change opened FHA loans to DACA recipients — reversing the prior exclusion. As of 2025, DACA buyers in Arizona can access:\n\n**FHA Loans:**\n• 3.5% down payment with 580+ credit score\n• Pima County loan limit: $541,287\n• Requires Employment Authorization Document (EAD) as work authorization\n• Must have valid Social Security number\n• Same underwriting standards as any FHA borrower\n\n**Conventional Loans (Fannie Mae):**\n• Fannie Mae's guidelines allow DACA borrowers with valid EAD\n• 3–5% down payment available for first-time buyers\n• 620+ credit score typically required\n• Higher loan limits than FHA\n\n**What lenders will ask for:**\n• Valid EAD card\n• Social Security number\n• 2 years of tax returns\n• Employment verification\n• Standard credit and income documentation\n\n**What DACA status does NOT prevent:**\n• Homeownership\n• Qualifying for most assistance programs (HOME Plus, Pima Tucson Homebuyer's Solution)\n• Building equity and wealth through real estate\n\nI work with lenders in Tucson who have experience with DACA borrowers and understand the documentation process. That connection matters.",

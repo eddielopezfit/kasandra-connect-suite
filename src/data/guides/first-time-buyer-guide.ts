@@ -16,6 +16,19 @@ const data: GuideContentData = {
       contentEs: "Antes de explorar listados, es útil entender su punto de partida financiero.\n\nComience revisando su perfil crediticio. Muchos préstamos convencionales buscan puntajes de 620 o más, mientras que los préstamos FHA pueden permitir puntajes más bajos. Luego, calcule su relación deuda-ingreso (DTI)—sus pagos mensuales totales de deuda divididos por su ingreso mensual bruto. En muchos casos, los prestamistas buscan un DTI por debajo del 43%.\n\nBajo las condiciones actuales del mercado de Tucson (a principios de 2026), este es el panorama financiero para compradores:\n• Precio medio de venta: $315,000–$360,000\n• Pago mensual promedio de hipoteca: aproximadamente $2,247\n• Renta mensual promedio: $1,463\n• Tasa hipotecaria fija a 30 años: aproximadamente 6.06%\n\nEsa prima de $784/mes por comprar versus rentar es real—pero la relación vivienda-ingreso de Tucson (23.02%) sigue siendo favorable comparada con otras áreas metropolitanas del oeste de EE.UU. El beneficio de equidad a largo plazo de la propiedad a menudo compensa la diferencia mensual.\n\nTambién querrá planificar para:\n• Un pago inicial (generalmente entre 3–20%, dependiendo del tipo de préstamo)\n• Costos de cierre (típicamente 2–5% del monto del préstamo)\n• Gastos de mudanza y mantenimiento inicial del hogar\n\nEste paso no se trata de perfección—se trata de consciencia.",
     },
     {
+      heading: "Tucson Buyer Market Snapshot",
+      headingEs: "Panorama del Mercado para Compradores en Tucson",
+      content: "",
+      contentEs: "",
+      variant: 'stats-grid' as const,
+      statsData: [
+        { value: '$315K–$360K', valueEs: '$315K–$360K', label: 'Median sale price in Pima County (early 2026)', labelEs: 'Precio mediano de venta en Pima County (principios de 2026)' },
+        { value: '30–45 days', valueEs: '30–45 días', label: 'Typical time from offer accepted to close', labelEs: 'Tiempo típico desde oferta aceptada hasta cierre' },
+        { value: '3.5%', valueEs: '3.5%', label: 'Minimum down payment — FHA loan', labelEs: 'Pago inicial mínimo — préstamo FHA' },
+        { value: '2–5%', valueEs: '2–5%', label: 'Typical closing costs as % of purchase price', labelEs: 'Costos de cierre típicos como % del precio de compra' },
+      ],
+    },
+    {
       heading: "Down Payment Assistance Programs in Tucson",
       headingEs: "Programas de Asistencia para Pago Inicial en Tucson",
       content: "One of the most common barriers for first-time buyers is the down payment. What many people don't realize is that Pima County and the City of Tucson offer several programs designed specifically to help.\n\nUnder current program guidelines (as of early 2026):\n\n• Pima County/Tucson HOME Program: Provides up to 20% of the purchase price toward down payment and closing costs. Eligibility: household income up to $76,900 (family of 4). Maximum purchase price: $385,225.\n\n• Tucson Welcome Home Program: Offers 100% financing—meaning zero down payment required. Income limit: up to $126,280.\n\n• PTHS (Pima Tucson Homebuyer Solution): Provides down payment assistance that is forgiven after three years of occupancy—meaning you don't pay it back if you stay in the home.\n\nMost programs require a minimum credit score of 620–640. Your lender or a HUD-approved housing counselor can confirm which programs you qualify for.\n\nThese programs exist because homeownership builds long-term stability—and Tucson's community has invested in making that accessible.",

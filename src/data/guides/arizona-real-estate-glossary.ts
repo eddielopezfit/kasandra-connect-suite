@@ -34,6 +34,19 @@ const data: GuideContentData = {
       contentEs: "**Fideicomiso** — En Arizona, casi todas las transacciones de bienes raíces cierran a través del fideicomiso — un tercero neutral (la compañía de título/fideicomiso) que mantiene fondos y documentos hasta que se cumplan todas las condiciones de la venta.\n\n**Búsqueda de Título** — Una revisión de registros públicos para verificar que el vendedor realmente posee la propiedad y que no hay gravámenes, juicios o cargas que se transferirían con la propiedad.\n\n**Seguro de Título** — Protege contra defectos en el título que no fueron detectados en la búsqueda de título — herederos desconocidos, documentos falsificados, errores administrativos.\n\n**Gravamen** — Una reclamación legal contra una propiedad, típicamente por deudas impagas. Los gravámenes deben liquidarse antes o en el cierre.\n\n**Cadena de Título** — El historial completo de propiedad de una propiedad. Una 'nube en el título' significa que hay algo en ese historial que crea incertidumbre sobre la propiedad.",
     },
     {
+      heading: "Key Numbers Every Arizona Buyer & Seller Should Know",
+      headingEs: "Números Clave que Todo Comprador y Vendedor de Arizona Debe Conocer",
+      content: "",
+      contentEs: "",
+      variant: 'stats-grid' as const,
+      statsData: [
+        { value: '10 days', valueEs: '10 días', label: 'Standard inspection period in Arizona contracts', labelEs: 'Período de inspección estándar en contratos de Arizona' },
+        { value: '1–3%', valueEs: '1–3%', label: 'Typical earnest money deposit (% of purchase price)', labelEs: 'Depósito de dinero en garantía típico (% del precio de compra)' },
+        { value: '0.4–0.6%', valueEs: '0.4–0.6%', label: 'Buyer's title insurance (% of purchase price)', labelEs: 'Seguro de título del comprador (% del precio de compra)' },
+        { value: '30–45 days', valueEs: '30–45 días', label: 'Standard escrow/closing period in Pima County', labelEs: 'Período estándar de cierre en el Condado de Pima' },
+      ],
+    },
+    {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

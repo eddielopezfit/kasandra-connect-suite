@@ -34,6 +34,19 @@ const data: GuideContentData = {
       contentEs: "Estos son programas de préstamos federales — no asistencia para pago inicial — pero son la columna vertebral de financiamiento que usan la mayoría de los compradores primerizos, a menudo combinados con los programas de asistencia anteriores.\n\n**Préstamos FHA:** 3.5% de inicial con puntaje de crédito de 580+, límite del préstamo FHA del Condado de Pima: $541,287 (2025), requiere prima de seguro hipotecario (MIP).\n\n**Préstamos VA (solo militares):** 0% de inicial, sin PMI, límite del préstamo VA del Condado de Pima: $832,750 con derecho completo.\n\n**Préstamos USDA:** 0% de inicial en áreas rurales/suburbanas elegibles de USDA — algunas comunidades del área de Tucson califican.",
     },
     {
+      heading: "How Much These Programs Can Help",
+      headingEs: "Cuánto Pueden Ayudar Estos Programas",
+      content: "",
+      contentEs: "",
+      variant: 'stats-grid' as const,
+      statsData: [
+        { value: 'Up to 5%', valueEs: 'Hasta 5%', label: 'HOME Plus — down payment assistance as % of loan', labelEs: 'HOME Plus — asistencia para pago inicial como % del préstamo' },
+        { value: '$20,000', valueEs: '$20,000', label: 'Pathway to Purchase — maximum grant amount', labelEs: 'Pathway to Purchase — monto máximo de subvención' },
+        { value: '620', valueEs: '620', label: 'Minimum credit score for most assistance programs', labelEs: 'Puntaje de crédito mínimo para la mayoría de programas' },
+        { value: '$122,100', valueEs: '$122,100', label: 'Typical household income limit (family of 4)', labelEs: 'Límite de ingreso familiar típico (familia de 4)' },
+      ],
+    },
+    {
       heading: "",
       headingEs: "",
       content: "",

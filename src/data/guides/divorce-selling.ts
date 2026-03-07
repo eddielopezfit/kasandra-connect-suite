@@ -16,6 +16,19 @@ const data: GuideContentData = {
       contentEs: "Arizona es uno de los nueve estados de propiedad comunitaria. Esto significa que la propiedad adquirida durante el matrimonio generalmente es propiedad de ambos cónyuges en partes iguales — 50/50 — independientemente de cuyo nombre esté en la escritura o quién hizo los pagos de la hipoteca.\n\nEsto aplica a la casa familiar en la mayoría de los casos. Las excepciones incluyen:\n• Propiedad en propiedad antes del matrimonio\n• Regalos o herencias recibidas por un cónyuge durante el matrimonio\n• Propiedad explícitamente designada como propiedad separada en un acuerdo prenupcial\n\nSi la casa es propiedad comunitaria, ambos cónyuges deben acordar su venta — o un tribunal debe ordenarla. Ningún cónyuge puede listar o vender unilateralmente la casa sin el consentimiento escrito del otro.",
     },
     {
+      heading: 'Arizona Divorce Property by the Numbers',
+      headingEs: 'La Propiedad en Divorcio de Arizona en Números',
+      content: '',
+      contentEs: '',
+      variant: 'stats-grid' as const,
+      statsData: [
+        { value: '60+ days', valueEs: '60+ días', label: 'Minimum time to finalize an Arizona divorce decree', labelEs: 'Tiempo mínimo para finalizar un decreto de divorcio en Arizona' },
+        { value: '50/50', valueEs: '50/50', label: 'Default community property split in Arizona', labelEs: 'División predeterminada de propiedad comunitaria en Arizona' },
+        { value: '$250K / $500K', valueEs: '$250K / $500K', label: 'Capital gains exclusion (single / married) if 2-year rule met', labelEs: 'Exclusión de ganancias de capital (soltero / casado) si se cumple regla de 2 años' },
+        { value: '30–45 days', valueEs: '30–45 días', label: 'Typical escrow period once both parties agree to sell', labelEs: 'Período típico de depósito en garantía una vez que ambas partes acuerdan vender' },
+      ],
+    },
+    {
       heading: 'Three Ways the Home Gets Resolved in a Divorce',
       headingEs: 'Tres Formas en Que la Casa Se Resuelve en un Divorcio',
       variant: 'path-selector',
