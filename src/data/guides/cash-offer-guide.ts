@@ -46,6 +46,13 @@ const data: GuideContentData = {
       contentEs: "Las ofertas en efectivo típicamente son más bajas que las ventas en mercado abierto. Si maximizar el precio es su prioridad y tiene tiempo, un listado tradicional puede servirle mejor.\n\nConsidere tradicional si:\n• Su casa está en buena condición, lista para mostrar\n• Tiene más de 60 días de flexibilidad en su cronograma\n• Quiere capturar cerca del ~97.65% de relación precio de venta a precio de lista que actualmente promedian las ventas tradicionales en Tucson\n• Las condiciones del mercado local favorecen a los vendedores (actualmente ~4,600 listados activos en el Condado de Pima)\n\nNo hay elección incorrecta—solo lo que encaja con su situación.",
     },
     {
+      heading: '',
+      headingEs: '',
+      content: '',
+      contentEs: '',
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: "Important Information",
       headingEs: "Información Importante",
       content: "This guide is for general educational purposes only. It is not legal, tax, or financial advice.\n\nFor questions about contracts, tax implications, or legal matters, consult a qualified attorney, CPA, or financial advisor. No guarantees are made regarding offer amounts or outcomes.",

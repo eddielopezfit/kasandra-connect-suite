@@ -46,6 +46,13 @@ const data: GuideContentData = {
       contentEs: "Generalmente tiene tres caminos:\n\nConservar la Propiedad\n• Mudarse, rentarla, o mantenerla como inversión\n• Considere los costos continuos: impuestos de propiedad, seguro, mantenimiento, cuotas HOA\n• Si hay múltiples herederos, uno puede comprar la parte de los otros\n\nVender la Propiedad\n• Vender en el mercado abierto típicamente produce el precio más alto\n• Las ofertas en efectivo pueden ser más rápidas pero generalmente vienen a un precio más bajo\n• La propiedad a menudo puede venderse como está si las reparaciones no son factibles\n\nTransferir la Propiedad\n• Una escritura de beneficiario o escritura de renuncia puede transferir la propiedad a otro miembro de la familia\n• Las implicaciones fiscales varían—consulte a un contador o asesor fiscal\n\nNo hay elección incorrecta. La mejor opción depende de su cronograma, situación financiera, y dinámicas familiares.",
     },
     {
+      heading: '',
+      headingEs: '',
+      content: '',
+      contentEs: '',
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: "Working with Multiple Heirs",
       headingEs: "Trabajando con Múltiples Herederos",
       content: "When multiple family members inherit a property together, decisions require agreement—or at least clear communication.\n\nCommon situations include:\n• All heirs agree to sell and split proceeds\n• One heir wants to keep the property and buy out the others\n• Heirs disagree on what to do\n\nIn cases of disagreement, mediation or legal guidance may be necessary. Under Arizona law, any co-owner can file a partition action—a court-ordered process that can result in the property being sold, even without unanimous agreement. This is a last resort, but it means that the common belief that \"the house can't be sold if heirs disagree\" is not accurate.\n\nAn experienced real estate professional can help facilitate conversations by providing clear market data and options for all parties. The goal is clarity for everyone involved.",

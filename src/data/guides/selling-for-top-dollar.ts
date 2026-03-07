@@ -40,6 +40,13 @@ const data: GuideContentData = {
       contentEs: "Vender no siempre es la respuesta correcta—y eso está bien.\n\nConsidere esperar si:\n• No está seguro de a dónde se mudaría\n• Su situación financiera está en cambio\n• Las condiciones del mercado en su área no favorecen a los vendedores\n• No ha sido propietario el tiempo suficiente para compensar los costos de venta\n\nUna buena decisión viene de entender sus opciones, no de la presión.",
     },
     {
+      heading: '',
+      headingEs: '',
+      content: '',
+      contentEs: '',
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: "Tax and Legal Considerations for Arizona Sellers",
       headingEs: "Consideraciones Fiscales y Legales para Vendedores en Arizona",
       content: "Several Arizona-specific factors may affect your sale. Under current law (as of early 2026):\n\n• Primary Residence Capital Gains Exclusion: If you've lived in your home for at least 2 of the last 5 years, you can exclude up to $250,000 (single) or $500,000 (married filing jointly) in capital gains from federal taxes.\n\n• Community Property State: Arizona is a community property state. Assets acquired during marriage are generally jointly owned. If you are selling during or after a divorce, the division of equity may require legal coordination.\n\n• ALTCS/Medicaid Considerations: For senior homeowners considering long-term care, a home sale can impact eligibility for Arizona Long Term Care System (ALTCS) benefits. Asset limits apply, and consulting with an elder law attorney before selling is advisable.\n\nThese are general principles and do not constitute legal or tax advice.",

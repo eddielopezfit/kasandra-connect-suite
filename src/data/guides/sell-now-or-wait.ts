@@ -44,6 +44,13 @@ const data: GuideContentData = {
         '\u2022 Esperar sin plan: Un \u201cvoy a vender cuando el mercado mejore\u201d indefinido suele generar m\u00e1s gastos fijos y fatiga de decisi\u00f3n.\n\u2022 Mejorar de m\u00e1s antes de listar: Gastar en mejoras que no devuelven su costo retrasa tu l\u00ednea de tiempo y reduce tus ganancias.\n\u2022 Ignorar se\u00f1ales personales: La presi\u00f3n financiera, las transiciones de vida o la disposici\u00f3n emocional importan tanto como las condiciones del mercado.',
     },
     {
+      heading: '',
+      headingEs: '',
+      content: '',
+      contentEs: '',
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: 'What Most People Do Next',
       headingEs: 'Lo Que La Mayor\u00eda Hace Despu\u00e9s',
       content:

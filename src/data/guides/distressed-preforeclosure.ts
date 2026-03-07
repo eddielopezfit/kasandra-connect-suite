@@ -65,6 +65,13 @@ const data: GuideContentData = {
       contentEs: "Una venta corta ocurre cuando vendes tu casa por menos del saldo hipotecario pendiente, con aprobación del prestamista.\n\n¿Cuándo tiene sentido esto?\n• Estás bajo el agua en tu hipoteca (debes más de lo que vale)\n• La ejecución hipotecaria parece inevitable y quieres minimizar el daño al crédito\n• Tienes una dificultad que el prestamista reconoce (pérdida de empleo, crisis médica, divorcio, muerte en la familia)\n\nArizona ley anti-deficiencia: Los estatutos anti-deficiencia de Arizona ofrecen cierta protección a los propietarios. En muchas situaciones que involucran una hipoteca de dinero de compra en una vivienda de 2.5 acres o menos, los prestamistas no pueden perseguir un juicio de deficiencia después de una ejecución hipotecaria o una venta corta. Consulta un abogado de Arizona para entender si aplica a tu situación.",
     },
     {
+      heading: '',
+      headingEs: '',
+      content: '',
+      contentEs: '',
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: 'Free Resources if You Need Immediate Help',
       headingEs: 'Recursos Gratuitos Si Necesitas Ayuda Inmediata',
       content: "You don't have to navigate this alone.\n\n**HUD-Approved Housing Counselors (free):**\nCall 1-800-569-4287 or visit hud.gov to find a HUD-certified counselor near you. They provide free advice on foreclosure prevention, loan modifications, and your rights as a homeowner.\n\n**Arizona Department of Housing (ADOH):**\nAdministers foreclosure prevention programs and emergency mortgage assistance. Visit azhousing.gov.\n\n**Pima County Legal Aid (Tucson):**\n(520) 623-9461 — free legal services for income-eligible homeowners facing foreclosure.\n\n**Consumer Financial Protection Bureau (CFPB):**\nConsumerfinance.gov — resources on mortgage relief, servicer complaints, and rights during hardship.\n\nKasandra is not a legal or financial advisor, but she can help you understand the real estate options available and connect you with the right professionals.",
