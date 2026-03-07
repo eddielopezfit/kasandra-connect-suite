@@ -247,7 +247,7 @@ export const TOOL_BRIDGES: Record<string, ToolBridgeConfig> = {
     icon: 'compass',
     eyebrowEn: 'You Have More Options Than You Think',
     eyebrowEs: 'Tienes Más Opciones de las que Crees',
-    headlineEn: 'Let's Figure Out What Makes Sense for Your Situation',
+    headlineEn: "Let's Figure Out What Makes Sense for Your Situation",
     headlineEs: 'Descubramos Qué Tiene Sentido para Tu Situación',
     bodyEn: 'No forms. No judgment. Selena can walk through your timeline, what you owe, and what exit paths are still open — before you have to talk to anyone.',
     bodyEs: 'Sin formularios. Sin juicios. Selena puede revisar tu cronograma, lo que debes y qué opciones de salida siguen abiertas — antes de que tengas que hablar con nadie.',
