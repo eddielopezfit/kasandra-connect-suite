@@ -70,6 +70,7 @@ const App = () => (
             <Route path="/v2/thank-you" element={<V2ThankYou />} />
             
             <Route path="/v2/seller-decision" element={<V2SellerDecision />} />
+            <Route path="/v2/seller-timeline" element={<V2SellerTimeline />} />
             <Route path="/v2/seller-readiness" element={<V2SellerReadiness />} />
             <Route path="/v2/cash-readiness" element={<V2CashReadiness />} />
             <Route path="/v2/off-market" element={<V2OffMarketBuyer />} />

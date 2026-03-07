@@ -168,6 +168,22 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     actionSpec: { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' } },
   },
 
+  // --- Navigate: seller timeline planner ---
+  {
+    id: 'nav-seller-timeline-en',
+    label_en: 'Build my selling timeline',
+    label_es: 'Construir mi cronograma de venta',
+    normalized_key: 'build my selling timeline',
+    actionSpec: { type: 'navigate', path: '/v2/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
+  },
+  {
+    id: 'nav-seller-timeline-es',
+    label_en: 'Build my selling timeline',
+    label_es: 'Construir mi cronograma de venta',
+    normalized_key: 'construir mi cronograma de venta',
+    actionSpec: { type: 'navigate', path: '/v2/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
+  },
+
   // --- Navigate: guides hub ---
   {
     id: 'nav-guides-en',
