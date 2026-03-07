@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import type { ChatMessage, ChipMeta } from "@/contexts/SelenaChatContext";
@@ -15,6 +16,21 @@ const SUB_CHIPS = [
   { labelEn: 'Virtual walkthrough', labelEs: 'Recorrido virtual', callType: 'virtual-walkthrough' },
   { labelEn: 'No-pressure review', labelEs: 'Revisión sin presión', callType: 'no-pressure-review' },
 ] as const;
+
+// Expansion definitions — chips that open a secondary intent-narrowing row before navigating.
+// Phase ≤ 2 only (intent still being qualified). Phase 3+ resolves immediately.
+const EXPANSION_CHIPS: Record<string, {
+  labelEn: string;
+  labelEs: string;
+  path: string;
+  queryParam?: string;
+}[]> = {
+  'get my selling options': [
+    { labelEn: 'I need to sell fast',     labelEs: 'Necesito vender rápido',     path: '/v2/seller-decision', queryParam: 'urgency=fast'     },
+    { labelEn: 'I want top dollar',       labelEs: 'Quiero el mejor precio',     path: '/v2/seller-decision', queryParam: 'urgency=optimize' },
+    { labelEn: 'Just exploring options',  labelEs: 'Solo explorando opciones',   path: '/v2/seller-decision'                                  },
+  ],
+};
 
 export function SelenaDrawerSuggestedRepliesChips({
   suggestedReplies,
@@ -34,6 +50,12 @@ export function SelenaDrawerSuggestedRepliesChips({
   const navigate = useNavigate();
   const { openChat } = useSelenaChat();
   const { language } = useLanguage();
+
+  const [expandedChipKey, setExpandedChipKey] = useState<string | null>(null);
+
+  // Auto-collapse expansion row when new messages arrive
+  const messageCount = messages.length;
+  useEffect(() => { setExpandedChipKey(null); }, [messageCount]);
 
   if (!suggestedReplies || suggestedReplies.length === 0 || isLoading || activeTab) {
     return null;
@@ -77,13 +99,30 @@ export function SelenaDrawerSuggestedRepliesChips({
     const isAction = typeof reply !== 'string';
     const isBooking = isBookingChip(reply);
     const ctx = getSessionContext();
+    const phase = chipMeta?.phase ?? 0;
+
+    // ============= EXPANSION LOGIC — Phase ≤ 2 only =============
+    const chipKey = label.toLowerCase();
+    const expansionEntries = EXPANSION_CHIPS[chipKey];
+    if (expansionEntries && phase <= 2) {
+      // Toggle: second tap on same chip collapses it (user changed mind)
+      if (expandedChipKey === chipKey) {
+        setExpandedChipKey(null);
+      } else {
+        setExpandedChipKey(chipKey);
+      }
+      return; // Don't resolve — wait for sub-chip selection
+    }
+
+    // If a different primary chip is clicked while an expansion is open, collapse it
+    if (expandedChipKey) setExpandedChipKey(null);
 
     // ============= ANALYTICS: selena_chip_clicked =============
     logEvent('selena_chip_clicked', {
       chip_label: label,
       chip_type: isAction ? (reply.actionSpec ? 'action_spec' : 'text') : 'text',
       action_type: isAction && reply.actionSpec ? reply.actionSpec.type : undefined,
-      phase: chipMeta?.phase ?? 0,
+      phase,
       intent: ctx?.intent ?? 'unknown',
       containment_active: chipMeta?.containment ?? false,
       is_booking_chip: isBooking,
@@ -104,6 +143,26 @@ export function SelenaDrawerSuggestedRepliesChips({
       // Unmatched chip with label only — treat as conversational text
       onSuggestedReplyClick(reply.label);
     }
+  };
+
+  const handleExpansionSubChipClick = (entry: typeof EXPANSION_CHIPS[string][number], parentKey: string) => {
+    const label = language === 'es' ? entry.labelEs : entry.labelEn;
+    const ctx = getSessionContext();
+    const urgencyParam = entry.queryParam?.match(/urgency=([^&]+)/)?.[1];
+
+    logEvent('selena_chip_clicked', {
+      chip_label: label,
+      chip_type: 'expansion_sub',
+      parent_chip: parentKey,
+      urgency: urgencyParam,
+      phase: chipMeta?.phase ?? 0,
+      intent: ctx?.intent ?? 'unknown',
+      containment_active: chipMeta?.containment ?? false,
+    });
+
+    setExpandedChipKey(null);
+    const dest = entry.queryParam ? `${entry.path}?${entry.queryParam}` : entry.path;
+    navigate(dest);
   };
 
   // Show sub-chips only for warm leads (not hot — hot keeps single bold CTA)
@@ -164,6 +223,31 @@ export function SelenaDrawerSuggestedRepliesChips({
               </button>
             );
           })}
+        </div>
+      )}
+
+      {/* Expansion sub-row — intent narrowing for expandable chips (Phase ≤ 2) */}
+      {expandedChipKey && EXPANSION_CHIPS[expandedChipKey] && (
+        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide max-w-full pt-1.5">
+          <span className="shrink-0 self-center text-[11px] text-cc-navy/50 pr-1 whitespace-nowrap">
+            {language === 'es' ? '¿Qué más describe tu situación?' : 'What fits your situation?'}
+          </span>
+          {EXPANSION_CHIPS[expandedChipKey].map((entry, i) => (
+            <button
+              key={i}
+              onClick={() => handleExpansionSubChipClick(entry, expandedChipKey)}
+              className={cn(
+                "shrink-0 text-[11px] px-2.5 py-1.5 rounded-full",
+                "active:scale-95",
+                "transition-all duration-200",
+                "whitespace-nowrap",
+                "border border-cc-gold/40 text-cc-navy/80",
+                "bg-cc-ivory hover:bg-cc-sand hover:border-cc-gold/60",
+              )}
+            >
+              {language === 'es' ? entry.labelEs : entry.labelEn}
+            </button>
+          ))}
         </div>
       )}
 
