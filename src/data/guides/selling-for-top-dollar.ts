@@ -18,8 +18,15 @@ const data: GuideContentData = {
     {
       heading: "What Does the Tucson Market Look Like?",
       headingEs: "¿Cómo Luce el Mercado de Tucson?",
-      content: "Under current market conditions (as of early 2026), here's what sellers in Pima County can expect:\n\n• Median Sale Price: $315,000–$360,000\n• Average Days on Market: 40–78 days\n• Sale-to-List Price Ratio: Approximately 97.65%—meaning homes are selling close to their asking price\n• Active Listings: Approximately 4,600 in the Pima County MLS\n\nThese numbers provide grounding, not a guarantee. Every home and neighborhood is different, and market conditions shift. A Comparative Market Analysis (CMA) specific to your property gives the clearest picture.",
-      contentEs: "Bajo las condiciones actuales del mercado (a principios de 2026), esto es lo que los vendedores en el Condado de Pima pueden esperar:\n\n• Precio Medio de Venta: $315,000–$360,000\n• Días Promedio en el Mercado: 40–78 días\n• Relación Precio de Venta a Precio de Lista: Aproximadamente 97.65%—lo que significa que las casas se están vendiendo cerca de su precio de lista\n• Listados Activos: Aproximadamente 4,600 en el MLS del Condado de Pima\n\nEstos números proporcionan base, no una garantía. Cada casa y vecindario es diferente, y las condiciones del mercado cambian. Un Análisis Comparativo de Mercado (CMA) específico para su propiedad da la imagen más clara.",
+      variant: 'stats-grid' as const,
+      content: "Under current market conditions (as of early 2026), here's what sellers in Pima County can expect. These numbers provide grounding, not a guarantee — every home and neighborhood is different, and a CMA specific to your property gives the clearest picture.",
+      contentEs: "Bajo las condiciones actuales del mercado (a principios de 2026), esto es lo que los vendedores en el Condado de Pima pueden esperar. Estos números proporcionan base, no una garantía — un CMA específico para su propiedad da la imagen más clara.",
+      statsData: [
+        { value: '$315K–$360K', valueEs: '$315K–$360K', label: 'Median sale price in Pima County (early 2026)', labelEs: 'Precio mediano de venta en el Condado de Pima (principios de 2026)' },
+        { value: '40–78 days', valueEs: '40–78 días', label: 'Average days on market for Tucson homes', labelEs: 'Días promedio en el mercado para casas en Tucson' },
+        { value: '97.65%', valueEs: '97.65%', label: 'Sale-to-list ratio — homes selling close to asking price', labelEs: 'Relación venta-lista — casas vendidas cerca del precio pedido' },
+        { value: '~4,600', valueEs: '~4,600', label: 'Active listings in the Pima County MLS', labelEs: 'Listados activos en el MLS del Condado de Pima' },
+      ],
     },
     {
       heading: "How Selling Works: Step by Step",

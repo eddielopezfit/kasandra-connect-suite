@@ -21,6 +21,36 @@ const data: GuideContentData = {
       content: "A home valuation estimates what your property might sell for in current market conditions.\n\nCommon methods include:\n• Comparative Market Analysis (CMA): A local agent reviews recent sales of similar homes nearby. Under current Tucson conditions (as of early 2026), homes are selling at approximately 97.65% of their list price, which means well-prepared CMAs are landing close to actual sale outcomes.\n• Professional Appraisal: A licensed appraiser provides a formal opinion (often used for lending)\n• Online Estimates: Algorithms use public data to generate a number\n\nEach has a purpose. CMAs offer local insight. Appraisals are formal. Online tools are convenient but limited—they cannot see inside your home or account for condition, updates, or neighborhood nuance.",
       contentEs: "Una valoración de vivienda estima por cuánto podría venderse su propiedad en las condiciones actuales del mercado.\n\nMétodos comunes incluyen:\n• Análisis Comparativo de Mercado (CMA): Un agente local revisa ventas recientes de casas similares cercanas. Bajo las condiciones actuales de Tucson (a principios de 2026), las casas se están vendiendo a aproximadamente el 97.65% de su precio de lista, lo que significa que los CMAs bien preparados están aterrizando cerca de los resultados reales de venta.\n• Avalúo Profesional: Un tasador licenciado proporciona una opinión formal (a menudo usado para préstamos)\n• Estimaciones en Línea: Algoritmos usan datos públicos para generar un número\n\nCada uno tiene un propósito. Los CMAs ofrecen perspectiva local. Los avalúos son formales. Las herramientas en línea son convenientes pero limitadas—no pueden ver el interior de su casa ni considerar condición, actualizaciones, o matices del vecindario.",
     },
+,
+    {
+      heading: "CMA vs. Online Estimate: What's the Real Difference?",
+      headingEs: "CMA vs. Estimación en Línea: ¿Cuál Es la Diferencia Real?",
+      variant: 'comparison' as const,
+      content: "",
+      contentEs: "",
+      comparisonData: {
+        left: {
+          label: "Comparative Market Analysis (Agent)",
+          labelEs: "Análisis Comparativo de Mercado (Agente)",
+          items: [
+            { bold: "Accounts for condition:", boldEs: "Considera la condición:", text: "Agent sees inside your home — upgrades, repairs, actual state.", textEs: "El agente ve el interior de tu casa — mejoras, reparaciones, estado real." },
+            { bold: "Live comparable sales:", boldEs: "Ventas comparables en vivo:", text: "Uses active Tucson MLS data, not public records lag.", textEs: "Usa datos activos del MLS de Tucson, no retrasos en registros públicos." },
+            { bold: "Neighborhood knowledge:", boldEs: "Conocimiento del vecindario:", text: "Accounts for micro-market factors online tools miss.", textEs: "Considera factores del micro-mercado que las herramientas en línea no ven." },
+            { bold: "No cost, no obligation:", boldEs: "Sin costo, sin obligación:", text: "20–30 minutes — you walk away with your actual number.", textEs: "20–30 minutos — sales con tu número real." },
+          ],
+        },
+        right: {
+          label: "Online Estimate (Algorithm)",
+          labelEs: "Estimación en Línea (Algoritmo)",
+          items: [
+            { bold: "Instant access:", boldEs: "Acceso instantáneo:", text: "Available 24/7, no contact required.", textEs: "Disponible 24/7, sin contacto requerido." },
+            { bold: "Public records only:", boldEs: "Solo registros públicos:", text: "Can't see inside your home — condition, upgrades, and layout are invisible.", textEs: "No puede ver el interior de tu casa — condición, mejoras y distribución son invisibles." },
+            { bold: "Often off 5–15%:", boldEs: "A menudo errado 5–15%:", text: "In Tucson specifically, outlier sales skew algorithms quickly.", textEs: "En Tucson específicamente, ventas atípicas sesgan los algoritmos rápidamente." },
+            { bold: "Good starting point:", boldEs: "Buen punto de partida:", text: "Useful for ballpark, not for pricing decisions.", textEs: "Útil como referencia, no para decisiones de precios." },
+          ],
+        },
+      },
+    },
     {
       heading: "Key Factors That Affect Value",
       headingEs: "Factores Clave que Afectan el Valor",

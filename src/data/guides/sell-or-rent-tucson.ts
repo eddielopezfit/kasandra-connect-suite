@@ -15,6 +15,36 @@ const data: GuideContentData = {
       content: "The rent-vs-sell decision lives or dies on one number: monthly cash flow after all expenses.\n\n**Gross rent estimate for Tucson (2025–2026):**\n• 2BR/2BA: $1,400–$1,800/month\n• 3BR/2BA: $1,700–$2,200/month\n• 4BR/2BA: $2,000–$2,700/month\n\n**Your expenses as a landlord:**\n• Mortgage payment (PITI — principal, interest, taxes, insurance)\n• Property management fee: 8–10% of gross rent if you use a manager\n• Maintenance reserve: 1% of home value annually ($3,500–$4,500/year on an average Tucson home)\n• Vacancy allowance: 5–8% of gross rent (you won't be 100% occupied every month of every year)\n• HOA (if applicable)\n\n**Simple rule:** If your rent income minus all expenses (including management) leaves less than $200–$300/month cash flow — or is negative — renting is rarely worth it financially unless you have strong appreciation conviction and a long hold horizon.",
       contentEs: "La decisión de alquilar vs. vender vive o muere en un número: flujo de efectivo mensual después de todos los gastos.\n\n**Estimación de alquiler bruto para Tucson (2025–2026):** 2 hab/2 baños: $1,400–$1,800/mes; 3 hab/2 baños: $1,700–$2,200/mes; 4 hab/2 baños: $2,000–$2,700/mes.\n\n**Tus gastos como arrendador:** pago de hipoteca, tarifa de administración de propiedades (8–10% si usas un administrador), reserva de mantenimiento (1% del valor de la vivienda anualmente), provisión por vacancia (5–8% del alquiler bruto), HOA si aplica.",
     },
+,
+    {
+      heading: "Sell vs. Rent: The Core Trade-offs at a Glance",
+      headingEs: "Vender vs. Alquilar: Los Compromisos Principales de un Vistazo",
+      variant: 'comparison' as const,
+      content: "",
+      contentEs: "",
+      comparisonData: {
+        left: {
+          label: "The Case for Selling",
+          labelEs: "El Argumento para Vender",
+          items: [
+            { bold: "Equity access:", boldEs: "Acceso al capital:", text: "Use proceeds for down payment, debt, or life transition.", textEs: "Usa las ganancias para pago inicial, deudas o transición de vida." },
+            { bold: "Capital gains window:", boldEs: "Ventana de ganancias de capital:", text: "Sell while the 2-in-5-year exclusion applies — tax-free up to $250K/$500K.", textEs: "Vende mientras aplica la exclusión de 2 en 5 años — libre de impuestos hasta $250K/$500K." },
+            { bold: "No landlord risk:", boldEs: "Sin riesgo de arrendador:", text: "No tenants, vacancies, repairs, or evictions.", textEs: "Sin inquilinos, vacantes, reparaciones ni desalojos." },
+            { bold: "Clean exit:", boldEs: "Salida limpia:", text: "Especially valuable when relocating far from Tucson.", textEs: "Especialmente valioso al reubicarse lejos de Tucson." },
+          ],
+        },
+        right: {
+          label: "The Case for Renting",
+          labelEs: "El Argumento para Alquilar",
+          items: [
+            { bold: "Positive cash flow:", boldEs: "Flujo de efectivo positivo:", text: "Even $300–$500/month compounds meaningfully over time.", textEs: "Incluso $300–$500/mes se acumula significativamente con el tiempo." },
+            { bold: "Low-rate mortgage:", boldEs: "Hipoteca de tasa baja:", text: "A sub-4% mortgage from 2020–21 is an asset worth protecting at 6.5%+ rates.", textEs: "Una hipoteca sub-4% de 2020–21 es un activo que vale la pena proteger con tasas del 6.5%+." },
+            { bold: "Long-term appreciation:", boldEs: "Apreciación a largo plazo:", text: "Tucson median has roughly doubled since 2010.", textEs: "La mediana de Tucson se ha aproximadamente duplicado desde 2010." },
+            { bold: "Temporary relocation:", boldEs: "Reubicación temporal:", text: "Plan to return? Renting keeps your options open.", textEs: "¿Planeas regresar? Alquilar mantiene tus opciones abiertas." },
+          ],
+        },
+      },
+    },
     {
       heading: "The Case for Selling",
       headingEs: "El Argumento para Vender",

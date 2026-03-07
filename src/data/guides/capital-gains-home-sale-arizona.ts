@@ -27,6 +27,36 @@ const data: GuideContentData = {
       content: "Arizona taxes capital gains as ordinary income at the state level — there's no separate preferential capital gains rate like the federal system.\n\n**Arizona income tax rates (2025):** A flat 2.5% rate applies to most Arizona taxable income following the 2022 flat tax law.\n\n**How it interacts with the federal exclusion:** If your gain is fully excluded under the federal Section 121 exclusion, Arizona also excludes it — the state exclusion mirrors the federal. If you have a taxable gain above the exclusion threshold, Arizona taxes it at the flat 2.5% rate.\n\n**Practical example:** Gain of $30,000 above your federal exclusion → Arizona tax ≈ $750. That's meaningful but not alarming for most sellers.\n\n**Important:** Arizona does not have a separate capital gains tax form — gains are reported on your regular Arizona individual income tax return (Form 140).",
       contentEs: "Arizona grava las ganancias de capital como ingresos ordinarios a nivel estatal — no hay una tasa preferencial separada para ganancias de capital como el sistema federal.\n\n**Tasas de impuesto sobre la renta de Arizona (2025):** Una tasa plana del 2.5% aplica a la mayoría de los ingresos imponibles de Arizona.\n\n**Cómo interactúa con la exclusión federal:** Si tu ganancia está totalmente excluida bajo la exclusión federal de la Sección 121, Arizona también la excluye — la exclusión estatal refleja la federal.\n\n**Ejemplo práctico:** Ganancia de $30,000 sobre tu exclusión federal → impuesto de Arizona ≈ $750.",
     },
+,
+    {
+      heading: "When You Owe Tax vs. When You Don't",
+      headingEs: "Cuándo Debes Impuestos vs. Cuándo No",
+      variant: 'comparison' as const,
+      content: "",
+      contentEs: "",
+      comparisonData: {
+        left: {
+          label: "Gain Fully Excluded — No Tax Owed",
+          labelEs: "Ganancia Totalmente Excluida — Sin Impuesto",
+          items: [
+            { bold: "Lived there 2+ years:", boldEs: "Viviste allí 2+ años:", text: "Primary residence rule met — Section 121 applies.", textEs: "Regla de residencia principal cumplida — aplica la Sección 121." },
+            { bold: "Gain under threshold:", boldEs: "Ganancia bajo el umbral:", text: "Below $250K (single) or $500K (married) — owe nothing federally.", textEs: "Bajo $250K (soltero) o $500K (casado) — no debes nada federalmente." },
+            { bold: "Improvements documented:", boldEs: "Mejoras documentadas:", text: "Every capital improvement reduces your taxable gain.", textEs: "Cada mejora de capital reduce tu ganancia imponible." },
+            { bold: "Arizona mirrors federal:", boldEs: "Arizona refleja lo federal:", text: "State exclusion matches the federal exclusion — flat 2.5% applies only to taxable remainder.", textEs: "La exclusión estatal refleja la federal — el 2.5% plano aplica solo al resto imponible." },
+          ],
+        },
+        right: {
+          label: "Tax May Apply — Know Your Exposure",
+          labelEs: "Puede Aplicar Impuesto — Conoce Tu Exposición",
+          items: [
+            { bold: "Sold in under 2 years:", boldEs: "Vendido en menos de 2 años:", text: "Full gain is taxable — no exclusion available.", textEs: "La ganancia completa es imponible — no hay exclusión disponible." },
+            { bold: "Gain exceeds exclusion:", boldEs: "Ganancia supera la exclusión:", text: "Long-term owners with large gains pay tax on the amount above the threshold.", textEs: "Propietarios a largo plazo con grandes ganancias pagan impuesto sobre el monto sobre el umbral." },
+            { bold: "Rental use period:", boldEs: "Período de uso como alquiler:", text: "Depreciation recapture applies to the rental portion — CPA required.", textEs: "La recuperación de depreciación aplica a la porción de alquiler — se requiere CPA." },
+            { bold: "Investment property:", boldEs: "Propiedad de inversión:", text: "Section 121 does not apply — consider 1031 exchange to defer.", textEs: "La Sección 121 no aplica — considera un intercambio 1031 para diferir." },
+          ],
+        },
+      },
+    },
     {
       heading: "Situations Where You Might Still Owe Tax",
       headingEs: "Situaciones en las Que Aún Podrías Deber Impuestos",

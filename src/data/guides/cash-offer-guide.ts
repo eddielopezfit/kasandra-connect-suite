@@ -24,8 +24,15 @@ const data: GuideContentData = {
     {
       heading: "How Does a Cash Sale Compare to a Traditional Sale?",
       headingEs: "¿Cómo Se Compara una Venta en Efectivo con una Venta Tradicional?",
+      variant: 'stats-grid' as const,
       content: "Here's a side-by-side comparison based on current Tucson market data:\n\n• Timeline: Cash sales close in 7–14 days. Traditional sales average 40–78 days.\n• Offer Amount: Cash offers typically range from 50%–70% of fair market value. Traditional sales average approximately 97.65% of list price.\n• Repairs: Cash sales are as-is. Traditional sales involve negotiated repairs after inspection.\n• Closing Costs: Cash buyers often cover closing costs. Traditional sellers typically pay 8%–10% (including commission and closing costs).\n• Certainty: Cash offers carry very high certainty (no financing risk). Traditional sales carry moderate risk (financing contingency, appraisal gaps).\n\nWith the Tucson median sale price currently between $315,000 and $360,000, the financial difference between these paths can be substantial. Understanding both options ensures you're making an informed decision.",
       contentEs: "Aquí hay una comparación lado a lado basada en datos actuales del mercado de Tucson:\n\n• Cronograma: Las ventas en efectivo cierran en 7–14 días. Las ventas tradicionales promedian 40–78 días.\n• Monto de Oferta: Las ofertas en efectivo típicamente van del 50%–70% del valor justo de mercado. Las ventas tradicionales promedian aproximadamente el 97.65% del precio de lista.\n• Reparaciones: Las ventas en efectivo son como está. Las ventas tradicionales involucran reparaciones negociadas después de la inspección.\n• Costos de Cierre: Los compradores en efectivo a menudo cubren los costos de cierre. Los vendedores tradicionales típicamente pagan 8%–10% (incluyendo comisión y costos de cierre).\n• Certeza: Las ofertas en efectivo tienen certeza muy alta (sin riesgo de financiamiento). Las ventas tradicionales tienen riesgo moderado (contingencia de financiamiento, brechas de avalúo).\n\nCon el precio medio de venta de Tucson actualmente entre $315,000 y $360,000, la diferencia financiera entre estos caminos puede ser sustancial. Entender ambas opciones asegura que esté tomando una decisión informada.",
+      statsData: [
+        { value: '7–14 days', valueEs: '7–14 días', label: 'Typical cash offer close timeline in Tucson', labelEs: 'Cronograma típico de cierre de oferta en efectivo en Tucson' },
+        { value: '40–78 days', valueEs: '40–78 días', label: 'Traditional sale average timeline', labelEs: 'Cronograma promedio de venta tradicional' },
+        { value: '50–70%', valueEs: '50–70%', label: 'Cash offers as % of fair market value (typical)', labelEs: 'Ofertas en efectivo como % del valor justo de mercado (típico)' },
+        { value: '97.65%', valueEs: '97.65%', label: 'Traditional sale-to-list ratio — open market advantage', labelEs: 'Relación venta-lista tradicional — ventaja del mercado abierto' },
+      ],
     },
     {
       heading: "How It Works in Arizona",

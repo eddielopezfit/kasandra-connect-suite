@@ -15,6 +15,20 @@ const data: GuideContentData = {
       content: "Arizona is a non-judicial foreclosure state, which means lenders can foreclose without going through court — but the process still takes time.\n\nHere's a general timeline:\n\n**Day 1–90: Grace period and late fees**\nMost loans have a 15-day grace period before late fees begin. After 30 days, your lender will report the missed payment to credit bureaus. After 90 days of non-payment, most lenders will escalate to pre-foreclosure status.\n\n**Notice of Trustee's Sale (NTS)**\nIn Arizona, after 90+ days of missed payments, lenders typically record a Notice of Trustee's Sale. This is the formal start of the foreclosure clock. Arizona requires a minimum 91-day notice period after the NTS is recorded before the sale can occur.\n\n**Trustee Sale**\nThe home is auctioned to the highest bidder at the courthouse steps. Once sold at trustee sale, redemption rights are limited.\n\n**Your window:** From the NTS recording, you have approximately 91 days minimum to act. That's enough time to pursue a loan modification, short sale, or cash offer — if you start now.\n\nThis guide does not provide legal advice. If you have received a foreclosure notice, consult an Arizona housing attorney or HUD-approved housing counselor immediately.",
       contentEs: "Arizona es un estado de ejecución hipotecaria no judicial, lo que significa que los prestamistas pueden ejecutar hipotecas sin ir a través de los tribunales — pero el proceso aún lleva tiempo.\n\nAquí hay un cronograma general:\n\n**Día 1–90: Período de gracia y cargos por mora**\nLa mayoría de los préstamos tienen un período de gracia de 15 días antes de que comiencen los cargos por mora. Después de 30 días, tu prestamista reportará el pago perdido a las agencias de crédito. Después de 90 días de no pago, la mayoría de los prestamistas escalarán al estado de pre-ejecución hipotecaria.\n\n**Aviso de Venta del Fideicomisario (NTS)**\nEn Arizona, después de 90+ días de pagos perdidos, los prestamistas típicamente registran un Aviso de Venta del Fideicomisario. Este es el inicio formal del reloj de ejecución hipotecaria. Arizona requiere un período mínimo de aviso de 91 días después de que se registra el NTS antes de que pueda ocurrir la venta.",
     },
+,
+    {
+      heading: "Arizona Foreclosure Timeline: Key Numbers to Know",
+      headingEs: "Cronograma de Ejecución Hipotecaria en Arizona: Números Clave que Debes Conocer",
+      variant: 'stats-grid' as const,
+      content: "Understanding the timeline gives you clarity on how much time you have — and what it costs to wait.",
+      contentEs: "Entender el cronograma te da claridad sobre cuánto tiempo tienes — y lo que cuesta esperar.",
+      statsData: [
+        { value: '90+ days', valueEs: '90+ días', label: 'Arizona minimum foreclosure process — non-judicial, from notice to trustee sale', labelEs: 'Proceso mínimo de ejecución hipotecaria en Arizona — no judicial, desde aviso hasta venta' },
+        { value: '30 days', valueEs: '30 días', label: 'Window to respond after Notice of Trustee Sale is recorded', labelEs: 'Ventana para responder después de que se registra el Aviso de Venta del Fideicomisario' },
+        { value: '7 years', valueEs: '7 años', label: 'How long a foreclosure stays on your credit report vs. 4 years for short sale', labelEs: 'Cuánto tiempo una ejecución hipotecaria permanece en tu historial crediticio vs. 4 años para venta corta' },
+        { value: '$0', valueEs: '$0', label: 'Seller closing costs in many cash offer / short sale scenarios — more equity preserved', labelEs: 'Costos de cierre para el vendedor en muchos escenarios de oferta en efectivo / venta corta' },
+      ],
+    },
     {
       heading: 'Your Options — From Most to Least Equity-Preserving',
       headingEs: 'Tus Opciones — De Mayor a Menor Preservación de Capital',

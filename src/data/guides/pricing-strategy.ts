@@ -57,6 +57,20 @@ const data: GuideContentData = {
       content: "This is the most important section of this guide. Most sellers who overprice believe they can always reduce the price later. What they don't account for:\n\n**Days on market signal.** Buyers and buyer's agents see the full listing history. A home that has been on market for 60+ days with a price reduction carries a stigma — buyers assume something is wrong and bid lower accordingly.\n\n**Carrying costs.** Every month your home doesn't sell costs you: mortgage payments, property taxes, HOA fees, insurance, and utilities. At $2,000–$2,500/month in total carrying costs, a 60-day overpricing delay costs $4,000–$5,000 out of pocket — often more than you would have gained by pricing higher.\n\n**The Tucson data:** In January 2026, homes in Tucson sold at 97.64% of list price. Homes that required price reductions sold at a lower percentage — and stayed on market 2–3x longer.\n\n**The math on pricing correctly:** A home priced at $365,000 that sells in 15 days at 97.64% nets $356,386. A home listed at $390,000, reduced twice to $365,000 after 75 days, and sold at 97% nets $354,050 — after carrying costs of $3,750+. Net result: the overpriced strategy costs $5,000–$8,000 more.",
       contentEs: "Esta es la sección más importante de esta guía. La mayoría de los vendedores que sobrevaloran creen que siempre pueden reducir el precio más tarde. Lo que no tienen en cuenta:\n\n**Señal de días en mercado.** Los compradores y agentes del comprador ven el historial completo del listado. Una casa que ha estado en el mercado durante 60+ días con una reducción de precio lleva un estigma.\n\n**Costos de posesión.** Cada mes que tu casa no se vende te cuesta: pagos de hipoteca, impuestos de propiedad, cuotas de HOA, seguro y servicios públicos.\n\n**Los datos de Tucson:** En enero de 2026, las casas en Tucson se vendieron al 97.64% del precio de lista. Las casas que requirieron reducciones de precio se vendieron a un porcentaje más bajo — y permanecieron en el mercado 2–3 veces más.",
     },
+,
+    {
+      heading: "Tucson Pricing Benchmarks: What the Data Shows",
+      headingEs: "Puntos de Referencia de Precios en Tucson: Lo Que Muestran los Datos",
+      variant: 'stats-grid' as const,
+      content: "These are the numbers that define Tucson's current pricing environment. Price correctly from day one and these benchmarks work in your favor.",
+      contentEs: "Estos son los números que definen el entorno de precios actual de Tucson. Establece el precio correcto desde el primer día y estos puntos de referencia trabajarán a tu favor.",
+      statsData: [
+        { value: '97.64%', valueEs: '97.64%', label: 'Sale-to-list ratio in Tucson — correctly priced homes sell close to asking', labelEs: 'Relación venta-lista en Tucson — casas bien valuadas se venden cerca del precio pedido' },
+        { value: '4.92 mo', valueEs: '4.92 meses', label: 'Current market supply — a balanced market', labelEs: 'Oferta actual del mercado — un mercado equilibrado' },
+        { value: '~7% lower', valueEs: '~7% menos', label: 'Average final price for overpriced homes that required a reduction', labelEs: 'Precio final promedio para casas sobrevaloradas que necesitaron reducción' },
+        { value: '2× more', valueEs: '2× más', label: 'Showings in first 2 weeks vs rest of listing life — the pricing window matters', labelEs: 'Visitas en las primeras 2 semanas vs resto de la vida del listado — la ventana de precios importa' },
+      ],
+    },
     {
       heading: 'Responding to Low Offers and Negotiation',
       headingEs: 'Responder a Ofertas Bajas y Negociación',

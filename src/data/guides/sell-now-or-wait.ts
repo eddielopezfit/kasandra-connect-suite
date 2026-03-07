@@ -27,6 +27,20 @@ const data: GuideContentData = {
       contentEs:
         'En Tucson, esperar un \u201cmejor mercado\u201d a menudo cuesta m\u00e1s en gastos de mantenimiento\u2014hipoteca, seguro, reparaciones\u2014que la diferencia de precio que ganar\u00edas. En una casa de precio medio, dos o tres meses de gastos fijos pueden borrar un aumento modesto de precio. Eso hace que el momento dependa menos del mercado y m\u00e1s de tu preparaci\u00f3n personal.',
     },
+,
+    {
+      heading: "Tucson Market Snapshot: The Numbers Behind the Decision",
+      headingEs: "Panorama del Mercado de Tucson: Los Números Detrás de la Decisión",
+      variant: 'stats-grid' as const,
+      content: "The timing decision isn't abstract — it lives in real numbers. Here's the current Tucson market context.",
+      contentEs: "La decisión de tiempo no es abstracta — vive en números reales. Aquí está el contexto actual del mercado de Tucson.",
+      statsData: [
+        { value: '$1,200–$1,800', valueEs: '$1,200–$1,800', label: 'Estimated monthly holding cost on a median Tucson home (mortgage + insurance + maintenance)', labelEs: 'Costo mensual estimado de tenencia en una casa mediana de Tucson (hipoteca + seguro + mantenimiento)' },
+        { value: '38 days', valueEs: '38 días', label: 'Median days to sell in Tucson — correctly priced homes move fast', labelEs: 'Días medianos para vender en Tucson — casas bien valuadas se venden rápido' },
+        { value: '4.92 mo', valueEs: '4.92 meses', label: 'Current months of supply — neither strong buyer nor seller market', labelEs: 'Meses de oferta actuales — ni mercado fuertemente comprador ni vendedor' },
+        { value: '97.64%', valueEs: '97.64%', label: 'Sale-to-list ratio — a stable pricing environment for sellers', labelEs: 'Relación venta-lista — un entorno de precios estable para vendedores' },
+      ],
+    },
     {
       heading: 'Your Realistic Options',
       headingEs: 'Tus Opciones Realistas',
