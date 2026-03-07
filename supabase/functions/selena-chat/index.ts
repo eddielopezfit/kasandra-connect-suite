@@ -2643,7 +2643,47 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       phase = rawGoverned.phase;
       escalated = rawGoverned.escalated;
     }
-    
+
+    // ============= GUIDE-CONTEXTUAL CHIP INJECTION (P2) =============
+    // When last_guide_id is set, prepend 1 guide-specific chip to the chip array.
+    // Only fires for Phase 1-2 (Phase 3 has fixed chips, Mode 4 has booking chips).
+    // All labels match CHIPS_REGISTRY entries for deterministic routing.
+    const GUIDE_CHIP_MAP: Record<string, { en: string; es: string }[]> = {
+      'divorce-selling': [{ en: 'Get my selling options', es: 'Ver mis opciones de venta' }],
+      'inherited-probate-property': [{ en: 'Get my selling options', es: 'Ver mis opciones de venta' }],
+      'distressed-preforeclosure': [{ en: 'Get my selling options', es: 'Ver mis opciones de venta' }],
+      'life-change-selling': [{ en: 'Get my selling options', es: 'Ver mis opciones de venta' }],
+      'senior-downsizing': [{ en: 'Get my selling options', es: 'Ver mis opciones de venta' }],
+      'cash-vs-traditional-sale': [{ en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' }],
+      'selling-for-top-dollar': [{ en: 'How to price my home', es: 'Cómo fijar el precio de mi casa' }],
+      'pricing-strategy': [{ en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' }],
+      'cost-to-sell-tucson': [{ en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' }],
+      'how-long-to-sell-tucson': [{ en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' }],
+      'sell-now-or-wait': [{ en: 'Tucson Market Data', es: 'Datos del Mercado Tucson' }],
+      'sell-or-rent-tucson': [{ en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' }],
+      'home-prep-staging': [{ en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' }],
+      'capital-gains-home-sale-arizona': [{ en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' }],
+      'cash-offer-guide': [{ en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' }],
+      'understanding-home-valuation': [{ en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' }],
+      'military-pcs-guide': [{ en: 'Get my selling options', es: 'Ver mis opciones de venta' }],
+      'first-time-buyer-guide': [{ en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' }],
+      'arizona-first-time-buyer-programs': [{ en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' }],
+      'buying-home-noncitizen-arizona': [{ en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' }],
+      'move-up-buyer': [{ en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' }],
+      'relocating-to-tucson': [{ en: 'Explore Tucson neighborhoods', es: 'Explorar vecindarios de Tucson' }],
+      'tucson-neighborhoods': [{ en: 'Compare Neighborhoods', es: 'Comparar Vecindarios' }],
+      'tucson-suburb-comparison': [{ en: 'Compare Neighborhoods', es: 'Comparar Vecindarios' }],
+    };
+    const guideId = context.last_guide_id;
+    if (guideId && phase <= 2 && GUIDE_CHIP_MAP[guideId]) {
+      const guideChip = GUIDE_CHIP_MAP[guideId][0];
+      const guideChipLabel = language === 'es' ? guideChip.es : guideChip.en;
+      // Prepend only if not already present
+      if (!chips.some(c => c.toLowerCase() === guideChipLabel.toLowerCase())) {
+        chips = [guideChipLabel, ...chips.slice(0, 2)]; // max 3 chips total
+      }
+    }
+
     // ============= JOURNEY STATE GOVERNANCE HINT =============
     const toolsCompleted = context.tools_completed ?? [];
     let journeyHint = "";
