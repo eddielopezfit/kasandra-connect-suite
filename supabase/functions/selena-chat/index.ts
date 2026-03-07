@@ -2676,11 +2676,34 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     };
     const guideId = context.last_guide_id;
     if (guideId && phase <= 2 && GUIDE_CHIP_MAP[guideId]) {
-      const guideChip = GUIDE_CHIP_MAP[guideId][0];
-      const guideChipLabel = language === 'es' ? guideChip.es : guideChip.en;
-      // Prepend only if not already present
-      if (!chips.some(c => c.toLowerCase() === guideChipLabel.toLowerCase())) {
-        chips = [guideChipLabel, ...chips.slice(0, 2)]; // max 3 chips total
+      // Intent alignment guard: don't inject a sell-guide chip when user declared buy intent
+      // (and vice versa). Neutral guide chips always pass.
+      const SELL_GUIDE_IDS = new Set([
+        'divorce-selling','inherited-probate-property','distressed-preforeclosure',
+        'life-change-selling','senior-downsizing','cash-vs-traditional-sale',
+        'selling-for-top-dollar','pricing-strategy','cost-to-sell-tucson',
+        'how-long-to-sell-tucson','sell-now-or-wait','sell-or-rent-tucson',
+        'home-prep-staging','capital-gains-home-sale-arizona','cash-offer-guide',
+        'understanding-home-valuation','military-pcs-guide',
+      ]);
+      const BUY_GUIDE_IDS = new Set([
+        'first-time-buyer-guide','arizona-first-time-buyer-programs',
+        'buying-home-noncitizen-arizona','move-up-buyer','pima-county-property-taxes',
+      ]);
+      const guideIntentCategory =
+        SELL_GUIDE_IDS.has(guideId) ? 'sell' :
+        BUY_GUIDE_IDS.has(guideId)  ? 'buy'  : 'neutral';
+      const intentMismatch =
+        (guideIntentCategory === 'sell' && effectiveIntent === 'buy') ||
+        (guideIntentCategory === 'buy'  && (effectiveIntent === 'sell' || effectiveIntent === 'cash'));
+
+      if (!intentMismatch) {
+        const guideChip = GUIDE_CHIP_MAP[guideId][0];
+        const guideChipLabel = language === 'es' ? guideChip.es : guideChip.en;
+        // Prepend only if not already present
+        if (!chips.some(c => c.toLowerCase() === guideChipLabel.toLowerCase())) {
+          chips = [guideChipLabel, ...chips.slice(0, 2)]; // max 3 chips total
+        }
       }
     }
 
