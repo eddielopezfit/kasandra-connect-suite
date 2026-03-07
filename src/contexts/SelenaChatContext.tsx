@@ -208,7 +208,7 @@ function getPhaseAwareChips(
     const chips = prependGuideChip(filterAndReplace([
       { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
       { en: 'Browse guides',            es: 'Explorar guías' },
-    ], 'buy'));
+    ]), 'buy');
     return mapChipsToActionSpecs(chips.length ? chips : [t('Browse guides', 'Explorar guías')]);
   }
   if (floor >= 2 && intent) {
