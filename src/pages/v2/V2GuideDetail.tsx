@@ -105,7 +105,8 @@ function GuideDetailContent() {
     if (slot.type === 'video') {
       return <GuideVideo src={slot.src} posterSrc={slot.posterSrc} alt={slot.alt} altEs={slot.altEs} />;
     }
-    return <GuideImage src={slot.src} alt={slot.alt} altEs={slot.altEs} />;
+    // image & checklist-image — not rendered in guide body (hero card only)
+    return null;
   };
 
   // Per-guide SEO overrides — keyed by guideId
