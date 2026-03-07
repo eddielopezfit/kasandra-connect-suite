@@ -178,6 +178,18 @@ function getPhaseAwareChips(
     return out;
   }
 
+  // P2: Guide-contextual chip injection — prepend 1 guide-specific chip if last_guide_id is set
+  function prependGuideChip(chipLabels: string[]): string[] {
+    const guideId = ctx?.last_guide_id;
+    if (!guideId) return chipLabels;
+    const guideChipLabels = getGuideChips(guideId, lang as 'en' | 'es');
+    if (guideChipLabels.length === 0) return chipLabels;
+    const first = guideChipLabels[0];
+    // Don't duplicate if already present
+    if (chipLabels.some(c => c.toLowerCase() === first.toLowerCase())) return chipLabels;
+    return [first, ...chipLabels.slice(0, 2)]; // max 3 total
+  }
+
   if (floor >= 3) {
     const chips = filterAndReplace([
       { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
@@ -186,17 +198,17 @@ function getPhaseAwareChips(
     return mapChipsToActionSpecs(chips.length ? chips : [t('Talk with Kasandra', 'Hablar con Kasandra')]);
   }
   if (floor >= 2 && (intent === 'sell' || intent === 'cash')) {
-    const chips = filterAndReplace([
+    const chips = prependGuideChip(filterAndReplace([
       { en: 'Get my selling options',   es: 'Ver mis opciones de venta' },
       { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' },
-    ]);
+    ]));
     return mapChipsToActionSpecs(chips.length ? chips : [t('Talk with Kasandra', 'Hablar con Kasandra')]);
   }
   if (floor >= 2 && intent === 'buy') {
-    const chips = filterAndReplace([
+    const chips = prependGuideChip(filterAndReplace([
       { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
       { en: 'Browse guides',            es: 'Explorar guías' },
-    ]);
+    ]));
     return mapChipsToActionSpecs(chips.length ? chips : [t('Browse guides', 'Explorar guías')]);
   }
   if (floor >= 2 && intent) {
