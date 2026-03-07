@@ -315,9 +315,6 @@ function GuideDetailContent() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               {t("Back to Guides", "Volver a Guías")}
             </Link>
-            <div className="bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5">
-              <LanguageToggle variant="dark" />
-            </div>
           </div>
           
           <div className="flex items-center gap-4 mb-4">

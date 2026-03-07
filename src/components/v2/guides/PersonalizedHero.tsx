@@ -122,12 +122,6 @@ export function PersonalizedHero({
       />
       <div className="absolute inset-0 bg-gradient-to-b from-cc-navy/85 via-cc-navy/75 to-cc-navy/90" />
       <div className="container mx-auto px-4 relative z-10 w-full max-w-full">
-        {/* Language Toggle */}
-        <div className="flex justify-end mb-6">
-          <div className="bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5">
-            <LanguageToggle variant="dark" />
-          </div>
-        </div>
         
         <div className="text-center max-w-3xl mx-auto">
           {/* Badge */}

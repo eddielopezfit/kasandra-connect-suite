@@ -36,13 +36,13 @@ export interface MarketStats {
   holdingCostPerDay: number;
   /** Average pre-sale prep spend */
   prepAvg: number;
-  /** Human-readable verified date e.g. "January 2026" */
+  /** Human-readable verified date e.g. "January 2026" / "enero de 2026" */
   verifiedDate: string | null;
   /** Whether data came from live DB or fallback */
   isLive: boolean;
 }
 
-function deriveStats(pulse: MarketPulse, isLive: boolean): MarketStats {
+function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' = 'en'): MarketStats {
   const daysOnMarket = pulse.days_to_close
     ? Math.max(1, Math.round(pulse.days_to_close - 30))
     : 38;
@@ -53,8 +53,9 @@ function deriveStats(pulse: MarketPulse, isLive: boolean): MarketStats {
 
   const saleToListRatio = `${(saleToListRaw * 100).toFixed(1)}%`;
 
+  const locale = language === 'es' ? 'es-US' : 'en-US';
   const verifiedDate = pulse.last_verified_date
-    ? new Date(pulse.last_verified_date).toLocaleDateString("en-US", {
+    ? new Date(pulse.last_verified_date).toLocaleDateString(locale, {
         month: "long",
         year: "numeric",
       })
@@ -77,10 +78,11 @@ function deriveStats(pulse: MarketPulse, isLive: boolean): MarketStats {
  * Shared hook for live Tucson market stats.
  * Used by guides, tools, and any component needing current market data.
  *
+ * Accepts optional language param for locale-aware date formatting.
  * Returns derived human-readable stats + raw pulse + loading state.
  * Falls back gracefully if the edge function is unavailable.
  */
-export function useMarketPulse() {
+export function useMarketPulse(language: 'en' | 'es' = 'en') {
   const [pulse, setPulse] = useState<MarketPulse>(MARKET_FALLBACK);
   const [isLive, setIsLive] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -97,7 +99,7 @@ export function useMarketPulse() {
 
   return {
     pulse,
-    stats: deriveStats(pulse, isLive),
+    stats: deriveStats(pulse, isLive, language),
     isLive,
     loading,
   };

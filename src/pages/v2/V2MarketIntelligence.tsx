@@ -16,7 +16,7 @@ import {
 const V2MarketIntelligenceContent = () => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
-  const { stats: pulseStats, isLive, loading } = useMarketPulse();
+  const { stats: pulseStats, isLive, loading } = useMarketPulse(language);
 
   useDocumentHead({
     titleEn: "Tucson Real Estate Market Intelligence | Current Market Data",

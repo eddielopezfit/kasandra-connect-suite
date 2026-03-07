@@ -23,8 +23,8 @@ interface GuideMarketStatsProps {
  *   <GuideMarketStats variant="seller-full" />
  */
 export function GuideMarketStats({ variant = 'seller-full' }: GuideMarketStatsProps) {
-  const { stats, isLive, loading } = useMarketPulse();
   const { t, language } = useLanguage();
+  const { stats, isLive, loading } = useMarketPulse(language);
 
   const liveLabel = isLive
     ? t("Live Tucson Data", "Datos en Vivo de Tucson")

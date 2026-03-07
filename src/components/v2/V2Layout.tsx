@@ -18,7 +18,7 @@ interface V2LayoutProps {
 
 const V2Layout = ({ children }: V2LayoutProps) => {
   // Use language from global context to force re-render on language change
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const location = useLocation();
   
   // Initialize session on mount and log page views
@@ -146,7 +146,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
                            transition-all active:scale-95"
               >
                 <Calendar className="w-4 h-4" />
-                Book a Free Consultation
+                {t("Book a Free Consultation", "Agendar una Cita Gratis")}
               </Link>
             </div>
           </div>
