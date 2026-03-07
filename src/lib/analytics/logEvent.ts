@@ -150,6 +150,8 @@ export type EventType =
   | 'session_snapshot_saved'
   | 'session_snapshot_restored'
   // Equity Pulse (Saved Utility)
+  | 'seller_timeline_step_completed'
+  | 'seller_timeline_completed'
   | 'equity_pulse_saved'
   | 'equity_pulse_shared';
 

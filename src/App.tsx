@@ -24,6 +24,7 @@ import V2PrivateCashReview from "./pages/v2/V2PrivateCashReview";
 import V2ThankYou from "./pages/v2/V2ThankYou";
 
 import V2SellerDecision from "./pages/v2/V2SellerDecision";
+import V2SellerTimeline from "./pages/v2/V2SellerTimeline";
 import V2SellerReadiness from "./pages/v2/V2SellerReadiness";
 import V2CashReadiness from "./pages/v2/V2CashReadiness";
 import V2MarketIntelligence from "./pages/v2/V2MarketIntelligence";

@@ -45,7 +45,8 @@ export type EntrySource =
   | 'seller_readiness_capture'
   | 'market_intelligence'
   | 'neighborhood_compare'
-  | 'buyer_closing_costs';
+  | 'buyer_closing_costs'
+  | 'seller_timeline';
 
 export interface EntryContext {
   source: EntrySource;
