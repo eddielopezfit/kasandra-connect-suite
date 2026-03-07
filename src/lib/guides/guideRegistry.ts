@@ -249,7 +249,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     readTimeEs: "7 min de lectura",
     category: 'valuation',
     status: 'live',
-    funnelStage: 'tofu',
+    funnelStage: 'mofu',
     keywords: ['value', 'valuation', 'worth', 'price', 'cma', 'valor', 'precio', 'cuánto'],
     tier: 2,
     lifeEvent: 'valuation_awareness',
@@ -290,7 +290,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'first-time-buyer-story', lifeEvent: 'first_time_buying' }, label: { en: 'Continue the conversation', es: 'Continuar la conversación' } },
       secondaryActions: [],
-      relatedGuideIds: [],
+      relatedGuideIds: ['first-time-buyer-guide', 'arizona-first-time-buyer-programs', 'relocating-to-tucson'],
     },
     decisionIntent: 'trust',
     decisionStage: 'explore',
@@ -319,7 +319,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'budget-buyer-story', lifeEvent: 'budget_buying' }, label: { en: 'Continue the conversation', es: 'Continuar la conversación' } },
       secondaryActions: [],
-      relatedGuideIds: [],
+      relatedGuideIds: ['first-time-buyer-guide', 'arizona-first-time-buyer-programs', 'buying-home-noncitizen-arizona'],
     },
     decisionIntent: 'trust',
     decisionStage: 'explore',
@@ -348,7 +348,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'seller-stressful-market-story', lifeEvent: 'general_selling' }, label: { en: 'Continue the conversation', es: 'Continuar la conversación' } },
       secondaryActions: [],
-      relatedGuideIds: [],
+      relatedGuideIds: ['selling-for-top-dollar', 'pricing-strategy', 'how-long-to-sell-tucson'],
     },
     decisionIntent: 'trust',
     decisionStage: 'explore',
@@ -377,7 +377,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'spanish-speaking-client-story', lifeEvent: 'bilingual_service' }, label: { en: 'Continue the conversation', es: 'Continuar la conversación' } },
       secondaryActions: [],
-      relatedGuideIds: [],
+      relatedGuideIds: ['first-time-buyer-guide', 'buying-home-noncitizen-arizona', 'relocating-to-tucson'],
     },
     decisionIntent: 'trust',
     decisionStage: 'explore',
@@ -1065,7 +1065,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     isFeatured: false,
     category: 'selling',
     status: 'live',
-    funnelStage: 'tofu',
+    funnelStage: 'mofu',
     keywords: ['how long to sell', 'days on market', 'timeline selling', 'how fast', 'cuánto tiempo vender', 'días en el mercado', 'cronograma venta', 'how long does it take to sell a house in tucson', 'tucson days on market 2025', 'best time to sell house tucson'],
     tier: 2,
     lifeEvent: 'general_selling',
