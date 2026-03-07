@@ -109,6 +109,8 @@ interface ChatRequest {
     // Calculator enrichment — sent from client when available (Fix 2)
     estimated_value?: number;
     mortgage_balance?: number;
+    // Neighborhood intelligence — ZIP from Neighborhood Explorer / Seller Decision / Timeline
+    last_neighborhood_zip?: string;
     // Level 2: Session trail — breadcrumb of pages/tools visited this session
     session_trail?: Array<{
       label: string;
@@ -2303,6 +2305,8 @@ serve(async (req) => {
               context.situation = ctxJson.situation as string;
             if (!filled(context.timeline) && filled(ctxJson.timeline))
               context.timeline = ctxJson.timeline as string;
+            if (!filled(context.last_neighborhood_zip) && filled(ctxJson.last_neighborhood_zip))
+              context.last_neighborhood_zip = ctxJson.last_neighborhood_zip as string;
           }
         }
 
@@ -2510,6 +2514,49 @@ serve(async (req) => {
         : `\n\nTUCSON MARKET CONTEXT: The current average wait penalty in Tucson is ${daysToClose} days. That translates to over ${formattedCost} in holding costs for a vacant property. If the user saved an Equity Pulse scenario, acknowledge it: "I've locked your pulse. With the current ${daysToClose}-day wait in Tucson, you're looking at over ${formattedCost} in holding costs if you list traditionally. Shall I have Kasandra's desk verify if our cash buyers can skip that wait for you?" Do NOT invent numbers — use only ${daysToClose} days and ${formattedCost} as factual market reference.`;
     }
     
+
+    // ============= NEIGHBORHOOD INTELLIGENCE HINT (Perplexity-grounded) =============
+    // Fires only when last_neighborhood_zip is present. Single DB read (~5ms).
+    // Profile is Perplexity Sonar generated + cached 7 days — no API call here.
+    let neighborhoodHint = "";
+    const rawZip = (context.last_neighborhood_zip ?? "").trim();
+    const isValidZip = /^\d{5}$/.test(rawZip);
+
+    if (isValidZip && rlUrl && rlKey) {
+      try {
+        const nbClient = createClient(rlUrl, rlKey);
+        const { data: nbProfile } = await nbClient
+          .from("neighborhood_profiles")
+          .select("profile_en, profile_es")
+          .eq("zip_code", rawZip)
+          .maybeSingle();
+
+        if (nbProfile) {
+          const profile = language === 'es' ? nbProfile.profile_es : nbProfile.profile_en;
+          if (profile) {
+            const lifestyle = profile.lifestyle_feel ?? "";
+            const buyerFit = Array.isArray(profile.buyer_fit) ? (profile.buyer_fit as string[]).join(", ") : (profile.buyer_fit ?? "");
+            const sellerCtx = profile.seller_context ?? "";
+            const notIdeal = profile.not_ideal_for ?? "";
+
+            neighborhoodHint = language === 'es'
+              ? `\n\nCONTEXTO DEL VECINDARIO (ZIP ${rawZip}):
+Estilo de vida: ${lifestyle}
+Perfil de comprador: ${buyerFit}
+Contexto de vendedor: ${sellerCtx}
+No ideal para: ${notIdeal}
+Use esta información cuando el usuario pregunte sobre su área. NUNCA compare, clasifique ni recomiende vecindarios — orientación solo. No invente datos adicionales sobre el área.`
+              : `\n\nNEIGHBORHOOD CONTEXT (ZIP ${rawZip}):
+Lifestyle: ${lifestyle}
+Buyer fit: ${buyerFit}
+Seller context: ${sellerCtx}
+Not ideal for: ${notIdeal}
+Reference this when the user asks about their area. NEVER rank, compare, or recommend neighborhoods — orientation only. Do not invent additional data about the area.`;
+          }
+        }
+      } catch (_e) { /* non-blocking — ZIP intelligence is additive, not critical */ }
+    }
+
     // Tell the AI what phase we're in so response text matches chip direction
     const rawGoverned = getGovernedChips(effectiveIntent, timeline, engagement, language);
     
@@ -2810,7 +2857,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
         messages: [
-          { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
+          { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
           ...history.slice(-6), // Extended to -6 to support loop detection context
           { role: "user", content: message }
         ],

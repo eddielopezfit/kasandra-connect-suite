@@ -1229,6 +1229,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               primary_priority: context?.primary_priority,
               quiz_result_path: context?.quiz_result_path,
               calculator_motivation: context?.calculator_motivation,
+              // Neighborhood intelligence — ZIP for Perplexity-grounded context
+              last_neighborhood_zip: context?.last_neighborhood_zip,
               // Level 2: Session trail — full page/tool journey this session
               session_trail: serializeTrailForSelena(),
             },
