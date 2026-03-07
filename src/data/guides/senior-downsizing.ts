@@ -76,6 +76,13 @@ const data: GuideContentData = {
       contentEs: "Reducir el tamaño es una de las decisiones inmobiliarias más personales que existen. No hay urgencia aquí — solo el momento adecuado para tu situación.\n\nSi deseas entender cuánto vale tu casa actual en el mercado actual de Tucson, o explorar qué opciones existen en Green Valley, Oro Valley u otras comunidades 55+, Kasandra y Selena están aquí para ayudarte a orientarte — al ritmo que te funcione.",
     },
   {
+      heading: '',
+      headingEs: '',
+      content: '',
+      contentEs: '',
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

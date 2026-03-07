@@ -33,6 +33,14 @@ const data: GuideContentData = {
       content: "Here's how I walk clients through this decision:\n\n**Step 1: Run the cash flow numbers.** What would your property actually rent for? Subtract all real expenses. Is the number positive, breakeven, or negative? Be honest with the maintenance reserve — Tucson's heat is hard on HVAC systems.\n\n**Step 2: Consider the capital gains window.** If you're within 3 years of it, the tax-free exclusion is a real financial factor. Exiting the primary residence period before selling costs real money.\n\n**Step 3: Assess your landlord appetite.** Are you genuinely willing to handle tenant calls, vacancies, repair coordination — either directly or through a property manager? If the honest answer is no, no cash flow number fixes that.\n\n**Step 4: Look at what you'd do with the equity.** Is there a specific, productive use for it? Or would it just sit? Equity in a home is real wealth but it's illiquid — sometimes selling and deploying the capital is the right move financially even if renting looks positive on paper.\n\nI'll run the real numbers for your specific property if you want — that conversation is always free.",
       contentEs: "Así es como guío a los clientes a través de esta decisión:\n\n**Paso 1: Calcula los números de flujo de efectivo.** ¿Por cuánto se alquilaría realmente tu propiedad? Resta todos los gastos reales. ¿El número es positivo, equilibrado o negativo?\n\n**Paso 2: Considera la ventana de ganancias de capital.** Si estás dentro de 3 años de ella, la exclusión libre de impuestos es un factor financiero real.\n\n**Paso 3: Evalúa tu apetito como arrendador.** ¿Estás genuinamente dispuesto a manejar llamadas de inquilinos, vacantes, coordinación de reparaciones?\n\n**Paso 4: Mira qué harías con el capital.** ¿Hay un uso específico y productivo para él? El capital en una casa es riqueza real pero es ilíquido.",
     },
+,
+    {
+      heading: '',
+      headingEs: '',
+      content: '',
+      contentEs: '',
+      variant: 'tool-bridge' as const,
+    },
     {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",

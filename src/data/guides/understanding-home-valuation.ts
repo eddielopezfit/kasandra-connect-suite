@@ -52,6 +52,13 @@ const data: GuideContentData = {
       contentEs: "Si le gustaría tener claridad sobre cuánto podría valer su casa, el siguiente paso de abajo es un buen lugar para comenzar—a su propio ritmo, sin obligación.",
     },
   {
+      heading: '',
+      headingEs: '',
+      content: '',
+      contentEs: '',
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

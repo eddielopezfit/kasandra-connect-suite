@@ -63,6 +63,13 @@ const data: GuideContentData = {
       contentEs: "Las transacciones de avance son manejables cuando la secuencia es clara. El mejor lugar para comenzar es saber cuánto vale tu casa actual y cuál es realmente tu posición de capital.\n\nKasandra maneja ambos lados de esta transacción y puede ayudarte a construir un cronograma realista desde el primer día.",
     },
   {
+      heading: '',
+      headingEs: '',
+      content: '',
+      contentEs: '',
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

@@ -53,6 +53,13 @@ const data: GuideContentData = {
       contentEs: "Entender los impuestos de propiedad es parte de calcular tus números reales antes de tomar una decisión de compra. Si deseas ayuda para calcular los costos anuales de tenencia de una casa específica que estás considerando, Selena y Kasandra pueden guiarte — incluyendo impuestos, seguro, HOA e hipoteca.",
     },
   {
+      heading: '',
+      headingEs: '',
+      content: '',
+      contentEs: '',
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",

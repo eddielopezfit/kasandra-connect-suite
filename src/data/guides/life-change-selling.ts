@@ -60,6 +60,13 @@ const data: GuideContentData = {
         'Si quieres claridad sin presi\u00f3n, el siguiente paso de abajo te ayudar\u00e1 a elegir con confianza.',
     },
   {
+      heading: '',
+      headingEs: '',
+      content: '',
+      contentEs: '',
+      variant: 'tool-bridge' as const,
+    },
+    {
       heading: "Frequently Asked Questions",
       headingEs: "Preguntas Frecuentes",
       content: "",
