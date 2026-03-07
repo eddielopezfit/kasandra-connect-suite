@@ -28,11 +28,13 @@ import {
 } from '@/lib/analytics/logEvent';
 import { getGuideById } from '@/lib/guides/guideRegistry';
 // ActionSpec type used transitively via MappedReply from chipsRegistry
+import { getGuideById } from '@/lib/guides/guideRegistry';
 
 // ============= CHIP → ACTIONSPEC MAPPING (Registry-backed) =============
 // Imports from centralized Chips Registry (OS Lock P1.3a).
 // mapChipsToActionSpecs stays local because it needs logEvent access.
 import { type MappedReply, normalizeChipLabel, findChipByNormalizedKey } from '@/lib/registry/chipsRegistry';
+import { getGuideChips } from '@/lib/registry/guideChipMap';
 export type { MappedReply };
 
 function mapChipsToActionSpecs(
