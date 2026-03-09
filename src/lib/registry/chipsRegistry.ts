@@ -5,9 +5,14 @@
  * No side effects, no imports from React or context.
  * 
  * Deduplication rule: only dedupe when BOTH normalized_key AND actionSpec are identical.
+ * 
+ * DUAL LOOKUP ARCHITECTURE:
+ * 1. By semantic key (chipKey) — for deterministic routing from journeyState/chipGovernance
+ * 2. By normalized text (normalized_key) — fallback for LLM hallucination detection
  */
 
 import type { ActionSpec } from '@/lib/actions/actionSpec';
+import { CHIP_KEYS, type ChipKey } from './chipKeys';
 
 // ============= TYPES =============
 
@@ -19,6 +24,8 @@ export interface ChipRegistryEntry {
   label_es: string;
   normalized_key: string;
   actionSpec: ActionSpec;
+  /** Optional semantic key for deterministic routing. If present, enables lookup by CHIP_KEYS. */
+  chipKey?: ChipKey;
 }
 
 // ============= NORMALIZATION =============
