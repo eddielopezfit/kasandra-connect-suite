@@ -119,7 +119,7 @@ const V2ThankYouContent = () => {
               'Learn how cash offers work and what to expect.',
               'Aprenda cómo funcionan las ofertas en efectivo y qué esperar.'
             ),
-            href: '/v2/guides/cash-offer-guide',
+            href: '/guides/cash-offer-guide',
           },
         };
       
