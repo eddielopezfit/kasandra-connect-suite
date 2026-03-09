@@ -123,7 +123,7 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
     if (!hasLoggedToolStart.current) {
       logEvent("tool_started", {
         tool_id: "buyer_readiness",
-        page_path: "/v2/buyer-readiness",
+        page_path: "/buyer-readiness",
       });
       hasLoggedToolStart.current = true;
     }
