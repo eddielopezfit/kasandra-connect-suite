@@ -121,6 +121,15 @@ interface ChatRequest {
       type: 'guide' | 'tool' | 'quiz' | 'page';
       minutes_ago: number;
     }>;
+    // Buyer Closing Costs calculator data
+    closing_cost_data?: {
+      purchasePrice: number;
+      loanType: string;
+      downPaymentPercent: number;
+      estimatedLow: number;
+      estimatedHigh: number;
+      totalCashNeeded: number;
+    } | null;
   };
   history?: ChatMessage[];
 }
