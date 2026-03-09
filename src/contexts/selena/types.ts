@@ -30,7 +30,10 @@ export type EntrySource =
   | 'buyer_closing_costs'
   | 'seller_timeline'
   | 'neighborhoods_index'
-  | 'neighborhood_detail';
+  | 'neighborhood_detail'
+  | 'off_market_registered'
+  | 'neighborhood_compare_result'
+  | 'market_intelligence_result';
 
 export interface EntryContext {
   source: EntrySource;
@@ -67,6 +70,21 @@ export interface EntryContext {
     score: number;
     primaryPriority: string;
     toolType: 'buyer' | 'seller' | 'cash';
+  };
+  offMarketData?: {
+    areas: string[];
+    budgetRange: string;
+    timeline: string;
+    propertyType: string;
+  };
+  neighborhoodCompareData?: {
+    areasCompared: string[];
+  };
+  marketIntelData?: {
+    daysOnMarket: number;
+    saleToListRatio: string;
+    holdingCostPerDay: number;
+    isLive: boolean;
   };
 }
 

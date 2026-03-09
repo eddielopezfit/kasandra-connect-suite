@@ -120,9 +120,10 @@ export function computeGreeting(
   
   const isAllowedGreetingSource = !!entryContext && [
     'calculator', 'guide_handoff', 'synthesis', 'hero', 'quiz_result', 'post_booking', 'seller_decision',
-    'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs',
-    'neighborhood_detail', 'neighborhoods_index',
-    'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture'
+    'market_intelligence', 'market_intelligence_result', 'neighborhood_compare', 'neighborhood_compare_result', 
+    'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index',
+    'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture',
+    'off_market_registered', 'off_market_capture'
   ].includes(entryContext.source);
 
   const hasRecoveryCandidate = !sessionContext?.recovery_shown && !!sessionContext?.booking_chips_shown_at;
@@ -135,8 +136,11 @@ export function computeGreeting(
     if (!storedHistoryExists && messages.length === 0) return true;
     if (messages.length > 3 && isMeaningfulSource && isAllowedGreetingSource) {
       const contextualSources = ['guide_handoff', 'calculator', 'synthesis', 'quiz_result', 'seller_decision',
-        'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index',
-        'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture'];
+        'market_intelligence', 'market_intelligence_result', 'neighborhood_compare', 'neighborhood_compare_result', 
+        'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index',
+        'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture',
+        'off_market_registered', 'off_market_capture'];
+      return contextualSources.includes(entryContext?.source || '');
       return contextualSources.includes(entryContext?.source || '');
     }
     if (isMeaningfulSource && isAllowedGreetingSource) return true;
@@ -411,6 +415,72 @@ export function computeGreeting(
         { label: t("Talk with Kasandra", "Hablar con Kasandra") },
       ];
     }
+  } else if (entryContext?.source === 'off_market_registered' || entryContext?.source === 'off_market_capture') {
+    const om = entryContext.offMarketData;
+    if (om && om.areas?.length > 0) {
+      const areasStr = om.areas.slice(0, 3).join(', ');
+      greetingContent = t(
+        `You're registered for off-market access in ${areasStr} — ${om.budgetRange} range, ${om.propertyType}. Kasandra works with sellers before they list — you're in the right place.\n\nWant to share more about what you're looking for so she can keep an eye out?`,
+        `Estás registrado/a para acceso fuera del mercado en ${areasStr} — rango ${om.budgetRange}, ${om.propertyType}. Kasandra trabaja con vendedores antes de que publiquen — estás en el lugar correcto.\n\n¿Quieres compartir más sobre lo que buscas para que ella esté atenta?`
+      );
+      suggestedReplies = [
+        { label: t("What does off-market mean?", "¿Qué significa fuera del mercado?") },
+        { label: t("How does Kasandra find these?", "¿Cómo encuentra Kasandra estas casas?") },
+        { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+      ];
+    } else {
+      greetingContent = t(
+        "You're on the list for off-market properties. Kasandra will personally reach out when something matches your criteria.\n\nIs there anything about the buying process you'd like to understand better?",
+        "Estás en la lista para propiedades fuera del mercado. Kasandra te contactará personalmente cuando algo coincida con tus criterios.\n\n¿Hay algo sobre el proceso de compra que te gustaría entender mejor?"
+      );
+      suggestedReplies = [
+        { label: t("Explore Tucson neighborhoods", "Explorar vecindarios de Tucson") },
+        { label: t("How does buying work?", "¿Cómo funciona comprar?") },
+        { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+      ];
+    }
+  } else if (entryContext?.source === 'neighborhood_compare_result' || entryContext?.source === 'neighborhood_compare') {
+    const nc = entryContext.neighborhoodCompareData;
+    if (nc && nc.areasCompared?.length >= 2) {
+      const areasStr = nc.areasCompared.slice(0, 3).join(' vs ');
+      greetingContent = t(
+        `You compared ${areasStr} — a comparison tool gives you the numbers, but Kasandra knows the streets. Want her perspective on which is the better fit for your situation?`,
+        `Comparaste ${areasStr} — una herramienta de comparación te da los números, pero Kasandra conoce las calles. ¿Quieres su perspectiva sobre cuál se ajusta mejor a tu situación?`
+      );
+    } else {
+      greetingContent = t(
+        "You're comparing Tucson neighborhoods — smart move. Kasandra knows these communities personally.\n\nIs there something specific you're looking for in a neighborhood?",
+        "Estás comparando vecindarios de Tucson — buena decisión. Kasandra conoce estas comunidades personalmente.\n\n¿Hay algo específico que estés buscando en un vecindario?"
+      );
+    }
+    suggestedReplies = [
+      { label: t("Which is better for my situation?", "¿Cuál es mejor para mi situación?") },
+      { label: t("What's the local context?", "¿Cuál es el contexto local?") },
+      { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+    ];
+  } else if (entryContext?.source === 'market_intelligence_result' || entryContext?.source === 'market_intelligence') {
+    const mi = entryContext.marketIntelData;
+    if (mi && mi.daysOnMarket > 0) {
+      const implication = mi.daysOnMarket <= 20 
+        ? t("a fast-moving market", "un mercado activo")
+        : mi.daysOnMarket <= 45 
+        ? t("a balanced market", "un mercado equilibrado")
+        : t("a buyer's market with more negotiating room", "un mercado de compradores con más margen para negociar");
+      greetingContent = t(
+        `Tucson homes are averaging ${mi.daysOnMarket} days on market with a ${mi.saleToListRatio} sale-to-list ratio — that's ${implication}.\n\nThese are county-wide averages. Want to understand what this means for your specific ZIP and price point?`,
+        `Las casas de Tucson promedian ${mi.daysOnMarket} días en mercado con un ratio de ${mi.saleToListRatio} precio/lista — eso es ${implication}.\n\nEstos son promedios del condado. ¿Quieres entender qué significa para tu código postal y rango de precio específico?`
+      );
+    } else {
+      greetingContent = t(
+        "You're looking at live Tucson market data — days on market, sale-to-list ratio, and daily holding costs.\n\nWant to understand what these numbers mean for your specific situation?",
+        "Estás viendo datos en vivo del mercado de Tucson — días en mercado, ratio precio/lista y costos diarios.\n\n¿Quieres entender qué significan estos números para tu situación específica?"
+      );
+    }
+    suggestedReplies = [
+      { label: t("Is it a good time to sell?", "¿Es buen momento para vender?") },
+      { label: t("What about buying?", "¿Y para comprar?") },
+      { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+    ];
   } else if (entryContext?.source === 'neighborhoods_index') {
     greetingContent = t(
       `You're browsing Tucson-area neighborhoods — smart move. I can help you narrow down which areas fit your situation best.\n\nAre you looking to buy or sell?`,

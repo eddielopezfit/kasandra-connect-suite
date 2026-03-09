@@ -238,6 +238,15 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     if (entryContext?.readinessData) {
       updateSessionContext({ readiness_entry_data: entryContext.readinessData } as any);
     }
+    if (entryContext?.offMarketData) {
+      updateSessionContext({ off_market_data: entryContext.offMarketData } as any);
+    }
+    if (entryContext?.neighborhoodCompareData) {
+      updateSessionContext({ neighborhood_compare_data: entryContext.neighborhoodCompareData } as any);
+    }
+    if (entryContext?.marketIntelData) {
+      updateSessionContext({ market_intel_data: entryContext.marketIntelData } as any);
+    }
     updateSessionContext(entryUpdates as any);
 
     logEvent('selena_opened', {
@@ -387,6 +396,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               closing_cost_data: (context as any)?.closing_cost_data ?? null,
               seller_calc_data: (context as any)?.seller_calc_data ?? null,
               readiness_entry_data: (context as any)?.readiness_entry_data ?? null,
+              off_market_data: (context as any)?.off_market_data ?? null,
+              neighborhood_compare_data: (context as any)?.neighborhood_compare_data ?? null,
+              market_intel_data: (context as any)?.market_intel_data ?? null,
             },
             history,
           }),
