@@ -795,7 +795,7 @@ function filterChipsForCompletedTools(
     if (!replacementKey) continue;
 
     // Booking chips require earned access
-    if (replacementDest === '/v2/book' && !hasEarnedBooking) continue;
+    if (replacementDest === '/book' && !hasEarnedBooking) continue;
 
     filtered.push(replacementKey);
     existingDests.add(replacementDest);
