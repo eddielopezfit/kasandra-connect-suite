@@ -71,6 +71,21 @@ export interface EntryContext {
     primaryPriority: string;
     toolType: 'buyer' | 'seller' | 'cash';
   };
+  offMarketData?: {
+    areas: string[];
+    budgetRange: string;
+    timeline: string;
+    propertyType: string;
+  };
+  neighborhoodCompareData?: {
+    areasCompared: string[];
+  };
+  marketIntelData?: {
+    daysOnMarket: number;
+    saleToListRatio: string;
+    holdingCostPerDay: number;
+    isLive: boolean;
+  };
 }
 
 export interface ChipMeta {
