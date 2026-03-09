@@ -314,6 +314,7 @@ export type Database = {
           created_at: string
           generated_at: string
           id: string
+          neighborhood_name: string | null
           profile_en: Json
           profile_es: Json
           profile_hash: string | null
@@ -323,6 +324,7 @@ export type Database = {
           created_at?: string
           generated_at?: string
           id?: string
+          neighborhood_name?: string | null
           profile_en: Json
           profile_es: Json
           profile_hash?: string | null
@@ -332,6 +334,7 @@ export type Database = {
           created_at?: string
           generated_at?: string
           id?: string
+          neighborhood_name?: string | null
           profile_en?: Json
           profile_es?: Json
           profile_hash?: string | null
