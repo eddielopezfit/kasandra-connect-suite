@@ -287,7 +287,7 @@ function StartHerePanel({
           {(!isIntentLocked || effectiveIntent === 'buy') && (
             <QuickLink 
               label={t("First-Time Buyer Guide", "Guía del Comprador Primerizo")}
-              onClick={() => onNavigate('/v2/guides/first-time-buyer-guide', 'guide_cta_click')}
+              onClick={() => onNavigate('/guides/first-time-buyer-guide', 'guide_cta_click')}
             />
           )}
           {(!isIntentLocked || effectiveIntent === 'sell' || effectiveIntent === 'cash') && (
