@@ -43,7 +43,7 @@ const TrustStoriesSection = ({ stories, onStoryClick }: TrustStoriesSectionProps
             return (
               <Link
                 key={story.id}
-                to={`/v2/guides/${story.id}`}
+                to={`/guides/${story.id}`}
                 onClick={() => onStoryClick(story.id)}
                 className={cn(
                   "group bg-white rounded-xl p-5 shadow-soft hover:shadow-elevated transition-all duration-300 border border-cc-sand-dark/50 hover:border-cc-gold/30",

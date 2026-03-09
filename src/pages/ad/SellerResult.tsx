@@ -456,7 +456,7 @@ const SellerResultContent = () => {
                   asChild
                   className="w-full bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold py-6 rounded-full text-base shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
                 >
-                  <Link to={`/v2/seller-decision?${wizardParams}`}>
+                  <Link to={`/seller-decision?${wizardParams}`}>
                     {t("Get My Selling Recommendation", "Obtener Mi Recomendación de Venta")}
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Link>

@@ -93,7 +93,7 @@ export function RecommendedGuidesCarousel({
           {items.map(({ guide, badgeType }) => (
             <Link
               key={guide.id}
-              to={`/v2/guides/${guide.id}`}
+              to={`/guides/${guide.id}`}
               onClick={() => onGuideClick(guide.id)}
               className={cn(
                 "group flex-shrink-0 w-[280px] sm:w-[300px] bg-white rounded-xl p-5 border border-cc-sand-dark/50 snap-start",

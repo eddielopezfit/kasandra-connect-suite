@@ -63,7 +63,7 @@ const RelatedNeighborhoodsRail = ({ neighborhood }: RelatedNeighborhoodsRailProp
             {/* Mobile Compare CTA */}
             <div className="mt-4 sm:hidden">
               <Button asChild variant="outline" className="w-full">
-                <Link to={`/v2/neighborhood-compare?areas=${neighborhood.slug},${neighborhood.relatedNeighborhoods.join(',')}`}>
+                <Link to={`/neighborhood-compare?areas=${neighborhood.slug},${neighborhood.relatedNeighborhoods.join(',')}`}>
                   <GitCompare className="w-4 h-4 mr-2" />
                   {t("Compare These Areas", "Comparar Estas Áreas")}
                 </Link>
