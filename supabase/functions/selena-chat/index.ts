@@ -2465,6 +2465,63 @@ function sanitizeBracketCTAs(text: string): string {
     .trim();
 }
 
+// ============= IN-MEMORY EDGE CACHE =============
+// Global scope — persists across hot Deno isolate invocations.
+const _dbCache = new Map<string, { data: unknown; expires: number }>();
+function getCached<T>(key: string): T | null {
+  const entry = _dbCache.get(key);
+  if (entry && entry.expires > Date.now()) return entry.data as T;
+  if (entry) _dbCache.delete(key);
+  return null;
+}
+function setCache(key: string, data: unknown, ttlMs = 3600000): void {
+  _dbCache.set(key, { data, expires: Date.now() + ttlMs });
+}
+
+// ============= DYNAMIC PROMPT ASSEMBLY =============
+function stripSection(text: string, startMarker: string, endMarker: string): string {
+  const start = text.indexOf(startMarker);
+  if (start === -1) return text;
+  const end = text.indexOf(endMarker, start + startMarker.length);
+  if (end === -1) return text;
+  return text.slice(0, start) + text.slice(end);
+}
+function buildSystemPrompt(language: 'en' | 'es', intent: string, hasToolsCompleted: boolean): string {
+  let prompt = language === 'es' ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN;
+  const isSeller = intent === 'sell' || intent === 'cash' || intent === 'dual';
+  const isBuyer = intent === 'buy' || intent === 'dual';
+  if (!isSeller) {
+    if (language === 'es') {
+      prompt = stripSection(prompt, 'EDUCACION DE PROCESO — VENDEDOR', 'EDUCACION DE PROCESO — COMPRADOR');
+      prompt = stripSection(prompt, 'RESUMEN DE CAMINOS — VENDEDOR', 'RESUMEN DE CAMINOS — COMPRADOR');
+      prompt = stripSection(prompt, 'EDUCACION PARA VENDEDORES', 'CONFIDENCIALIDAD');
+    } else {
+      prompt = stripSection(prompt, 'PROCESS EDUCATION — SELLER', 'PROCESS EDUCATION — BUYER');
+      prompt = stripSection(prompt, 'PATHS OVERVIEW — SELLER', 'PATHS OVERVIEW — BUYER');
+      prompt = stripSection(prompt, 'SELLER EDUCATION (high-level)', 'CONFIDENTIALITY');
+    }
+  }
+  if (!isBuyer) {
+    if (language === 'es') {
+      prompt = stripSection(prompt, 'EDUCACION DE PROCESO — COMPRADOR', 'PLAZOS TIPICOS');
+      prompt = stripSection(prompt, 'RESUMEN DE CAMINOS — COMPRADOR', 'LIMITE DE RESUMEN DE CAMINOS');
+      prompt = stripSection(prompt, 'EDUCACION PARA COMPRADORES', 'EDUCACION PARA VENDEDORES');
+    } else {
+      prompt = stripSection(prompt, 'PROCESS EDUCATION — BUYER', 'TYPICAL TIMELINES');
+      prompt = stripSection(prompt, 'PATHS OVERVIEW — BUYER', 'PATHS OVERVIEW BOUNDARY');
+      prompt = stripSection(prompt, 'BUYER EDUCATION (high-level)', 'SELLER EDUCATION (high-level)');
+    }
+  }
+  if (intent === 'explore' && !hasToolsCompleted) {
+    if (language === 'es') {
+      prompt = stripSection(prompt, 'KB-8: CONTEXTO DE PLATAFORMA', 'KB-9');
+    } else {
+      prompt = stripSection(prompt, 'KB-8: CORNER CONNECT', 'KB-9');
+    }
+  }
+  return prompt;
+}
+
 // ============= MAIN HANDLER =============
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
@@ -2685,7 +2742,8 @@ serve(async (req) => {
     const stalled = isStalled(history, message);
 
     // Build system prompt with mode context
-    const systemPrompt = language === "es" ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN;
+    const systemPrompt = buildSystemPrompt(language, effectiveIntent, (context.tools_completed ?? []).length > 0);
+    console.log(`[Selena] System prompt assembled: ${systemPrompt.length} chars, intent: ${effectiveIntent}`);
 
     // ============= CONCIERGE MEMORY SUMMARY (max 3 lines, ~30 tokens) =============
     // Only injected when context audit ran and surfaced useful data.
@@ -2759,29 +2817,34 @@ serve(async (req) => {
       let priceCutPct: number | null = null;
 
       try {
-        if (rlUrl && rlKey) {
+        const pulseCacheKey = 'market_pulse_Tucson_Overall';
+        const cachedPulse = getCached<Record<string, unknown>>(pulseCacheKey);
+        const pulse = cachedPulse ?? (rlUrl && rlKey ? await (async () => {
           const pulseClient = createClient(rlUrl, rlKey);
-          const { data: pulse } = await pulseClient
+          const { data } = await pulseClient
             .from("market_pulse_settings")
             .select("days_to_close, holding_cost_per_day, negotiation_gap, scrape_log")
             .eq("market_name", "Tucson_Overall")
             .single();
-          if (pulse) {
-            daysToClose = pulse.days_to_close ?? daysToClose;
-            holdingCostPerDay = Number(pulse.holding_cost_per_day) || holdingCostPerDay;
-            if (pulse.negotiation_gap != null) {
-              const ratio = 1 - pulse.negotiation_gap;
+          if (data) setCache(pulseCacheKey, data, 3600000); // 1 hour TTL
+          return data;
+        })() : null);
+        if (cachedPulse) console.log('[Selena] Market pulse cache HIT');
+        if (pulse) {
+            daysToClose = (pulse as Record<string, unknown>).days_to_close as number ?? daysToClose;
+            holdingCostPerDay = Number((pulse as Record<string, unknown>).holding_cost_per_day) || holdingCostPerDay;
+            const negGap = (pulse as Record<string, unknown>).negotiation_gap;
+            if (negGap != null) {
+              const ratio = 1 - (negGap as number);
               saleToListPct = `${(ratio * 100).toFixed(1)}%`;
             }
-            // Extended fields from scrape_log (set by Firecrawl P1 expansion)
-            const log = pulse.scrape_log as Record<string, unknown> | null;
+            const log = (pulse as Record<string, unknown>).scrape_log as Record<string, unknown> | null;
             if (log) {
               if (log.median_list_price) medianListPrice = log.median_list_price as string;
               if (log.active_listings) activeListings = log.active_listings as number;
               if (log.price_cut_pct) priceCutPct = log.price_cut_pct as number;
             }
           }
-        }
       } catch (_e) { /* fallback to defaults — non-blocking */ }
 
       const totalHoldingCost = Math.round(daysToClose * holdingCostPerDay);
@@ -2807,7 +2870,7 @@ serve(async (req) => {
           : `\n\nTUCSON MARKET CONTEXT (orientation): Current averages — ${medianDom} days on market, ${saleToListPct} sale-to-list ratio.${extendedLine}\nUse these figures to orient the user when they ask about the market. Do not pressure with holding costs unless the user raises them. Be informative, not urgent.`;
       }
     }
-    
+
 
     // ============= NEIGHBORHOOD INTELLIGENCE HINT (Perplexity-grounded) =============
     // Fires only when last_neighborhood_zip is present. Single DB read (~5ms).
@@ -2818,12 +2881,19 @@ serve(async (req) => {
 
     if (isValidZip && rlUrl && rlKey) {
       try {
-        const nbClient = createClient(rlUrl, rlKey);
-        const { data: nbProfile } = await nbClient
-          .from("neighborhood_profiles")
-          .select("profile_en, profile_es")
-          .eq("zip_code", rawZip)
-          .maybeSingle();
+        const nbCacheKey = `neighborhood_${rawZip}`;
+        const cachedNb = getCached<Record<string, unknown>>(nbCacheKey);
+        const nbProfile = cachedNb ?? await (async () => {
+          const nbClient = createClient(rlUrl, rlKey);
+          const { data } = await nbClient
+            .from("neighborhood_profiles")
+            .select("profile_en, profile_es")
+            .eq("zip_code", rawZip)
+            .maybeSingle();
+          if (data) setCache(nbCacheKey, data, 86400000); // 24 hour TTL
+          return data;
+        })();
+        if (cachedNb) console.log(`[Selena] Neighborhood cache HIT for ZIP ${rawZip}`);
 
         if (nbProfile) {
           const profile = language === 'es' ? nbProfile.profile_es : nbProfile.profile_en;
@@ -3358,8 +3428,8 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         throw new Error(`Primary model failed: ${response.status}`);
       }
     } catch (e) {
-      console.warn("Primary model failed, falling back to openai/gpt-5-nano", e);
-      modelUsed = "openai/gpt-5-nano";
+      console.warn("Primary model failed, falling back to openai/gpt-4o-mini", e);
+      modelUsed = "openai/gpt-4o-mini";
       response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`, "Content-Type": "application/json" },
