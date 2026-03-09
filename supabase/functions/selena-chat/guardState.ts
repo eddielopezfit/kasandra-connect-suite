@@ -290,8 +290,8 @@ export function applyGuardRules(
       ? 'GUARDIA: Usuario ansioso en bucle. Escalación solo a conexión humana, nunca a herramientas ni reservas.'
       : 'GUARD: Anxious user looping. Escalation must be human connection only, never tools or booking.');
     chipOverrides = language === 'es'
-      ? ['Hablar con Kasandra', 'Seguir conversando con Selena']
-      : ['Talk with Kasandra', 'Keep chatting with Selena'];
+      ? ['Hablar con Kasandra', 'Tengo otra pregunta']
+      : ['Talk with Kasandra', 'I have another question'];
     violations.push({ rule: 'anxiety_loop_gate', action: 'modified' });
   }
 
