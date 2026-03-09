@@ -30,7 +30,7 @@ export class ChatErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-white/95 backdrop-blur-md border border-cc-navy/10 p-4 rounded-2xl shadow-xl animate-in slide-in-from-bottom-5">
-          <div className="bg-red-50 text-red-500 p-2 rounded-full">
+          <div className="bg-destructive/10 text-destructive p-2 rounded-full">
             <MessageCircle className="w-5 h-5" />
           </div>
           <div className="flex flex-col">
