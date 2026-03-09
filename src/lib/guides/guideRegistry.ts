@@ -465,7 +465,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- life-change-selling ---
   {
     id: 'life-change-selling',
-    path: '/v2/guides/life-change-selling',
+    path: '/guides/life-change-selling',
     titleEn: 'Selling After a Life Change (Divorce, Relocation, Downsizing)',
     titleEs: 'Vender Después de un Cambio de Vida (Divorcio, Mudanza, Reducción)',
     labelEn: 'Life Change Selling',
