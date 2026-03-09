@@ -343,7 +343,7 @@ function GuidesPanel({
       </div>
 
       <Button
-        onClick={() => onNavigate('/v2/guides', 'guide_browse_click')}
+        onClick={() => onNavigate('/guides', 'guide_browse_click')}
         className="w-full mb-4"
       >
         <BookOpen className="w-4 h-4 mr-2" />
