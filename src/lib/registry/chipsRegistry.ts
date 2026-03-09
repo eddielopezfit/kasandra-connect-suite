@@ -149,9 +149,9 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
   {
     id: 'tool-cash-readiness-es',
     label_en: 'Take the cash readiness check',
-    label_es: 'Tomar el check de preparación en efectivo',
-    normalized_key: 'tomar el check de preparacion en efectivo',
-    actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' } },
+    label_es: 'Preparación para efectivo',
+    normalized_key: 'preparacion para efectivo',
+    actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Preparación para efectivo' } },
     chipKey: CHIP_KEYS.CASH_READINESS,
   },
 
