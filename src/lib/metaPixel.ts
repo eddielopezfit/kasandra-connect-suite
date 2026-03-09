@@ -142,7 +142,7 @@ export function track(
 /** Fire a custom event (SellerQuizCompleted, etc.) */
 export function trackCustom(
   eventName: string,
-  params?: Record<string, any>,
+  params?: Record<string, unknown>,
 ) {
   const merged = { ...getPixelSafeParams(), ...params };
   log("trackCustom", eventName, merged);
