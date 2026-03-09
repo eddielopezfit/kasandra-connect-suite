@@ -43,14 +43,14 @@ export type ActionSpec =
 
 // Internal route maps — never exposed outside this module
 const TOOL_ROUTES: Record<ToolId, string> = {
-  'buyer-readiness': '/v2/buyer-readiness',
-  'cash-readiness': '/v2/cash-readiness',
-  'seller-readiness': '/v2/seller-readiness',
-  'off-market-buyer': '/v2/off-market',
+  'buyer-readiness': '/buyer-readiness',
+  'cash-readiness': '/cash-readiness',
+  'seller-readiness': '/seller-readiness',
+  'off-market-buyer': '/off-market',
 };
 
 const CALC_ROUTES: Record<CalculatorId, string> = {
-  'cash-comparison': '/v2/cash-offer-options',
+  'cash-comparison': '/cash-offer-options',
 };
 
 /**
