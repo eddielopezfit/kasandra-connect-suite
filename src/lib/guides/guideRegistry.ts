@@ -200,7 +200,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'inherited-probate-property',
-    path: '/v2/guides/inherited-probate-property',
+    path: '/guides/inherited-probate-property',
     titleEn: 'Inherited Property in Pima County: Understanding Your Options',
     titleEs: 'Propiedad Heredada en el Condado de Pima: Entendiendo Sus Opciones',
     labelEn: 'Inherited Property Guide',
