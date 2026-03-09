@@ -66,7 +66,7 @@ export function resetSellerDecisionContext(): void {
   try {
     const raw = localStorage.getItem(CONTEXT_KEY);
     if (!raw) {
-      console.log('[QA] No session context to reset.');
+      logger.log('[QA] No session context to reset.');
       return;
     }
     const ctx = JSON.parse(raw);
