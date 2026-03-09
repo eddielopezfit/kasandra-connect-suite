@@ -268,7 +268,7 @@ const V2ThankYouContent = () => {
               'Helpful strategies for your selling side of the equation.',
               'Estrategias útiles para el lado de venta de la ecuación.'
             ),
-            href: '/v2/guides/selling-for-top-dollar',
+            href: '/guides/selling-for-top-dollar',
           },
         };
       
