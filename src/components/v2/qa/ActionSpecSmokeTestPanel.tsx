@@ -13,6 +13,7 @@ import {
 import { CheckCircle2, XCircle, AlertTriangle, Play } from 'lucide-react';
 import { GUIDE_REGISTRY, getGuideById } from '@/lib/guides/guideRegistry';
 import { isActionValid, type ActionSpec } from '@/lib/actions/actionSpec';
+import { isQaAccessGranted } from '@/lib/qa/qaAccess';
 
 // Internal route maps (duplicated read-only for display — no behavior change)
 const TOOL_ROUTES: Record<string, string> = { 'buyer-readiness': '/v2/buyer-readiness', 'cash-readiness': '/v2/cash-readiness', 'seller-readiness': '/v2/seller-readiness' };
@@ -99,6 +100,9 @@ const ActionSpecSmokeTestPanel = () => {
       label: { en: 'Test', es: 'Prueba' },
     };
   }, [manualGuideId]);
+
+  // Gate AFTER hooks to preserve React hook order.
+  if (!isQaAccessGranted()) return null;
 
   return (
     <div className="space-y-6">

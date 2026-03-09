@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import { CheckCircle2, XCircle, Clock, Copy, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { isQaAccessGranted } from "@/lib/qa/qaAccess";
 
 // Guardrail 3: module-level comment — runtime gate is inside component (after hooks)
 
@@ -75,7 +76,7 @@ const V2CTAQualityAssurance = () => {
   }, [results]);
 
   // Guardrail 3: hard gate AFTER all hooks
-  if (!import.meta.env.DEV) {
+  if (!isQaAccessGranted()) {
     return null;
   }
 

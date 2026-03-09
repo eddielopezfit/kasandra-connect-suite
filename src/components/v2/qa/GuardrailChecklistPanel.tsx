@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { isQaAccessGranted } from '@/lib/qa/qaAccess';
 
 const CONTEXT_KEY = 'selena_context_v2';
 const CHAT_KEY = 'selena_chat_history';
@@ -130,6 +131,9 @@ const GuardrailChecklistPanel = () => {
   const [checks, setChecks] = useState(() => computeChecks(language));
 
   const refresh = useCallback(() => setChecks(computeChecks(language)), [language]);
+
+  // Gate AFTER hooks to preserve React hook order.
+  if (!isQaAccessGranted()) return null;
 
   return (
     <div className="space-y-4">
