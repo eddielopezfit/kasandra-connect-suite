@@ -197,7 +197,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Build my selling timeline',
     label_es: 'Construir mi cronograma de venta',
     normalized_key: 'build my selling timeline',
-    actionSpec: { type: 'navigate', path: '/v2/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
+    actionSpec: { type: 'navigate', path: '/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
     chipKey: CHIP_KEYS.BUILD_SELLING_TIMELINE,
   },
   {
