@@ -221,7 +221,7 @@ const V2ThankYouContent = () => {
               'Learn strategies to maximize your home\'s value.',
               'Aprenda estrategias para maximizar el valor de su casa.'
             ),
-            href: '/v2/guides/selling-for-top-dollar',
+            href: '/guides/selling-for-top-dollar',
           },
         };
       
