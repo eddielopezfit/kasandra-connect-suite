@@ -431,7 +431,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- sell-now-or-wait ---
   {
     id: 'sell-now-or-wait',
-    path: '/v2/guides/sell-now-or-wait',
+    path: '/guides/sell-now-or-wait',
     titleEn: 'Sell Now or Wait? How Tucson Homeowners Decide',
     titleEs: '¿Vender Ahora o Esperar? Cómo Deciden los Propietarios en Tucson',
     labelEn: 'Sell Now or Wait?',
