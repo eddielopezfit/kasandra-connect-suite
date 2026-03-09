@@ -5,9 +5,14 @@
  * No side effects, no imports from React or context.
  * 
  * Deduplication rule: only dedupe when BOTH normalized_key AND actionSpec are identical.
+ * 
+ * DUAL LOOKUP ARCHITECTURE:
+ * 1. By semantic key (chipKey) — for deterministic routing from journeyState/chipGovernance
+ * 2. By normalized text (normalized_key) — fallback for LLM hallucination detection
  */
 
 import type { ActionSpec } from '@/lib/actions/actionSpec';
+import { CHIP_KEYS, type ChipKey } from './chipKeys';
 
 // ============= TYPES =============
 
@@ -19,6 +24,8 @@ export interface ChipRegistryEntry {
   label_es: string;
   normalized_key: string;
   actionSpec: ActionSpec;
+  /** Optional semantic key for deterministic routing. If present, enables lookup by CHIP_KEYS. */
+  chipKey?: ChipKey;
 }
 
 // ============= NORMALIZATION =============
@@ -47,6 +54,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Estimar mis ganancias netas',
     normalized_key: 'estimate my net proceeds',
     actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
+    chipKey: CHIP_KEYS.ESTIMATE_PROCEEDS,
   },
   {
     id: 'calc-net-proceeds-es',
@@ -54,6 +62,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Estimar mis ganancias netas',
     normalized_key: 'estimar mis ganancias netas',
     actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
+    chipKey: CHIP_KEYS.ESTIMATE_PROCEEDS,
   },
 
   // --- Calculator: cash vs listing ---
@@ -63,6 +72,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Comparar efectivo vs. listado',
     normalized_key: 'compare cash vs listing',
     actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
+    chipKey: CHIP_KEYS.COMPARE_CASH_LISTING,
   },
   {
     id: 'calc-cash-vs-listing-es',
@@ -70,6 +80,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Comparar efectivo vs. listado',
     normalized_key: 'comparar efectivo vs listado',
     actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
+    chipKey: CHIP_KEYS.COMPARE_CASH_LISTING,
   },
 
   // --- Booking: talk with Kasandra ---
@@ -79,6 +90,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Hablar con Kasandra',
     normalized_key: 'talk with kasandra',
     actionSpec: { type: 'book', label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
+    chipKey: CHIP_KEYS.TALK_WITH_KASANDRA,
   },
   {
     id: 'book-talk-es',
@@ -86,6 +98,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Hablar con Kasandra',
     normalized_key: 'hablar con kasandra',
     actionSpec: { type: 'book', label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
+    chipKey: CHIP_KEYS.TALK_WITH_KASANDRA,
   },
 
   // --- Booking: find a time ---
@@ -95,6 +108,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Encontrar un horario con Kasandra',
     normalized_key: 'find a time with kasandra',
     actionSpec: { type: 'book', label: { en: 'Find a time with Kasandra', es: 'Encontrar un horario con Kasandra' } },
+    chipKey: CHIP_KEYS.FIND_A_TIME,
   },
   {
     id: 'book-find-time-es',
@@ -102,6 +116,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Encontrar un horario con Kasandra',
     normalized_key: 'encontrar un horario con kasandra',
     actionSpec: { type: 'book', label: { en: 'Find a time with Kasandra', es: 'Encontrar un horario con Kasandra' } },
+    chipKey: CHIP_KEYS.FIND_A_TIME,
   },
 
   // --- Tool: buyer readiness ---
@@ -111,6 +126,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Tomar la evaluación de preparación',
     normalized_key: 'take the readiness check',
     actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+    chipKey: CHIP_KEYS.BUYER_READINESS,
   },
   {
     id: 'tool-buyer-readiness-es',
@@ -118,6 +134,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Tomar la evaluación de preparación',
     normalized_key: 'tomar la evaluacion de preparacion',
     actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+    chipKey: CHIP_KEYS.BUYER_READINESS,
   },
 
   // --- Tool: cash readiness ---
@@ -127,6 +144,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Tomar el check de preparación en efectivo',
     normalized_key: 'take the cash readiness check',
     actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' } },
+    chipKey: CHIP_KEYS.CASH_READINESS,
   },
   {
     id: 'tool-cash-readiness-es',
@@ -134,6 +152,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Tomar el check de preparación en efectivo',
     normalized_key: 'tomar el check de preparacion en efectivo',
     actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' } },
+    chipKey: CHIP_KEYS.CASH_READINESS,
   },
 
   // --- Navigate: seller decision ---
@@ -143,6 +162,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Ver mis opciones de venta',
     normalized_key: 'get my selling options',
     actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    chipKey: CHIP_KEYS.GET_SELLING_OPTIONS,
   },
   {
     id: 'nav-seller-decision-es',
@@ -150,6 +170,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Ver mis opciones de venta',
     normalized_key: 'ver mis opciones de venta',
     actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    chipKey: CHIP_KEYS.GET_SELLING_OPTIONS,
   },
 
   // --- Tool: seller readiness ---
@@ -159,6 +180,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Check rápido de preparación para vender',
     normalized_key: 'quick seller readiness check',
     actionSpec: { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' } },
+    chipKey: CHIP_KEYS.SELLER_READINESS,
   },
   {
     id: 'tool-seller-readiness-es',
@@ -166,6 +188,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Check rápido de preparación para vender',
     normalized_key: 'check rapido de preparacion para vender',
     actionSpec: { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' } },
+    chipKey: CHIP_KEYS.SELLER_READINESS,
   },
 
   // --- Navigate: seller timeline planner ---
@@ -175,6 +198,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Construir mi cronograma de venta',
     normalized_key: 'build my selling timeline',
     actionSpec: { type: 'navigate', path: '/v2/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
+    chipKey: CHIP_KEYS.BUILD_SELLING_TIMELINE,
   },
   {
     id: 'nav-seller-timeline-es',
@@ -182,6 +206,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Construir mi cronograma de venta',
     normalized_key: 'construir mi cronograma de venta',
     actionSpec: { type: 'navigate', path: '/v2/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
+    chipKey: CHIP_KEYS.BUILD_SELLING_TIMELINE,
   },
 
   // --- Navigate: guides hub ---
@@ -191,6 +216,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Explorar guías',
     normalized_key: 'browse guides',
     actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+    chipKey: CHIP_KEYS.BROWSE_GUIDES,
   },
   {
     id: 'nav-guides-es',
@@ -198,6 +224,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Explorar guías',
     normalized_key: 'explorar guias',
     actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+    chipKey: CHIP_KEYS.BROWSE_GUIDES,
   },
 
   // --- Legacy: browse buyer guides → guides hub ---
@@ -630,10 +657,18 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
 
 // ============= LOOKUP =============
 
-// Pre-build lookup map for O(1) matching
+// Pre-build lookup map for O(1) matching by normalized text
 const chipLookup = new Map<string, ChipRegistryEntry>(
   CHIPS_REGISTRY.map(entry => [entry.normalized_key, entry])
 );
+
+// Pre-build lookup map for O(1) matching by semantic chip key
+const chipKeyLookup = new Map<string, ChipRegistryEntry>();
+for (const entry of CHIPS_REGISTRY) {
+  if (entry.chipKey && !chipKeyLookup.has(entry.chipKey)) {
+    chipKeyLookup.set(entry.chipKey, entry);
+  }
+}
 
 /**
  * Find a chip registry entry by normalizing the input label and matching against normalized_key.
@@ -642,4 +677,13 @@ const chipLookup = new Map<string, ChipRegistryEntry>(
 export function findChipByNormalizedKey(label: string): ChipRegistryEntry | undefined {
   const normalized = normalizeChipLabel(label);
   return chipLookup.get(normalized);
+}
+
+/**
+ * Find a chip registry entry by semantic chip key (from CHIP_KEYS).
+ * This is the PRIMARY lookup for deterministic routing — no text matching involved.
+ * Returns undefined if the key is not registered.
+ */
+export function findChipByKey(key: string): ChipRegistryEntry | undefined {
+  return chipKeyLookup.get(key);
 }

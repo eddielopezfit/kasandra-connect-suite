@@ -2,13 +2,15 @@ import { EntryContext, ChatMessage } from './types';
 import { SessionContext, updateSessionContext } from '@/lib/analytics/selenaSession';
 import { MappedReply } from '@/lib/registry/chipsRegistry';
 import { mapChipsToActionSpecs, getPhaseAwareChips } from './chipGovernance';
+import type { Language } from '@/contexts/LanguageContext';
 
 export function computeGreeting(
   entryContext: EntryContext | undefined,
   sessionContext: SessionContext | null,
   messages: ChatMessage[],
   storedHistoryExists: boolean,
-  t: (en: string, es: string) => string
+  t: (en: string, es: string) => string,
+  language: Language = 'en',
 ): { greetingContent: string; suggestedReplies: MappedReply[]; } | null {
   const isPostBooking = entryContext?.source === 'post_booking';
   const isMeaningfulSource = entryContext && 
@@ -68,7 +70,7 @@ export function computeGreeting(
       );
       suggestedReplies = mapChipsToActionSpecs([
         t("Talk with Kasandra", "Hablar con Kasandra"),
-      ]);
+      ], language);
       suggestedReplies.push({ label: t("Keep exploring", "Seguir explorando") });
       updateSessionContext({ recovery_shown: true });
     } else {

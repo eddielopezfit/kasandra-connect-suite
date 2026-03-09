@@ -427,41 +427,29 @@ function getGovernedChips(
     (isLooping && hasIntent);
 
   if (enterPhase3) {
-    const chips = language === 'es'
-      ? ["Estimar mis ganancias netas", "Hablar con Kasandra"]
-      : ["Estimate my net proceeds", "Talk with Kasandra"];
+    const chips = [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA];
     return { chips, phase: 3, escalated: isLooping || engagement.hasComparedOptions >= 2 };
   }
 
   // PHASE 2: Intent known — MAX 2 chips, no guides unless first time
   if (hasIntent) {
     if (intent === 'sell' || intent === 'cash') {
-      // If user already asked value → offer compare + decision
       if (engagement.hasAskedValue) {
-        const chips = language === 'es'
-          ? ["Comparar efectivo vs. listado", "Ver mis opciones de venta"]
-          : ["Compare cash vs. listing", "Get my selling options"];
+        const chips = [CHIP_KEYS.COMPARE_CASH_LISTING, CHIP_KEYS.GET_SELLING_OPTIONS];
         return { chips, phase: 2, escalated: false };
       }
-      // Default seller/cash Phase 2
       const chips = intent === 'cash'
-        ? (language === 'es'
-          ? ["Tomar el check de preparación en efectivo", "Comparar efectivo vs. listado"]
-          : ["Take the cash readiness check", "Compare cash vs. listing"])
-        : (language === 'es'
-          ? ["Ver mis opciones de venta", "Comparar efectivo vs. listado"]
-          : ["Get my selling options", "Compare cash vs. listing"]);
+        ? [CHIP_KEYS.CASH_READINESS, CHIP_KEYS.COMPARE_CASH_LISTING]
+        : [CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.COMPARE_CASH_LISTING];
       return { chips, phase: 2, escalated: false };
     }
     if (intent === 'buy') {
-      const chips = language === 'es'
-        ? ["Tomar la evaluación de preparación", "Explorar guías", "Encontrar casas fuera del mercado"]
-        : ["Take the readiness check", "Browse guides", "Find off-market homes"];
+      const chips = [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET];
       return { chips, phase: 2, escalated: false };
     }
   }
 
-  // PHASE 1: Intent unknown
+  // PHASE 1: Intent unknown — conversational labels (not routable, no semantic key needed)
   const chips = language === 'es'
     ? ["Estoy pensando en vender", "Estoy buscando comprar", "Solo estoy explorando"]
     : ["I'm thinking about selling", "I'm looking to buy", "Just exploring"];
@@ -534,25 +522,122 @@ function filterSuggestionsForEarnedAccess(suggestions: string[], hasEarned: bool
 }
 
 // ============= JOURNEY AWARENESS: DESTINATION-BASED CHIP FILTER =============
-// Deterministic filtering by ActionSpec destination, not label text.
-// All Phase 2+ chips are hardcoded → exact-match map is exhaustive.
+// Deterministic filtering by semantic chip key → destination path.
+// All Phase 2+ chips use semantic keys from CHIP_KEYS (server-side mirror).
 
-// Chip label → canonical destination route (server-side mirror of chipsRegistry)
+/**
+ * Semantic chip keys — server-side mirror of src/lib/registry/chipKeys.ts
+ * Used for deterministic chip→destination resolution.
+ */
+const CHIP_KEYS = {
+  TALK_WITH_KASANDRA: 'talk_with_kasandra',
+  FIND_A_TIME: 'find_a_time',
+  ESTIMATE_PROCEEDS: 'estimate_proceeds',
+  COMPARE_CASH_LISTING: 'compare_cash_listing',
+  GET_SELLING_OPTIONS: 'get_selling_options',
+  BUYER_READINESS: 'buyer_readiness',
+  BUYER_READINESS_SHORT: 'buyer_readiness_short',
+  BUYER_READINESS_CHECK: 'buyer_readiness_check',
+  START_NOW: 'start_now',
+  CASH_READINESS: 'cash_readiness',
+  SELLER_READINESS: 'seller_readiness',
+  BROWSE_GUIDES: 'browse_guides',
+  BROWSE_BUYER_GUIDES: 'browse_buyer_guides',
+  SELLING_GUIDES: 'selling_guides',
+  BUILD_SELLING_TIMELINE: 'build_selling_timeline',
+  FIND_OFF_MARKET: 'find_off_market',
+  GET_OFF_MARKET_ACCESS: 'get_off_market_access',
+  COMPARE_NEIGHBORHOODS: 'compare_neighborhoods',
+  ESTIMATE_CLOSING_COSTS: 'estimate_closing_costs',
+  TUCSON_MARKET_DATA: 'tucson_market_data',
+  EXPLORE_NEIGHBORHOODS: 'explore_neighborhoods',
+  GUIDE_CASH_VS_LISTING: 'guide_cash_vs_listing',
+  GUIDE_FTB: 'guide_ftb',
+  GUIDE_FTB_VIEW: 'guide_ftb_view',
+  GUIDE_SELLING_TOP_DOLLAR: 'guide_selling_top_dollar',
+  GUIDE_MILITARY: 'guide_military',
+  GUIDE_DIVORCE: 'guide_divorce',
+  GUIDE_SENIOR: 'guide_senior',
+  GUIDE_NEIGHBORHOODS: 'guide_neighborhoods',
+  GUIDE_RELOCATION: 'guide_relocation',
+  GUIDE_PRICING: 'guide_pricing',
+  GUIDE_COST_TO_SELL: 'guide_cost_to_sell',
+  GUIDE_CAPITAL_GAINS: 'guide_capital_gains',
+  GUIDE_SELL_OR_RENT: 'guide_sell_or_rent',
+  GUIDE_HOW_LONG: 'guide_how_long',
+  GUIDE_FTB_PROGRAMS: 'guide_ftb_programs',
+  GUIDE_SUBURB_COMPARE: 'guide_suburb_compare',
+  GUIDE_NONCITIZEN: 'guide_noncitizen',
+  GUIDE_GLOSSARY: 'guide_glossary',
+  LEGACY_HOME_WORTH: 'legacy_home_worth',
+  LEGACY_CASH_VS_TRADITIONAL: 'legacy_cash_vs_traditional',
+  LEGACY_CASH_VS_VENTA_TRADICIONAL: 'legacy_cash_vs_venta_tradicional',
+  ESTIMATE_NET_PROCEEDS_CAPS: 'estimate_net_proceeds_caps',
+} as const;
+
+/** Semantic chip key → destination path */
+const CHIP_KEY_DESTINATION: Record<string, string> = {
+  [CHIP_KEYS.TALK_WITH_KASANDRA]: '/v2/book',
+  [CHIP_KEYS.FIND_A_TIME]: '/v2/book',
+  [CHIP_KEYS.ESTIMATE_PROCEEDS]: '/v2/cash-offer-options',
+  [CHIP_KEYS.COMPARE_CASH_LISTING]: '/v2/cash-offer-options',
+  [CHIP_KEYS.GET_SELLING_OPTIONS]: '/v2/seller-decision',
+  [CHIP_KEYS.BUYER_READINESS]: '/v2/buyer-readiness',
+  [CHIP_KEYS.BUYER_READINESS_SHORT]: '/v2/buyer-readiness',
+  [CHIP_KEYS.BUYER_READINESS_CHECK]: '/v2/buyer-readiness',
+  [CHIP_KEYS.START_NOW]: '/v2/buyer-readiness',
+  [CHIP_KEYS.CASH_READINESS]: '/v2/cash-readiness',
+  [CHIP_KEYS.SELLER_READINESS]: '/v2/seller-readiness',
+  [CHIP_KEYS.BROWSE_GUIDES]: '/v2/guides',
+  [CHIP_KEYS.BROWSE_BUYER_GUIDES]: '/v2/guides',
+  [CHIP_KEYS.SELLING_GUIDES]: '/v2/guides',
+  [CHIP_KEYS.BUILD_SELLING_TIMELINE]: '/v2/seller-timeline',
+  [CHIP_KEYS.FIND_OFF_MARKET]: '/v2/off-market',
+  [CHIP_KEYS.GET_OFF_MARKET_ACCESS]: '/v2/off-market',
+  [CHIP_KEYS.COMPARE_NEIGHBORHOODS]: '/v2/neighborhood-compare',
+  [CHIP_KEYS.ESTIMATE_CLOSING_COSTS]: '/v2/buyer-closing-costs',
+  [CHIP_KEYS.TUCSON_MARKET_DATA]: '/v2/market',
+  [CHIP_KEYS.EXPLORE_NEIGHBORHOODS]: '/v2/buy',
+  [CHIP_KEYS.GUIDE_CASH_VS_LISTING]: '/v2/guides/cash-vs-traditional-sale',
+  [CHIP_KEYS.GUIDE_FTB]: '/v2/guides/first-time-buyer-guide',
+  [CHIP_KEYS.GUIDE_FTB_VIEW]: '/v2/guides/first-time-buyer-guide',
+  [CHIP_KEYS.GUIDE_SELLING_TOP_DOLLAR]: '/v2/guides/selling-for-top-dollar',
+  [CHIP_KEYS.GUIDE_MILITARY]: '/v2/guides/military-pcs-guide',
+  [CHIP_KEYS.GUIDE_DIVORCE]: '/v2/guides/divorce-selling',
+  [CHIP_KEYS.GUIDE_SENIOR]: '/v2/guides/senior-downsizing',
+  [CHIP_KEYS.GUIDE_NEIGHBORHOODS]: '/v2/guides/tucson-neighborhoods',
+  [CHIP_KEYS.GUIDE_RELOCATION]: '/v2/guides/relocating-to-tucson',
+  [CHIP_KEYS.GUIDE_PRICING]: '/v2/guides/pricing-strategy',
+  [CHIP_KEYS.GUIDE_COST_TO_SELL]: '/v2/guides/cost-to-sell-tucson',
+  [CHIP_KEYS.GUIDE_CAPITAL_GAINS]: '/v2/guides/capital-gains-home-sale-arizona',
+  [CHIP_KEYS.GUIDE_SELL_OR_RENT]: '/v2/guides/sell-or-rent-tucson',
+  [CHIP_KEYS.GUIDE_HOW_LONG]: '/v2/guides/how-long-to-sell-tucson',
+  [CHIP_KEYS.GUIDE_FTB_PROGRAMS]: '/v2/guides/arizona-first-time-buyer-programs',
+  [CHIP_KEYS.GUIDE_SUBURB_COMPARE]: '/v2/guides/tucson-suburb-comparison',
+  [CHIP_KEYS.GUIDE_NONCITIZEN]: '/v2/guides/buying-home-noncitizen-arizona',
+  [CHIP_KEYS.GUIDE_GLOSSARY]: '/v2/guides/arizona-real-estate-glossary',
+  [CHIP_KEYS.LEGACY_HOME_WORTH]: '/v2/seller-decision',
+  [CHIP_KEYS.LEGACY_CASH_VS_TRADITIONAL]: '/v2/cash-offer-options',
+  [CHIP_KEYS.LEGACY_CASH_VS_VENTA_TRADICIONAL]: '/v2/cash-offer-options',
+  [CHIP_KEYS.ESTIMATE_NET_PROCEEDS_CAPS]: '/v2/cash-offer-options',
+};
+
+/**
+ * Legacy display-string → destination map.
+ * Kept for backward compatibility: when the LLM emits a display string instead of a semantic key,
+ * this map resolves it. The client-side dual lookup handles the same via normalized text.
+ */
 const CHIP_DESTINATION: Record<string, string> = {
-  // EN Phase 2 chips
+  // EN chips
   'Take the readiness check': '/v2/buyer-readiness',
   'Browse guides': '/v2/guides',
   'Take the cash readiness check': '/v2/cash-readiness',
   'Compare cash vs. listing': '/v2/cash-offer-options',
-  // 'Get my selling options' → seller-DECISION (wizard), not seller-READINESS (tool).
-  // 'Quick seller readiness check' is the chip that goes to the tool directly.
   'Get my selling options': '/v2/seller-decision',
   'Quick seller readiness check': '/v2/seller-readiness',
-  // EN Phase 3 chips
   'Estimate my net proceeds': '/v2/cash-offer-options',
   'Find off-market homes': '/v2/off-market',
   'Get off-market access': '/v2/off-market',
-  // Guide chips — EN
   'Browse buyer guides': '/v2/guides',
   'Selling Guides': '/v2/guides',
   'First-Time Buyer Guide': '/v2/guides/first-time-buyer-guide',
@@ -568,7 +653,6 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Estimate Net Proceeds': '/v2/cash-offer-options',
   'Compare cash vs. traditional': '/v2/cash-offer-options',
   'Compare cash vs. traditional sale': '/v2/cash-offer-options',
-  // Phase 4 guide chips — EN
   'Cost to Sell Guide': '/v2/guides/cost-to-sell-tucson',
   'AZ Real Estate Glossary': '/v2/guides/arizona-real-estate-glossary',
   'Tucson Suburb Comparison': '/v2/guides/tucson-suburb-comparison',
@@ -577,31 +661,15 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Sell or Rent Guide': '/v2/guides/sell-or-rent-tucson',
   'How Long to Sell Guide': '/v2/guides/how-long-to-sell-tucson',
   'Non-Citizen Buyer Guide': '/v2/guides/buying-home-noncitizen-arizona',
-  // Phase 4 guide chips — ES
-  'Guía de Costos de Venta': '/v2/guides/cost-to-sell-tucson',
-  'Glosario de Bienes Raíces': '/v2/guides/arizona-real-estate-glossary',
-  'Comparación de Suburbios': '/v2/guides/tucson-suburb-comparison',
-  'Programas para Compradores': '/v2/guides/arizona-first-time-buyer-programs',
-  'Guía de Ganancias de Capital': '/v2/guides/capital-gains-home-sale-arizona',
-  'Guía Vender o Rentar': '/v2/guides/sell-or-rent-tucson',
-  'Cuánto Tarda Vender': '/v2/guides/how-long-to-sell-tucson',
-  'Guía para No Ciudadanos': '/v2/guides/buying-home-noncitizen-arizona',
-  // Floating conversation chips
   'Check my readiness': '/v2/buyer-readiness',
   'Take readiness check': '/v2/buyer-readiness',
   'Start now': '/v2/buyer-readiness',
   'Find a time with Kasandra': '/v2/book',
-  'Encontrar un horario con Kasandra': '/v2/book',
-  // New tools — EN
   'Tucson Market Data': '/v2/market',
   'Compare Neighborhoods': '/v2/neighborhood-compare',
   'Estimate Closing Costs': '/v2/buyer-closing-costs',
-  // New tools — ES
-  'Datos del Mercado Tucson': '/v2/market',
-  'Comparar Vecindarios': '/v2/neighborhood-compare',
-  'Estimar Costos de Cierre': '/v2/buyer-closing-costs',
   'Talk with Kasandra': '/v2/book',
-  // ES Phase 2 chips
+  // ES chips
   'Tomar la evaluación de preparación': '/v2/buyer-readiness',
   'Explorar guías': '/v2/guides',
   'Tomar el check de preparación en efectivo': '/v2/cash-readiness',
@@ -610,9 +678,20 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Comparar efectivo vs. listado': '/v2/cash-offer-options',
   'Ver mis opciones de venta': '/v2/seller-decision',
   'Check rápido de preparación para vender': '/v2/seller-readiness',
-  // ES Phase 3 chips
   'Estimar mis ganancias netas': '/v2/cash-offer-options',
   'Hablar con Kasandra': '/v2/book',
+  'Encontrar un horario con Kasandra': '/v2/book',
+  'Guía de Costos de Venta': '/v2/guides/cost-to-sell-tucson',
+  'Glosario de Bienes Raíces': '/v2/guides/arizona-real-estate-glossary',
+  'Comparación de Suburbios': '/v2/guides/tucson-suburb-comparison',
+  'Programas para Compradores': '/v2/guides/arizona-first-time-buyer-programs',
+  'Guía de Ganancias de Capital': '/v2/guides/capital-gains-home-sale-arizona',
+  'Guía Vender o Rentar': '/v2/guides/sell-or-rent-tucson',
+  'Cuánto Tarda Vender': '/v2/guides/how-long-to-sell-tucson',
+  'Guía para No Ciudadanos': '/v2/guides/buying-home-noncitizen-arizona',
+  'Datos del Mercado Tucson': '/v2/market',
+  'Comparar Vecindarios': '/v2/neighborhood-compare',
+  'Estimar Costos de Cierre': '/v2/buyer-closing-costs',
 };
 
 // Tool ID → destination paths it blocks (the routes the tool lives on)
@@ -626,21 +705,31 @@ const TOOL_BLOCKED_DESTINATIONS: Record<string, string[]> = {
 };
 
 // Replacement destinations when a tool is completed — ordered by progression
-// This is the "Next Best Step" selector: tool completed → where to go next
 const TOOL_REPLACEMENT_DESTINATION: Record<string, string> = {
-  'buyer_readiness': '/v2/guides',          // TOFU→MOFU: education
-  'seller_readiness': '/v2/cash-offer-options', // readiness→calculator
-  'cash_readiness': '/v2/cash-offer-options',   // readiness→calculator
-  'tucson_alpha_calculator': '/v2/book',        // calculator→booking (earned)
-  'seller_decision': '/v2/book',                // decision→booking (earned)
-  'off_market_buyer': '/v2/guides',              // registered→educate while waiting
+  'buyer_readiness': '/v2/guides',
+  'seller_readiness': '/v2/cash-offer-options',
+  'cash_readiness': '/v2/cash-offer-options',
+  'tucson_alpha_calculator': '/v2/book',
+  'seller_decision': '/v2/book',
+  'off_market_buyer': '/v2/guides',
 };
 
-// Reverse lookup: destination → chip label (by language)
+// Reverse lookup: destination → semantic chip key
+const DESTINATION_TO_CHIP_KEY: Record<string, string> = {
+  '/v2/guides': CHIP_KEYS.BROWSE_GUIDES,
+  '/v2/buyer-readiness': CHIP_KEYS.BUYER_READINESS,
+  '/v2/seller-readiness': CHIP_KEYS.SELLER_READINESS,
+  '/v2/cash-readiness': CHIP_KEYS.CASH_READINESS,
+  '/v2/off-market': CHIP_KEYS.FIND_OFF_MARKET,
+  '/v2/cash-offer-options': CHIP_KEYS.ESTIMATE_PROCEEDS,
+  '/v2/book': CHIP_KEYS.TALK_WITH_KASANDRA,
+  '/v2/seller-decision': CHIP_KEYS.GET_SELLING_OPTIONS,
+};
+
+// Legacy reverse lookup (kept for display-string resolution in filterChipsForCompletedTools)
 const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
   '/v2/guides': { en: 'Browse guides', es: 'Explorar guías' },
   '/v2/buyer-readiness': { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
-  // seller-readiness replacement chip uses the tool-direct label (not the wizard label)
   '/v2/seller-readiness': { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' },
   '/v2/cash-readiness': { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' },
   '/v2/off-market': { en: 'Find off-market homes', es: 'Encontrar casas fuera del mercado' },
@@ -675,9 +764,9 @@ function filterChipsForCompletedTools(
   const filtered: string[] = [];
 
   for (const chip of chips) {
-    const dest = CHIP_DESTINATION[chip];
+    // Dual lookup: try semantic key first, then display string
+    const dest = CHIP_KEY_DESTINATION[chip] || CHIP_DESTINATION[chip];
     if (dest && blockedDests.has(dest)) {
-      // Find which tool blocked this chip
       const blockingTool = toolsCompleted.find(tid =>
         TOOL_BLOCKED_DESTINATIONS[tid]?.includes(dest)
       );
@@ -687,35 +776,34 @@ function filterChipsForCompletedTools(
         destination: dest,
         reason: 'completed',
       });
-      continue; // Remove this chip
+      continue;
     }
     filtered.push(chip);
   }
 
-  // Add replacement chips for suppressed tools (by destination, not by label)
-  const existingDests = new Set(filtered.map(c => CHIP_DESTINATION[c]).filter(Boolean));
+  // Add replacement chips for suppressed tools — emit semantic keys
+  const existingDests = new Set(filtered.map(c => CHIP_KEY_DESTINATION[c] || CHIP_DESTINATION[c]).filter(Boolean));
   for (const toolId of toolsCompleted) {
     const replacementDest = TOOL_REPLACEMENT_DESTINATION[toolId];
     if (!replacementDest) continue;
-    // Don't add if destination is also blocked or already present
     if (blockedDests.has(replacementDest)) continue;
     if (existingDests.has(replacementDest)) continue;
     if (filtered.length >= 3) break;
 
-    const chipEntry = DESTINATION_TO_CHIP[replacementDest];
-    if (!chipEntry) continue;
-    const chipLabel = language === 'es' ? chipEntry.es : chipEntry.en;
+    // Emit semantic key for replacement chip
+    const replacementKey = DESTINATION_TO_CHIP_KEY[replacementDest];
+    if (!replacementKey) continue;
 
     // Booking chips require earned access
     if (replacementDest === '/v2/book' && !hasEarnedBooking) continue;
 
-    filtered.push(chipLabel);
+    filtered.push(replacementKey);
     existingDests.add(replacementDest);
   }
 
-  // Fallback: if all chips were filtered, provide a neutral progression chip
+  // Fallback: emit semantic key
   if (filtered.length === 0) {
-    filtered.push(language === 'es' ? 'Explorar guías' : 'Browse guides');
+    filtered.push(CHIP_KEYS.BROWSE_GUIDES);
   }
 
   return { filtered, suppressions };

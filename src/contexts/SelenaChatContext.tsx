@@ -260,7 +260,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     const storedHistoryExists = messages.length > 0 || !!localStorage.getItem(CHAT_HISTORY_KEY);
     const hasContextualEntry = isMeaningfulSource && isNewEntry;
 
-    const result = computeGreeting(entryContext, sessionContext, messages, storedHistoryExists, t);
+    const result = computeGreeting(entryContext, sessionContext, messages, storedHistoryExists, t, language);
 
     if (result) {
       const greeting: ChatMessage = {
@@ -399,7 +399,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       const currentTurnCount = getSessionContext()?.turn_count ?? 0;
       updateSessionContext({ turn_count: currentTurnCount + 1 });
       
-      const mappedReplies = mapChipsToActionSpecs(data.suggestedReplies || []);
+      const mappedReplies = mapChipsToActionSpecs(data.suggestedReplies || [], languageRef.current);
 
       const chipMeta: ChipMeta = {
         phase: data.chip_phase ?? data.chip_phase_floor ?? 0,

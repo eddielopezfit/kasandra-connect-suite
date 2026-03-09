@@ -2,11 +2,11 @@
  * Journey State Engine — Deterministic TOFU/MOFU/BOFU classifier
  * 
  * Classifies users into explore | evaluate | decide based on
- * readiness score + engagement signals. Returns bilingual chips
+ * readiness score + engagement signals. Returns semantic chip keys
  * and governance hints for the system prompt.
  * 
  * Guard 2: Only uses canonical tool IDs (no text inference).
- * All chip labels are exact matches to existing CHIP_DESTINATION keys.
+ * All chip keys are semantic identifiers from CHIP_KEYS — never display strings.
  */
 
 export type JourneyState = 'explore' | 'evaluate' | 'decide';
@@ -14,8 +14,23 @@ export type JourneyState = 'explore' | 'evaluate' | 'decide';
 export interface JourneyClassification {
   journey_state: JourneyState;
   governanceHint: string;
+  /** Semantic chip keys — resolved to localized labels on the client */
   stageChips: string[];
 }
+
+/**
+ * Semantic chip keys — server-side mirror of src/lib/registry/chipKeys.ts
+ * Used for deterministic routing. Display labels live in the client registry.
+ */
+const CHIP_KEYS = {
+  TALK_WITH_KASANDRA: 'talk_with_kasandra',
+  ESTIMATE_PROCEEDS: 'estimate_proceeds',
+  COMPARE_CASH_LISTING: 'compare_cash_listing',
+  GET_SELLING_OPTIONS: 'get_selling_options',
+  BUYER_READINESS: 'buyer_readiness',
+  CASH_READINESS: 'cash_readiness',
+  BROWSE_GUIDES: 'browse_guides',
+} as const;
 
 const DECIDE_TOOLS = ['tucson_alpha_calculator', 'seller_decision'];
 const DECIDE_INTENTS = ['buy', 'sell', 'cash'];
@@ -31,7 +46,6 @@ export function classifyJourneyState(input: {
   const isEs = language === 'es';
 
   // ── decide ──
-  // readiness_score >= 60 AND (tools_completed includes canonical decide-tool) AND valid intent
   if (
     readiness_score >= 60 &&
     tools_completed.some(t => DECIDE_TOOLS.includes(t)) &&
@@ -42,14 +56,11 @@ export function classifyJourneyState(input: {
       governanceHint: isEs
         ? '\n\nESTADO DEL VIAJE: decide\n- Rute hacia reserva. Reconocimiento breve + chip de reserva solamente.'
         : '\n\nJOURNEY STATE: decide\n- Route to booking. Brief acknowledgment + booking chip only.',
-      stageChips: isEs
-        ? ['Hablar con Kasandra']
-        : ['Talk with Kasandra'],
+      stageChips: [CHIP_KEYS.TALK_WITH_KASANDRA],
     };
   }
 
   // ── evaluate ──
-  // readiness_score >= 30 OR tools_completed >= 1 OR guides_read_count >= 2
   if (
     readiness_score >= 30 ||
     tools_completed.length >= 1 ||
@@ -57,17 +68,11 @@ export function classifyJourneyState(input: {
   ) {
     let chips: string[];
     if (intent === 'sell' || intent === 'cash') {
-      chips = isEs
-        ? ['Comparar efectivo vs. listado', 'Ver mis opciones de venta']
-        : ['Compare cash vs. listing', 'Get my selling options'];
+      chips = [CHIP_KEYS.COMPARE_CASH_LISTING, CHIP_KEYS.GET_SELLING_OPTIONS];
     } else if (intent === 'buy') {
-      chips = isEs
-        ? ['Tomar la evaluación de preparación', 'Explorar guías']
-        : ['Take the readiness check', 'Browse guides'];
+      chips = [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES];
     } else {
-      chips = isEs
-        ? ['Explorar guías', 'Ver mis opciones de venta']
-        : ['Browse guides', 'Get my selling options'];
+      chips = [CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.GET_SELLING_OPTIONS];
     }
 
     return {
@@ -82,21 +87,13 @@ export function classifyJourneyState(input: {
   // ── explore ──
   let chips: string[];
   if (intent === 'buy') {
-    chips = isEs
-      ? ['Tomar la evaluación de preparación', 'Explorar guías']
-      : ['Take the readiness check', 'Browse guides'];
+    chips = [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES];
   } else if (intent === 'sell') {
-    chips = isEs
-      ? ['Ver mis opciones de venta', 'Explorar guías']
-      : ['Get my selling options', 'Browse guides'];
+    chips = [CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.BROWSE_GUIDES];
   } else if (intent === 'cash') {
-    chips = isEs
-      ? ['Tomar el check de preparación en efectivo', 'Explorar guías']
-      : ['Take the cash readiness check', 'Browse guides'];
+    chips = [CHIP_KEYS.CASH_READINESS, CHIP_KEYS.BROWSE_GUIDES];
   } else {
-    chips = isEs
-      ? ['Explorar guías']
-      : ['Browse guides'];
+    chips = [CHIP_KEYS.BROWSE_GUIDES];
   }
 
   return {
