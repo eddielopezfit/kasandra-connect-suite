@@ -37,6 +37,7 @@ import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import { isReturningVisitor, getIntent, getGuidesRead } from "@/lib/guides/personalization";
+import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeighborhoodCards";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
@@ -107,7 +108,7 @@ const V2HomeContent = () => {
         knowsLanguage: ["en", "es"],
       }} />
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center w-full max-w-full overflow-hidden">
+      <section className="relative min-h-[85vh] md:min-h-screen flex items-center justify-center w-full max-w-full overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
@@ -115,7 +116,7 @@ const V2HomeContent = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-cc-blue/90 to-cc-blue/75" />
         </div>
 
-        <div className="relative container mx-auto px-4 pt-24 w-full max-w-full">
+        <div className="relative container mx-auto px-4 pt-20 pb-12 w-full max-w-full">
           <div className="max-w-2xl text-white">
             {returningContext.isReturning ? (
               // ── Returning visitor hero ───────────────────────────────────
@@ -202,8 +203,7 @@ const V2HomeContent = () => {
                   </Button>
                   <Button
                     asChild
-                    variant="outline"
-                    className="border-white/40 text-white hover:bg-white/10 rounded-full px-8 py-6 text-lg"
+                    className="bg-white hover:bg-white/90 text-cc-navy font-semibold rounded-full px-8 py-6 text-lg shadow-lg"
                   >
                     <Link to="/guides">
                       {t("Explore Free Guides", "Ver Guías Gratis")}
@@ -457,6 +457,9 @@ const V2HomeContent = () => {
           </div>
         </div>
       </section>
+
+      {/* Neighborhood Cards */}
+      <HomepageNeighborhoodCards />
 
       {/* Trust Bar */}
       <TrustBar />

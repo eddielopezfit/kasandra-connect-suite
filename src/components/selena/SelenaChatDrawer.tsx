@@ -372,7 +372,7 @@ export function SelenaChatDrawer() {
       <Sheet open={isOpen} onOpenChange={(open) => !open && closeChat()}>
         <SheetContent 
           side="right" 
-          className="w-[400px] max-w-[35vw] min-w-[320px] p-0 flex flex-col h-full"
+          className="w-[460px] max-w-[40vw] min-w-[320px] p-0 flex flex-col h-full"
         >
           <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
             <div className="flex items-center justify-between">
