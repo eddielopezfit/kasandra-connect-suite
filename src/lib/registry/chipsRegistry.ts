@@ -161,7 +161,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Get my selling options',
     label_es: 'Ver mis opciones de venta',
     normalized_key: 'get my selling options',
-    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
     chipKey: CHIP_KEYS.GET_SELLING_OPTIONS,
   },
   {
