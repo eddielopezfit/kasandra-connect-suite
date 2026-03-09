@@ -63,7 +63,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Más Información (Vendedores)',
     component: 'src/pages/v2/V2Home.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/sell',
+    expectedTarget: '/sell',
     automatable: true,
     priority: 4,
   },
