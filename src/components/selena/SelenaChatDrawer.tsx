@@ -380,7 +380,9 @@ export function SelenaChatDrawer() {
   // ========== DESKTOP: Right-Side Sheet ==========
   return (
     <>
-      <Sheet open={isOpen} onOpenChange={(open) => !open && closeChat()}>
+      <Sheet open={isOpen} onOpenChange={(open) => {
+        if (!open) closeChat();
+      }}>
         <SheetContent 
           side="right" 
           className="w-[460px] max-w-[40vw] min-w-[320px] p-0 flex flex-col h-full"
