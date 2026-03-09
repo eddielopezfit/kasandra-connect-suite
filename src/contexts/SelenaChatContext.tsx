@@ -260,7 +260,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     const storedHistoryExists = messages.length > 0 || !!localStorage.getItem(CHAT_HISTORY_KEY);
     const hasContextualEntry = isMeaningfulSource && isNewEntry;
 
-    const result = computeGreeting(entryContext, sessionContext, messages, storedHistoryExists, t);
+    const result = computeGreeting(entryContext, sessionContext, messages, storedHistoryExists, t, language);
 
     if (result) {
       const greeting: ChatMessage = {

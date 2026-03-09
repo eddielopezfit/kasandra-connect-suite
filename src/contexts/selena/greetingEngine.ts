@@ -70,7 +70,7 @@ export function computeGreeting(
       );
       suggestedReplies = mapChipsToActionSpecs([
         t("Talk with Kasandra", "Hablar con Kasandra"),
-      ]);
+      ], language);
       suggestedReplies.push({ label: t("Keep exploring", "Seguir explorando") });
       updateSessionContext({ recovery_shown: true });
     } else {
