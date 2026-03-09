@@ -538,7 +538,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- divorce-selling ---
   {
     id: 'divorce-selling',
-    path: '/v2/guides/divorce-selling',
+    path: '/guides/divorce-selling',
     titleEn: 'Selling a Home During Divorce in Arizona: A Clear Path Forward',
     titleEs: 'Vender una Casa Durante el Divorcio en Arizona: Un Camino Claro',
     labelEn: 'Selling During Divorce',
