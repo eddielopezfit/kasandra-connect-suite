@@ -378,6 +378,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               entry_source: context?.entry_source ?? 'unknown',
               entry_guide_id: context?.entry_guide_id ?? null,
               entry_guide_title: context?.entry_guide_title ?? null,
+              closing_cost_data: (context as any)?.closing_cost_data ?? null,
             },
             history,
           }),
