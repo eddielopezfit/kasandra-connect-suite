@@ -33,7 +33,7 @@ const QuizFunnelLayout = ({ children, showSelena = false }: QuizFunnelLayoutProp
 
   return (
     <SelenaChatProvider>
-      <div className="min-h-screen flex flex-col bg-cc-ivory">
+      <div className="min-h-[100dvh] flex flex-col bg-cc-ivory">
         {/* Minimal top bar — back-to-home + language toggle only, zero nav links */}
         <div className="border-b border-cc-sand-dark/30 bg-white/80 backdrop-blur-sm px-4 py-3">
           <div className="container mx-auto max-w-3xl flex items-center justify-between">

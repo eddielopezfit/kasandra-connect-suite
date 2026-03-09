@@ -95,13 +95,16 @@ const CalculatorInputs = ({
               {t("Or enter exact amount:", "O ingresa la cantidad exacta:")}
             </Label>
             <Input
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={estimatedValue}
               onChange={(e) => {
-                const val = parseInt(e.target.value) || 100000;
+                const val = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 100000;
                 onValueChange(Math.min(2000000, Math.max(100000, val)));
               }}
               className="text-center font-semibold border-cc-sand-dark bg-white"
+              id="estimated-value"
+              name="estimated-value"
             />
           </div>
         </div>
@@ -136,14 +139,17 @@ const CalculatorInputs = ({
               )}
             </p>
             <Input
-              type="number"
+              type="text"
+              inputMode="numeric"
               placeholder={t("e.g. 245000", "ej. 245000")}
               value={mortgageBalance || ""}
               onChange={(e) => {
-                const val = parseInt(e.target.value) || 0;
+                const val = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
                 onMortgageBalanceChange(Math.max(0, val));
               }}
               className="text-center font-semibold border-cc-sand-dark bg-white text-lg"
+              id="mortgage-balance"
+              name="mortgage-balance"
             />
             {mortgageBalance > 0 && (
               <p className="text-xs text-center text-cc-slate">
@@ -216,7 +222,7 @@ const CalculatorInputs = ({
       {/* Calculate Button */}
       <Button
         onClick={onCalculate}
-        className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full py-6 text-lg shadow-gold"
+        className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full py-6 text-lg shadow-gold min-h-[48px]"
       >
         {t("Calculate My Options", "Calcular Mis Opciones")}
         <ArrowRight className="w-5 h-5 ml-2" />

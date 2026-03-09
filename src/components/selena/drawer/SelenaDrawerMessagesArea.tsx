@@ -25,6 +25,7 @@ export function SelenaDrawerMessagesArea({
       className="flex-1 min-h-0 p-4"
       ref={scrollRef}
       onClick={onMessagesAreaClick}
+      style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
     >
       <div className="space-y-4 pb-2">
         {messages.map((message) => (

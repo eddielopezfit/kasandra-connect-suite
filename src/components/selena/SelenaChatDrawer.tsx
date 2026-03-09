@@ -109,12 +109,16 @@ export function SelenaChatDrawer() {
   }, [messages.length, isLoading, isKeyboardOpen]);
 
 
-  // Close tab panel when drawer closes
+  // Close tab panel when drawer closes & remove body scroll lock
   useEffect(() => {
     if (!isOpen) {
       setActiveTab(null);
       setIsMinimized(false);
+      document.body.classList.remove('selena-open');
     }
+    return () => {
+      document.body.classList.remove('selena-open');
+    };
   }, [isOpen]);
 
   // Global language toggle handler - changes site-wide language
@@ -291,11 +295,20 @@ export function SelenaChatDrawer() {
   if (isMobile) {
     return (
       <>
-        <Drawer open={isOpen} onOpenChange={(open) => !open && closeChat()}>
+        <Drawer open={isOpen} onOpenChange={(open) => {
+          if (!open) {
+            document.body.classList.remove('selena-open');
+            closeChat();
+          } else {
+            document.body.classList.add('selena-open');
+          }
+        }}>
           <DrawerContent 
             className="h-[85dvh] max-h-[700px] flex flex-col overflow-hidden"
             style={{ paddingBottom: keyboardInset > 0 ? `${keyboardInset}px` : undefined }}
           >
+            {/* FIX 15 — Swipe drag handle indicator */}
+            <div className="mx-auto w-8 h-1 rounded-full bg-muted-foreground/30 mt-2 mb-1 shrink-0" />
             <DrawerHeader className="border-b border-border px-4 py-3 shrink-0">
               <div className="flex items-center justify-between">
                 <DrawerTitle className="flex items-center gap-2 text-lg">
@@ -369,7 +382,9 @@ export function SelenaChatDrawer() {
   // ========== DESKTOP: Right-Side Sheet ==========
   return (
     <>
-      <Sheet open={isOpen} onOpenChange={(open) => !open && closeChat()}>
+      <Sheet open={isOpen} onOpenChange={(open) => {
+        if (!open) closeChat();
+      }}>
         <SheetContent 
           side="right" 
           className="w-[460px] max-w-[40vw] min-w-[320px] p-0 flex flex-col h-full"

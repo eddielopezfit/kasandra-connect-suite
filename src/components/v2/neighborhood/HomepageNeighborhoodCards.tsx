@@ -72,6 +72,9 @@ function NeighborhoodFeatureCard({ neighborhood }: { neighborhood: typeof NEIGHB
               alt={`${neighborhood.name} neighborhood in Tucson`}
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               loading="lazy"
+              decoding="async"
+              width={400}
+              height={176}
               onError={() => setImgError(true)}
             />
           ) : (
