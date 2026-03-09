@@ -1,5 +1,6 @@
 import { useSearchParams, Link } from "react-router-dom";
 import { useEffect } from "react";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { CheckCircle2, Clock, FileText, Home, Phone, ArrowRight, MessageCircle } from "lucide-react";
