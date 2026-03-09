@@ -205,7 +205,7 @@ const V2HomeContent = () => {
                     variant="outline"
                     className="border-white/40 text-white hover:bg-white/10 rounded-full px-8 py-6 text-lg"
                   >
-                    <Link to="/v2/guides">
+                    <Link to="/guides">
                       {t("Explore Free Guides", "Ver Guías Gratis")}
                     </Link>
                   </Button>
