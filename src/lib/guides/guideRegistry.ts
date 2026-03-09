@@ -1084,7 +1084,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'buying-home-noncitizen-arizona',
-    path: '/v2/guides/buying-home-noncitizen-arizona',
+    path: '/guides/buying-home-noncitizen-arizona',
     titleEn: 'Buying a Home in Arizona as a Non-Citizen or DACA Recipient',
     titleEs: 'Comprar una Casa en Arizona como No Ciudadano o Beneficiario de DACA',
     labelEn: 'Non-Citizen Home Buying',
