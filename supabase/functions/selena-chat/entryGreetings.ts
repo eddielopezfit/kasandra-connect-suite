@@ -63,6 +63,15 @@ export interface EntryContext {
   userName?: string;
   // General
   language: 'en' | 'es';
+  // Buyer closing costs
+  closingCostData?: {
+    purchasePrice: number;
+    loanType: string;
+    downPaymentPercent: number;
+    estimatedLow: number;
+    estimatedHigh: number;
+    totalCashNeeded: number;
+  };
 }
 
 interface GreetingResult {
