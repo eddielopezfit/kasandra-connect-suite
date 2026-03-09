@@ -23,9 +23,9 @@ let initialized = false;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function log(label: string, ...args: any[]) {
+function log(label: string, ...args: unknown[]) {
   if (DEBUG || SUPPRESS) {
-    console.log(`[MetaPixel:${label}]`, ...args);
+    logger.log(`[MetaPixel:${label}]`, ...args);
   }
 }
 
