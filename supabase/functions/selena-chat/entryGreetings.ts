@@ -530,22 +530,47 @@ function generateNeighborhoodCompareGreeting(language: 'en' | 'es'): GreetingRes
   };
 }
 
-function generateBuyerClosingCostsGreeting(language: 'en' | 'es'): GreetingResult {
+function generateBuyerClosingCostsGreeting(language: 'en' | 'es', closingCostData?: EntryContext['closingCostData']): GreetingResult {
+  const cc = closingCostData;
+  if (cc && cc.purchasePrice > 0) {
+    const fmtNum = (n: number) => `$${Math.round(n).toLocaleString()}`;
+    const loanLabel = cc.loanType === 'fha' ? 'FHA' : cc.loanType === 'va' ? 'VA' : cc.loanType === 'cash' ? (language === 'es' ? 'efectivo' : 'cash') : (language === 'es' ? 'convencional' : 'conventional');
+    
+    if (language === 'es') {
+      return {
+        content: `Estás viendo ${fmtNum(cc.estimatedLow)}–${fmtNum(cc.estimatedHigh)} en costos de cierre para una compra ${loanLabel} de ${fmtNum(cc.purchasePrice)} — más tu enganche, eso es aproximadamente ${fmtNum(cc.totalCashNeeded)} total al cierre.\n\nLa buena noticia: algunos de estos rubros son negociables. Kasandra ha reducido estos costos en transacciones recientes en Tucson.`,
+        suggestedReplies: [
+          "¿Qué es negociable?",
+          "¿Cómo reduzco estos costos?",
+          "Hablar con Kasandra",
+        ],
+      };
+    }
+    return {
+      content: `You're looking at ${fmtNum(cc.estimatedLow)}–${fmtNum(cc.estimatedHigh)} in closing costs on a ${fmtNum(cc.purchasePrice)} ${loanLabel} purchase — plus your down payment, that's about ${fmtNum(cc.totalCashNeeded)} total at closing.\n\nThe good news: some of these line items are negotiable. Kasandra has negotiated these costs down on recent Tucson transactions.`,
+      suggestedReplies: [
+        "What's negotiable?",
+        "How do I reduce these costs?",
+        "Talk with Kasandra",
+      ],
+    };
+  }
+
   if (language === 'es') {
     return {
-      content: `Estás estimando tus costos de cierre — es una de las preguntas más importantes que los compradores no hacen hasta que es demasiado tarde.\n\n¿Tienes alguna duda sobre alguno de los ítems de línea?`,
+      content: `Estás investigando los costos de cierre — inteligente hacerlo antes de hacer una oferta. ¿Tienes un rango de precio o tipo de préstamo específico?`,
       suggestedReplies: [
-        "¿Qué es el seguro de título?",
-        "¿Cuánto necesito en total?",
+        "Estoy usando FHA",
+        "Ayúdame a estimar",
         "Hablar con Kasandra",
       ],
     };
   }
   return {
-    content: `You're estimating your closing costs — that's one of the most important questions buyers don't ask until it's too late.\n\nHave any questions about specific line items?`,
+    content: `You're looking into closing costs — smart to do before making an offer. Are you working with a specific price range or loan type?`,
     suggestedReplies: [
-      "What is title insurance?",
-      "How much do I need total?",
+      "I'm using FHA",
+      "Help me estimate",
       "Talk with Kasandra",
     ],
   };
