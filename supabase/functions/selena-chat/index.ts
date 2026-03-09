@@ -716,26 +716,26 @@ const TOOL_REPLACEMENT_DESTINATION: Record<string, string> = {
 
 // Reverse lookup: destination → semantic chip key
 const DESTINATION_TO_CHIP_KEY: Record<string, string> = {
-  '/v2/guides': CHIP_KEYS.BROWSE_GUIDES,
-  '/v2/buyer-readiness': CHIP_KEYS.BUYER_READINESS,
-  '/v2/seller-readiness': CHIP_KEYS.SELLER_READINESS,
-  '/v2/cash-readiness': CHIP_KEYS.CASH_READINESS,
-  '/v2/off-market': CHIP_KEYS.FIND_OFF_MARKET,
-  '/v2/cash-offer-options': CHIP_KEYS.ESTIMATE_PROCEEDS,
-  '/v2/book': CHIP_KEYS.TALK_WITH_KASANDRA,
-  '/v2/seller-decision': CHIP_KEYS.GET_SELLING_OPTIONS,
+  '/guides': CHIP_KEYS.BROWSE_GUIDES,
+  '/buyer-readiness': CHIP_KEYS.BUYER_READINESS,
+  '/seller-readiness': CHIP_KEYS.SELLER_READINESS,
+  '/cash-readiness': CHIP_KEYS.CASH_READINESS,
+  '/off-market': CHIP_KEYS.FIND_OFF_MARKET,
+  '/cash-offer-options': CHIP_KEYS.ESTIMATE_PROCEEDS,
+  '/book': CHIP_KEYS.TALK_WITH_KASANDRA,
+  '/seller-decision': CHIP_KEYS.GET_SELLING_OPTIONS,
 };
 
 // Legacy reverse lookup (kept for display-string resolution in filterChipsForCompletedTools)
 const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
-  '/v2/guides': { en: 'Browse guides', es: 'Explorar guías' },
-  '/v2/buyer-readiness': { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
-  '/v2/seller-readiness': { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' },
-  '/v2/cash-readiness': { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' },
-  '/v2/off-market': { en: 'Find off-market homes', es: 'Encontrar casas fuera del mercado' },
-  '/v2/cash-offer-options': { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
-  '/v2/book': { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' },
-  '/v2/seller-decision': { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
+  '/guides': { en: 'Browse guides', es: 'Explorar guías' },
+  '/buyer-readiness': { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
+  '/seller-readiness': { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' },
+  '/cash-readiness': { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' },
+  '/off-market': { en: 'Find off-market homes', es: 'Encontrar casas fuera del mercado' },
+  '/cash-offer-options': { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
+  '/book': { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' },
+  '/seller-decision': { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
 };
 
 interface ChipSuppressionEvent {
