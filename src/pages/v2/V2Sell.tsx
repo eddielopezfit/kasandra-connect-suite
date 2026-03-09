@@ -317,8 +317,8 @@ const V2SellContent = () => {
                 className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
               >
                 <Link 
-                  to="/v2/seller-decision"
-                  onClick={() => handleCTAClick('seller_decision_path', '/v2/seller-decision')}
+                  to="/seller-decision"
+                  onClick={() => handleCTAClick('seller_decision_path', '/seller-decision')}
                 >
                   {t("Start the Decision Tool", "Iniciar la Herramienta de Decisión")}
                   <ArrowRight className="w-4 h-4 ml-2" />
