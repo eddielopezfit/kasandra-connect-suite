@@ -33,7 +33,7 @@ const NeighborhoodIndexCard = ({ neighborhood }: NeighborhoodIndexCardProps) => 
   const heroUrl = getNeighborhoodHeroUrl(neighborhood.slug);
   
   return (
-    <Link to={`/v2/neighborhoods/${neighborhood.slug}`}>
+    <Link to={`/neighborhoods/${neighborhood.slug}`}>
       <Card className="group h-full bg-white hover:shadow-lg transition-all duration-300 border-cc-sand-dark/20 overflow-hidden">
         <div className="h-40 relative overflow-hidden bg-gradient-to-br from-cc-navy/80 to-cc-slate/60">
           {!imgError ? (

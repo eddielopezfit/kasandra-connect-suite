@@ -418,7 +418,7 @@ function GuidesContent() {
               return (
                 <Link
                   key={guide.id}
-                  to={`/v2/guides/${guide.id}`}
+                  to={`/guides/${guide.id}`}
                   onClick={() => handleGuideClick(guide.id)}
                   className={cn(
                     "group bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-elevated transition-all duration-300 border border-cc-sand-dark/50 hover:border-cc-gold/30 flex flex-col",

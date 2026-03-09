@@ -742,7 +742,7 @@ const V2HomeContent = () => {
                   "Los bienes raíces son más que transacciones—se trata de construir comunidades más fuertes. Estoy comprometida a hacer una diferencia en la vida de las familias en todo Tucson."
                 )}
               </p>
-              <Link to="/v2/community" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
+              <Link to="/community" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
                 {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
