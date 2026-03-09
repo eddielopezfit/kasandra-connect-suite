@@ -198,7 +198,7 @@ export function SelenaDrawerSuggestedRepliesChips({
     <div className="border-t border-border px-4 py-2.5 shrink-0 bg-background/95 backdrop-blur-sm">
       {/* Primary chips — booking chip removed when sub-chips are active */}
       {primaryReplies.length > 0 && (
-        <div className="flex gap-2 overflow-x-auto md:flex-wrap pb-1 scrollbar-hide max-w-full">
+        <div className="flex gap-2 overflow-x-auto md:flex-wrap pb-1 scrollbar-hide touch-scroll-x max-w-full">
           {primaryReplies.map((reply, index) => {
             const booking = isBookingChip(reply);
             return (
