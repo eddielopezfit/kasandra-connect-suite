@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { type GuideCategory } from "@/lib/guides/guideRegistry";
+import { getGuidesCompleted } from "@/lib/analytics/selenaSession";
 
 interface RelatedGuide {
   id: string;
@@ -95,6 +96,13 @@ export function GuideReadNext({ currentGuideId, currentCategory }: GuideReadNext
 
   const related = RELATED_GUIDES[currentGuideId];
   if (!related) return null;
+  
+  // Filter out guides the user has already completed
+  const completedGuides = new Set(getGuidesCompleted());
+  const filteredRelated = related.filter(guide => !completedGuides.has(guide.id));
+  
+  // If user has read all related guides, hide the section entirely
+  if (filteredRelated.length === 0) return null;
 
   return (
     <section className="py-12 bg-cc-navy">
