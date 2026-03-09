@@ -123,9 +123,9 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Conectar con Kasandra',
     component: 'src/components/selena/ConciergeTabPanels.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/book',
+    expectedTarget: '/book',
     automatable: false,
-    manualSteps: 'Open chat drawer → Talk tab → Click "Connect with Kasandra". Verify route = /v2/book, drawer closes, no modal.',
+    manualSteps: 'Open chat drawer → Talk tab → Click "Connect with Kasandra". Verify route = /book, drawer closes, no modal.',
     priority: 9,
   },
   {
