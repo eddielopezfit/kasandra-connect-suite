@@ -15,7 +15,7 @@ import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 import heroImage from "@/assets/hero-sell-premium.png";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 
-const PAGE_PATH = '/v2/sell';
+const PAGE_PATH = '/sell';
 const PAGE_INTENT = 'sell' as const;
 
 const V2SellContent = () => {
