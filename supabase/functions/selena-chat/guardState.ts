@@ -290,8 +290,8 @@ export function applyGuardRules(
       ? 'GUARDIA: Usuario ansioso en bucle. Escalación solo a conexión humana, nunca a herramientas ni reservas.'
       : 'GUARD: Anxious user looping. Escalation must be human connection only, never tools or booking.');
     chipOverrides = language === 'es'
-      ? ['Hablar con Kasandra', 'Seguir conversando con Selena']
-      : ['Talk with Kasandra', 'Keep chatting with Selena'];
+      ? ['Hablar con Kasandra', 'Tengo otra pregunta']
+      : ['Talk with Kasandra', 'I have another question'];
     violations.push({ rule: 'anxiety_loop_gate', action: 'modified' });
   }
 
@@ -344,8 +344,8 @@ export function applyGuardRules(
       ? 'CONTENCIÓN ACTIVA (KB-9): 1-2 oraciones máximo. Sin guías, sin estadísticas, sin datos de plataforma, sin claims de volumen. Ofrezca como opción tranquila hablar con Kasandra. Si declinan, haga UNA sola pregunta estabilizadora: "¿Qué parte le genera más preocupación?" No haga más de una pregunta.'
       : 'CONTAINMENT ACTIVE (KB-9): 1-2 sentences max. No guides, no stats, no platform data, no volume claims. Offer a calm option to talk with Kasandra. If they decline, ask ONE stabilizing question only: "What feels riskiest right now?" Do not ask more than one question.');
     chipOverrides = language === 'es'
-      ? ['Hablar con Kasandra', 'Seguir conversando con Selena']
-      : ['Talk with Kasandra', 'Keep chatting with Selena'];
+      ? ['Hablar con Kasandra', 'Tengo otra pregunta']
+      : ['Talk with Kasandra', 'I have another question'];
     maxTokensOverride = 80;
     violations.push({ rule: 'containment_active', action: 'modified' });
   }

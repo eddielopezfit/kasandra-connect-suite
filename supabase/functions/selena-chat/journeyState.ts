@@ -41,9 +41,45 @@ export function classifyJourneyState(input: {
   guides_read_count: number;
   intent?: string;
   language: 'en' | 'es';
+  isInheritedHome?: boolean;
+  timeline?: string;
+  hasTrustSignal?: boolean;
 }): JourneyClassification {
-  const { readiness_score, tools_completed, guides_read_count, intent, language } = input;
+  const { readiness_score, tools_completed, guides_read_count, intent, language, isInheritedHome, timeline, hasTrustSignal } = input;
   const isEs = language === 'es';
+
+  // ── HIGHEST PRIORITY: Inherited home + ASAP = immediate decide ──
+  if (isInheritedHome && timeline === 'asap') {
+    return {
+      journey_state: 'decide',
+      governanceHint: isEs
+        ? '\n\nPRIORIDAD MÁXIMA — HERENCIA + URGENTE:\nEste usuario heredó una propiedad y quiere actuar en 0-30 días. NO ofrezca guías ni herramientas. Reconozca la situación con una oración empática, luego entregue una invitación directa a reservar.\n"Kasandra ha guiado a familias en exactamente esta situación — propiedades heredadas donde el plazo importa y la confianza es todo. Una llamada de 20 minutos le daría claridad sobre ambos caminos — efectivo y tradicional — sin presión."\nPrimera y única respuesta sugerida: "Hablar con Kasandra".'
+        : '\n\nHIGHEST PRIORITY — INHERITED HOME + ASAP TIMELINE:\nThis user inherited a property and wants to move in 0-30 days. Do NOT offer guides or tools. Acknowledge their situation with one empathetic sentence, then deliver a direct booking invitation.\n"Kasandra has guided families through exactly this situation — inherited properties where the timeline matters and trust is everything. A 20-minute call with her would give you clarity on both paths — cash and traditional — with no pressure and no commitment."\nFirst and only suggested reply: "Talk with Kasandra".',
+      stageChips: [CHIP_KEYS.TALK_WITH_KASANDRA],
+    };
+  }
+
+  // ── Inherited home alone (any timeline) = decide ──
+  if (isInheritedHome) {
+    return {
+      journey_state: 'decide',
+      governanceHint: isEs
+        ? '\n\nHERENCIA DETECTADA:\nEste vendedor heredó la propiedad. Situación de alta sensibilidad y alto interés.\n- Reconozca el peso emocional brevemente, sin exagerar\n- Preocupaciones clave: ser aprovechado, entender el valor real, tomar la decisión correcta para la familia\n- "Kasandra ha ayudado a familias a navegar propiedades heredadas — entiende la complejidad emocional y práctica."\n- Siempre incluya "Hablar con Kasandra" como respuesta sugerida\n- NO recomiende más guías después de detectar esta señal'
+        : '\n\nINHERITED HOME DETECTED:\nThis seller inherited the property. High-sensitivity, high-intent situation.\n- Acknowledge the emotional weight once, briefly, without overdoing it\n- Key concerns: being taken advantage of, understanding true value, making the right decision for the family\n- "Kasandra has helped families navigate inherited properties — she understands the emotional and practical complexity."\n- Always include "Talk with Kasandra" as suggested reply\n- Do NOT recommend more guides after this pattern is detected',
+      stageChips: [CHIP_KEYS.TALK_WITH_KASANDRA],
+    };
+  }
+
+  // ── Trust signal + high-intent = decide ──
+  if (hasTrustSignal && intent && DECIDE_INTENTS.includes(intent)) {
+    return {
+      journey_state: 'decide',
+      governanceHint: isEs
+        ? '\n\nSEÑAL DE CONFIANZA DETECTADA:\nEl usuario ha expresado confianza explícita en Kasandra. Valide su instinto e invite a reservar.\n"Su instinto sobre Kasandra es correcto — ha construido su reputación exactamente en este tipo de situaciones."'
+        : '\n\nTRUST SIGNAL DETECTED:\nUser has explicitly expressed trust in Kasandra. Validate their instinct and invite booking.\n"Your instinct about Kasandra is right — she\'s built her reputation on exactly the kind of situations you\'re describing."',
+      stageChips: [CHIP_KEYS.TALK_WITH_KASANDRA],
+    };
+  }
 
   // ── HIGH INTENT OVERRIDE: guides alone can trigger decide ──
   if (guides_read_count >= 5 && intent && DECIDE_INTENTS.includes(intent)) {
