@@ -176,11 +176,11 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
 
     logEvent("tool_abandoned", {
       tool_id: "buyer_readiness",
-      page_path: "/v2/buyer-readiness",
+      page_path: "/buyer-readiness",
       step_reached: currentStep,
       questions_answered: answers.filter((a) => a.answerIndex != null).length,
     });
-    navigate("/v2/guides");
+    navigate("/guides");
   };
 
   // ─── Completion Side-Effects (fires exactly once) ────────────────────────
