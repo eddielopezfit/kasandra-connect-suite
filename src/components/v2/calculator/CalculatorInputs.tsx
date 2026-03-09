@@ -139,14 +139,17 @@ const CalculatorInputs = ({
               )}
             </p>
             <Input
-              type="number"
+              type="text"
+              inputMode="numeric"
               placeholder={t("e.g. 245000", "ej. 245000")}
               value={mortgageBalance || ""}
               onChange={(e) => {
-                const val = parseInt(e.target.value) || 0;
+                const val = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
                 onMortgageBalanceChange(Math.max(0, val));
               }}
               className="text-center font-semibold border-cc-sand-dark bg-white text-lg"
+              id="mortgage-balance"
+              name="mortgage-balance"
             />
             {mortgageBalance > 0 && (
               <p className="text-xs text-center text-cc-slate">
