@@ -117,9 +117,9 @@ const V2BuyContent = () => {
               <Button 
                 asChild 
                 className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
-                onClick={() => handleCTAClick(CTA_NAMES.HERO_BUYER_READINESS, '/v2/buyer-readiness')}
+                onClick={() => handleCTAClick(CTA_NAMES.HERO_BUYER_READINESS, '/buyer-readiness')}
               >
-                <Link to="/v2/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
+                <Link to="/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
               </Button>
               <Button 
                 asChild 
