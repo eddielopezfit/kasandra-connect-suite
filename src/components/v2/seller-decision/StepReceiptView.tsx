@@ -358,7 +358,7 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
 
           {recommended === 'cash' && (
             <a
-              href="/v2/cash-offer-options"
+              href="/cash-offer-options"
               onClick={() => logEvent("cta_click", { cta: "receipt_cash_offer", source: "decision_receipt" })}
               className="flex items-center gap-3 border border-cc-sand-dark/30 rounded-xl px-5 py-4 text-left hover:bg-cc-sand/30 transition-colors"
             >
