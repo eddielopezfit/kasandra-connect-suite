@@ -77,6 +77,8 @@ interface ChatRequest {
     last_guide_title?: string;
     lastEvents?: string[];
     lead_id?: string;
+    inherited_home?: boolean;
+    trust_signal_detected?: boolean;
     // Mode detection signals (FIX 6: renamed from tool_used)
     last_tool_completed?: string;
     last_tool_result?: string;
@@ -791,6 +793,48 @@ const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
   '/book': { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' },
   '/seller-decision': { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
 };
+
+const GUIDE_DELIVERY_AFFIRMATIVE = /^(yes|sure|yeah|yep|ok|okay|please|show me|tell me more|sí|si|claro|por favor|muéstrame|muestrame)$/i;
+const GUIDE_MENTION_PATTERN = /\b(guide|guides|guía|guia|guías|guias)\b/i;
+
+const GUIDE_ID_TO_CHIP_KEY: Record<string, string> = {
+  'first-time-buyer-guide': CHIP_KEYS.GUIDE_FTB,
+  'cash-vs-traditional-sale': CHIP_KEYS.GUIDE_CASH_VS_LISTING,
+  'selling-for-top-dollar': CHIP_KEYS.GUIDE_SELLING_TOP_DOLLAR,
+  'military-pcs-guide': CHIP_KEYS.GUIDE_MILITARY,
+  'divorce-selling': CHIP_KEYS.GUIDE_DIVORCE,
+  'senior-downsizing': CHIP_KEYS.GUIDE_SENIOR,
+  'tucson-neighborhoods': CHIP_KEYS.GUIDE_NEIGHBORHOODS,
+  'relocating-to-tucson': CHIP_KEYS.GUIDE_RELOCATION,
+  'pricing-strategy': CHIP_KEYS.GUIDE_PRICING,
+  'cost-to-sell-tucson': CHIP_KEYS.GUIDE_COST_TO_SELL,
+  'capital-gains-home-sale-arizona': CHIP_KEYS.GUIDE_CAPITAL_GAINS,
+  'sell-or-rent-tucson': CHIP_KEYS.GUIDE_SELL_OR_RENT,
+  'how-long-to-sell-tucson': CHIP_KEYS.GUIDE_HOW_LONG,
+  'arizona-first-time-buyer-programs': CHIP_KEYS.GUIDE_FTB_PROGRAMS,
+  'tucson-suburb-comparison': CHIP_KEYS.GUIDE_SUBURB_COMPARE,
+  'buying-home-noncitizen-arizona': CHIP_KEYS.GUIDE_NONCITIZEN,
+  'arizona-real-estate-glossary': CHIP_KEYS.GUIDE_GLOSSARY,
+};
+
+function detectGuideChipForDelivery(lastAssistantMessage: string, context: ChatRequest["context"]): string {
+  const lastGuideId = context.last_guide_id;
+  if (lastGuideId && GUIDE_ID_TO_CHIP_KEY[lastGuideId]) {
+    return GUIDE_ID_TO_CHIP_KEY[lastGuideId];
+  }
+
+  const lower = lastAssistantMessage.toLowerCase();
+  if (/first.?time buyer|primer.*comprador/.test(lower)) return CHIP_KEYS.GUIDE_FTB;
+  if (/cash\s*vs|efectivo\s*vs/.test(lower)) return CHIP_KEYS.GUIDE_CASH_VS_LISTING;
+  if (/top dollar|mejor precio/.test(lower)) return CHIP_KEYS.GUIDE_SELLING_TOP_DOLLAR;
+  if (/military|va|militar/.test(lower)) return CHIP_KEYS.GUIDE_MILITARY;
+  if (/divorce|divorcio/.test(lower)) return CHIP_KEYS.GUIDE_DIVORCE;
+  if (/downsizing|jubil|adulto mayor/.test(lower)) return CHIP_KEYS.GUIDE_SENIOR;
+  if (/non.?citizen|no ciudadano/.test(lower)) return CHIP_KEYS.GUIDE_NONCITIZEN;
+  if (/capital gains|ganancias de capital/.test(lower)) return CHIP_KEYS.GUIDE_CAPITAL_GAINS;
+
+  return CHIP_KEYS.BROWSE_GUIDES;
+}
 
 interface ChipSuppressionEvent {
   tool_id: string;
@@ -3131,10 +3175,10 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     const HIGH_INTENT_FINANCIAL = /how much|what.*need|can i afford|what do i need|cuánto.*necesito|cuanto.*necesito|what.*cost|total.*need/i;
     const isHighIntentQuestion = HIGH_INTENT_FINANCIAL.test(message);
 
-    // FIX 3: Inherited home + trust signal detection (scans full conversation)
+    // FIX 3: Inherited home + trust signal detection (scans full conversation + persisted context)
     const allConversation = [...history.map(h => h.content), message].join(' ');
-    const isInheritedHome = INHERITED_HOME_PATTERNS.test(allConversation);
-    const hasTrustSignal = TRUST_SIGNAL_PATTERNS.test(allConversation);
+    const isInheritedHome = INHERITED_HOME_PATTERNS.test(allConversation) || context.inherited_home === true;
+    const hasTrustSignal = TRUST_SIGNAL_PATTERNS.test(allConversation) || context.trust_signal_detected === true;
 
     const journey = classifyJourneyState({
       readiness_score: safeReadinessScore,
@@ -3439,6 +3483,25 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // they take absolute priority over all other chip governance.
     if (guardRules.chipOverrides) {
       suggestedReplies = guardRules.chipOverrides;
+    }
+
+    // ============= STRUCTURAL GUIDE DELIVERY ENFORCEMENT =============
+    // Deterministic post-processing: if user affirms after assistant mentioned a guide,
+    // force direct guide delivery chip and suppress guide re-description.
+    const lastUserMessage = message.toLowerCase().trim();
+    const lastAssistantMessage = [...history].reverse().find(m => m.role === 'assistant')?.content ?? '';
+    const isAffirmativeResponse = GUIDE_DELIVERY_AFFIRMATIVE.test(lastUserMessage);
+    const mentionedGuide = GUIDE_MENTION_PATTERN.test(lastAssistantMessage);
+    const shouldForceGuideDelivery =
+      isAffirmativeResponse &&
+      mentionedGuide &&
+      !guardRules.chipOverrides &&
+      !guardState.containment_active;
+
+    if (shouldForceGuideDelivery) {
+      const guideChip = detectGuideChipForDelivery(lastAssistantMessage, context);
+      suggestedReplies = [guideChip, ...suggestedReplies.filter(chip => chip !== guideChip)];
+      reply = language === 'es' ? 'Aquí está:' : 'Here it is:';
     }
 
     const actions: Array<{ label: string; href: string; eventType: string }> = [];

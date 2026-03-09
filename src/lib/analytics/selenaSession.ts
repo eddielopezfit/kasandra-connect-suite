@@ -108,6 +108,9 @@ export interface SessionContext {
   // Tool completion tracking (real-time journey awareness)
   tools_completed?: string[];           // Canonical tool IDs completed this session
   last_tool_completed?: string;         // Most recent tool finished (FIX 6: renamed from tool_used)
+  // Cross-turn high-intent signal persistence
+  inherited_home?: boolean;
+  trust_signal_detected?: boolean;
   // Guide completion tracking (FIX 2: journey awareness)
   guides_completed?: string[];          // Guide IDs the user has completed (50%+ scroll)
   // Seller Decision Path
