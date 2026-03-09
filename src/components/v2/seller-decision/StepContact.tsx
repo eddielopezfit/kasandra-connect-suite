@@ -164,7 +164,7 @@ const StepContact = ({
         name: data.name,
         variant,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[StepContact] Submit error:", err);
       toast.error(
         t("Something went wrong. Please try again.", "Algo salió mal. Intente de nuevo.")
