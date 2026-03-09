@@ -95,13 +95,16 @@ const CalculatorInputs = ({
               {t("Or enter exact amount:", "O ingresa la cantidad exacta:")}
             </Label>
             <Input
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={estimatedValue}
               onChange={(e) => {
-                const val = parseInt(e.target.value) || 100000;
+                const val = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 100000;
                 onValueChange(Math.min(2000000, Math.max(100000, val)));
               }}
               className="text-center font-semibold border-cc-sand-dark bg-white"
+              id="estimated-value"
+              name="estimated-value"
             />
           </div>
         </div>
