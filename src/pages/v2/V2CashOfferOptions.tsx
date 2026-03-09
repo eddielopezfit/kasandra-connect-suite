@@ -291,7 +291,7 @@ const V2CashOfferOptionsContent = () => {
               )}
             </p>
             <Link
-              to="/v2/cash-readiness"
+              to="/cash-readiness"
               className="inline-flex items-center bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3 shadow-gold transition-all active:scale-[0.98]"
             >
               {t("Take the Cash Readiness Check", "Toma el Check de Preparación")}
