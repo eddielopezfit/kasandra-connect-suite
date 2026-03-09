@@ -325,7 +325,7 @@ const V2CashOfferOptionsContent = () => {
               <Link
                 to="/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options"
                 onClick={() => {
-                  logCTAClick({ cta_name: 'cash_offer_book_review', destination: '/v2/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options', page_path: '/v2/cash-offer-options', intent: 'sell' });
+                  logCTAClick({ cta_name: 'cash_offer_book_review', destination: '/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options', page_path: '/cash-offer-options', intent: 'sell' });
                 }}
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
