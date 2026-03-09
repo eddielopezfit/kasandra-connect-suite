@@ -5,6 +5,7 @@
 
 const SESSION_KEY = 'selena_session_id';
 const CONTEXT_KEY = 'selena_context_v2';
+const GUIDES_COMPLETED_KEY = 'selena_guides_completed';
 
 export type ToolUsed = 'tucson_alpha_calculator' | 'buyer_readiness' | 'seller_readiness' | 'cash_readiness' | 'report' | 'seller_decision';
 export type CalculatorAdvantage = 'cash' | 'traditional' | 'consult';
@@ -106,7 +107,9 @@ export interface SessionContext {
   neighborhood_quiz_top_zip?: string | null;
   // Tool completion tracking (real-time journey awareness)
   tools_completed?: string[];           // Canonical tool IDs completed this session
-  last_tool_completed?: string;         // Most recent tool finished
+  last_tool_completed?: string;         // Most recent tool finished (FIX 6: renamed from tool_used)
+  // Guide completion tracking (FIX 2: journey awareness)
+  guides_completed?: string[];          // Guide IDs the user has completed (50%+ scroll)
   // Seller Decision Path
   seller_decision_step?: number;
   seller_decision_recommended_path?: 'cash' | 'traditional' | 'consult';
@@ -421,4 +424,50 @@ export function clearSession(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(CONTEXT_KEY);
+  localStorage.removeItem(GUIDES_COMPLETED_KEY);
+}
+
+// ============= FIX 2: GUIDE COMPLETION TRACKING =============
+
+/**
+ * Get the list of completed guide IDs from sessionStorage
+ */
+export function getGuidesCompleted(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const stored = sessionStorage.getItem(GUIDES_COMPLETED_KEY);
+    if (!stored) return [];
+    return JSON.parse(stored) as string[];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Mark a guide as completed (user scrolled 50%+ or spent 30s+)
+ * Appends to the array without duplicates
+ */
+export function markGuideCompleted(guideId: string): void {
+  if (typeof window === 'undefined') return;
+  if (!guideId) return;
+  
+  try {
+    const current = getGuidesCompleted();
+    if (current.includes(guideId)) return; // Already tracked
+    
+    const updated = [...current, guideId];
+    sessionStorage.setItem(GUIDES_COMPLETED_KEY, JSON.stringify(updated));
+    
+    // Also update SessionContext for payload inclusion
+    updateSessionContext({ guides_completed: updated });
+  } catch {
+    // Silent fail — guide tracking is non-critical
+  }
+}
+
+/**
+ * Check if a specific guide has been completed
+ */
+export function isGuideCompleted(guideId: string): boolean {
+  return getGuidesCompleted().includes(guideId);
 }

@@ -7,6 +7,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { logEvent } from '@/lib/analytics/logEvent';
 import { getIntent } from '@/lib/guides/personalization';
+import { markGuideCompleted } from '@/lib/analytics/selenaSession';
 
 interface UseGuideScrollTrackingOptions {
   guideId: string;
@@ -45,13 +46,15 @@ export function useGuideScrollTracking({
       intent: intent || 'unknown',
     };
 
-    // Fire 50% milestone
+    // Fire 50% milestone — also marks guide as completed for journey awareness
     if (scrollPercent >= 50 && !fired50Ref.current) {
       fired50Ref.current = true;
       logEvent('guide_scroll_50', {
         ...basePayload,
         scroll_depth: 50,
       });
+      // FIX 2: Mark guide as completed for Selena journey awareness
+      markGuideCompleted(guideId);
     }
 
     // Fire 90% milestone (guide_complete)

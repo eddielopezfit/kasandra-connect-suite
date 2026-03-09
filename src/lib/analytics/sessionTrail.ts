@@ -38,6 +38,9 @@ const ROUTE_MAP: Array<{ pattern: RegExp; label: string; type: TrailEventType }>
   { pattern: /^\/neighborhood-compare/, label: 'Neighborhood Comparison Tool', type: 'tool' },
   { pattern: /^\/buyer-closing-costs/,  label: 'Buyer Closing Cost Estimator', type: 'tool' },
   { pattern: /^\/off-market/,         label: 'Off-Market Buyer Registration', type: 'tool' },
+  // Neighborhood pages (FIX 1: strong intent signal)
+  { pattern: /^\/neighborhoods\/(.+)/, label: 'Neighborhood Profile', type: 'page' },
+  { pattern: /^\/neighborhoods$/,     label: 'Neighborhoods Index', type: 'page' },
   // Guide detail (extract guide ID for label lookup)
   { pattern: /^\/guides\/.+/,         label: 'Guide', type: 'guide' },
   // Section pages
@@ -71,6 +74,30 @@ const GUIDE_LABELS: Record<string, string> = {
   'pima-county-property-taxes':      'Pima County Property Taxes Guide',
   'capital-gains-home-sale-arizona': 'Capital Gains Guide',
   'arizona-real-estate-glossary':    'Real Estate Glossary',
+  'inherited-probate-property':      'Inherited/Probate Property Guide',
+  'life-change-selling':             'Life Change Selling Guide',
+  'selling-for-top-dollar':          'Selling for Top Dollar Guide',
+  'cash-offer-guide':                'Cash Offer Guide',
+  'understanding-home-valuation':    'Home Valuation Guide',
+};
+
+// Human-readable labels for neighborhood slugs
+const NEIGHBORHOOD_LABELS: Record<string, string> = {
+  'catalina-foothills':    'Catalina Foothills',
+  'oro-valley':            'Oro Valley',
+  'marana':                'Marana',
+  'sahuarita':             'Sahuarita',
+  'rita-ranch':            'Rita Ranch',
+  'vail':                  'Vail',
+  'sam-hughes':            'Sam Hughes',
+  'downtown-tucson':       'Downtown Tucson',
+  'tanque-verde':          'Tanque Verde',
+  'dove-mountain':         'Dove Mountain',
+  'casas-adobes':          'Casas Adobes',
+  'picture-rocks':         'Picture Rocks',
+  'midtown':               'Midtown',
+  'east-side':             'East Side',
+  'foothills':             'Foothills',
 };
 
 /**
@@ -84,6 +111,12 @@ export function classifyPath(path: string): { label: string; type: TrailEventTyp
         const guideId = path.replace('/guides/', '').split('?')[0];
         const label = GUIDE_LABELS[guideId] ?? `Guide: ${guideId}`;
         return { label, type: 'guide' };
+      }
+      // For neighborhood detail pages, extract slug for specific label
+      if (route.label === 'Neighborhood Profile') {
+        const slug = path.replace('/neighborhoods/', '').split('?')[0];
+        const label = NEIGHBORHOOD_LABELS[slug] ?? `Neighborhood: ${slug}`;
+        return { label, type: 'page' };
       }
       return { label: route.label, type: route.type };
     }
@@ -143,11 +176,12 @@ export function appendTrail(path: string): void {
 
 /**
  * Paths that add no signal — skip tracking these.
+ * NOTE: Neighborhood pages are NOT skipped — they carry strong intent signal.
  */
 function shouldSkipPath(path: string): boolean {
   const SKIP = [
     /^\/guides\/?$/,  // guides index — too generic
-    /^\/$/,
+    /^\/$/,           // home page — too generic
   ];
   return SKIP.some(p => p.test(path));
 }

@@ -77,13 +77,17 @@ interface ChatRequest {
     last_guide_title?: string;
     lastEvents?: string[];
     lead_id?: string;
-    // Mode detection signals
-    tool_used?: string;
+    // Mode detection signals (FIX 6: renamed from tool_used)
+    last_tool_completed?: string;
     last_tool_result?: string;
     quiz_completed?: boolean;
     guides_read?: number;
-    // Entry context
+    // FIX 2: Guide completion tracking
+    guides_completed?: string[];
+    // Entry context (FIX 4: now persisted across all turns)
     entry_source?: string;
+    entry_guide_id?: string | null;
+    entry_guide_title?: string | null;
     calculator_advantage?: string;
     calculator_difference?: number;
     // Mode persistence — client sends back the server's last reported mode
@@ -377,7 +381,7 @@ function inferSessionState(
     hasAskedValue: VALUE_PATTERNS.test(userCombined),
     hasComparedOptions: (userCombined.match(new RegExp(COMPARE_PATTERNS.source, 'gi')) || []).length,
     hasReadSellerGuide: SELLER_GUIDE_PATTERNS.test(combined) || !!context.last_guide_id,
-    hasUsedCalculator: CALCULATOR_PATTERNS.test(combined) || !!context.tool_used,
+    hasUsedCalculator: CALCULATOR_PATTERNS.test(combined) || !!context.last_tool_completed,
     chipHistory: userMessages.slice(-5).map(m => m.toLowerCase().trim()),
   };
 }
@@ -493,8 +497,8 @@ function hasEarnedBookingAccess(
   // 1. User explicitly asked to book/call → immediate unlock
   if (userAskedToBook(message)) return true;
   
-  // 2. Tool completion flags (stable fields from SessionContext)
-  if (context.tool_used) return true;
+  // 2. Tool completion flags (stable fields from SessionContext) — FIX 6: renamed
+  if (context.last_tool_completed) return true;
   if (context.last_tool_result) return true;
   if (context.quiz_completed) return true;
   
@@ -1539,6 +1543,36 @@ Then offer forward-moving chips (compare, decide, or book — never the same too
 CHIP COMPLEXITY LIMIT:
 Maximum 3 chips per response. A concierge reduces complexity, not adds to it.
 
+KB-12 — SESSION TRAIL AWARENESS (Journey Intelligence · Supersedes generic greeting behavior)
+
+You have access to context.session_trail — an ordered array of pages, guides, and tools the user visited before or during this conversation. Each entry has: label, type (guide/tool/page), and minutes_ago.
+
+MANDATORY RULES:
+1. NEVER re-recommend any guide or tool that appears in session_trail.
+   The user has already been there. Move them forward.
+
+2. ACKNOWLEDGE the trail when relevant — but only once per conversation,
+   in the first substantive response. Example:
+   "Since you've already looked at the Cost to Sell guide and used the calculator — let me build on that rather than repeat it."
+
+3. USE the trail to calibrate your starting point:
+   - 1 guide read → treat as Clarity Building phase minimum
+   - 1 tool completed → treat as Confidence phase minimum
+   - 2+ tools or 3+ guides → treat as Synthesis phase minimum
+   - Override the declared current_mode if trail signals higher readiness
+
+4. SYNTHESIZE across trail entries. If they read a seller guide AND used
+   the calculator, connect those dots explicitly without being asked.
+
+5. entry_source tells you HOW they arrived. Use it to frame your tone:
+   - guide_handoff → they just finished reading; go deeper, don't restart
+   - calculator → they have a number; respond to the number
+   - neighborhood_detail → they're evaluating a specific area
+   - floating_button → they initiated; let them lead
+
+SPANISH: Apply identical logic when language is 'es'. Acknowledge trail
+in natural Spanish, not translated English.
+
 KB-10 — CONCIERGE ROUTING DOCTRINE (Response Structure · If any earlier rule conflicts with KB-10, follow KB-10.)
 
 RESPONSE LENGTH RULE (HARD):
@@ -2191,6 +2225,36 @@ Luego ofrezca chips que avancen (comparar, decidir o reservar — nunca la misma
 LÍMITE DE COMPLEJIDAD DE CHIPS:
 Máximo 3 chips por respuesta. Una concierge reduce la complejidad, no la aumenta.
 
+KB-12 — CONCIENCIA DEL RECORRIDO DE SESIÓN (Inteligencia de Viaje · Supersede comportamiento de saludo genérico)
+
+Tiene acceso a context.session_trail — un array ordenado de páginas, guías y herramientas que el usuario visitó antes o durante esta conversación. Cada entrada tiene: label, type (guide/tool/page), y minutes_ago.
+
+REGLAS OBLIGATORIAS:
+1. NUNCA recomiende de nuevo ninguna guía o herramienta que aparezca en session_trail.
+   El usuario ya estuvo allí. Hágalo avanzar.
+
+2. RECONOZCA el recorrido cuando sea relevante — pero solo una vez por conversación,
+   en la primera respuesta sustantiva. Ejemplo:
+   "Ya que revisó la guía de Costos de Venta y usó la calculadora — construyamos sobre eso en lugar de repetirlo."
+
+3. USE el recorrido para calibrar su punto de partida:
+   - 1 guía leída → trate como fase de Construcción de Claridad mínimo
+   - 1 herramienta completada → trate como fase de Confianza mínimo
+   - 2+ herramientas o 3+ guías → trate como fase de Síntesis mínimo
+   - Anule el current_mode declarado si el recorrido señala mayor preparación
+
+4. SINTETICE entre entradas del recorrido. Si leyeron una guía de vendedor Y usaron
+   la calculadora, conecte esos puntos explícitamente sin que se lo pidan.
+
+5. entry_source le dice CÓMO llegaron. Úselo para enmarcar su tono:
+   - guide_handoff → acaban de terminar de leer; profundice, no reinicie
+   - calculator → tienen un número; responda al número
+   - neighborhood_detail → están evaluando un área específica
+   - floating_button → ellos iniciaron; déjelos liderar
+
+INGLÉS: Aplique lógica idéntica cuando el idioma es 'en'. Reconozca el recorrido
+en inglés natural, no español traducido.
+
 KB-10 — DOCTRINA DE ENRUTAMIENTO CONCIERGE (Estructura de Respuesta · Si cualquier regla anterior entra en conflicto con KB-10, siga KB-10.)
 
 REGLA DE LONGITUD DE RESPUESTA (DURA):
@@ -2244,7 +2308,7 @@ function buildConversationState(
     hasIntent: !!primaryIntent && primaryIntent !== 'explore',
     intent: primaryIntent,
     guidesRead: context.guides_read ?? 0,
-    toolUsed: !!context.tool_used,
+    toolUsed: !!context.last_tool_completed,
     quizCompleted: !!context.quiz_completed,
     hasToolResult: !!context.last_tool_result,
     hasEmail: !!extractedEmail || emailInHistory,
@@ -2338,7 +2402,7 @@ serve(async (req) => {
     // ============= CONTEXT AUDIT (Concierge Memory Fallback) =============
     // Fires ONLY when client signals it has no context (localStorage cleared,
     // new device, returning user). Parallel fetch — single round-trip (~20ms).
-    const needsAudit = !context.intent && !context.tool_used && context.session_id;
+    const needsAudit = !context.intent && !context.last_tool_completed && context.session_id;
     let serverName: string | null = null;
 
     if (needsAudit && rlUrl && rlKey) {
@@ -2542,7 +2606,7 @@ serve(async (req) => {
     let reflectionHint = "";
     if (modeContext.reflectionRequired) {
       const guideTitle = context.last_guide_title;
-      const toolUsed = context.tool_used;
+      const toolUsed = context.last_tool_completed;
       const guidesRead = context.guides_read || 0;
       
       if (language === "es") {
@@ -2566,7 +2630,7 @@ serve(async (req) => {
 
     // --- Seller Decision Receipt context ---
     let sellerDecisionHint = "";
-    if (context.tool_used === "seller_decision" || context.seller_decision_recommended_path) {
+    if (context.last_tool_completed === "seller_decision" || context.seller_decision_recommended_path) {
       const s = context.situation || "unknown";
       const p = context.seller_goal_priority || "unknown";
       const c = context.property_condition_raw || "unknown";
@@ -2583,7 +2647,7 @@ serve(async (req) => {
     //     read from scrape_log jsonb column — no schema change required.
     let marketPulseHint = "";
     const isSellerIntent = effectiveIntent === 'sell' || effectiveIntent === 'cash' || effectiveIntent === 'dual';
-    const equityPulseSaved = context.tool_used === 'tucson_alpha_calculator' || 
+    const equityPulseSaved = context.last_tool_completed === 'tucson_alpha_calculator' || 
       (context.tools_completed && context.tools_completed.includes('tucson_alpha_calculator'));
 
     if (isSellerIntent || equityPulseSaved) {
@@ -2837,7 +2901,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // Fires only when a tool has been completed AND produced output data.
     let toolOutputHint = "";
 
-    const toolUsed = context.tool_used;
+    const toolUsed = context.last_tool_completed;
 
     // --- Seller Net Calculator output ---
     if (
@@ -3007,7 +3071,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     
     const isFirstSellerTurn = conversationState.userTurns <= 1
       && (primaryIntent === 'sell' || primaryIntent === 'cash')
-      && !context.tool_used
+      && !context.last_tool_completed
       && !context.quiz_completed
       && !isTimelineReply    // Never re-fire on timeline chip responses
       && !proceedsOverride   // PROCEEDS override takes absolute priority over first-turn intercept
