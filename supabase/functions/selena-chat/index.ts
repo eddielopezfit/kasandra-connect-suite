@@ -3358,8 +3358,8 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         throw new Error(`Primary model failed: ${response.status}`);
       }
     } catch (e) {
-      console.warn("Primary model failed, falling back to openai/gpt-5-nano", e);
-      modelUsed = "openai/gpt-5-nano";
+      console.warn("Primary model failed, falling back to openai/gpt-4o-mini", e);
+      modelUsed = "openai/gpt-4o-mini";
       response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`, "Content-Type": "application/json" },
