@@ -322,7 +322,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Selling Guides',
     label_es: 'Guías de Venta',
     normalized_key: 'selling guides',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Selling Guides', es: 'Guías de Venta' } },
+    actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Selling Guides', es: 'Guías de Venta' } },
   },
   {
     id: 'nav-selling-guides-es',
