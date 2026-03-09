@@ -2630,7 +2630,7 @@ serve(async (req) => {
 
     // --- Seller Decision Receipt context ---
     let sellerDecisionHint = "";
-    if (context.tool_used === "seller_decision" || context.seller_decision_recommended_path) {
+    if (context.last_tool_completed === "seller_decision" || context.seller_decision_recommended_path) {
       const s = context.situation || "unknown";
       const p = context.seller_goal_priority || "unknown";
       const c = context.property_condition_raw || "unknown";
