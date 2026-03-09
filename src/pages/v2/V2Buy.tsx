@@ -125,9 +125,9 @@ const V2BuyContent = () => {
                 asChild 
                 variant="outline" 
                 className="bg-white/15 border-white/40 text-white hover:bg-white/20 hover:border-white/50 rounded-full px-6 sm:px-8 text-sm sm:text-base"
-                onClick={() => handleCTAClick('hero_buyer_guide', '/v2/guides/first-time-buyer-guide')}
+                onClick={() => handleCTAClick('hero_buyer_guide', '/guides/first-time-buyer-guide')}
               >
-                <Link to="/v2/guides/first-time-buyer-guide">{t("Read the Buyer's Guide", "Leer la Guía del Comprador")}</Link>
+                <Link to="/guides/first-time-buyer-guide">{t("Read the Buyer's Guide", "Leer la Guía del Comprador")}</Link>
               </Button>
             </div>
           </div>
