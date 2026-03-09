@@ -70,7 +70,7 @@ const V2Navigation = () => {
         <div className="flex items-center justify-between">
           {/* Logo & Brokerage */}
           <div className="flex flex-col">
-            <Link to="/v2" className={`font-serif text-xl font-semibold tracking-wide ${isScrolled ? "text-cc-navy" : "text-white"}`}>
+            <Link to="/" className={`font-serif text-xl font-semibold tracking-wide ${isScrolled ? "text-cc-navy" : "text-white"}`}>
               KASANDRA PRIETO
             </Link>
             <span className={`text-[10px] tracking-wide ${isScrolled ? "text-cc-slate" : "text-white/70"}`}>
