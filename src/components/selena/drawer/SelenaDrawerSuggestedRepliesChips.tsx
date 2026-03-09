@@ -228,7 +228,7 @@ export function SelenaDrawerSuggestedRepliesChips({
 
       {/* Expansion sub-row — intent narrowing for expandable chips (Phase ≤ 2) */}
       {expandedChipKey && EXPANSION_CHIPS[expandedChipKey] && (
-        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide max-w-full pt-1.5">
+        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide touch-scroll-x max-w-full pt-1.5">
           <span className="shrink-0 self-center text-[11px] text-cc-navy/50 pr-1 whitespace-nowrap">
             {language === 'es' ? '¿Qué más describe tu situación?' : 'What fits your situation?'}
           </span>
