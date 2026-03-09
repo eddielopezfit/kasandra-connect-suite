@@ -33,8 +33,6 @@ export type DisclaimerType = 'legal' | 'financial' | 'general';
 export type DecisionIntent = 'buy' | 'sell' | 'value' | 'cash' | 'life_event' | 'trust';
 export type DecisionStage = 'explore' | 'compare' | 'decide';
 
-/** @deprecated Removed as part of Guide-First Restructure. Mid-guide CTAs are no longer rendered. */
-export type MidGuidePromptKey = never;
 
 // Asset slot configuration — render nothing when undefined
 // Governance: fields are optional per tier. No console warnings for missing optional slots.
@@ -83,10 +81,6 @@ export interface GuideRegistryEntry {
   decisionStage: DecisionStage;
   // Stable sort order for grid display
   sortOrder: number;
-  /** @deprecated Removed in Guide-First Restructure. Do not use. */
-  midGuideCTA?: never;
-  /** @deprecated Removed in Guide-First Restructure. Do not use. */
-  exitRampCopy?: never;
   // Authority metadata for decision-compression guides
   authorityTheme?: AuthorityTheme;
   isCashGuide?: boolean;
@@ -1119,7 +1113,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
 export const getLiveGuides = (): GuideRegistryEntry[] => {
   const live = GUIDE_REGISTRY.filter(g => g.status === 'live');
-  if (!import.meta.env.PROD) live.forEach(validateTierAssets);
   return live.sort((a, b) => a.sortOrder - b.sortOrder);
 };
 
@@ -1158,14 +1151,3 @@ export const getGuideDestinations = (guideId: string): GuideDestinations | undef
   return guide?.destinations;
 };
 
-/**
- * Dev-only: Warn if a Tier 1/2 guide is missing required orientation media slot.
- * videoOverview, infographic, pdfGuide are optional-by-tier — never warned.
- */
-const _validatedIds = new Set<string>();
-export const validateTierAssets = (entry: GuideRegistryEntry): void => {
-  if (import.meta.env.PROD || _validatedIds.has(entry.id)) return;
-  _validatedIds.add(entry.id);
-  // No warnings for optional asset slots (videoOverview, infographic, pdfGuide)
-  // Orientation media slot validation is handled by guideMediaSlots.ts validateMediaSlots()
-};
