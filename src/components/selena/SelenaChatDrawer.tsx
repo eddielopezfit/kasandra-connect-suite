@@ -291,7 +291,14 @@ export function SelenaChatDrawer() {
   if (isMobile) {
     return (
       <>
-        <Drawer open={isOpen} onOpenChange={(open) => !open && closeChat()}>
+        <Drawer open={isOpen} onOpenChange={(open) => {
+          if (!open) {
+            document.body.classList.remove('selena-open');
+            closeChat();
+          } else {
+            document.body.classList.add('selena-open');
+          }
+        }}>
           <DrawerContent 
             className="h-[85dvh] max-h-[700px] flex flex-col overflow-hidden"
             style={{ paddingBottom: keyboardInset > 0 ? `${keyboardInset}px` : undefined }}
