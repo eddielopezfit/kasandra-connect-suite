@@ -37,7 +37,7 @@ export function computeGreeting(
     if (!storedHistoryExists && messages.length === 0) return true;
     if (messages.length > 3 && isMeaningfulSource && isAllowedGreetingSource) {
       const contextualSources = ['guide_handoff', 'calculator', 'synthesis', 'quiz_result', 'seller_decision',
-        'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs'];
+        'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index'];
       return contextualSources.includes(entryContext?.source || '');
     }
     if (isMeaningfulSource && isAllowedGreetingSource) return true;
