@@ -29,23 +29,23 @@ const MAX_TRAIL = 12;
 // Order matters — more specific matches first.
 const ROUTE_MAP: Array<{ pattern: RegExp; label: string; type: TrailEventType }> = [
   // Tools
-  { pattern: /^\/v2\/cash-offer-options/, label: 'Seller Net Calculator', type: 'tool' },
-  { pattern: /^\/v2\/seller-readiness/,   label: 'Seller Readiness Check', type: 'quiz' },
-  { pattern: /^\/v2\/buyer-readiness/,    label: 'Buyer Readiness Navigator', type: 'quiz' },
-  { pattern: /^\/v2\/cash-readiness/,     label: 'Cash Readiness Check', type: 'quiz' },
-  { pattern: /^\/v2\/seller-decision/,    label: 'Seller Decision Wizard', type: 'tool' },
-  { pattern: /^\/v2\/market/,             label: 'Tucson Market Intelligence', type: 'tool' },
-  { pattern: /^\/v2\/neighborhood-compare/, label: 'Neighborhood Comparison Tool', type: 'tool' },
-  { pattern: /^\/v2\/buyer-closing-costs/,  label: 'Buyer Closing Cost Estimator', type: 'tool' },
-  { pattern: /^\/v2\/off-market/,         label: 'Off-Market Buyer Registration', type: 'tool' },
+  { pattern: /^\/cash-offer-options/, label: 'Seller Net Calculator', type: 'tool' },
+  { pattern: /^\/seller-readiness/,   label: 'Seller Readiness Check', type: 'quiz' },
+  { pattern: /^\/buyer-readiness/,    label: 'Buyer Readiness Navigator', type: 'quiz' },
+  { pattern: /^\/cash-readiness/,     label: 'Cash Readiness Check', type: 'quiz' },
+  { pattern: /^\/seller-decision/,    label: 'Seller Decision Wizard', type: 'tool' },
+  { pattern: /^\/market/,             label: 'Tucson Market Intelligence', type: 'tool' },
+  { pattern: /^\/neighborhood-compare/, label: 'Neighborhood Comparison Tool', type: 'tool' },
+  { pattern: /^\/buyer-closing-costs/,  label: 'Buyer Closing Cost Estimator', type: 'tool' },
+  { pattern: /^\/off-market/,         label: 'Off-Market Buyer Registration', type: 'tool' },
   // Guide detail (extract guide ID for label lookup)
-  { pattern: /^\/v2\/guides\/.+/,         label: 'Guide', type: 'guide' },
+  { pattern: /^\/guides\/.+/,         label: 'Guide', type: 'guide' },
   // Section pages
-  { pattern: /^\/v2\/guides$/,            label: 'Guides Library', type: 'page' },
-  { pattern: /^\/v2\/buy/,               label: 'Buy Overview', type: 'page' },
-  { pattern: /^\/v2\/sell/,              label: 'Sell Overview', type: 'page' },
-  { pattern: /^\/v2\/book/,              label: 'Book a Consultation', type: 'page' },
-  { pattern: /^\/v2\/?$/,               label: 'Home', type: 'page' },
+  { pattern: /^\/guides$/,            label: 'Guides Library', type: 'page' },
+  { pattern: /^\/buy/,               label: 'Buy Overview', type: 'page' },
+  { pattern: /^\/sell/,              label: 'Sell Overview', type: 'page' },
+  { pattern: /^\/book/,              label: 'Book a Consultation', type: 'page' },
+  { pattern: /^\/?$/,               label: 'Home', type: 'page' },
 ];
 
 // Human-readable labels for known guide IDs
@@ -81,7 +81,7 @@ export function classifyPath(path: string): { label: string; type: TrailEventTyp
     if (route.pattern.test(path)) {
       // For guide detail pages, extract the guide ID for a specific label
       if (route.type === 'guide') {
-        const guideId = path.replace('/v2/guides/', '').split('?')[0];
+        const guideId = path.replace('/guides/', '').split('?')[0];
         const label = GUIDE_LABELS[guideId] ?? `Guide: ${guideId}`;
         return { label, type: 'guide' };
       }
@@ -146,9 +146,8 @@ export function appendTrail(path: string): void {
  */
 function shouldSkipPath(path: string): boolean {
   const SKIP = [
-    /^\/v2\/guides\/?$/,  // guides index — too generic
+    /^\/guides\/?$/,  // guides index — too generic
     /^\/$/,
-    /^\/v2\/?$/,          // home already tracked as 'Home'
   ];
   return SKIP.some(p => p.test(path));
 }
