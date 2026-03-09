@@ -28,7 +28,9 @@ export type DestinationKey =
   | 'private_cash_review'
   | 'thank_you'
   | 'selena_open'
-  | 'external_youtube';
+  | 'external_youtube'
+  | 'neighborhoods'
+  | 'neighborhood_detail';
 
 interface DestinationEntry {
   key: DestinationKey;
