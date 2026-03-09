@@ -138,7 +138,7 @@ const CashReadinessCheck = ({ onScoreRevealed }: CashReadinessCheckProps) => {
     if (!hasLoggedToolStart.current) {
       logEvent("tool_started", {
         tool_id: "cash_readiness",
-        page_path: "/v2/cash-readiness",
+        page_path: "/cash-readiness",
       });
       hasLoggedToolStart.current = true;
     }
