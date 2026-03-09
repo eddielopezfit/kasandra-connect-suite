@@ -109,12 +109,16 @@ export function SelenaChatDrawer() {
   }, [messages.length, isLoading, isKeyboardOpen]);
 
 
-  // Close tab panel when drawer closes
+  // Close tab panel when drawer closes & remove body scroll lock
   useEffect(() => {
     if (!isOpen) {
       setActiveTab(null);
       setIsMinimized(false);
+      document.body.classList.remove('selena-open');
     }
+    return () => {
+      document.body.classList.remove('selena-open');
+    };
   }, [isOpen]);
 
   // Global language toggle handler - changes site-wide language
