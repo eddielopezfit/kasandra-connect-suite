@@ -212,7 +212,7 @@ const V2ThankYouContent = () => {
           ],
           cta: {
             label: t('Calculate: Your Net Proceeds', 'Calcular: Sus Ganancias Netas'),
-            href: '/v2/cash-offer-options',
+            href: '/cash-offer-options',
             icon: FileText,
           },
           resource: {
