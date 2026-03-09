@@ -123,7 +123,7 @@ export function computeGreeting(
     'market_intelligence', 'market_intelligence_result', 'neighborhood_compare', 'neighborhood_compare_result', 
     'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index',
     'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture',
-    'off_market_registered', 'off_market_capture'
+    'off_market_registered', 'off_market_capture', 'seller_timeline'
   ].includes(entryContext.source);
 
   const hasRecoveryCandidate = !sessionContext?.recovery_shown && !!sessionContext?.booking_chips_shown_at;
