@@ -427,41 +427,29 @@ function getGovernedChips(
     (isLooping && hasIntent);
 
   if (enterPhase3) {
-    const chips = language === 'es'
-      ? ["Estimar mis ganancias netas", "Hablar con Kasandra"]
-      : ["Estimate my net proceeds", "Talk with Kasandra"];
+    const chips = [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA];
     return { chips, phase: 3, escalated: isLooping || engagement.hasComparedOptions >= 2 };
   }
 
   // PHASE 2: Intent known — MAX 2 chips, no guides unless first time
   if (hasIntent) {
     if (intent === 'sell' || intent === 'cash') {
-      // If user already asked value → offer compare + decision
       if (engagement.hasAskedValue) {
-        const chips = language === 'es'
-          ? ["Comparar efectivo vs. listado", "Ver mis opciones de venta"]
-          : ["Compare cash vs. listing", "Get my selling options"];
+        const chips = [CHIP_KEYS.COMPARE_CASH_LISTING, CHIP_KEYS.GET_SELLING_OPTIONS];
         return { chips, phase: 2, escalated: false };
       }
-      // Default seller/cash Phase 2
       const chips = intent === 'cash'
-        ? (language === 'es'
-          ? ["Tomar el check de preparación en efectivo", "Comparar efectivo vs. listado"]
-          : ["Take the cash readiness check", "Compare cash vs. listing"])
-        : (language === 'es'
-          ? ["Ver mis opciones de venta", "Comparar efectivo vs. listado"]
-          : ["Get my selling options", "Compare cash vs. listing"]);
+        ? [CHIP_KEYS.CASH_READINESS, CHIP_KEYS.COMPARE_CASH_LISTING]
+        : [CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.COMPARE_CASH_LISTING];
       return { chips, phase: 2, escalated: false };
     }
     if (intent === 'buy') {
-      const chips = language === 'es'
-        ? ["Tomar la evaluación de preparación", "Explorar guías", "Encontrar casas fuera del mercado"]
-        : ["Take the readiness check", "Browse guides", "Find off-market homes"];
+      const chips = [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET];
       return { chips, phase: 2, escalated: false };
     }
   }
 
-  // PHASE 1: Intent unknown
+  // PHASE 1: Intent unknown — conversational labels (not routable, no semantic key needed)
   const chips = language === 'es'
     ? ["Estoy pensando en vender", "Estoy buscando comprar", "Solo estoy explorando"]
     : ["I'm thinking about selling", "I'm looking to buy", "Just exploring"];
