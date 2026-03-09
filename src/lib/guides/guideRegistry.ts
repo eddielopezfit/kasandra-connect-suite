@@ -1151,14 +1151,3 @@ export const getGuideDestinations = (guideId: string): GuideDestinations | undef
   return guide?.destinations;
 };
 
-/**
- * Dev-only: Warn if a Tier 1/2 guide is missing required orientation media slot.
- * videoOverview, infographic, pdfGuide are optional-by-tier — never warned.
- */
-const _validatedIds = new Set<string>();
-export const validateTierAssets = (entry: GuideRegistryEntry): void => {
-  if (import.meta.env.PROD || _validatedIds.has(entry.id)) return;
-  _validatedIds.add(entry.id);
-  // No warnings for optional asset slots (videoOverview, infographic, pdfGuide)
-  // Orientation media slot validation is handled by guideMediaSlots.ts validateMediaSlots()
-};
