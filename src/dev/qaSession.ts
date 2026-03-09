@@ -88,8 +88,8 @@ export function resetSellerDecisionContext(): void {
     }
 
     localStorage.setItem(CONTEXT_KEY, JSON.stringify(ctx));
-    console.log('[QA] Seller decision context keys cleared:', sellerKeys);
+    logger.log('[QA] Seller decision context keys cleared:', sellerKeys);
   } catch {
-    console.warn('[QA] Failed to reset seller decision context.');
+    logger.warn('[QA] Failed to reset seller decision context.');
   }
 }

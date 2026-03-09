@@ -29,7 +29,7 @@ function log(label: string, ...args: unknown[]) {
   }
 }
 
-function fbq(...args: any[]) {
+function fbq(...args: unknown[]) {
   if (!SUPPRESS && typeof window.fbq === "function") {
     window.fbq(...args);
   }
