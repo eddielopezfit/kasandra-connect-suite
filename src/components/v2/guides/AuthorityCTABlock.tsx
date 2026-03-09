@@ -104,7 +104,7 @@ const CTA_CONFIG: Record<GuideCategory, {
   buying:    { labelEn: 'Get Clarity on Your Buying Journey',         labelEs: 'Obtenga Claridad sobre Su Proceso de Compra',       routeThruSelena: true,  link: 'selena_chat' },
   selling:   { labelEn: 'Request a Home Value Review',               labelEs: 'Solicitar Revisión de Valor de Vivienda',            routeThruSelena: true,  link: 'selena_chat' },
   valuation: { labelEn: 'Request a Home Value Review',               labelEs: 'Solicitar Revisión de Valor de Vivienda',            routeThruSelena: true,  link: 'selena_chat' },
-  cash:      { labelEn: 'Schedule Your Private Cash Review',         labelEs: 'Programe Su Revisión Privada de Efectivo',           routeThruSelena: false, link: '/v2/cash-offer-options' },
+  cash:      { labelEn: 'Schedule Your Private Cash Review',         labelEs: 'Programe Su Revisión Privada de Efectivo',           routeThruSelena: false, link: '/cash-offer-options' },
   stories:   { labelEn: 'Explore Your Options with Kasandra',        labelEs: 'Explore Sus Opciones con Kasandra',                  routeThruSelena: true,  link: 'selena_chat' },
   probate:   { labelEn: 'Discuss Your Inherited Property Options',   labelEs: 'Converse Sobre Sus Opciones de Propiedad Heredada',  routeThruSelena: true,  link: 'selena_chat' },
   divorce:   { labelEn: 'Talk Through Your Situation',               labelEs: 'Converse Sobre Su Situación',                       routeThruSelena: true,  link: 'selena_chat' },
