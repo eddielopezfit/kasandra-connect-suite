@@ -81,10 +81,6 @@ export interface GuideRegistryEntry {
   decisionStage: DecisionStage;
   // Stable sort order for grid display
   sortOrder: number;
-  /** @deprecated Removed in Guide-First Restructure. Do not use. */
-  midGuideCTA?: never;
-  /** @deprecated Removed in Guide-First Restructure. Do not use. */
-  exitRampCopy?: never;
   // Authority metadata for decision-compression guides
   authorityTheme?: AuthorityTheme;
   isCashGuide?: boolean;
