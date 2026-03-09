@@ -399,7 +399,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       const currentTurnCount = getSessionContext()?.turn_count ?? 0;
       updateSessionContext({ turn_count: currentTurnCount + 1 });
       
-      const mappedReplies = mapChipsToActionSpecs(data.suggestedReplies || []);
+      const mappedReplies = mapChipsToActionSpecs(data.suggestedReplies || [], languageRef.current);
 
       const chipMeta: ChipMeta = {
         phase: data.chip_phase ?? data.chip_phase_floor ?? 0,

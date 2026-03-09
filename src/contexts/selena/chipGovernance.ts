@@ -1,62 +1,104 @@
-import { MappedReply, normalizeChipLabel, findChipByNormalizedKey } from '@/lib/registry/chipsRegistry';
+import { MappedReply, normalizeChipLabel, findChipByNormalizedKey, findChipByKey } from '@/lib/registry/chipsRegistry';
+import { CHIP_KEYS, type ChipKey } from '@/lib/registry/chipKeys';
 import { getGuideChips } from '@/lib/registry/guideChipMap';
 import { logEvent } from '@/lib/analytics/logEvent';
 import { SessionContext } from '@/lib/analytics/selenaSession';
 
-export const CLIENT_TOOL_BLOCKED_CHIPS: Record<string, { en: string; es: string }[]> = {
+// ============= BLOCKED & REPLACEMENT MAPS (Semantic Keys) =============
+
+/** Tool ID → semantic chip keys that should be suppressed when tool is completed */
+export const CLIENT_TOOL_BLOCKED_CHIPS: Record<string, ChipKey[]> = {
   buyer_readiness: [
-    { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
-    { en: 'Take readiness check',     es: 'Tomar evaluación de preparación' },
-    { en: 'Check my readiness',       es: 'Verificar mi preparación' },
+    CHIP_KEYS.BUYER_READINESS,
+    CHIP_KEYS.BUYER_READINESS_SHORT,
+    CHIP_KEYS.BUYER_READINESS_CHECK,
   ],
   seller_readiness: [
-    { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' },
+    CHIP_KEYS.SELLER_READINESS,
   ],
   cash_readiness: [
-    { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' },
+    CHIP_KEYS.CASH_READINESS,
   ],
   seller_decision: [
-    { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
+    CHIP_KEYS.GET_SELLING_OPTIONS,
   ],
   tucson_alpha_calculator: [
-    { en: 'Estimate my net proceeds',   es: 'Estimar mis ganancias netas' },
-    { en: 'Compare cash vs. listing',   es: 'Comparar efectivo vs. listado' },
+    CHIP_KEYS.ESTIMATE_PROCEEDS,
+    CHIP_KEYS.COMPARE_CASH_LISTING,
   ],
 };
 
-export const CLIENT_TOOL_REPLACEMENT: Record<string, { en: string; es: string }> = {
-  buyer_readiness:          { en: 'Browse guides',         es: 'Explorar guías' },
-  seller_readiness:         { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
-  cash_readiness:           { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
-  seller_decision:          { en: 'Talk with Kasandra',    es: 'Hablar con Kasandra' },
-  tucson_alpha_calculator:  { en: 'Talk with Kasandra',    es: 'Hablar con Kasandra' },
+/** Tool ID → semantic chip key to use as replacement when tool is completed */
+export const CLIENT_TOOL_REPLACEMENT: Record<string, ChipKey> = {
+  buyer_readiness:          CHIP_KEYS.BROWSE_GUIDES,
+  seller_readiness:         CHIP_KEYS.ESTIMATE_PROCEEDS,
+  cash_readiness:           CHIP_KEYS.ESTIMATE_PROCEEDS,
+  seller_decision:          CHIP_KEYS.TALK_WITH_KASANDRA,
+  tucson_alpha_calculator:  CHIP_KEYS.TALK_WITH_KASANDRA,
 };
 
-export function mapChipsToActionSpecs(
-  replies: string[],
+// ============= SEMANTIC KEY → LOCALIZED LABEL RESOLUTION =============
+
+/**
+ * Resolves a reply (which may be a semantic key, display label, or raw text)
+ * into a MappedReply with the correct localized label and ActionSpec.
+ *
+ * Resolution order:
+ * 1. Semantic key lookup (CHIP_KEYS match) → localized label from registry
+ * 2. Normalized text lookup → label passthrough with ActionSpec from registry
+ * 3. Unmatched → logged as drift, returned as plain text
+ */
+function resolveReply(
+  reply: string,
+  language: 'en' | 'es',
   opts?: { phase?: number; intent?: string },
-): MappedReply[] {
-  const phase = opts?.phase;
-  const intent = opts?.intent;
+): MappedReply {
+  // 1. Try semantic key lookup first
+  const byKey = findChipByKey(reply);
+  if (byKey) {
+    const label = language === 'es' ? byKey.label_es : byKey.label_en;
+    return { label, actionSpec: byKey.actionSpec };
+  }
 
-  return replies.map((label) => {
-    const entry = findChipByNormalizedKey(label);
+  // 2. Try normalized text lookup (fallback for LLM hallucinations / raw labels)
+  const byText = findChipByNormalizedKey(reply);
+  if (byText) {
+    return { label: reply, actionSpec: byText.actionSpec };
+  }
 
-    if (entry?.actionSpec) {
-      return { label, actionSpec: entry.actionSpec };
-    }
-
-    logEvent('selena_chip_unmatched', {
-      chip_label_raw: label,
-      chip_label_normalized: normalizeChipLabel(label),
-      phase,
-      intent,
-    });
-
-    return { label };
+  // 3. Unmatched — log drift
+  logEvent('selena_chip_unmatched', {
+    chip_label_raw: reply,
+    chip_label_normalized: normalizeChipLabel(reply),
+    phase: opts?.phase,
+    intent: opts?.intent,
   });
+
+  return { label: reply };
 }
 
+// ============= PUBLIC API =============
+
+/**
+ * Maps an array of replies (semantic keys or display strings) to MappedReplies
+ * with correct localized labels and ActionSpecs.
+ *
+ * @param replies - Array of semantic chip keys (preferred) or display strings
+ * @param language - REQUIRED. Active language for label resolution.
+ * @param opts - Optional phase/intent context for drift logging
+ */
+export function mapChipsToActionSpecs(
+  replies: string[],
+  language: 'en' | 'es',
+  opts?: { phase?: number; intent?: string },
+): MappedReply[] {
+  return replies.map((reply) => resolveReply(reply, language, opts));
+}
+
+/**
+ * Returns phase-aware chips for the current session context.
+ * Uses semantic keys internally and resolves to localized labels.
+ */
 export function getPhaseAwareChips(
   t: (en: string, es: string) => string,
   ctx?: SessionContext | null,
@@ -66,80 +108,91 @@ export function getPhaseAwareChips(
   const toolsDone = new Set(ctx?.tools_completed ?? []);
   const lang = (ctx as any)?._lang ?? 'en';
 
-  const blockedLabels = new Set<string>();
+  // Build set of blocked semantic keys from completed tools
+  const blockedKeys = new Set<ChipKey>();
   for (const toolId of toolsDone) {
-    for (const entry of CLIENT_TOOL_BLOCKED_CHIPS[toolId] ?? []) {
-      blockedLabels.add(entry.en.toLowerCase());
-      blockedLabels.add(entry.es.toLowerCase());
+    for (const key of CLIENT_TOOL_BLOCKED_CHIPS[toolId] ?? []) {
+      blockedKeys.add(key);
     }
   }
 
-  function isBlocked(en: string, es: string): boolean {
-    return blockedLabels.has(en.toLowerCase()) || blockedLabels.has(es.toLowerCase());
+  /** Check if a semantic key is blocked */
+  function isBlocked(key: ChipKey): boolean {
+    return blockedKeys.has(key);
   }
 
-  function pickLabel(en: string, es: string): string {
-    return t(en, es);
+  /** Resolve a semantic key to its localized label */
+  function resolveLabel(key: ChipKey): string {
+    const entry = findChipByKey(key);
+    if (entry) return lang === 'es' ? entry.label_es : entry.label_en;
+    // Fallback: should never happen if registry is complete
+    return key;
   }
 
-  function filterAndReplace(candidates: { en: string; es: string }[]): string[] {
-    const out: string[] = [];
-    const addedDests = new Set<string>();
+  /** Filter candidates, replace blocked ones, return semantic keys */
+  function filterAndReplace(candidates: ChipKey[]): ChipKey[] {
+    const out: ChipKey[] = [];
+    const addedKeys = new Set<ChipKey>();
 
-    for (const c of candidates) {
-      if (!isBlocked(c.en, c.es)) {
-        out.push(pickLabel(c.en, c.es));
-        addedDests.add(c.en);
+    for (const key of candidates) {
+      if (!isBlocked(key)) {
+        out.push(key);
+        addedKeys.add(key);
       }
     }
 
+    // Add replacements for completed tools
     for (const toolId of toolsDone) {
       const blocked = CLIENT_TOOL_BLOCKED_CHIPS[toolId] ?? [];
-      const wasBlocked = blocked.some(b => candidates.some(c => c.en === b.en));
+      const wasBlocked = blocked.some(b => candidates.includes(b));
       if (!wasBlocked) continue;
 
       const replacement = CLIENT_TOOL_REPLACEMENT[toolId];
       if (!replacement) continue;
-      if (addedDests.has(replacement.en)) continue;
-      if (isBlocked(replacement.en, replacement.es)) continue;
+      if (addedKeys.has(replacement)) continue;
+      if (isBlocked(replacement)) continue;
 
-      out.push(pickLabel(replacement.en, replacement.es));
-      addedDests.add(replacement.en);
+      out.push(replacement);
+      addedKeys.add(replacement);
     }
 
     return out;
   }
 
-  function prependGuideChip(chipLabels: string[], forIntent?: string): string[] {
+  function prependGuideChip(chipKeys: ChipKey[], forIntent?: string): string[] {
+    const labels = chipKeys.map(resolveLabel);
     const guideId = ctx?.last_guide_id;
-    if (!guideId) return chipLabels;
+    if (!guideId) return labels;
     const guideChipLabels = getGuideChips(guideId, lang as 'en' | 'es', forIntent);
-    if (guideChipLabels.length === 0) return chipLabels;
+    if (guideChipLabels.length === 0) return labels;
     const first = guideChipLabels[0];
-    if (chipLabels.some(c => c.toLowerCase() === first.toLowerCase())) return chipLabels;
-    return [first, ...chipLabels.slice(0, 2)];
+    if (labels.some(l => l.toLowerCase() === first.toLowerCase())) return labels;
+    return [first, ...labels.slice(0, 2)];
   }
 
   if (floor >= 3) {
-    const chips = filterAndReplace([
-      { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
-      { en: 'Talk with Kasandra',       es: 'Hablar con Kasandra' },
-    ]);
-    return mapChipsToActionSpecs(chips.length ? chips : [t('Talk with Kasandra', 'Hablar con Kasandra')]);
+    const keys = filterAndReplace([CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA]);
+    const labels = keys.map(resolveLabel);
+    return mapChipsToActionSpecs(
+      labels.length ? labels : [resolveLabel(CHIP_KEYS.TALK_WITH_KASANDRA)],
+      lang as 'en' | 'es',
+    );
   }
   if (floor >= 2 && (intent === 'sell' || intent === 'cash')) {
-    const chips = prependGuideChip(filterAndReplace([
-      { en: 'Get my selling options',   es: 'Ver mis opciones de venta' },
-      { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' },
-    ]), intent === 'sell' ? 'sell' : 'cash');
-    return mapChipsToActionSpecs(chips.length ? chips : [t('Talk with Kasandra', 'Hablar con Kasandra')]);
+    const keys = filterAndReplace([CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.COMPARE_CASH_LISTING]);
+    const labels = prependGuideChip(keys, intent === 'sell' ? 'sell' : 'cash');
+    return mapChipsToActionSpecs(
+      labels.length ? labels : [resolveLabel(CHIP_KEYS.TALK_WITH_KASANDRA)],
+      lang as 'en' | 'es',
+    );
   }
   if (floor >= 2 && intent === 'buy') {
-    const chips = prependGuideChip(filterAndReplace([
-      { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
-      { en: 'Browse guides',            es: 'Explorar guías' },
-    ]), 'buy');
-    return mapChipsToActionSpecs(chips.length ? chips : [t('Browse guides', 'Explorar guías')]);
+    const keys = filterAndReplace([CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES]);
+    const labels = prependGuideChip(keys, 'buy');
+    return mapChipsToActionSpecs(
+      labels.length ? labels : [resolveLabel(CHIP_KEYS.BROWSE_GUIDES)],
+      lang as 'en' | 'es',
+    );
   }
   if (floor >= 2 && intent) {
     return [

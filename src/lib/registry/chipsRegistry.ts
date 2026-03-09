@@ -657,10 +657,18 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
 
 // ============= LOOKUP =============
 
-// Pre-build lookup map for O(1) matching
+// Pre-build lookup map for O(1) matching by normalized text
 const chipLookup = new Map<string, ChipRegistryEntry>(
   CHIPS_REGISTRY.map(entry => [entry.normalized_key, entry])
 );
+
+// Pre-build lookup map for O(1) matching by semantic chip key
+const chipKeyLookup = new Map<string, ChipRegistryEntry>();
+for (const entry of CHIPS_REGISTRY) {
+  if (entry.chipKey && !chipKeyLookup.has(entry.chipKey)) {
+    chipKeyLookup.set(entry.chipKey, entry);
+  }
+}
 
 /**
  * Find a chip registry entry by normalizing the input label and matching against normalized_key.
@@ -669,4 +677,13 @@ const chipLookup = new Map<string, ChipRegistryEntry>(
 export function findChipByNormalizedKey(label: string): ChipRegistryEntry | undefined {
   const normalized = normalizeChipLabel(label);
   return chipLookup.get(normalized);
+}
+
+/**
+ * Find a chip registry entry by semantic chip key (from CHIP_KEYS).
+ * This is the PRIMARY lookup for deterministic routing — no text matching involved.
+ * Returns undefined if the key is not registered.
+ */
+export function findChipByKey(key: string): ChipRegistryEntry | undefined {
+  return chipKeyLookup.get(key);
 }
