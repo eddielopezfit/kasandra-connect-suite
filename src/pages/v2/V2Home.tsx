@@ -686,7 +686,7 @@ const V2HomeContent = () => {
                   <p className="text-sm text-cc-text-muted">{t("Saturdays 9:30 AM", "Sábados 9:30 AM")}</p>
                 </div>
               </div>
-              <Link to="/v2/podcast" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
+              <Link to="/podcast" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
                 {t("Explore Podcast", "Explorar Podcast")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
