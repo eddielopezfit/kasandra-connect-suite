@@ -149,7 +149,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Obtenga Su Comparación de Oferta',
     component: 'src/pages/v2/V2Sell.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/cash-offer-options',
+    expectedTarget: '/cash-offer-options',
     automatable: true,
     priority: 11,
   },
