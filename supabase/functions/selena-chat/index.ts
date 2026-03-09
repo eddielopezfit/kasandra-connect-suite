@@ -2685,7 +2685,8 @@ serve(async (req) => {
     const stalled = isStalled(history, message);
 
     // Build system prompt with mode context
-    const systemPrompt = language === "es" ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN;
+    const systemPrompt = buildSystemPrompt(language, effectiveIntent, (context.tools_completed ?? []).length > 0);
+    console.log(`[Selena] System prompt assembled: ${systemPrompt.length} chars, intent: ${effectiveIntent}`);
 
     // ============= CONCIERGE MEMORY SUMMARY (max 3 lines, ~30 tokens) =============
     // Only injected when context audit ran and surfaced useful data.
