@@ -75,7 +75,7 @@ async function fetchGoogleReviews(): Promise<{ reviews: GoogleReview[]; source: 
       try {
         localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
       } catch (e) {
-        console.warn('[GoogleReviews] Failed to cache reviews:', e);
+        logger.warn('[GoogleReviews] Failed to cache reviews:', e);
       }
       return { reviews: data.reviews, source: 'live' };
     }
