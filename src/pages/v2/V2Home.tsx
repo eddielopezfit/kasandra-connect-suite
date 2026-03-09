@@ -203,8 +203,7 @@ const V2HomeContent = () => {
                   </Button>
                   <Button
                     asChild
-                    variant="outline"
-                    className="border-white/40 text-white hover:bg-white/10 rounded-full px-8 py-6 text-lg"
+                    className="bg-white hover:bg-white/90 text-cc-navy font-semibold rounded-full px-8 py-6 text-lg shadow-lg"
                   >
                     <Link to="/guides">
                       {t("Explore Free Guides", "Ver Guías Gratis")}
