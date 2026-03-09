@@ -120,7 +120,7 @@ const V2Navigation = () => {
           <div className="hidden lg:flex items-center gap-4">
             <LanguageToggle variant={isScrolled ? "light" : "dark"} />
             <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 shadow-gold">
-              <Link to="/v2/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
+              <Link to="/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
             </Button>
           </div>
 
