@@ -500,7 +500,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- military-pcs-guide ---
   {
     id: 'military-pcs-guide',
-    path: '/v2/guides/military-pcs-guide',
+    path: '/guides/military-pcs-guide',
     titleEn: 'Military & PCS: Buying or Selling a Home in Tucson',
     titleEs: 'Militares y PCS: Comprar o Vender una Casa en Tucson',
     labelEn: 'Military & PCS Guide',
