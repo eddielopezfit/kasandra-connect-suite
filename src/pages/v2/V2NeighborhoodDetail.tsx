@@ -5,7 +5,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { MapPin, Sparkles } from "lucide-react";
 import { getNeighborhoodBySlug } from "@/data/neighborhoods/neighborhoodRegistry";
-import { JsonLd } from "@/components/seo/JsonLd";
+import JsonLd from "@/components/seo/JsonLd";
 import NeighborhoodIntelligencePanel from "@/components/v2/neighborhood/NeighborhoodIntelligencePanel";
 import NeighborhoodSplitCTA from "@/components/v2/neighborhood/NeighborhoodSplitCTA";
 import RelatedNeighborhoodsRail from "@/components/v2/neighborhood/RelatedNeighborhoodsRail";
