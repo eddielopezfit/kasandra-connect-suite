@@ -67,7 +67,7 @@ const App = () => {
             <Routes>
               {/* Legacy redirects */}
               <Route path="/v2" element={<Navigate to="/" replace />} />
-              <Route path="/v2/*" element={<Navigate to="/" replace />} />
+              <Route path="/v2/*" element={<V2Redirect />} />
               <Route path="/cash-offer" element={<Navigate to="/cash-offer-options" replace />} />
               <Route path="/podcast/episodes" element={<Navigate to="/podcast" replace />} />
 
