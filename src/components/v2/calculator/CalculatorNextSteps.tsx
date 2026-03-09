@@ -104,7 +104,7 @@ const CalculatorNextSteps = ({
                 tool_used: 'tucson_alpha_calculator',
                 intent: 'cash',
                 has_viewed_report: true,
-                page_path: '/v2/cash-offer-options',
+                page_path: '/cash-offer-options',
               },
             }).catch(() => {}); // fire-and-forget
           }
