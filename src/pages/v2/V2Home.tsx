@@ -510,7 +510,7 @@ const V2HomeContent = () => {
                   <li>• {t("Full disclosure guidance", "Orientación sobre divulgaciones")}</li>
                   <li>• {t("Protection-first approach", "Enfoque en protección")}</li>
                 </ul>
-                <Link to="/v2/sell" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
+                <Link to="/sell" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
                   {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
