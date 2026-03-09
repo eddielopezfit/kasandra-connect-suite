@@ -329,7 +329,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Selling Guides',
     label_es: 'Guías de Venta',
     normalized_key: 'guias de venta',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Selling Guides', es: 'Guías de Venta' } },
+    actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Selling Guides', es: 'Guías de Venta' } },
   },
 
   // --- Calculator: Estimate Net Proceeds (semantically honest) ---
