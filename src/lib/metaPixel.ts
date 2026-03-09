@@ -132,7 +132,7 @@ export function pageView() {
 /** Fire a standard Meta event (ViewContent, Lead, etc.) */
 export function track(
   eventName: string,
-  params?: Record<string, any>,
+  params?: Record<string, unknown>,
 ) {
   const merged = { ...getPixelSafeParams(), ...params };
   log("track", eventName, merged);
