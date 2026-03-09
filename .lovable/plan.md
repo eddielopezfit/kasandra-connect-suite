@@ -1,75 +1,85 @@
 
 
-## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
+# Selena Closing Costs Context Awareness + Booking Pivot
 
-### What We're Doing
+## Problem
+"Ask Selena About My Costs" opens Selena with a generic greeting. User just calculated $13K–$18K on a $400K FHA loan — Selena has zero awareness of those numbers. Trust-destroying disconnect. No booking pivot.
 
-Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
+## Changes (5 files)
 
-### What We Do NOT Import
+### 1. EntryContext type — add calculator fields
+**File:** `src/contexts/selena/types.ts`
 
-- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
-- No market stats with hard-coded numbers (stale data risk)
-- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
-- No standalone footer (GuideComplianceFooter already exists)
-- No mid-guide CTAs or interactive state that writes to session
-
----
-
-### Changes
-
-**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
-
-Add optional `variant` field and structured data:
-
-```typescript
-export interface GuideSection {
-  heading: string;
-  headingEs: string;
-  content: string;       // plain-text fallback always required
-  contentEs: string;
-  variant?: 'default' | 'comparison' | 'path-selector';
-  comparisonData?: {
-    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-  };
-  pathData?: Array<{
-    id: string;
-    title: string; titleEs: string;
-    desc: string; descEs: string;
-  }>;
-}
+Add optional `closingCostData` to `EntryContext`:
+```ts
+closingCostData?: {
+  purchasePrice: number;
+  loanType: string;
+  downPaymentPercent: number;
+  estimatedLow: number;
+  estimatedHigh: number;
+  totalCashNeeded: number;
+};
 ```
 
-**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
+### 2. V2BuyerClosingCosts — pass calculator state
+**File:** `src/pages/v2/V2BuyerClosingCosts.tsx`
 
-Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
+Update the `openChat` call to include computed values:
+```ts
+openChat({
+  source: 'buyer_closing_costs',
+  intent: 'buy',
+  closingCostData: {
+    purchasePrice: price,
+    loanType: inputs.loanType,
+    downPaymentPercent: downPct,
+    estimatedLow: totLow,
+    estimatedHigh: totHigh,
+    totalCashNeeded: cashNeeded,
+  }
+})
+```
+Only pass `closingCostData` when `calculated` is true (user ran the estimate).
 
-**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
+### 3. Client greeting engine — context-aware greeting
+**File:** `src/contexts/selena/greetingEngine.ts`
 
-Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
+Add a new `else if` block for `buyer_closing_costs` (before the generic fallback, after `neighborhood_detail`):
 
-**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
+- **With calculator data:** Reference exact numbers. "You're looking at $X–$Y in closing costs on a $Z [loanType] purchase — plus $D down, that's ~$T total at closing. Some of these are negotiable. Want me to walk you through what Kasandra typically helps reduce?"
+- **Without data:** "You're looking into closing costs — smart to do before making an offer. What loan type or price range are you working with?"
 
-In the `.map()` loop, switch on `section.variant`:
-- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
-- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
-- default → current `whitespace-pre-line` text
+Suggested replies with data: "What's negotiable?" / "How do I reduce these?" / "Talk with Kasandra"
+Without data: "I'm using FHA" / "Help me estimate" / "Talk with Kasandra"
 
-**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
+### 4. SelenaChatContext — pass closing cost data to edge function
+**File:** `src/contexts/SelenaChatContext.tsx`
 
-- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
-- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
-- Plain text `content`/`contentEs` stays as fallback
+In `openChat`, persist `closingCostData` to session context. In `sendMessage`, include `closing_cost_data` in the context payload sent to the edge function.
 
-**6. Export new components** (`src/components/v2/guides/index.ts`)
+### 5. Edge function — KB instruction for closing costs context
+**File:** `supabase/functions/selena-chat/index.ts`
 
-Add exports for `GuideComparisonCards` and `GuidePathSelector`.
+Add to the system prompt assembly (KB addendum):
 
-### Governance Compliance
+```
+CLOSING COSTS CONTEXT:
+When entry_source is 'buyer_closing_costs' and closing_cost_data is present:
+- Reference the user's specific numbers. They have real data.
+- Identify what's negotiable (title fees, lender origination, seller credits).
+- Booking pivot: "Kasandra has negotiated these costs down on recent Tucson transactions. A 20-minute call could save you thousands."
+- Always include "Talk with Kasandra" chip.
+- NEVER give generic buyer education — they have the breakdown.
+```
 
-- No mid-guide CTAs — these are educational visual enhancements only
-- Terminal routing stays in AuthorityCTABlock (unchanged)
-- Path selector is read-only visual engagement, does not write to session or navigate
-- All new components are bilingual via `useLanguage()`
+Also update `generateBuyerClosingCostsGreeting` in `entryGreetings.ts` to accept and use `closing_cost_data` from context if present.
+
+### 6. Edge function entry greeting — numbers-aware version
+**File:** `supabase/functions/selena-chat/entryGreetings.ts`
+
+Update `generateBuyerClosingCostsGreeting` to accept context with closing cost data and produce a number-specific greeting with booking pivot.
+
+## Result
+User calculates → sees numbers → clicks CTA → Selena opens referencing their exact $13K–$18K estimate → explains what's negotiable → pivots to "Kasandra can help reduce these" → booking. Clean conversion path.
 
