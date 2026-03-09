@@ -197,7 +197,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Hablar con Kasandra',
     component: 'src/pages/v2/V2CashOfferOptions.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/book',
+    expectedTarget: '/book',
     automatable: true,
     priority: 15,
   },
