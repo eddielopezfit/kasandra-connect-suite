@@ -614,7 +614,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- distressed-preforeclosure ---
   {
     id: 'distressed-preforeclosure',
-    path: '/v2/guides/distressed-preforeclosure',
+    path: '/guides/distressed-preforeclosure',
     titleEn: 'Facing Financial Hardship? Your Options as a Tucson Homeowner',
     titleEs: '¿Enfrentando Dificultades Financieras? Tus Opciones como Propietario en Tucson',
     labelEn: 'Hardship & Pre-Foreclosure',
