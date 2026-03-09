@@ -776,9 +776,9 @@ function filterChipsForCompletedTools(
   const filtered: string[] = [];
 
   for (const chip of chips) {
-    const dest = CHIP_DESTINATION[chip];
+    // Dual lookup: try semantic key first, then display string
+    const dest = CHIP_KEY_DESTINATION[chip] || CHIP_DESTINATION[chip];
     if (dest && blockedDests.has(dest)) {
-      // Find which tool blocked this chip
       const blockingTool = toolsCompleted.find(tid =>
         TOOL_BLOCKED_DESTINATIONS[tid]?.includes(dest)
       );
@@ -788,35 +788,34 @@ function filterChipsForCompletedTools(
         destination: dest,
         reason: 'completed',
       });
-      continue; // Remove this chip
+      continue;
     }
     filtered.push(chip);
   }
 
-  // Add replacement chips for suppressed tools (by destination, not by label)
-  const existingDests = new Set(filtered.map(c => CHIP_DESTINATION[c]).filter(Boolean));
+  // Add replacement chips for suppressed tools — emit semantic keys
+  const existingDests = new Set(filtered.map(c => CHIP_KEY_DESTINATION[c] || CHIP_DESTINATION[c]).filter(Boolean));
   for (const toolId of toolsCompleted) {
     const replacementDest = TOOL_REPLACEMENT_DESTINATION[toolId];
     if (!replacementDest) continue;
-    // Don't add if destination is also blocked or already present
     if (blockedDests.has(replacementDest)) continue;
     if (existingDests.has(replacementDest)) continue;
     if (filtered.length >= 3) break;
 
-    const chipEntry = DESTINATION_TO_CHIP[replacementDest];
-    if (!chipEntry) continue;
-    const chipLabel = language === 'es' ? chipEntry.es : chipEntry.en;
+    // Emit semantic key for replacement chip
+    const replacementKey = DESTINATION_TO_CHIP_KEY[replacementDest];
+    if (!replacementKey) continue;
 
     // Booking chips require earned access
     if (replacementDest === '/v2/book' && !hasEarnedBooking) continue;
 
-    filtered.push(chipLabel);
+    filtered.push(replacementKey);
     existingDests.add(replacementDest);
   }
 
-  // Fallback: if all chips were filtered, provide a neutral progression chip
+  // Fallback: emit semantic key
   if (filtered.length === 0) {
-    filtered.push(language === 'es' ? 'Explorar guías' : 'Browse guides');
+    filtered.push(CHIP_KEYS.BROWSE_GUIDES);
   }
 
   return { filtered, suppressions };
