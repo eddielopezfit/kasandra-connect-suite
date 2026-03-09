@@ -33,18 +33,11 @@ const RelatedNeighborhoodsRail = ({ neighborhood }: RelatedNeighborhoodsRailProp
                 {t("Nearby Neighborhoods", "Vecindarios Cercanos")}
               </h3>
               <Button asChild variant="outline" size="sm" className="hidden sm:flex">
-                <Link to={`/v2/neighborhood-compare?areas=${neighborhood.slug},${neighborhood.relatedNeighborhoods.join(',')}`}>
-                  <GitCompare className="w-4 h-4 mr-2" />
-                  {t("Compare These Areas", "Comparar Estas Áreas")}
-                </Link>
-              </Button>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-4">
-              {relatedNeighborhoods.map((related) => (
+                <Link to={`/neighborhood-compare?areas=${neighborhood.slug},${neighborhood.relatedNeighborhoods.join(',')}`}>
+...
                 <Link
                   key={related.slug}
-                  to={`/v2/neighborhoods/${related.slug}`}
+                  to={`/neighborhoods/${related.slug}`}
                   className="group bg-cc-ivory hover:bg-cc-sand/50 rounded-xl p-5 transition-colors border border-cc-sand-dark/10"
                 >
                   <div className="flex items-start justify-between mb-3">
