@@ -19,7 +19,7 @@ const SELENA_ROUTED_CATEGORIES: Set<GuideCategory> = new Set([
 const getCTAConfig = (category: GuideCategory) => {
   if (category === 'buying') {
     return {
-      link: "/v2/buyer-readiness",
+      link: "/buyer-readiness",
       textEn: "Start Buyer Readiness Check",
       textEs: "Iniciar Evaluación de Preparación",
       subtextEn: "A quick self-assessment to understand where you stand",
@@ -32,7 +32,7 @@ const getCTAConfig = (category: GuideCategory) => {
 
   if (category === 'cash') {
     return {
-      link: "/v2/cash-offer-options",
+      link: "/cash-offer-options",
       textEn: "Explore Cash Offer Options",
       textEs: "Explorar Opciones de Oferta en Efectivo",
       subtextEn: "See if a cash offer makes sense for your situation",
@@ -101,7 +101,7 @@ const getCTAConfig = (category: GuideCategory) => {
 
   // Default for stories, tips, etc.
   return {
-    link: "/v2/guides",
+    link: "/guides",
     textEn: "Explore More Resources",
     textEs: "Explorar Más Recursos",
     subtextEn: "Continue learning at your own pace",

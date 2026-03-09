@@ -161,7 +161,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Get my selling options',
     label_es: 'Ver mis opciones de venta',
     normalized_key: 'get my selling options',
-    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
     chipKey: CHIP_KEYS.GET_SELLING_OPTIONS,
   },
   {
@@ -169,7 +169,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Get my selling options',
     label_es: 'Ver mis opciones de venta',
     normalized_key: 'ver mis opciones de venta',
-    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
     chipKey: CHIP_KEYS.GET_SELLING_OPTIONS,
   },
 
@@ -197,7 +197,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Build my selling timeline',
     label_es: 'Construir mi cronograma de venta',
     normalized_key: 'build my selling timeline',
-    actionSpec: { type: 'navigate', path: '/v2/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
+    actionSpec: { type: 'navigate', path: '/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
     chipKey: CHIP_KEYS.BUILD_SELLING_TIMELINE,
   },
   {
@@ -205,7 +205,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Build my selling timeline',
     label_es: 'Construir mi cronograma de venta',
     normalized_key: 'construir mi cronograma de venta',
-    actionSpec: { type: 'navigate', path: '/v2/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
+    actionSpec: { type: 'navigate', path: '/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
     chipKey: CHIP_KEYS.BUILD_SELLING_TIMELINE,
   },
 
@@ -215,7 +215,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Browse guides',
     label_es: 'Explorar guías',
     normalized_key: 'browse guides',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+    actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
     chipKey: CHIP_KEYS.BROWSE_GUIDES,
   },
   {
@@ -223,7 +223,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Browse guides',
     label_es: 'Explorar guías',
     normalized_key: 'explorar guias',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+    actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
     chipKey: CHIP_KEYS.BROWSE_GUIDES,
   },
 
@@ -233,14 +233,14 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Browse buyer guides',
     label_es: 'Explorar guías del comprador',
     normalized_key: 'browse buyer guides',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+    actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
   },
   {
     id: 'nav-buyer-guides-es',
     label_en: 'Browse buyer guides',
     label_es: 'Explorar guías del comprador',
     normalized_key: 'explorar guias del comprador',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+    actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
   },
 
   // --- Legacy safety net: "What's my home worth?" → seller-decision ---
@@ -249,14 +249,14 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: "What's my home worth?",
     label_es: '¿Cuánto vale mi casa?',
     normalized_key: "what's my home worth",
-    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
   },
   {
     id: 'legacy-home-worth-es',
     label_en: "What's my home worth?",
     label_es: '¿Cuánto vale mi casa?',
     normalized_key: 'cuanto vale mi casa',
-    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
   },
 
   // --- Legacy safety net: "Compare cash vs. traditional" → cash-comparison ---
@@ -322,14 +322,14 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Selling Guides',
     label_es: 'Guías de Venta',
     normalized_key: 'selling guides',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Selling Guides', es: 'Guías de Venta' } },
+    actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Selling Guides', es: 'Guías de Venta' } },
   },
   {
     id: 'nav-selling-guides-es',
     label_en: 'Selling Guides',
     label_es: 'Guías de Venta',
     normalized_key: 'guias de venta',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Selling Guides', es: 'Guías de Venta' } },
+    actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Selling Guides', es: 'Guías de Venta' } },
   },
 
   // --- Calculator: Estimate Net Proceeds (semantically honest) ---

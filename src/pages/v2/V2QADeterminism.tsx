@@ -33,7 +33,7 @@ const V2QADeterminism = () => {
 
   // Prod gate — redirects cleanly, never renders blank
   if (!isQaAccessGranted()) {
-    return <Navigate to="/v2" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return (

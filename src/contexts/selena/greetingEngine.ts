@@ -91,7 +91,7 @@ export function computeGreeting(
 
     const resumeChips: string[] = [];
     const lastPage = sessionContext.last_page;
-    if (lastPage && lastPage.startsWith('/v2/')) {
+    if (lastPage && lastPage.startsWith('/')) {
       resumeChips.push(t("Continue where I left off", "Continuar donde lo dejé"));
     }
     if (sessionContext.readiness_score || sessionContext.estimated_value) {

@@ -38,7 +38,7 @@ const QuizFunnelLayout = ({ children, showSelena = false }: QuizFunnelLayoutProp
         <div className="border-b border-cc-sand-dark/30 bg-white/80 backdrop-blur-sm px-4 py-3">
           <div className="container mx-auto max-w-3xl flex items-center justify-between">
             <Link
-              to="/v2"
+              to="/"
               className="inline-flex items-center gap-1.5 text-sm text-cc-slate hover:text-cc-navy transition-colors"
             >
               <Home className="w-3.5 h-3.5" />

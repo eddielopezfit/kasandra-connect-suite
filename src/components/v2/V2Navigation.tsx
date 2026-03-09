@@ -31,17 +31,17 @@ const V2Navigation = () => {
   }, []);
 
   const primaryLinks = [
-    { href: "/v2", label: t("Home", "Inicio") },
-    { href: "/v2/buy", label: t("Buy", "Comprar") },
-    { href: "/v2/sell", label: t("Sell", "Vender") },
-    { href: "/v2/cash-offer-options", label: t("Cash Options", "Opciones en Efectivo") },
+    { href: "/", label: t("Home", "Inicio") },
+    { href: "/buy", label: t("Buy", "Comprar") },
+    { href: "/sell", label: t("Sell", "Vender") },
+    { href: "/cash-offer-options", label: t("Cash Options", "Opciones en Efectivo") },
   ];
 
   const exploreLinks = [
-    { href: "/v2/neighborhoods", label: t("Neighborhoods", "Vecindarios") },
-    { href: "/v2/guides", label: t("Guides", "Guías") },
-    { href: "/v2/podcast", label: t("Podcast", "Podcast") },
-    { href: "/v2/community", label: t("Community", "Comunidad") },
+    { href: "/neighborhoods", label: t("Neighborhoods", "Vecindarios") },
+    { href: "/guides", label: t("Guides", "Guías") },
+    { href: "/podcast", label: t("Podcast", "Podcast") },
+    { href: "/community", label: t("Community", "Comunidad") },
   ];
 
   const allLinks = [...primaryLinks, ...exploreLinks];
@@ -70,7 +70,7 @@ const V2Navigation = () => {
         <div className="flex items-center justify-between">
           {/* Logo & Brokerage */}
           <div className="flex flex-col">
-            <Link to="/v2" className={`font-serif text-xl font-semibold tracking-wide ${isScrolled ? "text-cc-navy" : "text-white"}`}>
+            <Link to="/" className={`font-serif text-xl font-semibold tracking-wide ${isScrolled ? "text-cc-navy" : "text-white"}`}>
               KASANDRA PRIETO
             </Link>
             <span className={`text-[10px] tracking-wide ${isScrolled ? "text-cc-slate" : "text-white/70"}`}>
@@ -120,7 +120,7 @@ const V2Navigation = () => {
           <div className="hidden lg:flex items-center gap-4">
             <LanguageToggle variant={isScrolled ? "light" : "dark"} />
             <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 shadow-gold">
-              <Link to="/v2/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
+              <Link to="/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
             </Button>
           </div>
 
@@ -157,7 +157,7 @@ const V2Navigation = () => {
               </Link>
             ))}
             <Button asChild className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold">
-              <Link to="/v2/book" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link to="/book" onClick={() => setIsMobileMenuOpen(false)}>
                 {t("Book a Consultation", "Agendar una Cita")}
               </Link>
             </Button>
