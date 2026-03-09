@@ -1053,7 +1053,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'how-long-to-sell-tucson',
-    path: '/v2/guides/how-long-to-sell-tucson',
+    path: '/guides/how-long-to-sell-tucson',
     titleEn: 'How Long Does It Take to Sell a House in Tucson?',
     titleEs: '¿Cuánto Tiempo Tarda Vender una Casa en Tucson?',
     labelEn: 'How Long to Sell?',
