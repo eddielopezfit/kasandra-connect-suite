@@ -15,7 +15,7 @@ import { NeighborhoodExplorer, NeighborhoodQuiz } from "@/components/v2/neighbor
 import heroImage from "@/assets/hero-neighborhood-road.png";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 
-const PAGE_PATH = '/v2/buy';
+const PAGE_PATH = '/buy';
 const PAGE_INTENT = 'buy' as const;
 
 const V2BuyContent = () => {
