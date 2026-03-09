@@ -43,7 +43,7 @@ const NotFoundContent = () => {
             {t("Ask Selena — she'll point you in the right direction", "Pregúntale a Selena — ella te orientará")}
           </Button>
 
-          <Link to="/v2/guides">
+          <Link to="/guides">
             <Button
               variant="outline"
               className="w-full border-white/30 text-white hover:bg-white/10 py-5 rounded-xl text-base"
