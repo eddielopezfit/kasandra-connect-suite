@@ -251,7 +251,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Socios Comunitarios',
     component: 'src/pages/v2/V2Community.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/community',
+    expectedTarget: '/community',
     automatable: true,
     priority: 19,
   },
