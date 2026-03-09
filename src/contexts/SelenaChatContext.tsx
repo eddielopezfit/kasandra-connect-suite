@@ -92,7 +92,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const [pendingReportId, setPendingReportId] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<'report' | null>(null);
-  const [hasReports, setHasReports] = useState(false);
+  const [hasReports] = useState(false);
   const [hasUsedCalculator, setHasUsedCalculator] = useState(false);
   const [lastCalculatorAdvantage, setLastCalculatorAdvantage] = useState<CalculatorAdvantage | null>(null);
   
