@@ -898,7 +898,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'arizona-real-estate-glossary',
-    path: '/v2/guides/arizona-real-estate-glossary',
+    path: '/guides/arizona-real-estate-glossary',
     titleEn: 'Arizona Real Estate Glossary — Tucson Edition',
     titleEs: 'Glosario de Bienes Raíces de Arizona — Edición Tucson',
     labelEn: 'Real Estate Glossary',
