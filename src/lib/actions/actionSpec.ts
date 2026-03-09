@@ -96,7 +96,7 @@ export function resolveAction(
 ): void {
   switch (spec.type) {
     case 'open_guide':
-      navigate(`/v2/guides/${spec.guideId}`);
+      navigate(`/guides/${spec.guideId}`);
       break;
     case 'open_tool':
       navigate(TOOL_ROUTES[spec.toolId]);
