@@ -389,7 +389,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // === PHASE 2 — DECISION COMPRESSION GUIDES ===
   {
     id: 'cash-vs-traditional-sale',
-    path: '/v2/guides/cash-vs-traditional-sale',
+    path: '/guides/cash-vs-traditional-sale',
     titleEn: 'Cash Offer vs. Listing Your Tucson Home: What to Expect',
     titleEs: 'Oferta en Efectivo vs. Listar Tu Casa en Tucson: Qué Esperar',
     labelEn: 'Cash vs. Listing',
