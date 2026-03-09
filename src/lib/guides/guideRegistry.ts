@@ -358,7 +358,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'spanish-speaking-client-story',
-    path: '/v2/guides/spanish-speaking-client-story',
+    path: '/guides/spanish-speaking-client-story',
     titleEn: 'A Family Finds Home in Their Language',
     titleEs: 'Una Familia Encuentra Hogar en Su Idioma',
     labelEn: 'Spanish-Speaking Client Story',
