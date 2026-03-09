@@ -103,8 +103,9 @@ export function ConciergeTabPanels({
 
   const handleBookWithKasandra = () => {
     logEvent('priority_call_click', { source: 'concierge_tabs' });
-    closeDrawer();
+    // Navigate FIRST, then close drawer — prevents unmount before navigation completes
     navigate('/book');
+    closeDrawer();
   };
 
   const handleResetIntent = () => {
