@@ -123,7 +123,7 @@ const SellerReadinessCheck = ({ onScoreRevealed }: SellerReadinessCheckProps) =>
     if (!hasLoggedToolStart.current) {
       logEvent("tool_started", {
         tool_id: "seller_readiness",
-        page_path: "/v2/seller-readiness",
+        page_path: "/seller-readiness",
       });
       hasLoggedToolStart.current = true;
     }
