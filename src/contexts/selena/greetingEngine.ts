@@ -120,9 +120,10 @@ export function computeGreeting(
   
   const isAllowedGreetingSource = !!entryContext && [
     'calculator', 'guide_handoff', 'synthesis', 'hero', 'quiz_result', 'post_booking', 'seller_decision',
-    'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs',
-    'neighborhood_detail', 'neighborhoods_index',
-    'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture'
+    'market_intelligence', 'market_intelligence_result', 'neighborhood_compare', 'neighborhood_compare_result', 
+    'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index',
+    'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture',
+    'off_market_registered', 'off_market_capture'
   ].includes(entryContext.source);
 
   const hasRecoveryCandidate = !sessionContext?.recovery_shown && !!sessionContext?.booking_chips_shown_at;
