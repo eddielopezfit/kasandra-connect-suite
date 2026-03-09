@@ -233,7 +233,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Browse buyer guides',
     label_es: 'Explorar guías del comprador',
     normalized_key: 'browse buyer guides',
-    actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+    actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
   },
   {
     id: 'nav-buyer-guides-es',
