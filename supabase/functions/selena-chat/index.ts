@@ -3485,6 +3485,25 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       suggestedReplies = guardRules.chipOverrides;
     }
 
+    // ============= STRUCTURAL GUIDE DELIVERY ENFORCEMENT =============
+    // Deterministic post-processing: if user affirms after assistant mentioned a guide,
+    // force direct guide delivery chip and suppress guide re-description.
+    const lastUserMessage = message.toLowerCase().trim();
+    const lastAssistantMessage = [...history].reverse().find(m => m.role === 'assistant')?.content ?? '';
+    const isAffirmativeResponse = GUIDE_DELIVERY_AFFIRMATIVE.test(lastUserMessage);
+    const mentionedGuide = GUIDE_MENTION_PATTERN.test(lastAssistantMessage);
+    const shouldForceGuideDelivery =
+      isAffirmativeResponse &&
+      mentionedGuide &&
+      !guardRules.chipOverrides &&
+      !guardState.containment_active;
+
+    if (shouldForceGuideDelivery) {
+      const guideChip = detectGuideChipForDelivery(lastAssistantMessage, context);
+      suggestedReplies = [guideChip, ...suggestedReplies.filter(chip => chip !== guideChip)];
+      reply = language === 'es' ? 'Aquí está:' : 'Here it is:';
+    }
+
     const actions: Array<{ label: string; href: string; eventType: string }> = [];
     
     // Guard 4 (actions): Only add booking action if earned AND journey_state is 'decide'
