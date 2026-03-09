@@ -89,7 +89,7 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
       });
     } catch (err: unknown) {
       console.error("[NeighborhoodExplorer] Error:", err);
-      const msg = err?.message || "";
+      const msg = (err as Error)?.message || "";
       if (msg.includes("Rate limit")) {
         toast.error(t("Too many requests. Please try again later.", "Demasiadas solicitudes. Intente más tarde."));
       } else {

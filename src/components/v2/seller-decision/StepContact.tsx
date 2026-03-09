@@ -343,7 +343,7 @@ const StepContact = ({
             <Checkbox
               id="consent-email"
               checked={emailForm.watch("consent") === true}
-              onCheckedChange={(checked) => emailForm.setValue("consent", checked === true ? true : undefined as unknown as boolean, { shouldValidate: true })}
+              onCheckedChange={(checked) => emailForm.setValue("consent", checked === true ? true : undefined as unknown as true, { shouldValidate: true })}
               className="mt-0.5"
             />
             <Label htmlFor="consent-email" className="text-xs text-cc-text-muted leading-relaxed cursor-pointer">
