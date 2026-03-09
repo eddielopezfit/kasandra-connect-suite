@@ -7,6 +7,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { logEvent } from '@/lib/analytics/logEvent';
 import { getIntent } from '@/lib/guides/personalization';
+import { markGuideCompleted } from '@/lib/analytics/selenaSession';
 
 interface UseGuideScrollTrackingOptions {
   guideId: string;
