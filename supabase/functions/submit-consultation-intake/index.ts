@@ -515,7 +515,7 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
             price_range: input.price_range || null,
             pre_approved: input.pre_approved || null,
             notes: input.notes || null,
-            page_path: input.page_path || "/v2/book",
+            page_path: input.page_path || "/book",
             situation: input.situation || null,
             condition: input.condition || null,
             tool_used: input.tool_used || null,

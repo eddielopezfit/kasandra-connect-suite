@@ -122,7 +122,7 @@ const V2NeighborhoodDetail = () => {
   });
 
   if (!neighborhood) {
-    return <Navigate to="/v2/neighborhoods" replace />;
+    return <Navigate to="/neighborhoods" replace />;
   }
 
   return (
