@@ -343,7 +343,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               timeline: context?.timeline,
               last_guide_id: context?.last_guide_id,
               lead_id: leadId,
-              tool_used: context?.tool_used,
+              // FIX 6: Renamed from tool_used
+              last_tool_completed: context?.last_tool_completed,
               last_tool_result: context?.last_tool_result,
               quiz_completed: context?.quiz_completed ?? false,
               guides_read: context?.guides_read ?? (context?.last_guide_id ? 1 : 0),
@@ -352,6 +353,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               seller_goal_priority: context?.seller_goal_priority,
               property_condition_raw: context?.property_condition_raw,
               tools_completed: context?.tools_completed ?? [],
+              // FIX 2: Pass completed guides for server-side filtering
+              guides_completed: getGuidesCompleted(),
               calculator_advantage: lastCalculatorAdvantage ?? undefined,
               estimated_value: context?.estimated_value,
               calculator_difference: context?.calculator_difference,
@@ -367,6 +370,10 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               calculator_motivation: context?.calculator_motivation,
               last_neighborhood_zip: context?.last_neighborhood_zip,
               session_trail: serializeTrailForSelena(),
+              // FIX 4: Persist entry context across all turns
+              entry_source: context?.entry_source ?? 'unknown',
+              entry_guide_id: context?.entry_guide_id ?? null,
+              entry_guide_title: context?.entry_guide_title ?? null,
             },
             history,
           }),
