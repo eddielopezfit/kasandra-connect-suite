@@ -130,6 +130,23 @@ interface ChatRequest {
       estimatedHigh: number;
       totalCashNeeded: number;
     } | null;
+    // Seller Net Calculator data (full results)
+    seller_calc_data?: {
+      estimatedValue: number;
+      mortgageBalance: number;
+      cashNetProceeds: number;
+      traditionalNetProceeds: number;
+      recommendation: string;
+      netDifference: number;
+      motivation: string;
+      timeline: string;
+    } | null;
+    // Readiness check entry data
+    readiness_entry_data?: {
+      score: number;
+      primaryPriority: string;
+      toolType: 'buyer' | 'seller' | 'cash';
+    } | null;
   };
   history?: ChatMessage[];
 }
