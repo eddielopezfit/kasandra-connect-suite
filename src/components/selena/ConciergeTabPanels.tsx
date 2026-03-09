@@ -412,7 +412,7 @@ function MyOptionsPanel({
   // Cash vs Listing → Navigate to Decision Room
   const handleCashComparisonClick = () => {
     logEvent('concierge_cash_comparison_click', { source: 'my_options', intent: effectiveIntent });
-    onNavigate('/v2/cash-offer-options', 'decision_room_visit');
+    onNavigate('/cash-offer-options', 'decision_room_visit');
   };
 
   // Buyer Readiness → Navigate to Readiness Check
