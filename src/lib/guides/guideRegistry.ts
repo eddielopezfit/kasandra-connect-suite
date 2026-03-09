@@ -929,7 +929,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'tucson-suburb-comparison',
-    path: '/v2/guides/tucson-suburb-comparison',
+    path: '/guides/tucson-suburb-comparison',
     titleEn: 'Marana vs. Oro Valley vs. Sahuarita vs. Vail',
     titleEs: 'Marana vs. Oro Valley vs. Sahuarita vs. Vail',
     labelEn: 'Suburb Comparison',
