@@ -14,6 +14,7 @@
 
 import { Navigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useDocumentHead } from '@/hooks/useDocumentHead';
 import V2Layout from '@/components/v2/V2Layout';
 import { Badge } from '@/components/ui/badge';
 import {
