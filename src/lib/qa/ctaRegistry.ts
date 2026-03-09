@@ -277,7 +277,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Volver al Inicio',
     component: 'src/pages/v2/V2ThankYou.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2',
+    expectedTarget: '/',
     automatable: true,
     priority: 21,
   },
