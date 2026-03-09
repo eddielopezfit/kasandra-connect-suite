@@ -2901,7 +2901,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // Fires only when a tool has been completed AND produced output data.
     let toolOutputHint = "";
 
-    const toolUsed = context.tool_used;
+    const toolUsed = context.last_tool_completed;
 
     // --- Seller Net Calculator output ---
     if (
