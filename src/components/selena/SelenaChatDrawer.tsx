@@ -307,6 +307,8 @@ export function SelenaChatDrawer() {
             className="h-[85dvh] max-h-[700px] flex flex-col overflow-hidden"
             style={{ paddingBottom: keyboardInset > 0 ? `${keyboardInset}px` : undefined }}
           >
+            {/* FIX 15 — Swipe drag handle indicator */}
+            <div className="mx-auto w-8 h-1 rounded-full bg-muted-foreground/30 mt-2 mb-1 shrink-0" />
             <DrawerHeader className="border-b border-border px-4 py-3 shrink-0">
               <div className="flex items-center justify-between">
                 <DrawerTitle className="flex items-center gap-2 text-lg">

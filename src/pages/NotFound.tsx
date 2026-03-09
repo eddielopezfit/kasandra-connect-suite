@@ -18,7 +18,7 @@ const NotFoundContent = () => {
   }, [location.pathname]);
 
   return (
-    <section className="min-h-screen bg-cc-navy flex items-center justify-center px-4 pt-20">
+    <section className="min-h-[100dvh] bg-cc-navy flex items-center justify-center px-4 pt-20">
       <div className="max-w-xl w-full text-center">
         {/* Number */}
         <p className="font-serif text-8xl font-bold text-cc-gold/30 mb-2">404</p>

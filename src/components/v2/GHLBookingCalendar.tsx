@@ -44,7 +44,7 @@ const GHLBookingCalendar = () => {
   };
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden">
+    <div className="w-full max-w-full overflow-x-hidden" style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
       <div className="w-full mx-auto flex justify-center">
         <iframe
           src="https://api.leadconnectorhq.com/widget/booking/N7himS3BLf5KxaVbQPz6"
@@ -54,6 +54,7 @@ const GHLBookingCalendar = () => {
             border: "none",
             minHeight: getMinHeight(),
           }}
+          scrolling="yes"
           id="N7himS3BLf5KxaVbQPz6_1770095323495"
           title="Schedule a Conversation with Kasandra"
           loading="eager"

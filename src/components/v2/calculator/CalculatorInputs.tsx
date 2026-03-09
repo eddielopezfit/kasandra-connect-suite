@@ -222,7 +222,7 @@ const CalculatorInputs = ({
       {/* Calculate Button */}
       <Button
         onClick={onCalculate}
-        className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full py-6 text-lg shadow-gold"
+        className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full py-6 text-lg shadow-gold min-h-[48px]"
       >
         {t("Calculate My Options", "Calcular Mis Opciones")}
         <ArrowRight className="w-5 h-5 ml-2" />

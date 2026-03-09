@@ -121,8 +121,9 @@ export function SelenaDrawerBottomSection({
               "bg-muted border-0",
               "text-foreground placeholder:text-muted-foreground",
               "focus:outline-none focus:ring-2 focus:ring-primary/50",
-              "text-base"
+              "text-base" // 16px — prevents iOS zoom
             )}
+            style={{ fontSize: '16px' }}
             disabled={isLoading}
             autoComplete="off"
             autoCorrect="off"
