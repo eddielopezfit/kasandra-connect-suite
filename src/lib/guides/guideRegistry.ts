@@ -991,7 +991,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'capital-gains-home-sale-arizona',
-    path: '/v2/guides/capital-gains-home-sale-arizona',
+    path: '/guides/capital-gains-home-sale-arizona',
     titleEn: 'Capital Gains Tax When Selling Your Home in Arizona',
     titleEs: 'Impuesto a las Ganancias de Capital al Vender Tu Casa en Arizona',
     labelEn: 'Capital Gains Tax Guide',
