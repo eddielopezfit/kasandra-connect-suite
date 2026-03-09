@@ -10,7 +10,7 @@ import { logEvent } from "@/lib/analytics/logEvent";
 
 type IntentType = 'cash' | 'sell' | 'buy' | 'dual' | 'explore';
 
-const PAGE_PATH = '/v2/thank-you';
+const PAGE_PATH = '/thank-you';
 
 const V2ThankYouContent = () => {
   const { t } = useLanguage();
@@ -110,7 +110,7 @@ const V2ThankYouContent = () => {
           ],
           cta: {
             label: t('Explore Your Cash Offer Options', 'Explorar Sus Opciones de Oferta en Efectivo'),
-            href: '/v2/cash-offer-options',
+            href: '/cash-offer-options',
             icon: FileText,
           },
           resource: {
@@ -119,7 +119,7 @@ const V2ThankYouContent = () => {
               'Learn how cash offers work and what to expect.',
               'Aprenda cómo funcionan las ofertas en efectivo y qué esperar.'
             ),
-            href: '/v2/guides/cash-offer-guide',
+            href: '/guides/cash-offer-guide',
           },
         };
       
@@ -161,7 +161,7 @@ const V2ThankYouContent = () => {
           ],
           cta: {
             label: t('Read: First-Time Buyer Guide', 'Leer: Guía para Compradores Primerizos'),
-            href: '/v2/guides/first-time-buyer-guide',
+            href: '/guides/first-time-buyer-guide',
             icon: FileText,
           },
           resource: {
@@ -170,7 +170,7 @@ const V2ThankYouContent = () => {
               'Step-by-step guide for first-time homebuyers.',
               'Guía paso a paso para compradores de vivienda por primera vez.'
             ),
-            href: '/v2/guides/first-time-buyer-guide',
+            href: '/guides/first-time-buyer-guide',
           },
         };
       
@@ -212,7 +212,7 @@ const V2ThankYouContent = () => {
           ],
           cta: {
             label: t('Calculate: Your Net Proceeds', 'Calcular: Sus Ganancias Netas'),
-            href: '/v2/cash-offer-options',
+            href: '/cash-offer-options',
             icon: FileText,
           },
           resource: {
@@ -221,7 +221,7 @@ const V2ThankYouContent = () => {
               'Learn strategies to maximize your home\'s value.',
               'Aprenda estrategias para maximizar el valor de su casa.'
             ),
-            href: '/v2/guides/selling-for-top-dollar',
+            href: '/guides/selling-for-top-dollar',
           },
         };
       
@@ -268,7 +268,7 @@ const V2ThankYouContent = () => {
               'Helpful strategies for your selling side of the equation.',
               'Estrategias útiles para el lado de venta de la ecuación.'
             ),
-            href: '/v2/guides/selling-for-top-dollar',
+            href: '/guides/selling-for-top-dollar',
           },
         };
       
@@ -307,7 +307,7 @@ const V2ThankYouContent = () => {
               'Helpful information for anyone exploring the market.',
               'Información útil para cualquier persona explorando el mercado.'
             ),
-            href: '/v2/guides/first-time-buyer-guide',
+            href: '/guides/first-time-buyer-guide',
           },
         };
     }

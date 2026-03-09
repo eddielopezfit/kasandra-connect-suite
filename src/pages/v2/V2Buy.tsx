@@ -142,8 +142,8 @@ const V2BuyContent = () => {
           </p>
           <div className="grid grid-cols-2 gap-3">
             <Link
-              to="/v2/buyer-closing-costs"
-              onClick={() => handleCTAClick('sub_hero_closing_costs', '/v2/buyer-closing-costs')}
+              to="/buyer-closing-costs"
+              onClick={() => handleCTAClick('sub_hero_closing_costs', '/buyer-closing-costs')}
               className="flex items-center gap-3 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all group"
             >
               <DollarSign className="w-5 h-5 text-cc-gold flex-shrink-0" />
@@ -152,8 +152,8 @@ const V2BuyContent = () => {
               </span>
             </Link>
             <Link
-              to="/v2/neighborhood-compare"
-              onClick={() => handleCTAClick('sub_hero_neighborhood_compare', '/v2/neighborhood-compare')}
+              to="/neighborhood-compare"
+              onClick={() => handleCTAClick('sub_hero_neighborhood_compare', '/neighborhood-compare')}
               className="flex items-center gap-3 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all group"
             >
               <Search className="w-5 h-5 text-cc-gold flex-shrink-0" />

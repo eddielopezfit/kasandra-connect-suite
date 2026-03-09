@@ -234,8 +234,8 @@ function GuideDetailContent() {
   };
 
   const seo = guideId && seoOverrides[guideId];
-  const canonicalBase = 'https://kasandraoasis.com';
-  const canonicalUrl = guideId ? `${canonicalBase}/v2/guides/${guideId}` : undefined;
+  const canonicalBase = 'https://kasandraprietorealtor.com';
+  const canonicalUrl = guideId ? `${canonicalBase}/guides/${guideId}` : undefined;
 
   useDocumentHead({
     titleEn: seo ? seo.titleEn : guide ? `${guide.title} | Kasandra Prieto` : 'Guide | Kasandra Prieto',
@@ -310,7 +310,7 @@ function GuideDetailContent() {
           {/* Top Bar: Back + Language Toggle */}
           <div className="flex items-center justify-between mb-6">
             <Link
-              to="/v2/guides"
+              to="/guides"
               className="inline-flex items-center text-white/70 hover:text-cc-gold transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />

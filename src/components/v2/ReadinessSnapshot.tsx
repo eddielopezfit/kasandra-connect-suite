@@ -144,13 +144,13 @@ function getNextStep(intent: "buy" | "sell" | "cash", priority: string, band: Sc
     if (band === "ready") {
       return {
         label: { en: "Get Your Cash Offer", es: "Obtén Tu Oferta en Efectivo" },
-        path: "/v2/private-cash-review",
+        path: "/private-cash-review",
         icon: DollarSign,
       };
     }
     return {
       label: { en: "Compare Cash vs. Listing", es: "Compara Efectivo vs. Listado" },
-      path: "/v2/cash-offer-options",
+      path: "/cash-offer-options",
       icon: DollarSign,
     };
   }
@@ -159,20 +159,20 @@ function getNextStep(intent: "buy" | "sell" | "cash", priority: string, band: Sc
     if (priority === "speed" || priority === "simplicity") {
       return {
         label: { en: "Compare Your Options", es: "Compara Tus Opciones" },
-        path: "/v2/cash-offer-options",
+        path: "/cash-offer-options",
         icon: DollarSign,
       };
     }
     if (priority === "maximize_value") {
       return {
         label: { en: "Read the Selling Guide", es: "Lee la Guía de Venta" },
-        path: "/v2/guides/selling-for-top-dollar",
+        path: "/guides/selling-for-top-dollar",
         icon: BookOpen,
       };
     }
     return {
       label: { en: "Explore Your Paths", es: "Explora Tus Caminos" },
-      path: "/v2/seller-decision",
+      path: "/seller-decision",
       icon: MapPin,
     };
   }
@@ -181,20 +181,20 @@ function getNextStep(intent: "buy" | "sell" | "cash", priority: string, band: Sc
   if (band === "ready") {
     return {
       label: { en: "Book a Strategy Call", es: "Agenda una Llamada Estratégica" },
-      path: "/v2/book?intent=buy&source=readiness",
+      path: "/book?intent=buy&source=readiness",
       icon: ArrowRight,
     };
   }
   if (priority === "neighborhoods") {
     return {
       label: { en: "Explore Neighborhoods", es: "Explora Vecindarios" },
-      path: "/v2/community",
+      path: "/community",
       icon: Home,
     };
   }
   return {
     label: { en: "Read the Buyer's Guide", es: "Lee la Guía del Comprador" },
-    path: "/v2/guides/first-time-buyer-guide",
+    path: "/guides/first-time-buyer-guide",
     icon: BookOpen,
   };
 }
@@ -271,7 +271,7 @@ const ReadinessSnapshot = ({
         {/* Browse guides fallback */}
         <div className="mt-4">
           <button
-            onClick={() => navigate("/v2/guides")}
+            onClick={() => navigate("/guides")}
             className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-4 min-h-[44px] inline-flex items-center"
           >
             {t("Browse all guides", "Ver todas las guías")}

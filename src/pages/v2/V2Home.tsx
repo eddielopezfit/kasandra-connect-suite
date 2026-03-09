@@ -99,7 +99,7 @@ const V2HomeContent = () => {
         "@type": ["RealEstateAgent", "LocalBusiness"],
         name: "Kasandra Prieto",
         description: "Bilingual REALTOR® serving the Tucson community with integrity, heart, and expertise.",
-        url: "https://kasandraprietorealtor.com/v2",
+        url: "https://kasandraprietorealtor.com",
         image: "https://kasandraprietorealtor.com/og-kasandra.jpg",
         telephone: "+1-520-349-3248",
         address: { "@type": "PostalAddress", addressLocality: "Tucson", addressRegion: "AZ", addressCountry: "US" },
@@ -150,7 +150,7 @@ const V2HomeContent = () => {
                 <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animation-delay-400">
                   <Button
                     onClick={() => {
-                      logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2', intent: returningContext.intent as any || 'explore' });
+                      logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/', intent: returningContext.intent as any || 'explore' });
                       openChat({ source: 'hero_returning', intent: returningContext.intent as any || 'explore' });
                     }}
                     className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-8 py-6 text-lg shadow-gold"
@@ -164,7 +164,7 @@ const V2HomeContent = () => {
                       variant="outline"
                       className="border-white/40 text-white hover:bg-white/10 rounded-full px-8 py-6 text-lg"
                     >
-                      <Link to="/v2/seller-decision">
+                      <Link to="/seller-decision">
                         {t("Find My Best Path", "Encontrar Mi Mejor Camino")}
                       </Link>
                     </Button>
@@ -192,7 +192,7 @@ const V2HomeContent = () => {
                 <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animation-delay-600">
                   <Button
                     onClick={() => {
-                      logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2', intent: 'explore' });
+                      logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/', intent: 'explore' });
                       openChat({ source: 'hero', intent: 'explore' });
                     }}
                     className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-8 py-6 text-lg shadow-gold"
@@ -205,7 +205,7 @@ const V2HomeContent = () => {
                     variant="outline"
                     className="border-white/40 text-white hover:bg-white/10 rounded-full px-8 py-6 text-lg"
                   >
-                    <Link to="/v2/guides">
+                    <Link to="/guides">
                       {t("Explore Free Guides", "Ver Guías Gratis")}
                     </Link>
                   </Button>
@@ -491,7 +491,7 @@ const V2HomeContent = () => {
                   <li>• {t("Step-by-step buying process", "Proceso de compra paso a paso")}</li>
                   <li>• {t("Bilingual support throughout", "Apoyo bilingüe durante todo el proceso")}</li>
                 </ul>
-                <Link to="/v2/buy" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
+                <Link to="/buy" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
                   {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -510,7 +510,7 @@ const V2HomeContent = () => {
                   <li>• {t("Full disclosure guidance", "Orientación sobre divulgaciones")}</li>
                   <li>• {t("Protection-first approach", "Enfoque en protección")}</li>
                 </ul>
-                <Link to="/v2/sell" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
+                <Link to="/sell" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
                   {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -529,7 +529,7 @@ const V2HomeContent = () => {
                   <li>• {t("Risk awareness guidance", "Orientación sobre riesgos")}</li>
                   <li>• {t("No pressure, just clarity", "Sin presión, solo claridad")}</li>
                 </ul>
-                <Link to="/v2/cash-offer-options" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
+                <Link to="/cash-offer-options" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
                   {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
