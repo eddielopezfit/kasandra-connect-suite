@@ -55,7 +55,7 @@ export function resetAll(): void {
   localStorage.removeItem(QA_KEY);
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(CONTEXT_KEY);
-  console.log('[QA] All session data cleared.');
+  logger.log('[QA] All session data cleared.');
 }
 
 /**
