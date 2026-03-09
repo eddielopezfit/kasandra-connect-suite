@@ -111,7 +111,7 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
     case 'neighborhood_compare':
       return generateNeighborhoodCompareGreeting(language);
     case 'buyer_closing_costs':
-      return generateBuyerClosingCostsGreeting(language);
+      return generateBuyerClosingCostsGreeting(language, context.closingCostData);
     case 'seller_timeline':
       return generateSellerTimelineGreeting(context);
     case 'floating':
