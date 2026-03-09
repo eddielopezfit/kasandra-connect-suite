@@ -794,6 +794,48 @@ const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
   '/seller-decision': { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
 };
 
+const GUIDE_DELIVERY_AFFIRMATIVE = /^(yes|sure|yeah|yep|ok|okay|please|show me|tell me more|sí|si|claro|por favor|muéstrame|muestrame)$/i;
+const GUIDE_MENTION_PATTERN = /\b(guide|guides|guía|guia|guías|guias)\b/i;
+
+const GUIDE_ID_TO_CHIP_KEY: Record<string, string> = {
+  'first-time-buyer-guide': CHIP_KEYS.GUIDE_FTB,
+  'cash-vs-traditional-sale': CHIP_KEYS.GUIDE_CASH_VS_LISTING,
+  'selling-for-top-dollar': CHIP_KEYS.GUIDE_SELLING_TOP_DOLLAR,
+  'military-pcs-guide': CHIP_KEYS.GUIDE_MILITARY,
+  'divorce-selling': CHIP_KEYS.GUIDE_DIVORCE,
+  'senior-downsizing': CHIP_KEYS.GUIDE_SENIOR,
+  'tucson-neighborhoods': CHIP_KEYS.GUIDE_NEIGHBORHOODS,
+  'relocating-to-tucson': CHIP_KEYS.GUIDE_RELOCATION,
+  'pricing-strategy': CHIP_KEYS.GUIDE_PRICING,
+  'cost-to-sell-tucson': CHIP_KEYS.GUIDE_COST_TO_SELL,
+  'capital-gains-home-sale-arizona': CHIP_KEYS.GUIDE_CAPITAL_GAINS,
+  'sell-or-rent-tucson': CHIP_KEYS.GUIDE_SELL_OR_RENT,
+  'how-long-to-sell-tucson': CHIP_KEYS.GUIDE_HOW_LONG,
+  'arizona-first-time-buyer-programs': CHIP_KEYS.GUIDE_FTB_PROGRAMS,
+  'tucson-suburb-comparison': CHIP_KEYS.GUIDE_SUBURB_COMPARE,
+  'buying-home-noncitizen-arizona': CHIP_KEYS.GUIDE_NONCITIZEN,
+  'arizona-real-estate-glossary': CHIP_KEYS.GUIDE_GLOSSARY,
+};
+
+function detectGuideChipForDelivery(lastAssistantMessage: string, context: ChatRequest["context"]): string {
+  const lastGuideId = context.last_guide_id;
+  if (lastGuideId && GUIDE_ID_TO_CHIP_KEY[lastGuideId]) {
+    return GUIDE_ID_TO_CHIP_KEY[lastGuideId];
+  }
+
+  const lower = lastAssistantMessage.toLowerCase();
+  if (/first.?time buyer|primer.*comprador/.test(lower)) return CHIP_KEYS.GUIDE_FTB;
+  if (/cash\s*vs|efectivo\s*vs/.test(lower)) return CHIP_KEYS.GUIDE_CASH_VS_LISTING;
+  if (/top dollar|mejor precio/.test(lower)) return CHIP_KEYS.GUIDE_SELLING_TOP_DOLLAR;
+  if (/military|va|militar/.test(lower)) return CHIP_KEYS.GUIDE_MILITARY;
+  if (/divorce|divorcio/.test(lower)) return CHIP_KEYS.GUIDE_DIVORCE;
+  if (/downsizing|jubil|adulto mayor/.test(lower)) return CHIP_KEYS.GUIDE_SENIOR;
+  if (/non.?citizen|no ciudadano/.test(lower)) return CHIP_KEYS.GUIDE_NONCITIZEN;
+  if (/capital gains|ganancias de capital/.test(lower)) return CHIP_KEYS.GUIDE_CAPITAL_GAINS;
+
+  return CHIP_KEYS.BROWSE_GUIDES;
+}
+
 interface ChipSuppressionEvent {
   tool_id: string;
   chip_label: string;
