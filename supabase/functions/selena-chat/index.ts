@@ -3152,6 +3152,14 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // Append Journey State Engine governance hint to system prompt
     governanceHint += journey.governanceHint;
 
+    // ============= HIGH INTENT OVERRIDE =============
+    // If user asked a direct financial question OR has read 5+ guides, force booking pivot
+    if (isHighIntentQuestion && guidesReadCount >= 2) {
+      governanceHint += language === 'es'
+        ? `\n\nINTENTO ALTO — PREGUNTA FINANCIERA DIRECTA:\nEste usuario preguntó algo específico sobre costos/números. Ha leído ${guidesReadCount} guías. NO ofrezca más guías.\nResponda con un dato específico si es posible, luego pivotee: "Kasandra puede darte tu número exacto basado en tu préstamo y plazo. Esa llamada es gratuita y toma 20 minutos."\nPrimera respuesta sugerida: "Hablar con Kasandra".`
+        : `\n\nHIGH INTENT — DIRECT FINANCIAL QUESTION:\nUser asked a specific cost/number question. They've read ${guidesReadCount} guides. Do NOT offer more guides.\nAnswer with a specific data point if possible, then pivot: "Kasandra can give you your actual number based on your loan type and timeline. That call is free and takes 20 minutes."\nFirst suggested reply: "Talk with Kasandra".`;
+    }
+
     // ============= GUIDE INQUIRY ROUTING HINT =============
     const GUIDE_INQUIRY = /what guides|which guide|qu[eé]\s+gu[ií]as|guias|show.*guides|recommend.*guide|gu[ií]as.*tien/i;
     if (GUIDE_INQUIRY.test(message)) {
