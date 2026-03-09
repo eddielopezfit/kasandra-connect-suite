@@ -39,11 +39,14 @@ export type EntrySource =
   | 'cash_readiness_capture'
   | 'cash_offer_options_hero'
   | 'off_market_capture'
+  | 'off_market_registered'
   | 'community_mid_page'
   | 'podcast_page'
   | 'seller_readiness_capture'
   | 'market_intelligence'
+  | 'market_intelligence_result'
   | 'neighborhood_compare'
+  | 'neighborhood_compare_result'
   | 'buyer_closing_costs'
   | 'seller_timeline';
 
