@@ -34,7 +34,14 @@ const RelatedNeighborhoodsRail = ({ neighborhood }: RelatedNeighborhoodsRailProp
               </h3>
               <Button asChild variant="outline" size="sm" className="hidden sm:flex">
                 <Link to={`/neighborhood-compare?areas=${neighborhood.slug},${neighborhood.relatedNeighborhoods.join(',')}`}>
-...
+                  <GitCompare className="w-4 h-4 mr-2" />
+                  {t("Compare These Areas", "Comparar Estas Áreas")}
+                </Link>
+              </Button>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              {relatedNeighborhoods.map((related) => (
                 <Link
                   key={related.slug}
                   to={`/neighborhoods/${related.slug}`}
@@ -79,13 +86,9 @@ const RelatedNeighborhoodsRail = ({ neighborhood }: RelatedNeighborhoodsRailProp
               </h3>
               <div className="flex flex-wrap gap-3">
                 {relatedGuides.map((guide) => (
-                  <Link
-                    key={guide!.id}
-                    to={guide!.path}
-                    className="group"
-                  >
-                    <Badge 
-                      variant="outline" 
+                  <Link key={guide!.id} to={guide!.path} className="group">
+                    <Badge
+                      variant="outline"
                       className="px-4 py-2 text-sm font-medium bg-white hover:bg-cc-gold/10 hover:border-cc-gold transition-colors cursor-pointer"
                     >
                       <BookOpen className="w-3 h-3 mr-2 text-cc-gold" />
