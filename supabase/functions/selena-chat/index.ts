@@ -497,8 +497,8 @@ function hasEarnedBookingAccess(
   // 1. User explicitly asked to book/call → immediate unlock
   if (userAskedToBook(message)) return true;
   
-  // 2. Tool completion flags (stable fields from SessionContext)
-  if (context.tool_used) return true;
+  // 2. Tool completion flags (stable fields from SessionContext) — FIX 6: renamed
+  if (context.last_tool_completed) return true;
   if (context.last_tool_result) return true;
   if (context.quiz_completed) return true;
   
