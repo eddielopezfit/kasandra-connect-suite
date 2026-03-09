@@ -149,6 +149,49 @@ const LeadCaptureModal = ({
         is_new: data.is_new,
       });
 
+      // Fire-and-forget handoff to GHL via notify-handoff edge function
+      const handoffContext = getSessionContext();
+      const nameParts = name.trim().split(' ');
+      supabase.functions.invoke('notify-handoff', {
+        body: {
+          contact: {
+            firstName: nameParts[0] || '',
+            lastName: nameParts.slice(1).join(' ') || '',
+            phone: phone.trim() || '',
+            email: email.trim().toLowerCase(),
+          },
+          context: {
+            selena_lead_id: leadId,
+            session_id: handoffContext?.session_id ?? '',
+            intent: handoffContext?.intent ?? '',
+            language,
+            journey_state: handoffContext?.journey_state ?? 'explore',
+            chip_phase_floor: handoffContext?.chip_phase_floor ?? 0,
+            guides_consumed: handoffContext?.guides_completed ?? [],
+            tools_completed: handoffContext?.tools_completed ?? [],
+            readiness_score: handoffContext?.readiness_score ?? 0,
+            inherited_home: handoffContext?.inherited_home ?? false,
+            trust_signal_detected: handoffContext?.trust_signal_detected ?? false,
+            timeline: handoffContext?.timeline ?? '',
+            estimated_value: handoffContext?.estimated_value ?? '',
+            property_condition: handoffContext?.property_condition_raw ?? '',
+            situation: handoffContext?.situation ?? '',
+            entry_source: handoffContext?.entry_source ?? source,
+            page_path: window.location.pathname,
+            utm_source: handoffContext?.utm_source ?? '',
+            utm_campaign: handoffContext?.utm_campaign ?? '',
+            quiz_completed: handoffContext?.quiz_completed ?? false,
+            quiz_result_path: handoffContext?.quiz_result_path ?? '',
+            primary_priority: handoffContext?.primary_priority ?? '',
+            sms_consent: false,
+            ai_disclosure_accepted: true,
+          },
+        },
+      }).then(({ error: handoffErr }) => {
+        if (handoffErr) console.error('[LeadCapture] Handoff failed:', handoffErr);
+        else console.log('[LeadCapture] Handoff successful');
+      });
+
       // Success callback
       onSuccess?.(leadId);
       
