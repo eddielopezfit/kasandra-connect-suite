@@ -3083,19 +3083,21 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       });
     }
 
-    // Log model usage for analytics
-    try {
-      await supabase.from("event_log").insert({
-        session_id: context.session_id,
-        event_type: "selena_model_fallback",
-        event_payload: {
-          model: modelUsed,
-          fallback_triggered: modelUsed !== "google/gemini-3-flash-preview",
-          timestamp: new Date().toISOString()
-        }
-      });
-    } catch (e) {
-      console.error("Failed to log model fallback event:", e);
+    // Log model usage for analytics (uses handler-scoped supabase client)
+    if (supabase) {
+      try {
+        await supabase.from("event_log").insert({
+          session_id: context.session_id,
+          event_type: "selena_model_usage",
+          event_payload: {
+            model: modelUsed,
+            fallback_triggered: modelUsed !== "google/gemini-3-flash-preview",
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (e) {
+        console.error("Failed to log model usage event:", e);
+      }
     }
 
     const data = await response.json();
