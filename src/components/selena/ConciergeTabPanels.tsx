@@ -360,7 +360,7 @@ function GuidesPanel({
             <QuickLink
               key={guide.id}
               label={t(guide.labelEn, guide.labelEs)}
-              onClick={() => onNavigate(`/v2/guides/${guide.id}`, 'guide_cta_click')}
+              onClick={() => onNavigate(`/guides/${guide.id}`, 'guide_cta_click')}
             />
           ))}
         </div>
