@@ -1,8 +1,8 @@
-import { MappedReply, normalizeChipLabel, findChipByNormalizedKey, findChipByKey } from '@/lib/registry/chipsRegistry';
+import { MappedReply, normalizeChipLabel, findChipByNormalizedKey, findChipByKey, CHIPS_REGISTRY } from '@/lib/registry/chipsRegistry';
 import { CHIP_KEYS, type ChipKey } from '@/lib/registry/chipKeys';
 import { getGuideChips } from '@/lib/registry/guideChipMap';
 import { logEvent } from '@/lib/analytics/logEvent';
-import { SessionContext } from '@/lib/analytics/selenaSession';
+import { SessionContext, getGuidesCompleted } from '@/lib/analytics/selenaSession';
 
 // ============= BLOCKED & REPLACEMENT MAPS (Semantic Keys) =============
 
