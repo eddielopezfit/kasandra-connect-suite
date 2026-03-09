@@ -110,7 +110,7 @@ const V2ThankYouContent = () => {
           ],
           cta: {
             label: t('Explore Your Cash Offer Options', 'Explorar Sus Opciones de Oferta en Efectivo'),
-            href: '/v2/cash-offer-options',
+            href: '/cash-offer-options',
             icon: FileText,
           },
           resource: {
