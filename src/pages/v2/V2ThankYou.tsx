@@ -10,7 +10,7 @@ import { logEvent } from "@/lib/analytics/logEvent";
 
 type IntentType = 'cash' | 'sell' | 'buy' | 'dual' | 'explore';
 
-const PAGE_PATH = '/v2/thank-you';
+const PAGE_PATH = '/thank-you';
 
 const V2ThankYouContent = () => {
   const { t } = useLanguage();
