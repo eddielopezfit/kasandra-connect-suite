@@ -234,8 +234,8 @@ function GuideDetailContent() {
   };
 
   const seo = guideId && seoOverrides[guideId];
-  const canonicalBase = 'https://kasandraoasis.com';
-  const canonicalUrl = guideId ? `${canonicalBase}/v2/guides/${guideId}` : undefined;
+  const canonicalBase = 'https://kasandraprietorealtor.com';
+  const canonicalUrl = guideId ? `${canonicalBase}/guides/${guideId}` : undefined;
 
   useDocumentHead({
     titleEn: seo ? seo.titleEn : guide ? `${guide.title} | Kasandra Prieto` : 'Guide | Kasandra Prieto',
