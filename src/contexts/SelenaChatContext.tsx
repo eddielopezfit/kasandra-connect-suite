@@ -227,7 +227,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       }
     }
     if (entryContext?.intent) {
-      setFieldIfEmpty('intent', entryContext.intent);
+      setFieldIfEmpty('intent', entryContext.intent as import('@/lib/analytics/selenaSession').Intent);
     }
     if (entryContext?.closingCostData) {
       updateSessionContext({ closing_cost_data: entryContext.closingCostData });
