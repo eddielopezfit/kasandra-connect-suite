@@ -153,7 +153,9 @@ export type EventType =
   | 'seller_timeline_step_completed'
   | 'seller_timeline_completed'
   | 'equity_pulse_saved'
-  | 'equity_pulse_shared';
+  | 'equity_pulse_shared'
+  // Neighborhood Intelligence Hub
+  | 'neighborhood_page_view';
 
 export interface EventPayload {
   [key: string]: unknown;

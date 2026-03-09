@@ -28,7 +28,9 @@ export type EntrySource =
   | 'market_intelligence'
   | 'neighborhood_compare'
   | 'buyer_closing_costs'
-  | 'seller_timeline';
+  | 'seller_timeline'
+  | 'neighborhoods_index'
+  | 'neighborhood_detail';
 
 export interface EntryContext {
   source: EntrySource;
@@ -41,6 +43,8 @@ export interface EntryContext {
   intent?: string;
   userName?: string;
   prefillMessage?: string;
+  neighborhoodSlug?: string;
+  neighborhoodName?: string;
 }
 
 export interface ChipMeta {

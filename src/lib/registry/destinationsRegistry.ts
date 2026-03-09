@@ -28,7 +28,9 @@ export type DestinationKey =
   | 'private_cash_review'
   | 'thank_you'
   | 'selena_open'
-  | 'external_youtube';
+  | 'external_youtube'
+  | 'neighborhoods'
+  | 'neighborhood_detail';
 
 interface DestinationEntry {
   key: DestinationKey;
@@ -60,6 +62,8 @@ const DESTINATIONS: readonly DestinationEntry[] = [
   { key: 'thank_you', path: '/v2/thank-you', label_en: 'Thank You', label_es: 'Gracias' },
   { key: 'selena_open', path: null, label_en: 'Open Selena', label_es: 'Abrir Selena' },
   { key: 'external_youtube', path: null, label_en: 'YouTube', label_es: 'YouTube' },
+  { key: 'neighborhoods', path: '/v2/neighborhoods', label_en: 'Neighborhoods', label_es: 'Vecindarios' },
+  { key: 'neighborhood_detail', path: '/v2/neighborhoods/:slug', label_en: 'Neighborhood', label_es: 'Vecindario' },
 ] as const;
 
 // Lookup map for O(1) access

@@ -60,6 +60,7 @@ serve(async (req) => {
   try {
     const body = await req.json();
     const zip_code = (body.zip_code || "").trim();
+    const neighborhood_name = (body.neighborhood_name || "").trim();
 
     if (!/^\d{5}$/.test(zip_code)) {
       return new Response(
@@ -108,9 +109,14 @@ serve(async (req) => {
 
     const isTucson = isTucsonZip(zip_code);
 
+    // Build location string — use neighborhood_name if provided (for shared ZIPs like Corona de Tucson / Vail)
+    const locationString = neighborhood_name 
+      ? `${neighborhood_name}, Arizona (ZIP code ${zip_code})`
+      : `ZIP code ${zip_code}`;
+
     const regionContext = isTucson
-      ? `ZIP code ${zip_code} is in the Tucson, Arizona metropolitan area (Pima County). Provide detailed, confident local insights grounded in current data. Search for recent listings, sales activity, school ratings, and community developments specifically for this ZIP.`
-      : `ZIP code ${zip_code} is outside the Tucson metro area. Provide general insights based on current web data, but note that Kasandra Prieto specializes in Tucson/Pima County. Set confidence_level to "exploratory".`;
+      ? `${locationString} is in the Tucson, Arizona metropolitan area (Pima County). Provide detailed, confident local insights grounded in current data. Search for recent listings, sales activity, school ratings, and community developments specifically for ${neighborhood_name || `ZIP ${zip_code}`}.`
+      : `${locationString} is outside the Tucson metro area. Provide general insights based on current web data, but note that Kasandra Prieto specializes in Tucson/Pima County. Set confidence_level to "exploratory".`;
 
     const systemPrompt = `You are a bilingual (English/Spanish) real estate neighborhood intelligence analyst for Tucson, Arizona, working for Kasandra Prieto at Corner Connect (brokered by Realty Executives Arizona Territory).
 
@@ -125,7 +131,7 @@ ${PROFILE_SCHEMA}
 
 Both profile_en and profile_es are required. The Spanish version should be a natural, idiomatic translation — not literal. confidence_level must be one of: "high", "medium", or "exploratory".`;
 
-    const userMessage = `Generate a current, web-grounded neighborhood intelligence profile for ZIP code ${zip_code}. Search for recent real estate activity, current listings, school ratings, local news, and community character. Return only the JSON profile.`;
+    const userMessage = `Generate a current, web-grounded neighborhood intelligence profile for ${locationString}. Search for recent real estate activity, current listings, school ratings, local news, and community character. Return only the JSON profile.`;
 
     const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",

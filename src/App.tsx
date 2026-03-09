@@ -34,6 +34,8 @@ import V2NeighborhoodCompare from "./pages/v2/V2NeighborhoodCompare";
 import V2BuyerClosingCosts from "./pages/v2/V2BuyerClosingCosts";
 import V2CTAQualityAssurance from "./pages/v2/V2CTAQualityAssurance";
 import V2QADeterminism from "./pages/v2/V2QADeterminism";
+import V2Neighborhoods from "./pages/v2/V2Neighborhoods";
+import V2NeighborhoodDetail from "./pages/v2/V2NeighborhoodDetail";
 // Ad Funnel Pages
 import V2OffMarketBuyer from "./pages/v2/V2OffMarketBuyer";
 import SellerLanding from "./pages/ad/SellerLanding";
@@ -88,6 +90,8 @@ const App = () => {
               <Route path="/v2/buyer-closing-costs" element={<V2BuyerClosingCosts />} />
               <Route path="/v2/qa-cta" element={<V2CTAQualityAssurance />} />
               <Route path="/v2/qa-determinism" element={<V2QADeterminism />} />
+              <Route path="/v2/neighborhoods" element={<V2Neighborhoods />} />
+              <Route path="/v2/neighborhoods/:slug" element={<V2NeighborhoodDetail />} />
 
               {/* Ad Funnel Routes (Isolated) */}
               <Route path="/ad/seller" element={<SellerLanding />} />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Home } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageToggle from "./LanguageToggle";
@@ -22,6 +22,7 @@ const V2Navigation = () => {
     { href: "/v2/buy", label: t("Buy", "Comprar") },
     { href: "/v2/sell", label: t("Sell", "Vender") },
     { href: "/v2/cash-offer-options", label: t("Cash Options", "Opciones en Efectivo") },
+    { href: "/v2/neighborhoods", label: t("Neighborhoods", "Vecindarios") },
     { href: "/v2/guides", label: t("Guides", "Guías") },
     { href: "/v2/podcast", label: t("Podcast", "Podcast") },
     { href: "/v2/community", label: t("Community", "Comunidad") },
