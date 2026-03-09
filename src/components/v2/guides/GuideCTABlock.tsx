@@ -32,7 +32,7 @@ const getCTAConfig = (category: GuideCategory) => {
 
   if (category === 'cash') {
     return {
-      link: "/v2/cash-offer-options",
+      link: "/cash-offer-options",
       textEn: "Explore Cash Offer Options",
       textEs: "Explorar Opciones de Oferta en Efectivo",
       subtextEn: "See if a cash offer makes sense for your situation",
