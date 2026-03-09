@@ -3071,7 +3071,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     
     const isFirstSellerTurn = conversationState.userTurns <= 1
       && (primaryIntent === 'sell' || primaryIntent === 'cash')
-      && !context.tool_used
+      && !context.last_tool_completed
       && !context.quiz_completed
       && !isTimelineReply    // Never re-fire on timeline chip responses
       && !proceedsOverride   // PROCEEDS override takes absolute priority over first-turn intercept
