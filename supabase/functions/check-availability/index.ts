@@ -81,7 +81,7 @@ serve(async (req) => {
       });
 
       // Build channel-aware booking URL with all context
-      const bookingUrl = `/v2/book?channel=${channel}&slot=${encodeURIComponent(slotStart.toISOString())}&lead_id=${lead_id}&priority=hot`;
+      const bookingUrl = `/book?channel=${channel}&slot=${encodeURIComponent(slotStart.toISOString())}&lead_id=${lead_id}&priority=hot`;
 
       slots.push({
         start: slotStart.toISOString(),

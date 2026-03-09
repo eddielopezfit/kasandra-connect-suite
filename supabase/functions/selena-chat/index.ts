@@ -3208,7 +3208,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     if (hasEarned && journey.journey_state === 'decide') {
       actions.push({
         label: language === "es" ? "Revisar Estrategia con Kasandra" : "Review Strategy with Kasandra",
-        href: "/v2/book",
+        href: "/book",
         eventType: "book_click",
       });
     }

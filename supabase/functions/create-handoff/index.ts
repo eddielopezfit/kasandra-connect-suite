@@ -125,7 +125,7 @@ serve(async (req) => {
 
     // If no slots available and no pre-selected slot, use generic booking URL
     if (!bookingUrl) {
-      bookingUrl = `/v2/book?lead_id=${lead_id}&channel=${channel}&priority=${priority}&callback=true`;
+      bookingUrl = `/book?lead_id=${lead_id}&channel=${channel}&priority=${priority}&callback=true`;
     }
 
     // Build handoff record
