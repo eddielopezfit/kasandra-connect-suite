@@ -90,6 +90,8 @@ const App = () => {
               <Route path="/v2/buyer-closing-costs" element={<V2BuyerClosingCosts />} />
               <Route path="/v2/qa-cta" element={<V2CTAQualityAssurance />} />
               <Route path="/v2/qa-determinism" element={<V2QADeterminism />} />
+              <Route path="/v2/neighborhoods" element={<V2Neighborhoods />} />
+              <Route path="/v2/neighborhoods/:slug" element={<V2NeighborhoodDetail />} />
 
               {/* Ad Funnel Routes (Isolated) */}
               <Route path="/ad/seller" element={<SellerLanding />} />

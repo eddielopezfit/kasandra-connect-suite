@@ -22,6 +22,7 @@ const V2Navigation = () => {
     { href: "/v2/buy", label: t("Buy", "Comprar") },
     { href: "/v2/sell", label: t("Sell", "Vender") },
     { href: "/v2/cash-offer-options", label: t("Cash Options", "Opciones en Efectivo") },
+    { href: "/v2/neighborhoods", label: t("Neighborhoods", "Vecindarios") },
     { href: "/v2/guides", label: t("Guides", "Guías") },
     { href: "/v2/podcast", label: t("Podcast", "Podcast") },
     { href: "/v2/community", label: t("Community", "Comunidad") },

@@ -131,7 +131,7 @@ ${PROFILE_SCHEMA}
 
 Both profile_en and profile_es are required. The Spanish version should be a natural, idiomatic translation — not literal. confidence_level must be one of: "high", "medium", or "exploratory".`;
 
-    const userMessage = `Generate a current, web-grounded neighborhood intelligence profile for ZIP code ${zip_code}. Search for recent real estate activity, current listings, school ratings, local news, and community character. Return only the JSON profile.`;
+    const userMessage = `Generate a current, web-grounded neighborhood intelligence profile for ${locationString}. Search for recent real estate activity, current listings, school ratings, local news, and community character. Return only the JSON profile.`;
 
     const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
