@@ -6,6 +6,7 @@ import {
   initSessionContext, 
   updateSessionContext,
   setFieldIfEmpty,
+  getGuidesCompleted,
 } from '@/lib/analytics/selenaSession';
 import { appendTrail, serializeTrailForSelena } from '@/lib/analytics/sessionTrail';
 import {
