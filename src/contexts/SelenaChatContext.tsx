@@ -232,6 +232,12 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     if (entryContext?.closingCostData) {
       updateSessionContext({ closing_cost_data: entryContext.closingCostData } as any);
     }
+    if (entryContext?.sellerCalcData) {
+      updateSessionContext({ seller_calc_data: entryContext.sellerCalcData } as any);
+    }
+    if (entryContext?.readinessData) {
+      updateSessionContext({ readiness_entry_data: entryContext.readinessData } as any);
+    }
     updateSessionContext(entryUpdates as any);
 
     logEvent('selena_opened', {
