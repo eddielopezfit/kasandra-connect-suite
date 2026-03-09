@@ -2606,7 +2606,7 @@ serve(async (req) => {
     let reflectionHint = "";
     if (modeContext.reflectionRequired) {
       const guideTitle = context.last_guide_title;
-      const toolUsed = context.tool_used;
+      const toolUsed = context.last_tool_completed;
       const guidesRead = context.guides_read || 0;
       
       if (language === "es") {
