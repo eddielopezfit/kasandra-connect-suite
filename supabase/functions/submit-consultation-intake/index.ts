@@ -482,6 +482,9 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
             last_declared_goal: getGoalLabel(normalizedIntent.raw, input.language),
             is_pre_approved: input.pre_approved === 'yes',
             priority_handoff: priorityHandoffTriggered,
+            // Journey progression fields
+            chip_phase_floor: input.chip_phase_floor ?? null,
+            tools_completed: Array.isArray(input.tools_completed) ? input.tools_completed.join(',') : null,
             // Lead scoring fields
             lead_score: scoreResult.lead_score,
             lead_score_bucket: scoreResult.lead_score_bucket,
