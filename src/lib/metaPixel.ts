@@ -90,7 +90,16 @@ export function init() {
   }
 
   // Otherwise inject the standard snippet + script tag
-  const n: Record<string, unknown> & { push?: unknown, loaded?: boolean, version?: string, queue?: unknown[], callMethod?: (...args: unknown[]) => void } = (f.fbq = function (...args: unknown[]) {
+  interface FbqFunction {
+    (...args: unknown[]): void;
+    push?: unknown;
+    loaded?: boolean;
+    version?: string;
+    queue?: unknown[][];
+    callMethod?: (...args: unknown[]) => void;
+  }
+
+  const n: FbqFunction = (f.fbq = function (...args: unknown[]) {
     if (n.callMethod) {
       n.callMethod.apply(n, args);
     } else if (Array.isArray(n.queue)) {
