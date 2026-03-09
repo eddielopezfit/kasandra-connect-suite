@@ -424,4 +424,50 @@ export function clearSession(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(CONTEXT_KEY);
+  localStorage.removeItem(GUIDES_COMPLETED_KEY);
+}
+
+// ============= FIX 2: GUIDE COMPLETION TRACKING =============
+
+/**
+ * Get the list of completed guide IDs from sessionStorage
+ */
+export function getGuidesCompleted(): string[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const stored = sessionStorage.getItem(GUIDES_COMPLETED_KEY);
+    if (!stored) return [];
+    return JSON.parse(stored) as string[];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Mark a guide as completed (user scrolled 50%+ or spent 30s+)
+ * Appends to the array without duplicates
+ */
+export function markGuideCompleted(guideId: string): void {
+  if (typeof window === 'undefined') return;
+  if (!guideId) return;
+  
+  try {
+    const current = getGuidesCompleted();
+    if (current.includes(guideId)) return; // Already tracked
+    
+    const updated = [...current, guideId];
+    sessionStorage.setItem(GUIDES_COMPLETED_KEY, JSON.stringify(updated));
+    
+    // Also update SessionContext for payload inclusion
+    updateSessionContext({ guides_completed: updated });
+  } catch {
+    // Silent fail — guide tracking is non-critical
+  }
+}
+
+/**
+ * Check if a specific guide has been completed
+ */
+export function isGuideCompleted(guideId: string): boolean {
+  return getGuidesCompleted().includes(guideId);
 }

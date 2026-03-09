@@ -176,11 +176,12 @@ export function appendTrail(path: string): void {
 
 /**
  * Paths that add no signal — skip tracking these.
+ * NOTE: Neighborhood pages are NOT skipped — they carry strong intent signal.
  */
 function shouldSkipPath(path: string): boolean {
   const SKIP = [
     /^\/guides\/?$/,  // guides index — too generic
-    /^\/$/,
+    /^\/$/,           // home page — too generic
   ];
   return SKIP.some(p => p.test(path));
 }
