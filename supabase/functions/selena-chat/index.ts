@@ -2448,11 +2448,17 @@ const BRACKET_CTA_ALLOWLIST = new Set([
   'revisar estrategia con kasandra',
 ]);
 
+// Patterns that indicate a bracket CTA the LLM invented (catch-all for booking/action leakage)
+const BRACKET_CTA_PATTERNS = /^\s*(book|schedule|call|talk|find a time|speak|connect|reserve|reservar|agendar|hablar|llamar|programar|conectar)/i;
+
 function sanitizeBracketCTAs(text: string): string {
   return text
     .replace(/\[([^\]]{5,80})\]/g, (_match, inner: string) => {
       const normalized = inner.toLowerCase().trim();
+      // Strip exact known chip labels
       if (BRACKET_CTA_ALLOWLIST.has(normalized)) return '';
+      // Strip any bracket starting with booking/action verbs
+      if (BRACKET_CTA_PATTERNS.test(normalized)) return '';
       return _match; // preserve non-CTA brackets (e.g., "[optional]")
     })
     .replace(/\n{3,}/g, '\n\n')
