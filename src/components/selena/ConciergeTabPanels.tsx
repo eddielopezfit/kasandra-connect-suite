@@ -103,7 +103,7 @@ export function ConciergeTabPanels({
   const handleBookWithKasandra = () => {
     logEvent('priority_call_click', { source: 'concierge_tabs' });
     closeDrawer();
-    navigate('/v2/book');
+    navigate('/book');
   };
 
   const handleResetIntent = () => {
