@@ -72,6 +72,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Comparar efectivo vs. listado',
     normalized_key: 'compare cash vs listing',
     actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
+    chipKey: CHIP_KEYS.COMPARE_CASH_LISTING,
   },
   {
     id: 'calc-cash-vs-listing-es',
@@ -79,6 +80,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Comparar efectivo vs. listado',
     normalized_key: 'comparar efectivo vs listado',
     actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' } },
+    chipKey: CHIP_KEYS.COMPARE_CASH_LISTING,
   },
 
   // --- Booking: talk with Kasandra ---
@@ -88,6 +90,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Hablar con Kasandra',
     normalized_key: 'talk with kasandra',
     actionSpec: { type: 'book', label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
+    chipKey: CHIP_KEYS.TALK_WITH_KASANDRA,
   },
   {
     id: 'book-talk-es',
@@ -95,6 +98,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Hablar con Kasandra',
     normalized_key: 'hablar con kasandra',
     actionSpec: { type: 'book', label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
+    chipKey: CHIP_KEYS.TALK_WITH_KASANDRA,
   },
 
   // --- Booking: find a time ---
