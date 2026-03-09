@@ -205,12 +205,12 @@ export function SelenaDrawerSuggestedRepliesChips({
               <button
                 key={index}
                 onClick={() => handleClick(reply)}
-                className={cn(
-                  "shrink-0 text-xs font-medium px-3 py-2 rounded-full",
-                  "active:scale-95",
-                  "transition-all duration-200",
-                  "whitespace-nowrap",
-                  "max-w-[200px] truncate",
+              className={cn(
+                "shrink-0 text-xs font-medium px-3 py-2 rounded-full",
+                "active:scale-95",
+                "transition-all duration-200",
+                "whitespace-nowrap",
+                "max-w-[200px] truncate min-h-[44px] min-w-[44px]",
                   // Booking chip visual weighting
                   booking && isHot
                     ? "bg-cc-gold text-cc-navy font-semibold border border-cc-gold shadow-sm"
