@@ -15,6 +15,12 @@ const PAGE_PATH = '/thank-you';
 
 const V2ThankYouContent = () => {
   const { t } = useLanguage();
+  useDocumentHead({
+    titleEn: "Thank You | Kasandra Prieto — Realty Executives Arizona",
+    titleEs: "Gracias | Kasandra Prieto — Realty Executives Arizona",
+    descriptionEn: "Your consultation with Kasandra Prieto is confirmed. Next steps for your Tucson real estate journey.",
+    descriptionEs: "Su consulta con Kasandra Prieto está confirmada. Próximos pasos para su viaje inmobiliario en Tucson.",
+  });
   const [searchParams] = useSearchParams();
   const { openChat } = useSelenaChat();
   
