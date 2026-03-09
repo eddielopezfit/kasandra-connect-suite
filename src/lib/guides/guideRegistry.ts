@@ -98,7 +98,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // === TIER 1 — PILLAR GUIDES ===
   {
     id: 'first-time-buyer-guide',
-    path: '/v2/guides/first-time-buyer-guide',
+    path: '/guides/first-time-buyer-guide',
     titleEn: "First-Time Home Buyer's Complete Guide",
     titleEs: 'Guía Completa para Compradores de Primera Vivienda',
     labelEn: 'First-Time Buyer Guide',
