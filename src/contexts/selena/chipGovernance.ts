@@ -130,11 +130,21 @@ export function getPhaseAwareChips(
   const intent = ctx?.intent;
   const toolsDone = new Set(ctx?.tools_completed ?? []);
   const lang = (ctx as any)?._lang ?? 'en';
+  
+  // FIX 3: Get completed guides for chip suppression
+  const guidesCompleted = new Set(getGuidesCompleted());
 
   // Build set of blocked semantic keys from completed tools
   const blockedKeys = new Set<ChipKey>();
   for (const toolId of toolsDone) {
     for (const key of CLIENT_TOOL_BLOCKED_CHIPS[toolId] ?? []) {
+      blockedKeys.add(key);
+    }
+  }
+  
+  // Add blocked keys from completed guides
+  for (const guideId of guidesCompleted) {
+    for (const key of GUIDE_BLOCKED_CHIPS[guideId] ?? []) {
       blockedKeys.add(key);
     }
   }
