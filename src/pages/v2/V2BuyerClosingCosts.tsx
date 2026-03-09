@@ -304,7 +304,7 @@ const V2BuyerClosingCostsContent = () => {
                   <Percent className="w-4 h-4" />
                   {t("Down Payment", "Enganche")}
                 </label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 overflow-x-auto max-w-full">
                   {([3, 3.5, 5, 10, 20].filter(p => p >= minDown)).map(p => (
                     <button
                       key={p}

@@ -458,6 +458,9 @@ const V2HomeContent = () => {
         </div>
       </section>
 
+      {/* Neighborhood Cards */}
+      <HomepageNeighborhoodCards />
+
       {/* Trust Bar */}
       <TrustBar />
 

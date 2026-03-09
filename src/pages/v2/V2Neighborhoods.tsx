@@ -41,7 +41,7 @@ const NeighborhoodsContent = () => {
     <>
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-cc-navy via-cc-navy to-cc-slate py-20 lg:py-28">
-        <div className="absolute inset-0 bg-[url('/og-kasandra.jpg')] bg-cover bg-center opacity-10" />
+        <div className="absolute inset-0 bg-[url('/og-kasandra.jpg')] bg-cover bg-center md:bg-center bg-[center_bottom] opacity-10" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-cc-gold/20 text-cc-gold px-4 py-1.5 rounded-full text-sm font-medium mb-6">

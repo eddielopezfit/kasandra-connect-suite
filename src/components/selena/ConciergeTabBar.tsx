@@ -98,7 +98,7 @@ export function ConciergeTabBar({
   journeyStep 
 }: ConciergeTabBarProps) {
   return (
-    <div className="flex items-center justify-around border-t border-border bg-background/95 backdrop-blur-sm px-1 py-1.5 shrink-0">
+    <div className="flex items-center justify-around border-t border-border bg-background/95 backdrop-blur-sm px-1 py-1 md:py-1.5 shrink-0">
       {TABS.map((tab) => {
         const config = TAB_CONFIG[tab];
         const Icon = config.icon;
