@@ -255,9 +255,9 @@ const V2SellContent = () => {
               <Button 
                 asChild 
                 className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full"
-                onClick={() => handleCTAClick(CTA_NAMES.TRADITIONAL_LISTING_GUIDE, '/v2/guides/selling-for-top-dollar')}
+                onClick={() => handleCTAClick(CTA_NAMES.TRADITIONAL_LISTING_GUIDE, '/guides/selling-for-top-dollar')}
               >
-                <Link to="/v2/guides/selling-for-top-dollar">
+                <Link to="/guides/selling-for-top-dollar">
                   {t("Learn Listing Strategy", "Conocer Estrategia de Venta")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
