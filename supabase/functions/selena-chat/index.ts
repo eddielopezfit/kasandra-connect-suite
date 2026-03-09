@@ -2647,7 +2647,7 @@ serve(async (req) => {
     //     read from scrape_log jsonb column — no schema change required.
     let marketPulseHint = "";
     const isSellerIntent = effectiveIntent === 'sell' || effectiveIntent === 'cash' || effectiveIntent === 'dual';
-    const equityPulseSaved = context.tool_used === 'tucson_alpha_calculator' || 
+    const equityPulseSaved = context.last_tool_completed === 'tucson_alpha_calculator' || 
       (context.tools_completed && context.tools_completed.includes('tucson_alpha_calculator'));
 
     if (isSellerIntent || equityPulseSaved) {
