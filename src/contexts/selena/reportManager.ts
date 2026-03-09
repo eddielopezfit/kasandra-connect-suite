@@ -79,7 +79,7 @@ export async function generateReport(
       };
     }
 
-    logEvent('report_generation_completed', {
+    logEvent('report_generate_success', {
       report_id: data.report.id,
       report_type: data.report.report_type,
     });
