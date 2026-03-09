@@ -684,11 +684,14 @@ const CHIP_KEY_DESTINATION: Record<string, string> = {
  * this map resolves it. The client-side dual lookup handles the same via normalized text.
  */
 const CHIP_DESTINATION: Record<string, string> = {
-  // EN chips
+  // EN chips — core actions
   'Take the readiness check': '/buyer-readiness',
+  'Take the buyer readiness check': '/buyer-readiness',
+  'Take the seller readiness check': '/seller-readiness',
   'Browse guides': '/guides',
   'Take the cash readiness check': '/cash-readiness',
   'Compare cash vs. listing': '/cash-offer-options',
+  'Compare cash vs listing': '/cash-offer-options',
   'Get my selling options': '/seller-decision',
   'Quick seller readiness check': '/seller-readiness',
   'Estimate my net proceeds': '/cash-offer-options',
@@ -696,6 +699,9 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Get off-market access': '/off-market',
   'Browse buyer guides': '/guides',
   'Selling Guides': '/guides',
+  'Explore neighborhoods': '/buy',
+  'View market intelligence': '/market',
+  // EN chips — guides
   'First-Time Buyer Guide': '/guides/first-time-buyer-guide',
   'View first-time buyer guide': '/guides/first-time-buyer-guide',
   'Cash vs. Listing Guide': '/guides/cash-vs-traditional-sale',
@@ -725,18 +731,38 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Compare Neighborhoods': '/neighborhood-compare',
   'Estimate Closing Costs': '/buyer-closing-costs',
   'Talk with Kasandra': '/book',
-  // ES chips
+
+  // EN fuzzy aliases — common LLM variations
+  'Take a readiness check': '/buyer-readiness',
+  'Use the seller net calculator': '/cash-offer-options',
+  'Use the net proceeds estimator': '/cash-offer-options',
+  'Open the calculator': '/cash-offer-options',
+  'See the calculator': '/cash-offer-options',
+  'Run the numbers': '/cash-offer-options',
+  'Talk to Kasandra': '/book',
+  'Speak with Kasandra': '/book',
+  'Schedule with Kasandra': '/book',
+  'Book a call': '/book',
+  'Book a consultation': '/book',
+
+  // ES chips — core actions (parity with EN)
   'Tomar la evaluación de preparación': '/buyer-readiness',
+  'Evaluación de preparación del comprador': '/buyer-readiness',
+  'Evaluación de preparación del vendedor': '/seller-readiness',
   'Explorar guías': '/guides',
   'Tomar el check de preparación en efectivo': '/cash-readiness',
   'Encontrar casas fuera del mercado': '/off-market',
   'Obtener acceso fuera del mercado': '/off-market',
   'Comparar efectivo vs. listado': '/cash-offer-options',
+  'Comparar efectivo vs listado': '/cash-offer-options',
   'Ver mis opciones de venta': '/seller-decision',
   'Check rápido de preparación para vender': '/seller-readiness',
   'Estimar mis ganancias netas': '/cash-offer-options',
+  'Explorar vecindarios': '/buy',
+  'Ver inteligencia del mercado': '/market',
   'Hablar con Kasandra': '/book',
   'Encontrar un horario con Kasandra': '/book',
+  // ES chips — guides
   'Guía de Costos de Venta': '/guides/cost-to-sell-tucson',
   'Glosario de Bienes Raíces': '/guides/arizona-real-estate-glossary',
   'Comparación de Suburbios': '/guides/tucson-suburb-comparison',
@@ -748,6 +774,11 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Datos del Mercado Tucson': '/market',
   'Comparar Vecindarios': '/neighborhood-compare',
   'Estimar Costos de Cierre': '/buyer-closing-costs',
+  // ES fuzzy aliases
+  'Agendar con Kasandra': '/book',
+  'Reservar una consulta': '/book',
+  'Abrir la calculadora': '/cash-offer-options',
+  'Ver la calculadora': '/cash-offer-options',
 };
 
 // Tool ID → destination paths it blocks (the routes the tool lives on)
