@@ -130,7 +130,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'selling-for-top-dollar',
-    path: '/v2/guides/selling-for-top-dollar',
+    path: '/guides/selling-for-top-dollar',
     titleEn: 'Selling Your Home in Arizona: A Clear Path Forward',
     titleEs: 'Vender Su Casa en Arizona: Un Camino Claro',
     labelEn: 'Selling Your Home Guide',
