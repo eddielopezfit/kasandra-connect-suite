@@ -2,9 +2,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+
+const V2Redirect = () => {
+  const location = useLocation();
+  const newPath = location.pathname.replace(/^\/v2/, '') || '/';
+  return <Navigate to={newPath + location.search} replace />;
+};
 import ScrollManager from "@/components/ScrollManager";
 import RouteAnalytics from "@/components/RouteAnalytics";
 import NotFound from "./pages/NotFound";
@@ -61,7 +67,7 @@ const App = () => {
             <Routes>
               {/* Legacy redirects */}
               <Route path="/v2" element={<Navigate to="/" replace />} />
-              <Route path="/v2/*" element={<Navigate to="/" replace />} />
+              <Route path="/v2/*" element={<V2Redirect />} />
               <Route path="/cash-offer" element={<Navigate to="/cash-offer-options" replace />} />
               <Route path="/podcast/episodes" element={<Navigate to="/podcast" replace />} />
 
