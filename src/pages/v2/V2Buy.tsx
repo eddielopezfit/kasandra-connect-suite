@@ -15,7 +15,7 @@ import { NeighborhoodExplorer, NeighborhoodQuiz } from "@/components/v2/neighbor
 import heroImage from "@/assets/hero-neighborhood-road.png";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 
-const PAGE_PATH = '/v2/buy';
+const PAGE_PATH = '/buy';
 const PAGE_INTENT = 'buy' as const;
 
 const V2BuyContent = () => {
@@ -117,17 +117,17 @@ const V2BuyContent = () => {
               <Button 
                 asChild 
                 className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
-                onClick={() => handleCTAClick(CTA_NAMES.HERO_BUYER_READINESS, '/v2/buyer-readiness')}
+                onClick={() => handleCTAClick(CTA_NAMES.HERO_BUYER_READINESS, '/buyer-readiness')}
               >
-                <Link to="/v2/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
+                <Link to="/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
               </Button>
               <Button 
                 asChild 
                 variant="outline" 
                 className="bg-white/15 border-white/40 text-white hover:bg-white/20 hover:border-white/50 rounded-full px-6 sm:px-8 text-sm sm:text-base"
-                onClick={() => handleCTAClick('hero_buyer_guide', '/v2/guides/first-time-buyer-guide')}
+                onClick={() => handleCTAClick('hero_buyer_guide', '/guides/first-time-buyer-guide')}
               >
-                <Link to="/v2/guides/first-time-buyer-guide">{t("Read the Buyer's Guide", "Leer la Guía del Comprador")}</Link>
+                <Link to="/guides/first-time-buyer-guide">{t("Read the Buyer's Guide", "Leer la Guía del Comprador")}</Link>
               </Button>
             </div>
           </div>

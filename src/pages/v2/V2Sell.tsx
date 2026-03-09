@@ -15,7 +15,7 @@ import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 import heroImage from "@/assets/hero-sell-premium.png";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 
-const PAGE_PATH = '/v2/sell';
+const PAGE_PATH = '/sell';
 const PAGE_INTENT = 'sell' as const;
 
 const V2SellContent = () => {
@@ -255,9 +255,9 @@ const V2SellContent = () => {
               <Button 
                 asChild 
                 className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full"
-                onClick={() => handleCTAClick(CTA_NAMES.TRADITIONAL_LISTING_GUIDE, '/v2/guides/selling-for-top-dollar')}
+                onClick={() => handleCTAClick(CTA_NAMES.TRADITIONAL_LISTING_GUIDE, '/guides/selling-for-top-dollar')}
               >
-                <Link to="/v2/guides/selling-for-top-dollar">
+                <Link to="/guides/selling-for-top-dollar">
                   {t("Learn Listing Strategy", "Conocer Estrategia de Venta")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
@@ -287,9 +287,9 @@ const V2SellContent = () => {
                 asChild 
                 variant="outline"
                 className="w-full border-cc-gold text-cc-gold hover:bg-cc-gold hover:text-cc-navy font-semibold rounded-full"
-                onClick={() => handleCTAClick(CTA_NAMES.CASH_OFFER_OPTIONS, '/v2/cash-offer-options')}
+                onClick={() => handleCTAClick(CTA_NAMES.CASH_OFFER_OPTIONS, '/cash-offer-options')}
               >
-                <Link to="/v2/cash-offer-options">
+                <Link to="/cash-offer-options">
                   {t("Explore Cash Options", "Explorar Opciones en Efectivo")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>

@@ -263,7 +263,7 @@ const V2OffMarketBuyerContent = () => {
               </button>
               <div className="mt-4">
                 <button
-                  onClick={() => navigate("/v2/guides")}
+                  onClick={() => navigate("/guides")}
                   className="text-sm text-cc-gold hover:text-cc-gold/80 underline underline-offset-2"
                 >
                   {t("Browse buyer guides", "Ver guías para compradores")}

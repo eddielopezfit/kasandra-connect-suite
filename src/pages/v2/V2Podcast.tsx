@@ -152,7 +152,7 @@ const V2PodcastContent = () => {
             </p>
             <Button
               onClick={() => {
-                logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2/podcast', intent: 'explore' });
+                logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/podcast', intent: 'explore' });
                 openChat({ source: 'podcast_page', intent: 'explore' });
               }}
               className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"

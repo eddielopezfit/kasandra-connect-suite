@@ -235,7 +235,7 @@ const V2BookConfirmedContent = () => {
       <section className="py-6 bg-cc-ivory w-full">
         <div className="container mx-auto px-4 text-center">
           <Link
-            to="/v2/book"
+            to="/book"
             className="text-sm text-muted-foreground underline hover:text-foreground transition-colors"
           >
             {t(

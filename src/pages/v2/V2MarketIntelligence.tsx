@@ -27,7 +27,7 @@ const V2MarketIntelligenceContent = () => {
 
   useEffect(() => {
     setFieldIfEmpty('intent', 'explore');
-    logEvent('page_view', { page: '/v2/market', tool: 'market_intelligence' });
+    logEvent('page_view', { page: '/market', tool: 'market_intelligence' });
   }, []);
 
   const dom = pulseStats.daysOnMarket;
