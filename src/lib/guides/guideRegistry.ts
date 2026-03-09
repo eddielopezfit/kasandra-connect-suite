@@ -1113,7 +1113,6 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
 export const getLiveGuides = (): GuideRegistryEntry[] => {
   const live = GUIDE_REGISTRY.filter(g => g.status === 'live');
-  if (!import.meta.env.PROD) live.forEach(validateTierAssets);
   return live.sort((a, b) => a.sortOrder - b.sortOrder);
 };
 
