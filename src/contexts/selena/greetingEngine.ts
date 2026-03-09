@@ -312,6 +312,31 @@ export function computeGreeting(
       { label: t("I'm thinking about selling there", "Estoy pensando en vender allí") },
       { label: t("I'm looking to buy there", "Estoy buscando comprar allí") },
     ];
+  } else if (entryContext?.source === 'buyer_closing_costs') {
+    const cc = entryContext.closingCostData;
+    if (cc && cc.purchasePrice > 0) {
+      const fmtNum = (n: number) => `$${Math.round(n).toLocaleString()}`;
+      const loanLabel = cc.loanType === 'fha' ? 'FHA' : cc.loanType === 'va' ? 'VA' : cc.loanType === 'cash' ? t('cash', 'efectivo') : t('conventional', 'convencional');
+      greetingContent = t(
+        `You're looking at ${fmtNum(cc.estimatedLow)}–${fmtNum(cc.estimatedHigh)} in closing costs on a ${fmtNum(cc.purchasePrice)} ${loanLabel} purchase — plus your down payment, that's about ${fmtNum(cc.totalCashNeeded)} total at closing.\n\nThe good news: some of these line items are negotiable. Kasandra has reduced these costs on recent Tucson transactions.`,
+        `Estás viendo ${fmtNum(cc.estimatedLow)}–${fmtNum(cc.estimatedHigh)} en costos de cierre para una compra ${loanLabel} de ${fmtNum(cc.purchasePrice)} — más tu enganche, eso es aproximadamente ${fmtNum(cc.totalCashNeeded)} total al cierre.\n\nLa buena noticia: algunos de estos rubros son negociables. Kasandra ha reducido estos costos en transacciones recientes en Tucson.`
+      );
+      suggestedReplies = [
+        { label: t("What's negotiable?", "¿Qué es negociable?") },
+        { label: t("How do I reduce these costs?", "¿Cómo reduzco estos costos?") },
+        { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+      ];
+    } else {
+      greetingContent = t(
+        "You're looking into closing costs — smart to do before making an offer. Are you working with a specific price range or loan type?",
+        "Estás investigando los costos de cierre — inteligente hacerlo antes de hacer una oferta. ¿Tienes un rango de precio o tipo de préstamo específico?"
+      );
+      suggestedReplies = [
+        { label: t("I'm using FHA", "Estoy usando FHA") },
+        { label: t("Help me estimate", "Ayúdame a estimar") },
+        { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+      ];
+    }
   } else if (entryContext?.source === 'neighborhoods_index') {
     greetingContent = t(
       `You're browsing Tucson-area neighborhoods — smart move. I can help you narrow down which areas fit your situation best.\n\nAre you looking to buy or sell?`,
