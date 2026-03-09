@@ -150,7 +150,7 @@ const V2HomeContent = () => {
                 <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animation-delay-400">
                   <Button
                     onClick={() => {
-                      logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2', intent: returningContext.intent as any || 'explore' });
+                      logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/', intent: returningContext.intent as any || 'explore' });
                       openChat({ source: 'hero_returning', intent: returningContext.intent as any || 'explore' });
                     }}
                     className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-8 py-6 text-lg shadow-gold"
