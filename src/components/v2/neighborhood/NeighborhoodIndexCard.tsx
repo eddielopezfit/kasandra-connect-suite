@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, MapPin } from "lucide-react";
 import { type NeighborhoodEntry, type RegionGroup } from "@/data/neighborhoods/neighborhoodRegistry";
+import { getNeighborhoodHeroUrl } from "@/lib/neighborhood/heroUrl";
+import { useState } from "react";
 
 const REGION_COLORS: Record<RegionGroup, string> = {
   central: 'bg-blue-100 text-blue-800',
@@ -27,13 +29,25 @@ interface NeighborhoodIndexCardProps {
 
 const NeighborhoodIndexCard = ({ neighborhood }: NeighborhoodIndexCardProps) => {
   const { language } = useLanguage();
+  const [imgError, setImgError] = useState(false);
+  const heroUrl = getNeighborhoodHeroUrl(neighborhood.slug);
   
   return (
     <Link to={`/v2/neighborhoods/${neighborhood.slug}`}>
       <Card className="group h-full bg-white hover:shadow-lg transition-all duration-300 border-cc-sand-dark/20 overflow-hidden">
-        {/* Placeholder hero — can be replaced with actual neighborhood images later */}
-        <div className="h-40 bg-gradient-to-br from-cc-navy/80 to-cc-slate/60 relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('/og-kasandra.jpg')] bg-cover bg-center opacity-20 group-hover:scale-105 transition-transform duration-500" />
+        <div className="h-40 relative overflow-hidden bg-gradient-to-br from-cc-navy/80 to-cc-slate/60">
+          {!imgError ? (
+            <img
+              src={heroUrl}
+              alt={`${neighborhood.name} neighborhood`}
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="absolute inset-0 bg-[url('/og-kasandra.jpg')] bg-cover bg-center opacity-20 group-hover:scale-105 transition-transform duration-500" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           <div className="absolute top-3 left-3">
             <Badge className={`${REGION_COLORS[neighborhood.regionGroup]} font-medium`}>
               {language === 'es' ? REGION_LABELS[neighborhood.regionGroup].es : REGION_LABELS[neighborhood.regionGroup].en}
