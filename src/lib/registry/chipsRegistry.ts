@@ -177,9 +177,9 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
   {
     id: 'tool-seller-readiness-en',
     label_en: 'Quick seller readiness check',
-    label_es: 'Check rápido de preparación para vender',
+    label_es: 'Preparación para vender',
     normalized_key: 'quick seller readiness check',
-    actionSpec: { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' } },
+    actionSpec: { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Quick seller readiness check', es: 'Preparación para vender' } },
     chipKey: CHIP_KEYS.SELLER_READINESS,
   },
   {
