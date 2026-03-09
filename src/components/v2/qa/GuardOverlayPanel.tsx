@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { RefreshCw, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { getGuardTelemetryBuffer } from '@/lib/analytics/guardTelemetry';
+import { isQaAccessGranted } from '@/lib/qa/qaAccess';
 
 const GuardOverlayPanel = () => {
   const [entries, setEntries] = useState(() => [...getGuardTelemetryBuffer()]);
@@ -21,6 +22,9 @@ const GuardOverlayPanel = () => {
   }, []);
 
   const containmentCount = entries.filter((e) => e.containment_active).length;
+
+  // Gate AFTER hooks to preserve React hook order.
+  if (!isQaAccessGranted()) return null;
 
   return (
     <div className="space-y-4">

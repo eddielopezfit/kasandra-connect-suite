@@ -25,13 +25,14 @@ import GuardrailChecklistPanel from '@/components/v2/qa/GuardrailChecklistPanel'
 import GuideRegistryValidationPanel from '@/components/v2/qa/GuideRegistryValidationPanel';
 import ActionSpecSmokeTestPanel from '@/components/v2/qa/ActionSpecSmokeTestPanel';
 import GuardOverlayPanel from '@/components/v2/qa/GuardOverlayPanel';
+import { isQaAccessGranted } from '@/lib/qa/qaAccess';
 
 const V2QADeterminism = () => {
   // All hooks must be called before the gate
   const { language } = useLanguage();
 
   // Prod gate — redirects cleanly, never renders blank
-  if (!import.meta.env.DEV) {
+  if (!isQaAccessGranted()) {
     return <Navigate to="/v2" replace />;
   }
 

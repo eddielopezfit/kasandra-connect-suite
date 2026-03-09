@@ -11,6 +11,7 @@ import {
   Table, TableHeader, TableBody, TableRow, TableHead, TableCell,
 } from '@/components/ui/table';
 import { RefreshCw } from 'lucide-react';
+import { isQaAccessGranted } from '@/lib/qa/qaAccess';
 
 const CONTEXT_KEY = 'selena_context_v2';
 const SESSION_KEY = 'selena_session_id';
@@ -79,6 +80,9 @@ const SessionContextPanel = () => {
   const [data, setData] = useState(readSnapshot);
 
   const refresh = useCallback(() => setData(readSnapshot()), []);
+
+  // Gate AFTER hooks to preserve React hook order.
+  if (!isQaAccessGranted()) return null;
 
   return (
     <div className="space-y-4">
