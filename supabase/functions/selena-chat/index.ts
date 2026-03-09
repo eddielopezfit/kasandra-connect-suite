@@ -708,6 +708,7 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Capital Gains Guide': '/guides/capital-gains-home-sale-arizona',
   'Sell or Rent Guide': '/guides/sell-or-rent-tucson',
   'How Long to Sell Guide': '/guides/how-long-to-sell-tucson',
+  'Non-Citizen Buyers': '/guides/buying-home-noncitizen-arizona',
   'Non-Citizen Buyer Guide': '/guides/buying-home-noncitizen-arizona',
   'Check my readiness': '/buyer-readiness',
   'Take readiness check': '/buyer-readiness',
