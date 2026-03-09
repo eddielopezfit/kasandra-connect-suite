@@ -23,7 +23,8 @@ export function computeGreeting(
   
   const isAllowedGreetingSource = !!entryContext && [
     'calculator', 'guide_handoff', 'synthesis', 'hero', 'quiz_result', 'post_booking', 'seller_decision',
-    'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs'
+    'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs',
+    'neighborhood_detail', 'neighborhoods_index'
   ].includes(entryContext.source);
 
   const hasRecoveryCandidate = !sessionContext?.recovery_shown && !!sessionContext?.booking_chips_shown_at;
