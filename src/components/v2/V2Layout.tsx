@@ -129,8 +129,10 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         <V2Footer />
         
         {/* Selena Chat - Site Wide */}
-        <SelenaFloatingButton />
-        <SelenaChatDrawer />
+        <ChatErrorBoundary>
+          <SelenaFloatingButton />
+          <SelenaChatDrawer />
+        </ChatErrorBoundary>
 
         {/* Sticky mobile Book CTA — lg:hidden so desktop nav button handles it */}
         {showStickyBook && (
