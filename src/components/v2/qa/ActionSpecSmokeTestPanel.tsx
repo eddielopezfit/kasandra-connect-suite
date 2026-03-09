@@ -22,7 +22,7 @@ const CALC_ROUTES: Record<string, string> = { 'cash-comparison': '/cash-offer-op
 /** Describe what resolveAction would do — without executing it */
 function describeResolution(spec: ActionSpec): string {
   switch (spec.type) {
-    case 'open_guide': return `Navigate to /v2/guides/${spec.guideId}`;
+    case 'open_guide': return `Navigate to /guides/${spec.guideId}`;
     case 'open_tool': return `Navigate to ${TOOL_ROUTES[spec.toolId] ?? `[unknown tool: ${spec.toolId}]`}`;
     case 'run_calculator': return `Navigate to ${CALC_ROUTES[spec.calculatorId] ?? `[unknown calc: ${spec.calculatorId}]`}`;
     case 'open_chat': return `Open Selena chat (source: ${spec.payload.source})`;
