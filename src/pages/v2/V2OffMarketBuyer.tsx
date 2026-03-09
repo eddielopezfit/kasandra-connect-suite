@@ -234,7 +234,7 @@ const V2OffMarketBuyerContent = () => {
   // ── Confirmed view ──────────────────────────────────────────────────────────
   if (step === 3) {
     return (
-      <div className="min-h-screen bg-cc-ivory">
+      <div className="min-h-[100dvh] bg-cc-ivory">
         <section className="bg-cc-navy pt-32 pb-16">
           <div className="container mx-auto px-4 text-center">
             <div className="w-16 h-16 bg-cc-gold rounded-full flex items-center justify-center mx-auto mb-6">
