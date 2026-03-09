@@ -3027,6 +3027,36 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       }
     }
 
+    // --- Seller Net Calculator entry data (full results from CTA click) ---
+    const scData = context.seller_calc_data;
+    if (scData && scData.estimatedValue > 0) {
+      const scValue = `$${Math.round(scData.estimatedValue).toLocaleString()}`;
+      const scCash = `$${Math.round(scData.cashNetProceeds).toLocaleString()}`;
+      const scList = `$${Math.round(scData.traditionalNetProceeds).toLocaleString()}`;
+      const scDiff = `$${Math.round(scData.netDifference).toLocaleString()}`;
+      const scAdv = scData.recommendation === 'cash' ? 'cash offer' : scData.recommendation === 'traditional' ? 'traditional listing' : 'close call';
+
+      if (language === 'es') {
+        toolOutputHint += `\n\nRESULTADO DE HERRAMIENTA — CALCULADORA NETO DEL VENDEDOR (desde CTA):\nValor: ${scValue}\nNeto efectivo: ${scCash}\nNeto listado: ${scList}\nDiferencia: ${scDiff} (ventaja: ${scAdv})\nMotivación: ${scData.motivation}\nPlazo: ${scData.timeline}\n\nCONTEXTO DE CALCULADORA DEL VENDEDOR:\n- Referencia estos números exactos. El usuario los tiene en pantalla.\n- Pivote a reserva: "Kasandra puede ayudarte a acercarte a ese número con la estrategia correcta de precios y negociación."\n- Siempre incluye chip "Hablar con Kasandra".\n- NUNCA repitas la herramienta — avanza desde los resultados.`;
+      } else {
+        toolOutputHint += `\n\nTOOL RESULT — SELLER NET CALCULATOR (from CTA):\nValue: ${scValue}\nCash net: ${scCash}\nListing net: ${scList}\nDifference: ${scDiff} (advantage: ${scAdv})\nMotivation: ${scData.motivation}\nTimeline: ${scData.timeline}\n\nSELLER CALCULATOR CONTEXT:\n- Reference these exact numbers. The user has them on screen.\n- Booking pivot: "Kasandra can help you get closer to that number with the right pricing and negotiation strategy."\n- Always include "Talk with Kasandra" chip.\n- NEVER re-recommend the calculator — move forward from results.`;
+      }
+    }
+
+    // --- Readiness check entry data (score + priority from CTA click) ---
+    const rdData = context.readiness_entry_data;
+    if (rdData && rdData.score > 0) {
+      const rdScore = rdData.score;
+      const rdBand = rdScore >= 75 ? 'ready' : rdScore >= 50 ? 'nearly ready' : 'building readiness';
+      const rdTool = rdData.toolType === 'buyer' ? 'Buyer' : rdData.toolType === 'cash' ? 'Cash' : 'Seller';
+
+      if (language === 'es') {
+        toolOutputHint += `\n\nRESULTADO DE HERRAMIENTA — EVALUACIÓN DE PREPARACIÓN ${rdTool.toUpperCase()} (desde CTA):\nPuntuación: ${rdScore}/100 (${rdBand})\nPrioridad: ${rdData.primaryPriority}\n\nCONTEXTO DE PREPARACIÓN:\n- Referencia esta puntuación y prioridad directamente.\n- ${rdScore >= 75 ? 'Alta preparación — pivotea a reserva: "Con una puntuación de ' + rdScore + ', estás listo. Una llamada de estrategia con Kasandra es tu siguiente paso más claro."' : rdScore >= 50 ? 'Preparación media — identifica áreas a fortalecer, luego pivotea: "Kasandra puede orientarte en exactamente qué hacer primero."' : 'Baja preparación — normaliza y educa, luego ofrece: "Kasandra puede ayudarte a construir un plan a tu ritmo."'}\n- Siempre incluye chip "Hablar con Kasandra".`;
+      } else {
+        toolOutputHint += `\n\nTOOL RESULT — ${rdTool.toUpperCase()} READINESS CHECK (from CTA):\nScore: ${rdScore}/100 (${rdBand})\nPriority: ${rdData.primaryPriority}\n\nREADINESS CONTEXT:\n- Reference this score and priority directly.\n- ${rdScore >= 75 ? 'High readiness — pivot to booking: "With a score of ' + rdScore + ', you\'re ready. A strategy call with Kasandra is your clearest next step."' : rdScore >= 50 ? 'Medium readiness — identify areas to strengthen, then pivot: "Kasandra can walk you through exactly what to focus on first."' : 'Low readiness — normalize and educate, then offer: "Kasandra can help you build a plan at your own pace."'}\n- Always include "Talk with Kasandra" chip.`;
+      }
+    }
+
     // ============= JOURNEY STATE ENGINE =============
     // Guard 1: Coerce readiness_score to safe number
     const rawReadiness = Number(context.readiness_score);
