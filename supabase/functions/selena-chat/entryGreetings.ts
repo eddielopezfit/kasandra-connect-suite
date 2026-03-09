@@ -140,11 +140,14 @@ export function generateEntryGreeting(context: EntryContext): GreetingResult {
     case 'cash_offer_options_hero':
       return generateQuestionGreeting(language, 'cash');
     case 'off_market_capture':
-      return generateOffMarketGreeting(language);
+    case 'off_market_registered':
+      return generateOffMarketGreeting(language, context.offMarketData);
     case 'market_intelligence':
-      return generateMarketIntelligenceGreeting(language);
+    case 'market_intelligence_result':
+      return generateMarketIntelligenceGreeting(language, context.marketIntelData);
     case 'neighborhood_compare':
-      return generateNeighborhoodCompareGreeting(language);
+    case 'neighborhood_compare_result':
+      return generateNeighborhoodCompareGreeting(language, context.neighborhoodCompareData);
     case 'buyer_closing_costs':
       return generateBuyerClosingCostsGreeting(language, context.closingCostData);
     case 'seller_timeline':
