@@ -6,6 +6,7 @@ import V2Footer from "./V2Footer";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
+import { ChatErrorBoundary } from "@/components/selena/ChatErrorBoundary";
 import { logPageView, logEvent } from "@/lib/analytics/logEvent";
 import { initSessionContext, getSessionContext, updateSessionContext } from "@/lib/analytics/selenaSession";
 import { bridgeAuthToLead } from "@/lib/analytics/bridgeAuthToLead";
@@ -129,8 +130,10 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         <V2Footer />
         
         {/* Selena Chat - Site Wide */}
-        <SelenaFloatingButton />
-        <SelenaChatDrawer />
+        <ChatErrorBoundary>
+          <SelenaFloatingButton />
+          <SelenaChatDrawer />
+        </ChatErrorBoundary>
 
         {/* Sticky mobile Book CTA — lg:hidden so desktop nav button handles it */}
         {showStickyBook && (

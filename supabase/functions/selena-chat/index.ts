@@ -2949,20 +2949,59 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       );
     }
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
-          ...history.slice(-6), // Extended to -6 to support loop detection context
-          { role: "user", content: message }
-        ],
-        max_tokens: guardRules.maxTokensOverride ?? 150,
-        temperature: 0.7,
-      }),
-    });
+    const messagesPayload = [
+      { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
+      ...history.slice(-6), // Extended to -6 to support loop detection context
+      { role: "user", content: message }
+    ];
+
+    let response;
+    let modelUsed = "google/gemini-3-flash-preview";
+
+    try {
+      response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: modelUsed,
+          messages: messagesPayload,
+          max_tokens: guardRules.maxTokensOverride ?? 150,
+          temperature: 0.7,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Primary model failed: ${response.status}`);
+      }
+    } catch (e) {
+      console.warn("Primary model failed, falling back to openai/gpt-4o-mini", e);
+      modelUsed = "openai/gpt-4o-mini";
+      response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: modelUsed,
+          messages: messagesPayload,
+          max_tokens: guardRules.maxTokensOverride ?? 150,
+          temperature: 0.7,
+        }),
+      });
+    }
+
+    // Log model usage for analytics
+    try {
+      await supabase.from("event_log").insert({
+        session_id: context.session_id,
+        event_type: "selena_model_fallback",
+        event_payload: {
+          model: modelUsed,
+          fallback_triggered: modelUsed !== "google/gemini-3-flash-preview",
+          timestamp: new Date().toISOString()
+        }
+      });
+    } catch (e) {
+      console.error("Failed to log model fallback event:", e);
+    }
 
     const data = await response.json();
     const rawReply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
