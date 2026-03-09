@@ -180,6 +180,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Check rápido de preparación para vender',
     normalized_key: 'quick seller readiness check',
     actionSpec: { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' } },
+    chipKey: CHIP_KEYS.SELLER_READINESS,
   },
   {
     id: 'tool-seller-readiness-es',
@@ -187,6 +188,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Check rápido de preparación para vender',
     normalized_key: 'check rapido de preparacion para vender',
     actionSpec: { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' } },
+    chipKey: CHIP_KEYS.SELLER_READINESS,
   },
 
   // --- Navigate: seller timeline planner ---
@@ -196,6 +198,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Construir mi cronograma de venta',
     normalized_key: 'build my selling timeline',
     actionSpec: { type: 'navigate', path: '/v2/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
+    chipKey: CHIP_KEYS.BUILD_SELLING_TIMELINE,
   },
   {
     id: 'nav-seller-timeline-es',
@@ -203,6 +206,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Construir mi cronograma de venta',
     normalized_key: 'construir mi cronograma de venta',
     actionSpec: { type: 'navigate', path: '/v2/seller-timeline', label: { en: 'Build my selling timeline', es: 'Construir mi cronograma de venta' } },
+    chipKey: CHIP_KEYS.BUILD_SELLING_TIMELINE,
   },
 
   // --- Navigate: guides hub ---
@@ -212,6 +216,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Explorar guías',
     normalized_key: 'browse guides',
     actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+    chipKey: CHIP_KEYS.BROWSE_GUIDES,
   },
   {
     id: 'nav-guides-es',
@@ -219,6 +224,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Explorar guías',
     normalized_key: 'explorar guias',
     actionSpec: { type: 'navigate', path: '/v2/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
+    chipKey: CHIP_KEYS.BROWSE_GUIDES,
   },
 
   // --- Legacy: browse buyer guides → guides hub ---
