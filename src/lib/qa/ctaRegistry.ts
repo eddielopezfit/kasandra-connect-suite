@@ -210,7 +210,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Ver Todas las Guías',
     component: 'src/pages/v2/V2Guides.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/guides',
+    expectedTarget: '/guides',
     automatable: true,
     priority: 16,
   },
