@@ -109,7 +109,7 @@ const CalculatorNextSteps = ({
             }).catch(() => {}); // fire-and-forget
           }
 
-          navigate('/v2/private-cash-review');
+          navigate('/private-cash-review');
         }}
         className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-xl py-6 text-base shadow-gold group"
       >

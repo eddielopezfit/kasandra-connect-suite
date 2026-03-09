@@ -111,7 +111,7 @@ export function resolveAction(
       navigate(spec.path);
       break;
     case 'book':
-      navigate('/v2/book');
+      navigate('/book');
       break;
     case 'call_contact':
       window.open(`tel:${spec.phone}`, '_self');

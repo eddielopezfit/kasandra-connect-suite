@@ -27,7 +27,7 @@ function describeResolution(spec: ActionSpec): string {
     case 'run_calculator': return `Navigate to ${CALC_ROUTES[spec.calculatorId] ?? `[unknown calc: ${spec.calculatorId}]`}`;
     case 'open_chat': return `Open Selena chat (source: ${spec.payload.source})`;
     case 'navigate': return `Navigate to ${spec.path}`;
-    case 'book': return 'Navigate to /v2/book';
+    case 'book': return 'Navigate to /book';
     case 'call_contact': return `Open tel:${spec.phone}`;
     case 'external_link': return `Open ${spec.url} (new tab)`;
     default: return 'Unknown action type';

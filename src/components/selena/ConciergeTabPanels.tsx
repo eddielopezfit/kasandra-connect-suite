@@ -418,7 +418,7 @@ function MyOptionsPanel({
   // Buyer Readiness → Navigate to Readiness Check
   const handleBuyerReadinessClick = () => {
     logEvent('concierge_buyer_readiness_click', { source: 'my_options', intent: effectiveIntent });
-    onNavigate('/v2/buyer-readiness', 'decision_room_visit');
+    onNavigate('/buyer-readiness', 'decision_room_visit');
   };
 
   // Intent-based filtering and ordering

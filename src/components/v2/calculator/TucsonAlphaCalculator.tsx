@@ -164,7 +164,7 @@ const TucsonAlphaCalculator = () => {
     setCurrentStep(1);
     logEvent('tool_started', { 
       tool_id: 'tucson_alpha_calculator',
-      page_path: '/v2/cash-offer-options',
+      page_path: '/cash-offer-options',
     });
     logEvent('calculator_open', { source: 'cash_offer_options' });
   }, []);
