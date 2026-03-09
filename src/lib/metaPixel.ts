@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Meta Pixel utility — lazy init, PII-safe, debug/suppress modes.
  *
@@ -7,11 +9,11 @@
  *   VITE_PIXEL_SUPPRESS     — "true" → console.log only, suppress fbq calls
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// Removed eslint-disable for any
 declare global {
   interface Window {
-    fbq: (...args: any[]) => void;
-    _fbq: any;
+    fbq: (...args: unknown[]) => void;
+    _fbq: unknown;
   }
 }
 
@@ -23,13 +25,13 @@ let initialized = false;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function log(label: string, ...args: any[]) {
+function log(label: string, ...args: unknown[]) {
   if (DEBUG || SUPPRESS) {
-    console.log(`[MetaPixel:${label}]`, ...args);
+    logger.log(`[MetaPixel:${label}]`, ...args);
   }
 }
 
-function fbq(...args: any[]) {
+function fbq(...args: unknown[]) {
   if (!SUPPRESS && typeof window.fbq === "function") {
     window.fbq(...args);
   }
@@ -76,7 +78,7 @@ export function getScoreBand(score: number): string {
 export function init() {
   if (initialized || !PIXEL_ID) return;
 
-  const f = window as any;
+  const f = window;
   const b = document;
 
   // If fbq already exists (e.g. injected by GTM), just init the pixel ID
@@ -88,8 +90,21 @@ export function init() {
   }
 
   // Otherwise inject the standard snippet + script tag
-  const n: any = (f.fbq = function (...args: any[]) {
-    n.callMethod ? n.callMethod.apply(n, args) : n.queue.push(args);
+  interface FbqFunction {
+    (...args: unknown[]): void;
+    push?: unknown;
+    loaded?: boolean;
+    version?: string;
+    queue?: unknown[][];
+    callMethod?: (...args: unknown[]) => void;
+  }
+
+  const n: FbqFunction = (f.fbq = function (...args: unknown[]) {
+    if (n.callMethod) {
+      n.callMethod.apply(n, args);
+    } else if (Array.isArray(n.queue)) {
+      n.queue.push(args);
+    }
   });
   if (!f._fbq) f._fbq = n;
   n.push = n;
@@ -117,7 +132,7 @@ export function pageView() {
 /** Fire a standard Meta event (ViewContent, Lead, etc.) */
 export function track(
   eventName: string,
-  params?: Record<string, any>,
+  params?: Record<string, unknown>,
 ) {
   const merged = { ...getPixelSafeParams(), ...params };
   log("track", eventName, merged);
@@ -127,7 +142,7 @@ export function track(
 /** Fire a custom event (SellerQuizCompleted, etc.) */
 export function trackCustom(
   eventName: string,
-  params?: Record<string, any>,
+  params?: Record<string, unknown>,
 ) {
   const merged = { ...getPixelSafeParams(), ...params };
   log("trackCustom", eventName, merged);

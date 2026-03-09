@@ -74,13 +74,13 @@ const StepContact = ({
   // Full form
   const fullForm = useForm<FullFormData>({
     resolver: zodResolver(fullSchema),
-    defaultValues: { name: "", email: "", phone: "", consent: false as any },
+    defaultValues: { name: "", email: "", phone: "", consent: false as unknown as true },
   });
 
   // Email-only form
   const emailForm = useForm<EmailOnlyFormData>({
     resolver: zodResolver(emailOnlySchema),
-    defaultValues: { email: "", consent: false as any },
+    defaultValues: { email: "", consent: false as unknown as true },
   });
 
   // Pre-populate from session
@@ -164,7 +164,7 @@ const StepContact = ({
         name: data.name,
         variant,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[StepContact] Submit error:", err);
       toast.error(
         t("Something went wrong. Please try again.", "Algo salió mal. Intente de nuevo.")
@@ -288,7 +288,7 @@ const StepContact = ({
             <Checkbox
               id="consent-full"
               checked={fullForm.watch("consent") === true}
-              onCheckedChange={(checked) => fullForm.setValue("consent", checked === true ? true : undefined as any, { shouldValidate: true })}
+              onCheckedChange={(checked) => fullForm.setValue("consent", checked === true ? true : undefined as unknown as true, { shouldValidate: true })}
               className="mt-0.5"
             />
             <Label htmlFor="consent-full" className="text-xs text-cc-text-muted leading-relaxed cursor-pointer">
@@ -343,7 +343,7 @@ const StepContact = ({
             <Checkbox
               id="consent-email"
               checked={emailForm.watch("consent") === true}
-              onCheckedChange={(checked) => emailForm.setValue("consent", checked === true ? true : undefined as any, { shouldValidate: true })}
+              onCheckedChange={(checked) => emailForm.setValue("consent", checked === true ? true : undefined as unknown as true, { shouldValidate: true })}
               className="mt-0.5"
             />
             <Label htmlFor="consent-email" className="text-xs text-cc-text-muted leading-relaxed cursor-pointer">

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 export interface GoogleReview {
   author: string;
@@ -75,16 +76,16 @@ async function fetchGoogleReviews(): Promise<{ reviews: GoogleReview[]; source: 
       try {
         localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
       } catch (e) {
-        console.warn('[GoogleReviews] Failed to cache reviews:', e);
+        logger.warn('[GoogleReviews] Failed to cache reviews:', e);
       }
       return { reviews: data.reviews, source: 'live' };
     }
 
     if (data?.error) {
-      console.warn('[GoogleReviews] API returned error:', data.status, data.error);
+      logger.warn('[GoogleReviews] API returned error:', data.status, data.error);
     }
   } catch (e) {
-    console.warn('[GoogleReviews] API call failed:', e);
+    logger.warn('[GoogleReviews] API call failed:', e);
   }
 
   // Strategy 2: Try cache
@@ -93,16 +94,16 @@ async function fetchGoogleReviews(): Promise<{ reviews: GoogleReview[]; source: 
     if (cached) {
       const { reviews, cachedAt }: CachedReviews = JSON.parse(cached);
       if (Date.now() - cachedAt < CACHE_TTL_MS && reviews.length > 0) {
-        if (import.meta.env.DEV) console.log('[GoogleReviews] Using cached reviews');
+        if (import.meta.env.DEV) logger.log('[GoogleReviews] Using cached reviews');
         return { reviews, source: 'cache' };
       }
     }
   } catch (e) {
-    console.warn('[GoogleReviews] Failed to read cache:', e);
+    logger.warn('[GoogleReviews] Failed to read cache:', e);
   }
 
   // Strategy 3: Return fallback
-  if (import.meta.env.DEV) console.log('[GoogleReviews] Using fallback reviews');
+  if (import.meta.env.DEV) logger.log('[GoogleReviews] Using fallback reviews');
   return { reviews: FALLBACK_REVIEWS, source: 'fallback' };
 }
 

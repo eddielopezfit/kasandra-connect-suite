@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * QA Session Helper — DEV only
  * Forces a deterministic session_id for repeatable test runs.
@@ -29,7 +31,7 @@ export function setQaSession(id: string): void {
     // noop
   }
 
-  console.log(`[QA] Session ID set to: ${id}`);
+  logger.log(`[QA] Session ID set to: ${id}`);
 }
 
 /**
@@ -44,7 +46,7 @@ export function getQaSessionId(): string | null {
  */
 export function clearQaSession(): void {
   localStorage.removeItem(QA_KEY);
-  console.log('[QA] QA session override cleared. Next load will generate a new session.');
+  logger.log('[QA] QA session override cleared. Next load will generate a new session.');
 }
 
 /**
@@ -55,7 +57,7 @@ export function resetAll(): void {
   localStorage.removeItem(QA_KEY);
   localStorage.removeItem(SESSION_KEY);
   localStorage.removeItem(CONTEXT_KEY);
-  console.log('[QA] All session data cleared.');
+  logger.log('[QA] All session data cleared.');
 }
 
 /**
@@ -66,7 +68,7 @@ export function resetSellerDecisionContext(): void {
   try {
     const raw = localStorage.getItem(CONTEXT_KEY);
     if (!raw) {
-      console.log('[QA] No session context to reset.');
+      logger.log('[QA] No session context to reset.');
       return;
     }
     const ctx = JSON.parse(raw);
@@ -88,8 +90,8 @@ export function resetSellerDecisionContext(): void {
     }
 
     localStorage.setItem(CONTEXT_KEY, JSON.stringify(ctx));
-    console.log('[QA] Seller decision context keys cleared:', sellerKeys);
+    logger.log('[QA] Seller decision context keys cleared:', sellerKeys);
   } catch {
-    console.warn('[QA] Failed to reset seller decision context.');
+    logger.warn('[QA] Failed to reset seller decision context.');
   }
 }

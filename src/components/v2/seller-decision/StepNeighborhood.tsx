@@ -73,9 +73,9 @@ const StepNeighborhood = ({ externalZip, initialResult, onNext, onBack }: StepNe
       });
 
       logEvent('seller_decision_neighborhood_completed', { zip: trimmed, cached: !!data.cached });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[StepNeighborhood] Error:", err);
-      const msg = err?.message || "";
+      const msg = (err as Error)?.message || "";
       if (msg.includes("Rate limit")) {
         toast.error(t("Too many requests. Please try again later.", "Demasiadas solicitudes. Intente más tarde."));
       } else {
