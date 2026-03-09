@@ -2897,12 +2897,19 @@ function buildSystemPrompt(
 
     if (isValidZip && rlUrl && rlKey) {
       try {
-        const nbClient = createClient(rlUrl, rlKey);
-        const { data: nbProfile } = await nbClient
-          .from("neighborhood_profiles")
-          .select("profile_en, profile_es")
-          .eq("zip_code", rawZip)
-          .maybeSingle();
+        const nbCacheKey = `neighborhood_${rawZip}`;
+        const cachedNb = getCached<Record<string, unknown>>(nbCacheKey);
+        const nbProfile = cachedNb ?? await (async () => {
+          const nbClient = createClient(rlUrl, rlKey);
+          const { data } = await nbClient
+            .from("neighborhood_profiles")
+            .select("profile_en, profile_es")
+            .eq("zip_code", rawZip)
+            .maybeSingle();
+          if (data) setCache(nbCacheKey, data, 86400000); // 24 hour TTL
+          return data;
+        })();
+        if (cachedNb) console.log(`[Selena] Neighborhood cache HIT for ZIP ${rawZip}`);
 
         if (nbProfile) {
           const profile = language === 'es' ? nbProfile.profile_es : nbProfile.profile_en;
