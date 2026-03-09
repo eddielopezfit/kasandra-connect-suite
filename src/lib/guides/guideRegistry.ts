@@ -865,7 +865,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'cost-to-sell-tucson',
-    path: '/v2/guides/cost-to-sell-tucson',
+    path: '/guides/cost-to-sell-tucson',
     titleEn: 'What Does It Actually Cost to Sell a House in Tucson?',
     titleEs: '¿Cuánto Cuesta Realmente Vender una Casa en Tucson?',
     labelEn: 'Cost to Sell in Tucson',
