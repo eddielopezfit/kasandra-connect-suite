@@ -81,10 +81,10 @@ async function fetchGoogleReviews(): Promise<{ reviews: GoogleReview[]; source: 
     }
 
     if (data?.error) {
-      console.warn('[GoogleReviews] API returned error:', data.status, data.error);
+      logger.warn('[GoogleReviews] API returned error:', data.status, data.error);
     }
   } catch (e) {
-    console.warn('[GoogleReviews] API call failed:', e);
+    logger.warn('[GoogleReviews] API call failed:', e);
   }
 
   // Strategy 2: Try cache
