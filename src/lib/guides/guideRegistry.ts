@@ -960,7 +960,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'arizona-first-time-buyer-programs',
-    path: '/v2/guides/arizona-first-time-buyer-programs',
+    path: '/guides/arizona-first-time-buyer-programs',
     titleEn: 'First-Time Home Buyer Programs in Arizona — 2025 & 2026',
     titleEs: 'Programas para Compradores Primerizos en Arizona — 2025 y 2026',
     labelEn: 'First-Time Buyer Programs',
