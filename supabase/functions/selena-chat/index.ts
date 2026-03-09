@@ -2395,7 +2395,7 @@ const BRACKET_CTA_ALLOWLIST = new Set([
   'verificar mi preparación',
   'comparar efectivo vs. listado',
   'encontrar un horario con kasandra',
-  'seguir conversando con selena',
+  'tengo otra pregunta',
   'revisar estrategia con kasandra',
 ]);
 
