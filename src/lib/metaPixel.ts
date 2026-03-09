@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Meta Pixel utility — lazy init, PII-safe, debug/suppress modes.
  *
