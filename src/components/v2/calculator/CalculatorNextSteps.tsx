@@ -85,7 +85,7 @@ const CalculatorNextSteps = ({
       {/* Primary CTA: Private Cash Review */}
       <Button
         onClick={() => {
-          handleCTAClick(CTA_NAMES.TOOL_PRIVATE_CASH_REVIEW, '/v2/private-cash-review');
+          handleCTAClick(CTA_NAMES.TOOL_PRIVATE_CASH_REVIEW, '/private-cash-review');
           trackCustom("PrivateCashReviewRequested", { content_category: "calculator" });
           // Guardrail 1: only set intent if empty (preserves sell_compare / sell)
           setFieldIfEmpty('intent', 'cash');
