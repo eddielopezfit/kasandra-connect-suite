@@ -38,7 +38,7 @@ export async function generateReport(
     };
   }
 
-  logEvent('report_generation_started', {
+  logEvent('report_generate_start', {
     report_type: reportType,
     lead_id: leadId,
   });
