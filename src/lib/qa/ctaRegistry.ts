@@ -264,7 +264,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Escuchar Podcast',
     component: 'src/pages/v2/V2Podcast.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/podcast',
+    expectedTarget: '/podcast',
     automatable: true,
     priority: 20,
   },
