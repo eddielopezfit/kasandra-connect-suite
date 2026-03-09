@@ -293,7 +293,7 @@ function StartHerePanel({
           {(!isIntentLocked || effectiveIntent === 'sell' || effectiveIntent === 'cash') && (
             <QuickLink 
               label={t("Selling Your Home", "Vender Su Casa")}
-              onClick={() => onNavigate('/v2/guides/selling-for-top-dollar', 'guide_cta_click')}
+              onClick={() => onNavigate('/guides/selling-for-top-dollar', 'guide_cta_click')}
             />
           )}
         </div>
