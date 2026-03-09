@@ -2325,13 +2325,13 @@ serve(async (req) => {
       .slice(-MAX_HISTORY_TURNS)
       .map(m => ({ role: m.role, content: String(m.content ?? '').slice(0, MAX_HISTORY_TURN_CHARS) }));
 
-    // Rate limiting
+    // Rate limiting + handler-scoped Supabase client
     const rlUrl = Deno.env.get("SUPABASE_URL");
     const rlKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    if (rlUrl && rlKey) {
-      const rlClient = createClient(rlUrl, rlKey);
+    const supabase = (rlUrl && rlKey) ? createClient(rlUrl, rlKey) : null;
+    if (supabase) {
       const rlk = extractRateLimitKey(req, body);
-      const rl = await checkRateLimit(rlClient, rlk, 'selena-chat');
+      const rl = await checkRateLimit(supabase, rlk, 'selena-chat');
       if (!rl.allowed) return rateLimitResponse(corsHeaders);
     }
 
