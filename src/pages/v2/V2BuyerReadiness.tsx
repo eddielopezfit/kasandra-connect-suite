@@ -98,9 +98,16 @@ const V2BuyerReadinessContent = () => {
     trackCustom("BuyerReadinessLeadCaptured", { content_category: "buyer_readiness" });
     setCaptured(true);
     setShowSaveLink(false);
-    // Open Selena with buyer context after identity capture — gives the lead
-    // somewhere to go immediately rather than stranding them on the tool page.
-    setTimeout(() => openChat({ source: "buyer_readiness_capture", intent: "buy" }), 400);
+    const ctx = getSessionContext();
+    setTimeout(() => openChat({
+      source: "buyer_readiness_capture",
+      intent: "buy",
+      readinessData: {
+        score: ctx?.readiness_score ?? 0,
+        primaryPriority: ctx?.primary_priority ?? '',
+        toolType: 'buyer',
+      },
+    }), 400);
   };
 
   return (

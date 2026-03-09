@@ -53,6 +53,21 @@ export interface EntryContext {
     estimatedHigh: number;
     totalCashNeeded: number;
   };
+  sellerCalcData?: {
+    estimatedValue: number;
+    mortgageBalance: number;
+    cashNetProceeds: number;
+    traditionalNetProceeds: number;
+    recommendation: string;
+    netDifference: number;
+    motivation: string;
+    timeline: string;
+  };
+  readinessData?: {
+    score: number;
+    primaryPriority: string;
+    toolType: 'buyer' | 'seller' | 'cash';
+  };
 }
 
 export interface ChipMeta {
