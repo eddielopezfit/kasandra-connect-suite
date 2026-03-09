@@ -3174,6 +3174,25 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         : `\n\nHIGH INTENT — DIRECT FINANCIAL QUESTION:\nUser asked a specific cost/number question. They've read ${guidesReadCount} guides. Do NOT offer more guides.\nAnswer with a specific data point if possible, then pivot: "Kasandra can give you your actual number based on your loan type and timeline. That call is free and takes 20 minutes."\nFirst suggested reply: "Talk with Kasandra".`;
     }
 
+    // ============= INHERITED HOME CONTEXT HINT =============
+    if (isInheritedHome) {
+      governanceHint += language === 'es'
+        ? `\n\nHERENCIA DETECTADA:\nEste vendedor heredó la propiedad. Situación de alta sensibilidad.\n- Reconozca el peso emocional brevemente, sin exagerar\n- Preocupaciones clave: ser aprovechado, entender valor real, decisión correcta para la familia\n- Pivote: "Kasandra ha ayudado a familias a navegar propiedades heredadas — entiende la complejidad."\n- Siempre incluya "Hablar con Kasandra". NO recomiende más guías.`
+        : `\n\nINHERITED HOME DETECTED:\nThis seller inherited the property. High-sensitivity situation.\n- Acknowledge the emotional weight once, briefly\n- Key concerns: being taken advantage of, understanding true value, family obligation\n- Pivot: "Kasandra has helped families navigate inherited properties — she understands the complexity."\n- Always include "Talk with Kasandra". Do NOT recommend more guides.`;
+    }
+
+    // ============= TRUST SIGNAL HINT =============
+    if (hasTrustSignal && (isInheritedHome || isHighIntentQuestion || guidesReadCount >= 5)) {
+      governanceHint += language === 'es'
+        ? `\n\nSEÑAL DE CONFIANZA DETECTADA:\nEl usuario ha expresado confianza explícita en Kasandra. Valide su instinto e invite a reservar.\n"Su instinto sobre Kasandra es correcto — ha construido su reputación exactamente en este tipo de situaciones. El siguiente paso es una conversación directa con ella."`
+        : `\n\nTRUST SIGNAL DETECTED:\nUser has explicitly expressed trust in Kasandra. Validate their instinct and invite booking.\n"Your instinct about Kasandra is right — she's built her reputation on exactly the kind of situations you're describing. The next step is a direct conversation with her."`;
+    }
+
+    // ============= GUIDE DELIVERY RULE + REPETITION GUARD =============
+    governanceHint += language === 'es'
+      ? `\n\nREGLA DE ENTREGA DE GUÍAS:\nCuando un usuario acepta ver una guía ("sí", "claro", "muéstrame", "cuéntame más"), NO describa la guía de nuevo. Responda con una oración + el chip de la guía directamente. Nunca describa el mismo contenido de guía dos veces en turnos consecutivos.\n\nGUARDIA DE REPETICIÓN:\nSi su respuesta repetiría sustancialmente el mismo contenido que su respuesta anterior, reformule completamente. Ofrezca un ángulo diferente o escale al siguiente paso.`
+      : `\n\nGUIDE DELIVERY RULE:\nWhen a user agrees to see a guide ("yes", "sure", "show me", "tell me more"), do NOT describe the guide again. Respond with one sentence + the guide chip directly. Never describe the same guide content twice in consecutive turns.\n\nREPETITION GUARD:\nIf your response would repeat substantially the same content as your previous response, reframe entirely. Offer a different angle or escalate to the next step.`;
+
     // ============= GUIDE INQUIRY ROUTING HINT =============
     const GUIDE_INQUIRY = /what guides|which guide|qu[eé]\s+gu[ií]as|guias|show.*guides|recommend.*guide|gu[ií]as.*tien/i;
     if (GUIDE_INQUIRY.test(message)) {
