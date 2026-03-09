@@ -329,7 +329,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'seller-stressful-market-story',
-    path: '/v2/guides/seller-stressful-market-story',
+    path: '/guides/seller-stressful-market-story',
     titleEn: 'Selling in an Uncertain Market',
     titleEs: 'Vendiendo en un Mercado Incierto',
     labelEn: 'Seller Story',
