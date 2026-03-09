@@ -832,7 +832,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- pima-county-property-taxes ---
   {
     id: 'pima-county-property-taxes',
-    path: '/v2/guides/pima-county-property-taxes',
+    path: '/guides/pima-county-property-taxes',
     titleEn: 'Pima County Property Taxes: What Tucson Homeowners Should Know',
     titleEs: 'Impuestos de Propiedad del Condado de Pima: Lo Que Deben Saber los Propietarios de Tucson',
     labelEn: 'Pima County Property Taxes',
