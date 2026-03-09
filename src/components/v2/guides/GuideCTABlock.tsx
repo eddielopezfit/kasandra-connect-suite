@@ -19,7 +19,7 @@ const SELENA_ROUTED_CATEGORIES: Set<GuideCategory> = new Set([
 const getCTAConfig = (category: GuideCategory) => {
   if (category === 'buying') {
     return {
-      link: "/v2/buyer-readiness",
+      link: "/buyer-readiness",
       textEn: "Start Buyer Readiness Check",
       textEs: "Iniciar Evaluación de Preparación",
       subtextEn: "A quick self-assessment to understand where you stand",
