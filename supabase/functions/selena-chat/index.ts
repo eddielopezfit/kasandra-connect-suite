@@ -2402,7 +2402,7 @@ serve(async (req) => {
     // ============= CONTEXT AUDIT (Concierge Memory Fallback) =============
     // Fires ONLY when client signals it has no context (localStorage cleared,
     // new device, returning user). Parallel fetch — single round-trip (~20ms).
-    const needsAudit = !context.intent && !context.tool_used && context.session_id;
+    const needsAudit = !context.intent && !context.last_tool_completed && context.session_id;
     let serverName: string | null = null;
 
     if (needsAudit && rlUrl && rlKey) {
