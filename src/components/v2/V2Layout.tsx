@@ -117,7 +117,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
   
   // Pages where the sticky book bar should be suppressed —
   // the booking CTA is already the primary action on these pages.
-  const SUPPRESS_STICKY_BOOK = ['/v2/book', '/v2/thank-you', '/v2/book/confirmed', '/ad/'];
+  const SUPPRESS_STICKY_BOOK = ['/book', '/thank-you', '/book/confirmed', '/ad/'];
   const showStickyBook = !SUPPRESS_STICKY_BOOK.some(p => location.pathname.startsWith(p));
 
   return (
@@ -143,7 +143,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
             <div className="bg-white/95 backdrop-blur-sm border-t border-cc-sand-dark/30 px-4 py-3 pointer-events-auto
                             pb-[max(12px,env(safe-area-inset-bottom))]">
               <Link
-                to="/v2/book"
+                to="/book"
                 className="flex items-center justify-center gap-2 w-full bg-cc-gold hover:bg-cc-gold-dark
                            text-cc-navy font-semibold rounded-full py-3 text-sm shadow-gold
                            transition-all active:scale-95"

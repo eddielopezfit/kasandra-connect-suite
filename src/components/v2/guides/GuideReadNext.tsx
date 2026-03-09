@@ -116,7 +116,7 @@ export function GuideReadNext({ currentGuideId, currentCategory }: GuideReadNext
             {related.map((guide) => (
               <Link
                 key={guide.id}
-                to={`/v2/guides/${guide.id}`}
+                to={`/guides/${guide.id}`}
                 className="group bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cc-gold/40 rounded-xl p-6 transition-all duration-200 flex flex-col gap-3"
               >
                 {/* Category badge */}

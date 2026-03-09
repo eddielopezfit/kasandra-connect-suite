@@ -41,7 +41,7 @@ const NeighborhoodSplitCTA = ({ neighborhood }: NeighborhoodSplitCTAProps) => {
               {language === 'es' ? neighborhood.sellerProfile.es : neighborhood.sellerProfile.en}
             </p>
             <Button asChild className="w-full bg-cc-navy hover:bg-cc-navy/90 text-white font-semibold py-6 rounded-lg">
-              <Link to={`/v2/seller-readiness?neighborhood=${neighborhood.slug}`}>
+              <Link to={`/seller-readiness?neighborhood=${neighborhood.slug}`}>
                 {t("Check My Seller Readiness", "Verificar Mi Preparación de Vendedor")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
@@ -62,7 +62,7 @@ const NeighborhoodSplitCTA = ({ neighborhood }: NeighborhoodSplitCTAProps) => {
               {language === 'es' ? neighborhood.buyerProfile.es : neighborhood.buyerProfile.en}
             </p>
             <Button asChild className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold py-6 rounded-lg shadow-gold">
-              <Link to={`/v2/buyer-readiness?neighborhood=${neighborhood.slug}`}>
+              <Link to={`/buyer-readiness?neighborhood=${neighborhood.slug}`}>
                 {t("Check My Buyer Readiness", "Verificar Mi Preparación de Comprador")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>

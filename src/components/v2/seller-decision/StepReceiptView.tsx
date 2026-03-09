@@ -345,7 +345,7 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
           </button>
 
           <a
-            href="/v2/book"
+            href="/book"
             onClick={() => logEvent("cta_click", { cta: "receipt_book", source: "decision_receipt" })}
             className="flex items-center gap-3 bg-cc-gold text-cc-navy rounded-xl px-5 py-4 text-left hover:bg-cc-gold-dark transition-colors"
           >
@@ -358,7 +358,7 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
 
           {recommended === 'cash' && (
             <a
-              href="/v2/cash-offer-options"
+              href="/cash-offer-options"
               onClick={() => logEvent("cta_click", { cta: "receipt_cash_offer", source: "decision_receipt" })}
               className="flex items-center gap-3 border border-cc-sand-dark/30 rounded-xl px-5 py-4 text-left hover:bg-cc-sand/30 transition-colors"
             >
@@ -372,7 +372,7 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
 
           {recommended === 'traditional' && (
             <a
-              href="/v2/sell"
+              href="/sell"
               onClick={() => logEvent("cta_click", { cta: "receipt_traditional", source: "decision_receipt" })}
               className="flex items-center gap-3 border border-cc-sand-dark/30 rounded-xl px-5 py-4 text-left hover:bg-cc-sand/30 transition-colors"
             >

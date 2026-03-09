@@ -100,7 +100,7 @@ export function SituationLane({ onSituationClick, className }: SituationLaneProp
               return (
                 <Link
                   key={card.id}
-                  to={`/v2/guides/${card.guideId}`}
+                  to={`/guides/${card.guideId}`}
                   onClick={() => onSituationClick(card.id)}
                   className={cn(
                     'flex items-center p-4 bg-white rounded-xl border border-cc-sand-dark/50',

@@ -108,7 +108,7 @@ export default function QaSessionToggle() {
           <button
             onClick={() => {
               resetSellerDecisionContext();
-              window.location.href = "/v2/seller-decision";
+              window.location.href = "/seller-decision";
             }}
             className="w-full mt-1 inline-flex items-center justify-center gap-1.5 text-xs text-cc-muted underline hover:text-cc-charcoal transition-colors py-1"
           >

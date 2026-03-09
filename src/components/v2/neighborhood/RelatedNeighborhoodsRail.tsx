@@ -33,18 +33,18 @@ const RelatedNeighborhoodsRail = ({ neighborhood }: RelatedNeighborhoodsRailProp
                 {t("Nearby Neighborhoods", "Vecindarios Cercanos")}
               </h3>
               <Button asChild variant="outline" size="sm" className="hidden sm:flex">
-                <Link to={`/v2/neighborhood-compare?areas=${neighborhood.slug},${neighborhood.relatedNeighborhoods.join(',')}`}>
+                <Link to={`/neighborhood-compare?areas=${neighborhood.slug},${neighborhood.relatedNeighborhoods.join(',')}`}>
                   <GitCompare className="w-4 h-4 mr-2" />
                   {t("Compare These Areas", "Comparar Estas Áreas")}
                 </Link>
               </Button>
             </div>
-            
+
             <div className="grid md:grid-cols-3 gap-4">
               {relatedNeighborhoods.map((related) => (
                 <Link
                   key={related.slug}
-                  to={`/v2/neighborhoods/${related.slug}`}
+                  to={`/neighborhoods/${related.slug}`}
                   className="group bg-cc-ivory hover:bg-cc-sand/50 rounded-xl p-5 transition-colors border border-cc-sand-dark/10"
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -70,7 +70,7 @@ const RelatedNeighborhoodsRail = ({ neighborhood }: RelatedNeighborhoodsRailProp
             {/* Mobile Compare CTA */}
             <div className="mt-4 sm:hidden">
               <Button asChild variant="outline" className="w-full">
-                <Link to={`/v2/neighborhood-compare?areas=${neighborhood.slug},${neighborhood.relatedNeighborhoods.join(',')}`}>
+                <Link to={`/neighborhood-compare?areas=${neighborhood.slug},${neighborhood.relatedNeighborhoods.join(',')}`}>
                   <GitCompare className="w-4 h-4 mr-2" />
                   {t("Compare These Areas", "Comparar Estas Áreas")}
                 </Link>
@@ -86,13 +86,9 @@ const RelatedNeighborhoodsRail = ({ neighborhood }: RelatedNeighborhoodsRailProp
               </h3>
               <div className="flex flex-wrap gap-3">
                 {relatedGuides.map((guide) => (
-                  <Link
-                    key={guide!.id}
-                    to={guide!.path}
-                    className="group"
-                  >
-                    <Badge 
-                      variant="outline" 
+                  <Link key={guide!.id} to={guide!.path} className="group">
+                    <Badge
+                      variant="outline"
                       className="px-4 py-2 text-sm font-medium bg-white hover:bg-cc-gold/10 hover:border-cc-gold transition-colors cursor-pointer"
                     >
                       <BookOpen className="w-3 h-3 mr-2 text-cc-gold" />

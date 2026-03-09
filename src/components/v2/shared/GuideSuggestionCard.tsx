@@ -32,7 +32,7 @@ const GuideSuggestionCard = ({
   const handleClick = () => {
     logEvent('cta_click', {
       cta_name: `guide_suggestion_${guideId}`,
-      destination: `/v2/guides/${guideId}`,
+      destination: `/guides/${guideId}`,
       page_path: window.location.pathname,
       source: ctaSource,
     });
@@ -41,7 +41,7 @@ const GuideSuggestionCard = ({
   if (variant === 'compact') {
     return (
       <Link
-        to={`/v2/guides/${guideId}`}
+        to={`/guides/${guideId}`}
         onClick={handleClick}
         className="flex items-center gap-3 p-3 rounded-lg bg-cc-sand hover:bg-cc-sand-dark/30 border border-cc-sand-dark/20 transition-all group"
       >
@@ -60,7 +60,7 @@ const GuideSuggestionCard = ({
 
   return (
     <Link
-      to={`/v2/guides/${guideId}`}
+      to={`/guides/${guideId}`}
       onClick={handleClick}
       className="block p-4 rounded-xl bg-cc-sand hover:bg-cc-sand-dark/30 border border-cc-sand-dark/30 transition-all group"
     >

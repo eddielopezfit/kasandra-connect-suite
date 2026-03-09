@@ -686,7 +686,7 @@ const V2HomeContent = () => {
                   <p className="text-sm text-cc-text-muted">{t("Saturdays 9:30 AM", "Sábados 9:30 AM")}</p>
                 </div>
               </div>
-              <Link to="/v2/podcast" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
+              <Link to="/podcast" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
                 {t("Explore Podcast", "Explorar Podcast")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -742,7 +742,7 @@ const V2HomeContent = () => {
                   "Los bienes raíces son más que transacciones—se trata de construir comunidades más fuertes. Estoy comprometida a hacer una diferencia en la vida de las familias en todo Tucson."
                 )}
               </p>
-              <Link to="/v2/community" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
+              <Link to="/community" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
                 {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

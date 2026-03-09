@@ -12,7 +12,7 @@ export function GoogleSignInButton() {
     setLoading(true);
     try {
       const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin + "/v2/community",
+        redirect_uri: window.location.origin + "/community",
       });
       if (error) {
         console.error("Sign-in error:", error);

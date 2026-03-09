@@ -291,7 +291,7 @@ const V2CashOfferOptionsContent = () => {
               )}
             </p>
             <Link
-              to="/v2/cash-readiness"
+              to="/cash-readiness"
               className="inline-flex items-center bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3 shadow-gold transition-all active:scale-[0.98]"
             >
               {t("Take the Cash Readiness Check", "Toma el Check de Preparación")}
@@ -323,9 +323,9 @@ const V2CashOfferOptionsContent = () => {
               className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
             >
               <Link
-                to="/v2/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options"
+                to="/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options"
                 onClick={() => {
-                  logCTAClick({ cta_name: 'cash_offer_book_review', destination: '/v2/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options', page_path: '/v2/cash-offer-options', intent: 'sell' });
+                  logCTAClick({ cta_name: 'cash_offer_book_review', destination: '/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options', page_path: '/cash-offer-options', intent: 'sell' });
                 }}
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
@@ -348,7 +348,7 @@ const V2CashOfferOptionsContent = () => {
               "¿Prefiere una venta tradicional? Conozca más sobre cómo trabajo con vendedores."
             )}
           </p>
-          <Link to="/v2/sell" className="inline-flex items-center text-cc-gold font-semibold hover:text-cc-gold-dark gap-2">
+          <Link to="/sell" className="inline-flex items-center text-cc-gold font-semibold hover:text-cc-gold-dark gap-2">
             {t("View Seller Services", "Ver Servicios para Vendedores")} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
