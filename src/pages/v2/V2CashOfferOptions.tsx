@@ -348,7 +348,7 @@ const V2CashOfferOptionsContent = () => {
               "¿Prefiere una venta tradicional? Conozca más sobre cómo trabajo con vendedores."
             )}
           </p>
-          <Link to="/v2/sell" className="inline-flex items-center text-cc-gold font-semibold hover:text-cc-gold-dark gap-2">
+          <Link to="/sell" className="inline-flex items-center text-cc-gold font-semibold hover:text-cc-gold-dark gap-2">
             {t("View Seller Services", "Ver Servicios para Vendedores")} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
