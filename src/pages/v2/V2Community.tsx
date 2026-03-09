@@ -69,7 +69,7 @@ const V2CommunityContent = () => {
             </div>
             <Button
               onClick={() => {
-                logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2/community', intent: 'explore' });
+                logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/community', intent: 'explore' });
                 openChat({ source: 'community_mid_page', intent: 'explore' });
               }}
               className="shrink-0 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-7 shadow-gold"
