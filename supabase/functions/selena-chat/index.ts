@@ -2308,7 +2308,7 @@ function buildConversationState(
     hasIntent: !!primaryIntent && primaryIntent !== 'explore',
     intent: primaryIntent,
     guidesRead: context.guides_read ?? 0,
-    toolUsed: !!context.tool_used,
+    toolUsed: !!context.last_tool_completed,
     quizCompleted: !!context.quiz_completed,
     hasToolResult: !!context.last_tool_result,
     hasEmail: !!extractedEmail || emailInHistory,
