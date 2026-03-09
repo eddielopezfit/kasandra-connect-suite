@@ -505,14 +505,37 @@ function generateProactiveGreeting(language: 'en' | 'es'): GreetingResult {
 }
 
 
-function generateOffMarketGreeting(language: 'en' | 'es'): GreetingResult {
+function generateOffMarketGreeting(language: 'en' | 'es', offMarketData?: EntryContext['offMarketData']): GreetingResult {
+  const om = offMarketData;
+  if (om && om.areas?.length > 0) {
+    const areasStr = om.areas.slice(0, 3).join(', ');
+    if (language === 'es') {
+      return {
+        content: `Estás registrado/a para acceso fuera del mercado en ${areasStr} — rango ${om.budgetRange}, ${om.propertyType}. Kasandra trabaja con vendedores antes de que publiquen — estás en el lugar correcto.\n\n¿Quieres compartir más sobre lo que buscas para que ella esté atenta?`,
+        suggestedReplies: [
+          "¿Qué significa fuera del mercado?",
+          "¿Cómo encuentra Kasandra estas casas?",
+          "Hablar con Kasandra",
+        ],
+      };
+    }
+    return {
+      content: `You're registered for off-market access in ${areasStr} — ${om.budgetRange} range, ${om.propertyType}. Kasandra works with sellers before they list — you're in the right place.\n\nWant to share more about what you're looking for so she can keep an eye out?`,
+      suggestedReplies: [
+        "What does off-market mean?",
+        "How does Kasandra find these?",
+        "Talk with Kasandra",
+      ],
+    };
+  }
+
   if (language === 'es') {
     return {
       content: `Estás en la lista. Kasandra se comunicará personalmente cuando algo que coincida con tus criterios aparezca — antes de que llegue al mercado.\n\n¿Hay algo sobre el proceso de compra o algún vecindario que te gustaría entender mejor mientras tanto?`,
       suggestedReplies: [
         "Explorar vecindarios de Tucson",
         "¿Cómo funciona el proceso de compra?",
-        "Programas para compradores",
+        "Hablar con Kasandra",
       ],
     };
   }
@@ -521,12 +544,40 @@ function generateOffMarketGreeting(language: 'en' | 'es'): GreetingResult {
     suggestedReplies: [
       "Explore Tucson neighborhoods",
       "How does the buying process work?",
-      "First-Time Buyer Programs",
+      "Talk with Kasandra",
     ],
   };
 }
 
-function generateMarketIntelligenceGreeting(language: 'en' | 'es'): GreetingResult {
+function generateMarketIntelligenceGreeting(language: 'en' | 'es', marketIntelData?: EntryContext['marketIntelData']): GreetingResult {
+  const mi = marketIntelData;
+  if (mi && mi.daysOnMarket > 0) {
+    const implication = mi.daysOnMarket <= 20 
+      ? (language === 'es' ? 'un mercado activo' : 'a fast-moving market')
+      : mi.daysOnMarket <= 45 
+      ? (language === 'es' ? 'un mercado equilibrado' : 'a balanced market')
+      : (language === 'es' ? 'un mercado de compradores con más margen para negociar' : "a buyer's market with more negotiating room");
+
+    if (language === 'es') {
+      return {
+        content: `Las casas de Tucson promedian ${mi.daysOnMarket} días en mercado con un ratio de ${mi.saleToListRatio} precio/lista — eso es ${implication}.\n\nEstos son promedios del condado. ¿Quieres entender qué significa para tu código postal y rango de precio específico?`,
+        suggestedReplies: [
+          "¿Es buen momento para vender?",
+          "¿Y para comprar?",
+          "Hablar con Kasandra",
+        ],
+      };
+    }
+    return {
+      content: `Tucson homes are averaging ${mi.daysOnMarket} days on market with a ${mi.saleToListRatio} sale-to-list ratio — that's ${implication}.\n\nThese are county-wide averages. Want to understand what this means for your specific ZIP and price point?`,
+      suggestedReplies: [
+        "Is it a good time to sell?",
+        "What about buying?",
+        "Talk with Kasandra",
+      ],
+    };
+  }
+
   if (language === 'es') {
     return {
       content: `Estás viendo los datos reales del mercado de Tucson — días en el mercado, ratio de venta a precio de lista, y costos de mantenimiento diarios.\n\n¿Quieres entender qué significan estos números para tu situación específica?`,
@@ -547,7 +598,30 @@ function generateMarketIntelligenceGreeting(language: 'en' | 'es'): GreetingResu
   };
 }
 
-function generateNeighborhoodCompareGreeting(language: 'en' | 'es'): GreetingResult {
+function generateNeighborhoodCompareGreeting(language: 'en' | 'es', neighborhoodCompareData?: EntryContext['neighborhoodCompareData']): GreetingResult {
+  const nc = neighborhoodCompareData;
+  if (nc && nc.areasCompared?.length >= 2) {
+    const areasStr = nc.areasCompared.slice(0, 3).join(' vs ');
+    if (language === 'es') {
+      return {
+        content: `Comparaste ${areasStr} — una herramienta de comparación te da los números, pero Kasandra conoce las calles. ¿Quieres su perspectiva sobre cuál se ajusta mejor a tu situación?`,
+        suggestedReplies: [
+          "¿Cuál es mejor para mi situación?",
+          "¿Cuál es el contexto local?",
+          "Hablar con Kasandra",
+        ],
+      };
+    }
+    return {
+      content: `You compared ${areasStr} — a comparison tool gives you the numbers, but Kasandra knows the streets. Want her perspective on which is the better fit for your situation?`,
+      suggestedReplies: [
+        "Which is better for my situation?",
+        "What's the local context?",
+        "Talk with Kasandra",
+      ],
+    };
+  }
+
   if (language === 'es') {
     return {
       content: `Estás comparando vecindarios de Tucson — excelente forma de reducir opciones. Kasandra conoce estas comunidades personalmente.\n\n¿Hay algo específico que estés buscando en un vecindario?`,
@@ -563,6 +637,7 @@ function generateNeighborhoodCompareGreeting(language: 'en' | 'es'): GreetingRes
     suggestedReplies: [
       "Which area is best for families?",
       "Compare schools by area",
+      "Talk with Kasandra",
       "Talk with Kasandra",
     ],
   };
