@@ -121,7 +121,8 @@ export function computeGreeting(
   const isAllowedGreetingSource = !!entryContext && [
     'calculator', 'guide_handoff', 'synthesis', 'hero', 'quiz_result', 'post_booking', 'seller_decision',
     'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs',
-    'neighborhood_detail', 'neighborhoods_index'
+    'neighborhood_detail', 'neighborhoods_index',
+    'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture'
   ].includes(entryContext.source);
 
   const hasRecoveryCandidate = !sessionContext?.recovery_shown && !!sessionContext?.booking_chips_shown_at;
@@ -134,7 +135,8 @@ export function computeGreeting(
     if (!storedHistoryExists && messages.length === 0) return true;
     if (messages.length > 3 && isMeaningfulSource && isAllowedGreetingSource) {
       const contextualSources = ['guide_handoff', 'calculator', 'synthesis', 'quiz_result', 'seller_decision',
-        'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index'];
+        'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index',
+        'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture'];
       return contextualSources.includes(entryContext?.source || '');
     }
     if (isMeaningfulSource && isAllowedGreetingSource) return true;
@@ -198,48 +200,120 @@ export function computeGreeting(
 
     suggestedReplies = resumeChips.map(label => ({ label }));
     updateSessionContext({ restored_from_snapshot: false });
-  } else if (entryContext?.source === 'calculator' && entryContext.calculatorAdvantage) {
-    const calcValue = sessionContext?.estimated_value;
-    const calcDiff = sessionContext?.calculator_difference ?? entryContext.calculatorDifference;
-    const formattedValue = calcValue ? `$${calcValue.toLocaleString()}` : '';
-    const formattedDiff = calcDiff ? `$${calcDiff.toLocaleString()}` : '';
-    
-    if (entryContext.calculatorAdvantage === 'cash') {
-      greetingContent = formattedValue
-        ? t(
-            `You ran the numbers on a ~${formattedValue} home. Cash looks like a strong option — speed and certainty without the prep costs.${formattedDiff ? ` The difference is about ${formattedDiff}.` : ''}\n\nWant the 30-second breakdown or tell me your timeline?`,
-            `Analizó los números de una casa de ~${formattedValue}. El efectivo parece ser una buena opción — velocidad y certeza sin los costos de preparación.${formattedDiff ? ` La diferencia es de unos ${formattedDiff}.` : ''}\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
-          )
-        : t(
-            `Nice work on the analysis. Cash looks like a strong option for you — speed and certainty without the prep costs.\n\nWant the 30-second breakdown or tell me your timeline?`,
-            `Excelente trabajo con el análisis. El efectivo parece una buena opción — velocidad y certeza sin los costos de preparación.\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
-          );
-    } else if (entryContext.calculatorAdvantage === 'traditional') {
-      greetingContent = formattedValue
-        ? t(
-            `You ran the numbers on a ~${formattedValue} home. Listing could net about ${formattedDiff || 'more'} — if you have the time to maximize value.\n\nWant the 30-second breakdown or tell me your timeline?`,
-            `Analizó los números de una casa de ~${formattedValue}. Vender de forma tradicional podría darle unos ${formattedDiff || 'más'} — si tiene el tiempo para maximizar el valor.\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
-          )
-        : t(
-            `Great job on the numbers. A traditional sale could net you ${formattedDiff || 'more'} — if you have the time to maximize value.\n\nWant the 30-second breakdown or tell me your timeline?`,
-            `Buen trabajo con los números. Una venta tradicional podría darle ${formattedDiff || 'más'} — si tiene el tiempo para maximizar el valor.\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
-          );
+  } else if (entryContext?.source === 'calculator' && (entryContext.calculatorAdvantage || entryContext.sellerCalcData)) {
+    const sc = entryContext.sellerCalcData;
+    if (sc && sc.estimatedValue > 0) {
+      const fmtNum = (n: number) => `$${Math.round(n).toLocaleString()}`;
+      const cashNet = fmtNum(sc.cashNetProceeds);
+      const listNet = fmtNum(sc.traditionalNetProceeds);
+      const diff = fmtNum(sc.netDifference);
+      const value = fmtNum(sc.estimatedValue);
+      
+      if (sc.recommendation === 'cash') {
+        greetingContent = t(
+          `On a ${value} home, cash nets you ${cashNet} — ${diff} less than listing at ${listNet}, but you close faster with zero prep costs.\n\nKasandra can walk you through the right strategy based on your timeline. That conversation is worth having.`,
+          `En una casa de ${value}, efectivo te da ${cashNet} — ${diff} menos que listado a ${listNet}, pero cierras más rápido sin costos de preparación.\n\nKasandra puede orientarte sobre la estrategia correcta según tu plazo. Esa conversación vale la pena.`
+        );
+      } else if (sc.recommendation === 'traditional') {
+        greetingContent = t(
+          `On a ${value} home, listing could net you ${listNet} — about ${diff} more than a cash offer at ${cashNet}. If you have the time, the traditional path pays off.\n\nKasandra can help you maximize that number with the right pricing and negotiation strategy.`,
+          `En una casa de ${value}, el listado podría darte ${listNet} — unos ${diff} más que una oferta en efectivo de ${cashNet}. Si tienes el tiempo, el camino tradicional vale la pena.\n\nKasandra puede ayudarte a maximizar ese número con la estrategia correcta de precios y negociación.`
+        );
+      } else {
+        greetingContent = t(
+          `On a ${value} home, the difference between cash (${cashNet}) and listing (${listNet}) is only ${diff}. Your timeline and priorities matter more than the number.\n\nKasandra can help you decide which path fits your situation best.`,
+          `En una casa de ${value}, la diferencia entre efectivo (${cashNet}) y listado (${listNet}) es solo ${diff}. Tu plazo y prioridades importan más que el número.\n\nKasandra puede ayudarte a decidir qué camino se ajusta mejor a tu situación.`
+        );
+      }
+      suggestedReplies = [
+        { label: t("Which path is right for me?", "¿Qué camino es mejor para mí?") },
+        { label: t("What affects my net the most?", "¿Qué afecta más mi ganancia neta?") },
+        { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+      ];
     } else {
-      greetingContent = formattedValue
-        ? t(
-            `You ran the numbers on a ~${formattedValue} home. The difference is small — which means your timeline matters most.\n\nWant the 30-second breakdown or tell me what you're deciding?`,
-            `Analizó los números de una casa de ~${formattedValue}. La diferencia es pequeña — lo cual significa que su plazo importa más.\n\n¿Quiere el resumen de 30 segundos o dígame qué está decidiendo?`
-          )
-        : t(
-            `You've taken a great step by running your numbers. The difference is subtle — which means the right choice depends on your situation.\n\nWant the 30-second breakdown or tell me what you're deciding?`,
-            `Ha hecho un gran paso al analizar sus números. La diferencia es sutil — la decisión correcta depende de su situación.\n\n¿Quiere el resumen de 30 segundos o dígame qué está decidiendo?`
-          );
+      // Fallback to existing advantage-based greeting
+      const calcValue = sessionContext?.estimated_value;
+      const calcDiff = sessionContext?.calculator_difference ?? entryContext.calculatorDifference;
+      const formattedValue = calcValue ? `$${calcValue.toLocaleString()}` : '';
+      const formattedDiff = calcDiff ? `$${calcDiff.toLocaleString()}` : '';
+      
+      if (entryContext.calculatorAdvantage === 'cash') {
+        greetingContent = formattedValue
+          ? t(
+              `You ran the numbers on a ~${formattedValue} home. Cash looks like a strong option — speed and certainty without the prep costs.${formattedDiff ? ` The difference is about ${formattedDiff}.` : ''}\n\nKasandra can help you decide if this is the right move.`,
+              `Analizó los números de una casa de ~${formattedValue}. El efectivo parece ser una buena opción — velocidad y certeza sin los costos de preparación.${formattedDiff ? ` La diferencia es de unos ${formattedDiff}.` : ''}\n\nKasandra puede ayudarle a decidir si este es el paso correcto.`
+            )
+          : t(
+              `Nice work on the analysis. Cash looks like a strong option for you.\n\nKasandra can help you decide if this is the right move.`,
+              `Excelente trabajo con el análisis. El efectivo parece una buena opción.\n\nKasandra puede ayudarle a decidir si este es el paso correcto.`
+            );
+      } else if (entryContext.calculatorAdvantage === 'traditional') {
+        greetingContent = formattedValue
+          ? t(
+              `You ran the numbers on a ~${formattedValue} home. Listing could net about ${formattedDiff || 'more'} — if you have the time.\n\nKasandra can help you maximize that number with the right strategy.`,
+              `Analizó los números de una casa de ~${formattedValue}. Vender de forma tradicional podría darle unos ${formattedDiff || 'más'} — si tiene el tiempo.\n\nKasandra puede ayudarle a maximizar ese número con la estrategia correcta.`
+            )
+          : t(
+              `Great job on the numbers. A traditional sale could net you more — if you have the time.\n\nKasandra can help you with the right pricing strategy.`,
+              `Buen trabajo con los números. Una venta tradicional podría darle más — si tiene el tiempo.\n\nKasandra puede ayudarle con la estrategia de precios correcta.`
+            );
+      } else {
+        greetingContent = formattedValue
+          ? t(
+              `You ran the numbers on a ~${formattedValue} home. The difference is small — your timeline matters most.\n\nKasandra can help you decide which path fits your situation.`,
+              `Analizó los números de una casa de ~${formattedValue}. La diferencia es pequeña — su plazo importa más.\n\nKasandra puede ayudarle a decidir qué camino se ajusta a su situación.`
+            )
+          : t(
+              `You've run your numbers. The difference is subtle — the right choice depends on your situation.\n\nKasandra can help you decide.`,
+              `Ha analizado sus números. La diferencia es sutil — la decisión correcta depende de su situación.\n\nKasandra puede ayudarle a decidir.`
+            );
+      }
+      suggestedReplies = [
+        { label: t("Which path is right for me?", "¿Qué camino es mejor para mí?") },
+        { label: t("What would my home net?", "¿Cuánto me daría mi casa?") },
+        { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+      ];
     }
-    suggestedReplies = [
-      { label: t("30-second breakdown", "Resumen de 30 segundos") },
-      { label: t("What would my home net?", "¿Cuánto me daría mi casa?") },
-      { label: t("I'm deciding: cash vs list", "Estoy decidiendo: efectivo vs venta") },
-    ];
+  } else if (entryContext?.source === 'buyer_readiness_capture' || entryContext?.source === 'seller_readiness_capture' || entryContext?.source === 'cash_readiness_capture') {
+    const rd = entryContext.readinessData;
+    if (rd && rd.score > 0) {
+      const score = rd.score;
+      const band = score >= 75 ? t('ready to move forward', 'listo/a para avanzar') : score >= 50 ? t('nearly ready', 'casi listo/a') : t('building readiness', 'construyendo preparación');
+      const priority = rd.primaryPriority || t('your situation', 'tu situación');
+      const toolLabel = rd.toolType === 'buyer' ? t('Buyer Readiness', 'Preparación del Comprador') : rd.toolType === 'cash' ? t('Cash Readiness', 'Preparación para Efectivo') : t('Seller Readiness', 'Preparación del Vendedor');
+      
+      if (score >= 75) {
+        greetingContent = t(
+          `Your ${toolLabel} score is ${score}/100 — you're ${band}. Your top priority is ${priority}.\n\nAt this level of readiness, a short strategy call with Kasandra could save you time and money on your next steps.`,
+          `Tu puntuación de ${toolLabel} es ${score}/100 — estás ${band}. Tu prioridad principal es ${priority}.\n\nCon este nivel de preparación, una llamada corta de estrategia con Kasandra podría ahorrarte tiempo y dinero en tus próximos pasos.`
+        );
+      } else if (score >= 50) {
+        greetingContent = t(
+          `Your ${toolLabel} score is ${score}/100 — you're ${band}. Your top priority is ${priority}.\n\nThere are a few areas to strengthen. Kasandra can walk you through exactly what to focus on.`,
+          `Tu puntuación de ${toolLabel} es ${score}/100 — estás ${band}. Tu prioridad principal es ${priority}.\n\nHay algunas áreas que fortalecer. Kasandra puede orientarte sobre exactamente en qué enfocarte.`
+        );
+      } else {
+        greetingContent = t(
+          `Your ${toolLabel} score is ${score}/100 — you're still ${band}, and that's completely normal. Your top priority is ${priority}.\n\nKasandra can help you build a plan to get there at your own pace.`,
+          `Tu puntuación de ${toolLabel} es ${score}/100 — aún estás ${band}, y eso es completamente normal. Tu prioridad principal es ${priority}.\n\nKasandra puede ayudarte a crear un plan para llegar a tu ritmo.`
+        );
+      }
+      suggestedReplies = [
+        { label: t("What should I work on first?", "¿En qué debería trabajar primero?") },
+        { label: t("Explain my score", "Explica mi puntuación") },
+        { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+      ];
+    } else {
+      greetingContent = t(
+        "Great job completing the readiness check. How can I help you take the next step?",
+        "Excelente trabajo completando la evaluación. ¿Cómo puedo ayudarte a dar el siguiente paso?"
+      );
+      suggestedReplies = [
+        { label: t("What should I do next?", "¿Qué debería hacer ahora?") },
+        { label: t("Browse guides", "Explorar guías") },
+        { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+      ];
+    }
   } else if (entryContext?.source === 'seller_decision') {
     const ctx = sessionContext;
 

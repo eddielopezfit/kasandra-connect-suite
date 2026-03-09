@@ -90,7 +90,16 @@ const V2CashReadinessContent = () => {
     trackCustom("CashReadinessLeadCaptured", { content_category: "cash_readiness" });
     setCaptured(true);
     setShowSaveLink(false);
-    setTimeout(() => openChat({ source: "cash_readiness_capture", intent: "cash" }), 400);
+    const ctx = getSessionContext();
+    setTimeout(() => openChat({
+      source: "cash_readiness_capture",
+      intent: "cash",
+      readinessData: {
+        score: ctx?.readiness_score ?? 0,
+        primaryPriority: ctx?.primary_priority ?? '',
+        toolType: 'cash',
+      },
+    }), 400);
   };
 
   return (

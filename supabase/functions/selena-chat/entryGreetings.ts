@@ -72,6 +72,23 @@ export interface EntryContext {
     estimatedHigh: number;
     totalCashNeeded: number;
   };
+  // Seller Net Calculator
+  sellerCalcData?: {
+    estimatedValue: number;
+    mortgageBalance: number;
+    cashNetProceeds: number;
+    traditionalNetProceeds: number;
+    recommendation: string;
+    netDifference: number;
+    motivation: string;
+    timeline: string;
+  };
+  // Readiness check
+  readinessData?: {
+    score: number;
+    primaryPriority: string;
+    toolType: 'buyer' | 'seller' | 'cash';
+  };
 }
 
 interface GreetingResult {

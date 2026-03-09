@@ -90,7 +90,16 @@ const V2SellerReadinessContent = () => {
     trackCustom("SellerReadinessLeadCaptured", { content_category: "seller_readiness" });
     setCaptured(true);
     setShowSaveLink(false);
-    setTimeout(() => openChat({ source: "seller_readiness_capture", intent: "sell" }), 400);
+    const ctx = getSessionContext();
+    setTimeout(() => openChat({
+      source: "seller_readiness_capture",
+      intent: "sell",
+      readinessData: {
+        score: ctx?.readiness_score ?? 0,
+        primaryPriority: ctx?.primary_priority ?? '',
+        toolType: 'seller',
+      },
+    }), 400);
   };
 
   return (

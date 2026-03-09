@@ -147,10 +147,21 @@ const TucsonAlphaCalculator = () => {
     // Pass calculator context for context-aware greeting
     openChat({
       source: 'calculator',
+      intent: 'sell',
       calculatorAdvantage: results?.recommendation === 'traditional' ? 'traditional' : results?.recommendation === 'cash' ? 'cash' : 'consult',
       calculatorDifference: results?.costOfTime?.netDifference,
+      sellerCalcData: results ? {
+        estimatedValue,
+        mortgageBalance,
+        cashNetProceeds: results.cash.netProceeds,
+        traditionalNetProceeds: results.traditional.netProceeds,
+        recommendation: results.recommendation,
+        netDifference: Math.abs(results.traditional.netProceeds - results.cash.netProceeds),
+        motivation,
+        timeline,
+      } : undefined,
     });
-  }, [openChat, estimatedValue, motivation, timeline, results]);
+  }, [openChat, estimatedValue, mortgageBalance, motivation, timeline, results]);
 
   // Handle back navigation
   const handleBack = useCallback(() => {

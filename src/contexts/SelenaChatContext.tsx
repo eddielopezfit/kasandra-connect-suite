@@ -232,6 +232,12 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     if (entryContext?.closingCostData) {
       updateSessionContext({ closing_cost_data: entryContext.closingCostData } as any);
     }
+    if (entryContext?.sellerCalcData) {
+      updateSessionContext({ seller_calc_data: entryContext.sellerCalcData } as any);
+    }
+    if (entryContext?.readinessData) {
+      updateSessionContext({ readiness_entry_data: entryContext.readinessData } as any);
+    }
     updateSessionContext(entryUpdates as any);
 
     logEvent('selena_opened', {
@@ -379,6 +385,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               entry_guide_id: context?.entry_guide_id ?? null,
               entry_guide_title: context?.entry_guide_title ?? null,
               closing_cost_data: (context as any)?.closing_cost_data ?? null,
+              seller_calc_data: (context as any)?.seller_calc_data ?? null,
+              readiness_entry_data: (context as any)?.readiness_entry_data ?? null,
             },
             history,
           }),
