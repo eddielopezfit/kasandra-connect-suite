@@ -204,6 +204,27 @@ export function computeGreeting(
       { label: t("How much is my home worth?", "¿Cuánto vale mi casa?") },
       { label: t("Talk with Kasandra", "Hablar con Kasandra") },
     ];
+  } else if (entryContext?.source === 'neighborhood_detail') {
+    const areaName = entryContext.neighborhoodName || 'this area';
+    greetingContent = t(
+      `I see you're exploring ${areaName}. Whether you're thinking about buying or selling there, I can help you understand what that market looks like right now.\n\nWhat's on your mind?`,
+      `Veo que está explorando ${areaName}. Ya sea que esté pensando en comprar o vender allí, puedo ayudarle a entender cómo se ve ese mercado ahora mismo.\n\n¿Qué tiene en mente?`
+    );
+    suggestedReplies = [
+      { label: t(`What's the market like in ${areaName}?`, `¿Cómo está el mercado en ${areaName}?`) },
+      { label: t("I'm thinking about selling there", "Estoy pensando en vender allí") },
+      { label: t("I'm looking to buy there", "Estoy buscando comprar allí") },
+    ];
+  } else if (entryContext?.source === 'neighborhoods_index') {
+    greetingContent = t(
+      `You're browsing Tucson-area neighborhoods — smart move. I can help you narrow down which areas fit your situation best.\n\nAre you looking to buy or sell?`,
+      `Está explorando vecindarios del área de Tucson — buena decisión. Puedo ayudarle a identificar qué áreas se ajustan mejor a su situación.\n\n¿Está buscando comprar o vender?`
+    );
+    suggestedReplies = [
+      { label: t("I'm looking to buy", "Estoy buscando comprar") },
+      { label: t("I'm thinking about selling", "Estoy pensando en vender") },
+      { label: t("Help me compare areas", "Ayúdame a comparar áreas") },
+    ];
   } else if (entryContext?.source === 'guide_handoff') {
     const title = entryContext.guideTitle || 'that guide';
     greetingContent = t(
