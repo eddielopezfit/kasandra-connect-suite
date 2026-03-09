@@ -108,6 +108,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Encontrar un horario con Kasandra',
     normalized_key: 'find a time with kasandra',
     actionSpec: { type: 'book', label: { en: 'Find a time with Kasandra', es: 'Encontrar un horario con Kasandra' } },
+    chipKey: CHIP_KEYS.FIND_A_TIME,
   },
   {
     id: 'book-find-time-es',
@@ -115,6 +116,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Encontrar un horario con Kasandra',
     normalized_key: 'encontrar un horario con kasandra',
     actionSpec: { type: 'book', label: { en: 'Find a time with Kasandra', es: 'Encontrar un horario con Kasandra' } },
+    chipKey: CHIP_KEYS.FIND_A_TIME,
   },
 
   // --- Tool: buyer readiness ---
@@ -124,6 +126,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Tomar la evaluación de preparación',
     normalized_key: 'take the readiness check',
     actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+    chipKey: CHIP_KEYS.BUYER_READINESS,
   },
   {
     id: 'tool-buyer-readiness-es',
@@ -131,6 +134,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Tomar la evaluación de preparación',
     normalized_key: 'tomar la evaluacion de preparacion',
     actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
+    chipKey: CHIP_KEYS.BUYER_READINESS,
   },
 
   // --- Tool: cash readiness ---
@@ -140,6 +144,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Tomar el check de preparación en efectivo',
     normalized_key: 'take the cash readiness check',
     actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' } },
+    chipKey: CHIP_KEYS.CASH_READINESS,
   },
   {
     id: 'tool-cash-readiness-es',
@@ -147,6 +152,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Tomar el check de preparación en efectivo',
     normalized_key: 'tomar el check de preparacion en efectivo',
     actionSpec: { type: 'open_tool', toolId: 'cash-readiness', label: { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' } },
+    chipKey: CHIP_KEYS.CASH_READINESS,
   },
 
   // --- Navigate: seller decision ---
@@ -156,6 +162,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Ver mis opciones de venta',
     normalized_key: 'get my selling options',
     actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    chipKey: CHIP_KEYS.GET_SELLING_OPTIONS,
   },
   {
     id: 'nav-seller-decision-es',
@@ -163,6 +170,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Ver mis opciones de venta',
     normalized_key: 'ver mis opciones de venta',
     actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    chipKey: CHIP_KEYS.GET_SELLING_OPTIONS,
   },
 
   // --- Tool: seller readiness ---
