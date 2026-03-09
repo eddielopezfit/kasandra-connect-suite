@@ -238,6 +238,15 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     if (entryContext?.readinessData) {
       updateSessionContext({ readiness_entry_data: entryContext.readinessData } as any);
     }
+    if (entryContext?.offMarketData) {
+      updateSessionContext({ off_market_data: entryContext.offMarketData } as any);
+    }
+    if (entryContext?.neighborhoodCompareData) {
+      updateSessionContext({ neighborhood_compare_data: entryContext.neighborhoodCompareData } as any);
+    }
+    if (entryContext?.marketIntelData) {
+      updateSessionContext({ market_intel_data: entryContext.marketIntelData } as any);
+    }
     updateSessionContext(entryUpdates as any);
 
     logEvent('selena_opened', {
