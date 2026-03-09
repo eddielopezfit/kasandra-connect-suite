@@ -175,6 +175,69 @@ Deno.serve(async (req) => {
 
       leadId = existingLead.id;
       isNew = false;
+    } else if (input.selena_lead_id) {
+      // ── Lead Merge: email changed but selena_lead_id exists → update existing row ──
+      console.log("[submit-consultation-intake] Email mismatch but selena_lead_id present, merging:", input.selena_lead_id);
+      const { data: existingByLeadId } = await supabase
+        .from("lead_profiles")
+        .select("id, tags")
+        .eq("id", input.selena_lead_id)
+        .maybeSingle();
+
+      if (existingByLeadId) {
+        const mergedTags = [...new Set([...(existingByLeadId.tags || []), ...tags, "email_changed"])];
+        const { error: mergeError } = await supabase
+          .from("lead_profiles")
+          .update({
+            email,
+            name: input.name.trim(),
+            phone: input.phone.trim(),
+            language: input.language || "en",
+            intent: normalizedIntent.canonical,
+            timeline: normalizedTimeline.canonical,
+            session_id: input.session_id || null,
+            source: input.source || "lovable_native_form",
+            tags: mergedTags,
+          })
+          .eq("id", existingByLeadId.id);
+
+        if (mergeError) {
+          console.error("Error merging lead:", mergeError);
+          return new Response(
+            JSON.stringify(createStructuredError('DB_CONSTRAINT', 'Failed to merge lead profile')),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        leadId = existingByLeadId.id;
+        isNew = false;
+      } else {
+        // selena_lead_id doesn't match any row — fall through to create new
+        const { data: newLead, error: insertError } = await supabase
+          .from("lead_profiles")
+          .insert({
+            email,
+            name: input.name.trim(),
+            phone: input.phone.trim(),
+            language: input.language || "en",
+            intent: normalizedIntent.canonical,
+            timeline: normalizedTimeline.canonical,
+            session_id: input.session_id || null,
+            source: input.source || "lovable_native_form",
+            tags,
+          })
+          .select("id")
+          .single();
+
+        if (insertError) {
+          console.error("Error inserting lead:", insertError);
+          return new Response(
+            JSON.stringify(createStructuredError('DB_CONSTRAINT', 'Failed to create lead profile')),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        leadId = newLead.id;
+        isNew = true;
+      }
     } else {
       const { data: newLead, error: insertError } = await supabase
         .from("lead_profiles")
