@@ -685,7 +685,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- relocating-to-tucson ---
   {
     id: 'relocating-to-tucson',
-    path: '/v2/guides/relocating-to-tucson',
+    path: '/guides/relocating-to-tucson',
     titleEn: 'Relocating to Tucson: What Every Incoming Buyer Should Know',
     titleEs: 'Mudarse a Tucson: Lo Que Todo Comprador Entrante Debe Saber',
     labelEn: 'Relocating to Tucson',
