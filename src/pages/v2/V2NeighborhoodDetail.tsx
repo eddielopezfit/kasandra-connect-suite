@@ -19,7 +19,8 @@ import { getNeighborhoodHeroUrl } from "@/lib/neighborhood/heroUrl";
 const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: NeighborhoodEntry }) => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
-
+  const [heroError, setHeroError] = useState(false);
+  const heroUrl = getNeighborhoodHeroUrl(neighborhood.slug);
   useEffect(() => {
     logEvent('neighborhood_page_view', { slug: neighborhood.slug, region: neighborhood.regionGroup });
   }, [neighborhood.slug, neighborhood.regionGroup]);
