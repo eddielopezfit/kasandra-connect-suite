@@ -249,7 +249,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: "What's my home worth?",
     label_es: '¿Cuánto vale mi casa?',
     normalized_key: "what's my home worth",
-    actionSpec: { type: 'navigate', path: '/v2/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
   },
   {
     id: 'legacy-home-worth-es',
