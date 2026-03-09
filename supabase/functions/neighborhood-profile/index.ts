@@ -109,9 +109,14 @@ serve(async (req) => {
 
     const isTucson = isTucsonZip(zip_code);
 
+    // Build location string — use neighborhood_name if provided (for shared ZIPs like Corona de Tucson / Vail)
+    const locationString = neighborhood_name 
+      ? `${neighborhood_name}, Arizona (ZIP code ${zip_code})`
+      : `ZIP code ${zip_code}`;
+
     const regionContext = isTucson
-      ? `ZIP code ${zip_code} is in the Tucson, Arizona metropolitan area (Pima County). Provide detailed, confident local insights grounded in current data. Search for recent listings, sales activity, school ratings, and community developments specifically for this ZIP.`
-      : `ZIP code ${zip_code} is outside the Tucson metro area. Provide general insights based on current web data, but note that Kasandra Prieto specializes in Tucson/Pima County. Set confidence_level to "exploratory".`;
+      ? `${locationString} is in the Tucson, Arizona metropolitan area (Pima County). Provide detailed, confident local insights grounded in current data. Search for recent listings, sales activity, school ratings, and community developments specifically for ${neighborhood_name || `ZIP ${zip_code}`}.`
+      : `${locationString} is outside the Tucson metro area. Provide general insights based on current web data, but note that Kasandra Prieto specializes in Tucson/Pima County. Set confidence_level to "exploratory".`;
 
     const systemPrompt = `You are a bilingual (English/Spanish) real estate neighborhood intelligence analyst for Tucson, Arizona, working for Kasandra Prieto at Corner Connect (brokered by Realty Executives Arizona Territory).
 
