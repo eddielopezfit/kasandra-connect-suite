@@ -529,7 +529,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     const isPriorityCallAction = action.actionType === 'priority_call' || action.type === 'priority_call' || action.id === 'priority_call';
     if (isPriorityCallAction) {
       closeChat();
-      navigate('/v2/book');
+      navigate('/book');
       return;
     }
     

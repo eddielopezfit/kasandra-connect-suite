@@ -98,7 +98,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // === TIER 1 — PILLAR GUIDES ===
   {
     id: 'first-time-buyer-guide',
-    path: '/v2/guides/first-time-buyer-guide',
+    path: '/guides/first-time-buyer-guide',
     titleEn: "First-Time Home Buyer's Complete Guide",
     titleEs: 'Guía Completa para Compradores de Primera Vivienda',
     labelEn: 'First-Time Buyer Guide',
@@ -130,7 +130,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'selling-for-top-dollar',
-    path: '/v2/guides/selling-for-top-dollar',
+    path: '/guides/selling-for-top-dollar',
     titleEn: 'Selling Your Home in Arizona: A Clear Path Forward',
     titleEs: 'Vender Su Casa en Arizona: Un Camino Claro',
     labelEn: 'Selling Your Home Guide',
@@ -161,7 +161,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'cash-offer-guide',
-    path: '/v2/guides/cash-offer-guide',
+    path: '/guides/cash-offer-guide',
     titleEn: 'Cash Offers Explained: What Homeowners Should Know',
     titleEs: 'Ofertas en Efectivo Explicadas: Lo Que Los Propietarios Deben Saber',
     labelEn: 'Cash Offer Guide',
@@ -200,7 +200,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'inherited-probate-property',
-    path: '/v2/guides/inherited-probate-property',
+    path: '/guides/inherited-probate-property',
     titleEn: 'Inherited Property in Pima County: Understanding Your Options',
     titleEs: 'Propiedad Heredada en el Condado de Pima: Entendiendo Sus Opciones',
     labelEn: 'Inherited Property Guide',
@@ -238,7 +238,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // === TIER 2 — SUPPORTING GUIDES ===
   {
     id: 'understanding-home-valuation',
-    path: '/v2/guides/understanding-home-valuation',
+    path: '/guides/understanding-home-valuation',
     titleEn: "Understanding Your Home's Value",
     titleEs: 'Entendiendo el Valor de Su Casa',
     labelEn: "Understanding Your Home's Value",
@@ -271,7 +271,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // === TIER 3 — MICRO GUIDES (Client Stories) ===
   {
     id: 'first-time-buyer-story',
-    path: '/v2/guides/first-time-buyer-story',
+    path: '/guides/first-time-buyer-story',
     titleEn: 'A First-Time Buyer Finds Her Way',
     titleEs: 'Una Compradora Primeriza Encuentra Su Camino',
     labelEn: 'First-Time Buyer Story',
@@ -300,7 +300,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'budget-buyer-story',
-    path: '/v2/guides/budget-buyer-story',
+    path: '/guides/budget-buyer-story',
     titleEn: 'Finding Security on a Budget',
     titleEs: 'Encontrando Seguridad con Presupuesto Limitado',
     labelEn: 'Budget Buyer Story',
@@ -329,7 +329,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'seller-stressful-market-story',
-    path: '/v2/guides/seller-stressful-market-story',
+    path: '/guides/seller-stressful-market-story',
     titleEn: 'Selling in an Uncertain Market',
     titleEs: 'Vendiendo en un Mercado Incierto',
     labelEn: 'Seller Story',
@@ -358,7 +358,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'spanish-speaking-client-story',
-    path: '/v2/guides/spanish-speaking-client-story',
+    path: '/guides/spanish-speaking-client-story',
     titleEn: 'A Family Finds Home in Their Language',
     titleEs: 'Una Familia Encuentra Hogar en Su Idioma',
     labelEn: 'Spanish-Speaking Client Story',
@@ -389,7 +389,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // === PHASE 2 — DECISION COMPRESSION GUIDES ===
   {
     id: 'cash-vs-traditional-sale',
-    path: '/v2/guides/cash-vs-traditional-sale',
+    path: '/guides/cash-vs-traditional-sale',
     titleEn: 'Cash Offer vs. Listing Your Tucson Home: What to Expect',
     titleEs: 'Oferta en Efectivo vs. Listar Tu Casa en Tucson: Qué Esperar',
     labelEn: 'Cash vs. Listing',
@@ -431,7 +431,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- sell-now-or-wait ---
   {
     id: 'sell-now-or-wait',
-    path: '/v2/guides/sell-now-or-wait',
+    path: '/guides/sell-now-or-wait',
     titleEn: 'Sell Now or Wait? How Tucson Homeowners Decide',
     titleEs: '¿Vender Ahora o Esperar? Cómo Deciden los Propietarios en Tucson',
     labelEn: 'Sell Now or Wait?',
@@ -465,7 +465,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- life-change-selling ---
   {
     id: 'life-change-selling',
-    path: '/v2/guides/life-change-selling',
+    path: '/guides/life-change-selling',
     titleEn: 'Selling After a Life Change (Divorce, Relocation, Downsizing)',
     titleEs: 'Vender Después de un Cambio de Vida (Divorcio, Mudanza, Reducción)',
     labelEn: 'Life Change Selling',
@@ -500,7 +500,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- military-pcs-guide ---
   {
     id: 'military-pcs-guide',
-    path: '/v2/guides/military-pcs-guide',
+    path: '/guides/military-pcs-guide',
     titleEn: 'Military & PCS: Buying or Selling a Home in Tucson',
     titleEs: 'Militares y PCS: Comprar o Vender una Casa en Tucson',
     labelEn: 'Military & PCS Guide',
@@ -538,7 +538,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- divorce-selling ---
   {
     id: 'divorce-selling',
-    path: '/v2/guides/divorce-selling',
+    path: '/guides/divorce-selling',
     titleEn: 'Selling a Home During Divorce in Arizona: A Clear Path Forward',
     titleEs: 'Vender una Casa Durante el Divorcio en Arizona: Un Camino Claro',
     labelEn: 'Selling During Divorce',
@@ -576,7 +576,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- senior-downsizing ---
   {
     id: 'senior-downsizing',
-    path: '/v2/guides/senior-downsizing',
+    path: '/guides/senior-downsizing',
     titleEn: "Downsizing in Tucson: A Senior Homeowner's Guide",
     titleEs: 'Reducción de Tamaño en Tucson: Guía para Propietarios Mayores',
     labelEn: 'Senior Downsizing Guide',
@@ -614,7 +614,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- distressed-preforeclosure ---
   {
     id: 'distressed-preforeclosure',
-    path: '/v2/guides/distressed-preforeclosure',
+    path: '/guides/distressed-preforeclosure',
     titleEn: 'Facing Financial Hardship? Your Options as a Tucson Homeowner',
     titleEs: '¿Enfrentando Dificultades Financieras? Tus Opciones como Propietario en Tucson',
     labelEn: 'Hardship & Pre-Foreclosure',
@@ -652,7 +652,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- move-up-buyer ---
   {
     id: 'move-up-buyer',
-    path: '/v2/guides/move-up-buyer',
+    path: '/guides/move-up-buyer',
     titleEn: 'Move-Up Buying in Tucson: How to Buy and Sell at the Same Time',
     titleEs: 'Comprar para Avanzar en Tucson: Cómo Comprar y Vender al Mismo Tiempo',
     labelEn: 'Move-Up Buyer Guide',
@@ -685,7 +685,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- relocating-to-tucson ---
   {
     id: 'relocating-to-tucson',
-    path: '/v2/guides/relocating-to-tucson',
+    path: '/guides/relocating-to-tucson',
     titleEn: 'Relocating to Tucson: What Every Incoming Buyer Should Know',
     titleEs: 'Mudarse a Tucson: Lo Que Todo Comprador Entrante Debe Saber',
     labelEn: 'Relocating to Tucson',
@@ -723,7 +723,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- home-prep-staging ---
   {
     id: 'home-prep-staging',
-    path: '/v2/guides/home-prep-staging',
+    path: '/guides/home-prep-staging',
     titleEn: 'How to Prepare Your Tucson Home for Sale',
     titleEs: 'Cómo Preparar Tu Casa en Tucson para la Venta',
     labelEn: 'Home Prep & Staging',
@@ -756,7 +756,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- pricing-strategy ---
   {
     id: 'pricing-strategy',
-    path: '/v2/guides/pricing-strategy',
+    path: '/guides/pricing-strategy',
     titleEn: "How to Price Your Tucson Home: A Seller's Strategy Guide",
     titleEs: 'Cómo Fijar el Precio de Tu Casa en Tucson: Guía de Estrategia para Vendedores',
     labelEn: 'Home Pricing Strategy',
@@ -794,7 +794,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- tucson-neighborhoods ---
   {
     id: 'tucson-neighborhoods',
-    path: '/v2/guides/tucson-neighborhoods',
+    path: '/guides/tucson-neighborhoods',
     titleEn: "Tucson Neighborhoods: A Buyer's Area Guide",
     titleEs: 'Vecindarios de Tucson: Guía de Áreas para Compradores',
     labelEn: 'Tucson Neighborhoods Guide',
@@ -832,7 +832,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- pima-county-property-taxes ---
   {
     id: 'pima-county-property-taxes',
-    path: '/v2/guides/pima-county-property-taxes',
+    path: '/guides/pima-county-property-taxes',
     titleEn: 'Pima County Property Taxes: What Tucson Homeowners Should Know',
     titleEs: 'Impuestos de Propiedad del Condado de Pima: Lo Que Deben Saber los Propietarios de Tucson',
     labelEn: 'Pima County Property Taxes',
@@ -865,7 +865,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'cost-to-sell-tucson',
-    path: '/v2/guides/cost-to-sell-tucson',
+    path: '/guides/cost-to-sell-tucson',
     titleEn: 'What Does It Actually Cost to Sell a House in Tucson?',
     titleEs: '¿Cuánto Cuesta Realmente Vender una Casa en Tucson?',
     labelEn: 'Cost to Sell in Tucson',
@@ -898,7 +898,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'arizona-real-estate-glossary',
-    path: '/v2/guides/arizona-real-estate-glossary',
+    path: '/guides/arizona-real-estate-glossary',
     titleEn: 'Arizona Real Estate Glossary — Tucson Edition',
     titleEs: 'Glosario de Bienes Raíces de Arizona — Edición Tucson',
     labelEn: 'Real Estate Glossary',
@@ -929,7 +929,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'tucson-suburb-comparison',
-    path: '/v2/guides/tucson-suburb-comparison',
+    path: '/guides/tucson-suburb-comparison',
     titleEn: 'Marana vs. Oro Valley vs. Sahuarita vs. Vail',
     titleEs: 'Marana vs. Oro Valley vs. Sahuarita vs. Vail',
     labelEn: 'Suburb Comparison',
@@ -960,7 +960,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'arizona-first-time-buyer-programs',
-    path: '/v2/guides/arizona-first-time-buyer-programs',
+    path: '/guides/arizona-first-time-buyer-programs',
     titleEn: 'First-Time Home Buyer Programs in Arizona — 2025 & 2026',
     titleEs: 'Programas para Compradores Primerizos en Arizona — 2025 y 2026',
     labelEn: 'First-Time Buyer Programs',
@@ -991,7 +991,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'capital-gains-home-sale-arizona',
-    path: '/v2/guides/capital-gains-home-sale-arizona',
+    path: '/guides/capital-gains-home-sale-arizona',
     titleEn: 'Capital Gains Tax When Selling Your Home in Arizona',
     titleEs: 'Impuesto a las Ganancias de Capital al Vender Tu Casa en Arizona',
     labelEn: 'Capital Gains Tax Guide',
@@ -1022,7 +1022,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'sell-or-rent-tucson',
-    path: '/v2/guides/sell-or-rent-tucson',
+    path: '/guides/sell-or-rent-tucson',
     titleEn: 'Should I Sell or Rent My Tucson Home?',
     titleEs: '¿Debo Vender o Alquilar Mi Casa en Tucson?',
     labelEn: 'Sell or Rent?',
@@ -1053,7 +1053,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'how-long-to-sell-tucson',
-    path: '/v2/guides/how-long-to-sell-tucson',
+    path: '/guides/how-long-to-sell-tucson',
     titleEn: 'How Long Does It Take to Sell a House in Tucson?',
     titleEs: '¿Cuánto Tiempo Tarda Vender una Casa en Tucson?',
     labelEn: 'How Long to Sell?',
@@ -1084,7 +1084,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'buying-home-noncitizen-arizona',
-    path: '/v2/guides/buying-home-noncitizen-arizona',
+    path: '/guides/buying-home-noncitizen-arizona',
     titleEn: 'Buying a Home in Arizona as a Non-Citizen or DACA Recipient',
     titleEs: 'Comprar una Casa en Arizona como No Ciudadano o Beneficiario de DACA',
     labelEn: 'Non-Citizen Home Buying',

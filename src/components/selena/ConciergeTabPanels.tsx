@@ -103,7 +103,7 @@ export function ConciergeTabPanels({
   const handleBookWithKasandra = () => {
     logEvent('priority_call_click', { source: 'concierge_tabs' });
     closeDrawer();
-    navigate('/v2/book');
+    navigate('/book');
   };
 
   const handleResetIntent = () => {
@@ -287,13 +287,13 @@ function StartHerePanel({
           {(!isIntentLocked || effectiveIntent === 'buy') && (
             <QuickLink 
               label={t("First-Time Buyer Guide", "Guía del Comprador Primerizo")}
-              onClick={() => onNavigate('/v2/guides/first-time-buyer-guide', 'guide_cta_click')}
+              onClick={() => onNavigate('/guides/first-time-buyer-guide', 'guide_cta_click')}
             />
           )}
           {(!isIntentLocked || effectiveIntent === 'sell' || effectiveIntent === 'cash') && (
             <QuickLink 
               label={t("Selling Your Home", "Vender Su Casa")}
-              onClick={() => onNavigate('/v2/guides/selling-for-top-dollar', 'guide_cta_click')}
+              onClick={() => onNavigate('/guides/selling-for-top-dollar', 'guide_cta_click')}
             />
           )}
         </div>
@@ -343,7 +343,7 @@ function GuidesPanel({
       </div>
 
       <Button
-        onClick={() => onNavigate('/v2/guides', 'guide_browse_click')}
+        onClick={() => onNavigate('/guides', 'guide_browse_click')}
         className="w-full mb-4"
       >
         <BookOpen className="w-4 h-4 mr-2" />
@@ -360,7 +360,7 @@ function GuidesPanel({
             <QuickLink
               key={guide.id}
               label={t(guide.labelEn, guide.labelEs)}
-              onClick={() => onNavigate(`/v2/guides/${guide.id}`, 'guide_cta_click')}
+              onClick={() => onNavigate(`/guides/${guide.id}`, 'guide_cta_click')}
             />
           ))}
         </div>
@@ -412,13 +412,13 @@ function MyOptionsPanel({
   // Cash vs Listing → Navigate to Decision Room
   const handleCashComparisonClick = () => {
     logEvent('concierge_cash_comparison_click', { source: 'my_options', intent: effectiveIntent });
-    onNavigate('/v2/cash-offer-options', 'decision_room_visit');
+    onNavigate('/cash-offer-options', 'decision_room_visit');
   };
 
   // Buyer Readiness → Navigate to Readiness Check
   const handleBuyerReadinessClick = () => {
     logEvent('concierge_buyer_readiness_click', { source: 'my_options', intent: effectiveIntent });
-    onNavigate('/v2/buyer-readiness', 'decision_room_visit');
+    onNavigate('/buyer-readiness', 'decision_room_visit');
   };
 
   // Intent-based filtering and ordering

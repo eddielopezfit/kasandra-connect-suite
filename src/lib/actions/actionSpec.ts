@@ -14,11 +14,11 @@ export const KNOWN_CALCULATORS = ['cash-comparison'] as const;
 
 // Whitelisted hub paths for the 'navigate' ActionSpec type
 const NAVIGATE_WHITELIST = [
-  '/v2/guides', '/v2/community', '/v2/podcast',
-  '/v2/buy', '/v2/sell', '/v2/book',
-  '/v2/seller-decision', '/v2/cash-offer-options',
-  '/v2/market', '/v2/neighborhood-compare', '/v2/buyer-closing-costs',
-  '/v2/seller-timeline',
+  '/guides', '/community', '/podcast',
+  '/buy', '/sell', '/book',
+  '/seller-decision', '/cash-offer-options',
+  '/market', '/neighborhood-compare', '/buyer-closing-costs',
+  '/seller-timeline',
 ] as const;
 
 // Valid entry sources for open_chat
@@ -43,14 +43,14 @@ export type ActionSpec =
 
 // Internal route maps — never exposed outside this module
 const TOOL_ROUTES: Record<ToolId, string> = {
-  'buyer-readiness': '/v2/buyer-readiness',
-  'cash-readiness': '/v2/cash-readiness',
-  'seller-readiness': '/v2/seller-readiness',
-  'off-market-buyer': '/v2/off-market',
+  'buyer-readiness': '/buyer-readiness',
+  'cash-readiness': '/cash-readiness',
+  'seller-readiness': '/seller-readiness',
+  'off-market-buyer': '/off-market',
 };
 
 const CALC_ROUTES: Record<CalculatorId, string> = {
-  'cash-comparison': '/v2/cash-offer-options',
+  'cash-comparison': '/cash-offer-options',
 };
 
 /**
@@ -96,7 +96,7 @@ export function resolveAction(
 ): void {
   switch (spec.type) {
     case 'open_guide':
-      navigate(`/v2/guides/${spec.guideId}`);
+      navigate(`/guides/${spec.guideId}`);
       break;
     case 'open_tool':
       navigate(TOOL_ROUTES[spec.toolId]);
@@ -111,7 +111,7 @@ export function resolveAction(
       navigate(spec.path);
       break;
     case 'book':
-      navigate('/v2/book');
+      navigate('/book');
       break;
     case 'call_contact':
       window.open(`tel:${spec.phone}`, '_self');

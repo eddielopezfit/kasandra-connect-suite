@@ -85,7 +85,7 @@ const CalculatorNextSteps = ({
       {/* Primary CTA: Private Cash Review */}
       <Button
         onClick={() => {
-          handleCTAClick(CTA_NAMES.TOOL_PRIVATE_CASH_REVIEW, '/v2/private-cash-review');
+          handleCTAClick(CTA_NAMES.TOOL_PRIVATE_CASH_REVIEW, '/private-cash-review');
           trackCustom("PrivateCashReviewRequested", { content_category: "calculator" });
           // Guardrail 1: only set intent if empty (preserves sell_compare / sell)
           setFieldIfEmpty('intent', 'cash');
@@ -104,12 +104,12 @@ const CalculatorNextSteps = ({
                 tool_used: 'tucson_alpha_calculator',
                 intent: 'cash',
                 has_viewed_report: true,
-                page_path: '/v2/cash-offer-options',
+                page_path: '/cash-offer-options',
               },
             }).catch(() => {}); // fire-and-forget
           }
 
-          navigate('/v2/private-cash-review');
+          navigate('/private-cash-review');
         }}
         className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-xl py-6 text-base shadow-gold group"
       >

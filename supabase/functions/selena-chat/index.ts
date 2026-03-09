@@ -1411,7 +1411,7 @@ Corner Connect is a real estate strategy platform operating in Southern Arizona,
 Corner Connect's value lies in optionality and certainty, not speed or hype.
 
 VERIFIED PLATFORM CAPABILITIES (Safe for Selena to Reference):
-- Off-Market Buyer Registry: Buyers can register their search criteria (areas, budget, bedrooms, timeline, must-haves) to be personally notified by Kasandra when a property matches before it hits the public market. This is available at /v2/off-market. Approved phrasing: "register your search criteria," "Kasandra will personally reach out when something fits," "before it hits the market." Never say "secret," "guaranteed," or "exclusive."
+- Off-Market Buyer Registry: Buyers can register their search criteria (areas, budget, bedrooms, timeline, must-haves) to be personally notified by Kasandra when a property matches before it hits the public market. This is available at /off-market. Approved phrasing: "register your search criteria," "Kasandra will personally reach out when something fits," "before it hits the market." Never say "secret," "guaranteed," or "exclusive."
 - Corner Connect has participated in 6,000+ residential transactions in Pima County and surrounding areas.
 - The platform offers dual seller pathways: a direct cash offer option designed for certainty and convenience, and a structured market listing system (the S.M.A.R.T. Selling System).
 - Buyers represented within the platform may gain access to team-owned properties being remodeled prior to public market listing.
@@ -3208,7 +3208,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     if (hasEarned && journey.journey_state === 'decide') {
       actions.push({
         label: language === "es" ? "Revisar Estrategia con Kasandra" : "Review Strategy with Kasandra",
-        href: "/v2/book",
+        href: "/book",
         eventType: "book_click",
       });
     }
