@@ -238,7 +238,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // === TIER 2 — SUPPORTING GUIDES ===
   {
     id: 'understanding-home-valuation',
-    path: '/v2/guides/understanding-home-valuation',
+    path: '/guides/understanding-home-valuation',
     titleEn: "Understanding Your Home's Value",
     titleEs: 'Entendiendo el Valor de Su Casa',
     labelEn: "Understanding Your Home's Value",
