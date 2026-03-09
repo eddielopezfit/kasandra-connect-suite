@@ -3,6 +3,102 @@ import { SessionContext, updateSessionContext } from '@/lib/analytics/selenaSess
 import { MappedReply } from '@/lib/registry/chipsRegistry';
 import { mapChipsToActionSpecs, getPhaseAwareChips } from './chipGovernance';
 import type { Language } from '@/contexts/LanguageContext';
+import { TrailEvent, serializeTrailForSelena } from '@/lib/analytics/sessionTrail';
+
+// FIX 5: Trail-aware greeting generation
+interface TrailSummary {
+  neighborhoodCount: number;
+  guideCount: number;
+  toolCount: number;
+  hasCalculator: boolean;
+  lastNeighborhood: string | null;
+  lastGuide: string | null;
+  lastTool: string | null;
+}
+
+function summarizeTrail(trail: Array<{ label: string; type: string; minutes_ago: number }>): TrailSummary {
+  let neighborhoodCount = 0;
+  let guideCount = 0;
+  let toolCount = 0;
+  let hasCalculator = false;
+  let lastNeighborhood: string | null = null;
+  let lastGuide: string | null = null;
+  let lastTool: string | null = null;
+
+  for (const event of trail) {
+    if (event.type === 'page' && (event.label.includes('Neighborhood') || event.label.includes('Catalina') || event.label.includes('Oro Valley') || event.label.includes('Marana'))) {
+      neighborhoodCount++;
+      if (!lastNeighborhood) lastNeighborhood = event.label;
+    }
+    if (event.type === 'guide') {
+      guideCount++;
+      if (!lastGuide) lastGuide = event.label;
+    }
+    if (event.type === 'tool' || event.type === 'quiz') {
+      toolCount++;
+      if (!lastTool) lastTool = event.label;
+      if (event.label.includes('Calculator') || event.label.includes('Net')) hasCalculator = true;
+    }
+  }
+
+  return { neighborhoodCount, guideCount, toolCount, hasCalculator, lastNeighborhood, lastGuide, lastTool };
+}
+
+function generateTrailAwareGreeting(
+  trail: TrailSummary,
+  t: (en: string, es: string) => string,
+): { content: string; replies: MappedReply[] } | null {
+  // Trail-aware greetings for floating_button / hero_cta where no specific context exists
+  
+  // 2+ neighborhood profiles explored
+  if (trail.neighborhoodCount >= 2) {
+    return {
+      content: t(
+        "I see you've been exploring some Tucson neighborhoods — what's drawing you to those areas?",
+        "Veo que ha estado explorando algunos vecindarios de Tucson — ¿qué le atrae de esas áreas?"
+      ),
+      replies: [
+        { label: t("I'm thinking about buying there", "Estoy pensando en comprar allí") },
+        { label: t("I'm considering selling nearby", "Estoy considerando vender cerca") },
+        { label: t("Help me compare areas", "Ayúdame a comparar áreas") },
+      ],
+    };
+  }
+
+  // Guide + tool combination
+  if (trail.guideCount >= 1 && trail.toolCount >= 1) {
+    const guideName = trail.lastGuide?.replace(' Guide', '') || 'a guide';
+    const toolName = trail.lastTool || 'a tool';
+    return {
+      content: t(
+        `You've been doing your homework — ${guideName} and the ${toolName}. What question came up?`,
+        `Ha estado haciendo su tarea — ${guideName} y el ${toolName}. ¿Qué pregunta surgió?`
+      ),
+      replies: [
+        { label: t("I have a specific question", "Tengo una pregunta específica") },
+        { label: t("Help me decide my next step", "Ayúdame a decidir mi próximo paso") },
+        { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+      ],
+    };
+  }
+
+  // Only guides read
+  if (trail.guideCount >= 2) {
+    return {
+      content: t(
+        `I see you've been reading up on real estate guides. What would you like to dig into?`,
+        `Veo que ha estado leyendo guías de bienes raíces. ¿En qué le gustaría profundizar?`
+      ),
+      replies: [
+        { label: t("I have a question about what I read", "Tengo una pregunta sobre lo que leí") },
+        { label: t("What should I do next?", "¿Qué debería hacer a continuación?") },
+        { label: t("Browse more guides", "Explorar más guías") },
+      ],
+    };
+  }
+
+  return null;
+}
 
 export function computeGreeting(
   entryContext: EntryContext | undefined,
@@ -11,6 +107,7 @@ export function computeGreeting(
   storedHistoryExists: boolean,
   t: (en: string, es: string) => string,
   language: Language = 'en',
+  sessionTrail?: Array<{ label: string; type: string; minutes_ago: number }>,
 ): { greetingContent: string; suggestedReplies: MappedReply[]; } | null {
   const isPostBooking = entryContext?.source === 'post_booking';
   const isMeaningfulSource = entryContext && 
