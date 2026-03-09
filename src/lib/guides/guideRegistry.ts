@@ -161,7 +161,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'cash-offer-guide',
-    path: '/v2/guides/cash-offer-guide',
+    path: '/guides/cash-offer-guide',
     titleEn: 'Cash Offers Explained: What Homeowners Should Know',
     titleEs: 'Ofertas en Efectivo Explicadas: Lo Que Los Propietarios Deben Saber',
     labelEn: 'Cash Offer Guide',
