@@ -38,6 +38,9 @@ const ROUTE_MAP: Array<{ pattern: RegExp; label: string; type: TrailEventType }>
   { pattern: /^\/neighborhood-compare/, label: 'Neighborhood Comparison Tool', type: 'tool' },
   { pattern: /^\/buyer-closing-costs/,  label: 'Buyer Closing Cost Estimator', type: 'tool' },
   { pattern: /^\/off-market/,         label: 'Off-Market Buyer Registration', type: 'tool' },
+  // Neighborhood pages (FIX 1: strong intent signal)
+  { pattern: /^\/neighborhoods\/(.+)/, label: 'Neighborhood Profile', type: 'page' },
+  { pattern: /^\/neighborhoods$/,     label: 'Neighborhoods Index', type: 'page' },
   // Guide detail (extract guide ID for label lookup)
   { pattern: /^\/guides\/.+/,         label: 'Guide', type: 'guide' },
   // Section pages
