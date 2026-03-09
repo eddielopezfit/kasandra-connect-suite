@@ -1,12 +1,3 @@
-/**
- * Selena Chat Context
- * Manages chat state across the app with lead identity awareness
- * 
- * ENTRY SOURCE SUPPORT (v2):
- * openChat() now accepts an optional EntryContext parameter for context-aware greetings.
- * Priority order: calculator > guide_handoff > synthesis > hero > floating
- */
-
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -15,7 +6,6 @@ import {
   initSessionContext, 
   updateSessionContext,
   setFieldIfEmpty,
-  type SessionContext,
 } from '@/lib/analytics/selenaSession';
 import { appendTrail, serializeTrailForSelena } from '@/lib/analytics/sessionTrail';
 import {
@@ -27,315 +17,47 @@ import {
   logEvent,
 } from '@/lib/analytics/logEvent';
 import { getGuideById } from '@/lib/guides/guideRegistry';
-// ActionSpec type used transitively via MappedReply from chipsRegistry
 
-// ============= CHIP → ACTIONSPEC MAPPING (Registry-backed) =============
-// Imports from centralized Chips Registry (OS Lock P1.3a).
-// mapChipsToActionSpecs stays local because it needs logEvent access.
-import { type MappedReply, normalizeChipLabel, findChipByNormalizedKey } from '@/lib/registry/chipsRegistry';
-import { getGuideChips } from '@/lib/registry/guideChipMap';
-export type { MappedReply };
-
-function mapChipsToActionSpecs(
-  replies: string[],
-  opts?: { phase?: number; intent?: string },
-): MappedReply[] {
-  const phase = opts?.phase;
-  const intent = opts?.intent;
-
-  return replies.map((label) => {
-    const entry = findChipByNormalizedKey(label);
-
-    if (entry?.actionSpec) {
-      return { label, actionSpec: entry.actionSpec };
-    }
-
-    // Drift detection: log unmatched chip for telemetry
-    logEvent('selena_chip_unmatched', {
-      chip_label_raw: label,
-      chip_label_normalized: normalizeChipLabel(label),
-      phase,
-      intent,
-    });
-
-    // IMPORTANT: still return MappedReply shape (not plain string)
-    return { label };
-  });
-}
-
-const CHAT_HISTORY_KEY = 'selena_chat_history';
-const LEAD_ID_KEY = 'selena_lead_id';
-const LAST_ENTRY_SIG_KEY = 'selena_last_entry_sig';
-const MAX_HISTORY = 50;
-
-// ============= PHASE-AWARE HELPERS =============
-
-/**
- * Reads localStorage directly (NOT React state) to determine if stored chat history exists.
- * Must not depend on React state since state may not have hydrated yet.
- */
-function hasStoredChatHistory(): boolean {
-  try {
-    const stored = localStorage.getItem(CHAT_HISTORY_KEY);
-    if (!stored) return false;
-    const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) && parsed.length > 0;
-  } catch {
-    return false;
-  }
-}
-
-// Tool ID → chip labels it blocks (client-side mirror of server TOOL_BLOCKED_DESTINATIONS).
-// Used by getPhaseAwareChips so the client fallback stays consistent with server chip governance.
-const CLIENT_TOOL_BLOCKED_CHIPS: Record<string, { en: string; es: string }[]> = {
-  buyer_readiness: [
-    { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
-    { en: 'Take readiness check',     es: 'Tomar evaluación de preparación' },
-    { en: 'Check my readiness',       es: 'Verificar mi preparación' },
-  ],
-  seller_readiness: [
-    { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' },
-  ],
-  cash_readiness: [
-    { en: 'Take the cash readiness check', es: 'Tomar el check de preparación en efectivo' },
-  ],
-  seller_decision: [
-    { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
-  ],
-  tucson_alpha_calculator: [
-    { en: 'Estimate my net proceeds',   es: 'Estimar mis ganancias netas' },
-    { en: 'Compare cash vs. listing',   es: 'Comparar efectivo vs. listado' },
-  ],
-};
-
-// Replacement chip for each tool once completed — mirrors server TOOL_REPLACEMENT_DESTINATION.
-const CLIENT_TOOL_REPLACEMENT: Record<string, { en: string; es: string }> = {
-  buyer_readiness:          { en: 'Browse guides',         es: 'Explorar guías' },
-  seller_readiness:         { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
-  cash_readiness:           { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
-  seller_decision:          { en: 'Talk with Kasandra',    es: 'Hablar con Kasandra' },
-  tucson_alpha_calculator:  { en: 'Talk with Kasandra',    es: 'Hablar con Kasandra' },
-};
-
-/**
- * Derives phase-appropriate fallback chips from chip_phase_floor + intent.
- * Used for error fallback and soft-resume when no chips are available from server.
- *
- * Respects tools_completed so completed-tool chips never re-appear even on error paths.
- */
-function getPhaseAwareChips(
-  t: (en: string, es: string) => string,
-  ctx?: SessionContext | null,
-): MappedReply[] {
-  const floor = ctx?.chip_phase_floor ?? 0;
-  const intent = ctx?.intent;
-  const toolsDone = new Set(ctx?.tools_completed ?? []);
-  const lang = (ctx as any)?._lang ?? 'en'; // injected by callers that have language access
-
-  // Build a flat set of chip labels blocked by completed tools
-  const blockedLabels = new Set<string>();
-  for (const toolId of toolsDone) {
-    for (const entry of CLIENT_TOOL_BLOCKED_CHIPS[toolId] ?? []) {
-      blockedLabels.add(entry.en.toLowerCase());
-      blockedLabels.add(entry.es.toLowerCase());
-    }
-  }
-
-  function isBlocked(en: string, es: string): boolean {
-    return blockedLabels.has(en.toLowerCase()) || blockedLabels.has(es.toLowerCase());
-  }
-
-  function pickLabel(en: string, es: string): string {
-    return t(en, es);
-  }
-
-  function filterAndReplace(candidates: { en: string; es: string }[]): string[] {
-    const out: string[] = [];
-    const addedDests = new Set<string>();
-
-    for (const c of candidates) {
-      if (!isBlocked(c.en, c.es)) {
-        out.push(pickLabel(c.en, c.es));
-        addedDests.add(c.en);
-      }
-    }
-
-    // Append replacement chips for completed tools that blocked something in this set
-    for (const toolId of toolsDone) {
-      const blocked = CLIENT_TOOL_BLOCKED_CHIPS[toolId] ?? [];
-      const wasBlocked = blocked.some(b => candidates.some(c => c.en === b.en));
-      if (!wasBlocked) continue;
-
-      const replacement = CLIENT_TOOL_REPLACEMENT[toolId];
-      if (!replacement) continue;
-      if (addedDests.has(replacement.en)) continue;
-      if (isBlocked(replacement.en, replacement.es)) continue;
-
-      out.push(pickLabel(replacement.en, replacement.es));
-      addedDests.add(replacement.en);
-    }
-
-    return out;
-  }
-
-  // P2: Guide-contextual chip injection — prepend 1 guide-specific chip if last_guide_id is set
-  function prependGuideChip(chipLabels: string[], forIntent?: string): string[] {
-    const guideId = ctx?.last_guide_id;
-    if (!guideId) return chipLabels;
-    const guideChipLabels = getGuideChips(guideId, lang as 'en' | 'es', forIntent);
-    if (guideChipLabels.length === 0) return chipLabels;
-    const first = guideChipLabels[0];
-    // Don't duplicate if already present
-    if (chipLabels.some(c => c.toLowerCase() === first.toLowerCase())) return chipLabels;
-    return [first, ...chipLabels.slice(0, 2)]; // max 3 total
-  }
-
-  if (floor >= 3) {
-    const chips = filterAndReplace([
-      { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
-      { en: 'Talk with Kasandra',       es: 'Hablar con Kasandra' },
-    ]);
-    return mapChipsToActionSpecs(chips.length ? chips : [t('Talk with Kasandra', 'Hablar con Kasandra')]);
-  }
-  if (floor >= 2 && (intent === 'sell' || intent === 'cash')) {
-    const chips = prependGuideChip(filterAndReplace([
-      { en: 'Get my selling options',   es: 'Ver mis opciones de venta' },
-      { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado' },
-    ]), intent === 'sell' ? 'sell' : 'cash');
-    return mapChipsToActionSpecs(chips.length ? chips : [t('Talk with Kasandra', 'Hablar con Kasandra')]);
-  }
-  if (floor >= 2 && intent === 'buy') {
-    const chips = prependGuideChip(filterAndReplace([
-      { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
-      { en: 'Browse guides',            es: 'Explorar guías' },
-    ]), 'buy');
-    return mapChipsToActionSpecs(chips.length ? chips : [t('Browse guides', 'Explorar guías')]);
-  }
-  if (floor >= 2 && intent) {
-    return [
-      t("What are my options?", "¿Cuáles son mis opciones?"),
-      t("I have a question", "Tengo una pregunta"),
-    ];
-  }
-  // Phase 0/1 — intent unknown
-  return [
-    t("I'm thinking about selling", "Estoy pensando en vender"),
-    t("I'm looking to buy", "Estoy buscando comprar"),
-    t("Just exploring for now", "Solo estoy explorando"),
-  ];
-}
-
-// ============= ENTRY SOURCE TYPES =============
-export type EntrySource = 
-  | 'calculator' 
-  | 'guide_handoff' 
-  | 'guide_exit_ramp'
-  | 'guide_mid_cta'
-  | 'synthesis' 
-  | 'hero'
-  | 'hero_returning'
-  | 'floating' 
-  | 'proactive'
-  | 'question'
-  | 'post_booking'
-  | 'quiz_result'
-  | 'seller_decision'
-  | 'ad_funnel_text_trigger'
-  | '404_page'
-  | 'post_funnel_unlock'
-  | 'pre_unlock'
-  | 'buyer_readiness_capture'
-  | 'off_market_capture'
-  | 'cash_offer_options_hero'
-  | 'cash_readiness_capture'
-  | 'community_mid_page'
-  | 'podcast_page'
-  | 'seller_readiness_capture'
-  | 'market_intelligence'
-  | 'neighborhood_compare'
-  | 'buyer_closing_costs'
-  | 'seller_timeline';
-
-export interface EntryContext {
-  source: EntrySource;
-  // Calculator context
-  calculatorAdvantage?: 'cash' | 'traditional' | 'consult';
-  calculatorDifference?: number;
-  // Guide context
-  guideId?: string;
-  guideTitle?: string;
-  guideCategory?: string;
-  // Synthesis context
-  guidesReadCount?: number;
-  // Post-booking context
-  intent?: string;
-  userName?: string;
-  // Prefill message (for synthesis/question flows)
-  prefillMessage?: string;
-}
-
-export interface ChipMeta {
-  phase: number;
-  mode: number;
-  containment: boolean;
-  bookingCtaShown?: boolean;
-}
-
-export interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: string;
-  actions?: ChatAction[];
-  suggestedReplies?: MappedReply[];
-  chipMeta?: ChipMeta;
-  metadata?: {
-    report_id?: string;
-    report_type?: string;
-  };
-}
-
-export interface ChatAction {
-  label: string;
-  href?: string;
-  eventType?: string;
-  actionType?: 'generate_report' | 'open_report' | 'priority_call';
-  type?: string; // Alternative action type field from AI
-  id?: string; // Alternative action identifier from AI
-  reportType?: 'net_sheet' | 'buyer_readiness' | 'cash_comparison' | 'home_value_preview';
-  reportId?: string; // For open_report action
-  context?: Record<string, unknown>;
-}
-
-interface ReportState {
-  isOpen: boolean;
-  isGenerating: boolean;
-  title: string;
-  markdown: string;
-  reportId?: string;
-  reportType?: string;
-}
-
-
-// Calculator awareness types
-
-// Calculator awareness types
-export type CalculatorAdvantage = 'cash' | 'traditional' | 'consult';
+import { 
+  EntryContext, 
+  ChatMessage, 
+  ChatAction, 
+  ReportState, 
+  CalculatorAdvantage,
+  ChipMeta
+} from './selena/types';
+import {
+  generateMessageId,
+  getStoredHistory,
+  saveHistory,
+  getStoredLeadId,
+  saveLeadId,
+  LAST_ENTRY_SIG_KEY,
+  CHAT_HISTORY_KEY
+} from './selena/identityManager';
+import {
+  mapChipsToActionSpecs,
+  getPhaseAwareChips
+} from './selena/chipGovernance';
+import { computeGreeting } from './selena/greetingEngine';
+import {
+  generateReport,
+  openReportById,
+  openLastReport
+} from './selena/reportManager';
 
 interface SelenaChatContextType {
   isOpen: boolean;
   messages: ChatMessage[];
   isLoading: boolean;
   leadId: string | null;
-  hasReports: boolean; // Track if user has generated any reports
+  hasReports: boolean;
   report: ReportState;
   showLeadCapture: boolean;
   pendingReportId: string | null;
   pendingAction: 'report' | null;
-  // Calculator awareness (Task 4)
   hasUsedCalculator: boolean;
   lastCalculatorAdvantage: CalculatorAdvantage | null;
-  // Context-aware chat opening (v2) - accepts optional EntryContext or can be used as click handler
   openChat: (entryContextOrEvent?: EntryContext | React.MouseEvent) => void;
   closeChat: () => void;
   toggleChat: () => void;
@@ -348,53 +70,10 @@ interface SelenaChatContextType {
   openLastReport: () => Promise<void>;
   closeLeadCapture: () => void;
   onLeadCaptured: (newLeadId: string) => void;
-  // Calculator awareness setter
   setCalculatorResult: (advantage: CalculatorAdvantage) => void;
 }
 
 const SelenaChatContext = createContext<SelenaChatContextType | undefined>(undefined);
-
-function generateMessageId(): string {
-  return `msg_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-}
-
-function getStoredHistory(): ChatMessage[] {
-  try {
-    const stored = localStorage.getItem(CHAT_HISTORY_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (e) {
-    console.warn('[Selena] Failed to load chat history:', e);
-  }
-  return [];
-}
-
-function saveHistory(messages: ChatMessage[]): void {
-  try {
-    // Keep only last MAX_HISTORY messages
-    const trimmed = messages.slice(-MAX_HISTORY);
-    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(trimmed));
-  } catch (e) {
-    console.warn('[Selena] Failed to save chat history:', e);
-  }
-}
-
-function getStoredLeadId(): string | null {
-  try {
-    return localStorage.getItem(LEAD_ID_KEY);
-  } catch {
-    return null;
-  }
-}
-
-function saveLeadId(leadId: string): void {
-  try {
-    localStorage.setItem(LEAD_ID_KEY, leadId);
-  } catch (e) {
-    console.warn('[Selena] Failed to save lead ID:', e);
-  }
-}
 
 export function SelenaChatProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -411,20 +90,15 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const [pendingReportId, setPendingReportId] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<'report' | null>(null);
-  
-  // Track if user has generated any reports (for "View My Latest Report" visibility)
   const [hasReports, setHasReports] = useState(false);
-  
-  // Calculator awareness state (Task 4)
   const [hasUsedCalculator, setHasUsedCalculator] = useState(false);
   const [lastCalculatorAdvantage, setLastCalculatorAdvantage] = useState<CalculatorAdvantage | null>(null);
   
   const { language, t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // Ref to always have current language in async callbacks (prevents stale closures)
   const languageRef = useRef(language);
+  
   useEffect(() => {
     languageRef.current = language;
   }, [language]);
@@ -439,8 +113,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     setPendingAction(null);
   }, []);
 
-
-  // Initialize session, load history and stored lead ID
   useEffect(() => {
     if (!hasInitialized) {
       initSessionContext(language);
@@ -454,7 +126,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     }
   }, [hasInitialized, language]);
 
-  // Update context when route changes + append to session trail (Level 2 intelligence)
   useEffect(() => {
     if (hasInitialized) {
       updateSessionContext({ last_page: location.pathname });
@@ -462,7 +133,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     }
   }, [location.pathname, hasInitialized]);
 
-  // Listen for proactive message events (e.g., loss aversion triggers)
   useEffect(() => {
     const handleProactiveMessage = (event: Event) => {
       const customEvent = event as CustomEvent<{ message: string }>;
@@ -472,9 +142,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         content: customEvent.detail.message,
         timestamp: new Date().toISOString(),
         suggestedReplies: [
-          t("Yes, explain the difference", "Sí, explícame la diferencia"),
-          t("I'd like to talk to Kasandra", "Me gustaría hablar con Kasandra"),
-          t("Not right now", "Ahora no"),
+          { label: t("Yes, explain the difference", "Sí, explícame la diferencia") },
+          { label: t("I'd like to talk to Kasandra", "Me gustaría hablar con Kasandra") },
+          { label: t("Not right now", "Ahora no") },
         ],
       };
       setMessages(prev => {
@@ -492,7 +162,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('selena-proactive-message', handleProactiveMessage);
   }, [t, location.pathname]);
 
-  // Listen for booking confirmation events (from ConsultationIntakeForm success)
   useEffect(() => {
     const handleBookingConfirmation = (event: Event) => {
       const customEvent = event as CustomEvent<{ message: string }>;
@@ -502,9 +171,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         content: customEvent.detail.message,
         timestamp: new Date().toISOString(),
         suggestedReplies: [
-          t("What happens after I book?", "¿Qué pasa después de reservar?"),
-          t("Can I reschedule if needed?", "¿Puedo reprogramar si es necesario?"),
-          t("Thanks, Selena!", "¡Gracias, Selena!"),
+          { label: t("What happens after I book?", "¿Qué pasa después de reservar?") },
+          { label: t("Can I reschedule if needed?", "¿Puedo reprogramar si es necesario?") },
+          { label: t("Thanks, Selena!", "¡Gracias, Selena!") },
         ],
       };
       setMessages(prev => {
@@ -523,13 +192,11 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     setIsOpen(true);
     logSelenaOpen(location.pathname);
     
-    // Determine if this is an EntryContext or a click event
     const entryContext: EntryContext | undefined = 
       entryContextOrEvent && 'source' in entryContextOrEvent 
         ? entryContextOrEvent 
         : undefined;
     
-    // Persist entry context to SessionContext for deterministic greetings
     const pagePath = location.pathname;
     const isGuidePage = /^\/v2\/guides\/.+$/.test(pagePath);
     const entryUpdates: Record<string, unknown> = {
@@ -561,14 +228,12 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     }
     updateSessionContext(entryUpdates as any);
 
-    // Emit analytics event
     logEvent('selena_opened', {
       entry_source: entryUpdates.entry_source,
       entry_guide_id: entryUpdates.entry_guide_id || null,
       page_path: pagePath,
     });
     
-    // Log entry source for telemetry
     if (entryContext) {
       logEvent('selena_entry', { 
         source: entryContext.source, 
@@ -577,18 +242,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         has_guide_context: !!entryContext.guideId,
       });
     }
-    
-    // Add greeting if:
-    // - No messages exist (first open)
-    // - Post-booking (always show identity reinforcement)
-    // - Any CTA with meaningful context AND a NEW entry signature (prevents duplicates)
-    const isPostBooking = entryContext?.source === 'post_booking';
-    const isMeaningfulSource = entryContext && 
-      entryContext.source !== 'floating' && 
-      entryContext.source !== 'proactive';
-    
-    // Compute entry signature to prevent duplicate greeting injection
-    // For calculator contexts, include calculator_run_id so reruns with new values trigger fresh greetings
+
     const calcRunId = entryContext?.source === 'calculator' ? (getSessionContext()?.calculator_run_id || '') : '';
     const entrySig = entryContext 
       ? `${entryContext.source}|${entryContext.intent || ''}|${entryContext.guideId || ''}|${pagePath}${calcRunId ? `|${calcRunId}` : ''}`
@@ -598,545 +252,26 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     if (entrySig && isNewEntry) {
       localStorage.setItem(LAST_ENTRY_SIG_KEY, entrySig);
     }
-    
+
+    const sessionContext = getSessionContext();
+    const isMeaningfulSource = entryContext && entryContext.source !== 'floating' && entryContext.source !== 'proactive';
+    const storedHistoryExists = messages.length > 0 || !!localStorage.getItem(CHAT_HISTORY_KEY);
     const hasContextualEntry = isMeaningfulSource && isNewEntry;
-    
-    // ============= PHASE GOVERNANCE: GREETING INJECTION GUARD =============
-    const storedHistoryExists = hasStoredChatHistory();
-    
-    // Blocked sources: NEVER inject a greeting (even if messages.length===0)
-    const isBlockedSource = !entryContext || 
-      entryContext.source === 'floating' || 
-      entryContext.source === 'proactive';
-    
-    // Allowed greeting sources (can inject if signature is new + phase matches)
-    const isAllowedGreetingSource = !!entryContext && [
-      'calculator', 'guide_handoff', 'synthesis', 'hero', 'quiz_result', 'post_booking', 'seller_decision',
-      'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs'
-    ].includes(entryContext.source);
 
-    // Core decision: should we inject a greeting?
-    const shouldInjectGreeting = (() => {
-      // Recovery exception: if booking chips were shown but not clicked, allow greeting even for blocked sources
-      const recoveryCtx = getSessionContext();
-      const hasRecoveryCandidate = !recoveryCtx?.recovery_shown && !!recoveryCtx?.booking_chips_shown_at;
-      
-      // If stored history exists and source is blocked → silent open (UNLESS recovery candidate)
-      if (storedHistoryExists && isBlockedSource && !hasRecoveryCandidate) return false;
-      
-      // Post-booking always injects (identity reinforcement)
-      if (isPostBooking) return true;
-      // Recovery greeting — blocked source but has abandoned booking chips
-      if (isBlockedSource && hasRecoveryCandidate) return true;
-      
-      // If stored history exists and source is NOT in allowed set → silent open
-      if (storedHistoryExists && !isAllowedGreetingSource) return false;
-      
-      // If no stored history AND no messages → first contact OR returning visitor
-      if (!storedHistoryExists && messages.length === 0) return true;
-      
-      // SESSION BOUNDARY GUARD: If active conversation (>3 messages), only allow
-      // contextual greetings (guide_handoff, calculator, synthesis), NEVER full
-      // identity greetings (hero, default). Prevents mid-thread re-introductions.
-      if (messages.length > 3 && hasContextualEntry && isAllowedGreetingSource) {
-        const contextualSources = ['guide_handoff', 'calculator', 'synthesis', 'quiz_result', 'seller_decision',
-          'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs'];
-        return contextualSources.includes(entryContext?.source || '');
-      }
-      
-      // Contextual entry with allowed source + new signature
-      if (hasContextualEntry && isAllowedGreetingSource) return true;
-      
-      return false;
-    })();
-    
-    if (shouldInjectGreeting) {
-      const sessionContext = getSessionContext();
-      const currentFloor = sessionContext?.chip_phase_floor ?? 0;
-      let greetingContent: string = '';
-      let suggestedReplies: MappedReply[];
-      
-      // Priority 0: Post-booking identity reinforcement (HIGHEST - seals the decision)
-      if (isPostBooking) {
-        const name = entryContext?.userName ? `${entryContext.userName}, ` : '';
-        greetingContent = t(
-          `${name}You're all set. You've already done the hard part — thinking this through carefully.\n\nKasandra will personally review what you shared before your call so you get complete clarity in 10 minutes.\n\nIf you'd like, tell me one thing you want to be 100% certain about when you two talk.`,
-          `${name}Listo. Usted ya hizo lo más difícil — pensar esto con cuidado.\n\nKasandra revisará personalmente lo que compartió antes de su llamada para que tenga claridad completa en 10 minutos.\n\nSi gusta, dígame una cosa sobre la que quiera estar 100% seguro/a cuando hablen.`
-        );
-        suggestedReplies = [
-          t("What should I prepare for the call?", "¿Qué debo preparar para la llamada?"),
-          t("Can I reschedule if needed?", "¿Puedo reprogramar si es necesario?"),
-          t("Thanks, Selena", "Gracias, Selena"),
-        ];
-      }
-      // Priority 0.5: Last-Chance Recovery — user was shown booking chips but didn't click
-      // Triggers on non-contextual opens (FAB, no context) when booking was abandoned
-      else if (isBlockedSource && !sessionContext?.recovery_shown && sessionContext?.booking_chips_shown_at) {
-        const shownAt = new Date(sessionContext.booking_chips_shown_at).getTime();
-        const now = Date.now();
-        const isWithin24h = (now - shownAt) < 24 * 60 * 60 * 1000;
-        if (isWithin24h) {
-          greetingContent = t(
-            "You were close to connecting with Kasandra. Would you like to continue?",
-            "Estaba cerca de conectarse con Kasandra. ¿Le gustaría continuar?"
-          );
-          suggestedReplies = mapChipsToActionSpecs([
-            t("Talk with Kasandra", "Hablar con Kasandra"),
-          ]);
-          // Add a plain-text "keep exploring" chip (not booking)
-          suggestedReplies.push(t("Keep exploring", "Seguir explorando"));
-          updateSessionContext({ recovery_shown: true });
-        }
-      }
-      // Priority 0.75: P1.1 Resume greeting — restored from server snapshot
-      else if (sessionContext?.restored_from_snapshot && !storedHistoryExists) {
-        const intentLabel = sessionContext.intent && sessionContext.intent !== 'explore'
-          ? sessionContext.intent
-          : '';
-        const intentFragment = intentLabel
-          ? t(` Last time we were looking at ${intentLabel} options.`, ` La última vez estábamos viendo opciones de ${intentLabel}.`)
-          : '';
-        greetingContent = t(
-          `Welcome back — I saved your place.${intentFragment} Want to continue where you left off?`,
-          `Bienvenido/a de nuevo — guardé tu progreso.${intentFragment} ¿Quieres continuar donde lo dejamos?`
-        );
+    const result = computeGreeting(entryContext, sessionContext, messages, storedHistoryExists, t);
 
-        // Build deterministic chips (Guard 4)
-        const resumeChips: string[] = [];
-        const lastPage = sessionContext.last_page;
-        // "Continue" — safe route or plain text
-        if (lastPage && lastPage.startsWith('/v2/')) {
-          resumeChips.push(t("Continue where I left off", "Continuar donde lo dejé"));
-        }
-        // "Show my results" — only if data exists
-        if (sessionContext.readiness_score || sessionContext.estimated_value) {
-          resumeChips.push(t("Show my results", "Ver mis resultados"));
-        }
-        resumeChips.push(t("Start fresh", "Empezar de nuevo"));
-
-        suggestedReplies = resumeChips.map(label => ({ label }));
-
-        // Clear flag after greeting shown
-        updateSessionContext({ restored_from_snapshot: false });
-      }
-      // Priority 1: Calculator completion context
-      else if (entryContext?.source === 'calculator' && entryContext.calculatorAdvantage) {
-        // Pull enriched data from SessionContext for specific numbers
-        const calcValue = sessionContext?.estimated_value;
-        const calcDiff = sessionContext?.calculator_difference ?? entryContext.calculatorDifference;
-        const formattedValue = calcValue ? `$${calcValue.toLocaleString()}` : '';
-        const formattedDiff = calcDiff ? `$${calcDiff.toLocaleString()}` : '';
-        
-        if (entryContext.calculatorAdvantage === 'cash') {
-          greetingContent = formattedValue
-            ? t(
-                `You ran the numbers on a ~${formattedValue} home. Cash looks like a strong option — speed and certainty without the prep costs.${formattedDiff ? ` The difference is about ${formattedDiff}.` : ''}\n\nWant the 30-second breakdown or tell me your timeline?`,
-                `Analizó los números de una casa de ~${formattedValue}. El efectivo parece ser una buena opción — velocidad y certeza sin los costos de preparación.${formattedDiff ? ` La diferencia es de unos ${formattedDiff}.` : ''}\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
-              )
-            : t(
-                `Nice work on the analysis. Cash looks like a strong option for you — speed and certainty without the prep costs.\n\nWant the 30-second breakdown or tell me your timeline?`,
-                `Excelente trabajo con el análisis. El efectivo parece una buena opción — velocidad y certeza sin los costos de preparación.\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
-              );
-        } else if (entryContext.calculatorAdvantage === 'traditional') {
-          greetingContent = formattedValue
-            ? t(
-                `You ran the numbers on a ~${formattedValue} home. Listing could net about ${formattedDiff || 'more'} — if you have the time to maximize value.\n\nWant the 30-second breakdown or tell me your timeline?`,
-                `Analizó los números de una casa de ~${formattedValue}. Vender de forma tradicional podría darle unos ${formattedDiff || 'más'} — si tiene el tiempo para maximizar el valor.\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
-              )
-            : t(
-                `Great job on the numbers. A traditional sale could net you ${formattedDiff || 'more'} — if you have the time to maximize value.\n\nWant the 30-second breakdown or tell me your timeline?`,
-                `Buen trabajo con los números. Una venta tradicional podría darle ${formattedDiff || 'más'} — si tiene el tiempo para maximizar el valor.\n\n¿Quiere el resumen de 30 segundos o dígame su plazo?`
-              );
-        } else {
-          greetingContent = formattedValue
-            ? t(
-                `You ran the numbers on a ~${formattedValue} home. The difference is small — which means your timeline matters most.\n\nWant the 30-second breakdown or tell me what you're deciding?`,
-                `Analizó los números de una casa de ~${formattedValue}. La diferencia es pequeña — lo cual significa que su plazo importa más.\n\n¿Quiere el resumen de 30 segundos o dígame qué está decidiendo?`
-              )
-            : t(
-                `You've taken a great step by running your numbers. The difference is subtle — which means the right choice depends on your situation.\n\nWant the 30-second breakdown or tell me what you're deciding?`,
-                `Ha hecho un gran paso al analizar sus números. La diferencia es sutil — la decisión correcta depende de su situación.\n\n¿Quiere el resumen de 30 segundos o dígame qué está decidiendo?`
-              );
-        }
-        suggestedReplies = [
-          t("30-second breakdown", "Resumen de 30 segundos"),
-          t("What would my home net?", "¿Cuánto me daría mi casa?"),
-          t("I'm deciding: cash vs list", "Estoy decidiendo: efectivo vs venta"),
-        ];
-      }
-      // Priority 1.5: Seller Decision Receipt continuity
-      else if (entryContext?.source === 'seller_decision') {
-        const ctx = getSessionContext();
-
-        // Bilingual label maps for human-readable greeting values
-        const situationLabels: Record<string, { en: string; es: string }> = {
-          inherited: { en: 'dealing with an inherited property', es: 'lidiando con una propiedad heredada' },
-          divorce: { en: 'going through a life change', es: 'pasando por un cambio de vida' },
-          tired_landlord: { en: 'a tired landlord', es: 'un propietario cansado' },
-          upgrading: { en: 'upgrading', es: 'buscando mejorar' },
-          relocating: { en: 'relocating', es: 'reubicándose' },
-          other: { en: 'exploring your options', es: 'explorando sus opciones' },
-        };
-        const goalLabels: Record<string, { en: string; es: string }> = {
-          speed: { en: 'speed', es: 'rapidez' },
-          price: { en: 'getting the highest price', es: 'obtener el mejor precio' },
-          least_stress: { en: 'least stress', es: 'menos estrés' },
-          privacy: { en: 'privacy', es: 'privacidad' },
-          not_sure: { en: 'still deciding', es: 'aún decidiendo' },
-        };
-        const conditionLabels: Record<string, { en: string; es: string }> = {
-          needs_work: { en: 'needs work', es: 'necesita trabajo' },
-          mostly_original: { en: 'mostly original', es: 'mayormente original' },
-          standard: { en: 'standard condition', es: 'condición estándar' },
-          updated: { en: 'recently updated', es: 'recientemente actualizada' },
-          like_new: { en: 'like new', es: 'como nueva' },
-        };
-
-        const rawSituation = ctx?.situation || '';
-        const rawGoal = ctx?.seller_goal_priority || '';
-        const rawCondition = ctx?.property_condition_raw || '';
-
-        const situation = situationLabels[rawSituation]
-          ? t(situationLabels[rawSituation].en, situationLabels[rawSituation].es)
-          : rawSituation.replace(/_/g, ' ') || t('your situation', 'su situación');
-        const goal = goalLabels[rawGoal]
-          ? t(goalLabels[rawGoal].en, goalLabels[rawGoal].es)
-          : rawGoal.replace(/_/g, ' ') || t('your priority', 'su prioridad');
-        const condition = conditionLabels[rawCondition]
-          ? t(conditionLabels[rawCondition].en, conditionLabels[rawCondition].es)
-          : rawCondition.replace(/_/g, ' ') || t('the condition', 'la condición');
-
-        const path = ctx?.seller_decision_recommended_path;
-
-        const pathLine = path === 'cash'
-          ? t("Based on that, it's worth comparing a cash offer to a traditional listing.",
-              "Basado en eso, vale la pena comparar una oferta en efectivo con un listado tradicional.")
-          : path === 'traditional'
-          ? t("Based on that, many sellers start with the traditional path to maximize value.",
-              "Basado en eso, muchos vendedores empiezan con el camino tradicional para maximizar valor.")
-          : t("Based on that, we can compare both paths calmly.",
-              "Basado en eso, podemos comparar ambos caminos con calma.");
-
-        greetingContent = t(
-          `I've reviewed your Seller Decision Receipt. You're ${situation}, your priority is ${goal}, and the home is ${condition}. ${pathLine} What would you like to do next?`,
-          `Ya revisé su Recibo de Decisión de Venta. Veo que está ${situation}, su prioridad es ${goal}, y la casa está ${condition}. ${pathLine} ¿Qué le gustaría hacer ahora?`
-        );
-
-        suggestedReplies = mapChipsToActionSpecs([
-          t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
-          t("Get my selling options", "Ver mis opciones de venta"),
-          t("Talk with Kasandra", "Hablar con Kasandra"),
-        ]);
-      }
-      // Priority 2: Synthesis footer context
-      else if (entryContext?.source === 'synthesis') {
-        // Use entryContext.guidesReadCount (passed from the component)
-        const guidesCount = entryContext.guidesReadCount || 0;
-        greetingContent = guidesCount >= 3
-          ? t(
-              `You've read ${guidesCount} guides — you're building a clear picture of your options. Let me summarize the key points that matter most for your situation.`,
-              `Ha leído ${guidesCount} guías — está construyendo una imagen clara de sus opciones. Permítame resumir los puntos clave que más importan para su situación.`
-            )
-          : t(
-              `You've been exploring your options. Would you like me to summarize what you've learned so far?`,
-              `Ha estado explorando sus opciones. ¿Le gustaría que resuma lo que ha aprendido hasta ahora?`
-            );
-        suggestedReplies = [
-          t("Yes, summarize what I've learned", "Sí, resume lo que he aprendido"),
-          t("What should my next step be?", "¿Cuál debería ser mi siguiente paso?"),
-          t("I have a specific question", "Tengo una pregunta específica"),
-        ];
-      }
-      // Priority 3: Question CTA context — intent-aware, never stacks on top of existing session
-      // If messages already exist (drawer has prior context), open without injecting a new greeting.
-      // Only inject if this is genuinely the first open with no prior messages.
-      else if (entryContext?.source === 'question') {
-        if (messages.length === 0) {
-          const questionIntent = entryContext?.intent;
-          if (questionIntent === 'cash') {
-            greetingContent = t(
-              `Already received a cash offer? I can help you read it — check for red flags, compare it to what the market might offer, and make sure you understand what you're signing.\n\nTell me about your situation.`,
-              `¿Ya recibió una oferta en efectivo? Puedo ayudarle a revisarla — buscar señales de alerta, compararla con lo que el mercado podría ofrecer, y asegurar que entienda lo que está firmando.\n\nCuénteme su situación.`
-            );
-            suggestedReplies = [
-              t("I got a cash offer", "Recibí una oferta en efectivo"),
-              t("Is my offer fair?", "¿Es justa mi oferta?"),
-              t("What should I watch out for?", "¿Qué debo tener en cuenta?"),
-            ];
-          } else {
-            greetingContent = t(
-              `I'm here to help. What question do you have in mind?`,
-              `Estoy aquí para ayudarle. ¿Qué pregunta tiene en mente?`
-            );
-            suggestedReplies = [
-              t("Get my selling options", "Ver mis opciones de venta"),
-              t("How does the process work?", "¿Cómo funciona el proceso?"),
-              t("What are my options?", "¿Cuáles son mis opciones?"),
-            ];
-          }
-        }
-        // If messages.length > 0: greetingContent stays '', so the block below creates
-        // a greeting with empty content. We handle this by guarding on greetingContent below.
-      }
-      // Priority 3.5: Quiz result context — intent-specific routing post-quiz
-      else if (entryContext?.source === 'quiz_result' && entryContext.intent) {
-        const quizIntent = entryContext.intent.toLowerCase();
-        if (quizIntent === 'sell' || quizIntent === 'cash') {
-          greetingContent = t(
-            `You just completed your path — and it looks like ${quizIntent === 'cash' ? 'a cash offer' : 'selling'} is on your mind.\n\nBased on what you shared, here's where I can help most: understanding your home's current value and comparing what cash vs. a traditional listing actually means for your situation.`,
-            `Acaba de completar su camino — y parece que ${quizIntent === 'cash' ? 'una oferta en efectivo' : 'vender'} está en su mente.\n\nBasado en lo que compartió, aquí es donde puedo ayudarle más: entender el valor actual de su casa y comparar lo que el efectivo vs. una venta tradicional significa para su situación.`
-          );
-            suggestedReplies = [
-              t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
-              t("Get my selling options", "Ver mis opciones de venta"),
-              t("Talk with Kasandra", "Hablar con Kasandra"),
-            ];
-        } else if (quizIntent === 'buy') {
-          greetingContent = t(
-            `You just completed your path — and you're thinking about buying. That's a great place to start.\n\nThe most useful next step for you right now is the Buyer Readiness Check — it tells you exactly where you stand before committing to anything.`,
-            `Acaba de completar su camino — y está pensando en comprar. Es un excelente lugar para comenzar.\n\nEl siguiente paso más útil para usted ahora mismo es la Evaluación de Preparación del Comprador — le dice exactamente dónde está antes de comprometerse con algo.`
-          );
-          suggestedReplies = [
-            t("Take the Buyer Readiness Check", "Tomar la Evaluación de Preparación"),
-            t("Browse buyer guides", "Explorar guías de comprador"),
-            t("I have a question", "Tengo una pregunta"),
-          ];
-        } else {
-          greetingContent = t(
-            `You just completed your path — and it's okay that things aren't fully clear yet. That's more normal than you think.\n\nLet's figure out your most useful next step together.`,
-            `Acaba de completar su camino — y está bien que las cosas no estén completamente claras aún. Eso es más normal de lo que piensa.\n\nFigurémonos juntos cuál es su próximo paso más útil.`
-          );
-          suggestedReplies = [
-            t("Help me find my path", "Ayúdame a encontrar mi camino"),
-            t("Show me my options", "Muéstrame mis opciones"),
-            t("Just exploring for now", "Solo estoy explorando"),
-          ];
-        }
-      }
-      // Priority 4: Guide handoff context — check BOTH EntryContext AND SessionContext
-      else if (
-        entryContext?.source === 'guide_handoff' || 
-        entryContext?.guideId ||
-        sessionContext?.entry_guide_id ||
-        (sessionContext?.last_guide_id && location.pathname.includes('/v2/guides/'))
-      ) {
-        const guideId = entryContext?.guideId || sessionContext?.entry_guide_id || sessionContext?.last_guide_id;
-        const guideEntry = guideId ? getGuideById(guideId) : null;
-        
-        if (guideEntry) {
-          const guideTitle = entryContext?.guideTitle || sessionContext?.entry_guide_title || (language === 'es' ? guideEntry.titleEs : guideEntry.titleEn);
-          
-          greetingContent = t(
-            `I see you're reading "${guideTitle}." Want the 30-second summary or do you have a specific question?`,
-            `Veo que está leyendo "${guideTitle}." ¿Quiere un resumen de 30 segundos o tiene una pregunta específica?`
-          );
-
-          // Build destination-backed chips from guide registry
-          const destinations = guideEntry.destinations;
-          const primaryChip = destinations?.primaryAction;
-          const actionChip: MappedReply | undefined = 
-            primaryChip ? { label: language === 'es' ? primaryChip.label.es : primaryChip.label.en, actionSpec: primaryChip } : undefined;
-          
-          suggestedReplies = [
-            t("30-second summary", "Resumen de 30 segundos"),
-            t("I have a question", "Tengo una pregunta"),
-          ];
-          if (actionChip) {
-            suggestedReplies.push(actionChip);
-          }
-        } else {
-          // Fallback: guide not found. Use phase-aware chips instead of Phase 1 regression
-          if (sessionContext?.intent) {
-            greetingContent = t(
-              "Welcome back — we can pick up where you left off.",
-              "Bienvenido/a de vuelta — podemos continuar donde lo dejamos."
-            );
-            suggestedReplies = getPhaseAwareChips(t, sessionContext);
-          } else {
-            greetingContent = t(
-              "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
-              "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
-            );
-            suggestedReplies = [
-              t("I'm thinking about selling", "Estoy pensando en vender"),
-              t("I'm looking to buy", "Estoy buscando comprar"),
-              t("Just exploring for now", "Solo estoy explorando"),
-            ];
-          }
-        }
-      }
-      // Priority 4.5: Market Intelligence page context
-      else if (entryContext?.source === 'market_intelligence') {
-        greetingContent = t(
-          `You're looking at live Tucson market data — days on market, sale-to-list ratio, and daily holding costs.\n\nWant to understand what these numbers mean for your specific situation?`,
-          `Estás viendo los datos reales del mercado de Tucson — días en el mercado, ratio de venta a precio de lista, y costos de mantenimiento diarios.\n\n¿Quieres entender qué significan estos números para tu situación específica?`
-        );
-        suggestedReplies = [
-          t("Is it a good time to sell?", "¿Es buen momento para vender?"),
-          t("What do these numbers mean?", "¿Qué significan estos números?"),
-          t("Talk with Kasandra", "Hablar con Kasandra"),
-        ];
-      }
-      // Priority 4.6: Neighborhood Compare context
-      else if (entryContext?.source === 'neighborhood_compare') {
-        greetingContent = t(
-          `You're comparing Tucson neighborhoods — that's a smart way to narrow things down. Kasandra knows these communities personally.\n\nIs there something specific you're looking for in a neighborhood?`,
-          `Estás comparando vecindarios de Tucson — excelente forma de reducir opciones. Kasandra conoce estas comunidades personalmente.\n\n¿Hay algo específico que estés buscando en un vecindario?`
-        );
-        suggestedReplies = [
-          t("Which area is best for families?", "¿Qué área es mejor para familias?"),
-          t("Compare schools by area", "Comparar escuelas por zona"),
-          t("Talk with Kasandra", "Hablar con Kasandra"),
-        ];
-      }
-      // Priority 4.7: Buyer Closing Costs context
-      else if (entryContext?.source === 'buyer_closing_costs') {
-        greetingContent = t(
-          `You're estimating your closing costs — that's one of the most important questions buyers don't ask until it's too late.\n\nHave any questions about specific line items?`,
-          `Estás estimando tus costos de cierre — es una de las preguntas más importantes que los compradores no hacen hasta que es demasiado tarde.\n\n¿Tienes alguna duda sobre alguno de los ítems de línea?`
-        );
-        suggestedReplies = [
-          t("What is title insurance?", "¿Qué es el seguro de título?"),
-          t("How much do I need total?", "¿Cuánto necesito en total?"),
-          t("Talk with Kasandra", "Hablar con Kasandra"),
-        ];
-      }
-      // Priority 5: Hero CTA context
-      else if (entryContext?.source === 'hero') {
-        greetingContent = t(
-          `Hello, I'm Selena — Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure. Whether you're thinking about buying, selling, or just understanding what's possible — I'm here to help.\n\nWhat brings you here today?`,
-          `Hola, soy Selena — la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión. Ya sea que esté pensando en comprar, vender, o simplemente entendiendo lo que es posible — estoy aquí para ayudarle.\n\n¿Qué le trae por aquí hoy?`
-        );
-        suggestedReplies = [
-          t("I'm thinking about selling", "Estoy pensando en vender"),
-          t("I'm looking to buy", "Estoy buscando comprar"),
-          t("Just exploring for now", "Solo estoy explorando"),
-        ];
-      }
-      // Default greeting — Decision Engine: deterministic bubbles based on SessionContext
-      else {
-        const sessionCtx = getSessionContext();
-        const declaredIntent = sessionCtx?.intent;
-        const declaredTimeline = sessionCtx?.timeline;
-        const toolUsed = sessionCtx?.tool_used;
-        const readinessScore = sessionCtx?.readiness_score;
-        const quizDone = sessionCtx?.quiz_completed;
-
-        // If intent is established, skip generic "buy/sell/explore" orientation
-        if (declaredIntent === 'sell' || declaredIntent === 'cash') {
-          if (declaredTimeline === 'asap') {
-            // Seller + ASAP → prioritize Cash Offer Comparison
-            greetingContent = t(
-              "Welcome back. Since you're on a tight timeline, comparing your cash vs. listing options is the fastest way to see where you stand.",
-              "Bienvenido/a de vuelta. Como tiene un cronograma ajustado, comparar sus opciones de efectivo vs. listado es la forma más rápida de ver dónde está."
-            );
-            suggestedReplies = [
-              t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
-              t("Get my selling options", "Ver mis opciones de venta"),
-              t("I have a question", "Tengo una pregunta"),
-            ];
-          } else {
-            greetingContent = t(
-              "Welcome back. I remember you're thinking about selling. How can I help you move forward?",
-              "Bienvenido/a de vuelta. Recuerdo que está pensando en vender. ¿Cómo puedo ayudarle a avanzar?"
-            );
-            suggestedReplies = [
-              t("Compare cash vs. listing", "Comparar efectivo vs. listado"),
-              t("Read the seller guide", "Leer la guía del vendedor"),
-              t("I'm ready to talk to Kasandra", "Estoy listo/a para hablar con Kasandra"),
-            ];
-          }
-        } else if (declaredIntent === 'buy') {
-          if (readinessScore !== undefined && readinessScore < 60) {
-            // Buyer + low readiness → prioritize Buyer Readiness Guide
-            greetingContent = t(
-              "Welcome back. Based on your readiness check, there are a few steps that could strengthen your position. Let me help you get there.",
-              "Bienvenido/a de vuelta. Según su evaluación de preparación, hay algunos pasos que podrían fortalecer su posición. Permítame ayudarle."
-            );
-            suggestedReplies = [
-              t("What should I work on first?", "¿En qué debería trabajar primero?"),
-              t("Review my readiness results", "Revisar mis resultados de preparación"),
-              t("I have a question", "Tengo una pregunta"),
-            ];
-          } else if (toolUsed === 'buyer_readiness') {
-            greetingContent = t(
-              "Welcome back. You've already completed your readiness check — that's a great step. What would you like to explore next?",
-              "Bienvenido/a de vuelta. Ya completó su evaluación de preparación — ese es un gran paso. ¿Qué le gustaría explorar a continuación?"
-            );
-            suggestedReplies = [
-              t("Browse buyer guides", "Explorar guías de comprador"),
-              t("I'm ready to talk to Kasandra", "Estoy listo/a para hablar con Kasandra"),
-              t("I have a question", "Tengo una pregunta"),
-            ];
-          } else {
-            greetingContent = t(
-              "Welcome back. I remember you're looking to buy. The Buyer Readiness Check is a great place to start.",
-              "Bienvenido/a de vuelta. Recuerdo que está buscando comprar. La Evaluación de Preparación del Comprador es un buen lugar para comenzar."
-            );
-            suggestedReplies = [
-              t("Take the Buyer Readiness Check", "Tomar la Evaluación de Preparación"),
-              t("Browse buyer guides", "Explorar guías de comprador"),
-              t("I have a question", "Tengo una pregunta"),
-            ];
-          }
-        } else if (declaredIntent === 'dual') {
-          greetingContent = t(
-            "Welcome back. Buying and selling at the same time requires careful coordination. Kasandra specializes in exactly this.",
-            "Bienvenido/a de vuelta. Comprar y vender al mismo tiempo requiere coordinación cuidadosa. Kasandra se especializa exactamente en esto."
-          );
-          suggestedReplies = [
-            t("How does a dual move work?", "¿Cómo funciona una mudanza dual?"),
-            t("I'd like to talk to Kasandra", "Me gustaría hablar con Kasandra"),
-            t("I have a question", "Tengo una pregunta"),
-          ];
-        } else if (quizDone) {
-          greetingContent = t(
-            "Welcome back. I see you completed the orientation quiz — great start. How can I help you take the next step?",
-            "Bienvenido/a de vuelta. Veo que completó el cuestionario de orientación — excelente comienzo. ¿Cómo puedo ayudarle a dar el siguiente paso?"
-          );
-          suggestedReplies = [
-            t("What should I do next?", "¿Qué debería hacer a continuación?"),
-            t("Browse guides", "Explorar guías"),
-            t("I have a specific question", "Tengo una pregunta específica"),
-          ];
-        } else if (sessionContext?.intent) {
-          // Returning visitor with known intent but no stored history → "Welcome back"
-          // NEVER show Phase 0/1 onboarding when intent exists
-          greetingContent = t(
-            "Welcome back — we can pick up where you left off.",
-            "Bienvenido/a de vuelta — podemos continuar donde lo dejamos."
-          );
-          suggestedReplies = getPhaseAwareChips(t, sessionContext);
-        } else {
-          // Truly new visitor — orientation mode (Phase 0)
-          greetingContent = t(
-            "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
-            "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
-          );
-          suggestedReplies = [
-            t("I'm thinking about selling", "Estoy pensando en vender"),
-            t("I'm looking to buy", "Estoy buscando comprar"),
-            t("Just exploring for now", "Solo estoy explorando"),
-          ];
-        }
-      }
-      
+    if (result) {
       const greeting: ChatMessage = {
         id: generateMessageId(),
         role: 'assistant',
-        content: greetingContent,
+        content: result.greetingContent,
         timestamp: new Date().toISOString(),
-        suggestedReplies,
+        suggestedReplies: result.suggestedReplies,
       };
-      
-      // Guard: if greetingContent is empty (e.g., 'question' source on existing session),
-      // open the drawer with history intact — no stacking, no empty message.
-      if (!greetingContent) {
-        // No-op: drawer opens, existing messages remain.
-      }
-      // If history exists and this is a cross-context injection, APPEND the greeting
-      // Otherwise (first open, no history), start fresh with just the greeting
-      else if (messages.length > 0 && hasContextualEntry) {
+
+      if (!result.greetingContent) {
+        // No-op
+      } else if (messages.length > 0 && hasContextualEntry) {
         const updatedMessages = [...messages, greeting];
         setMessages(updatedMessages);
         saveHistory(updatedMessages);
@@ -1144,15 +279,12 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         setMessages([greeting]);
         saveHistory([greeting]);
       }
-      
-      // If there's a prefill message (e.g., from synthesis), store it for later sending
-      // We can't call sendMessage here due to callback dependency order
+
       if (entryContext?.prefillMessage) {
-        // Store the prefill in localStorage temporarily for the next render cycle
         localStorage.setItem('selena_prefill_message', entryContext.prefillMessage);
       }
     }
-  }, [messages.length, location.pathname, t, language]);
+  }, [messages, location.pathname, t, language]);
 
   const closeChat = useCallback(() => {
     setIsOpen(false);
@@ -1160,11 +292,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
   }, [location.pathname]);
 
   const toggleChat = useCallback(() => {
-    if (isOpen) {
-      closeChat();
-    } else {
-      openChat({ source: 'floating' });
-    }
+    if (isOpen) closeChat();
+    else openChat({ source: 'floating' });
   }, [isOpen, openChat, closeChat]);
 
   const sendMessage = useCallback(async (content: string) => {
@@ -1202,7 +331,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
           body: JSON.stringify({
             message: content,
             context: {
-              // existing fields
               session_id: context?.session_id || '',
               route: location.pathname,
               language: languageRef.current,
@@ -1212,7 +340,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               timeline: context?.timeline,
               last_guide_id: context?.last_guide_id,
               lead_id: leadId,
-              // mode-progression fields from SessionContext
               tool_used: context?.tool_used,
               last_tool_result: context?.last_tool_result,
               quiz_completed: context?.quiz_completed ?? false,
@@ -1221,30 +348,21 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               seller_decision_recommended_path: context?.seller_decision_recommended_path,
               seller_goal_priority: context?.seller_goal_priority,
               property_condition_raw: context?.property_condition_raw,
-              // Journey awareness: completed tools array
               tools_completed: context?.tools_completed ?? [],
-              // from provider state
               calculator_advantage: lastCalculatorAdvantage ?? undefined,
-              // Calculator enrichment — decision-grade fields for Selena memory
               estimated_value: context?.estimated_value,
               calculator_difference: context?.calculator_difference,
               mortgage_balance: context?.mortgage_balance,
-              // Mode persistence — authoritative server mode signal, survives across turns
               current_mode: context?.current_mode,
-              // Phase governance fields
               chip_phase_floor: context?.chip_phase_floor ?? 0,
               greeting_phase_seen: context?.greeting_phase_seen ?? 0,
               timeline_last_asked_turn: context?.timeline_last_asked_turn,
               turn_count: (context?.turn_count ?? 0) + 1,
-              // Journey State Engine: readiness_score (Guard 1 — numeric-safe)
               readiness_score: Number.isFinite(context?.readiness_score) ? context!.readiness_score : 0,
-              // Level 3: Tool output data — actual numbers/scores Selena can reference
               primary_priority: context?.primary_priority,
               quiz_result_path: context?.quiz_result_path,
               calculator_motivation: context?.calculator_motivation,
-              // Neighborhood intelligence — ZIP for Perplexity-grounded context
               last_neighborhood_zip: context?.last_neighborhood_zip,
-              // Level 2: Session trail — full page/tool journey this session
               session_trail: serializeTrailForSelena(),
             },
             history,
@@ -1252,79 +370,43 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         }
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const data = await response.json();
       
-      // Store lead_id if returned (identity upgraded from anonymous to known)
       if (data.lead_id && data.lead_id !== leadId) {
         setLeadId(data.lead_id);
         saveLeadId(data.lead_id);
-        if (import.meta.env.DEV) console.log('[Selena] Lead identity captured:', data.lead_id);
       }
       
-      // Sync detected intent to SessionContext (Intent-Aware Filtering)
-      // Use write-once to respect user-declared intent from quiz/URL
-      if (data.detected_intent) {
-        const applied = setFieldIfEmpty('intent', data.detected_intent);
-        if (applied) {
-          if (import.meta.env.DEV) console.log('[Selena] Intent set to SessionContext:', data.detected_intent);
-        } else {
-          if (import.meta.env.DEV) console.log('[Selena] Intent detection skipped (already declared):', data.detected_intent);
-        }
-      }
-
-      // Persist server-authoritative mode to SessionContext (monotonic — never downgrade)
+      if (data.detected_intent) setFieldIfEmpty('intent', data.detected_intent);
+      
       if (data.current_mode) {
         const existingMode = getSessionContext()?.current_mode ?? 0;
-        if (data.current_mode >= existingMode) {
-          updateSessionContext({ current_mode: data.current_mode as 1 | 2 | 3 | 4 });
-        }
+        if (data.current_mode >= existingMode) updateSessionContext({ current_mode: data.current_mode as 1 | 2 | 3 | 4 });
       }
 
-      // Persist chip_phase_floor from server response (monotonic — never decrease)
       if (data.chip_phase_floor !== undefined) {
         const existingFloor = getSessionContext()?.chip_phase_floor ?? 0;
-        if (data.chip_phase_floor > existingFloor) {
-          updateSessionContext({ chip_phase_floor: data.chip_phase_floor });
-        }
+        if (data.chip_phase_floor > existingFloor) updateSessionContext({ chip_phase_floor: data.chip_phase_floor });
       }
 
-      // Persist timeline_last_asked_turn if server reports it
-      if (data.timeline_last_asked_turn !== undefined) {
-        updateSessionContext({ timeline_last_asked_turn: data.timeline_last_asked_turn });
-      }
-
-      // Persist journey_state from Journey State Engine
-      if (data.journey_state) {
-        updateSessionContext({ journey_state: data.journey_state });
-      }
-
-      // Increment turn_count
+      if (data.timeline_last_asked_turn !== undefined) updateSessionContext({ timeline_last_asked_turn: data.timeline_last_asked_turn });
+      if (data.journey_state) updateSessionContext({ journey_state: data.journey_state });
+      
       const currentTurnCount = getSessionContext()?.turn_count ?? 0;
       updateSessionContext({ turn_count: currentTurnCount + 1 });
       
-      // ============= CHIP → ACTIONSPEC MAPPING =============
-      // Convert known action-bearing string chips to structured ActionSpec objects.
-      // This ensures clicks call resolveAction() (deterministic routing) instead of
-      // sending a user message (which would trigger an AI round-trip).
       const mappedReplies = mapChipsToActionSpecs(data.suggestedReplies || []);
 
-      // ============= CHIP META EXTRACTION =============
-      // Persist phase/mode/containment from edge function for visual weighting
-      const chipMeta: import('./SelenaChatContext').ChipMeta = {
+      const chipMeta: ChipMeta = {
         phase: data.chip_phase ?? data.chip_phase_floor ?? 0,
         mode: data.current_mode ?? 0,
         containment: !!data.containment_active,
         bookingCtaShown: !!data.booking_cta_shown,
       };
 
-      // ============= BOOKING CHIPS SHOWN TRACKING (Feature 3) =============
-      const hasBookingChip = mappedReplies.some((r) => 
-        typeof r !== 'string' && r.actionSpec?.type === 'book'
-      );
+      const hasBookingChip = mappedReplies.some((r) => typeof r !== 'string' && r.actionSpec?.type === 'book');
       if (hasBookingChip && (chipMeta.phase >= 3 || chipMeta.mode >= 4 || data.booking_cta_shown)) {
         updateSessionContext({ booking_chips_shown_at: new Date().toISOString() });
       }
@@ -1332,10 +414,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       const assistantMessage: ChatMessage = {
         id: generateMessageId(),
         role: 'assistant',
-        content: data.reply || t(
-          "I'm here to help. What would you like to know?",
-          "Estoy aquí para ayudar. ¿Qué te gustaría saber?"
-        ),
+        content: data.reply || t("I'm here to help. What would you like to know?", "Estoy aquí para ayudar. ¿Qué te gustaría saber?"),
         timestamp: new Date().toISOString(),
         actions: data.actions || [],
         suggestedReplies: mappedReplies,
@@ -1345,271 +424,108 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       const updatedMessages = [...newMessages, assistantMessage];
       setMessages(updatedMessages);
       saveHistory(updatedMessages);
-      // P1.1: Persist session snapshot after each successful AI response
+      
       import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
       logSelenaMessageAI(data.reply || '', location.pathname, (data.actions?.length || 0) > 0);
 
-      // DEV-only: capture guard telemetry for QA panel
       if (import.meta.env.DEV) {
-        import('@/lib/analytics/guardTelemetry').then(({ pushGuardTelemetry }) => {
-          pushGuardTelemetry(data);
-        }).catch(() => {});
+        import('@/lib/analytics/guardTelemetry').then(({ pushGuardTelemetry }) => pushGuardTelemetry(data));
       }
 
     } catch (error) {
-      console.error('[Selena] Chat error:', error);
-      
-      // Graceful fallback — phase-aware chips (never regress to Phase 1 if intent known)
-      const fallbackCtx = getSessionContext();
-      const fallbackMessage: ChatMessage = {
+      console.error('[Selena] Message error:', error);
+      const ctx = getSessionContext();
+      const errorMessage: ChatMessage = {
         id: generateMessageId(),
         role: 'assistant',
-        content: t(
-          "I'm having a moment - but don't worry, I'm still here to help. What would you like to explore?",
-          "Estoy teniendo un momento - pero no te preocupes, sigo aquí para ayudarte. ¿Qué te gustaría explorar?"
-        ),
+        content: t("I'm having trouble connecting right now. Here are some quick options:", "Tengo problemas para conectarme ahora. Aquí tienes unas opciones rápidas:"),
         timestamp: new Date().toISOString(),
-        suggestedReplies: getPhaseAwareChips(t, fallbackCtx),
+        suggestedReplies: getPhaseAwareChips(t, ctx),
       };
-      
-      const updatedMessages = [...newMessages, fallbackMessage];
+      const updatedMessages = [...newMessages, errorMessage];
       setMessages(updatedMessages);
       saveHistory(updatedMessages);
     } finally {
       setIsLoading(false);
     }
-  }, [messages, isLoading, location.pathname, t, leadId, lastCalculatorAdvantage]); // FM-09: lastCalculatorAdvantage must be in deps to avoid stale closure
+  }, [messages, isLoading, leadId, location.pathname, lastCalculatorAdvantage, t]);
 
-  // Handle prefill messages stored by openChat (for synthesis flows)
-  useEffect(() => {
-    if (messages.length > 0 && !isLoading) {
-      const prefill = localStorage.getItem('selena_prefill_message');
-      if (prefill) {
-        localStorage.removeItem('selena_prefill_message');
-        // Delay slightly to let UI stabilize
-        setTimeout(() => {
-          sendMessage(prefill);
-        }, 300);
-      }
-    }
-  }, [messages.length, isLoading, sendMessage]);
-
-  const generateReport = useCallback(async (action: ChatAction) => {
-    if (!action.reportType || !leadId) {
-      console.warn('[Selena] Cannot generate report: missing reportType or leadId');
-      return;
-    }
-
-    logEvent('report_generate_start', {
-      report_type: action.reportType,
-      lead_id: leadId,
-    });
-
-    setReport(prev => ({
-      ...prev,
-      isGenerating: true,
-      title: getReportTitle(action.reportType!, t),
-    }));
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-report`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            lead_id: leadId,
-            report_type: action.reportType,
-            context: action.context || {},
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      logEvent('report_generate_success', {
-        report_id: data.report_id,
-        report_type: action.reportType,
-      });
-
-      setReport({
-        isOpen: true,
-        isGenerating: false,
-        title: getReportTitle(action.reportType!, t),
-        markdown: data.report_markdown,
-        reportId: data.report_id,
-        reportType: action.reportType,
-      });
-      
-      // Mark that user has generated at least one report
-      setHasReports(true);
-
-      // Update the last message with report metadata
-      setMessages(prev => {
-        const updated = [...prev];
-        // Find last assistant message index (compatible alternative to findLastIndex)
-        let lastAssistantIdx = -1;
-        for (let i = updated.length - 1; i >= 0; i--) {
-          if (updated[i].role === 'assistant') {
-            lastAssistantIdx = i;
-            break;
-          }
-        }
-        if (lastAssistantIdx !== -1) {
-          updated[lastAssistantIdx] = {
-            ...updated[lastAssistantIdx],
-            metadata: {
-              report_id: data.report_id,
-              report_type: action.reportType,
-            },
-          };
-        }
-        return updated;
-      });
-
-    } catch (error) {
-      console.error('[Selena] Report generation error:', error);
-      
-      logEvent('report_generate_error', {
-        report_type: action.reportType,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      });
-
-      setReport(prev => ({ ...prev, isGenerating: false }));
-      
-      // Add error message to chat - NO BOOKING CTA (Earned Access rule)
-      const errorMessage: ChatMessage = {
-        id: generateMessageId(),
-        role: 'assistant',
-        content: t(
-          "I couldn't generate your report right now. Let me try again, or I can help you explore your options another way.",
-          "No pude generar tu reporte en este momento. Déjame intentar de nuevo, o puedo ayudarte a explorar tus opciones de otra manera."
-        ),
-        timestamp: new Date().toISOString(),
-        // No hardcoded booking actions - let Selena AI handle earned access gating
-        suggestedReplies: [
-          t("Try again", "Intentar de nuevo"),
-          t("What are my options?", "¿Cuáles son mis opciones?"),
-        ],
-      };
-      setMessages(prev => [...prev, errorMessage]);
-      saveHistory([...messages, errorMessage]);
-    }
-  }, [leadId, t, messages]);
-
-  // Fetch and open an existing report by ID
-  const openReportById = useCallback(async (reportId: string) => {
-    // Check if lead identity exists
+  const handleOpenReportById = useCallback(async (reportId: string) => {
     if (!leadId) {
-      // Store pending report ID and open lead capture
       setPendingReportId(reportId);
       setShowLeadCapture(true);
       return;
     }
-
-    setReport(prev => ({
-      ...prev,
-      isGenerating: true,
-      title: t('Loading Report', 'Cargando Reporte'),
-    }));
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-report`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            lead_id: leadId,
-            report_id: reportId,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!data.ok || !data.report) {
-        console.error('[Selena] Report not found:', data.error);
-        setReport(prev => ({ ...prev, isGenerating: false }));
-        
-        // Add error message to chat
-        const errorMessage: ChatMessage = {
-          id: generateMessageId(),
-          role: 'assistant',
-          content: t(
-            "I couldn't find that report. It may have been created under a different email, or it may no longer exist.",
-            "No pude encontrar ese reporte. Puede que haya sido creado con otro correo, o que ya no exista."
-          ),
-          timestamp: new Date().toISOString(),
-        };
-        setMessages(prev => [...prev, errorMessage]);
-        return;
-      }
-
-      logEvent('report_view', {
-        report_id: reportId,
-        report_type: data.report.report_type,
-        source: 'chat_reopen',
+    
+    setReport(prev => ({ ...prev, isGenerating: true, title: t('Loading Report', 'Cargando Reporte') }));
+    const result = await openReportById(reportId, leadId, t);
+    
+    if (result.reportState) setReport(prev => ({ ...prev, ...result.reportState }));
+    if (result.messagesToAdd) {
+      setMessages(prev => {
+        const updated = [...prev, ...result.messagesToAdd!];
+        saveHistory(updated);
+        return updated;
       });
-
-      setReport({
-        isOpen: true,
-        isGenerating: false,
-        title: getReportTitle(data.report.report_type, t),
-        markdown: data.report.report_markdown,
-        reportId: data.report.id,
-        reportType: data.report.report_type,
-      });
-
-    } catch (error) {
-      console.error('[Selena] Error fetching report:', error);
-      setReport(prev => ({ ...prev, isGenerating: false }));
     }
   }, [leadId, t]);
 
-  const handleActionClick = useCallback((action: ChatAction) => {
+  const handleOpenLastReport = useCallback(async () => {
+    logEvent('my_report_click', { route: location.pathname });
+    if (!leadId) {
+      setPendingReportId('LAST');
+      setPendingAction('report');
+      setShowLeadCapture(true);
+      return;
+    }
+
+    setReport(prev => ({ ...prev, isGenerating: true, title: t('Loading Report', 'Cargando Reporte') }));
+    const result = await openLastReport(leadId, t);
+    
+    if (result.reportState) setReport(prev => ({ ...prev, ...result.reportState }));
+    if (result.messagesToAdd) {
+      setMessages(prev => {
+        const updated = [...prev, ...result.messagesToAdd!];
+        saveHistory(updated);
+        return updated;
+      });
+    }
+  }, [leadId, t, location.pathname]);
+
+  const handleActionClick = useCallback(async (action: ChatAction) => {
     logChatActionClick(action.label, action.href, location.pathname);
     
-    // Handle report generation actions (check multiple possible field names)
-    const isReportAction = 
-      action.actionType === 'generate_report' || 
-      action.type === 'generate_report' || 
-      action.id === 'generate_report';
-    
+    const isReportAction = action.actionType === 'generate_report' || action.type === 'generate_report' || action.id === 'generate_report';
     if (isReportAction) {
-      generateReport(action);
+      if (!leadId) {
+        setPendingAction('report');
+        setShowLeadCapture(true);
+        // Save report action somewhere if needed, but standard flow triggers via completion
+        return;
+      }
+      
+      setReport(prev => ({ ...prev, isGenerating: true, title: t('Generating Your Report', 'Generando Tu Reporte') }));
+      const result = await generateReport(action, leadId, t, languageRef.current as 'en' | 'es');
+      
+      if (result.reportState) setReport(prev => ({ ...prev, ...result.reportState }));
+      if (result.messagesToAdd) {
+        setMessages(prev => {
+          const updated = [...prev, ...result.messagesToAdd!];
+          saveHistory(updated);
+          return updated;
+        });
+      }
       return;
     }
 
-    // Handle open existing report actions
-    const isOpenReportAction = 
-      action.actionType === 'open_report' || 
-      action.type === 'open_report' || 
-      action.id === 'open_report';
-    
+    const isOpenReportAction = action.actionType === 'open_report' || action.type === 'open_report' || action.id === 'open_report';
     if (isOpenReportAction && action.reportId) {
-      openReportById(action.reportId);
+      handleOpenReportById(action.reportId);
       return;
     }
 
-    // Handle priority call actions
-    const isPriorityCallAction =
-      action.actionType === 'priority_call' ||
-      action.type === 'priority_call' ||
-      action.id === 'priority_call';
-    
+    const isPriorityCallAction = action.actionType === 'priority_call' || action.type === 'priority_call' || action.id === 'priority_call';
     if (isPriorityCallAction) {
-      // Route directly to booking page — no lead capture gate for booking
       closeChat();
       navigate('/v2/book');
       return;
@@ -1619,57 +535,45 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       closeChat();
       navigate(action.href);
     }
-  }, [navigate, closeChat, location.pathname, generateReport, openReportById, leadId]);
+  }, [navigate, closeChat, location.pathname, handleOpenReportById, leadId, t]);
 
   const clearHistory = useCallback(() => {
     setMessages([]);
     localStorage.removeItem(CHAT_HISTORY_KEY);
     localStorage.removeItem(LAST_ENTRY_SIG_KEY);
-    // Reset phase governance fields (conversation state) but keep real user data (intent, timeline, tool_used)
     updateSessionContext({ 
       chip_phase_floor: 0, 
       greeting_phase_seen: 0,
       turn_count: 0,
       timeline_last_asked_turn: undefined,
     });
-    // Re-add greeting message — phase-aware
+    
     const ctx = getSessionContext();
     const greeting: ChatMessage = {
       id: generateMessageId(),
       role: 'assistant',
       content: ctx?.intent
-        ? t(
-            "Welcome back — we can pick up where you left off.",
-            "Bienvenido/a de vuelta — podemos continuar donde lo dejamos."
-          )
-        : t(
-            "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
-            "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
-          ),
+        ? t("Welcome back — we can pick up where you left off.", "Bienvenido/a de vuelta — podemos continuar donde lo dejamos.")
+        : t("Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?", "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"),
       timestamp: new Date().toISOString(),
-      suggestedReplies: ctx?.intent
-        ? getPhaseAwareChips(t, ctx)
-        : [
-            t("I'm thinking about selling", "Estoy pensando en vender"),
-            t("I'm looking to buy", "Estoy buscando comprar"),
-            t("Just exploring for now", "Solo estoy explorando"),
-          ],
+      suggestedReplies: ctx?.intent ? getPhaseAwareChips(t, ctx) : [
+        { label: t("I'm thinking about selling", "Estoy pensando en vender") },
+        { label: t("I'm looking to buy", "Estoy buscando comprar") },
+        { label: t("Just exploring for now", "Solo estoy explorando") },
+      ],
     };
     setMessages([greeting]);
     saveHistory([greeting]);
     logEvent('selena_clear_history', { route: location.pathname });
   }, [t, location.pathname]);
 
-  // Allow external components to set lead identity
   const setLeadIdentity = useCallback((newLeadId: string) => {
     if (newLeadId && newLeadId !== leadId) {
       setLeadId(newLeadId);
       saveLeadId(newLeadId);
-      if (import.meta.env.DEV) console.log('[Selena] Lead identity set externally:', newLeadId);
     }
   }, [leadId]);
 
-  // Callback when lead is captured via modal - resume pending action
   const onLeadCaptured = useCallback((newLeadId: string) => {
     setLeadIdentity(newLeadId);
     setShowLeadCapture(false);
@@ -1678,82 +582,17 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     setPendingAction(null);
     setPendingReportId(null);
     
-    // Resume pending report action
     setTimeout(() => {
       if (currentPendingReportId) {
-        if (currentPendingReportId === 'LAST') {
-          openLastReport();
-        } else {
-          openReportById(currentPendingReportId);
-        }
+        if (currentPendingReportId === 'LAST') handleOpenLastReport();
+        else handleOpenReportById(currentPendingReportId);
       }
     }, 100);
-  }, [setLeadIdentity, pendingReportId, openReportById]);
+  }, [setLeadIdentity, pendingReportId, handleOpenReportById, handleOpenLastReport]);
 
-  // Open the user's last report (shortcut from UI)
-  const openLastReport = useCallback(async () => {
-    logEvent('my_report_click', { route: location.pathname });
-
-    // If no lead identity, set pending as LAST and open lead capture
-    if (!leadId) {
-      setPendingReportId('LAST');
-      setPendingAction('report');
-      setShowLeadCapture(true);
-      return;
-    }
-
-    setReport(prev => ({
-      ...prev,
-      isGenerating: true,
-      title: t('Loading Report', 'Cargando Reporte'),
-    }));
-
-    try {
-      // Fetch the last report ID
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-last-report-id`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({ lead_id: leadId }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!data.ok || !data.report_id) {
-        // No reports found - show empty state
-        logEvent('report_empty_state_shown', { lead_id: leadId });
-        setReport({
-          isOpen: true,
-          isGenerating: false,
-          title: t('My Report', 'Mi Reporte'),
-          markdown: '',
-          reportId: undefined,
-          reportType: 'empty',
-        });
-        return;
-      }
-
-      // Open the report by ID
-      setReport(prev => ({ ...prev, isGenerating: false }));
-      await openReportById(data.report_id);
-    } catch (error) {
-      console.error('[Selena] Error fetching last report:', error);
-      logEvent('report_error', { stage: 'fetch', message: 'Failed to fetch last report' });
-      setReport(prev => ({ ...prev, isGenerating: false }));
-    }
-  }, [leadId, t, location.pathname, openReportById]);
-
-
-  // Set calculator result - for Selena awareness (Task 4)
   const setCalculatorResult = useCallback((advantage: CalculatorAdvantage) => {
     setHasUsedCalculator(true);
     setLastCalculatorAdvantage(advantage);
-    if (import.meta.env.DEV) console.log('[Selena] Calculator result set:', advantage);
   }, []);
 
   return (
@@ -1765,7 +604,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         leadId,
         hasReports,
         report,
-        
         showLeadCapture,
         pendingReportId,
         pendingAction,
@@ -1779,8 +617,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         clearHistory,
         setLeadIdentity,
         closeReport,
-        openReportById,
-        openLastReport,
+        openReportById: handleOpenReportById,
+        openLastReport: handleOpenLastReport,
         closeLeadCapture,
         onLeadCaptured,
         setCalculatorResult,
@@ -1789,21 +627,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       {children}
     </SelenaChatContext.Provider>
   );
-}
-
-function getReportTitle(reportType: string, t: (en: string, es: string) => string): string {
-  switch (reportType) {
-    case 'net_sheet':
-      return t('Your Net Sheet Analysis', 'Análisis de tu Ganancia Neta');
-    case 'buyer_readiness':
-      return t('Buyer Readiness Report', 'Reporte de Preparación del Comprador');
-    case 'cash_comparison':
-      return t('Cash vs. Listing Comparison', 'Comparación: Efectivo vs. Listado');
-    case 'home_value_preview':
-      return t('Your Home Value Preview', 'Vista Previa del Valor de Su Casa');
-    default:
-      return t('Your Personalized Report', 'Tu Reporte Personalizado');
-  }
 }
 
 export function useSelenaChat() {
