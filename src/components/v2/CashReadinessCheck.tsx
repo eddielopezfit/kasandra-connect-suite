@@ -191,11 +191,11 @@ const CashReadinessCheck = ({ onScoreRevealed }: CashReadinessCheckProps) => {
 
     logEvent("tool_abandoned", {
       tool_id: "cash_readiness",
-      page_path: "/v2/cash-readiness",
+      page_path: "/cash-readiness",
       step_reached: currentStep,
       questions_answered: answers.filter((a) => a.answerIndex != null).length,
     });
-    navigate("/v2/guides");
+    navigate("/guides");
   };
 
   // ─── Completion Side-Effects (fires exactly once) ────────────────────────
