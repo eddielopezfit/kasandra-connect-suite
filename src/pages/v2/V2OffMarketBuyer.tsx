@@ -129,6 +129,12 @@ const ToggleChip = ({
 const V2OffMarketBuyerContent = () => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
+  useDocumentHead({
+    titleEn: "Off-Market Homes | Kasandra Prieto — Realty Executives Arizona",
+    titleEs: "Casas Fuera del Mercado | Kasandra Prieto — Realty Executives Arizona",
+    descriptionEn: "Get exclusive access to off-market properties in Tucson. Kasandra Prieto connects you with sellers before they list.",
+    descriptionEs: "Obtenga acceso exclusivo a propiedades fuera del mercado en Tucson. Kasandra le conecta con vendedores antes de publicar.",
+  });
   const navigate = useNavigate();
 
   const [step, setStep] = useState(0); // 0=criteria, 1=details, 2=contact, 3=confirmed
