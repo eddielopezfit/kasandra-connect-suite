@@ -90,8 +90,12 @@ export function init() {
   }
 
   // Otherwise inject the standard snippet + script tag
-  const n: any = (f.fbq = function (...args: any[]) {
-    n.callMethod ? n.callMethod.apply(n, args) : n.queue.push(args);
+  const n: Record<string, unknown> & { push?: unknown, loaded?: boolean, version?: string, queue?: unknown[], callMethod?: (...args: unknown[]) => void } = (f.fbq = function (...args: unknown[]) {
+    if (n.callMethod) {
+      n.callMethod.apply(n, args);
+    } else if (Array.isArray(n.queue)) {
+      n.queue.push(args);
+    }
   });
   if (!f._fbq) f._fbq = n;
   n.push = n;
