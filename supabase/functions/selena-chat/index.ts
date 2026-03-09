@@ -121,6 +121,15 @@ interface ChatRequest {
       type: 'guide' | 'tool' | 'quiz' | 'page';
       minutes_ago: number;
     }>;
+    // Buyer Closing Costs calculator data
+    closing_cost_data?: {
+      purchasePrice: number;
+      loanType: string;
+      downPaymentPercent: number;
+      estimatedLow: number;
+      estimatedHigh: number;
+      totalCashNeeded: number;
+    } | null;
   };
   history?: ChatMessage[];
 }
@@ -2982,6 +2991,22 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         toolOutputHint += `\n\nRESULTADO DE CUESTIONARIO — PREPARACIÓN EN EFECTIVO:\nCamino recomendado: ${pathLabel}\n\nEl cuestionario ya calificó su situación. No preguntes de nuevo qué está considerando — el camino está establecido.`;
       } else {
         toolOutputHint += `\n\nQUIZ RESULT — CASH READINESS:\nRecommended path: ${pathLabel}\n\nThe quiz already qualified their situation. Do NOT re-ask what they're considering — their path is established.`;
+      }
+    }
+
+    // --- Buyer Closing Costs calculator output ---
+    const ccData = context.closing_cost_data;
+    if (ccData && ccData.purchasePrice > 0 && context.entry_source === 'buyer_closing_costs') {
+      const ccPrice = `$${Math.round(ccData.purchasePrice).toLocaleString()}`;
+      const ccLow = `$${Math.round(ccData.estimatedLow).toLocaleString()}`;
+      const ccHigh = `$${Math.round(ccData.estimatedHigh).toLocaleString()}`;
+      const ccTotal = `$${Math.round(ccData.totalCashNeeded).toLocaleString()}`;
+      const ccLoan = ccData.loanType === 'fha' ? 'FHA' : ccData.loanType === 'va' ? 'VA' : ccData.loanType === 'cash' ? 'cash' : 'conventional';
+
+      if (language === 'es') {
+        toolOutputHint += `\n\nRESULTADO DE HERRAMIENTA — ESTIMADOR DE COSTOS DE CIERRE DEL COMPRADOR:\nPrecio de compra: ${ccPrice}\nTipo de préstamo: ${ccLoan}\nCostos de cierre estimados: ${ccLow}–${ccHigh}\nEfectivo total al cierre (incl. enganche): ${ccTotal}\n\nCONTEXTO DE COSTOS DE CIERRE:\n- Referencia estos números específicos. El usuario tiene datos reales.\n- Identifica qué es negociable (seguro de título, originación del préstamo, créditos del vendedor).\n- Pivote a reserva: "Kasandra ha negociado estos costos en transacciones recientes en Tucson. Una llamada de 20 minutos podría ahorrarte miles."\n- Siempre incluye chip "Hablar con Kasandra".\n- NUNCA des educación genérica de comprador — tienen el desglose.`;
+      } else {
+        toolOutputHint += `\n\nTOOL RESULT — BUYER CLOSING COST ESTIMATOR:\nPurchase price: ${ccPrice}\nLoan type: ${ccLoan}\nEstimated closing costs: ${ccLow}–${ccHigh}\nTotal cash at closing (incl. down payment): ${ccTotal}\n\nCLOSING COSTS CONTEXT:\n- Reference these specific numbers. The user has real data in front of them.\n- Identify what's negotiable (title fees, lender origination, seller credits).\n- Booking pivot: "Kasandra has negotiated these costs down on recent Tucson transactions. A 20-minute call could save you thousands."\n- Always include "Talk with Kasandra" chip.\n- NEVER give generic buyer education — they have the breakdown.`;
       }
     }
 

@@ -437,7 +437,20 @@ const V2BuyerClosingCostsContent = () => {
                 )}
               </p>
               <Button
-                onClick={() => openChat({ source: 'buyer_closing_costs', intent: 'buy' })}
+                onClick={() => openChat({
+                  source: 'buyer_closing_costs',
+                  intent: 'buy',
+                  ...(calculated && price >= 50000 ? {
+                    closingCostData: {
+                      purchasePrice: price,
+                      loanType: inputs.loanType,
+                      downPaymentPercent: downPct,
+                      estimatedLow: totLow,
+                      estimatedHigh: totHigh,
+                      totalCashNeeded: cashNeeded,
+                    }
+                  } : {}),
+                })}
                 className="bg-cc-navy text-white rounded-full px-8 font-semibold"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
