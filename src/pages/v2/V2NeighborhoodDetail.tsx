@@ -11,8 +11,9 @@ import NeighborhoodSplitCTA from "@/components/v2/neighborhood/NeighborhoodSplit
 import RelatedNeighborhoodsRail from "@/components/v2/neighborhood/RelatedNeighborhoodsRail";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { type NeighborhoodEntry } from "@/data/neighborhoods/neighborhoodRegistry";
+import { getNeighborhoodHeroUrl } from "@/lib/neighborhood/heroUrl";
 
 /** Inner content — must render inside V2Layout to access SelenaChatProvider */
 const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: NeighborhoodEntry }) => {
