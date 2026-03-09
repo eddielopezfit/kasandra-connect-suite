@@ -37,6 +37,7 @@ import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import { isReturningVisitor, getIntent, getGuidesRead } from "@/lib/guides/personalization";
+import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeighborhoodCards";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
