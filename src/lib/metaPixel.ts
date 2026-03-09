@@ -9,7 +9,7 @@ import { logger } from "@/lib/logger";
  *   VITE_PIXEL_SUPPRESS     — "true" → console.log only, suppress fbq calls
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// Removed eslint-disable for any
 declare global {
   interface Window {
     fbq: (...args: unknown[]) => void;
