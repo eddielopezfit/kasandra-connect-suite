@@ -385,6 +385,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               entry_guide_id: context?.entry_guide_id ?? null,
               entry_guide_title: context?.entry_guide_title ?? null,
               closing_cost_data: (context as any)?.closing_cost_data ?? null,
+              seller_calc_data: (context as any)?.seller_calc_data ?? null,
+              readiness_entry_data: (context as any)?.readiness_entry_data ?? null,
             },
             history,
           }),
