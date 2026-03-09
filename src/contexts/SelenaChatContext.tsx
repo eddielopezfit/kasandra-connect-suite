@@ -49,6 +49,9 @@ import {
   openLastReport
 } from './selena/reportManager';
 
+const INHERITED_HOME_SIGNAL = /inherited|inheritance|estate|passed away|lost.*(?:grand|parent|mom|dad|father|mother)|(?:grand|parent|mom|dad).*passed|family home|deceased|left me|left us|died|falleci[oó]|herencia|heredé|propiedad.*familia/i;
+const TRUST_SIGNAL = /she seems|he seems|looks trustworthy|saw.*social|social media|heard about|referred|recommended|friend said|family said|seems pleasant|seems nice|seems legit|parece confiable|me recomendaron|vi.*redes sociales/i;
+
 interface SelenaChatContextType {
   isOpen: boolean;
   messages: ChatMessage[];
