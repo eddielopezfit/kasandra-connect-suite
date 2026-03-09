@@ -43,12 +43,14 @@ export function SelenaDrawerBottomSection({
   const inputEl = useRef<HTMLInputElement | null>(null);
   // Local state only for button disabled check (doesn't control input value)
   const [hasText, setHasText] = useState(false);
+  const [isDebouncing, setIsDebouncing] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const text = (inputEl.current?.value || "").trim();
-    if (!text || isLoading) return;
+    if (!text || isLoading || isDebouncing) return;
 
+    setIsDebouncing(true);
     onSubmitText(text);
 
     // Clear after send
@@ -56,6 +58,9 @@ export function SelenaDrawerBottomSection({
       inputEl.current.value = "";
       setHasText(false);
     }
+
+    // Prevent rapid-fire submissions
+    setTimeout(() => setIsDebouncing(false), 500);
   };
 
   const handleInputChange = () => {
@@ -127,7 +132,7 @@ export function SelenaDrawerBottomSection({
           <Button
             type="submit"
             size="icon"
-            disabled={!hasText || isLoading}
+            disabled={!hasText || isLoading || isDebouncing}
             className="rounded-full w-10 h-10 shrink-0"
           >
             <span className="sr-only">Send</span>
