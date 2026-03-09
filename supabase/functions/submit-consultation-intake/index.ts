@@ -42,6 +42,9 @@ interface ConsultationIntakeInput {
   referrer?: string;
   ad_funnel_source?: string;
   ad_funnel_value_range?: string;
+  chip_phase_floor?: number;
+  tools_completed?: string[];
+  selena_lead_id?: string;
 }
 
 interface ConsultationIntakeResponse {
