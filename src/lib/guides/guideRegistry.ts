@@ -756,7 +756,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- pricing-strategy ---
   {
     id: 'pricing-strategy',
-    path: '/v2/guides/pricing-strategy',
+    path: '/guides/pricing-strategy',
     titleEn: "How to Price Your Tucson Home: A Seller's Strategy Guide",
     titleEs: 'Cómo Fijar el Precio de Tu Casa en Tucson: Guía de Estrategia para Vendedores',
     labelEn: 'Home Pricing Strategy',
