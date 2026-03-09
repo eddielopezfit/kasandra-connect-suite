@@ -12,8 +12,8 @@ import { logger } from "@/lib/logger";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
   interface Window {
-    fbq: (...args: any[]) => void;
-    _fbq: any;
+    fbq: (type: string, name: string, params?: Record<string, unknown>) => void;
+    _fbq: unknown;
   }
 }
 

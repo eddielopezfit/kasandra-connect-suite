@@ -35,7 +35,7 @@ const CONTEXT_KEY = 'selena_context_v2';
  */
 function resetJourneyIntent(): void {
   const raw = localStorage.getItem(CONTEXT_KEY);
-  let ctx: any = {};
+  let ctx: Record<string, unknown> = {};
   try { ctx = raw ? JSON.parse(raw) : {}; } catch { ctx = {}; }
 
   delete ctx.intent;

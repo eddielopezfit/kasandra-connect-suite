@@ -127,7 +127,7 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
           logEvent(data.cached ? "neighborhood_profile_cached" : "neighborhood_profile_generated", {
             zip_code: externalZip, cached: data.cached, source: "quiz",
           });
-        } catch (err: any) {
+        } catch (err: unknown) {
           console.error("[NeighborhoodExplorer] Auto-explore error:", err);
           toast.error(t("Something went wrong. Please try again.", "Algo salió mal. Intente de nuevo."));
         } finally {

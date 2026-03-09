@@ -73,7 +73,7 @@ const StepNeighborhood = ({ externalZip, initialResult, onNext, onBack }: StepNe
       });
 
       logEvent('seller_decision_neighborhood_completed', { zip: trimmed, cached: !!data.cached });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[StepNeighborhood] Error:", err);
       const msg = err?.message || "";
       if (msg.includes("Rate limit")) {

@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * QA Session Helper — DEV only
  * Forces a deterministic session_id for repeatable test runs.
