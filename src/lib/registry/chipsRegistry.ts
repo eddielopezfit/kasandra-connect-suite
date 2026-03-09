@@ -54,6 +54,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Estimar mis ganancias netas',
     normalized_key: 'estimate my net proceeds',
     actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
+    chipKey: CHIP_KEYS.ESTIMATE_PROCEEDS,
   },
   {
     id: 'calc-net-proceeds-es',
@@ -61,6 +62,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Estimar mis ganancias netas',
     normalized_key: 'estimar mis ganancias netas',
     actionSpec: { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' } },
+    chipKey: CHIP_KEYS.ESTIMATE_PROCEEDS,
   },
 
   // --- Calculator: cash vs listing ---
