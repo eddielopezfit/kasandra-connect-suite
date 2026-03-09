@@ -128,7 +128,12 @@ export function computeGreeting(
 
   const hasRecoveryCandidate = !sessionContext?.recovery_shown && !!sessionContext?.booking_chips_shown_at;
 
+  // FIX 1: Suppress greeting if the last message is from the user (mid-conversation)
+  const lastMessageIsUser = messages.length > 0 && messages[messages.length - 1].role === 'user';
+
   const shouldInjectGreeting = (() => {
+    // Never inject a greeting mid-conversation (after user has spoken) unless post-booking
+    if (lastMessageIsUser && !isPostBooking) return false;
     if (storedHistoryExists && isBlockedSource && !hasRecoveryCandidate) return false;
     if (isPostBooking) return true;
     if (isBlockedSource && hasRecoveryCandidate) return true;
@@ -140,7 +145,6 @@ export function computeGreeting(
         'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index',
         'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture',
         'off_market_registered', 'off_market_capture'];
-      return contextualSources.includes(entryContext?.source || '');
       return contextualSources.includes(entryContext?.source || '');
     }
     if (isMeaningfulSource && isAllowedGreetingSource) return true;

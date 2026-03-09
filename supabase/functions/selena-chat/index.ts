@@ -3115,6 +3115,17 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     const safeReadinessScore = Number.isFinite(rawReadiness) ? rawReadiness : 0;
     const guidesReadCount = typeof context.guides_read === 'number' ? context.guides_read : 0;
 
+    // FIX 4: Server-side phase escalation based on guide depth
+    if (guidesReadCount >= 8) {
+      effectiveChipPhase = Math.max(effectiveChipPhase, 3);
+    } else if (guidesReadCount >= 5) {
+      effectiveChipPhase = Math.max(effectiveChipPhase, 2);
+    }
+
+    // FIX 2: High-intent financial question detection
+    const HIGH_INTENT_FINANCIAL = /how much|what.*need|can i afford|what do i need|cuánto.*necesito|cuanto.*necesito|what.*cost|total.*need/i;
+    const isHighIntentQuestion = HIGH_INTENT_FINANCIAL.test(message);
+
     const journey = classifyJourneyState({
       readiness_score: safeReadinessScore,
       tools_completed: toolsCompleted,
