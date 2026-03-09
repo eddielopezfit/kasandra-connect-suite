@@ -1,4 +1,4 @@
-import { MappedReply, normalizeChipLabel, findChipByNormalizedKey, findChipByKey, CHIPS_REGISTRY } from '@/lib/registry/chipsRegistry';
+import { MappedReply, normalizeChipLabel, findChipByNormalizedKey, findChipByKey } from '@/lib/registry/chipsRegistry';
 import { CHIP_KEYS, type ChipKey } from '@/lib/registry/chipKeys';
 import { getGuideChips } from '@/lib/registry/guideChipMap';
 import { logEvent } from '@/lib/analytics/logEvent';
