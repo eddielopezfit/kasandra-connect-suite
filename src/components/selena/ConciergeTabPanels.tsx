@@ -90,8 +90,9 @@ export function ConciergeTabPanels({
     if (eventType) {
       logEvent(eventType, { path, route: window.location.pathname });
     }
-    closeDrawer();
+    // Navigate FIRST, then close drawer — prevents unmount before navigation completes
     navigate(path);
+    closeDrawer();
   };
 
   const handleIntentMessage = (message: string) => {
