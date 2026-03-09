@@ -216,7 +216,7 @@ export function ReportViewer({
     </div>
   </div>
   <div class="footer">
-    <span>KasandraPrieto.com · Corner Connect brokered by Realty Executives Arizona Territory</span>
+    <span>KasandraPrietoRealtor.com · Corner Connect brokered by Realty Executives Arizona Territory</span>
     <span>Tu Mejor Amiga en Bienes Raíces</span>
   </div>
 </body>

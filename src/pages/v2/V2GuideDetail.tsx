@@ -270,7 +270,7 @@ function GuideDetailContent() {
           name: guide.author,
           jobTitle: "REALTOR®",
           worksFor: { "@type": "Organization", name: "Corner Connect brokered by Realty Executives Arizona Territory" },
-          url: "https://kasandraprieto.com",
+          url: "https://kasandraprietorealtor.com",
         },
         publisher: {
           "@type": "Person",

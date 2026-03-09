@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+const PROD_DOMAIN = "https://kasandraprietorealtor.com";
+
 interface DocumentHeadOptions {
   titleEn: string;
   titleEs: string;
@@ -12,7 +14,7 @@ interface DocumentHeadOptions {
 
 const DEFAULT_TITLE = "Kasandra Prieto | Tucson Realtor & Podcast Host";
 const DEFAULT_DESC = "Your best friend in real estate. Serving the Tucson community with integrity, heart, and bilingual expertise.";
-const OG_IMAGE = "/og-kasandra.jpg";
+const OG_IMAGE = `${PROD_DOMAIN}/og-kasandra.jpg`;
 
 function upsertMeta(attr: string, key: string, content: string) {
   let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;
@@ -53,6 +55,9 @@ export function useDocumentHead({
     const description = language === "en" ? descriptionEn : descriptionEs;
     const image = ogImage || OG_IMAGE;
 
+    // Auto-generate canonical from current path if none provided
+    const canonicalUrl = canonical || `${PROD_DOMAIN}${window.location.pathname}`;
+
     document.title = title;
     upsertMeta("name", "description", description);
     upsertMeta("property", "og:title", title);
@@ -65,13 +70,11 @@ export function useDocumentHead({
     upsertMeta("name", "twitter:description", description);
     upsertMeta("name", "twitter:image", image);
 
-    if (canonical) {
-      upsertLink("canonical", canonical);
-      // hreflang alternates for EN/ES
-      upsertLink("alternate", canonical, "en");
-      upsertLink("alternate", canonical.replace('/v2/', '/v2/').replace('?lang=en', '') + '?lang=es', "es");
-      upsertLink("alternate", canonical, "x-default");
-    }
+    // Canonical + hreflang
+    upsertLink("canonical", canonicalUrl);
+    upsertLink("alternate", canonicalUrl, "en");
+    upsertLink("alternate", canonicalUrl + (canonicalUrl.includes('?') ? '&' : '?') + 'lang=es', "es");
+    upsertLink("alternate", canonicalUrl, "x-default");
 
     return () => {
       document.title = DEFAULT_TITLE;
