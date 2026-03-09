@@ -652,7 +652,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- move-up-buyer ---
   {
     id: 'move-up-buyer',
-    path: '/v2/guides/move-up-buyer',
+    path: '/guides/move-up-buyer',
     titleEn: 'Move-Up Buying in Tucson: How to Buy and Sell at the Same Time',
     titleEs: 'Comprar para Avanzar en Tucson: Cómo Comprar y Vender al Mismo Tiempo',
     labelEn: 'Move-Up Buyer Guide',
