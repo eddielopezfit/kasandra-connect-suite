@@ -255,8 +255,22 @@ const V2OffMarketBuyerContent = () => {
                 )}
               </p>
               <button
-                onClick={() => openChat({ source: "off_market_capture" as any, intent: "buy" })}
-                className="inline-flex items-center gap-2 bg-cc-navy text-white px-6 py-3 rounded-xl font-semibold hover:bg-cc-navy/90 transition-colors"
+                onClick={() => {
+                  const areaLabels = criteria.areas.map(id => TUCSON_AREAS.find(a => a.id === id)?.label || id);
+                  const budgetLabel = BUDGET_RANGES.find(b => b.id === criteria.budget)?.label || criteria.budget;
+                  const timelineLabel = TIMELINES.find(tl => tl.id === criteria.timeline)?.label || criteria.timeline;
+                  const propLabel = PROPERTY_TYPES.find(p => p.id === criteria.property_type)?.label || criteria.property_type;
+                  openChat({
+                    source: "off_market_registered" as any,
+                    intent: "buy",
+                    offMarketData: {
+                      areas: areaLabels,
+                      budgetRange: budgetLabel,
+                      timeline: timelineLabel,
+                      propertyType: propLabel,
+                    },
+                  });
+                }}
               >
                 <Sparkles className="w-4 h-4" />
                 {t("Talk to Selena", "Hablar con Selena")}

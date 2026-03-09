@@ -241,7 +241,16 @@ const V2MarketIntelligenceContent = () => {
               )}
             </p>
             <Button
-              onClick={() => openChat({ source: 'market_intelligence', intent: 'explore' })}
+              onClick={() => openChat({
+                source: 'market_intelligence_result' as any,
+                intent: 'explore',
+                marketIntelData: {
+                  daysOnMarket: dom,
+                  saleToListRatio: saleToListPct,
+                  holdingCostPerDay: holdingCost,
+                  isLive,
+                },
+              })}
               className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
             >
               <MessageCircle className="w-4 h-4 mr-2" />
