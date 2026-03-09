@@ -80,7 +80,7 @@ const StepContact = ({
   // Email-only form
   const emailForm = useForm<EmailOnlyFormData>({
     resolver: zodResolver(emailOnlySchema),
-    defaultValues: { email: "", consent: false as any },
+    defaultValues: { email: "", consent: false as unknown as boolean },
   });
 
   // Pre-populate from session
