@@ -173,7 +173,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Verifique Su Preparación',
     component: 'src/pages/v2/V2Buy.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/buyer-readiness',
+    expectedTarget: '/buyer-readiness',
     automatable: true,
     priority: 13,
   },
