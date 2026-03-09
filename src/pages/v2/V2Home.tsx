@@ -99,7 +99,7 @@ const V2HomeContent = () => {
         "@type": ["RealEstateAgent", "LocalBusiness"],
         name: "Kasandra Prieto",
         description: "Bilingual REALTOR® serving the Tucson community with integrity, heart, and expertise.",
-        url: "https://kasandraprietorealtor.com/v2",
+        url: "https://kasandraprietorealtor.com",
         image: "https://kasandraprietorealtor.com/og-kasandra.jpg",
         telephone: "+1-520-349-3248",
         address: { "@type": "PostalAddress", addressLocality: "Tucson", addressRegion: "AZ", addressCountry: "US" },
