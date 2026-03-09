@@ -160,7 +160,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Agende una Consulta Privada',
     component: 'src/pages/v2/V2Sell.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/book',
+    expectedTarget: '/book',
     automatable: true,
     priority: 12,
   },
