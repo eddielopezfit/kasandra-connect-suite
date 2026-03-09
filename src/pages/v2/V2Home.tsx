@@ -164,7 +164,7 @@ const V2HomeContent = () => {
                       variant="outline"
                       className="border-white/40 text-white hover:bg-white/10 rounded-full px-8 py-6 text-lg"
                     >
-                      <Link to="/v2/seller-decision">
+                      <Link to="/seller-decision">
                         {t("Find My Best Path", "Encontrar Mi Mejor Camino")}
                       </Link>
                     </Button>
