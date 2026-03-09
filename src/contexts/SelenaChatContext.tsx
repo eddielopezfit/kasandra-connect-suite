@@ -261,7 +261,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     const storedHistoryExists = messages.length > 0 || !!localStorage.getItem(CHAT_HISTORY_KEY);
     const hasContextualEntry = isMeaningfulSource && isNewEntry;
 
-    const result = computeGreeting(entryContext, sessionContext, messages, storedHistoryExists, t, language);
+    // FIX 5: Pass session trail to greeting engine for trail-aware greetings
+    const result = computeGreeting(entryContext, sessionContext, messages, storedHistoryExists, t, language, serializeTrailForSelena());
 
     if (result) {
       const greeting: ChatMessage = {

@@ -444,15 +444,25 @@ export function computeGreeting(
       );
       suggestedReplies = getPhaseAwareChips(t, sessionCtx);
     } else {
-      greetingContent = t(
-        "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
-        "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
-      );
-      suggestedReplies = [
-        { label: t("I'm thinking about selling", "Estoy pensando en vender") },
-        { label: t("I'm looking to buy", "Estoy buscando comprar") },
-        { label: t("Just exploring for now", "Solo estoy explorando") },
-      ];
+      // FIX 5: Try trail-aware greeting for floating_button/hero entries with journey context
+      const trail = sessionTrail ?? serializeTrailForSelena();
+      const trailSummary = summarizeTrail(trail);
+      const trailGreeting = generateTrailAwareGreeting(trailSummary, t);
+      
+      if (trailGreeting && (trail.length >= 2)) {
+        greetingContent = trailGreeting.content;
+        suggestedReplies = trailGreeting.replies;
+      } else {
+        greetingContent = t(
+          "Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?",
+          "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"
+        );
+        suggestedReplies = [
+          { label: t("I'm thinking about selling", "Estoy pensando en vender") },
+          { label: t("I'm looking to buy", "Estoy buscando comprar") },
+          { label: t("Just exploring for now", "Solo estoy explorando") },
+        ];
+      }
     }
   }
 
