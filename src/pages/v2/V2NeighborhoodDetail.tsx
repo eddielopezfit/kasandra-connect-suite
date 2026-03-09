@@ -12,30 +12,16 @@ import RelatedNeighborhoodsRail from "@/components/v2/neighborhood/RelatedNeighb
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { useEffect } from "react";
+import { type NeighborhoodEntry } from "@/data/neighborhoods/neighborhoodRegistry";
 
-const V2NeighborhoodDetail = () => {
-  const { slug } = useParams<{ slug: string }>();
+/** Inner content — must render inside V2Layout to access SelenaChatProvider */
+const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: NeighborhoodEntry }) => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
-  
-  const neighborhood = slug ? getNeighborhoodBySlug(slug) : undefined;
 
   useEffect(() => {
-    if (neighborhood) {
-      logEvent('neighborhood_page_view', { slug: neighborhood.slug, region: neighborhood.regionGroup });
-    }
-  }, [neighborhood]);
-
-  useDocumentHead({
-    titleEn: neighborhood ? `${neighborhood.name} AZ Real Estate | Kasandra Prieto — Corner Connect` : "Neighborhood Not Found",
-    titleEs: neighborhood ? `Bienes Raíces en ${neighborhood.nameEs} AZ | Kasandra Prieto — Corner Connect` : "Vecindario No Encontrado",
-    descriptionEn: neighborhood?.metaDescription.en || "",
-    descriptionEs: neighborhood?.metaDescription.es || "",
-  });
-
-  if (!neighborhood) {
-    return <Navigate to="/v2/neighborhoods" replace />;
-  }
+    logEvent('neighborhood_page_view', { slug: neighborhood.slug, region: neighborhood.regionGroup });
+  }, [neighborhood.slug, neighborhood.regionGroup]);
 
   const handleSelenaOpen = () => {
     openChat({
@@ -68,7 +54,7 @@ const V2NeighborhoodDetail = () => {
   };
 
   return (
-    <V2Layout>
+    <>
       <JsonLd data={jsonLdData} />
 
       {/* Hero */}
@@ -108,6 +94,28 @@ const V2NeighborhoodDetail = () => {
 
       {/* Related Neighborhoods + Guides */}
       <RelatedNeighborhoodsRail neighborhood={neighborhood} />
+    </>
+  );
+};
+
+const V2NeighborhoodDetail = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const neighborhood = slug ? getNeighborhoodBySlug(slug) : undefined;
+
+  useDocumentHead({
+    titleEn: neighborhood ? `${neighborhood.name} AZ Real Estate | Kasandra Prieto — Corner Connect` : "Neighborhood Not Found",
+    titleEs: neighborhood ? `Bienes Raíces en ${neighborhood.nameEs} AZ | Kasandra Prieto — Corner Connect` : "Vecindario No Encontrado",
+    descriptionEn: neighborhood?.metaDescription.en || "",
+    descriptionEs: neighborhood?.metaDescription.es || "",
+  });
+
+  if (!neighborhood) {
+    return <Navigate to="/v2/neighborhoods" replace />;
+  }
+
+  return (
+    <V2Layout>
+      <NeighborhoodDetailContent neighborhood={neighborhood} />
     </V2Layout>
   );
 };
