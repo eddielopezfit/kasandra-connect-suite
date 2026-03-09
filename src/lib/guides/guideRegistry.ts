@@ -33,8 +33,6 @@ export type DisclaimerType = 'legal' | 'financial' | 'general';
 export type DecisionIntent = 'buy' | 'sell' | 'value' | 'cash' | 'life_event' | 'trust';
 export type DecisionStage = 'explore' | 'compare' | 'decide';
 
-/** @deprecated Removed as part of Guide-First Restructure. Mid-guide CTAs are no longer rendered. */
-export type MidGuidePromptKey = never;
 
 // Asset slot configuration — render nothing when undefined
 // Governance: fields are optional per tier. No console warnings for missing optional slots.
