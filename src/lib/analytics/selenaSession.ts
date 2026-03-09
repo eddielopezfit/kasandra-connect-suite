@@ -107,7 +107,9 @@ export interface SessionContext {
   neighborhood_quiz_top_zip?: string | null;
   // Tool completion tracking (real-time journey awareness)
   tools_completed?: string[];           // Canonical tool IDs completed this session
-  last_tool_completed?: string;         // Most recent tool finished
+  last_tool_completed?: string;         // Most recent tool finished (FIX 6: renamed from tool_used)
+  // Guide completion tracking (FIX 2: journey awareness)
+  guides_completed?: string[];          // Guide IDs the user has completed (50%+ scroll)
   // Seller Decision Path
   seller_decision_step?: number;
   seller_decision_recommended_path?: 'cash' | 'traditional' | 'consult';
