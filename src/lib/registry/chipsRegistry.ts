@@ -123,7 +123,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
   {
     id: 'tool-buyer-readiness-en',
     label_en: 'Take the readiness check',
-    label_es: 'Tomar la evaluación de preparación',
+    label_es: 'Evaluación de preparación',
     normalized_key: 'take the readiness check',
     actionSpec: { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' } },
     chipKey: CHIP_KEYS.BUYER_READINESS,
