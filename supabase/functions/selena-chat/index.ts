@@ -381,7 +381,7 @@ function inferSessionState(
     hasAskedValue: VALUE_PATTERNS.test(userCombined),
     hasComparedOptions: (userCombined.match(new RegExp(COMPARE_PATTERNS.source, 'gi')) || []).length,
     hasReadSellerGuide: SELLER_GUIDE_PATTERNS.test(combined) || !!context.last_guide_id,
-    hasUsedCalculator: CALCULATOR_PATTERNS.test(combined) || !!context.tool_used,
+    hasUsedCalculator: CALCULATOR_PATTERNS.test(combined) || !!context.last_tool_completed,
     chipHistory: userMessages.slice(-5).map(m => m.toLowerCase().trim()),
   };
 }
