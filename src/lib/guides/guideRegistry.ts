@@ -1022,7 +1022,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   {
     id: 'sell-or-rent-tucson',
-    path: '/v2/guides/sell-or-rent-tucson',
+    path: '/guides/sell-or-rent-tucson',
     titleEn: 'Should I Sell or Rent My Tucson Home?',
     titleEs: '¿Debo Vender o Alquilar Mi Casa en Tucson?',
     labelEn: 'Sell or Rent?',
