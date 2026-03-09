@@ -74,7 +74,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Más Información (Ofertas en Efectivo)',
     component: 'src/pages/v2/V2Home.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/cash-offer-options',
+    expectedTarget: '/cash-offer-options',
     automatable: true,
     priority: 5,
   },
