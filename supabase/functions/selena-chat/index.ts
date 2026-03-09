@@ -3075,6 +3075,39 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       }
     }
 
+    // --- Off-Market Buyer Registration data (areas + criteria from CTA click) ---
+    const omData = context.off_market_data;
+    if (omData && omData.areas?.length > 0) {
+      const areasStr = omData.areas.slice(0, 3).join(', ');
+      if (language === 'es') {
+        toolOutputHint += `\n\nRESULTADO DE HERRAMIENTA — REGISTRO DE ACCESO FUERA DEL MERCADO:\nÁreas: ${areasStr}\nPresupuesto: ${omData.budgetRange}\nPlazo: ${omData.timeline}\nTipo de propiedad: ${omData.propertyType}\n\nCONTEXTO DE FUERA DEL MERCADO:\n- Referencia sus criterios específicos.\n- Pivote a reserva: "Kasandra monitorea listados privados que coinciden con tu perfil. Una llamada corta le ayuda a entender exactamente lo que buscas."\n- Siempre incluye chip "Hablar con Kasandra".`;
+      } else {
+        toolOutputHint += `\n\nTOOL RESULT — OFF-MARKET ACCESS REGISTRATION:\nAreas: ${areasStr}\nBudget: ${omData.budgetRange}\nTimeline: ${omData.timeline}\nProperty type: ${omData.propertyType}\n\nOFF-MARKET CONTEXT:\n- Reference their specific criteria.\n- Booking pivot: "Kasandra monitors pocket listings matching your profile. A short call helps her understand exactly what you're looking for."\n- Always include "Talk with Kasandra" chip.`;
+      }
+    }
+
+    // --- Neighborhood Compare data (areas compared from CTA click) ---
+    const ncData = context.neighborhood_compare_data;
+    if (ncData && ncData.areasCompared?.length >= 2) {
+      const areasStr = ncData.areasCompared.slice(0, 3).join(' vs ');
+      if (language === 'es') {
+        toolOutputHint += `\n\nRESULTADO DE HERRAMIENTA — COMPARACIÓN DE VECINDARIOS:\nÁreas comparadas: ${areasStr}\n\nCONTEXTO DE COMPARACIÓN:\n- Referencia las áreas específicas que compararon.\n- Pivote a reserva: "Kasandra puede compartir lo que está viendo en el terreno en esas áreas — contexto que no aparece en una herramienta."\n- Siempre incluye chip "Hablar con Kasandra".`;
+      } else {
+        toolOutputHint += `\n\nTOOL RESULT — NEIGHBORHOOD COMPARISON:\nAreas compared: ${areasStr}\n\nNEIGHBORHOOD COMPARE CONTEXT:\n- Reference the specific areas they compared.\n- Booking pivot: "Kasandra can share what she's seeing on the ground in those areas — context that doesn't show up in a tool."\n- Always include "Talk with Kasandra" chip.`;
+      }
+    }
+
+    // --- Market Intelligence data (live stats from CTA click) ---
+    const miData = context.market_intel_data;
+    if (miData && miData.daysOnMarket > 0) {
+      const implication = miData.daysOnMarket <= 20 ? 'fast-moving' : miData.daysOnMarket <= 45 ? 'balanced' : 'buyer-favorable';
+      if (language === 'es') {
+        toolOutputHint += `\n\nRESULTADO DE HERRAMIENTA — INTELIGENCIA DEL MERCADO:\nDías en mercado: ${miData.daysOnMarket}\nRatio precio/lista: ${miData.saleToListRatio}\nCosto diario de espera: $${miData.holdingCostPerDay}\nDatos en vivo: ${miData.isLive ? 'Sí' : 'Fallback'}\n\nCONTEXTO DE MERCADO:\n- Referencia estas estadísticas específicas. Son ${implication === 'fast-moving' ? 'un mercado activo' : implication === 'balanced' ? 'un mercado equilibrado' : 'un mercado favorable para compradores'}.\n- Pivote a reserva: "Estos son promedios — Kasandra puede decirte qué significan para tu código postal y rango de precio."\n- Siempre incluye chip "Hablar con Kasandra".`;
+      } else {
+        toolOutputHint += `\n\nTOOL RESULT — MARKET INTELLIGENCE:\nDays on market: ${miData.daysOnMarket}\nSale-to-list ratio: ${miData.saleToListRatio}\nDaily holding cost: $${miData.holdingCostPerDay}\nLive data: ${miData.isLive ? 'Yes' : 'Fallback'}\n\nMARKET INTELLIGENCE CONTEXT:\n- Reference these specific stats. It's a ${implication} market.\n- Booking pivot: "These are averages — Kasandra can tell you what they mean for your ZIP and price point."\n- Always include "Talk with Kasandra" chip.`;
+      }
+    }
+
     // ============= JOURNEY STATE ENGINE =============
     // Guard 1: Coerce readiness_score to safe number
     const rawReadiness = Number(context.readiness_score);
