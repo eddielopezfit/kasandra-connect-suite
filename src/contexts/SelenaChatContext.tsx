@@ -633,13 +633,60 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     setPendingAction(null);
     setPendingReportId(null);
     
+    // Fire-and-forget handoff to GHL via notify-handoff edge function
+    try {
+      const sessionContext = getSessionContext();
+      const handoffPayload = {
+        contact: {
+          firstName: sessionContext?.name?.split(' ')[0] ?? '',
+          lastName: sessionContext?.name?.split(' ').slice(1).join(' ') ?? '',
+          phone: sessionContext?.phone ?? '',
+          email: sessionContext?.email ?? '',
+        },
+        context: {
+          selena_lead_id: newLeadId,
+          session_id: sessionContext?.session_id ?? '',
+          intent: sessionContext?.intent ?? '',
+          language: languageRef.current,
+          journey_state: sessionContext?.journey_state ?? 'explore',
+          chip_phase_floor: sessionContext?.chip_phase_floor ?? 0,
+          guides_consumed: getGuidesCompleted(),
+          tools_completed: sessionContext?.tools_completed ?? [],
+          readiness_score: sessionContext?.readiness_score ?? 0,
+          inherited_home: sessionContext?.inherited_home ?? false,
+          trust_signal_detected: sessionContext?.trust_signal_detected ?? false,
+          timeline: sessionContext?.timeline ?? '',
+          estimated_value: sessionContext?.estimated_value ?? '',
+          property_condition: sessionContext?.property_condition_raw ?? '',
+          situation: sessionContext?.situation ?? '',
+          entry_source: sessionContext?.entry_source ?? 'selena_chat',
+          page_path: location.pathname,
+          utm_source: sessionContext?.utm_source ?? '',
+          utm_campaign: sessionContext?.utm_campaign ?? '',
+          quiz_completed: sessionContext?.quiz_completed ?? false,
+          quiz_result_path: sessionContext?.quiz_result_path ?? '',
+          primary_priority: sessionContext?.primary_priority ?? '',
+          sms_consent: false,
+          ai_disclosure_accepted: true,
+        },
+      };
+
+      supabase.functions.invoke('notify-handoff', { body: handoffPayload })
+        .then(({ error }) => {
+          if (error) console.error('[Selena] Handoff failed:', error);
+          else console.log('[Selena] Handoff successful');
+        });
+    } catch (handoffErr) {
+      console.error('[Selena] Handoff payload error:', handoffErr);
+    }
+    
     setTimeout(() => {
       if (currentPendingReportId) {
         if (currentPendingReportId === 'LAST') handleOpenLastReport();
         else handleOpenReportById(currentPendingReportId);
       }
     }, 100);
-  }, [setLeadIdentity, pendingReportId, handleOpenReportById, handleOpenLastReport]);
+  }, [setLeadIdentity, pendingReportId, handleOpenReportById, handleOpenLastReport, location.pathname]);
 
   const setCalculatorResult = useCallback((advantage: CalculatorAdvantage) => {
     setHasUsedCalculator(true);
