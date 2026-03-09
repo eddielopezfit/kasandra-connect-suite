@@ -136,8 +136,11 @@ export function computeGreeting(
     if (!storedHistoryExists && messages.length === 0) return true;
     if (messages.length > 3 && isMeaningfulSource && isAllowedGreetingSource) {
       const contextualSources = ['guide_handoff', 'calculator', 'synthesis', 'quiz_result', 'seller_decision',
-        'market_intelligence', 'neighborhood_compare', 'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index',
-        'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture'];
+        'market_intelligence', 'market_intelligence_result', 'neighborhood_compare', 'neighborhood_compare_result', 
+        'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index',
+        'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture',
+        'off_market_registered', 'off_market_capture'];
+      return contextualSources.includes(entryContext?.source || '');
       return contextualSources.includes(entryContext?.source || '');
     }
     if (isMeaningfulSource && isAllowedGreetingSource) return true;
