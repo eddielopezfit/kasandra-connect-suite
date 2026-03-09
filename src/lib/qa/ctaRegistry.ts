@@ -52,7 +52,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Más Información (Compradores)',
     component: 'src/pages/v2/V2Home.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/buy',
+    expectedTarget: '/buy',
     automatable: true,
     priority: 3,
   },
