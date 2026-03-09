@@ -400,6 +400,12 @@ const VALUE_PATTERNS = /home worth|what.*worth|value|valuation|cuánto vale|valo
 // Calculator usage
 const CALCULATOR_PATTERNS = /calculator|net proceeds|estimate.*net|cash offer|calculadora|calcular/i;
 
+// Inherited home / estate detection
+const INHERITED_HOME_PATTERNS = /inherited|inheritance|estate|passed away|lost.*(?:grand|parent|mom|dad|father|mother)|(?:grand|parent|mom|dad).*passed|family home|deceased|left me|left us|died|falleci[oó]|herencia|heredé|propiedad.*familia/i;
+
+// Trust signal detection
+const TRUST_SIGNAL_PATTERNS = /she seems|he seems|looks trustworthy|saw.*social|social media|heard about|referred|recommended|friend said|family said|seems pleasant|seems nice|seems legit|parece confiable|me recomendaron|vi.*redes sociales/i;
+
 /**
  * Infers session engagement state from conversation history
  */
