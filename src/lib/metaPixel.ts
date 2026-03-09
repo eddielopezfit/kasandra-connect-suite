@@ -78,7 +78,7 @@ export function getScoreBand(score: number): string {
 export function init() {
   if (initialized || !PIXEL_ID) return;
 
-  const f = window as any;
+  const f = window;
   const b = document;
 
   // If fbq already exists (e.g. injected by GTM), just init the pixel ID
