@@ -3132,12 +3132,20 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     const HIGH_INTENT_FINANCIAL = /how much|what.*need|can i afford|what do i need|cuánto.*necesito|cuanto.*necesito|what.*cost|total.*need/i;
     const isHighIntentQuestion = HIGH_INTENT_FINANCIAL.test(message);
 
+    // FIX 3: Inherited home + trust signal detection (scans full conversation)
+    const allConversation = [...history.map(h => h.content), message].join(' ');
+    const isInheritedHome = INHERITED_HOME_PATTERNS.test(allConversation);
+    const hasTrustSignal = TRUST_SIGNAL_PATTERNS.test(allConversation);
+
     const journey = classifyJourneyState({
       readiness_score: safeReadinessScore,
       tools_completed: toolsCompleted,
       guides_read_count: guidesReadCount,
       intent: effectiveIntent,
       language,
+      isInheritedHome,
+      timeline: timeline || context.timeline || undefined,
+      hasTrustSignal,
     });
 
     let governanceHint = "";
