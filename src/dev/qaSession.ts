@@ -29,7 +29,7 @@ export function setQaSession(id: string): void {
     // noop
   }
 
-  console.log(`[QA] Session ID set to: ${id}`);
+  logger.log(`[QA] Session ID set to: ${id}`);
 }
 
 /**
