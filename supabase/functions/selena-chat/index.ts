@@ -696,22 +696,22 @@ const CHIP_DESTINATION: Record<string, string> = {
 
 // Tool ID → destination paths it blocks (the routes the tool lives on)
 const TOOL_BLOCKED_DESTINATIONS: Record<string, string[]> = {
-  'buyer_readiness': ['/v2/buyer-readiness'],
-  'seller_readiness': ['/v2/seller-readiness'],
-  'cash_readiness': ['/v2/cash-readiness'],
-  'tucson_alpha_calculator': ['/v2/cash-offer-options'],
-  'seller_decision': ['/v2/seller-decision'],
-  'off_market_buyer': ['/v2/off-market'],
+  'buyer_readiness': ['/buyer-readiness'],
+  'seller_readiness': ['/seller-readiness'],
+  'cash_readiness': ['/cash-readiness'],
+  'tucson_alpha_calculator': ['/cash-offer-options'],
+  'seller_decision': ['/seller-decision'],
+  'off_market_buyer': ['/off-market'],
 };
 
 // Replacement destinations when a tool is completed — ordered by progression
 const TOOL_REPLACEMENT_DESTINATION: Record<string, string> = {
-  'buyer_readiness': '/v2/guides',
-  'seller_readiness': '/v2/cash-offer-options',
-  'cash_readiness': '/v2/cash-offer-options',
-  'tucson_alpha_calculator': '/v2/book',
-  'seller_decision': '/v2/book',
-  'off_market_buyer': '/v2/guides',
+  'buyer_readiness': '/guides',
+  'seller_readiness': '/cash-offer-options',
+  'cash_readiness': '/cash-offer-options',
+  'tucson_alpha_calculator': '/book',
+  'seller_decision': '/book',
+  'off_market_buyer': '/guides',
 };
 
 // Reverse lookup: destination → semantic chip key
