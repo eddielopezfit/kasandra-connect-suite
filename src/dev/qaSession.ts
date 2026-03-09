@@ -44,7 +44,7 @@ export function getQaSessionId(): string | null {
  */
 export function clearQaSession(): void {
   localStorage.removeItem(QA_KEY);
-  console.log('[QA] QA session override cleared. Next load will generate a new session.');
+  logger.log('[QA] QA session override cleared. Next load will generate a new session.');
 }
 
 /**
