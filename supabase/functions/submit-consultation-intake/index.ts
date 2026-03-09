@@ -497,7 +497,7 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
           source: "lovable_native_form",
           lead_id: leadId,
           language: input.language,
-          page_path: input.page_path || "/v2/book",
+          page_path: input.page_path || "/book",
           session_id: input.session_id || null,
           property_address: input.property_address || null,
           target_neighborhoods: input.target_neighborhoods || null,
