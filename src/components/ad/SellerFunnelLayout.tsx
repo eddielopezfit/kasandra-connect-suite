@@ -11,7 +11,7 @@ interface SellerFunnelLayoutProps {
 const SellerFunnelLayout = ({ children }: SellerFunnelLayoutProps) => {
   return (
     <SelenaChatProvider>
-      <div className="min-h-screen bg-cc-navy flex flex-col">
+      <div className="min-h-[100dvh] bg-cc-navy flex flex-col">
         {/* Language Toggle Header */}
         <header className="flex justify-end px-4 py-3">
           <LanguageToggle variant="dark" />
