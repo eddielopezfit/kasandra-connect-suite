@@ -323,7 +323,7 @@ const V2CashOfferOptionsContent = () => {
               className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
             >
               <Link
-                to="/v2/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options"
+                to="/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options"
                 onClick={() => {
                   logCTAClick({ cta_name: 'cash_offer_book_review', destination: '/v2/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options', page_path: '/v2/cash-offer-options', intent: 'sell' });
                 }}
