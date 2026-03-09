@@ -184,7 +184,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Agende una Consulta',
     component: 'src/pages/v2/V2Buy.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/book',
+    expectedTarget: '/book',
     automatable: true,
     priority: 14,
   },
