@@ -37,6 +37,29 @@ export const CLIENT_TOOL_REPLACEMENT: Record<string, ChipKey> = {
   tucson_alpha_calculator:  CHIP_KEYS.TALK_WITH_KASANDRA,
 };
 
+// ============= FIX 3: GUIDE CHIP SUPPRESSION =============
+
+/** Maps guide IDs to their chip keys that should be suppressed when guide is completed */
+const GUIDE_BLOCKED_CHIPS: Record<string, ChipKey[]> = {
+  'first-time-buyer-guide': [CHIP_KEYS.GUIDE_FTB, CHIP_KEYS.GUIDE_FTB_VIEW],
+  'cash-vs-traditional-sale': [CHIP_KEYS.GUIDE_CASH_VS_LISTING],
+  'selling-for-top-dollar': [CHIP_KEYS.GUIDE_SELLING_TOP_DOLLAR],
+  'military-pcs-guide': [CHIP_KEYS.GUIDE_MILITARY],
+  'divorce-selling': [CHIP_KEYS.GUIDE_DIVORCE],
+  'senior-downsizing': [CHIP_KEYS.GUIDE_SENIOR],
+  'tucson-neighborhoods': [CHIP_KEYS.GUIDE_NEIGHBORHOODS],
+  'relocating-to-tucson': [CHIP_KEYS.GUIDE_RELOCATION],
+  'pricing-strategy': [CHIP_KEYS.GUIDE_PRICING],
+  'cost-to-sell-tucson': [CHIP_KEYS.GUIDE_COST_TO_SELL],
+  'capital-gains-home-sale-arizona': [CHIP_KEYS.GUIDE_CAPITAL_GAINS],
+  'sell-or-rent-tucson': [CHIP_KEYS.GUIDE_SELL_OR_RENT],
+  'how-long-to-sell-tucson': [CHIP_KEYS.GUIDE_HOW_LONG],
+  'arizona-first-time-buyer-programs': [CHIP_KEYS.GUIDE_FTB_PROGRAMS],
+  'tucson-suburb-comparison': [CHIP_KEYS.GUIDE_SUBURB_COMPARE],
+  'buying-home-noncitizen-arizona': [CHIP_KEYS.GUIDE_NONCITIZEN],
+  'arizona-real-estate-glossary': [CHIP_KEYS.GUIDE_GLOSSARY],
+};
+
 // ============= SEMANTIC KEY → LOCALIZED LABEL RESOLUTION =============
 
 /**
