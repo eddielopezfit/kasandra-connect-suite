@@ -2325,13 +2325,13 @@ serve(async (req) => {
       .slice(-MAX_HISTORY_TURNS)
       .map(m => ({ role: m.role, content: String(m.content ?? '').slice(0, MAX_HISTORY_TURN_CHARS) }));
 
-    // Rate limiting
+    // Rate limiting + handler-scoped Supabase client
     const rlUrl = Deno.env.get("SUPABASE_URL");
     const rlKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    if (rlUrl && rlKey) {
-      const rlClient = createClient(rlUrl, rlKey);
+    const supabase = (rlUrl && rlKey) ? createClient(rlUrl, rlKey) : null;
+    if (supabase) {
       const rlk = extractRateLimitKey(req, body);
-      const rl = await checkRateLimit(rlClient, rlk, 'selena-chat');
+      const rl = await checkRateLimit(supabase, rlk, 'selena-chat');
       if (!rl.allowed) return rateLimitResponse(corsHeaders);
     }
 
@@ -3083,19 +3083,21 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       });
     }
 
-    // Log model usage for analytics
-    try {
-      await supabase.from("event_log").insert({
-        session_id: context.session_id,
-        event_type: "selena_model_fallback",
-        event_payload: {
-          model: modelUsed,
-          fallback_triggered: modelUsed !== "google/gemini-3-flash-preview",
-          timestamp: new Date().toISOString()
-        }
-      });
-    } catch (e) {
-      console.error("Failed to log model fallback event:", e);
+    // Log model usage for analytics (uses handler-scoped supabase client)
+    if (supabase) {
+      try {
+        await supabase.from("event_log").insert({
+          session_id: context.session_id,
+          event_type: "selena_model_usage",
+          event_payload: {
+            model: modelUsed,
+            fallback_triggered: modelUsed !== "google/gemini-3-flash-preview",
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (e) {
+        console.error("Failed to log model usage event:", e);
+      }
     }
 
     const data = await response.json();
