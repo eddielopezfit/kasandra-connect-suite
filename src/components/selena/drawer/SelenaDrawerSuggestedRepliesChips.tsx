@@ -26,9 +26,9 @@ const EXPANSION_CHIPS: Record<string, {
   queryParam?: string;
 }[]> = {
   'get my selling options': [
-    { labelEn: 'I need to sell fast',     labelEs: 'Necesito vender rápido',     path: '/v2/seller-decision', queryParam: 'urgency=fast'     },
-    { labelEn: 'I want top dollar',       labelEs: 'Quiero el mejor precio',     path: '/v2/seller-decision', queryParam: 'urgency=optimize' },
-    { labelEn: 'Just exploring options',  labelEs: 'Solo explorando opciones',   path: '/v2/seller-decision'                                  },
+    { labelEn: 'I need to sell fast',     labelEs: 'Necesito vender rápido',     path: '/seller-decision', queryParam: 'urgency=fast'     },
+    { labelEn: 'I want top dollar',       labelEs: 'Quiero el mejor precio',     path: '/seller-decision', queryParam: 'urgency=optimize' },
+    { labelEn: 'Just exploring options',  labelEs: 'Solo explorando opciones',   path: '/seller-decision'                                  },
   ],
 };
 

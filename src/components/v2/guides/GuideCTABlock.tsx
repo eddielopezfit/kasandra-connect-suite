@@ -101,7 +101,7 @@ const getCTAConfig = (category: GuideCategory) => {
 
   // Default for stories, tips, etc.
   return {
-    link: "/v2/guides",
+    link: "/guides",
     textEn: "Explore More Resources",
     textEs: "Explorar Más Recursos",
     subtextEn: "Continue learning at your own pace",
