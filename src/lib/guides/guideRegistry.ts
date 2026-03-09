@@ -723,7 +723,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- home-prep-staging ---
   {
     id: 'home-prep-staging',
-    path: '/v2/guides/home-prep-staging',
+    path: '/guides/home-prep-staging',
     titleEn: 'How to Prepare Your Tucson Home for Sale',
     titleEs: 'Cómo Preparar Tu Casa en Tucson para la Venta',
     labelEn: 'Home Prep & Staging',
