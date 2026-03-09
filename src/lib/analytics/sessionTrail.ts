@@ -74,6 +74,30 @@ const GUIDE_LABELS: Record<string, string> = {
   'pima-county-property-taxes':      'Pima County Property Taxes Guide',
   'capital-gains-home-sale-arizona': 'Capital Gains Guide',
   'arizona-real-estate-glossary':    'Real Estate Glossary',
+  'inherited-probate-property':      'Inherited/Probate Property Guide',
+  'life-change-selling':             'Life Change Selling Guide',
+  'selling-for-top-dollar':          'Selling for Top Dollar Guide',
+  'cash-offer-guide':                'Cash Offer Guide',
+  'understanding-home-valuation':    'Home Valuation Guide',
+};
+
+// Human-readable labels for neighborhood slugs
+const NEIGHBORHOOD_LABELS: Record<string, string> = {
+  'catalina-foothills':    'Catalina Foothills',
+  'oro-valley':            'Oro Valley',
+  'marana':                'Marana',
+  'sahuarita':             'Sahuarita',
+  'rita-ranch':            'Rita Ranch',
+  'vail':                  'Vail',
+  'sam-hughes':            'Sam Hughes',
+  'downtown-tucson':       'Downtown Tucson',
+  'tanque-verde':          'Tanque Verde',
+  'dove-mountain':         'Dove Mountain',
+  'casas-adobes':          'Casas Adobes',
+  'picture-rocks':         'Picture Rocks',
+  'midtown':               'Midtown',
+  'east-side':             'East Side',
+  'foothills':             'Foothills',
 };
 
 /**
