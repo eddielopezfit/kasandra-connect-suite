@@ -338,6 +338,17 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
 
     setIsLoading(true);
 
+    const normalizedMessage = content.trim().toLowerCase();
+    const detectedInheritedHome = INHERITED_HOME_SIGNAL.test(normalizedMessage);
+    const detectedTrustSignal = TRUST_SIGNAL.test(normalizedMessage);
+
+    if (detectedInheritedHome || detectedTrustSignal) {
+      updateSessionContext({
+        ...(detectedInheritedHome ? { inherited_home: true } : {}),
+        ...(detectedTrustSignal ? { trust_signal_detected: true } : {}),
+      });
+    }
+
     try {
       const context = getSessionContext();
       const history = messages.slice(-10).map(m => ({
@@ -365,6 +376,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               timeline: context?.timeline,
               last_guide_id: context?.last_guide_id,
               lead_id: leadId,
+              inherited_home: context?.inherited_home ?? false,
+              trust_signal_detected: context?.trust_signal_detected ?? false,
               // FIX 6: Renamed from tool_used
               last_tool_completed: context?.last_tool_completed,
               last_tool_result: context?.last_tool_result,
@@ -396,12 +409,12 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               entry_source: context?.entry_source ?? 'unknown',
               entry_guide_id: context?.entry_guide_id ?? null,
               entry_guide_title: context?.entry_guide_title ?? null,
-              closing_cost_data: (context as any)?.closing_cost_data ?? null,
-              seller_calc_data: (context as any)?.seller_calc_data ?? null,
-              readiness_entry_data: (context as any)?.readiness_entry_data ?? null,
-              off_market_data: (context as any)?.off_market_data ?? null,
-              neighborhood_compare_data: (context as any)?.neighborhood_compare_data ?? null,
-              market_intel_data: (context as any)?.market_intel_data ?? null,
+              closing_cost_data: context?.closing_cost_data ?? null,
+              seller_calc_data: context?.seller_calc_data ?? null,
+              readiness_entry_data: context?.readiness_entry_data ?? null,
+              off_market_data: context?.off_market_data ?? null,
+              neighborhood_compare_data: context?.neighborhood_compare_data ?? null,
+              market_intel_data: context?.market_intel_data ?? null,
             },
             history,
           }),
