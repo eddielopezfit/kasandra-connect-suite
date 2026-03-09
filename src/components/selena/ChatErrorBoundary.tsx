@@ -28,19 +28,27 @@ export class ChatErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
+      // Detect language from localStorage (LanguageContext not available in class components)
+      const lang = (typeof localStorage !== 'undefined' && localStorage.getItem('language')) || 'en';
+      const isEs = lang === 'es';
+
       return (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-white/95 backdrop-blur-md border border-cc-navy/10 p-4 rounded-2xl shadow-xl animate-in slide-in-from-bottom-5">
           <div className="bg-destructive/10 text-destructive p-2 rounded-full">
             <MessageCircle className="w-5 h-5" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-cc-navy">Chat unavailable</span>
-            <span className="text-xs text-cc-navy/60">Please refresh to try again.</span>
+            <span className="text-sm font-semibold text-cc-navy">
+              {isEs ? "Chat no disponible" : "Chat unavailable"}
+            </span>
+            <span className="text-xs text-cc-navy/60">
+              {isEs ? "Por favor actualiza para intentar de nuevo." : "Please refresh to try again."}
+            </span>
           </div>
           <button 
             onClick={this.handleReset}
             className="ml-2 p-2 hover:bg-cc-sand rounded-full transition-colors text-cc-navy/60 hover:text-cc-navy"
-            aria-label="Reload chat"
+            aria-label={isEs ? "Recargar chat" : "Reload chat"}
           >
             <RefreshCw className="w-4 h-4" />
           </button>

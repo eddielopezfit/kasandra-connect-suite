@@ -320,7 +320,7 @@ function isEmptyValue(value: unknown): boolean {
  * Only logs keys, never values
  */
 function devLog(msg: string, data?: unknown) {
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     console.log(msg, data ?? '');
   }
 }

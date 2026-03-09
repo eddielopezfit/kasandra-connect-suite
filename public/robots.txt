@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://kasandraprieto.com/sitemap.xml
+Sitemap: https://kasandraprietorealtor.com/sitemap.xml

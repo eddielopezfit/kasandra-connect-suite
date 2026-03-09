@@ -2,8 +2,8 @@
  * Shared CORS helper — replaces wildcard Access-Control-Allow-Origin: *
  *
  * Allowed origins:
- *   - kasandraprieto.com (production)
- *   - www.kasandraprieto.com
+ *   - kasandraprietorealtor.com (production)
+ *   - www.kasandraprietorealtor.com
  *   - lovable.app previews (Lovable build/preview environment)
  *   - localhost:* (local development)
  *
@@ -13,8 +13,8 @@
  */
 
 const ALLOWED_ORIGINS = [
-  "https://kasandraprieto.com",
-  "https://www.kasandraprieto.com",
+  "https://kasandraprietorealtor.com",
+  "https://www.kasandraprietorealtor.com",
 ];
 
 const ALLOWED_ORIGIN_PATTERNS = [
@@ -39,7 +39,7 @@ export function getCorsHeaders(req: Request): Record<string, string> {
     ALLOWED_ORIGIN_PATTERNS.some((p) => p.test(origin));
 
   return {
-    "Access-Control-Allow-Origin": isAllowed ? origin : "https://kasandraprieto.com",
+    "Access-Control-Allow-Origin": isAllowed ? origin : "https://kasandraprietorealtor.com",
     "Access-Control-Allow-Headers": CORS_ALLOWED_HEADERS,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   };
