@@ -284,11 +284,11 @@ export function getModeSuggestedReplies(
     4: {
       en: [
         "Find a time with Kasandra",
-        "Keep chatting with Selena",
+        "I have another question",
       ],
       es: [
         "Encontrar un horario con Kasandra",
-        "Seguir conversando con Selena",
+        "Tengo otra pregunta",
       ],
     },
   };

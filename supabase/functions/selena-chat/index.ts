@@ -3350,8 +3350,8 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     if (isMode4Handoff) {
       // HANDOFF mode: bypass all chip governance — chips must align with reply text
       suggestedReplies = language === "es"
-        ? ["Encontrar un horario con Kasandra", "Seguir conversando con Selena"]
-        : ["Find a time with Kasandra", "Keep chatting with Selena"];
+        ? ["Encontrar un horario con Kasandra", "Tengo otra pregunta"]
+        : ["Find a time with Kasandra", "I have another question"];
     } else if (isStallRecovery) {
       // Stall recovery — 3 options to re-anchor
       suggestedReplies = language === "es"
