@@ -121,7 +121,7 @@ export function GuideReadNext({ currentGuideId, currentCategory }: GuideReadNext
 
           {/* Cards */}
           <div className="grid sm:grid-cols-2 gap-4">
-            {related.map((guide) => (
+            {filteredRelated.map((guide) => (
               <Link
                 key={guide.id}
                 to={`/guides/${guide.id}`}
