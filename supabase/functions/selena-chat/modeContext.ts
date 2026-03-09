@@ -280,7 +280,7 @@ export function getModeSuggestedReplies(
         "¿Cuál es mi siguiente paso?",
       ],
     },
-    // MODE 4: Booking + keep chatting (must match HANDOFF reply text exactly)
+    // MODE 4: Booking + another question (must match HANDOFF reply text exactly)
     4: {
       en: [
         "Find a time with Kasandra",
