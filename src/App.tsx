@@ -9,7 +9,7 @@ import ScrollManager from "@/components/ScrollManager";
 import RouteAnalytics from "@/components/RouteAnalytics";
 import NotFound from "./pages/NotFound";
 import { initQaAccess } from "@/lib/qa/qaAccess";
-// V2 Pages (Canonical)
+// Pages (Canonical)
 import V2Home from "./pages/v2/V2Home";
 import V2Buy from "./pages/v2/V2Buy";
 import V2Sell from "./pages/v2/V2Sell";
@@ -59,39 +59,40 @@ const App = () => {
             <ScrollManager />
             <RouteAnalytics />
             <Routes>
-              {/* Legacy redirects → V2 */}
-              <Route path="/" element={<Navigate to="/v2" replace />} />
-              <Route path="/cash-offer" element={<Navigate to="/v2/cash-offer-options" replace />} />
-              <Route path="/podcast/episodes" element={<Navigate to="/v2/podcast" replace />} />
+              {/* Legacy redirects */}
+              <Route path="/v2" element={<Navigate to="/" replace />} />
+              <Route path="/v2/*" element={<Navigate to="/" replace />} />
+              <Route path="/cash-offer" element={<Navigate to="/cash-offer-options" replace />} />
+              <Route path="/podcast/episodes" element={<Navigate to="/podcast" replace />} />
 
-              {/* V2 Routes (Canonical) */}
-              <Route path="/v2" element={<V2Home />} />
-              <Route path="/v2/buy" element={<V2Buy />} />
-              <Route path="/v2/sell" element={<V2Sell />} />
-              <Route path="/v2/cash-offer-options" element={<V2CashOfferOptions />} />
-              <Route path="/v2/guides" element={<V2Guides />} />
-              <Route path="/v2/guides/:guideId" element={<V2GuideDetail />} />
-              <Route path="/v2/podcast" element={<V2Podcast />} />
-              <Route path="/v2/community" element={<V2Community />} />
-              <Route path="/v2/book" element={<V2Book />} />
-              <Route path="/v2/book/confirmed" element={<V2BookConfirmed />} />
-              <Route path="/v2/buyer-readiness" element={<V2BuyerReadiness />} />
+              {/* Canonical Routes */}
+              <Route path="/" element={<V2Home />} />
+              <Route path="/buy" element={<V2Buy />} />
+              <Route path="/sell" element={<V2Sell />} />
+              <Route path="/cash-offer-options" element={<V2CashOfferOptions />} />
+              <Route path="/guides" element={<V2Guides />} />
+              <Route path="/guides/:guideId" element={<V2GuideDetail />} />
+              <Route path="/podcast" element={<V2Podcast />} />
+              <Route path="/community" element={<V2Community />} />
+              <Route path="/book" element={<V2Book />} />
+              <Route path="/book/confirmed" element={<V2BookConfirmed />} />
+              <Route path="/buyer-readiness" element={<V2BuyerReadiness />} />
 
-              <Route path="/v2/private-cash-review" element={<V2PrivateCashReview />} />
-              <Route path="/v2/thank-you" element={<V2ThankYou />} />
+              <Route path="/private-cash-review" element={<V2PrivateCashReview />} />
+              <Route path="/thank-you" element={<V2ThankYou />} />
 
-              <Route path="/v2/seller-decision" element={<V2SellerDecision />} />
-              <Route path="/v2/seller-timeline" element={<V2SellerTimeline />} />
-              <Route path="/v2/seller-readiness" element={<V2SellerReadiness />} />
-              <Route path="/v2/cash-readiness" element={<V2CashReadiness />} />
-              <Route path="/v2/off-market" element={<V2OffMarketBuyer />} />
-              <Route path="/v2/market" element={<V2MarketIntelligence />} />
-              <Route path="/v2/neighborhood-compare" element={<V2NeighborhoodCompare />} />
-              <Route path="/v2/buyer-closing-costs" element={<V2BuyerClosingCosts />} />
-              <Route path="/v2/qa-cta" element={<V2CTAQualityAssurance />} />
-              <Route path="/v2/qa-determinism" element={<V2QADeterminism />} />
-              <Route path="/v2/neighborhoods" element={<V2Neighborhoods />} />
-              <Route path="/v2/neighborhoods/:slug" element={<V2NeighborhoodDetail />} />
+              <Route path="/seller-decision" element={<V2SellerDecision />} />
+              <Route path="/seller-timeline" element={<V2SellerTimeline />} />
+              <Route path="/seller-readiness" element={<V2SellerReadiness />} />
+              <Route path="/cash-readiness" element={<V2CashReadiness />} />
+              <Route path="/off-market" element={<V2OffMarketBuyer />} />
+              <Route path="/market" element={<V2MarketIntelligence />} />
+              <Route path="/neighborhood-compare" element={<V2NeighborhoodCompare />} />
+              <Route path="/buyer-closing-costs" element={<V2BuyerClosingCosts />} />
+              <Route path="/qa-cta" element={<V2CTAQualityAssurance />} />
+              <Route path="/qa-determinism" element={<V2QADeterminism />} />
+              <Route path="/neighborhoods" element={<V2Neighborhoods />} />
+              <Route path="/neighborhoods/:slug" element={<V2NeighborhoodDetail />} />
 
               {/* Ad Funnel Routes (Isolated) */}
               <Route path="/ad/seller" element={<SellerLanding />} />
