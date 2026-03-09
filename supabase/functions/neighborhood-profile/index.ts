@@ -60,6 +60,7 @@ serve(async (req) => {
   try {
     const body = await req.json();
     const zip_code = (body.zip_code || "").trim();
+    const neighborhood_name = (body.neighborhood_name || "").trim();
 
     if (!/^\d{5}$/.test(zip_code)) {
       return new Response(
