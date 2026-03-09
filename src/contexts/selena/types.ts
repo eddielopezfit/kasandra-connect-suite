@@ -30,7 +30,10 @@ export type EntrySource =
   | 'buyer_closing_costs'
   | 'seller_timeline'
   | 'neighborhoods_index'
-  | 'neighborhood_detail';
+  | 'neighborhood_detail'
+  | 'off_market_registered'
+  | 'neighborhood_compare_result'
+  | 'market_intelligence_result';
 
 export interface EntryContext {
   source: EntrySource;
