@@ -161,7 +161,7 @@ const V2ThankYouContent = () => {
           ],
           cta: {
             label: t('Read: First-Time Buyer Guide', 'Leer: Guía para Compradores Primerizos'),
-            href: '/v2/guides/first-time-buyer-guide',
+            href: '/guides/first-time-buyer-guide',
             icon: FileText,
           },
           resource: {
