@@ -110,7 +110,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
           <div className="bg-white rounded-xl p-3 text-center border border-cc-sand-dark/20">
             <p className="text-2xl font-serif font-bold text-cc-navy">$365K</p>
             <p className="text-[10px] text-cc-slate mt-0.5 leading-tight">
-              {t("Median Home Price", "Precio Mediano")}
+              {t("Pima County Median", "Mediana del Condado")}
             </p>
           </div>
         </div>

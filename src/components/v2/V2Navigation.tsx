@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageToggle from "./LanguageToggle";
@@ -8,6 +8,8 @@ import LanguageToggle from "./LanguageToggle";
 const V2Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isExploreOpen, setIsExploreOpen] = useState(false);
+  const exploreRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
   const location = useLocation();
 
@@ -17,18 +19,44 @@ const V2Navigation = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (exploreRef.current && !exploreRef.current.contains(e.target as Node)) {
+        setIsExploreOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const primaryLinks = [
     { href: "/v2", label: t("Home", "Inicio") },
     { href: "/v2/buy", label: t("Buy", "Comprar") },
     { href: "/v2/sell", label: t("Sell", "Vender") },
     { href: "/v2/cash-offer-options", label: t("Cash Options", "Opciones en Efectivo") },
+  ];
+
+  const exploreLinks = [
     { href: "/v2/neighborhoods", label: t("Neighborhoods", "Vecindarios") },
     { href: "/v2/guides", label: t("Guides", "Guías") },
     { href: "/v2/podcast", label: t("Podcast", "Podcast") },
     { href: "/v2/community", label: t("Community", "Comunidad") },
   ];
 
+  const allLinks = [...primaryLinks, ...exploreLinks];
+
   const isActive = (href: string) => location.pathname === href;
+  const isExploreActive = exploreLinks.some((l) => isActive(l.href));
+
+  const linkClass = (active: boolean) =>
+    `text-sm font-medium transition-colors ${
+      active
+        ? "text-cc-gold"
+        : isScrolled
+          ? "text-cc-charcoal hover:text-cc-gold"
+          : "text-white/90 hover:text-cc-gold"
+    }`;
 
   return (
     <nav
@@ -52,19 +80,40 @@ const V2Navigation = () => {
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={`text-sm font-medium transition-colors ${
-                  isActive(link.href)
-                    ? isScrolled ? "text-cc-gold" : "text-cc-gold"
-                    : isScrolled ? "text-cc-charcoal hover:text-cc-gold" : "text-white/90 hover:text-cc-gold"
-                }`}
-              >
+            {primaryLinks.map((link) => (
+              <Link key={link.href} to={link.href} className={linkClass(isActive(link.href))}>
                 {link.label}
               </Link>
             ))}
+
+            {/* Explore Dropdown */}
+            <div ref={exploreRef} className="relative">
+              <button
+                onClick={() => setIsExploreOpen(!isExploreOpen)}
+                className={`${linkClass(isExploreActive)} inline-flex items-center gap-1`}
+              >
+                {t("Explore", "Explorar")}
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExploreOpen ? "rotate-180" : ""}`} />
+              </button>
+              {isExploreOpen && (
+                <div className="absolute top-full mt-2 right-0 w-48 bg-white rounded-xl shadow-elevated border border-cc-sand-dark/20 py-2 z-50">
+                  {exploreLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      to={link.href}
+                      onClick={() => setIsExploreOpen(false)}
+                      className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
+                        isActive(link.href)
+                          ? "text-cc-gold bg-cc-sand/50"
+                          : "text-cc-charcoal hover:text-cc-gold hover:bg-cc-sand/30"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Right Side */}
@@ -93,14 +142,14 @@ const V2Navigation = () => {
             <div className="flex justify-center mb-4">
               <LanguageToggle variant={isScrolled ? "light" : "dark"} />
             </div>
-            {navLinks.map((link) => (
+            {allLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`block text-center py-2 font-medium ${
-                  isActive(link.href) 
-                    ? "text-cc-gold" 
+                  isActive(link.href)
+                    ? "text-cc-gold"
                     : isScrolled ? "text-cc-charcoal" : "text-white"
                 }`}
               >
