@@ -1,5 +1,6 @@
 import { useSearchParams, Link } from "react-router-dom";
 import { useEffect } from "react";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { CheckCircle2, Clock, FileText, Home, Phone, ArrowRight, MessageCircle } from "lucide-react";
@@ -14,6 +15,12 @@ const PAGE_PATH = '/thank-you';
 
 const V2ThankYouContent = () => {
   const { t } = useLanguage();
+  useDocumentHead({
+    titleEn: "Thank You | Kasandra Prieto — Realty Executives Arizona",
+    titleEs: "Gracias | Kasandra Prieto — Realty Executives Arizona",
+    descriptionEn: "Your consultation with Kasandra Prieto is confirmed. Next steps for your Tucson real estate journey.",
+    descriptionEs: "Su consulta con Kasandra Prieto está confirmada. Próximos pasos para su viaje inmobiliario en Tucson.",
+  });
   const [searchParams] = useSearchParams();
   const { openChat } = useSelenaChat();
   

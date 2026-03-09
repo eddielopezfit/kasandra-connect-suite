@@ -14,6 +14,7 @@
 
 import { Navigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useDocumentHead } from '@/hooks/useDocumentHead';
 import V2Layout from '@/components/v2/V2Layout';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -30,7 +31,12 @@ import { isQaAccessGranted } from '@/lib/qa/qaAccess';
 const V2QADeterminism = () => {
   // All hooks must be called before the gate
   const { language } = useLanguage();
-
+  useDocumentHead({
+    titleEn: "QA Determinism | Internal",
+    titleEs: "QA Determinismo | Interno",
+    descriptionEn: "Internal diagnostics for system determinism verification.",
+    descriptionEs: "Diagnósticos internos para verificación de determinismo del sistema.",
+  });
   // Prod gate — redirects cleanly, never renders blank
   if (!isQaAccessGranted()) {
     return <Navigate to="/" replace />;

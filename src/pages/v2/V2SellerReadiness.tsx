@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import V2Layout from "@/components/v2/V2Layout";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import SellerReadinessCheck from "@/components/v2/SellerReadinessCheck";
 import LeadCaptureModal from "@/components/v2/LeadCaptureModal";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -14,6 +15,12 @@ const LEAD_ID_KEY = "selena_lead_id";
 
 const V2SellerReadinessContent = () => {
   const { t } = useLanguage();
+  useDocumentHead({
+    titleEn: "Seller Readiness Check | Kasandra Prieto — Realty Executives Arizona",
+    titleEs: "Evaluación de Preparación del Vendedor | Kasandra Prieto — Realty Executives Arizona",
+    descriptionEn: "Check your readiness to sell your Tucson home. Get a personalized score and action plan from Kasandra Prieto.",
+    descriptionEs: "Evalúe su preparación para vender su casa en Tucson. Obtenga un puntaje personalizado y plan de acción.",
+  });
   const [showModal, setShowModal] = useState(false);
   const [showSaveLink, setShowSaveLink] = useState(false);
   const [captured, setCaptured] = useState(false);

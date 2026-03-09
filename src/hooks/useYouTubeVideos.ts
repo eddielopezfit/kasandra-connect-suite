@@ -19,7 +19,7 @@ async function fetchYouTubeVideos(limit: number = 8): Promise<YouTubeVideo[]> {
     throw new Error(error.message || 'Failed to fetch videos');
   }
 
-  const result = data as any;
+  const result = data as { success?: boolean; error?: string; videos?: YouTubeVideo[] };
 
   if (!result?.success) {
     throw new Error(result?.error || 'Failed to fetch videos');

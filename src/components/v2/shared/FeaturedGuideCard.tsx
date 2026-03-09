@@ -59,7 +59,7 @@ const FeaturedGuideCard = ({
       
       <div className="flex items-center justify-between">
         <Link
-          to={`/guides/${guideId}`}
+          to={`/guides/${guideId}`}  
           onClick={handleClick}
           className="inline-flex items-center gap-1 text-sm font-medium text-cc-gold hover:text-cc-gold-dark transition-colors group"
         >

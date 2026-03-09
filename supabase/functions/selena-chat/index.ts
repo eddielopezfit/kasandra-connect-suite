@@ -715,7 +715,6 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Sell or Rent Guide': '/guides/sell-or-rent-tucson',
   'How Long to Sell Guide': '/guides/how-long-to-sell-tucson',
   'Non-Citizen Buyers': '/guides/buying-home-noncitizen-arizona',
-  'Non-Citizen Buyer Guide': '/guides/buying-home-noncitizen-arizona',
   'Check my readiness': '/buyer-readiness',
   'Take readiness check': '/buyer-readiness',
   'Start now': '/buyer-readiness',
@@ -3309,8 +3308,8 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         throw new Error(`Primary model failed: ${response.status}`);
       }
     } catch (e) {
-      console.warn("Primary model failed, falling back to openai/gpt-4o-mini", e);
-      modelUsed = "openai/gpt-4o-mini";
+      console.warn("Primary model failed, falling back to openai/gpt-5-nano", e);
+      modelUsed = "openai/gpt-5-nano";
       response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`, "Content-Type": "application/json" },

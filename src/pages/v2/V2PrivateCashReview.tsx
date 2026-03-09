@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import V2Layout from "@/components/v2/V2Layout";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,6 +17,12 @@ type GateState = 'checking' | 'locked' | 'unlocked';
 
 const PrivateCashReviewContent = () => {
   const { t } = useLanguage();
+  useDocumentHead({
+    titleEn: "Private Cash Review | Kasandra Prieto — Realty Executives Arizona",
+    titleEs: "Revisión Privada de Efectivo | Kasandra Prieto — Realty Executives Arizona",
+    descriptionEn: "Get a private cash offer review for your Tucson home. Kasandra Prieto provides confidential, no-pressure consultations.",
+    descriptionEs: "Obtenga una revisión privada de oferta en efectivo para su casa en Tucson. Consultas confidenciales y sin presión.",
+  });
   const { openChat, openLastReport } = useSelenaChat();
   const schedulingRef = useRef<HTMLDivElement>(null);
   

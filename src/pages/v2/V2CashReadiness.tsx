@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import V2Layout from "@/components/v2/V2Layout";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import CashReadinessCheck from "@/components/v2/CashReadinessCheck";
 import LeadCaptureModal from "@/components/v2/LeadCaptureModal";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -14,6 +15,12 @@ const LEAD_ID_KEY = "selena_lead_id";
 
 const V2CashReadinessContent = () => {
   const { t } = useLanguage();
+  useDocumentHead({
+    titleEn: "Cash Offer Readiness Check | Kasandra Prieto — Realty Executives Arizona",
+    titleEs: "Evaluación de Preparación para Efectivo | Kasandra Prieto — Realty Executives Arizona",
+    descriptionEn: "Check if a cash offer is right for your Tucson property. Get a personalized readiness score from Kasandra Prieto.",
+    descriptionEs: "Verifique si una oferta en efectivo es adecuada para su propiedad en Tucson. Obtenga un puntaje personalizado.",
+  });
   const [showModal, setShowModal] = useState(false);
   const [showSaveLink, setShowSaveLink] = useState(false);
   const [captured, setCaptured] = useState(false);

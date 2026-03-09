@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import V2Layout from "@/components/v2/V2Layout";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -128,6 +129,12 @@ const ToggleChip = ({
 const V2OffMarketBuyerContent = () => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
+  useDocumentHead({
+    titleEn: "Off-Market Homes | Kasandra Prieto — Realty Executives Arizona",
+    titleEs: "Casas Fuera del Mercado | Kasandra Prieto — Realty Executives Arizona",
+    descriptionEn: "Get exclusive access to off-market properties in Tucson. Kasandra Prieto connects you with sellers before they list.",
+    descriptionEs: "Obtenga acceso exclusivo a propiedades fuera del mercado en Tucson. Kasandra le conecta con vendedores antes de publicar.",
+  });
   const navigate = useNavigate();
 
   const [step, setStep] = useState(0); // 0=criteria, 1=details, 2=contact, 3=confirmed
@@ -318,15 +325,14 @@ const V2OffMarketBuyerContent = () => {
               )}
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-sm text-white/60">
-              {[
-                [Eye, t("Private listings", "Listados privados")],
-                [Star, t("No bidding wars", "Sin guerras de ofertas")],
-                [Lock, t("No obligation", "Sin compromiso")],
-              ].map(([Icon, label], i) => (
+              {([
+                [Eye, t("Private listings", "Listados privados")] as [React.ComponentType<{className?: string}>, string],
+                [Star, t("No bidding wars", "Sin guerras de ofertas")] as [React.ComponentType<{className?: string}>, string],
+                [Lock, t("No obligation", "Sin compromiso")] as [React.ComponentType<{className?: string}>, string],
+              ]).map(([Icon, label], i) => (
                 <div key={i} className="flex items-center gap-2">
-                  {/* @ts-ignore */}
                   <Icon className="w-4 h-4 text-cc-gold" />
-                  <span>{label as string}</span>
+                  <span>{label}</span>
                 </div>
               ))}
             </div>

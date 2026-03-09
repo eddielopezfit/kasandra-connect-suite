@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
-// Route not needed — tests open in new tabs to preserve runner state
+import { useDocumentHead } from "@/hooks/useDocumentHead";
+import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { ctaRegistry, type CTATestEntry } from "@/lib/qa/ctaRegistry";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,13 @@ const saveResults = (results: Record<string, TestResult>) => {
 };
 
 const V2CTAQualityAssurance = () => {
+  const { t } = useLanguage();
+  useDocumentHead({
+    titleEn: "CTA Quality Assurance | Internal",
+    titleEs: "QA de CTAs | Interno",
+    descriptionEn: "Internal CTA testing dashboard for quality assurance.",
+    descriptionEs: "Panel interno de pruebas de CTAs para aseguramiento de calidad.",
+  });
   const [results, setResults] = useState<Record<string, TestResult>>(loadResults);
 
   useEffect(() => { saveResults(results); }, [results]);

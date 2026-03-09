@@ -279,8 +279,8 @@ export function applyGuardRules(
       ? 'GUARDIA CRITICA: El usuario está abrumado. NO recomiendes herramientas, guías, ni preguntas de calificación. Solo empatía + oferta de conexión humana con Kasandra.'
       : 'GUARD CRITICAL: User is overwhelmed. Do NOT recommend tools, guides, or qualification questions. Empathy only + offer human connection with Kasandra.');
     chipOverrides = language === 'es'
-      ? ['Conectar con Kasandra', 'Seguir conversando']
-      : ['Connect with Kasandra', 'Keep chatting'];
+      ? ['Conectar con Kasandra', 'Tengo otra pregunta']
+      : ['Connect with Kasandra', 'I have another question'];
     violations.push({ rule: 'overwhelm_gate', action: 'modified' });
   }
 
