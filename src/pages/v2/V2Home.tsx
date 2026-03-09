@@ -108,7 +108,7 @@ const V2HomeContent = () => {
         knowsLanguage: ["en", "es"],
       }} />
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center w-full max-w-full overflow-hidden">
+      <section className="relative min-h-[85vh] md:min-h-screen flex items-center justify-center w-full max-w-full overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
