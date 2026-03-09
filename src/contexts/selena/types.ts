@@ -45,6 +45,14 @@ export interface EntryContext {
   prefillMessage?: string;
   neighborhoodSlug?: string;
   neighborhoodName?: string;
+  closingCostData?: {
+    purchasePrice: number;
+    loanType: string;
+    downPaymentPercent: number;
+    estimatedLow: number;
+    estimatedHigh: number;
+    totalCashNeeded: number;
+  };
 }
 
 export interface ChipMeta {
