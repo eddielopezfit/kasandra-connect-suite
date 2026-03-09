@@ -176,11 +176,11 @@ const SellerReadinessCheck = ({ onScoreRevealed }: SellerReadinessCheckProps) =>
 
     logEvent("tool_abandoned", {
       tool_id: "seller_readiness",
-      page_path: "/v2/seller-readiness",
+      page_path: "/seller-readiness",
       step_reached: currentStep,
       questions_answered: answers.filter((a) => a.answerIndex != null).length,
     });
-    navigate("/v2/guides");
+    navigate("/guides");
   };
 
   // ─── Completion Side-Effects (fires exactly once) ────────────────────────
