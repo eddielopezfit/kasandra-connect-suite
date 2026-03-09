@@ -17,17 +17,11 @@ const REGION_LABELS: Record<RegionGroup | 'all', { en: string; es: string }> = {
   metro: { en: 'Greater Metro', es: 'Área Metropolitana' },
 };
 
-const V2Neighborhoods = () => {
+/** Inner component — must be rendered inside V2Layout to access SelenaChatProvider */
+const NeighborhoodsContent = () => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
   const [activeRegion, setActiveRegion] = useState<RegionGroup | 'all'>('all');
-
-  useDocumentHead({
-    titleEn: "Tucson Area Neighborhoods — Find Your Fit | Kasandra Prieto",
-    titleEs: "Vecindarios del Área de Tucson — Encuentra Tu Lugar | Kasandra Prieto",
-    descriptionEn: "Explore 15 Tucson-area neighborhoods with expert insights on buying and selling. Local market intelligence from Kasandra Prieto.",
-    descriptionEs: "Explora 15 vecindarios del área de Tucson con información experta sobre compra y venta. Inteligencia de mercado local de Kasandra Prieto.",
-  });
 
   const filteredNeighborhoods = activeRegion === 'all'
     ? NEIGHBORHOOD_REGISTRY
@@ -44,7 +38,7 @@ const V2Neighborhoods = () => {
   };
 
   return (
-    <V2Layout>
+    <>
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-cc-navy via-cc-navy to-cc-slate py-20 lg:py-28">
         <div className="absolute inset-0 bg-[url('/og-kasandra.jpg')] bg-cover bg-center opacity-10" />
@@ -103,14 +97,23 @@ const V2Neighborhoods = () => {
               <NeighborhoodIndexCard key={neighborhood.slug} neighborhood={neighborhood} />
             ))}
           </div>
-          
-          {filteredNeighborhoods.length === 0 && (
-            <div className="text-center py-12 text-cc-text-muted">
-              {t("No neighborhoods found in this region.", "No se encontraron vecindarios en esta región.")}
-            </div>
-          )}
         </div>
       </section>
+    </>
+  );
+};
+
+const V2Neighborhoods = () => {
+  useDocumentHead({
+    titleEn: "Tucson Area Neighborhoods — Find Your Fit | Kasandra Prieto",
+    titleEs: "Vecindarios del Área de Tucson — Encuentra Tu Lugar | Kasandra Prieto",
+    descriptionEn: "Explore 15 Tucson-area neighborhoods with expert insights on buying and selling. Local market intelligence from Kasandra Prieto.",
+    descriptionEs: "Explora 15 vecindarios del área de Tucson con información experta sobre compra y venta. Inteligencia de mercado local de Kasandra Prieto.",
+  });
+
+  return (
+    <V2Layout>
+      <NeighborhoodsContent />
     </V2Layout>
   );
 };
