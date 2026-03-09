@@ -303,7 +303,7 @@ ${input.notes ? `- **Notes:** ${input.notes}` : ''}
             summary_md: handoffSummary,
             reason: 'Urgent cash offer request with immediate timeline',
             recommended_next_step: 'Call within 15 minutes to discuss cash offer',
-            booking_url: `/v2/book?lead_id=${leadId}&priority=hot`,
+            booking_url: `/book?lead_id=${leadId}&priority=hot`,
             convo_summary_json: {
               intent: normalizedIntent.canonical,
               timeline: normalizedTimeline.canonical,
