@@ -300,7 +300,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   },
   {
     id: 'budget-buyer-story',
-    path: '/v2/guides/budget-buyer-story',
+    path: '/guides/budget-buyer-story',
     titleEn: 'Finding Security on a Budget',
     titleEs: 'Encontrando Seguridad con Presupuesto Limitado',
     labelEn: 'Budget Buyer Story',
