@@ -2760,29 +2760,34 @@ serve(async (req) => {
       let priceCutPct: number | null = null;
 
       try {
-        if (rlUrl && rlKey) {
+        const pulseCacheKey = 'market_pulse_Tucson_Overall';
+        const cachedPulse = getCached<Record<string, unknown>>(pulseCacheKey);
+        const pulse = cachedPulse ?? (rlUrl && rlKey ? await (async () => {
           const pulseClient = createClient(rlUrl, rlKey);
-          const { data: pulse } = await pulseClient
+          const { data } = await pulseClient
             .from("market_pulse_settings")
             .select("days_to_close, holding_cost_per_day, negotiation_gap, scrape_log")
             .eq("market_name", "Tucson_Overall")
             .single();
-          if (pulse) {
-            daysToClose = pulse.days_to_close ?? daysToClose;
-            holdingCostPerDay = Number(pulse.holding_cost_per_day) || holdingCostPerDay;
-            if (pulse.negotiation_gap != null) {
-              const ratio = 1 - pulse.negotiation_gap;
+          if (data) setCache(pulseCacheKey, data, 3600000); // 1 hour TTL
+          return data;
+        })() : null);
+        if (cachedPulse) console.log('[Selena] Market pulse cache HIT');
+        if (pulse) {
+            daysToClose = (pulse as Record<string, unknown>).days_to_close as number ?? daysToClose;
+            holdingCostPerDay = Number((pulse as Record<string, unknown>).holding_cost_per_day) || holdingCostPerDay;
+            const negGap = (pulse as Record<string, unknown>).negotiation_gap;
+            if (negGap != null) {
+              const ratio = 1 - (negGap as number);
               saleToListPct = `${(ratio * 100).toFixed(1)}%`;
             }
-            // Extended fields from scrape_log (set by Firecrawl P1 expansion)
-            const log = pulse.scrape_log as Record<string, unknown> | null;
+            const log = (pulse as Record<string, unknown>).scrape_log as Record<string, unknown> | null;
             if (log) {
               if (log.median_list_price) medianListPrice = log.median_list_price as string;
               if (log.active_listings) activeListings = log.active_listings as number;
               if (log.price_cut_pct) priceCutPct = log.price_cut_pct as number;
             }
           }
-        }
       } catch (_e) { /* fallback to defaults — non-blocking */ }
 
       const totalHoldingCost = Math.round(daysToClose * holdingCostPerDay);
