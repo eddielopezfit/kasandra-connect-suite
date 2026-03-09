@@ -708,6 +708,7 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Capital Gains Guide': '/guides/capital-gains-home-sale-arizona',
   'Sell or Rent Guide': '/guides/sell-or-rent-tucson',
   'How Long to Sell Guide': '/guides/how-long-to-sell-tucson',
+  'Non-Citizen Buyers': '/guides/buying-home-noncitizen-arizona',
   'Non-Citizen Buyer Guide': '/guides/buying-home-noncitizen-arizona',
   'Check my readiness': '/buyer-readiness',
   'Take readiness check': '/buyer-readiness',
@@ -3114,6 +3115,17 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     const safeReadinessScore = Number.isFinite(rawReadiness) ? rawReadiness : 0;
     const guidesReadCount = typeof context.guides_read === 'number' ? context.guides_read : 0;
 
+    // FIX 4: Server-side phase escalation based on guide depth
+    if (guidesReadCount >= 8) {
+      effectiveChipPhase = Math.max(effectiveChipPhase, 3);
+    } else if (guidesReadCount >= 5) {
+      effectiveChipPhase = Math.max(effectiveChipPhase, 2);
+    }
+
+    // FIX 2: High-intent financial question detection
+    const HIGH_INTENT_FINANCIAL = /how much|what.*need|can i afford|what do i need|cuánto.*necesito|cuanto.*necesito|what.*cost|total.*need/i;
+    const isHighIntentQuestion = HIGH_INTENT_FINANCIAL.test(message);
+
     const journey = classifyJourneyState({
       readiness_score: safeReadinessScore,
       tools_completed: toolsCompleted,
@@ -3139,6 +3151,14 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
 
     // Append Journey State Engine governance hint to system prompt
     governanceHint += journey.governanceHint;
+
+    // ============= HIGH INTENT OVERRIDE =============
+    // If user asked a direct financial question OR has read 5+ guides, force booking pivot
+    if (isHighIntentQuestion && guidesReadCount >= 2) {
+      governanceHint += language === 'es'
+        ? `\n\nINTENTO ALTO — PREGUNTA FINANCIERA DIRECTA:\nEste usuario preguntó algo específico sobre costos/números. Ha leído ${guidesReadCount} guías. NO ofrezca más guías.\nResponda con un dato específico si es posible, luego pivotee: "Kasandra puede darte tu número exacto basado en tu préstamo y plazo. Esa llamada es gratuita y toma 20 minutos."\nPrimera respuesta sugerida: "Hablar con Kasandra".`
+        : `\n\nHIGH INTENT — DIRECT FINANCIAL QUESTION:\nUser asked a specific cost/number question. They've read ${guidesReadCount} guides. Do NOT offer more guides.\nAnswer with a specific data point if possible, then pivot: "Kasandra can give you your actual number based on your loan type and timeline. That call is free and takes 20 minutes."\nFirst suggested reply: "Talk with Kasandra".`;
+    }
 
     // ============= GUIDE INQUIRY ROUTING HINT =============
     const GUIDE_INQUIRY = /what guides|which guide|qu[eé]\s+gu[ií]as|guias|show.*guides|recommend.*guide|gu[ií]as.*tien/i;

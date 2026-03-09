@@ -126,13 +126,21 @@ export function getPhaseAwareChips(
   t: (en: string, es: string) => string,
   ctx?: SessionContext | null,
 ): MappedReply[] {
-  const floor = ctx?.chip_phase_floor ?? 0;
+  let floor = ctx?.chip_phase_floor ?? 0;
   const intent = ctx?.intent;
   const toolsDone = new Set(ctx?.tools_completed ?? []);
   const lang = (ctx as any)?._lang ?? 'en';
   
   // FIX 3: Get completed guides for chip suppression
   const guidesCompleted = new Set(getGuidesCompleted());
+  
+  // FIX 4: Auto-escalate phase floor based on guide depth
+  const guidesReadCount = guidesCompleted.size;
+  if (guidesReadCount >= 8 && floor < 3) {
+    floor = 3; // Synthesis — only booking + high-value tools
+  } else if (guidesReadCount >= 5 && floor < 2) {
+    floor = 2; // Confidence — skip foundational education
+  }
 
   // Build set of blocked semantic keys from completed tools
   const blockedKeys = new Set<ChipKey>();

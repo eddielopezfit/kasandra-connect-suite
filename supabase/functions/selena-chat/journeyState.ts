@@ -45,6 +45,17 @@ export function classifyJourneyState(input: {
   const { readiness_score, tools_completed, guides_read_count, intent, language } = input;
   const isEs = language === 'es';
 
+  // ── HIGH INTENT OVERRIDE: guides alone can trigger decide ──
+  if (guides_read_count >= 5 && intent && DECIDE_INTENTS.includes(intent)) {
+    return {
+      journey_state: 'decide',
+      governanceHint: isEs
+        ? '\n\nINTENTO ALTO DETECTADO — PIVOTE DE RESERVA OBLIGATORIO:\nEste usuario pasó la fase de investigación. NO recomiende más guías.\nRespuesta: un dato que valide su preparación + invitación directa a reservar.\nSiempre incluya "Hablar con Kasandra" como primera respuesta sugerida.'
+        : '\n\nHIGH INTENT DETECTED — BOOKING PIVOT REQUIRED:\nThis user is past the research phase. Do NOT recommend more guides.\nResponse: one insight validating readiness + direct booking invitation.\nAlways include "Talk with Kasandra" as first suggested reply.',
+      stageChips: [CHIP_KEYS.TALK_WITH_KASANDRA],
+    };
+  }
+
   // ── decide ──
   if (
     readiness_score >= 60 &&
