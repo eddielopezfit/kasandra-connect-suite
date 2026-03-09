@@ -77,6 +77,8 @@ interface ChatRequest {
     last_guide_title?: string;
     lastEvents?: string[];
     lead_id?: string;
+    inherited_home?: boolean;
+    trust_signal_detected?: boolean;
     // Mode detection signals (FIX 6: renamed from tool_used)
     last_tool_completed?: string;
     last_tool_result?: string;
