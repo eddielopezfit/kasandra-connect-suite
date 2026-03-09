@@ -271,7 +271,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // === TIER 3 — MICRO GUIDES (Client Stories) ===
   {
     id: 'first-time-buyer-story',
-    path: '/v2/guides/first-time-buyer-story',
+    path: '/guides/first-time-buyer-story',
     titleEn: 'A First-Time Buyer Finds Her Way',
     titleEs: 'Una Compradora Primeriza Encuentra Su Camino',
     labelEn: 'First-Time Buyer Story',
