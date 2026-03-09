@@ -325,8 +325,8 @@ async function upsertLeadProfile(
 }
 
 // ============= INTENT DETECTION =============
-function detectIntent(message: string, route: string): string[] {
-  const lower = message.toLowerCase();
+function detectIntent(message: string, route: string = ''): string[] {
+  const lower = (message || '').toLowerCase();
   const intents: string[] = [];
   
   // Check for dual intent (buy + sell combination) - but don't suppress other intents
