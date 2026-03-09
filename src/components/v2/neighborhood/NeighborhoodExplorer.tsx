@@ -87,7 +87,7 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
         zip_code: trimmed,
         cached: data.cached,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[NeighborhoodExplorer] Error:", err);
       const msg = err?.message || "";
       if (msg.includes("Rate limit")) {
