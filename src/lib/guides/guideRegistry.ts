@@ -576,7 +576,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
   // --- senior-downsizing ---
   {
     id: 'senior-downsizing',
-    path: '/v2/guides/senior-downsizing',
+    path: '/guides/senior-downsizing',
     titleEn: "Downsizing in Tucson: A Senior Homeowner's Guide",
     titleEs: 'Reducción de Tamaño en Tucson: Guía para Propietarios Mayores',
     labelEn: 'Senior Downsizing Guide',
