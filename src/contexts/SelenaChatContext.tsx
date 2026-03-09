@@ -35,6 +35,8 @@ import {
   LAST_ENTRY_SIG_KEY,
   CHAT_HISTORY_KEY
 } from './selena/identityManager';
+
+export * from './selena/types';
 import {
   mapChipsToActionSpecs,
   getPhaseAwareChips
