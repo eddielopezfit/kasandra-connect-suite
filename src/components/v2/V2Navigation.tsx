@@ -31,17 +31,17 @@ const V2Navigation = () => {
   }, []);
 
   const primaryLinks = [
-    { href: "/v2", label: t("Home", "Inicio") },
-    { href: "/v2/buy", label: t("Buy", "Comprar") },
-    { href: "/v2/sell", label: t("Sell", "Vender") },
-    { href: "/v2/cash-offer-options", label: t("Cash Options", "Opciones en Efectivo") },
+    { href: "/", label: t("Home", "Inicio") },
+    { href: "/buy", label: t("Buy", "Comprar") },
+    { href: "/sell", label: t("Sell", "Vender") },
+    { href: "/cash-offer-options", label: t("Cash Options", "Opciones en Efectivo") },
   ];
 
   const exploreLinks = [
-    { href: "/v2/neighborhoods", label: t("Neighborhoods", "Vecindarios") },
-    { href: "/v2/guides", label: t("Guides", "Guías") },
-    { href: "/v2/podcast", label: t("Podcast", "Podcast") },
-    { href: "/v2/community", label: t("Community", "Comunidad") },
+    { href: "/neighborhoods", label: t("Neighborhoods", "Vecindarios") },
+    { href: "/guides", label: t("Guides", "Guías") },
+    { href: "/podcast", label: t("Podcast", "Podcast") },
+    { href: "/community", label: t("Community", "Comunidad") },
   ];
 
   const allLinks = [...primaryLinks, ...exploreLinks];
