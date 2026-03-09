@@ -96,7 +96,7 @@ export function SelenaDrawerBottomSection({
         journeyStep={journeyStep}
       />
 
-      <form onSubmit={handleSubmit} className="border-t border-border p-4 bg-background">
+      <form onSubmit={handleSubmit} className="border-t border-border p-4 bg-background" style={{ paddingBottom: isMobile ? 'max(env(safe-area-inset-bottom, 0px), 8px)' : undefined }}>
         <div className="flex gap-2">
           {/* 
             ⚠️ REGRESSION TRIPWIRE - DO NOT MODIFY WITHOUT READING ⚠️
