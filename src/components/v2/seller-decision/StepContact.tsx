@@ -288,7 +288,7 @@ const StepContact = ({
             <Checkbox
               id="consent-full"
               checked={fullForm.watch("consent") === true}
-              onCheckedChange={(checked) => fullForm.setValue("consent", checked === true ? true : undefined as any, { shouldValidate: true })}
+              onCheckedChange={(checked) => fullForm.setValue("consent", checked === true ? true : undefined as unknown as boolean, { shouldValidate: true })}
               className="mt-0.5"
             />
             <Label htmlFor="consent-full" className="text-xs text-cc-text-muted leading-relaxed cursor-pointer">
