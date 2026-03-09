@@ -789,6 +789,11 @@ const TOOL_BLOCKED_DESTINATIONS: Record<string, string[]> = {
   'tucson_alpha_calculator': ['/cash-offer-options'],
   'seller_decision': ['/seller-decision'],
   'off_market_buyer': ['/off-market'],
+  // Tool name aliases → same as tucson_alpha_calculator
+  'Seller Net Calculator': ['/cash-offer-options'],
+  'Net Proceeds Estimator': ['/cash-offer-options'],
+  'Use the calculator': ['/cash-offer-options'],
+  'Run the calculator': ['/cash-offer-options'],
 };
 
 // Replacement destinations when a tool is completed — ordered by progression
