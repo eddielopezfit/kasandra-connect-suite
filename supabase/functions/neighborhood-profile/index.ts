@@ -154,7 +154,7 @@ Both profile_en and profile_es are required. The Spanish version should be a nat
           { role: "user", content: userMessage },
         ],
         temperature: 0.2,
-        max_tokens: 1500,
+        max_tokens: 3000,
       }),
     });
 
