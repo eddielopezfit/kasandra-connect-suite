@@ -29,7 +29,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Agende una Consulta',
     component: 'src/components/v2/V2Navigation.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/book',
+    expectedTarget: '/book',
     automatable: true,
     priority: 1,
   },
