@@ -638,7 +638,6 @@ function generateNeighborhoodCompareGreeting(language: 'en' | 'es', neighborhood
       "Which area is best for families?",
       "Compare schools by area",
       "Talk with Kasandra",
-      "Talk with Kasandra",
     ],
   };
 }
