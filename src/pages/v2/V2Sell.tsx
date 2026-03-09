@@ -287,9 +287,9 @@ const V2SellContent = () => {
                 asChild 
                 variant="outline"
                 className="w-full border-cc-gold text-cc-gold hover:bg-cc-gold hover:text-cc-navy font-semibold rounded-full"
-                onClick={() => handleCTAClick(CTA_NAMES.CASH_OFFER_OPTIONS, '/v2/cash-offer-options')}
+                onClick={() => handleCTAClick(CTA_NAMES.CASH_OFFER_OPTIONS, '/cash-offer-options')}
               >
-                <Link to="/v2/cash-offer-options">
+                <Link to="/cash-offer-options">
                   {t("Explore Cash Options", "Explorar Opciones en Efectivo")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
