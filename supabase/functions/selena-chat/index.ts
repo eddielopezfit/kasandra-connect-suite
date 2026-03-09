@@ -147,6 +147,24 @@ interface ChatRequest {
       primaryPriority: string;
       toolType: 'buyer' | 'seller' | 'cash';
     } | null;
+    // Off-market buyer registration data
+    off_market_data?: {
+      areas: string[];
+      budgetRange: string;
+      timeline: string;
+      propertyType: string;
+    } | null;
+    // Neighborhood comparison data
+    neighborhood_compare_data?: {
+      areasCompared: string[];
+    } | null;
+    // Market intelligence data
+    market_intel_data?: {
+      daysOnMarket: number;
+      saleToListRatio: string;
+      holdingCostPerDay: number;
+      isLive: boolean;
+    } | null;
   };
   history?: ChatMessage[];
 }
