@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import V2Layout from "@/components/v2/V2Layout";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { supabase } from "@/integrations/supabase/client";
