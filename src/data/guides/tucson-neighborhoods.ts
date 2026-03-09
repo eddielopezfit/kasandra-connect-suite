@@ -64,7 +64,13 @@ const data: GuideContentData = {
       content: "The best way to narrow down neighborhoods is a combination of knowing your priorities and talking to someone who has worked in all of them.\n\nKasandra knows Tucson's residential markets from direct transaction experience — not just statistics. If you'd like to talk through what area makes sense for your situation, or take our neighborhood quiz to get a personalized recommendation, Selena can help you get started.",
       contentEs: "La mejor manera de reducir los vecindarios es una combinación de conocer tus prioridades y hablar con alguien que haya trabajado en todos ellos.\n\nKasandra conoce los mercados residenciales de Tucson desde la experiencia directa en transacciones — no solo estadísticas.",
     },
-  {
+    {
+      heading: 'Explore Neighborhood Detail Pages',
+      headingEs: 'Explora las Páginas de Detalle de Vecindarios',
+      content: "Want to go deeper on a specific area? Each of these neighborhoods has its own intelligence page with current market data, seller and buyer profiles, and personalized next steps:\n\n- [Tucson](/v2/neighborhoods/tucson) — Central Tucson & Midtown\n- [Catalina Foothills](/v2/neighborhoods/catalina-foothills) — Mountain views, luxury homes\n- [Oro Valley](/v2/neighborhoods/oro-valley) — Top schools, amenity-rich\n- [Marana](/v2/neighborhoods/marana) — New construction, fast growth\n- [Vail](/v2/neighborhoods/vail) — Military families, top schools\n- [Sahuarita](/v2/neighborhoods/sahuarita) — Best value suburb\n- [Green Valley](/v2/neighborhoods/green-valley) — 55+ retirement community\n- [South Tucson](/v2/neighborhoods/south-tucson) — Cultural heritage, affordability\n\n[View all 15 neighborhoods →](/v2/neighborhoods)",
+      contentEs: "¿Quiere profundizar en un área específica? Cada uno de estos vecindarios tiene su propia página de inteligencia con datos actuales del mercado, perfiles de vendedores y compradores, y próximos pasos personalizados:\n\n- [Tucson](/v2/neighborhoods/tucson) — Centro de Tucson y Midtown\n- [Catalina Foothills](/v2/neighborhoods/catalina-foothills) — Vistas a la montaña, casas de lujo\n- [Oro Valley](/v2/neighborhoods/oro-valley) — Mejores escuelas, rico en comodidades\n- [Marana](/v2/neighborhoods/marana) — Construcción nueva, crecimiento rápido\n- [Vail](/v2/neighborhoods/vail) — Familias militares, mejores escuelas\n- [Sahuarita](/v2/neighborhoods/sahuarita) — Mejor valor suburbano\n- [Green Valley](/v2/neighborhoods/green-valley) — Comunidad de jubilación 55+\n- [South Tucson](/v2/neighborhoods/south-tucson) — Herencia cultural, asequibilidad\n\n[Ver los 15 vecindarios →](/v2/neighborhoods)",
+    },
+    {
       heading: "",
       headingEs: "",
       content: "",
