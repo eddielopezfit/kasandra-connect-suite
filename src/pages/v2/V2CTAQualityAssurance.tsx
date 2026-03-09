@@ -34,6 +34,13 @@ const saveResults = (results: Record<string, TestResult>) => {
 };
 
 const V2CTAQualityAssurance = () => {
+  const { t } = useLanguage();
+  useDocumentHead({
+    titleEn: "CTA Quality Assurance | Internal",
+    titleEs: "QA de CTAs | Interno",
+    descriptionEn: "Internal CTA testing dashboard for quality assurance.",
+    descriptionEs: "Panel interno de pruebas de CTAs para aseguramiento de calidad.",
+  });
   const [results, setResults] = useState<Record<string, TestResult>>(loadResults);
 
   useEffect(() => { saveResults(results); }, [results]);

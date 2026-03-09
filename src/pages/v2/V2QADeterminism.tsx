@@ -31,7 +31,12 @@ import { isQaAccessGranted } from '@/lib/qa/qaAccess';
 const V2QADeterminism = () => {
   // All hooks must be called before the gate
   const { language } = useLanguage();
-
+  useDocumentHead({
+    titleEn: "QA Determinism | Internal",
+    titleEs: "QA Determinismo | Interno",
+    descriptionEn: "Internal diagnostics for system determinism verification.",
+    descriptionEs: "Diagnósticos internos para verificación de determinismo del sistema.",
+  });
   // Prod gate — redirects cleanly, never renders blank
   if (!isQaAccessGranted()) {
     return <Navigate to="/" replace />;
