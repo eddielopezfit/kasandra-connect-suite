@@ -35,16 +35,16 @@ const V2Footer = () => {
           <div className="text-center">
             <h4 className="font-semibold mb-4">{t("Quick Links", "Enlaces Rápidos")}</h4>
             <div className="space-y-2 text-sm text-white/80">
-              <Link to="/v2/buy" className="block hover:text-white transition-colors">
+              <Link to="/buy" className="block hover:text-white transition-colors">
                 {t("Buy a Home", "Comprar una Casa")}
               </Link>
-              <Link to="/v2/sell" className="block hover:text-white transition-colors">
+              <Link to="/sell" className="block hover:text-white transition-colors">
                 {t("Sell Your Home", "Vender su Casa")}
               </Link>
-              <Link to="/v2/cash-offer-options" className="block hover:text-white transition-colors">
+              <Link to="/cash-offer-options" className="block hover:text-white transition-colors">
                 {t("Cash Offer Options", "Opciones de Oferta en Efectivo")}
               </Link>
-              <Link to="/v2/podcast" className="block hover:text-white transition-colors">
+              <Link to="/podcast" className="block hover:text-white transition-colors">
                 {t("Podcast", "Podcast")}
               </Link>
             </div>

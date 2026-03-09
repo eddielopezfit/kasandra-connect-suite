@@ -54,7 +54,7 @@ const NotFoundContent = () => {
             </Button>
           </Link>
 
-          <Link to="/v2">
+          <Link to="/">
             <Button
               variant="ghost"
               className="w-full text-white/60 hover:text-white hover:bg-white/5 py-5 rounded-xl text-base"

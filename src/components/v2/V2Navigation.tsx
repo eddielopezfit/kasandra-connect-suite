@@ -157,7 +157,7 @@ const V2Navigation = () => {
               </Link>
             ))}
             <Button asChild className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold">
-              <Link to="/v2/book" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link to="/book" onClick={() => setIsMobileMenuOpen(false)}>
                 {t("Book a Consultation", "Agendar una Cita")}
               </Link>
             </Button>
