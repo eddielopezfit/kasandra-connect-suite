@@ -132,7 +132,7 @@ export function SelenaDrawerBottomSection({
           <Button
             type="submit"
             size="icon"
-            disabled={!hasText || isLoading}
+            disabled={!hasText || isLoading || isDebouncing}
             className="rounded-full w-10 h-10 shrink-0"
           >
             <span className="sr-only">Send</span>

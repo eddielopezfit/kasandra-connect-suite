@@ -2283,15 +2283,17 @@ serve(async (req) => {
         const filled = (v: unknown): boolean =>
           v !== null && v !== undefined && v !== '';
 
-        // Merge session snapshot — client wins, server fills nulls only
+        // Merge session snapshot — server authoritative for critical fields, client wins for others
         if (snapRes.status === 'fulfilled' && snapRes.value?.data) {
           const snap = snapRes.value.data as Record<string, unknown>;
-          if (!filled(context.intent) && filled(snap.intent))
-            context.intent = snap.intent as string;
-          if (!context.tools_completed?.length && Array.isArray(snap.tools_completed))
+          
+          // AUTHORITATIVE FIELDS (Server overwrites client)
+          if (filled(snap.intent)) context.intent = snap.intent as string;
+          if (Array.isArray(snap.tools_completed) && snap.tools_completed.length > 0)
             context.tools_completed = snap.tools_completed as string[];
-          if (!filled(context.readiness_score) && filled(snap.readiness_score))
+          if (filled(snap.readiness_score))
             context.readiness_score = snap.readiness_score as number;
+            
           const calcData = snap.calculator_data as Record<string, unknown> | null;
           if (calcData) {
             if (!filled(context.estimated_value) && filled(calcData.estimated_value))
@@ -2299,12 +2301,17 @@ serve(async (req) => {
             if (!filled(context.calculator_difference) && filled(calcData.calculator_difference))
               context.calculator_difference = calcData.calculator_difference as number;
           }
+          
           const ctxJson = snap.context_json as Record<string, unknown> | null;
           if (ctxJson) {
+            // AUTHORITATIVE FIELDS in context_json
+            if (filled(ctxJson.timeline)) context.timeline = ctxJson.timeline as string;
+            if (filled(ctxJson.chip_phase_floor)) context.chip_phase_floor = ctxJson.chip_phase_floor as number;
+            if (filled(ctxJson.journey_state)) context.journey_state = ctxJson.journey_state as string;
+            
+            // PASSIVE FIELDS (Client wins, server fills nulls only)
             if (!filled(context.situation) && filled(ctxJson.situation))
               context.situation = ctxJson.situation as string;
-            if (!filled(context.timeline) && filled(ctxJson.timeline))
-              context.timeline = ctxJson.timeline as string;
             if (!filled(context.last_neighborhood_zip) && filled(ctxJson.last_neighborhood_zip))
               context.last_neighborhood_zip = ctxJson.last_neighborhood_zip as string;
           }
