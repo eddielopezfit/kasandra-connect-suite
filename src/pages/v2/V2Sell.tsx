@@ -330,8 +330,8 @@ const V2SellContent = () => {
                 className="border-cc-gold/50 text-cc-navy font-medium rounded-full px-8 mt-3"
               >
                 <Link
-                  to="/v2/seller-readiness"
-                  onClick={() => handleCTAClick('seller_readiness_check', '/v2/seller-readiness')}
+                  to="/seller-readiness"
+                  onClick={() => handleCTAClick('seller_readiness_check', '/seller-readiness')}
                 >
                   {t("Quick Readiness Check", "Check Rápido de Preparación")}
                 </Link>

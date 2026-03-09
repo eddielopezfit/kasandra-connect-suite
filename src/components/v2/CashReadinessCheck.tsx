@@ -226,7 +226,7 @@ const CashReadinessCheck = ({ onScoreRevealed }: CashReadinessCheckProps) => {
     });
     logEvent("tool_completed", {
       tool_id: "cash_readiness",
-      page_path: "/v2/cash-readiness",
+      page_path: "/cash-readiness",
       intent: "cash",
       readiness_score,
       primary_priority,

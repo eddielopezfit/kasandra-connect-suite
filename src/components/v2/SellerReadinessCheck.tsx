@@ -211,7 +211,7 @@ const SellerReadinessCheck = ({ onScoreRevealed }: SellerReadinessCheckProps) =>
     });
     logEvent("tool_completed", {
       tool_id: "seller_readiness",
-      page_path: "/v2/seller-readiness",
+      page_path: "/seller-readiness",
       intent: "sell",
       readiness_score,
       primary_priority,

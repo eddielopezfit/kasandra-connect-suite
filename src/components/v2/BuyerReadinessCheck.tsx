@@ -211,7 +211,7 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
     });
     logEvent("tool_completed", {
       tool_id: "buyer_readiness",
-      page_path: "/v2/buyer-readiness",
+      page_path: "/buyer-readiness",
       intent: "buy",
       readiness_score,
       primary_priority,

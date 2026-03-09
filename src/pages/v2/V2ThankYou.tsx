@@ -307,7 +307,7 @@ const V2ThankYouContent = () => {
               'Helpful information for anyone exploring the market.',
               'Información útil para cualquier persona explorando el mercado.'
             ),
-            href: '/v2/guides/first-time-buyer-guide',
+            href: '/guides/first-time-buyer-guide',
           },
         };
     }

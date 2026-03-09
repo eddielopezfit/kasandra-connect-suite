@@ -267,7 +267,7 @@ const AuthorityCTABlock = React.forwardRef<HTMLElement, AuthorityCTABlockProps>(
         logCTAClick({
           cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
           destination: 'selena_chat',
-          page_path: `/v2/guides/${guideId}`,
+          page_path: `/guides/${guideId}`,
           intent: category === 'buying' ? 'buy' : category === 'cash' ? 'cash' : 'sell',
         });
         openChat({

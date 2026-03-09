@@ -271,7 +271,7 @@ const ReadinessSnapshot = ({
         {/* Browse guides fallback */}
         <div className="mt-4">
           <button
-            onClick={() => navigate("/v2/guides")}
+            onClick={() => navigate("/guides")}
             className="text-xs text-cc-slate hover:text-cc-navy transition-colors underline underline-offset-4 min-h-[44px] inline-flex items-center"
           >
             {t("Browse all guides", "Ver todas las guías")}
