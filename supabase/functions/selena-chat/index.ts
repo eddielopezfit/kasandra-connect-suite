@@ -2386,7 +2386,7 @@ const BRACKET_CTA_ALLOWLIST = new Set([
   'check my readiness',
   'compare cash vs. listing',
   'find a time with kasandra',
-  'keep chatting with selena',
+  'i have another question',
   'review strategy with kasandra',
   // ES labels
   'estimar mis ganancias netas',
