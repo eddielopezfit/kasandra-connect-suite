@@ -77,13 +77,17 @@ interface ChatRequest {
     last_guide_title?: string;
     lastEvents?: string[];
     lead_id?: string;
-    // Mode detection signals
-    tool_used?: string;
+    // Mode detection signals (FIX 6: renamed from tool_used)
+    last_tool_completed?: string;
     last_tool_result?: string;
     quiz_completed?: boolean;
     guides_read?: number;
-    // Entry context
+    // FIX 2: Guide completion tracking
+    guides_completed?: string[];
+    // Entry context (FIX 4: now persisted across all turns)
     entry_source?: string;
+    entry_guide_id?: string | null;
+    entry_guide_title?: string | null;
     calculator_advantage?: string;
     calculator_difference?: number;
     // Mode persistence — client sends back the server's last reported mode
