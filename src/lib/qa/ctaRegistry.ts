@@ -135,9 +135,9 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Explorar Guías',
     component: 'src/components/selena/ConciergeTabPanels.tsx',
     expectedBehavior: 'navigate',
-    expectedTarget: '/v2/guides',
+    expectedTarget: '/guides',
     automatable: false,
-    manualSteps: 'Open chat drawer → Learn tab → Click "Browse all guides". Verify route = /v2/guides.',
+    manualSteps: 'Open chat drawer → Learn tab → Click "Browse all guides". Verify route = /guides.',
     priority: 10,
   },
 
