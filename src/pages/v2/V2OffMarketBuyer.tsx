@@ -298,7 +298,7 @@ const V2OffMarketBuyerContent = () => {
   }
 
   return (
-    <div className="min-h-screen bg-cc-ivory">
+    <div className="min-h-[100dvh] bg-cc-ivory">
       {/* Hero */}
       <section className="bg-cc-navy pt-32 pb-12 relative overflow-hidden">
         <div className="absolute inset-0 opacity-5"
