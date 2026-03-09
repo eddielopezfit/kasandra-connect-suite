@@ -318,15 +318,14 @@ const V2OffMarketBuyerContent = () => {
               )}
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-sm text-white/60">
-              {[
-                [Eye, t("Private listings", "Listados privados")],
-                [Star, t("No bidding wars", "Sin guerras de ofertas")],
-                [Lock, t("No obligation", "Sin compromiso")],
-              ].map(([Icon, label], i) => (
+              {([
+                [Eye, t("Private listings", "Listados privados")] as [React.ComponentType<{className?: string}>, string],
+                [Star, t("No bidding wars", "Sin guerras de ofertas")] as [React.ComponentType<{className?: string}>, string],
+                [Lock, t("No obligation", "Sin compromiso")] as [React.ComponentType<{className?: string}>, string],
+              ]).map(([Icon, label], i) => (
                 <div key={i} className="flex items-center gap-2">
-                  {/* @ts-ignore */}
                   <Icon className="w-4 h-4 text-cc-gold" />
-                  <span>{label as string}</span>
+                  <span>{label}</span>
                 </div>
               ))}
             </div>

@@ -227,27 +227,27 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       }
     }
     if (entryContext?.intent) {
-      setFieldIfEmpty('intent', entryContext.intent as any);
+      setFieldIfEmpty('intent', entryContext.intent);
     }
     if (entryContext?.closingCostData) {
-      updateSessionContext({ closing_cost_data: entryContext.closingCostData } as any);
+      updateSessionContext({ closing_cost_data: entryContext.closingCostData });
     }
     if (entryContext?.sellerCalcData) {
-      updateSessionContext({ seller_calc_data: entryContext.sellerCalcData } as any);
+      updateSessionContext({ seller_calc_data: entryContext.sellerCalcData });
     }
     if (entryContext?.readinessData) {
-      updateSessionContext({ readiness_entry_data: entryContext.readinessData } as any);
+      updateSessionContext({ readiness_entry_data: entryContext.readinessData });
     }
     if (entryContext?.offMarketData) {
-      updateSessionContext({ off_market_data: entryContext.offMarketData } as any);
+      updateSessionContext({ off_market_data: entryContext.offMarketData });
     }
     if (entryContext?.neighborhoodCompareData) {
-      updateSessionContext({ neighborhood_compare_data: entryContext.neighborhoodCompareData } as any);
+      updateSessionContext({ neighborhood_compare_data: entryContext.neighborhoodCompareData });
     }
     if (entryContext?.marketIntelData) {
-      updateSessionContext({ market_intel_data: entryContext.marketIntelData } as any);
+      updateSessionContext({ market_intel_data: entryContext.marketIntelData });
     }
-    updateSessionContext(entryUpdates as any);
+    updateSessionContext(entryUpdates);
 
     logEvent('selena_opened', {
       entry_source: entryUpdates.entry_source,

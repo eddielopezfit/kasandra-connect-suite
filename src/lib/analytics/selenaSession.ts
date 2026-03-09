@@ -127,6 +127,45 @@ export interface SessionContext {
   equity_pulse_value?: number;
   equity_pulse_recommendation?: string;
   mortgage_balance?: number;
+  // Tool-specific entry data (typed fields to eliminate `as any` casts)
+  closing_cost_data?: {
+    purchasePrice: number;
+    loanType: string;
+    downPaymentPercent: number;
+    estimatedLow: number;
+    estimatedHigh: number;
+    totalCashNeeded: number;
+  };
+  seller_calc_data?: {
+    estimatedValue: number;
+    mortgageBalance: number;
+    cashNetProceeds: number;
+    traditionalNetProceeds: number;
+    recommendation: string;
+    netDifference: number;
+    motivation: string;
+    timeline: string;
+  };
+  readiness_entry_data?: {
+    score: number;
+    primaryPriority: string;
+    toolType: 'buyer' | 'seller' | 'cash';
+  };
+  off_market_data?: {
+    areas: string[];
+    budgetRange: string;
+    timeline: string;
+    propertyType: string;
+  };
+  neighborhood_compare_data?: {
+    areasCompared: string[];
+  };
+  market_intel_data?: {
+    daysOnMarket: number;
+    saleToListRatio: string;
+    holdingCostPerDay: number;
+    isLive: boolean;
+  };
 }
 
 /**

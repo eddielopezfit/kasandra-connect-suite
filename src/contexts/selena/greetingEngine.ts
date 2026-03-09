@@ -495,6 +495,33 @@ export function computeGreeting(
       { label: t("I'm thinking about selling", "Estoy pensando en vender") },
       { label: t("Help me compare areas", "Ayúdame a comparar áreas") },
     ];
+  } else if (entryContext?.source === 'seller_timeline') {
+    const ctx = sessionContext;
+    const timeline = ctx?.timeline;
+    const goalPriority = ctx?.seller_goal_priority;
+    
+    if (timeline === 'asap') {
+      greetingContent = t(
+        "You're thinking about selling — let's make sure you have a clear picture of what that looks like on your timeline. What matters most to you: speed, maximizing price, or flexibility?",
+        "Está pensando en vender — asegurémonos de que tenga una imagen clara de cómo se ve en su cronograma. ¿Qué le importa más: rapidez, maximizar el precio, o flexibilidad?"
+      );
+    } else if (goalPriority === 'price') {
+      greetingContent = t(
+        "You're focused on maximizing your sale price — that's smart. Strategic timing and preparation can make a real difference. Let me help you plan your next steps.",
+        "Está enfocado/a en maximizar su precio de venta — eso es inteligente. El tiempo estratégico y la preparación pueden marcar una diferencia real. Permítame ayudarle a planificar sus próximos pasos."
+      );
+    } else {
+      greetingContent = t(
+        "You're thinking about selling — let's make sure you have a clear picture of what that looks like on your timeline. What matters most to you: speed, maximizing price, or flexibility?",
+        "Está pensando en vender — asegurémonos de que tenga una imagen clara de cómo se ve en su cronograma. ¿Qué le importa más: rapidez, maximizar el precio, o flexibilidad?"
+      );
+    }
+    suggestedReplies = [
+      { label: t("I need to move fast", "Necesito moverme rápido") },
+      { label: t("I want maximum value", "Quiero el máximo valor") },
+      { label: t("I'm still deciding", "Aún estoy decidiendo") },
+      { label: t("Talk with Kasandra", "Hablar con Kasandra") },
+    ];
   } else if (entryContext?.source === 'guide_handoff') {
     const title = entryContext.guideTitle || 'that guide';
     greetingContent = t(

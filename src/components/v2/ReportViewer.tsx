@@ -352,7 +352,7 @@ export function ReportViewer({
             size="lg"
           >
             <MessageCircle className="w-4 h-4 mr-2" />
-            {t('Keep Chatting With Selena', 'Seguir Chateando con Selena')}
+            {t('Continue with Selena', 'Continuar con Selena')}
           </Button>
         </div>
       </div>

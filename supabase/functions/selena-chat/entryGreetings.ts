@@ -688,8 +688,8 @@ function generateBuyerClosingCostsGreeting(language: 'en' | 'es', closingCostDat
   };
 }
 
-function generateSellerTimelineGreeting(context: EntryContext): GreetingResult {
-  const { language, timeline, seller_goal_priority, estimated_value } = context as any;
+function generateSellerTimelineGreeting(context: EntryContext & { timeline?: string; seller_goal_priority?: string; estimated_value?: number }): GreetingResult {
+  const { language, timeline, seller_goal_priority, estimated_value } = context;
 
   const hasValue = estimated_value && estimated_value > 0;
   const valueStr = hasValue ? `$${Math.round(estimated_value / 1000)}K` : null;
