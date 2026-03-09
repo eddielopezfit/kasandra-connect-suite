@@ -116,7 +116,7 @@ const V2HomeContent = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-cc-blue/90 to-cc-blue/75" />
         </div>
 
-        <div className="relative container mx-auto px-4 pt-24 w-full max-w-full">
+        <div className="relative container mx-auto px-4 pt-20 pb-12 w-full max-w-full">
           <div className="max-w-2xl text-white">
             {returningContext.isReturning ? (
               // ── Returning visitor hero ───────────────────────────────────
