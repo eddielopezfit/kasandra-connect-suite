@@ -170,7 +170,7 @@ const V2ThankYouContent = () => {
               'Step-by-step guide for first-time homebuyers.',
               'Guía paso a paso para compradores de vivienda por primera vez.'
             ),
-            href: '/v2/guides/first-time-buyer-guide',
+            href: '/guides/first-time-buyer-guide',
           },
         };
       
