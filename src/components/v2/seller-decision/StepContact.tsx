@@ -74,7 +74,7 @@ const StepContact = ({
   // Full form
   const fullForm = useForm<FullFormData>({
     resolver: zodResolver(fullSchema),
-    defaultValues: { name: "", email: "", phone: "", consent: false as any },
+    defaultValues: { name: "", email: "", phone: "", consent: false as unknown as boolean },
   });
 
   // Email-only form
