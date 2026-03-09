@@ -112,6 +112,12 @@ export function classifyPath(path: string): { label: string; type: TrailEventTyp
         const label = GUIDE_LABELS[guideId] ?? `Guide: ${guideId}`;
         return { label, type: 'guide' };
       }
+      // For neighborhood detail pages, extract slug for specific label
+      if (route.label === 'Neighborhood Profile') {
+        const slug = path.replace('/neighborhoods/', '').split('?')[0];
+        const label = NEIGHBORHOOD_LABELS[slug] ?? `Neighborhood: ${slug}`;
+        return { label, type: 'page' };
+      }
       return { label: route.label, type: route.type };
     }
   }
