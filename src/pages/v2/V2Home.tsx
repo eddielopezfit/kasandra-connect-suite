@@ -541,6 +541,21 @@ const V2HomeContent = () => {
                   "Selena AI es una asistente de IA. Todos los consejos y decisiones son revisados y manejados por Kasandra Prieto, REALTOR® licenciada."
                 )}
               </p>
+              <div className="flex flex-col sm:flex-row items-start gap-4 mt-6">
+                <button
+                  onClick={() => openChat({ source: 'homepage_selena_section' })}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-cc-gold text-cc-navy font-semibold text-sm shadow-gold hover:bg-cc-gold-dark transition-all"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  {t("Talk to Selena Now", "Habla con Selena Ahora")}
+                </button>
+                <Link
+                  to="/selena-ai"
+                  className="inline-flex items-center gap-1 text-sm text-white/70 hover:text-cc-gold transition-colors underline underline-offset-2"
+                >
+                  {t("Learn more about Selena →", "Conoce más sobre Selena →")}
+                </Link>
+              </div>
             </div>
             <div className="flex justify-center">
               <div className="relative">
