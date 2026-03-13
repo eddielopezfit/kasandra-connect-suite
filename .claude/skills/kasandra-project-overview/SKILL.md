@@ -110,3 +110,20 @@ Pipeline routing: Cash / Sell / Buy / Dual / Explore — based on intent signals
 ## Environment Variables Summary
 **Client-side (VITE_):** VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY, VITE_SUPABASE_PROJECT_ID
 **Server-side:** SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, LOVABLE_API_KEY, GHL_WEBHOOK_URL, GHL_API_KEY, ADMIN_SECRET, FIRECRAWL_API_KEY, PERPLEXITY_API_KEY, GOOGLE_PLACES_API_KEY, YOUTUBE_API_KEY
+
+## Luxury Upgrades Completed (March 2026)
+- **Homepage testimonials**: Replaced dot-carousel with TestimonialColumns.tsx — staggered 3-col navy masonry, gold stars, real client names, source badges, Spanish review preserved
+- **About bento grid**: CredentialsBentoGrid.tsx — 6-cell asymmetric grid, Luxury Specialist as 2-col anchor with gold border, Diaper Bank logo embedded
+- **Market Pulse insight lines**: Plain-English translations under each metric (Sale-to-List, Days on Market, Holding Cost) on /buy and /sell
+- **Buying process timeline**: BuyingTimeline.tsx — animated vertical gold connector, scroll-triggered fade-up, alternating desktop layout, bilingual
+- **/sell blank render fixed**: GoogleReviewsSection lazy-loaded (commit 673c618)
+
+## Remaining Luxury Upgrade Queue
+- `/sell` — Traditional vs Cash split-panel comparison (Lovable)
+- `/contact` — Two-column with Kasandra headshot + form (Lovable)
+- `/selena-ai` — Expandable chat preview mockup (Lovable)
+- `/neighborhoods` — Display Cards with hover reveal (Lovable)
+- Schema markup — LocalBusiness, Article, Review, BreadcrumbList (Claude Code)
+- Aggregated review trust bar — "4.9 stars · 126+ reviews" (Lovable)
+- Instant Answer Widget — affordability + home value calculator (Lovable — approved plan ready)
+- Entry source personalization — Selena opens knowing buyer/seller context (Claude Code — Phase 2 symphony)
