@@ -163,7 +163,7 @@ export default function GlassmorphismHero({
       ? "/seller-decision"
       : "/guides");
 
-  const badgeText = badge || t("Tucson's Bilingual Concierge Agent", "La Agente Concierge Bilingüe de Tucson");
+  const badgeText = badge || t("AI Concierge · Bilingual", "Concierge IA · Bilingüe");
 
   return (
     <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center w-full overflow-hidden bg-cc-navy" role="banner">
