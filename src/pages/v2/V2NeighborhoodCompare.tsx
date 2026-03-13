@@ -12,8 +12,9 @@ import { toast } from "sonner";
 import type { NeighborhoodProfile } from "@/components/v2/neighborhood/NeighborhoodCard";
 import {
   MapPin, Search, MessageCircle, ArrowRight, X,
-  Users, TrendingUp, AlertTriangle, Lightbulb, Plus
+  Users, TrendingUp, AlertTriangle, Lightbulb, Plus, Calendar
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ZipResult {
   zip: string;
