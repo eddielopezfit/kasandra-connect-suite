@@ -151,6 +151,9 @@ const V2Footer = () => {
           <p className="text-white/50 text-xs">
             © {currentYear} Kasandra Prieto. {t("All rights reserved.", "Todos los derechos reservados.")}
           </p>
+          <Link to="/selena-ai" className="text-xs text-white/40 hover:text-cc-gold transition-colors mt-1 inline-block">
+            Powered by Selena AI
+          </Link>
         </div>
       </div>
     </footer>
