@@ -31,6 +31,8 @@ const StatItem = ({ value, label, icon }: StatItemProps) => (
 export interface GlassmorphismHeroProps {
   /** Badge text override */
   badge?: string;
+  /** Whether to show Market Pulse stats card (default true). When false, shows social proof. */
+  showMarketPulse?: boolean;
   /** Headline override (disables returning-visitor logic) */
   headline?: string;
   /** Subtext override (disables returning-visitor logic) */
