@@ -59,6 +59,12 @@ const V2Footer = () => {
               <Link to="/contact" className="block hover:text-white transition-colors">
                 {t("Contact", "Contacto")}
               </Link>
+              <Link to="/market" className="block hover:text-white transition-colors">
+                {t("Market Intelligence", "Inteligencia de Mercado")}
+              </Link>
+              <Link to="/selena-ai" className="block hover:text-white transition-colors">
+                {t("Meet Selena AI", "Conoce a Selena AI")}
+              </Link>
             </div>
           </div>
 
