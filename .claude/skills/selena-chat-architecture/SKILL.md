@@ -141,3 +141,19 @@ All confirmed values in the union as of March 2026:
 5. Always test bilingual output (EN + ES) after any index.ts change
 6. When fixing buyer chip bug — verify seller path still works after fix
 7. GlassmorphismHero accepts `showMarketPulse?: boolean` prop — false on homepage, true on /buy and /sell
+
+## Production Bug History (March 2026)
+
+### BUG 1: Buyer chip rendering — RESOLVED ✅ (commit 24021cd)
+Chips were appearing as raw `[bracket text]` after buyer intent responses.
+Root cause: BRACKET_CTA_ALLOWLIST only contained seller/handoff labels. Buyer bracket text passed through unstripped.
+Fix: Added buyer chip labels to allowlist, extended BRACKET_CTA_PATTERNS with buyer action verbs (take|browse|explore|get off + ES equivalents), changed fallback from `return _match` to `return ''`.
+
+### BUG 2: /buy and /sell blank render — RESOLVED ✅ (commit 24021cd)
+4-second white screen on cold load. Root cause: large PNG hero images with no background color fallback + synchronous heavy imports on /buy.
+Fix A: Added bg-cc-navy to GlassmorphismHero outermost section (GlassmorphismHero.tsx line 169).
+Fix B: Converted NeighborhoodExplorer + NeighborhoodQuiz to React.lazy() with Suspense in V2Buy.tsx.
+
+### TypeScript error in selena-chat/index.ts — OPEN ⚠️
+Math.max() returns `number` but variable expects `1 | 2 | 3`.
+Fix: Add type assertion `as 1 | 2 | 3` at the assignment. Low priority — does not affect runtime behavior.
