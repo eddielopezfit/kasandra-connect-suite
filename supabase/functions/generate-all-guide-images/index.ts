@@ -31,6 +31,15 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Admin-only: require x-admin-secret header
+  const authHeader = req.headers.get('x-admin-secret');
+  if (authHeader !== Deno.env.get('ADMIN_SECRET')) {
+    return new Response(JSON.stringify({ ok: false, error: 'Unauthorized' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
