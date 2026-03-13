@@ -95,8 +95,8 @@ const App = () => {
               <Route path="/market" element={<V2MarketIntelligence />} />
               <Route path="/neighborhood-compare" element={<V2NeighborhoodCompare />} />
               <Route path="/buyer-closing-costs" element={<V2BuyerClosingCosts />} />
-              <Route path="/qa-cta" element={<V2CTAQualityAssurance />} />
-              <Route path="/qa-determinism" element={<V2QADeterminism />} />
+              <Route path="/qa-cta" element={import.meta.env.DEV ? <V2CTAQualityAssurance /> : <Navigate to="/" replace />} />
+              <Route path="/qa-determinism" element={import.meta.env.DEV ? <V2QADeterminism /> : <Navigate to="/" replace />} />
               <Route path="/neighborhoods" element={<V2Neighborhoods />} />
               <Route path="/neighborhoods/:slug" element={<V2NeighborhoodDetail />} />
 
