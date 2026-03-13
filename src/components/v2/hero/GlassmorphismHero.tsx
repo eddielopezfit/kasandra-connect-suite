@@ -186,7 +186,7 @@ export default function GlassmorphismHero({
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${backgroundImage || heroImage})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-cc-navy/95 via-cc-navy/85 to-cc-navy-dark/90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-cc-navy/[0.97] via-cc-navy/90 to-cc-navy-dark/95" />
       </div>
 
       {/* Content */}

@@ -12,7 +12,7 @@ import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, Mess
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
-import heroImage from "@/assets/hero-sell-premium.png";
+
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 
@@ -61,7 +61,7 @@ const V2SellContent = () => {
         intent="sell"
         entrySource="sell_hero"
         pagePath="/sell"
-        backgroundImage={heroImage}
+        backgroundImage="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80"
       />
 
       {/* How I Protect Sellers — 2-column layout */}
