@@ -541,63 +541,8 @@ const V2HomeContent = () => {
         </div>
       </section>
 
-      {/* Social Proof */}
-      <section className="py-16 lg:py-20 bg-cc-sand">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-blue mb-3">
-              {t("What Clients Say", "Lo Que Dicen los Clientes")}
-            </h2>
-            <p className="text-xs text-muted-foreground/70 uppercase tracking-wider">
-              {t("Testimonials sourced from verified third-party review platforms.", "Testimonios de plataformas de reseñas verificadas.")}
-            </p>
-          </div>
-          
-          {/* Testimonials Carousel */}
-          <div className="relative px-4 sm:px-12">
-            <Carousel
-              setApi={setCarouselApi}
-              opts={{
-                align: "start",
-                loop: false,
-                slidesToScroll: 1,
-                containScroll: "trimSnaps",
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-4">
-                {allTestimonials.map((testimonial) => (
-                  <CarouselItem key={testimonial.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
-                    <TestimonialCard testimonial={testimonial} variant="primary" />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious 
-                className="hidden sm:flex -left-2 sm:left-0 bg-white border-cc-blue/20 hover:bg-cc-blue hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
-              />
-              <CarouselNext 
-                className="hidden sm:flex -right-2 sm:right-0 bg-white border-cc-blue/20 hover:bg-cc-blue hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-opacity"
-              />
-            </Carousel>
-            
-            {/* Dot indicators */}
-            <div className="flex justify-center gap-2 mt-6">
-              {allTestimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => carouselApi?.scrollTo(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    currentIndex === index 
-                      ? "bg-cc-blue w-4" 
-                      : "bg-cc-blue/30 hover:bg-cc-blue/50"
-                  }`}
-                  aria-label={`Go to testimonial ${index + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Social Proof — Staggered Masonry */}
+      <TestimonialColumns />
 
       {/* Podcast Section */}
       <section className="py-16 lg:py-20 bg-cc-blue-bg">
