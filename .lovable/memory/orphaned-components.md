@@ -1,17 +1,24 @@
-# Architecture: Orphaned Components
+# Architecture: Orphaned Components — RESOLVED
 
-## Unmounted Components in `src/components/v2/`
+## Cleanup Completed
 
-1. **`ConsultationIntakeForm.tsx`** — full TCPA-compliant intake form with Zod validation. Has consent checkboxes. Calls `submit-consultation-intake`.
-2. **`GHLCalendarEmbed.tsx`** — GHL calendar with pre-fill capability. Only rendered inside ConsultationIntakeForm (also unmounted).
-3. **`GoHighLevelForm.tsx`** — native GHL form embed (form ID `y3N8kzV03nx4q4NamSX4`). Not mounted.
-4. **`PhoneVerificationGate.tsx`** — phone verification component. Calls `verify-lead-phone`. Not mounted.
-5. **`GoogleSignInButton.tsx`** — Supabase Auth Google sign-in. Not wired to any page.
+The following orphaned components were **deleted** (no imports, no routes):
 
-## Dead Code
+1. ~~`ConsultationIntakeForm.tsx`~~ — deleted
+2. ~~`GHLCalendarEmbed.tsx`~~ — deleted (was only used inside ConsultationIntakeForm)
+3. ~~`GoHighLevelForm.tsx`~~ — deleted
+4. ~~`GoogleSignInButton.tsx`~~ — deleted
 
-- `hasReports` state in `SelenaChatContext.tsx` — initialized to `false`, never updated anywhere.
+## NOT Orphaned (Kept)
 
-## Decision Needed
+- **`PhoneVerificationGate.tsx`** — actively imported and rendered in `V2PrivateCashReview.tsx`. Do NOT delete.
 
-Either mount these components on appropriate routes or remove them to reduce codebase noise.
+## Dead Code Removed
+
+- `hasReports` state removed from `SelenaChatContext.tsx` and all consuming components (SelenaChatDrawer, SelenaDrawerBottomSection, ConciergeTabPanels). The "View My Latest Report" button in MyOptionsPanel is now gated behind `{false && ...}` until a proper report-tracking mechanism is implemented.
+
+## Supporting Files Kept
+
+- `useConsultationForm.ts` hook — still exists but no longer imported. Can be deleted if ConsultationIntakeForm is not rebuilt.
+- `ConsultationFormFields.tsx` — same status as above.
+- Edge functions `submit-consultation-intake` and `verify-lead-phone` are kept (server-side, may be reused).
