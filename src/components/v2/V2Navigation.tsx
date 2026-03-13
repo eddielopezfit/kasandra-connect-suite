@@ -83,6 +83,9 @@ const V2Navigation = () => {
             {primaryLinks.map((link) => (
               <Link key={link.href} to={link.href} className={linkClass(isActive(link.href))}>
                 {link.label}
+                {isActive(link.href) && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cc-gold rounded-full" />
+                )}
               </Link>
             ))}
 
