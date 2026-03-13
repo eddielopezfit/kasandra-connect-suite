@@ -8,6 +8,7 @@ import { isReturningVisitor, getIntent, getGuidesRead } from "@/lib/guides/perso
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import { useState, useEffect } from "react";
 import heroImage from "@/assets/hero-bg.jpg";
+import type { EntrySource } from "@/contexts/selena/types";
 
 interface StatItemProps {
   value: string;
@@ -27,7 +28,44 @@ const StatItem = ({ value, label, icon }: StatItemProps) => (
   </div>
 );
 
-export default function GlassmorphismHero() {
+export interface GlassmorphismHeroProps {
+  /** Badge text override */
+  badge?: string;
+  /** Headline override (disables returning-visitor logic) */
+  headline?: string;
+  /** Subtext override (disables returning-visitor logic) */
+  subtext?: string;
+  /** Primary CTA label override */
+  primaryLabel?: string;
+  /** Secondary CTA label override */
+  secondaryLabel?: string;
+  /** Secondary CTA link override */
+  secondaryLink?: string;
+  /** Secondary CTA icon override */
+  secondaryIcon?: React.ReactNode;
+  /** Intent for analytics & openChat */
+  intent?: string;
+  /** Entry source for openChat */
+  entrySource?: EntrySource;
+  /** Page path for analytics */
+  pagePath?: string;
+  /** Background image override */
+  backgroundImage?: string;
+}
+
+export default function GlassmorphismHero({
+  badge,
+  headline: headlineOverride,
+  subtext: subtextOverride,
+  primaryLabel: primaryLabelOverride,
+  secondaryLabel: secondaryLabelOverride,
+  secondaryLink: secondaryLinkOverride,
+  secondaryIcon,
+  intent: intentOverride,
+  entrySource,
+  pagePath = "/",
+  backgroundImage,
+}: GlassmorphismHeroProps = {}) {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
   const { stats } = useMarketPulse(language as "en" | "es");
@@ -49,22 +87,27 @@ export default function GlassmorphismHero() {
     setReturningContext({ isReturning: true, firstName, intent, guidesReadCount });
   }, []);
 
+  const resolvedIntent = intentOverride || returningContext.intent || "explore";
+
   const handleTalkToSelena = () => {
-    const intent = returningContext.intent as any || "explore";
     logCTAClick({
       cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
       destination: "selena_chat",
-      page_path: "/",
-      intent,
+      page_path: pagePath,
+      intent: resolvedIntent as any,
     });
     openChat({
-      source: returningContext.isReturning ? "hero_returning" : "hero",
-      intent,
+      source: entrySource || (returningContext.isReturning ? "hero_returning" : "hero"),
+      intent: resolvedIntent as any,
     });
   };
 
-  // Headline & subtext based on returning visitor state
-  const headline = returningContext.isReturning
+  // Use overrides if provided, otherwise fall back to returning-visitor logic
+  const useOverrides = !!headlineOverride;
+
+  const headline = useOverrides
+    ? headlineOverride!
+    : returningContext.isReturning
     ? returningContext.firstName
       ? t(`Welcome back, ${returningContext.firstName}.`, `Bienvenido/a de nuevo, ${returningContext.firstName}.`)
       : t("Welcome back.", "Bienvenido/a de nuevo.")
@@ -73,7 +116,9 @@ export default function GlassmorphismHero() {
         "Tu hogar en Tucson. Tu decisión. Tu claridad."
       );
 
-  const subtext = returningContext.isReturning
+  const subtext = useOverrides
+    ? subtextOverride || ""
+    : returningContext.isReturning
     ? returningContext.intent === "sell" || returningContext.intent === "cash"
       ? t(
           "Ready to take the next step? Selena can pull up your numbers, answer questions, or get you on Kasandra's calendar.",
@@ -98,19 +143,24 @@ export default function GlassmorphismHero() {
         "Kasandra Prieto guía a compradores, vendedores y familias en cada mudanza con experiencia, honestidad y un asistente de IA diseñado para ti."
       );
 
-  const primaryLabel = returningContext.isReturning
-    ? t("Continue with Selena", "Continuar con Selena")
-    : t("Talk to Selena", "Habla con Selena");
+  const primaryLabel = primaryLabelOverride
+    || (returningContext.isReturning
+      ? t("Continue with Selena", "Continuar con Selena")
+      : t("Talk to Selena", "Habla con Selena"));
 
-  const secondaryLabel = returningContext.isReturning
-    && (returningContext.intent === "sell" || returningContext.intent === "cash")
-    ? t("Find My Best Path", "Encontrar Mi Mejor Camino")
-    : t("Explore Guides", "Explorar Guías");
+  const secondaryLabel = secondaryLabelOverride
+    || (returningContext.isReturning
+      && (returningContext.intent === "sell" || returningContext.intent === "cash")
+      ? t("Find My Best Path", "Encontrar Mi Mejor Camino")
+      : t("Explore Guides", "Explorar Guías"));
 
-  const secondaryLink = returningContext.isReturning
-    && (returningContext.intent === "sell" || returningContext.intent === "cash")
-    ? "/seller-decision"
-    : "/guides";
+  const secondaryLink = secondaryLinkOverride
+    || (returningContext.isReturning
+      && (returningContext.intent === "sell" || returningContext.intent === "cash")
+      ? "/seller-decision"
+      : "/guides");
+
+  const badgeText = badge || t("Tucson's Bilingual Concierge Agent", "La Agente Concierge Bilingüe de Tucson");
 
   return (
     <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center w-full overflow-hidden" role="banner">
@@ -134,7 +184,7 @@ export default function GlassmorphismHero() {
       {/* Background image + navy overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        style={{ backgroundImage: `url(${backgroundImage || heroImage})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-cc-navy/95 via-cc-navy/85 to-cc-navy-dark/90" />
       </div>
@@ -148,7 +198,7 @@ export default function GlassmorphismHero() {
             <div className="hero-fade-in hero-delay-100 mb-6">
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cc-gold/30 bg-cc-gold/10 text-cc-gold text-xs font-semibold uppercase tracking-wider">
                 <TrendingUp className="w-3.5 h-3.5" />
-                {t("Tucson's Bilingual Concierge Agent", "La Agente Concierge Bilingüe de Tucson")}
+                {badgeText}
               </span>
             </div>
 
@@ -176,7 +226,7 @@ export default function GlassmorphismHero() {
                 to={secondaryLink}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
               >
-                <BookOpen className="w-5 h-5" />
+                {secondaryIcon || <BookOpen className="w-5 h-5" />}
                 {secondaryLabel}
                 <ArrowRight className="w-4 h-4" />
               </Link>
