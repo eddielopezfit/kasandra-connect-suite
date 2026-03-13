@@ -58,41 +58,6 @@ const V2BuyContent = () => {
     openChat({ source: 'hero', intent: 'buy' });
   };
 
-  const steps = [
-    {
-      icon: DollarSign,
-      title: t("Get Pre-Approved", "Obtenga Pre-Aprobación"),
-      description: t(
-        "I'll connect you with trusted lenders and help you understand financing options, including down payment assistance programs.",
-        "Le conectaré con prestamistas de confianza y le ayudaré a entender las opciones de financiamiento, incluyendo programas de asistencia para pago inicial."
-      ),
-    },
-    {
-      icon: Search,
-      title: t("Find Your Home", "Encuentre Su Casa"),
-      description: t(
-        "We'll search for properties that match your needs, budget, and lifestyle. I'll guide you through each showing.",
-        "Buscaremos propiedades que coincidan con sus necesidades, presupuesto y estilo de vida. Le guiaré a través de cada visita."
-      ),
-    },
-    {
-      icon: FileCheck,
-      title: t("Make an Offer", "Haga una Oferta"),
-      description: t(
-        "I'll help you craft a competitive offer and negotiate on your behalf, always keeping your best interests in mind.",
-        "Le ayudaré a crear una oferta competitiva y negociaré en su nombre, siempre teniendo en cuenta sus mejores intereses."
-      ),
-    },
-    {
-      icon: Home,
-      title: t("Close & Move In", "Cierre y Múdese"),
-      description: t(
-        "From inspections to closing, I'll be there every step of the way until you have the keys in hand.",
-        "Desde las inspecciones hasta el cierre, estaré allí en cada paso hasta que tenga las llaves en mano."
-      ),
-    },
-  ];
-
   return (
     <>
       {/* Hero */}
