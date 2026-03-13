@@ -5,6 +5,7 @@
  */
 
 import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { getSessionContext } from "@/lib/analytics/selenaSession";
