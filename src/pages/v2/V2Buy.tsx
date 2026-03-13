@@ -108,41 +108,8 @@ const V2BuyContent = () => {
         </div>
       </section>
 
-      {/* Process Steps */}
-      <section className="py-16 lg:py-20 bg-cc-ivory">
-        <div className="container mx-auto px-4">
-          {/* Section Header */}
-          <div className="bg-cc-navy rounded-xl p-6 md:p-8 mb-10 text-center">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-white">
-              {t("The Buying Process", "El Proceso de Compra")}
-            </h2>
-            <p className="text-white/80 mt-3 max-w-2xl mx-auto">
-              {t(
-                "A clear, step-by-step approach to help you feel confident every step of the way.",
-                "Un enfoque claro, paso a paso, para ayudarle a sentirse seguro en cada etapa."
-              )}
-            </p>
-          </div>
-
-          {/* Cards Container */}
-          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-elevated">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {steps.map((step, index) => (
-                <div key={index} className="relative">
-                  <div className="bg-cc-sand p-6 rounded-xl h-full border border-cc-sand-dark/30">
-                    <div className="w-12 h-12 bg-cc-navy text-white rounded-full flex items-center justify-center font-bold mb-4">
-                      {index + 1}
-                    </div>
-                    <step.icon className="w-8 h-8 text-cc-gold mb-4" />
-                    <h3 className="font-serif text-lg font-bold text-cc-navy mb-3">{step.title}</h3>
-                    <p className="text-sm text-cc-charcoal">{step.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Buying Process Timeline */}
+      <BuyingTimeline />
 
       {/* Neighborhood Quiz */}
       <Suspense fallback={null}><NeighborhoodQuiz onExploreZip={handleQuizExplore} /></Suspense>
