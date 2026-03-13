@@ -28,7 +28,6 @@ export function SelenaDrawerBottomSection({
   onActionClick: (action: any) => void;
   language: "en" | "es";
   leadId?: string | null;
-  hasReports?: boolean;
   closeDrawer: () => void;
   currentIntent?: JourneyIntent;
   journeyStep?: number;
