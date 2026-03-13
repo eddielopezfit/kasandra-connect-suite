@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TrustBar from "@/components/v2/TrustBar";
 import TestimonialCard from "@/components/v2/TestimonialCard";
@@ -33,13 +31,12 @@ import {
 } from "lucide-react";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
-import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeighborhoodCards";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
+import CTASection from "@/components/v2/CTASection";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
-  const { openChat } = useSelenaChat();
   useDocumentHead({
     titleEn: "Kasandra Prieto | Tucson Realtor & Bilingual Real Estate Agent",
     titleEs: "Kasandra Prieto | Agente de Bienes Raíces Bilingüe en Tucson",
@@ -627,29 +624,7 @@ const V2HomeContent = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 lg:py-20 bg-cc-blue text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">
-            {t("Ready to Start Your Journey?", "¿Listo para Comenzar Su Viaje?")}
-          </h2>
-          <p className="text-white/80 max-w-2xl mx-auto mb-8">
-            {t(
-              "Whether you're buying your first home, selling a property, or exploring your options, I'm here to help you every step of the way.",
-              "Ya sea que esté comprando su primera casa, vendiendo una propiedad, o explorando sus opciones, estoy aquí para ayudarle en cada paso del camino."
-            )}
-          </p>
-          <Button 
-            onClick={() => {
-              logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2', intent: 'explore' });
-              openChat({ source: 'hero', intent: 'explore' });
-            }}
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-10 py-6 text-lg shadow-gold"
-          >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            {t("Chat with Selena", "Hablar con Selena")}
-          </Button>
-        </div>
-      </section>
+      <CTASection />
     </>
   );
 };
