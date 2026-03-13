@@ -50,12 +50,12 @@ const V2Navigation = () => {
   const isExploreActive = exploreLinks.some((l) => isActive(l.href));
 
   const linkClass = (active: boolean) =>
-    `text-sm font-medium transition-colors ${
+    `relative text-sm font-medium transition-all duration-200 pb-1 ${
       active
         ? "text-cc-gold"
         : isScrolled
-          ? "text-cc-charcoal hover:text-cc-gold"
-          : "text-white/90 hover:text-cc-gold"
+          ? "text-cc-charcoal/70 hover:text-cc-charcoal hover:opacity-100"
+          : "text-white/70 hover:text-white hover:opacity-100"
     }`;
 
   return (
