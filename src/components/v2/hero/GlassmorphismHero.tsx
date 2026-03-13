@@ -30,7 +30,7 @@ const StatItem = ({ value, label, icon }: StatItemProps) => (
 export default function GlassmorphismHero() {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
-  const { stats, loading } = useMarketPulse(language as "en" | "es");
+  const { stats } = useMarketPulse(language as "en" | "es");
 
   const [returningContext, setReturningContext] = useState<{
     isReturning: boolean;
