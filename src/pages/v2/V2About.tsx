@@ -229,7 +229,7 @@ const V2AboutContent = () => {
             <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
               <Link
                 to="/book"
-                onClick={() => logCTAClick(CTA_NAMES.BOOK_CONSULTATION, { page: 'about' })}
+                onClick={() => logCTAClick({ cta_name: CTA_NAMES.TOOL_BOOK_CONSULTATION, destination: '/book', page_path: '/about', intent: 'neutral' })}
               >
                 {t("Book a Free Consultation", "Agendar una Consulta Gratuita")}
               </Link>
@@ -238,7 +238,7 @@ const V2AboutContent = () => {
               variant="outline"
               className="border-white/40 text-white hover:bg-white/10 rounded-full px-8"
               onClick={() => {
-                logCTAClick(CTA_NAMES.TALK_TO_SELENA, { page: 'about' });
+                logCTAClick({ cta_name: CTA_NAMES.RESULT_CHAT_SELENA, destination: 'selena_drawer', page_path: '/about', intent: 'neutral' });
                 openChat({ source: 'about_page' });
               }}
             >

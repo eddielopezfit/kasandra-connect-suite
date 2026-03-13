@@ -127,7 +127,7 @@ const V2SelenaAIContent = () => {
             size="lg"
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-10 shadow-gold"
             onClick={() => {
-              logCTAClick(CTA_NAMES.TALK_TO_SELENA, { page: 'selena-ai' });
+              logCTAClick({ cta_name: CTA_NAMES.RESULT_CHAT_SELENA, destination: 'selena_drawer', page_path: '/selena-ai', intent: 'neutral' });
               openChat({ source: 'selena_ai_page' });
             }}
           >

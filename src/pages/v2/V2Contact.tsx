@@ -118,7 +118,7 @@ const V2ContactContent = () => {
           <Button
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
             onClick={() => {
-              logCTAClick(CTA_NAMES.TALK_TO_SELENA, { page: 'contact' });
+              logCTAClick({ cta_name: CTA_NAMES.RESULT_CHAT_SELENA, destination: 'selena_drawer', page_path: '/contact', intent: 'neutral' });
               openChat({ source: 'contact_page' });
             }}
           >

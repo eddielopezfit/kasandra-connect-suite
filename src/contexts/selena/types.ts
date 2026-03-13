@@ -39,7 +39,10 @@ export type EntrySource =
   | 'sell_hero'
   | 'proactive_homepage'
   | 'buyer_fork'
-  | 'seller_fork';
+  | 'seller_fork'
+  | 'about_page'
+  | 'contact_page'
+  | 'selena_ai_page';
 
 export interface EntryContext {
   source: EntrySource;
