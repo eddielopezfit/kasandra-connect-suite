@@ -75,8 +75,8 @@ const V2BookContent = () => {
                 )
               ) : (
                 t(
-                  "Choose a time that works best for you. Kasandra personally reviews each situation before your conversation.",
-                  "Elija un horario que le funcione mejor. Kasandra revisa personalmente cada situación antes de la conversación."
+                  "Share a few details so Kasandra can prepare for your conversation.",
+                  "Comparta algunos detalles para que Kasandra pueda prepararse para su conversación."
                 )
               )}
             </p>
