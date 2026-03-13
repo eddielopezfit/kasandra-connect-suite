@@ -231,7 +231,7 @@ export default function GlassmorphismHero() {
                   />
                   <StatItem
                     icon={<Home className="w-5 h-5 text-cc-gold" />}
-                    value={`$${stats.holdingCostPerDay}/day`}
+                    value={`$${stats.holdingCostPerDay}/${t("day", "día")}`}
                     label={t("Holding Cost Per Day", "Costo Diario de Retención")}
                   />
                 </div>
