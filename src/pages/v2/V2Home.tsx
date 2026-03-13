@@ -98,7 +98,7 @@ const V2HomeContent = () => {
         proactiveFiredRef.current = true;
 
         // Open the drawer — greeting engine handles the welcome message
-        openChat({ source: 'proactive_homepage' as any });
+        openChat({ source: 'proactive_homepage' });
       }
     };
 
@@ -133,7 +133,7 @@ const V2HomeContent = () => {
             {/* Card A — Buyer */}
             <button
               onClick={() => {
-                openChat({ source: 'buyer_fork' as any });
+                openChat({ source: 'buyer_fork' });
               }}
               className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
             >
@@ -151,7 +151,7 @@ const V2HomeContent = () => {
             {/* Card B — Seller */}
             <button
               onClick={() => {
-                openChat({ source: 'seller_fork' as any });
+                openChat({ source: 'seller_fork' });
               }}
               className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
             >

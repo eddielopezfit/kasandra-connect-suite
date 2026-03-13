@@ -36,7 +36,10 @@ export type EntrySource =
   | 'market_intelligence_result'
   | 'cta_section'
   | 'buy_hero'
-  | 'sell_hero';
+  | 'sell_hero'
+  | 'proactive_homepage'
+  | 'buyer_fork'
+  | 'seller_fork';
 
 export interface EntryContext {
   source: EntrySource;
