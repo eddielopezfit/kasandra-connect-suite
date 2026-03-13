@@ -532,7 +532,7 @@ function GuidesContent() {
             </Link>
             <Button
               onClick={() => {
-                logEvent('selena_cta_clicked', { source: 'guides_footer', stage: stageId, intent: activeIntent });
+                logEvent('cta_click', { source: 'guides_footer', stage: stageId, intent: activeIntent, type: 'selena' });
                 openChat({ source: 'guides_footer' as any });
               }}
               variant="outline"
