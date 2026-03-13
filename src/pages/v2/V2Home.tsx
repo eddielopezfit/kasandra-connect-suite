@@ -36,31 +36,6 @@ const V2HomeContent = () => {
     descriptionEn: "Bilingual real estate guidance in Tucson. 24/7 AI concierge, cash offer options, and personalized home buying & selling support.",
     descriptionEs: "Orientación bilingüe de bienes raíces en Tucson. Asistente IA 24/7, opciones de oferta en efectivo y apoyo personalizado.",
   });
-  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  
-  // Combine all testimonials for the carousel
-  const allTestimonials = [...primaryTestimonials, ...secondaryTestimonials];
-  
-  const updateCarouselState = useCallback(() => {
-    if (!carouselApi) return;
-    setCurrentIndex(carouselApi.selectedScrollSnap());
-  }, [carouselApi]);
-  
-  useEffect(() => {
-    if (!carouselApi) return;
-    
-    updateCarouselState();
-    
-    carouselApi.on("select", updateCarouselState);
-    carouselApi.on("reInit", updateCarouselState);
-    
-    return () => {
-      carouselApi.off("select", updateCarouselState);
-      carouselApi.off("reInit", updateCarouselState);
-    };
-  }, [carouselApi, updateCarouselState]);
 
   // ========== PROACTIVE SELENA TRIGGER ==========
   const proactiveFiredRef = useRef(false);
