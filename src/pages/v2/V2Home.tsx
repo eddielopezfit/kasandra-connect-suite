@@ -97,20 +97,8 @@ const V2HomeContent = () => {
       if (scrollPercent >= 40 && elapsedMs >= 15000) {
         proactiveFiredRef.current = true;
 
-        // Open the drawer first
+        // Open the drawer — greeting engine handles the welcome message
         openChat({ source: 'proactive_homepage' as any });
-
-        // Dispatch the proactive message (SelenaChatContext listens for this)
-        setTimeout(() => {
-          window.dispatchEvent(new CustomEvent('selena-proactive-message', {
-            detail: {
-              message: t(
-                "Hi! I'm Selena — Kasandra's AI concierge. Are you thinking about buying or selling in Tucson, or just exploring your options?",
-                "¡Hola! Soy Selena, la concierge digital de Kasandra. ¿Estás pensando en comprar o vender en Tucson, o solo explorando tus opciones?"
-              ),
-            },
-          }));
-        }, 300);
       }
     };
 
