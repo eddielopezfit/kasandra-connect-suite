@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, DollarSign } from "lucide-react";
+import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, DollarSign, Calendar, MessageCircle } from "lucide-react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/button";
