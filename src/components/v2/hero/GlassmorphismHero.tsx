@@ -113,7 +113,7 @@ export default function GlassmorphismHero() {
     : "/guides";
 
   return (
-    <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center w-full overflow-hidden">
+    <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center w-full overflow-hidden" role="banner">
       {/* Scoped keyframes */}
       <style>{`
         @keyframes heroFadeSlideIn {
