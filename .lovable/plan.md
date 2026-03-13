@@ -1,34 +1,75 @@
 
 
-# Neighborhood Card Shimmer Fix
+## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
 
-Single-file edit to `src/components/v2/neighborhood/NeighborhoodIndexCard.tsx`.
+### What We're Doing
 
-## Change
+Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
 
-Replace the static `bg-gradient-to-br from-cc-navy/80 to-cc-slate/60` background in the image container (line 42) with an animated shimmer placeholder that shows while the image loads. Use a `loaded` state flag — when the `<img>` fires `onLoad`, flip to true and hide the shimmer.
+### What We Do NOT Import
 
-```text
-┌─────────────────────────┐
-│  Before img loads:      │
-│  ┌───────────────────┐  │
-│  │ ░░░▓▓░░░▓▓░░░▓▓░ │  ← animated gradient shimmer
-│  │ ░░░▓▓░░░▓▓░░░▓▓░ │
-│  └───────────────────┘  │
-│  After onLoad:          │
-│  ┌───────────────────┐  │
-│  │   actual image     │  ← shimmer hidden
-│  └───────────────────┘  │
-└─────────────────────────┘
+- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
+- No market stats with hard-coded numbers (stale data risk)
+- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
+- No standalone footer (GuideComplianceFooter already exists)
+- No mid-guide CTAs or interactive state that writes to session
+
+---
+
+### Changes
+
+**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
+
+Add optional `variant` field and structured data:
+
+```typescript
+export interface GuideSection {
+  heading: string;
+  headingEs: string;
+  content: string;       // plain-text fallback always required
+  contentEs: string;
+  variant?: 'default' | 'comparison' | 'path-selector';
+  comparisonData?: {
+    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
+    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
+  };
+  pathData?: Array<{
+    id: string;
+    title: string; titleEs: string;
+    desc: string; descEs: string;
+  }>;
+}
 ```
 
-## Implementation
+**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
 
-1. Add `const [loaded, setLoaded] = useState(false)` alongside existing `imgError` state
-2. Add a shimmer `<div>` inside the image container that's visible when `!loaded && !imgError`:
-   - Uses `@keyframes shimmer` via inline style or a Tailwind class: `animate-pulse` with a `bg-gradient-to-r from-cc-sand via-white/40 to-cc-sand bg-[length:200%_100%]`
-3. On the `<img>`, add `onLoad={() => setLoaded(true)}` — shimmer fades out when image is ready
-4. Fallback path (imgError) remains unchanged
+Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
 
-**1 file modified, ~10 lines changed.**
+**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
+
+Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
+
+**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
+
+In the `.map()` loop, switch on `section.variant`:
+- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
+- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
+- default → current `whitespace-pre-line` text
+
+**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
+
+- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
+- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
+- Plain text `content`/`contentEs` stays as fallback
+
+**6. Export new components** (`src/components/v2/guides/index.ts`)
+
+Add exports for `GuideComparisonCards` and `GuidePathSelector`.
+
+### Governance Compliance
+
+- No mid-guide CTAs — these are educational visual enhancements only
+- Terminal routing stays in AuthorityCTABlock (unchanged)
+- Path selector is read-only visual engagement, does not write to session or navigate
+- All new components are bilingual via `useLanguage()`
 
