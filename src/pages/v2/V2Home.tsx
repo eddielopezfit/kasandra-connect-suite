@@ -31,13 +31,11 @@ import {
   CheckCircle,
   ArrowRight,
 } from "lucide-react";
-import heroImage from "@/assets/hero-bg.jpg";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
-import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
-import { isReturningVisitor, getIntent, getGuidesRead } from "@/lib/guides/personalization";
 import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeighborhoodCards";
+import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
@@ -51,25 +49,6 @@ const V2HomeContent = () => {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Returning visitor personalization — read from localStorage after hydration.
-  // State initializes empty so SSR/first-paint is always the cold-visitor hero,
-  // then the effect fills it in client-side. No flash on cold visits.
-  const [returningContext, setReturningContext] = useState<{
-    isReturning: boolean;
-    firstName: string | null;
-    intent: string | null;
-    guidesReadCount: number;
-  }>({ isReturning: false, firstName: null, intent: null, guidesReadCount: 0 });
-
-  useEffect(() => {
-    const isRet = isReturningVisitor();
-    if (!isRet) return; // cold visitor — no update needed
-    const fullName = getStoredUserName();
-    const firstName = fullName ? fullName.split(' ')[0] : null;
-    const intent = getIntent() || null;
-    const guidesReadCount = getGuidesRead().length;
-    setReturningContext({ isReturning: true, firstName, intent, guidesReadCount });
-  }, []);
   
   // Combine all testimonials for the carousel
   const allTestimonials = [...primaryTestimonials, ...secondaryTestimonials];
@@ -108,113 +87,7 @@ const V2HomeContent = () => {
         knowsLanguage: ["en", "es"],
       }} />
       {/* Hero Section */}
-      <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center justify-center w-full max-w-full overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroImage})` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-cc-blue/90 to-cc-blue/75" />
-        </div>
-
-        <div className="relative container mx-auto px-4 pt-20 pb-12 w-full max-w-full">
-          <div className="max-w-2xl text-white">
-            {returningContext.isReturning ? (
-              // ── Returning visitor hero ───────────────────────────────────
-              <>
-                <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-up">
-                  {returningContext.firstName
-                    ? t(`Welcome back, ${returningContext.firstName}.`, `Bienvenido/a de nuevo, ${returningContext.firstName}.`)
-                    : t("Welcome back.", "Bienvenido/a de nuevo.")}
-                </h1>
-                <p className="text-lg md:text-xl text-white/90 mb-4 animate-fade-up animation-delay-200">
-                  {returningContext.intent === 'sell' || returningContext.intent === 'cash'
-                    ? t(
-                        "Ready to take the next step? Selena can pull up your numbers, answer questions, or get you on Kasandra's calendar.",
-                        "¿Lista/o para el siguiente paso? Selena puede ver tus números, responder preguntas o agendarte con Kasandra."
-                      )
-                    : returningContext.intent === 'buy'
-                    ? t(
-                        "Your search continues. Ask Selena anything about listings, neighborhoods, or next steps — she's ready.",
-                        "Tu búsqueda continúa. Pregúntale a Selena sobre propiedades, vecindarios o próximos pasos — está lista."
-                      )
-                    : returningContext.guidesReadCount > 0
-                    ? t(
-                        `You've been doing your research. Whenever you're ready to talk through your options, Selena's here.`,
-                        `Has estado investigando. Cuando estés lista/o para hablar de tus opciones, Selena está aquí.`
-                      )
-                    : t(
-                        "Good to see you again. Selena is ready whenever you are.",
-                        "Que bueno verte de nuevo. Selena está lista cuando tú estés."
-                      )
-                  }
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animation-delay-400">
-                  <Button
-                    onClick={() => {
-                      logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/', intent: returningContext.intent as any || 'explore' });
-                      openChat({ source: 'hero_returning', intent: returningContext.intent as any || 'explore' });
-                    }}
-                    className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-8 py-6 text-lg shadow-gold"
-                  >
-                    <MessageCircle className="w-5 h-5 mr-2" />
-                    {t("Continue with Selena", "Continuar con Selena")}
-                  </Button>
-                  {(returningContext.intent === 'sell' || returningContext.intent === 'cash') && (
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="border-white/40 text-white hover:bg-white/10 rounded-full px-8 py-6 text-lg"
-                    >
-                      <Link to="/seller-decision">
-                        {t("Find My Best Path", "Encontrar Mi Mejor Camino")}
-                      </Link>
-                    </Button>
-                  )}
-                </div>
-              </>
-            ) : (
-              // ── Cold visitor hero (unchanged) ────────────────────────────
-              <>
-                <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-up">
-                  {t("Your Best Friend in Real Estate.", "Tu Mejor Amiga en Bienes Raíces.")}
-                </h1>
-                <p className="text-lg md:text-xl text-white/90 mb-4 animate-fade-up animation-delay-200">
-                  {t(
-                    "Bilingual guidance in Tucson—powered by a 24/7 concierge (Selena AI) so you get clarity fast, without pressure.",
-                    "Orientación bilingüe en Tucson—con apoyo de una asistente 24/7 (Selena AI) para darle claridad, paso a paso, sin presión."
-                  )}
-                </p>
-                <p className="text-sm text-white/70 mb-8 animate-fade-up animation-delay-400">
-                  {t(
-                    "Selena AI is an AI assistant that supports Kasandra—she never replaces your licensed Realtor.",
-                    "Selena AI es una asistente de IA que apoya a Kasandra—nunca reemplaza a su Realtor® licenciada."
-                  )}
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 animate-fade-up animation-delay-600">
-                  <Button
-                    onClick={() => {
-                      logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/', intent: 'explore' });
-                      openChat({ source: 'hero', intent: 'explore' });
-                    }}
-                    className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-8 py-6 text-lg shadow-gold"
-                  >
-                    <MessageCircle className="w-5 h-5 mr-2" />
-                    {t("Chat with Selena", "Hablar con Selena")}
-                  </Button>
-                  <Button
-                    asChild
-                    className="bg-white hover:bg-white/90 text-cc-navy font-semibold rounded-full px-8 py-6 text-lg shadow-lg"
-                  >
-                    <Link to="/guides">
-                      {t("Explore Free Guides", "Ver Guías Gratis")}
-                    </Link>
-                  </Button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
+      <GlassmorphismHero />
 
       {/* About Section */}
       <section className="py-16 lg:py-24 bg-cc-sand">
