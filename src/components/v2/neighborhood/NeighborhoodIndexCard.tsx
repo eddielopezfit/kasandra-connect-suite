@@ -30,18 +30,23 @@ interface NeighborhoodIndexCardProps {
 const NeighborhoodIndexCard = ({ neighborhood }: NeighborhoodIndexCardProps) => {
   const { language } = useLanguage();
   const [imgError, setImgError] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const heroUrl = getNeighborhoodHeroUrl(neighborhood.slug);
   
   return (
     <Link to={`/neighborhoods/${neighborhood.slug}`}>
       <Card className="group h-full bg-white hover:shadow-lg transition-all duration-300 border-cc-sand-dark/20 overflow-hidden">
-        <div className="h-40 relative overflow-hidden bg-gradient-to-br from-cc-navy/80 to-cc-slate/60">
+        <div className="h-40 relative overflow-hidden bg-cc-sand">
+          {!loaded && !imgError && (
+            <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-cc-sand via-white/40 to-cc-sand bg-[length:200%_100%]" />
+          )}
           {!imgError ? (
             <img
               src={heroUrl}
               alt={`${neighborhood.name} neighborhood`}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              className={`absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} transition-opacity`}
               loading="lazy"
+              onLoad={() => setLoaded(true)}
               onError={() => setImgError(true)}
             />
           ) : (
