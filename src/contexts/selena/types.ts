@@ -34,7 +34,8 @@ export type EntrySource =
   | 'off_market_registered'
   | 'neighborhood_compare_result'
   | 'market_intelligence_result'
-  | 'cta_section';
+  | 'cta_section'
+  | 'buy_hero';
 
 export interface EntryContext {
   source: EntrySource;
