@@ -42,6 +42,8 @@ const V2Navigation = () => {
     { href: "/guides", label: t("Guides", "Guías") },
     { href: "/podcast", label: t("Podcast", "Podcast") },
     { href: "/community", label: t("Community", "Comunidad") },
+    { href: "/about", label: t("About", "Sobre Mí") },
+    { href: "/contact", label: t("Contact", "Contacto") },
   ];
 
   const allLinks = [...primaryLinks, ...exploreLinks];
