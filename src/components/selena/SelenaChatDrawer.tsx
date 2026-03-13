@@ -78,7 +78,6 @@ export function SelenaChatDrawer() {
     onLeadCaptured,
     leadId,
     pendingAction,
-    hasReports,
     clearHistory,
   } = useSelenaChat();
   const { t, language, setLanguage } = useLanguage();
