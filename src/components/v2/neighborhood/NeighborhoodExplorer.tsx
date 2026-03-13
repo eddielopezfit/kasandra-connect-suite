@@ -182,6 +182,17 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
               zipCode={resultZip}
               marketPulse={marketPulse}
             />
+            <div className="text-center mt-4">
+              <a
+                href="/book?intent=buy&source=zip_explorer"
+                className="text-cc-gold hover:text-cc-gold-dark text-sm font-medium transition-colors"
+              >
+                {t(
+                  "Ready to explore this area? Talk to Kasandra →",
+                  "¿Lista para explorar esta área? Habla con Kasandra →"
+                )}
+              </a>
+            </div>
           </div>
         )}
       </div>

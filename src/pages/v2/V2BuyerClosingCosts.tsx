@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
-import { MessageCircle, ArrowRight, Info, DollarSign, Home, Percent, FileText } from "lucide-react";
+import { MessageCircle, ArrowRight, Info, DollarSign, Home, Percent, FileText, Calendar } from "lucide-react";
 
 interface CalcInputs {
   purchasePrice: string;
@@ -457,6 +458,12 @@ const V2BuyerClosingCostsContent = () => {
                 {t("Ask Selena About My Costs", "Preguntarle a Selena Sobre Mis Costos")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
+              <Link to="/book?intent=buy&source=closing_costs" className="inline-block mt-3">
+                <Button className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  {t("Review This With Kasandra", "Revisar Esto Con Kasandra")}
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
