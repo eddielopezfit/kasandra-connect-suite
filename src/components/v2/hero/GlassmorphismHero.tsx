@@ -163,7 +163,7 @@ export default function GlassmorphismHero({
       ? "/seller-decision"
       : "/guides");
 
-  const badgeText = badge || t("Tucson's Bilingual Concierge Agent", "La Agente Concierge Bilingüe de Tucson");
+  const badgeText = badge || t("AI Concierge · Bilingual", "Concierge IA · Bilingüe");
 
   return (
     <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center w-full overflow-hidden bg-cc-navy" role="banner">
@@ -199,8 +199,8 @@ export default function GlassmorphismHero({
           <div className="max-w-xl">
             {/* Badge */}
             <div className="hero-fade-in hero-delay-100 mb-6">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cc-gold/30 bg-cc-gold/10 text-cc-gold text-xs font-semibold uppercase tracking-wider">
-                <TrendingUp className="w-3.5 h-3.5" />
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cc-gold/30 bg-cc-gold/10 text-cc-gold text-xs font-semibold uppercase tracking-wider text-center leading-tight">
+                <TrendingUp className="w-3.5 h-3.5 shrink-0" />
                 {badgeText}
               </span>
             </div>
