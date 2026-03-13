@@ -42,7 +42,7 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
   // Fetch live Tucson market data once on mount
   useEffect(() => {
     supabase.functions.invoke("get-market-pulse").then(({ data, error }) => {
-      if (!error && data?.negotiation_gap) {
+      if (!error && data?.negotiation_gap != null) {
         setMarketPulse({
           negotiation_gap: data.negotiation_gap,
           days_to_close: data.days_to_close,
