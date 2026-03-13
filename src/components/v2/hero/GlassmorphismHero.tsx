@@ -14,9 +14,10 @@ interface StatItemProps {
   value: string;
   label: string;
   icon: React.ReactNode;
+  insight?: string;
 }
 
-const StatItem = ({ value, label, icon }: StatItemProps) => (
+const StatItem = ({ value, label, icon, insight }: StatItemProps) => (
   <div className="flex items-center gap-3">
     <div className="w-10 h-10 rounded-lg bg-cc-gold/10 flex items-center justify-center shrink-0">
       {icon}
@@ -24,6 +25,7 @@ const StatItem = ({ value, label, icon }: StatItemProps) => (
     <div>
       <p className="text-lg font-bold text-cc-ivory">{value}</p>
       <p className="text-xs text-cc-ivory/60">{label}</p>
+      {insight && <p className="text-xs italic mt-0.5 text-cc-ivory/50">{insight}</p>}
     </div>
   </div>
 );
