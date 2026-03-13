@@ -334,6 +334,12 @@ const V2NeighborhoodCompareContent = () => {
               {t("Ask Selena About These Areas", "Preguntarle a Selena Sobre Estas Áreas")}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
+            <Link to="/book?intent=buy&source=neighborhood_compare" className="inline-block mt-3">
+              <Button className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
+                <Calendar className="w-4 h-4 mr-2" />
+                {t("Discuss These Areas With Kasandra", "Hablar de Estas Áreas Con Kasandra")}
+              </Button>
+            </Link>
           </div>
         </section>
       )}

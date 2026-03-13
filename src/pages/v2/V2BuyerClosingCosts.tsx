@@ -458,6 +458,12 @@ const V2BuyerClosingCostsContent = () => {
                 {t("Ask Selena About My Costs", "Preguntarle a Selena Sobre Mis Costos")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
+              <Link to="/book?intent=buy&source=closing_costs" className="inline-block mt-3">
+                <Button className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  {t("Review This With Kasandra", "Revisar Esto Con Kasandra")}
+                </Button>
+              </Link>
             </div>
           </div>
         </section>

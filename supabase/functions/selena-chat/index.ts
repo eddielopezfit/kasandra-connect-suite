@@ -3351,9 +3351,9 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
 
     // FIX 4: Server-side phase escalation based on guide depth
     if (guidesReadCount >= 8) {
-      effectiveChipPhase = Math.max(effectiveChipPhase, 3);
+      effectiveChipPhase = Math.max(effectiveChipPhase, 3) as 1 | 2 | 3;
     } else if (guidesReadCount >= 5) {
-      effectiveChipPhase = Math.max(effectiveChipPhase, 2);
+      effectiveChipPhase = Math.max(effectiveChipPhase, 2) as 1 | 2 | 3;
     }
 
     // FIX 2: High-intent financial question detection
