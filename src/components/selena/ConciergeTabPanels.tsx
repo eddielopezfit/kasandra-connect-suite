@@ -67,7 +67,6 @@ export function ConciergeTabPanels({
   onActionClick,
   language,
   leadId,
-  hasReports,
   closeDrawer,
   currentIntent,
 }: ConciergeTabPanelsProps) {
