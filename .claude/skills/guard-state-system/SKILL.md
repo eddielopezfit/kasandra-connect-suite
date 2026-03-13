@@ -13,14 +13,26 @@ description: Knowledge of the GuardState KB containment hierarchy in the selena-
 
 ## KB Hierarchy (Priority Order — Highest to Lowest)
 ```
-KB-0          → Absolute prohibitions (never say, never do — non-negotiable)
+KB-0            → Absolute prohibitions (never say, never do — non-negotiable)
 Brokerage Truth → Kasandra-specific facts (brokerage, licensing, territory)
 Conversational  → Doctrine of how Selena speaks and behaves
-STATE GUARD   → The guardState.ts enforcement layer (this file)
-Mode Instructions → TOFU/MOFU/BOFU mode-specific behavior
+STATE GUARD     → The guardState.ts enforcement layer (this file)
+Mode Instructions → Mode-specific behavior (Orientation/Clarity/Confidence/Handoff)
 ```
 
 **KB-0 always wins.** If any instruction conflicts with KB-0, KB-0 takes precedence.
+
+## CRITICAL TERMINOLOGY — Do Not Confuse These Two Systems
+
+**Modes** (psychological progression — 4 states, one-directional per session):
+- Orientation → Clarity → Confidence → Handoff
+- Controlled by `modeContext.ts`
+- Determines HOW Selena engages and WHEN booking CTAs are allowed
+
+**Journey States** (TOFU/MOFU/BOFU — lead funnel classifier):
+- TOFU = Top of funnel (exploring), MOFU = Middle (evaluating), BOFU = Bottom (deciding)
+- Separate system used for lead scoring and GHL pipeline routing
+- Do NOT conflate with modes — they are independent classifiers
 
 ## What guardState.ts Enforces
 - Selena never recommends competitors or alternative agents
@@ -58,3 +70,4 @@ guardState.ts injects its containment logic into the system prompt assembly in i
 - Do not add "helpful" exceptions to KB-0 rules for edge cases
 - Do not expose guardState internals to the client (never return guard state in API responses)
 - Do not use guardState.ts logic in any frontend component — it belongs exclusively in the edge function
+- Do not use "TOFU/MOFU/BOFU" to refer to Selena's conversation modes — those are journey state classifiers, not modes
