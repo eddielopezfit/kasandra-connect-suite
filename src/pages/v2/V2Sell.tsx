@@ -15,6 +15,7 @@ import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
+import heroSellBg from "@/assets/hero-sell-tucson-aerial.png";
 
 const PAGE_PATH = '/sell';
 const PAGE_INTENT = 'sell' as const;
@@ -61,7 +62,7 @@ const V2SellContent = () => {
         intent="sell"
         entrySource="sell_hero"
         pagePath="/sell"
-        backgroundImage="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80"
+        backgroundImage={heroSellBg}
       />
 
       {/* How I Protect Sellers — 2-column layout */}
