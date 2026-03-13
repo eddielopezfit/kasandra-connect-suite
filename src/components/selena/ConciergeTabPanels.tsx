@@ -56,7 +56,6 @@ interface ConciergeTabPanelsProps {
   onActionClick: (action: ChatAction) => void;
   language: 'en' | 'es';
   leadId?: string | null;
-  hasReports?: boolean; // Track if user has generated any reports
   closeDrawer: () => void;
   currentIntent?: JourneyIntent;
 }
@@ -68,7 +67,6 @@ export function ConciergeTabPanels({
   onActionClick,
   language,
   leadId,
-  hasReports,
   closeDrawer,
   currentIntent,
 }: ConciergeTabPanelsProps) {
@@ -161,7 +159,6 @@ export function ConciergeTabPanels({
           <MyOptionsPanel 
             t={t} 
             leadId={leadId}
-            hasReports={hasReports}
             onActionClick={onActionClick}
             onClose={onClose}
             onSendMessage={onSendMessage}
@@ -376,7 +373,6 @@ function GuidesPanel({
 function MyOptionsPanel({ 
   t,
   leadId,
-  hasReports,
   onActionClick,
   onClose,
   onSendMessage,
@@ -385,7 +381,6 @@ function MyOptionsPanel({
 }: { 
   t: (en: string, es: string) => string;
   leadId?: string | null;
-  hasReports?: boolean;
   onActionClick: (action: ChatAction) => void;
   onClose: () => void;
   onSendMessage: (message: string) => void;
@@ -438,8 +433,8 @@ function MyOptionsPanel({
         </p>
       </div>
 
-      {/* Only show "View My Latest Report" if user has actually generated reports */}
-      {leadId && hasReports && (
+      {/* View Latest Report — hidden until report system tracks generated state */}
+      {false && leadId && (
         <Button
           variant="outline"
           onClick={handleViewLastReport}

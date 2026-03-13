@@ -12,7 +12,6 @@ export function SelenaDrawerBottomSection({
   onActionClick,
   language,
   leadId,
-  hasReports,
   closeDrawer,
   currentIntent,
   journeyStep,
@@ -29,7 +28,6 @@ export function SelenaDrawerBottomSection({
   onActionClick: (action: any) => void;
   language: "en" | "es";
   leadId?: string | null;
-  hasReports?: boolean;
   closeDrawer: () => void;
   currentIntent?: JourneyIntent;
   journeyStep?: number;
@@ -83,7 +81,6 @@ export function SelenaDrawerBottomSection({
         onActionClick={onActionClick}
         language={language}
         leadId={leadId}
-        hasReports={hasReports}
         closeDrawer={closeDrawer}
         currentIntent={currentIntent}
       />

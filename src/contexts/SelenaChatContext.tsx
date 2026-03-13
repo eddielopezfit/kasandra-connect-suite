@@ -57,7 +57,6 @@ interface SelenaChatContextType {
   messages: ChatMessage[];
   isLoading: boolean;
   leadId: string | null;
-  hasReports: boolean;
   report: ReportState;
   showLeadCapture: boolean;
   pendingReportId: string | null;
@@ -96,7 +95,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
   const [showLeadCapture, setShowLeadCapture] = useState(false);
   const [pendingReportId, setPendingReportId] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<'report' | null>(null);
-  const [hasReports] = useState(false);
   const [hasUsedCalculator, setHasUsedCalculator] = useState(false);
   const [lastCalculatorAdvantage, setLastCalculatorAdvantage] = useState<CalculatorAdvantage | null>(null);
   
@@ -653,7 +651,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         messages,
         isLoading,
         leadId,
-        hasReports,
         report,
         showLeadCapture,
         pendingReportId,
