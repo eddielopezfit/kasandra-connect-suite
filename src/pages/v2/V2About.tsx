@@ -137,40 +137,8 @@ const V2AboutContent = () => {
         </div>
       </section>
 
-      {/* Credentials Grid */}
-      <section className="bg-cc-sand py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-blue text-center mb-10">
-            {t("Leadership & Credentials", "Liderazgo y Credenciales")}
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            {credentials.map((cred, i) => (
-              <div key={i} className="bg-white rounded-xl p-6 shadow-soft border border-cc-sand-dark/10 text-center">
-                <cred.icon className="w-8 h-8 text-cc-gold mx-auto mb-3" />
-                <h3 className="font-semibold text-cc-blue text-sm mb-1">{cred.title}</h3>
-                <p className="text-xs text-cc-text-muted">{cred.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Recognition Row */}
-      <section className="bg-cc-ivory py-12">
-        <div className="container mx-auto px-4">
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-cc-blue text-center mb-8">
-            {t("Recognition", "Reconocimientos")}
-          </h2>
-          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-            {recognitions.map((item, i) => (
-              <span key={i} className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-sm text-cc-charcoal border border-cc-sand-dark/15 shadow-sm">
-                <Star className="w-4 h-4 text-cc-gold flex-shrink-0" />
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Credentials Bento Grid */}
+      <CredentialsBentoGrid />
 
       {/* Podcast Link */}
       <div className="bg-cc-sand py-4 text-center">

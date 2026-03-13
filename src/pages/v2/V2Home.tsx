@@ -5,7 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TrustBar from "@/components/v2/TrustBar";
 import TestimonialColumns from "@/components/v2/TestimonialColumns";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Home,
   Shield,
