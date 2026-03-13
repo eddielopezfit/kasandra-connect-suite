@@ -239,7 +239,7 @@ const V2CommunityContent = () => {
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
           >
             <MessageCircle className="w-5 h-5 mr-2" />
-            {t("Chat with Kasandra", "Hablar con Kasandra")}
+            {t("Chat with Selena", "Hablar con Selena")}
           </Button>
           
         </div>

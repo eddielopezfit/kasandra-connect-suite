@@ -59,6 +59,12 @@ const V2Footer = () => {
               <Link to="/contact" className="block hover:text-white transition-colors">
                 {t("Contact", "Contacto")}
               </Link>
+              <Link to="/market" className="block hover:text-white transition-colors">
+                {t("Market Intelligence", "Inteligencia de Mercado")}
+              </Link>
+              <Link to="/selena-ai" className="block hover:text-white transition-colors">
+                {t("Meet Selena AI", "Conoce a Selena AI")}
+              </Link>
             </div>
           </div>
 
@@ -84,7 +90,7 @@ const V2Footer = () => {
             {/* Social Links */}
             <div className="flex justify-center md:justify-end gap-3 mt-4">
               <a
-                href="https://www.instagram.com/kasandraprietore/"
+                href="https://www.instagram.com/prietorealestate/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-cc-gold transition-colors"
@@ -145,6 +151,9 @@ const V2Footer = () => {
           <p className="text-white/50 text-xs">
             © {currentYear} Kasandra Prieto. {t("All rights reserved.", "Todos los derechos reservados.")}
           </p>
+          <Link to="/selena-ai" className="text-xs text-white/40 hover:text-cc-gold transition-colors mt-1 inline-block">
+            Powered by Selena AI
+          </Link>
         </div>
       </div>
     </footer>
