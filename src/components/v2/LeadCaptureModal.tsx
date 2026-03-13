@@ -327,6 +327,22 @@ const LeadCaptureModal = ({
             />
           </div>
 
+          {/* TCPA Consent */}
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="consent"
+              checked={consentChecked}
+              onCheckedChange={(checked) => setConsentChecked(checked === true)}
+              className="mt-0.5"
+            />
+            <label htmlFor="consent" className="text-[12px] leading-[1.4] text-cc-slate cursor-pointer select-none">
+              {t(
+                "By submitting, I agree to receive communications from Kasandra Prieto / Corner Connect Realty including SMS text messages. Message and data rates may apply. I understand I am communicating with an AI assistant. Reply STOP to opt out.",
+                "Al enviar, acepto recibir comunicaciones de Kasandra Prieto / Corner Connect Realty, incluidos mensajes de texto SMS. Se pueden aplicar tarifas de mensajes y datos. Entiendo que me comunico con un asistente de IA. Responde STOP para cancelar."
+              )}
+            </label>
+          </div>
+
           {error && (
             <p className="text-sm text-destructive text-center">{error}</p>
           )}
