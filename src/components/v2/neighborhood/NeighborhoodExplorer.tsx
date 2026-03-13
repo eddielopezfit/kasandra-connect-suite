@@ -42,7 +42,7 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
   // Fetch live Tucson market data once on mount
   useEffect(() => {
     supabase.functions.invoke("get-market-pulse").then(({ data, error }) => {
-      if (!error && data?.negotiation_gap) {
+      if (!error && data?.negotiation_gap != null) {
         setMarketPulse({
           negotiation_gap: data.negotiation_gap,
           days_to_close: data.days_to_close,
@@ -53,9 +53,8 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
     });
   }, []);
 
-  const handleExplore = async () => {
-    const trimmed = zip.trim();
-    if (!/^\d{5}$/.test(trimmed)) {
+  const doExplore = async (zipCode: string) => {
+    if (!/^\d{5}$/.test(zipCode)) {
       toast.error(t("Please enter a valid 5-digit ZIP code.", "Ingrese un código postal válido de 5 dígitos."));
       return;
     }
@@ -66,7 +65,7 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
 
     try {
       const { data, error } = await supabase.functions.invoke("neighborhood-profile", {
-        body: { zip_code: trimmed },
+        body: { zip_code: zipCode },
       });
 
       if (error) throw error;
@@ -74,18 +73,11 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
 
       setProfileEn(data.profile_en);
       setProfileEs(data.profile_es);
-      setResultZip(trimmed);
+      setResultZip(zipCode);
 
-      // Enrich session
-      updateSessionContext({
-        last_neighborhood_zip: trimmed,
-        neighborhood_explored: true,
-      });
-
-      // Analytics
+      updateSessionContext({ last_neighborhood_zip: zipCode, neighborhood_explored: true });
       logEvent(data.cached ? "neighborhood_profile_cached" : "neighborhood_profile_generated", {
-        zip_code: trimmed,
-        cached: data.cached,
+        zip_code: zipCode, cached: data.cached,
       });
     } catch (err: unknown) {
       console.error("[NeighborhoodExplorer] Error:", err);
@@ -100,6 +92,8 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
     }
   };
 
+  const handleExplore = () => doExplore(zip.trim());
+
   // Handle external ZIP from quiz
   useEffect(() => {
     if (externalZip && externalZip !== processedExternalZip.current) {
@@ -110,31 +104,7 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
         sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
       // Auto-trigger explore
-      const runExplore = async () => {
-        setLoading(true);
-        setProfileEn(null);
-        setProfileEs(null);
-        try {
-          const { data, error } = await supabase.functions.invoke("neighborhood-profile", {
-            body: { zip_code: externalZip },
-          });
-          if (error) throw error;
-          if (!data?.ok) throw new Error(data?.error || "Unknown error");
-          setProfileEn(data.profile_en);
-          setProfileEs(data.profile_es);
-          setResultZip(externalZip);
-          updateSessionContext({ last_neighborhood_zip: externalZip, neighborhood_explored: true });
-          logEvent(data.cached ? "neighborhood_profile_cached" : "neighborhood_profile_generated", {
-            zip_code: externalZip, cached: data.cached, source: "quiz",
-          });
-        } catch (err: unknown) {
-          console.error("[NeighborhoodExplorer] Auto-explore error:", err);
-          toast.error(t("Something went wrong. Please try again.", "Algo salió mal. Intente de nuevo."));
-        } finally {
-          setLoading(false);
-        }
-      };
-      runExplore();
+      doExplore(externalZip);
     }
   }, [externalZip, t]);
 
@@ -178,6 +148,18 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
               <Search className="w-4 h-4 mr-1" />
               {t("Explore", "Explorar")}
             </Button>
+          </div>
+          <div className="flex items-center justify-center gap-2 mt-3 text-sm text-cc-text-muted">
+            <span>{t("Try:", "Prueba:")}</span>
+            {["85718", "85742", "85719", "85629"].map((code) => (
+              <button
+                key={code}
+                onClick={() => { setZip(code); doExplore(code); }}
+                className="px-3 py-1 rounded-full bg-cc-sand hover:bg-cc-sand-dark text-cc-navy font-medium transition-colors"
+              >
+                {code}
+              </button>
+            ))}
           </div>
         </div>
 
