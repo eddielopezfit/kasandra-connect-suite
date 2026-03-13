@@ -61,7 +61,7 @@ const V2SellContent = () => {
         intent="sell"
         entrySource="sell_hero"
         pagePath="/sell"
-        backgroundImage={heroImage}
+        backgroundImage="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=80"
       />
 
       {/* How I Protect Sellers — 2-column layout */}
