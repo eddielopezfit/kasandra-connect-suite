@@ -123,6 +123,72 @@ const V2HomeContent = () => {
       {/* Hero Section */}
       <GlassmorphismHero />
 
+      {/* Buyer / Seller Fork */}
+      <section className="bg-cc-sand py-10">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <p className="text-center text-sm font-semibold uppercase tracking-widest text-cc-navy/50 mb-6">
+            {t("What brings you here today?", "¿Qué te trae hoy?")}
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Card A — Buyer */}
+            <button
+              onClick={() => {
+                openChat({ source: 'buyer_fork' as any });
+                setTimeout(() => {
+                  window.dispatchEvent(new CustomEvent('selena-proactive-message', {
+                    detail: {
+                      message: t(
+                        "Great — let's find you the right home. Are you pre-approved yet, or still in the early research phase?",
+                        "Excelente — encontremos la casa correcta para ti. ¿Ya tienes preaprobación, o todavía estás en la fase de investigación?"
+                      ),
+                    },
+                  }));
+                }, 300);
+              }}
+              className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
+            >
+              <Home className="w-7 h-7 text-cc-gold" />
+              <div>
+                <p className="font-semibold text-cc-navy text-base leading-snug">
+                  {t("I'm looking to buy", "Quiero comprar")}
+                </p>
+                <p className="text-sm text-cc-charcoal/60 mt-1">
+                  {t("Find your home in Tucson", "Encuentra tu hogar en Tucson")}
+                </p>
+              </div>
+            </button>
+
+            {/* Card B — Seller */}
+            <button
+              onClick={() => {
+                openChat({ source: 'seller_fork' as any });
+                setTimeout(() => {
+                  window.dispatchEvent(new CustomEvent('selena-proactive-message', {
+                    detail: {
+                      message: t(
+                        "Got it — let's talk about selling. Do you have a timeline in mind, or are you still figuring out if it's the right time?",
+                        "Entendido — hablemos de vender. ¿Tienes un plazo en mente, o todavía estás evaluando si es el momento adecuado?"
+                      ),
+                    },
+                  }));
+                }, 300);
+              }}
+              className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
+            >
+              <ArrowRight className="w-7 h-7 text-cc-gold" />
+              <div>
+                <p className="font-semibold text-cc-navy text-base leading-snug">
+                  {t("I'm looking to sell", "Quiero vender")}
+                </p>
+                <p className="text-sm text-cc-charcoal/60 mt-1">
+                  {t("See what your home is worth", "Descubre el valor de tu propiedad")}
+                </p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* About Section */}
       <section className="py-16 lg:py-24 bg-cc-sand">
         <div className="container mx-auto px-4 max-w-6xl">
