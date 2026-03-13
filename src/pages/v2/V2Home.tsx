@@ -49,25 +49,6 @@ const V2HomeContent = () => {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Returning visitor personalization — read from localStorage after hydration.
-  // State initializes empty so SSR/first-paint is always the cold-visitor hero,
-  // then the effect fills it in client-side. No flash on cold visits.
-  const [returningContext, setReturningContext] = useState<{
-    isReturning: boolean;
-    firstName: string | null;
-    intent: string | null;
-    guidesReadCount: number;
-  }>({ isReturning: false, firstName: null, intent: null, guidesReadCount: 0 });
-
-  useEffect(() => {
-    const isRet = isReturningVisitor();
-    if (!isRet) return; // cold visitor — no update needed
-    const fullName = getStoredUserName();
-    const firstName = fullName ? fullName.split(' ')[0] : null;
-    const intent = getIntent() || null;
-    const guidesReadCount = getGuidesRead().length;
-    setReturningContext({ isReturning: true, firstName, intent, guidesReadCount });
-  }, []);
   
   // Combine all testimonials for the carousel
   const allTestimonials = [...primaryTestimonials, ...secondaryTestimonials];
