@@ -104,9 +104,7 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
         sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
       // Auto-trigger explore
-        doExplore(externalZip);
-      };
-      runExplore();
+      doExplore(externalZip);
     }
   }, [externalZip, t]);
 
