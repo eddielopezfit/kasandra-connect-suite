@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
-import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
+const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
 import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle, ArrowRight } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
@@ -201,7 +201,7 @@ const V2SellContent = () => {
       </section>
 
       {/* Google Reviews — Social Proof */}
-      <GoogleReviewsSection />
+      <Suspense fallback={null}><GoogleReviewsSection /></Suspense>
 
       {/* Your Selling Options — Navy/dark styled cards */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
