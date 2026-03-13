@@ -186,8 +186,9 @@ const LeadCaptureModal = ({
             quiz_completed: handoffContext?.quiz_completed ?? false,
             quiz_result_path: handoffContext?.quiz_result_path ?? '',
             primary_priority: handoffContext?.primary_priority ?? '',
-            sms_consent: false,
-            ai_disclosure_accepted: true,
+            sms_consent: consentChecked,
+            ai_disclosure_accepted: consentChecked,
+            consent_timestamp: consentChecked ? new Date().toISOString() : null,
           },
         },
       }).then(({ error: handoffErr }) => {
