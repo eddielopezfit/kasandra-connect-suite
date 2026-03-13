@@ -58,6 +58,7 @@ const LeadCaptureModal = ({
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [consentChecked, setConsentChecked] = useState(false);
 
   const { t, language } = useLanguage();
   const { setLeadIdentity } = useSelenaChat();
