@@ -141,19 +141,19 @@ const V2Navigation = () => {
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
             isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
           }`}>
-          <div className={`mt-4 pb-4 border-t pt-4 space-y-4 ${isScrolled ? "border-border bg-white" : "border-white/20 bg-cc-navy"}`}>
+          <div className={`mt-4 pb-4 border-t pt-4 space-y-0 bg-cc-navy ${isScrolled ? "border-white/10" : "border-white/20"}`}>
             <div className="flex justify-center mb-4">
-              <LanguageToggle variant={isScrolled ? "light" : "dark"} />
+              <LanguageToggle variant="dark" />
             </div>
             {allLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block text-center py-2 font-medium ${
+                className={`block text-center py-3 text-base font-medium border-b border-white/10 last:border-b-0 ${
                   isActive(link.href)
                     ? "text-cc-gold"
-                    : isScrolled ? "text-cc-charcoal" : "text-white"
+                    : "text-white/80 hover:text-white"
                 }`}
               >
                 {link.label}
