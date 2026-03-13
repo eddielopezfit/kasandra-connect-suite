@@ -373,7 +373,6 @@ function GuidesPanel({
 function MyOptionsPanel({ 
   t,
   leadId,
-  hasReports,
   onActionClick,
   onClose,
   onSendMessage,
@@ -382,7 +381,6 @@ function MyOptionsPanel({
 }: { 
   t: (en: string, es: string) => string;
   leadId?: string | null;
-  hasReports?: boolean;
   onActionClick: (action: ChatAction) => void;
   onClose: () => void;
   onSendMessage: (message: string) => void;
