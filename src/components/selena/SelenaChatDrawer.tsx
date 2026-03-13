@@ -229,7 +229,6 @@ export function SelenaChatDrawer() {
     onActionClick: handleActionClick,
     language,
     leadId,
-    hasReports,
     closeDrawer: closeChat,
     currentIntent: journeyContext.intent,
     journeyStep: journeyContext.step,

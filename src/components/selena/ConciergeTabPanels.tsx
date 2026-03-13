@@ -433,8 +433,8 @@ function MyOptionsPanel({
         </p>
       </div>
 
-      {/* Only show "View My Latest Report" if user has actually generated reports */}
-      {leadId && hasReports && (
+      {/* View Latest Report — hidden until report system tracks generated state */}
+      {false && leadId && (
         <Button
           variant="outline"
           onClick={handleViewLastReport}

@@ -651,7 +651,6 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         messages,
         isLoading,
         leadId,
-        hasReports,
         report,
         showLeadCapture,
         pendingReportId,
