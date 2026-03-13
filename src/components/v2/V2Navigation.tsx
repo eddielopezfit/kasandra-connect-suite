@@ -62,7 +62,7 @@ const V2Navigation = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-cc-sand/95 backdrop-blur-md shadow-md py-3"
+          ? "bg-cc-sand/95 backdrop-blur-md shadow-md border-b border-white/[0.08] py-3"
           : "bg-cc-navy py-4"
       }`}
     >
