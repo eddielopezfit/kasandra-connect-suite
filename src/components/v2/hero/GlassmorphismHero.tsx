@@ -202,8 +202,13 @@ export default function GlassmorphismHero({
               </span>
             </div>
 
+            {/* Tagline */}
+            <p className="hero-fade-in hero-delay-200 text-xs font-semibold uppercase tracking-widest text-cc-gold mb-3">
+              {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
+            </p>
+
             {/* Headline */}
-            <h1 className="hero-fade-in hero-delay-200 font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-cc-ivory leading-[1.1] mb-6">
+            <h1 className="hero-fade-in hero-delay-300 font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-cc-ivory leading-[1.1] mb-6">
               {headline}
             </h1>
 
