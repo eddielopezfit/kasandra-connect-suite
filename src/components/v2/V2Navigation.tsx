@@ -50,19 +50,19 @@ const V2Navigation = () => {
   const isExploreActive = exploreLinks.some((l) => isActive(l.href));
 
   const linkClass = (active: boolean) =>
-    `text-sm font-medium transition-colors ${
+    `relative text-sm font-medium transition-all duration-200 pb-1 ${
       active
         ? "text-cc-gold"
         : isScrolled
-          ? "text-cc-charcoal hover:text-cc-gold"
-          : "text-white/90 hover:text-cc-gold"
+          ? "text-cc-charcoal/70 hover:text-cc-charcoal hover:opacity-100"
+          : "text-white/70 hover:text-white hover:opacity-100"
     }`;
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-cc-sand/95 backdrop-blur-md shadow-md py-3"
+          ? "bg-cc-sand/95 backdrop-blur-md shadow-md border-b border-white/[0.08] py-3"
           : "bg-cc-navy py-4"
       }`}
     >
@@ -70,10 +70,10 @@ const V2Navigation = () => {
         <div className="flex items-center justify-between">
           {/* Logo & Brokerage */}
           <div className="flex flex-col">
-            <Link to="/" className={`font-serif text-xl font-semibold tracking-wide ${isScrolled ? "text-cc-navy" : "text-white"}`}>
+            <Link to="/" className={`font-serif text-xl font-bold tracking-wide ${isScrolled ? "text-cc-navy" : "text-white"}`}>
               KASANDRA PRIETO
             </Link>
-            <span className={`text-[10px] tracking-wide ${isScrolled ? "text-cc-slate" : "text-white/70"}`}>
+            <span className={`text-xs tracking-wider ${isScrolled ? "text-cc-slate/80" : "text-white/80"}`}>
               Corner Connect | Realty Executives Arizona Territory
             </span>
           </div>
@@ -83,6 +83,9 @@ const V2Navigation = () => {
             {primaryLinks.map((link) => (
               <Link key={link.href} to={link.href} className={linkClass(isActive(link.href))}>
                 {link.label}
+                {isActive(link.href) && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cc-gold rounded-full" />
+                )}
               </Link>
             ))}
 
@@ -96,7 +99,7 @@ const V2Navigation = () => {
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExploreOpen ? "rotate-180" : ""}`} />
               </button>
               {isExploreOpen && (
-                <div className="absolute top-full mt-2 right-0 w-48 bg-white rounded-xl shadow-elevated border border-cc-sand-dark/20 py-2 z-50">
+                <div className="absolute top-full mt-2 right-0 w-48 bg-white rounded-xl shadow-xl shadow-black/40 border border-cc-gold/20 py-2 z-50">
                   {exploreLinks.map((link) => (
                     <Link
                       key={link.href}
@@ -105,7 +108,7 @@ const V2Navigation = () => {
                       className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
                         isActive(link.href)
                           ? "text-cc-gold bg-cc-sand/50"
-                          : "text-cc-charcoal hover:text-cc-gold hover:bg-cc-sand/30"
+                          : "text-cc-charcoal hover:text-cc-gold hover:bg-cc-navy/[0.06]"
                       }`}
                     >
                       {link.label}
@@ -138,19 +141,19 @@ const V2Navigation = () => {
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
             isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
           }`}>
-          <div className={`mt-4 pb-4 border-t pt-4 space-y-4 ${isScrolled ? "border-border bg-white" : "border-white/20 bg-cc-navy"}`}>
+          <div className={`mt-4 pb-4 border-t pt-4 space-y-0 bg-cc-navy ${isScrolled ? "border-white/10" : "border-white/20"}`}>
             <div className="flex justify-center mb-4">
-              <LanguageToggle variant={isScrolled ? "light" : "dark"} />
+              <LanguageToggle variant="dark" />
             </div>
             {allLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block text-center py-2 font-medium ${
+                className={`block text-center py-3 text-base font-medium border-b border-white/10 last:border-b-0 ${
                   isActive(link.href)
                     ? "text-cc-gold"
-                    : isScrolled ? "text-cc-charcoal" : "text-white"
+                    : "text-white/80 hover:text-white"
                 }`}
               >
                 {link.label}
