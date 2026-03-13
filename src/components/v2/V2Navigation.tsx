@@ -42,6 +42,8 @@ const V2Navigation = () => {
     { href: "/guides", label: t("Guides", "Guías") },
     { href: "/podcast", label: t("Podcast", "Podcast") },
     { href: "/community", label: t("Community", "Comunidad") },
+    { href: "/about", label: t("About", "Sobre Mí") },
+    { href: "/contact", label: t("Contact", "Contacto") },
   ];
 
   const allLinks = [...primaryLinks, ...exploreLinks];
@@ -159,6 +161,13 @@ const V2Navigation = () => {
                 {link.label}
               </Link>
             ))}
+            <Link
+              to="/contact"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-center py-3 text-base font-semibold text-cc-gold border-b border-white/10"
+            >
+              {t("Contact", "Contacto")}
+            </Link>
             <Button asChild className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold">
               <Link to="/book" onClick={() => setIsMobileMenuOpen(false)}>
                 {t("Book a Consultation", "Agendar una Cita")}
