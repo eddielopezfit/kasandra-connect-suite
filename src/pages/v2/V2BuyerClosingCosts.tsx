@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
-import { MessageCircle, ArrowRight, Info, DollarSign, Home, Percent, FileText } from "lucide-react";
+import { MessageCircle, ArrowRight, Info, DollarSign, Home, Percent, FileText, Calendar } from "lucide-react";
 
 interface CalcInputs {
   purchasePrice: string;
