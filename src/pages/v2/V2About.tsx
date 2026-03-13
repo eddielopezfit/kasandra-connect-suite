@@ -22,35 +22,8 @@ const V2AboutContent = () => {
     descriptionEs: "Conoce a Kasandra Prieto — residente de Tucson por más de 20 años, REALTOR® bilingüe, conductora de radio y defensora comunitaria.",
   });
 
-  const credentials = [
-    {
-      icon: Users,
-      title: t("Arizona Diaper Bank", "Arizona Diaper Bank"),
-      desc: t("Vice President, Governing Board", "Vicepresidenta, Junta Directiva"),
-    },
-    {
-      icon: Award,
-      title: t("Greater Tucson Leadership", "Greater Tucson Leadership"),
-      desc: t("Class of 2026", "Promoción 2026"),
-    },
-    {
-      icon: Radio,
-      title: t("Urbana 92.5 FM", "Urbana 92.5 FM"),
-      desc: t('Host of "Lifting You Up with Kasandra Prieto" — every Saturday at 9:30 AM', 'Conductora de "Lifting You Up with Kasandra Prieto" — cada sábado a las 9:30 AM'),
-    },
-    {
-      icon: Gem,
-      title: t("Certified Global Luxury Property Specialist", "Especialista Certificada en Propiedades de Lujo Global"),
-      desc: t("Luxury market expertise", "Experiencia en el mercado de lujo"),
-    },
-  ];
 
-  const recognitions = [
-    t("Coldwell Banker International Diamond Society (2024)", "Coldwell Banker International Diamond Society (2024)"),
-    t("Tucson Real Producers Rising Stars (October 2025)", "Tucson Real Producers Rising Stars (Octubre 2025)"),
-    t("Premios OZEA Award (October 2025)", "Premios OZEA Award (Octubre 2025)"),
-    t("100+ Five-Star Reviews on Birdeye", "100+ Reseñas de Cinco Estrellas en Birdeye"),
-  ];
+
 
   return (
     <>
