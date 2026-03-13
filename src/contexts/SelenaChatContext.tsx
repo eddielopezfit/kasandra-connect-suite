@@ -57,7 +57,6 @@ interface SelenaChatContextType {
   messages: ChatMessage[];
   isLoading: boolean;
   leadId: string | null;
-  hasReports: boolean;
   report: ReportState;
   showLeadCapture: boolean;
   pendingReportId: string | null;
