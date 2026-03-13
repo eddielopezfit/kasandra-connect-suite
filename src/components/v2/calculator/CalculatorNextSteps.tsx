@@ -152,7 +152,7 @@ const CalculatorNextSteps = ({
       <button
         onClick={() => {
           handleCTAClick(CTA_NAMES.TOOL_BOOK_CONSULTATION, 'selena_chat');
-          onAskSelena();
+          navigate('/book?intent=cash&source=calculator');
         }}
         className="w-full p-4 text-left rounded-xl border-2 border-cc-sand-dark bg-white hover:border-cc-gold/50 transition-all group"
       >

@@ -143,9 +143,9 @@ function getNextStep(intent: "buy" | "sell" | "cash", priority: string, band: Sc
   if (intent === "cash") {
     if (band === "ready") {
       return {
-        label: { en: "Get Your Cash Offer", es: "Obtén Tu Oferta en Efectivo" },
-        path: "/private-cash-review",
-        icon: DollarSign,
+        label: { en: "Book Your Cash Offer Review", es: "Agendar tu Revisión de Oferta en Efectivo" },
+        path: "/book?intent=cash&source=readiness",
+        icon: ArrowRight,
       };
     }
     return {
@@ -156,6 +156,13 @@ function getNextStep(intent: "buy" | "sell" | "cash", priority: string, band: Sc
   }
 
   if (intent === "sell") {
+    if (band === "ready") {
+      return {
+        label: { en: "Book Your Seller Strategy Session", es: "Agendar tu Sesión de Estrategia de Venta" },
+        path: "/book?intent=sell&source=readiness",
+        icon: ArrowRight,
+      };
+    }
     if (priority === "speed" || priority === "simplicity") {
       return {
         label: { en: "Compare Your Options", es: "Compara Tus Opciones" },
