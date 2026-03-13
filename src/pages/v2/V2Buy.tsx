@@ -90,50 +90,21 @@ const V2BuyContent = () => {
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>
-          <div className="absolute inset-0 bg-gradient-to-r from-cc-blue/90 to-cc-blue/75" />
-        </div>
-        <div className="relative container mx-auto px-4 pt-32 pb-16">
-          <div className="max-w-3xl">
-            <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
-              {t("For Buyers", "Para Compradores")}
-            </span>
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mt-2 mb-6 text-white">
-              {t("Find Your Perfect Home in Tucson", "Encuentre Su Casa Perfecta en Tucson")}
-            </h1>
-            {leadName && (
-              <p className="text-cc-gold font-medium text-lg -mt-2 mb-4">
-                {t(`Welcome back, ${leadName}`, `Bienvenido/a de nuevo, ${leadName}`)}
-              </p>
-            )}
-            <p className="text-xl text-white/90 mb-8">
-              {t(
-                "Buying a home is one of the biggest decisions you'll make. With bilingual guidance and step-by-step support, I'll help you navigate the process with confidence.",
-                "Comprar una casa es una de las decisiones más grandes que tomará. Con orientación bilingüe y apoyo paso a paso, le ayudaré a navegar el proceso con confianza."
-              )}
-            </p>
-            {/* Hero CTAs — 2 max on mobile (governance rule) */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                asChild 
-                className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base"
-                onClick={() => handleCTAClick(CTA_NAMES.HERO_BUYER_READINESS, '/buyer-readiness')}
-              >
-                <Link to="/buyer-readiness">{t("Check Your Readiness", "Evalúe Su Preparación")}</Link>
-              </Button>
-              <Button 
-                asChild 
-                variant="outline" 
-                className="bg-white/15 border-white/40 text-white hover:bg-white/20 hover:border-white/50 rounded-full px-6 sm:px-8 text-sm sm:text-base"
-                onClick={() => handleCTAClick('hero_buyer_guide', '/guides/first-time-buyer-guide')}
-              >
-                <Link to="/guides/first-time-buyer-guide">{t("Read the Buyer's Guide", "Leer la Guía del Comprador")}</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <GlassmorphismHero
+        badge={t("For Buyers", "Para Compradores")}
+        headline={t("Find Your Tucson Home with Confidence.", "Encuentra tu hogar en Tucson con confianza.")}
+        subtext={t(
+          "Kasandra guides buyers through every step — from first search to closed door — with honesty, expertise, and an AI concierge built for you.",
+          "Kasandra guía a compradores en cada paso — desde la primera búsqueda hasta el cierre — con honestidad, experiencia y un asistente de IA diseñado para ti."
+        )}
+        primaryLabel={t("Talk to Selena", "Habla con Selena")}
+        secondaryLabel={t("Buyer Readiness Quiz", "Quiz de Preparación")}
+        secondaryLink="/buyer-readiness"
+        intent="buy"
+        entrySource="buy_hero"
+        pagePath="/buy"
+        backgroundImage={heroImage}
+      />
 
       {/* Sub-Hero Tools Strip — Closing Costs + Neighborhoods (demoted from hero) */}
       <section className="bg-white border-b border-cc-sand-dark/20 py-6">
