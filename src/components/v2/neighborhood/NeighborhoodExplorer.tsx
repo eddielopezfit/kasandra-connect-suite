@@ -149,6 +149,18 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
               {t("Explore", "Explorar")}
             </Button>
           </div>
+          <div className="flex items-center justify-center gap-2 mt-3 text-sm text-cc-text-muted">
+            <span>{t("Try:", "Prueba:")}</span>
+            {["85718", "85742", "85719", "85629"].map((code) => (
+              <button
+                key={code}
+                onClick={() => { setZip(code); doExplore(code); }}
+                className="px-3 py-1 rounded-full bg-cc-sand hover:bg-cc-sand-dark text-cc-navy font-medium transition-colors"
+              >
+                {code}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Loading Skeleton */}
