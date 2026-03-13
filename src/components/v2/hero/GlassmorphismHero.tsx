@@ -113,7 +113,7 @@ export default function GlassmorphismHero() {
     : "/guides";
 
   return (
-    <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center w-full overflow-hidden">
+    <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center w-full overflow-hidden" role="banner">
       {/* Scoped keyframes */}
       <style>{`
         @keyframes heroFadeSlideIn {
@@ -140,7 +140,7 @@ export default function GlassmorphismHero() {
       </div>
 
       {/* Content */}
-      <div className="relative container mx-auto px-4 pt-24 pb-16 w-full">
+      <div className="relative container mx-auto px-4 pt-20 pb-10 md:pt-24 md:pb-16 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left column — copy */}
           <div className="max-w-xl">
@@ -231,7 +231,7 @@ export default function GlassmorphismHero() {
                   />
                   <StatItem
                     icon={<Home className="w-5 h-5 text-cc-gold" />}
-                    value={`$${stats.holdingCostPerDay}/day`}
+                    value={`$${stats.holdingCostPerDay}/${t("day", "día")}`}
                     label={t("Holding Cost Per Day", "Costo Diario de Retención")}
                   />
                 </div>
