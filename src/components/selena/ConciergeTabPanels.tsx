@@ -56,7 +56,6 @@ interface ConciergeTabPanelsProps {
   onActionClick: (action: ChatAction) => void;
   language: 'en' | 'es';
   leadId?: string | null;
-  hasReports?: boolean; // Track if user has generated any reports
   closeDrawer: () => void;
   currentIntent?: JourneyIntent;
 }
