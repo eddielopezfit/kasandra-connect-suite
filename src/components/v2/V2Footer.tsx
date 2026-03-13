@@ -53,6 +53,12 @@ const V2Footer = () => {
               <Link to="/podcast" className="block hover:text-white transition-colors">
                 {t("Podcast", "Podcast")}
               </Link>
+              <Link to="/about" className="block hover:text-white transition-colors">
+                {t("About", "Sobre Mí")}
+              </Link>
+              <Link to="/contact" className="block hover:text-white transition-colors">
+                {t("Contact", "Contacto")}
+              </Link>
             </div>
           </div>
 

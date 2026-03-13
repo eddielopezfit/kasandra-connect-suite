@@ -102,6 +102,9 @@ const App = () => {
               <Route path="/qa-determinism" element={import.meta.env.DEV ? <V2QADeterminism /> : <Navigate to="/" replace />} />
               <Route path="/neighborhoods" element={<V2Neighborhoods />} />
               <Route path="/neighborhoods/:slug" element={<V2NeighborhoodDetail />} />
+              <Route path="/about" element={<V2About />} />
+              <Route path="/contact" element={<V2Contact />} />
+              <Route path="/selena-ai" element={<V2SelenaAI />} />
 
               {/* Ad Funnel Routes (Isolated) */}
               <Route path="/ad/seller" element={<SellerLanding />} />
