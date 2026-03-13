@@ -5,6 +5,7 @@
  */
 
 import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { getSessionContext } from "@/lib/analytics/selenaSession";
@@ -58,6 +59,7 @@ const LeadCaptureModal = ({
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [consentChecked, setConsentChecked] = useState(false);
 
   const { t, language } = useLanguage();
   const { setLeadIdentity } = useSelenaChat();
@@ -117,7 +119,8 @@ const LeadCaptureModal = ({
           quiz_completed: context?.quiz_completed || false,
           has_viewed_report: context?.has_viewed_report || false,
           timeline: context?.timeline || null,
-          consent_communications: false, // Guardrail 3: no explicit consent checkbox in modal
+          consent_communications: consentChecked,
+          consent_timestamp: consentChecked ? new Date().toISOString() : null,
         },
       });
 
@@ -183,8 +186,9 @@ const LeadCaptureModal = ({
             quiz_completed: handoffContext?.quiz_completed ?? false,
             quiz_result_path: handoffContext?.quiz_result_path ?? '',
             primary_priority: handoffContext?.primary_priority ?? '',
-            sms_consent: false,
-            ai_disclosure_accepted: true,
+            sms_consent: consentChecked,
+            ai_disclosure_accepted: consentChecked,
+            consent_timestamp: consentChecked ? new Date().toISOString() : null,
           },
         },
       }).then(({ error: handoffErr }) => {
@@ -199,6 +203,7 @@ const LeadCaptureModal = ({
       setEmail("");
       setName("");
       setPhone("");
+      setConsentChecked(false);
       setStep("email");
       onClose();
 
@@ -320,6 +325,22 @@ const LeadCaptureModal = ({
               className="border-cc-sand-dark focus:border-cc-gold focus:ring-cc-gold/20 bg-white"
               autoComplete="tel"
             />
+          </div>
+
+          {/* TCPA Consent */}
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="consent"
+              checked={consentChecked}
+              onCheckedChange={(checked) => setConsentChecked(checked === true)}
+              className="mt-0.5"
+            />
+            <label htmlFor="consent" className="text-[12px] leading-[1.4] text-cc-slate cursor-pointer select-none">
+              {t(
+                "By submitting, I agree to receive communications from Kasandra Prieto / Corner Connect Realty including SMS text messages. Message and data rates may apply. I understand I am communicating with an AI assistant. Reply STOP to opt out.",
+                "Al enviar, acepto recibir comunicaciones de Kasandra Prieto / Corner Connect Realty, incluidos mensajes de texto SMS. Se pueden aplicar tarifas de mensajes y datos. Entiendo que me comunico con un asistente de IA. Responde STOP para cancelar."
+              )}
+            </label>
           </div>
 
           {error && (
