@@ -203,6 +203,7 @@ const LeadCaptureModal = ({
       setEmail("");
       setName("");
       setPhone("");
+      setConsentChecked(false);
       setStep("email");
       onClose();
 
