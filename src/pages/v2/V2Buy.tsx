@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,12 @@ import { Home, Search, DollarSign, FileCheck, CheckCircle, MessageCircle } from 
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
-import { NeighborhoodExplorer, NeighborhoodQuiz } from "@/components/v2/neighborhood";
+const NeighborhoodExplorer = lazy(() =>
+  import("@/components/v2/neighborhood").then(m => ({ default: m.NeighborhoodExplorer }))
+);
+const NeighborhoodQuiz = lazy(() =>
+  import("@/components/v2/neighborhood").then(m => ({ default: m.NeighborhoodQuiz }))
+);
 import heroImage from "@/assets/hero-neighborhood-road.png";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
@@ -174,10 +179,10 @@ const V2BuyContent = () => {
       </section>
 
       {/* Neighborhood Quiz */}
-      <NeighborhoodQuiz onExploreZip={handleQuizExplore} />
+      <Suspense fallback={null}><NeighborhoodQuiz onExploreZip={handleQuizExplore} /></Suspense>
 
       {/* Neighborhood Intelligence */}
-      <NeighborhoodExplorer externalZip={quizExploreZip} />
+      <Suspense fallback={null}><NeighborhoodExplorer externalZip={quizExploreZip} /></Suspense>
 
       {/* Buyer Testimonials */}
       <section className="py-12 bg-white">

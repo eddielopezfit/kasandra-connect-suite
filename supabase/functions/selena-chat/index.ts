@@ -2474,7 +2474,20 @@ const BRACKET_CTA_ALLOWLIST = new Set([
   'find a time with kasandra',
   'i have another question',
   'review strategy with kasandra',
-  // ES labels
+  // EN labels — buyer chips
+  'take the readiness check',
+  'take readiness check',
+  'browse guides',
+  'find off-market homes',
+  'explore off-market homes',
+  'get off-market access',
+  'first-time buyer guide',
+  'new construction vs resale',
+  'buyer readiness check',
+  'explore neighborhoods',
+  'take the buyer readiness check',
+  'see buyer guides',
+  // ES labels — seller/handoff
   'estimar mis ganancias netas',
   'hablar con kasandra',
   'comparar mis opciones',
@@ -2483,10 +2496,18 @@ const BRACKET_CTA_ALLOWLIST = new Set([
   'encontrar un horario con kasandra',
   'tengo otra pregunta',
   'revisar estrategia con kasandra',
+  // ES labels — buyer chips
+  'tomar la evaluación de preparación',
+  'tomar evaluación de preparación',
+  'explorar guías',
+  'encontrar casas fuera del mercado',
+  'obtener acceso fuera del mercado',
+  'evaluación de preparación para compradores',
+  'explorar vecindarios',
 ]);
 
 // Patterns that indicate a bracket CTA the LLM invented (catch-all for booking/action leakage)
-const BRACKET_CTA_PATTERNS = /^\s*(book|schedule|call|talk|find a time|speak|connect|reserve|reservar|agendar|hablar|llamar|programar|conectar)/i;
+const BRACKET_CTA_PATTERNS = /^\s*(book|schedule|call|talk|find a time|speak|connect|reserve|take|browse|explore|get off|tomar|explorar|encontrar|obtener|reservar|agendar|hablar|llamar|programar|conectar)/i;
 
 function sanitizeBracketCTAs(text: string): string {
   return text
@@ -2496,7 +2517,7 @@ function sanitizeBracketCTAs(text: string): string {
       if (BRACKET_CTA_ALLOWLIST.has(normalized)) return '';
       // Strip any bracket starting with booking/action verbs
       if (BRACKET_CTA_PATTERNS.test(normalized)) return '';
-      return _match; // preserve non-CTA brackets (e.g., "[optional]")
+      return ''; // strip all unrecognised brackets — safe default
     })
     .replace(/\n{3,}/g, '\n\n')
     .trim();

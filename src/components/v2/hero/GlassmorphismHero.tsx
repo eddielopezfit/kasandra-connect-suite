@@ -166,7 +166,7 @@ export default function GlassmorphismHero({
   const badgeText = badge || t("Tucson's Bilingual Concierge Agent", "La Agente Concierge Bilingüe de Tucson");
 
   return (
-    <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center w-full overflow-hidden" role="banner">
+    <section className="relative min-h-[85dvh] md:min-h-[100dvh] flex items-center w-full overflow-hidden bg-cc-navy" role="banner">
       {/* Scoped keyframes */}
       <style>{`
         @keyframes heroFadeSlideIn {
