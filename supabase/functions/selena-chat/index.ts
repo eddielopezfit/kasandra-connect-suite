@@ -107,6 +107,7 @@ interface ChatRequest {
     timeline_last_asked_turn?: number;
     turn_count?: number;
     // Journey State Engine
+    journey_state?: string;
     readiness_score?: number;
     // Level 3: Tool output data — actual result numbers/scores Selena can reference
     primary_priority?: string;
@@ -2962,7 +2963,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     
     // ============= CHIP PHASE FLOOR ENFORCEMENT (monotonic) =============
     const clientChipFloor = context.chip_phase_floor ?? 0;
-    const effectiveChipPhase = Math.max(clientChipFloor, rawGoverned.phase) as 1 | 2 | 3;
+    let effectiveChipPhase = Math.max(clientChipFloor, rawGoverned.phase) as 1 | 2 | 3;
     
     // Re-derive chips if floor pushed us past what getGovernedChips returned
     let chips: string[];

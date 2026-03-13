@@ -14,7 +14,7 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Home,
   Shield,
@@ -34,9 +34,11 @@ import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeighborhoodCards";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import CTASection from "@/components/v2/CTASection";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
+  const { isOpen, openChat } = useSelenaChat();
   useDocumentHead({
     titleEn: "Kasandra Prieto | Tucson Realtor & Bilingual Real Estate Agent",
     titleEs: "Kasandra Prieto | Agente de Bienes Raíces Bilingüe en Tucson",
@@ -68,6 +70,53 @@ const V2HomeContent = () => {
       carouselApi.off("reInit", updateCarouselState);
     };
   }, [carouselApi, updateCarouselState]);
+
+  // ========== PROACTIVE SELENA TRIGGER ==========
+  const proactiveFiredRef = useRef(false);
+  const hasOpenedSelenaRef = useRef(false);
+  const pageLoadTimeRef = useRef(Date.now());
+
+  // Track if user opened Selena themselves
+  useEffect(() => {
+    if (isOpen && !proactiveFiredRef.current) {
+      hasOpenedSelenaRef.current = true;
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (proactiveFiredRef.current || hasOpenedSelenaRef.current) return;
+
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight <= 0) return;
+
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      const elapsedMs = Date.now() - pageLoadTimeRef.current;
+
+      if (scrollPercent >= 40 && elapsedMs >= 15000) {
+        proactiveFiredRef.current = true;
+
+        // Open the drawer first
+        openChat({ source: 'proactive_homepage' as any });
+
+        // Dispatch the proactive message (SelenaChatContext listens for this)
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('selena-proactive-message', {
+            detail: {
+              message: t(
+                "Hi! I'm Selena — Kasandra's AI concierge. Are you thinking about buying or selling in Tucson, or just exploring your options?",
+                "¡Hola! Soy Selena, la concierge digital de Kasandra. ¿Estás pensando en comprar o vender en Tucson, o solo explorando tus opciones?"
+              ),
+            },
+          }));
+        }, 300);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [openChat, t]);
 
   return (
     <>
