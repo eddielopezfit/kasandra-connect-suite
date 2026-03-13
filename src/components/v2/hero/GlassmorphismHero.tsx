@@ -14,9 +14,10 @@ interface StatItemProps {
   value: string;
   label: string;
   icon: React.ReactNode;
+  insight?: string;
 }
 
-const StatItem = ({ value, label, icon }: StatItemProps) => (
+const StatItem = ({ value, label, icon, insight }: StatItemProps) => (
   <div className="flex items-center gap-3">
     <div className="w-10 h-10 rounded-lg bg-cc-gold/10 flex items-center justify-center shrink-0">
       {icon}
@@ -24,6 +25,7 @@ const StatItem = ({ value, label, icon }: StatItemProps) => (
     <div>
       <p className="text-lg font-bold text-cc-ivory">{value}</p>
       <p className="text-xs text-cc-ivory/60">{label}</p>
+      {insight && <p className="text-xs italic mt-0.5 text-cc-ivory/50">{insight}</p>}
     </div>
   </div>
 );
@@ -280,16 +282,19 @@ export default function GlassmorphismHero({
                       icon={<TrendingUp className="w-5 h-5 text-cc-gold" />}
                       value={stats.saleToListRatio}
                       label={t("Sale-to-List Ratio", "Relación Venta/Lista")}
+                      insight={t("Buyers have slight negotiating room right now", "Los compradores tienen algo de margen de negociación")}
                     />
                     <StatItem
                       icon={<Clock className="w-5 h-5 text-cc-gold" />}
                       value={`${stats.daysOnMarket} ${t("days", "días")}`}
                       label={t("Median Days on Market", "Días Mediana en el Mercado")}
+                      insight={t("Overpriced homes sit for months — pricing strategy matters", "Las casas sobrevaloradas permanecen meses en el mercado")}
                     />
                     <StatItem
                       icon={<Home className="w-5 h-5 text-cc-gold" />}
                       value={`$${stats.holdingCostPerDay}/${t("day", "día")}`}
                       label={t("Holding Cost Per Day", "Costo Diario de Retención")}
+                      insight={t("Every month unsold costs sellers ~$540", "Cada mes sin vender cuesta ~$540 al vendedor")}
                     />
                   </div>
 
