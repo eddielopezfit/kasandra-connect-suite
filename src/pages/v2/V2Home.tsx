@@ -31,9 +31,9 @@ import {
 } from "lucide-react";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
-import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeighborhoodCards";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
+import CTASection from "@/components/v2/CTASection";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
