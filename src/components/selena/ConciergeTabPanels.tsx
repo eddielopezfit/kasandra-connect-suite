@@ -159,7 +159,6 @@ export function ConciergeTabPanels({
           <MyOptionsPanel 
             t={t} 
             leadId={leadId}
-            hasReports={hasReports}
             onActionClick={onActionClick}
             onClose={onClose}
             onSendMessage={onSendMessage}
