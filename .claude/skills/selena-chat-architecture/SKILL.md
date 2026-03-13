@@ -1,142 +1,130 @@
 ---
 name: selena-chat-architecture
-description: Deep architectural knowledge of the selena-chat Supabase edge function. Use this when reading, editing, refactoring, or extracting modules from supabase/functions/selena-chat/index.ts or any of its imported modules (modeContext.ts, guardState.ts, journeyState.ts).
+description: Architecture of the Selena AI concierge system. Use this whenever working on SelenaChatContext.tsx, any file in src/context/selena/, or any file in supabase/functions/selena-chat/. This skill covers both the client-side React context and the server-side Deno edge function — they are completely separate systems.
 ---
 
-# selena-chat Edge Function Architecture
+# Selena Chat Architecture
 
-## Critical Warning
-`supabase/functions/selena-chat/index.ts` is **3,673 lines**. It cannot be safely edited in a single pass. Always read the full file before making any changes. Understand the import chain before touching anything.
+## CRITICAL: Two Completely Separate Systems
 
-## File Inventory
-```
-supabase/functions/selena-chat/
-  index.ts          # 3,673 lines — main handler (MONOLITH)
-  modeContext.ts    # 297 lines — mode-specific context injection
-  guardState.ts     # 549 lines — KB containment overlay system
-  journeyState.ts   # 153 lines — journey state classifier
-  entryGreetings.ts # Entry greeting definitions (size unknown — read before editing)
+| System | Location | Size | Purpose |
+|--------|----------|------|---------|
+| Client context | `src/context/SelenaChatContext.tsx` | 686 lines | React state, UI, localStorage |
+| Edge function | `supabase/functions/selena-chat/index.ts` | 3,673 lines | AI, system prompt, context assembly |
 
-supabase/functions/_shared/
-  cors.ts           # Shared CORS headers
-  rateLimit.ts      # Shared rate limiting: checkRateLimit, extractRateLimitKey, rateLimitResponse
-```
+**Never confuse these two.** Changes to one do NOT affect the other. They communicate only via Supabase Edge Function HTTP calls.
 
-## The 14 Dynamic Context Blocks (assembled at line 3443)
-Assembly order (concatenated in this exact sequence):
+## THE REAL MONOLITH: selena-chat/index.ts (3,673 lines)
 
-| # | Variable | Lines | Purpose |
-|---|----------|-------|---------|
-| 1 | `systemPrompt` | ~2780 | Base bilingual prompt (KB-0 through KB-12), built by `buildSystemPrompt()` |
-| 2 | `memorySummary` | 2786-2797 | Concierge memory: name, property value, situation from context audit |
-| 3 | `reflectionHint` | 2800-2823 | Modes 2/3: references last guide/tool/guides-read count |
-| 4 | `sellerDecisionHint` | 2826-2836 | Seller Decision receipt: situation, priority, condition, recommended path |
-| 5 | `marketPulseHint` | 2842-2908 | Tucson market data from `market_pulse_settings` table |
-| 6 | `neighborhoodHint` | 2914-2958 | ZIP-based neighborhood intelligence from `neighborhood_profiles` table |
-| 7 | `toolOutputHint` | 3108-3271 | Surfaces numbers from completed tools: Seller Net, Readiness scores, Cash quiz, Buyer Closing Costs, Off-Market, Neighborhood Compare, Market Intelligence |
-| 8 | `governanceHint` | 3306-3366 | Phase/proceeds/ASAP/anti-loop governance + Journey State Engine hint + trust signal + guide delivery rule + repetition guard + stop-talking rule |
-| 9 | `journeyHint` | 3077-3083 | Lists completed tools — instructs AI not to re-suggest them |
-| 10 | `trailHint` | 3088-3102 | Session trail breadcrumbs (page/tool/guide visits with timestamps) |
-| 11 | `guideModeHint` | 3376-3382 | When entry_source is 'guide' or 'guide_handoff': restricts suggestions to guide context |
-| 12 | `modeHint` | 3384-3386 | Current mode number + name injected for tone alignment |
-| 13 | `guardRules.guardHints` | from guardState.ts | Guard state violations, emotional posture constraints, identity/timeline lock rules |
-| 14 | Containment override | 3443 (inline) | If `containment_active`: hard 2-sentence limit, no credentials, acknowledge + Kasandra only |
+This is the highest-priority refactor target. It contains:
+- `buildSystemPrompt()` — assembles the full bilingual system prompt
+- 14-block dynamic context assembly (lines ~2780–3443)
+- Intent detection logic
+- Booking gate enforcement
+- Chip governance (server-side)
+- AI gateway call (Lovable AI Gateway → Gemini 3 Flash / GPT-4o-mini fallback)
 
-## Key Function/Constant Names
+### System Prompt Assembly Order (inside buildSystemPrompt)
+1. KB-0 — Absolute prohibitions (always)
+2. KB-1 — Kasandra identity facts (always)
+3. KB-4 — Intent-specific knowledge (seller OR buyer, conditional)
+4. KB-6 — Neighborhood knowledge (conditional)
+5. KB-7 — Tool knowledge (conditional)
+6. KB-7.1 — Calculator knowledge (conditional)
+7. KB-8 — Guide delivery rules (always)
+8. KB-12 — Compliance/legal (always)
 
-| Concern | Name | Location |
-|---------|------|----------|
-| Email extraction (regex) | `EMAIL_REGEX` | line 242 |
-| Email extraction (fn) | `extractEmail(message)` | line 244 |
-| Rate limiting | `checkRateLimit`, `extractRateLimitKey`, `rateLimitResponse` | `../_shared/rateLimit.ts` |
-| Booking gate | `hasEarnedBookingAccess(context, history, message, extractedEmail)` | line 543 |
-| Booking keyword detect | `userAskedToBook(message)` | line 526 |
-| Booking suggestion filter | `filterSuggestionsForEarnedAccess(suggestions, hasEarned)` | line 571 |
-| Booking keywords | `BOOKING_KEYWORDS` | line 517 |
-| Booking phrases | `BOOKING_PHRASES` | line 521 |
-| Intent detection | `detectIntent(message, route)` | line 328 |
-| Intent priority picker | `pickPrimaryIntent(intents)` | line 195 |
-| Timeline detection | `detectTimeline(message)` | line 231 |
-| Lead upsert | `upsertLeadProfile(email, context, intent, timeline)` | line 267 |
-| Chip governance | `getGovernedChips(intent, timeline, engagement, language)` | line 468 |
-| Chip filter (completed tools) | `filterChipsForCompletedTools(chips, toolsCompleted, language, hasEarned)` | line 882 |
-| Chip keys registry | `CHIP_KEYS` | lines 588-632 |
-| Chip → destination map | `CHIP_KEY_DESTINATION` | lines 635-679 |
-| Legacy chip → destination | `CHIP_DESTINATION` | lines 686-782 |
+### 14 Dynamic Context Blocks (runtime append order)
+1. systemPrompt (base)
+2. memorySummary
+3. reflectionHint
+4. sellerDecisionHint
+5. marketPulseHint
+6. neighborhoodHint
+7. toolOutputHint
+8. governanceHint
+9. journeyHint
+10. trailHint
+11. guideModeHint
+12. modeHint
+13. guardRules.guardHints
+14. Containment override (hard 2-sentence limit when containment_active)
 
-## Guide Chip Intent Categories
-
-**Sell-intent guide IDs** (`SELL_GUIDE_IDS`):
-divorce-selling, inherited-probate-property, distressed-preforeclosure, life-change-selling, senior-downsizing, cash-vs-traditional-sale, selling-for-top-dollar, pricing-strategy, cost-to-sell-tucson, how-long-to-sell-tucson, sell-now-or-wait, sell-or-rent-tucson, home-prep-staging, capital-gains-home-sale-arizona, cash-offer-guide, understanding-home-valuation, military-pcs-guide
-
-**Buy-intent guide IDs** (`BUY_GUIDE_IDS`):
-first-time-buyer-guide, arizona-first-time-buyer-programs, buying-home-noncitizen-arizona, move-up-buyer, pima-county-property-taxes
-
-**Neutral** (all others — e.g., relocating-to-tucson, tucson-neighborhoods, tucson-suburb-comparison): fall through to `'neutral'`
-
-## modeContext.ts — The 4 Modes
-
-| Mode | Name | Trigger | Key Behavior |
-|------|------|---------|--------------|
-| 1 | ORIENTATION | Default (no intent, <2 turns, no guides/tools) | Ask ONE gentle question. NEVER mention booking. Reduce anxiety. |
-| 2 | CLARITY | Intent declared OR 1+ guide read OR tool used OR 2+ turns | Open with Reflection Sentence. Suggest 2-3 next steps. No booking. |
-| 3 | CONFIDENCE | 3+ guides OR tool result OR quiz completed | Reflect on progress. Summarize insights. `reflectionRequired: true`. No hard booking CTA. |
-| 4 | HANDOFF | Explicit booking ask OR email provided OR (tool used + 2+ turns) | One sentence calm acknowledgment. No persuasion. No follow-up questions. `allowBookingCTA: true`. |
-
-Also exports: `getModeSuggestedReplies(mode, language, intent)`, `generateReflectionSentence(language, context)`, `MODE_INSTRUCTIONS_EN`, `MODE_INSTRUCTIONS_ES`
-
-## journeyState.ts — 3-State Journey Classifier
-
-States: `explore` → `evaluate` → `decide`
-
-**Important**: journeyState.ts does NOT detect intent. It receives `intent` from `index.ts` (via `detectIntent()` + `pickPrimaryIntent()`).
-
-`DECIDE_INTENTS = ['buy', 'sell', 'cash']`
-`DECIDE_TOOLS = ['tucson_alpha_calculator', 'seller_decision']`
-
-Classification priority (highest first):
-
-| Priority | Signal | Result |
-|----------|--------|--------|
-| 1 | `isInheritedHome && timeline === 'asap'` | `decide` — immediate booking |
-| 2 | `isInheritedHome` (any timeline) | `decide` — empathetic pivot |
-| 3 | `hasTrustSignal && intent ∈ DECIDE_INTENTS` | `decide` |
-| 4 | `guides_read_count >= 5 && intent ∈ DECIDE_INTENTS` | `decide` |
-| 5 | `readiness_score >= 60 && tools_completed includes DECIDE_TOOLS && intent ∈ DECIDE_INTENTS` | `decide` |
-| 6 | `readiness_score >= 30 OR tools_completed >= 1 OR guides_read_count >= 2` | `evaluate` |
-| 7 (default) | Everything else | `explore` |
-
-## Planned Extraction Targets (Refactor Roadmap)
-
-Extract in this order to minimize risk:
-
-1. **`systemPrompt.ts`** — Extract `buildSystemPrompt()` and the ~2,500 line bilingual prompt. Reduces index.ts by ~68%. Highest priority.
-2. **`emailExtractor.ts`** — `EMAIL_REGEX` + `extractEmail()`. Self-contained, safe to extract early.
-3. **`rateLimiter.ts`** — Already in `_shared/rateLimit.ts`. Verify import path, may already be done.
-4. **`bookingGate.ts`** — `BOOKING_KEYWORDS`, `BOOKING_PHRASES`, `userAskedToBook()`, `hasEarnedBookingAccess()`, `filterSuggestionsForEarnedAccess()`.
-5. **`chipGovernance.ts`** — `CHIP_KEYS`, `CHIP_KEY_DESTINATION`, `CHIP_DESTINATION`, `getGovernedChips()`, `filterChipsForCompletedTools()`.
-6. **`contextAssembler.ts`** — The 14 context block assembly. Depends on modeContext.ts, guardState.ts, journeyState.ts.
-
-After extraction, index.ts should be a thin orchestrator (~300-400 lines).
-
-## Safe Refactor Protocol
-1. Read the ENTIRE current file before writing any changes
-2. Extract ONE module at a time
-3. After each extraction: verify imports compile, test the chat endpoint
-4. Never modify guardState.ts hierarchy order
-5. Never increase max_tokens beyond 150 without explicit instruction
-6. EN and ES system prompt versions must stay in sync — edit both or neither
-
-## Client-Side Selena Context Modules (src/context/selena/)
-These are frontend modules — separate from the edge function but part of the same system:
-
+### Edge Function File Inventory
 | File | Lines | Purpose |
 |------|-------|---------|
-| `types.ts` | 136 | Type definitions — EntrySource (39 sources), EntryContext, ChatMessage, ChipMeta |
-| `greetingEngine.ts` | 670 | Greeting generation with trail awareness — `computeGreeting()` |
-| `chipGovernance.ts` | 249 | Client-side chip filtering — `mapChipsToActionSpecs()`, `getPhaseAwareChips()` |
-| `reportManager.ts` | 252 | Report generation/retrieval — `generateReport()`, `openReportById()` |
-| `identityManager.ts` | 58 | Chat history persistence — `getStoredHistory()`, `saveHistory()`, `getStoredLeadId()` |
+| `index.ts` | 3,673 | Monolith — system prompt, context, AI call |
+| `modeContext.ts` | 297 | 4-mode psychological progression |
+| `guardState.ts` | 549 | KB containment overlay |
+| `journeyState.ts` | 153 | Journey state classifier (separate from modes) |
+| `entryGreetings.ts` | ~50 | Server-side greeting variants |
 
-`greetingEngine.ts` at 670 lines is the largest client-side context module. Read it fully before editing.
+## CRITICAL TERMINOLOGY
 
+### Modes (psychological progression — modeContext.ts)
+One-directional per session. Controls HOW Selena engages.
+```
+Mode 1 — ORIENTATION  → First contact. Educational. NEVER mention booking.
+Mode 2 — CLARITY      → Intent declared. Suggest tools/guides. No booking.
+Mode 3 — CONFIDENCE   → Deep engagement. Reflect progress. No hard CTA.
+Mode 4 — HANDOFF      → Ready to convert. allowBookingCTA: true.
+```
+
+### Journey States (funnel classifier — journeyState.ts)
+SEPARATE from modes. Used for lead scoring and GHL pipeline routing.
+```
+explore  → early stage, browsing
+evaluate → comparing options, using tools
+decide   → ready, high intent
+```
+
+### TOFU/MOFU/BOFU
+These are NOT mode names and NOT journey state names. Do NOT use this terminology anywhere in the codebase. The correct terms are the mode names above and the journey state names above.
+
+## Client-Side Context (SelenaChatContext.tsx — 686 lines)
+
+### Import Chain
+```
+SelenaChatContext.tsx
+├── selena/types.ts (136) — all TypeScript interfaces
+├── selena/identityManager.ts (58) — localStorage persistence
+├── selena/chipGovernance.ts (249) — chip filtering/resolution
+│   ├── lib/registry/chipsRegistry.ts (689) — 82 chip entries EN+ES
+│   ├── lib/registry/chipKeys.ts (137) — semantic key constants
+│   └── lib/registry/guideChipMap.ts
+├── selena/greetingEngine.ts (670) — computeGreeting()
+├── selena/reportManager.ts (252) — report generation/retrieval
+├── lib/analytics/selenaSession.ts
+├── lib/analytics/sessionTrail.ts
+└── lib/guides/guideRegistry.ts
+```
+
+### Key Exported Hook
+`useSelenaChat()` — returns full chat state + actions. Used by all Selena UI components.
+
+### Critical useEffect Hooks
+| Effect | Trigger | Side Effect |
+|--------|---------|-------------|
+| Session init | once | initSessionContext(), loads localStorage history |
+| Route tracking | pathname change | updateSessionContext, appendTrail |
+| Proactive listener | mount | Listens for `selena-proactive-message` CustomEvent |
+| Booking confirmation | mount | Listens for `selena-booking-confirmation` CustomEvent |
+
+### The Proactive Trigger Hook
+`selena-proactive-message` CustomEvent is already wired in SelenaChatContext.tsx.
+To trigger Selena proactively from the homepage: dispatch this event with a message payload.
+No backend changes needed — this is a pure frontend Lovable task.
+
+## Environment Variables (Edge Function Only)
+| Variable | Purpose |
+|----------|---------|
+| `SUPABASE_URL` | DB client |
+| `SUPABASE_SERVICE_ROLE_KEY` | DB client |
+| `LOVABLE_API_KEY` | AI Gateway (NOT GEMINI_API_KEY) |
+
+## Safe Editing Rules
+1. Never edit `modeContext.ts` without reading guardState.ts first
+2. Never touch the 14-block context assembly order in index.ts
+3. Never add client-side GuardState logic — it belongs in the edge function only
+4. The `max_tokens: 150` setting is INTENTIONAL — do not increase it
+5. Always test bilingual output (EN + ES) after any index.ts change
