@@ -627,29 +627,7 @@ const V2HomeContent = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 lg:py-20 bg-cc-blue text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">
-            {t("Ready to Start Your Journey?", "¿Listo para Comenzar Su Viaje?")}
-          </h2>
-          <p className="text-white/80 max-w-2xl mx-auto mb-8">
-            {t(
-              "Whether you're buying your first home, selling a property, or exploring your options, I'm here to help you every step of the way.",
-              "Ya sea que esté comprando su primera casa, vendiendo una propiedad, o explorando sus opciones, estoy aquí para ayudarle en cada paso del camino."
-            )}
-          </p>
-          <Button 
-            onClick={() => {
-              logCTAClick({ cta_name: CTA_NAMES.SELENA_ROUTE_CALL, destination: 'selena_chat', page_path: '/v2', intent: 'explore' });
-              openChat({ source: 'hero', intent: 'explore' });
-            }}
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-blue font-semibold rounded-full px-10 py-6 text-lg shadow-gold"
-          >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            {t("Chat with Selena", "Hablar con Selena")}
-          </Button>
-        </div>
-      </section>
+      <CTASection />
     </>
   );
 };
