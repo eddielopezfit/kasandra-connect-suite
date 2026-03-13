@@ -99,7 +99,7 @@ const V2Navigation = () => {
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExploreOpen ? "rotate-180" : ""}`} />
               </button>
               {isExploreOpen && (
-                <div className="absolute top-full mt-2 right-0 w-48 bg-white rounded-xl shadow-elevated border border-cc-sand-dark/20 py-2 z-50">
+                <div className="absolute top-full mt-2 right-0 w-48 bg-white rounded-xl shadow-xl shadow-black/40 border border-cc-gold/20 py-2 z-50">
                   {exploreLinks.map((link) => (
                     <Link
                       key={link.href}
@@ -108,7 +108,7 @@ const V2Navigation = () => {
                       className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
                         isActive(link.href)
                           ? "text-cc-gold bg-cc-sand/50"
-                          : "text-cc-charcoal hover:text-cc-gold hover:bg-cc-sand/30"
+                          : "text-cc-charcoal hover:text-cc-gold hover:bg-cc-navy/[0.06]"
                       }`}
                     >
                       {link.label}
