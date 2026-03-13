@@ -47,42 +47,22 @@ const V2SellContent = () => {
 
   return (
     <>
-      {/* Hero — Gold italic accent word */}
-      <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>
-          <div className="absolute inset-0 bg-gradient-to-r from-cc-navy/90 to-cc-navy/80" />
-        </div>
-        <div className="relative container mx-auto px-4 pt-32 pb-16">
-          <div className="max-w-3xl">
-            <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
-              {t("For Sellers", "Para Vendedores")}
-            </span>
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mt-2 mb-6 text-white">
-              {t("Sell Your Home with", "Venda Su Casa con")}
-              <br />
-              <span className="text-cc-gold italic">{t("Confidence", "Confianza")}</span>
-            </h1>
-            {leadName && (
-              <p className="text-cc-gold font-medium text-lg -mt-2 mb-4">
-                {t(`Welcome back, ${leadName}`, `Bienvenido/a de nuevo, ${leadName}`)}
-              </p>
-            )}
-            <p className="text-xl text-white/90 mb-8">
-              {t(
-                "Selling your home is a significant decision. I'll guide you with market-based pricing, full disclosure support, and a protection-first approach.",
-                "Vender su casa es una decisión significativa. Le guiaré con precios basados en el mercado, apoyo de divulgación completa, y un enfoque en protección."
-              )}
-            </p>
-            <Button 
-              onClick={handleSelenaRoute}
-              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 sm:px-8 shadow-gold text-sm sm:text-base w-fit"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              {t("Talk Through My Options", "Hablar Sobre Mis Opciones")}
-            </Button>
-          </div>
-        </div>
-      </section>
+      {/* Hero */}
+      <GlassmorphismHero
+        badge={t("For Sellers", "Para Vendedores")}
+        headline={t("Know Your Home's Worth. Move on Your Terms.", "Conoce el valor de tu hogar. Muévete en tus términos.")}
+        subtext={t(
+          "Kasandra helps Tucson sellers price right, time the market, and close with confidence — with an AI concierge that answers every question before you even ask.",
+          "Kasandra ayuda a vendedores en Tucson a fijar el precio correcto, aprovechar el mercado y cerrar con confianza — con un asistente de IA que responde cada pregunta antes de que la hagas."
+        )}
+        primaryLabel={t("Talk to Selena", "Habla con Selena")}
+        secondaryLabel={t("Seller Readiness Quiz", "Quiz de Preparación para Vender")}
+        secondaryLink="/seller-readiness"
+        intent="sell"
+        entrySource="sell_hero"
+        pagePath="/sell"
+        backgroundImage={heroImage}
+      />
 
       {/* How I Protect Sellers — 2-column layout */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
