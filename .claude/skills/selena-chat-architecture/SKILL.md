@@ -122,9 +122,22 @@ No backend changes needed — this is a pure frontend Lovable task.
 | `SUPABASE_SERVICE_ROLE_KEY` | DB client |
 | `LOVABLE_API_KEY` | AI Gateway (NOT GEMINI_API_KEY) |
 
+## EntrySource Values (src/contexts/selena/types.ts)
+All confirmed values in the union as of March 2026:
+```
+'hero_cta' | 'floating_button' | 'guide_prompt' | 'quiz_result' |
+'booking_gate' | 'proactive' | 'buy_hero' | 'sell_hero' |
+'buyer_fork' | 'seller_fork' | 'proactive_homepage' |
+'about_page' | 'contact_page' | 'selena_ai_page' |
+'instant_answer_affordability' | 'instant_answer_value' |
+'homepage_selena_section'
+```
+
 ## Safe Editing Rules
 1. Never edit `modeContext.ts` without reading guardState.ts first
 2. Never touch the 14-block context assembly order in index.ts
 3. Never add client-side GuardState logic — it belongs in the edge function only
 4. The `max_tokens: 150` setting is INTENTIONAL — do not increase it
 5. Always test bilingual output (EN + ES) after any index.ts change
+6. When fixing buyer chip bug — verify seller path still works after fix
+7. GlassmorphismHero accepts `showMarketPulse?: boolean` prop — false on homepage, true on /buy and /sell

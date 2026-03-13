@@ -18,7 +18,7 @@ A production AI-powered real estate Digital Concierge OS for Kasandra Prieto (As
 | Voice | ElevenLabs |
 | Data | Firecrawl (Redfin scraping), Perplexity (neighborhood profiles), Google Places, YouTube Data API |
 | State | TanStack Query v5 + Supabase Realtime |
-| Routing | React Router v6 — 29 routes + redirects |
+| Routing | React Router v6 — 35+ routes + redirects |
 
 ## Core AI — Selena
 Selena is the AI concierge. She is NOT a generic chatbot.
@@ -29,17 +29,19 @@ Selena is the AI concierge. She is NOT a generic chatbot.
 - `max_tokens: 150` is intentional — do not change
 - GuardState hierarchy enforces brand/legal compliance on every response
 
-## Production Security Status (CRITICAL AWARENESS)
-19 of 26 edge functions have NO auth protection. Only 3 use x-admin-secret:
+## Production Security Status (CURRENT — March 2026)
+4 edge functions use x-admin-secret auth:
 - `scrape-market-pulse` ✅ protected
 - `generate-guide-image` ✅ protected
 - `generate-all-guide-images` ✅ protected
+- `generate-neighborhood-heroes` ✅ protected (added March 2026)
 
-**Unprotected but calling paid APIs:**
-- `generate-neighborhood-heroes` — calls LOVABLE_API_KEY with no auth ⚠️
+Remaining 22 edge functions have no auth — rate limit only or nothing.
+All paid API callers are now protected.
 
-**Known stub:**
-- `check-availability` — returns fake hardcoded time slots, not connected to real calendar
+**Deleted stubs:**
+- `check-availability` — DELETED (was returning fake hardcoded slots)
+- `SlotPicker.tsx` — DELETED (UI component for the stub)
 
 ## Brand Tokens
 | Token | Hex |
@@ -53,18 +55,44 @@ Selena is the AI concierge. She is NOT a generic chatbot.
 
 Fonts: Playfair Display (serif headings), Inter (sans body)
 
-## Homepage Structure (V2Home.tsx — 638 lines)
-Render order: JsonLd → GlassmorphismHero → About (inline ~240 lines) → HomepageNeighborhoodCards → TrustBar → Services (inline) → Selena AI Section (inline) → Testimonials → Podcast → Community → CTASection
+## Homepage Structure (V2Home.tsx — ~740 lines)
+Render order: JsonLd → GlassmorphismHero (showMarketPulse={false}) → Buyer/Seller Fork → About (inline) → HomepageNeighborhoodCards → TrustBar → Services (inline) → Selena AI Section (inline, has CTAs) → Testimonials → Podcast → Community → CTASection
 
 **WARNING:** About, Services, Selena AI Section, Testimonials, Podcast, Community are all INLINE JSX in V2Home.tsx — not separate components. Section reordering must be done in Claude Code, not Lovable, to avoid breakage.
 
-## Confirmed Orphaned Files (safe to delete)
-- `src/hooks/useConsultationForm.ts`
-- `src/components/v2/ConsultationFormFields.tsx`
+## New Pages Added (March 2026)
+- `/about` → V2About.tsx (~260 lines) — Kasandra bio, credentials bento, recognition
+- `/contact` → V2Contact.tsx (~140 lines) — Phone, address, social links, Selena CTA
+- `/selena-ai` → V2SelenaAI.tsx (~150 lines) — AI concierge explainer, compliance
 
-## Dev-Only Routes (no route guard — publicly accessible)
-- `/qa-cta` → V2CTAQualityAssurance
-- `/qa-determinism` → V2QADeterminism
+## Key UX Features (March 2026)
+- **Buyer/Seller fork**: Below hero, two cards open Selena with `buyer_fork`/`seller_fork` source
+- **Proactive Selena trigger**: Fires at 50% scroll + 15s elapsed, single-fire, skips if already open
+- **GlassmorphismHero**: Accepts `showMarketPulse` prop — false on homepage (shows social proof), true on /buy and /sell
+- **ZIP explorer chips**: 85718, 85742, 85719, 85629 suggestion chips on /buy
+- **Neighborhood shimmer**: Animated pulse placeholder while card images load
+- **"Your Best Friend in Real Estate"**: Gold tagline above hero headline on all pages, gold text in desktop nav
+
+## Known Production Bugs (March 2026)
+- **Buyer chip rendering bug**: Buyer flow chips render as `[bracket text]` instead of clickable buttons. Seller flow works fine. Under investigation in selena-chat/index.ts.
+- **/buy and /sell blank render**: ~4 second white screen on cold load. Fast pages: /, /about, /cash-offer-options. Under investigation.
+
+## Luxury Upgrade Queue (Next Sprints)
+Priority components from 21st.dev:
+1. Testimonials Columns (Efferd) — homepage
+2. Bento Grid (Aceternity) — /about credentials
+3. Two-column contact layout — /contact rebuild
+4. Timeline (Aceternity) — /buy buying process
+5. Pricing Comparison (Tommy Jepsen) — /sell options
+
+## Deleted Files (March 2026 — do not re-introduce)
+- `src/hooks/useConsultationForm.ts` — deleted, zero imports
+- `src/components/v2/ConsultationFormFields.tsx` — deleted, zero imports
+- `src/components/v2/booking/SlotPicker.tsx` — deleted, was calling fake check-availability stub
+
+## Dev-Only Routes (properly gated behind import.meta.env.DEV)
+- `/qa-cta` → V2CTAQualityAssurance (redirects to / in production)
+- `/qa-determinism` → V2QADeterminism (redirects to / in production)
 
 ## GHL Integration
 All GHL calls use `GHL_WEBHOOK_URL` env var. 6 edge functions sync to GHL:
