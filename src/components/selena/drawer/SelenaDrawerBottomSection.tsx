@@ -12,7 +12,6 @@ export function SelenaDrawerBottomSection({
   onActionClick,
   language,
   leadId,
-  hasReports,
   closeDrawer,
   currentIntent,
   journeyStep,
