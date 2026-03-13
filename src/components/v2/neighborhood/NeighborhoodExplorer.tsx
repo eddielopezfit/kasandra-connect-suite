@@ -108,25 +108,7 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
         setLoading(true);
         setProfileEn(null);
         setProfileEs(null);
-        try {
-          const { data, error } = await supabase.functions.invoke("neighborhood-profile", {
-            body: { zip_code: externalZip },
-          });
-          if (error) throw error;
-          if (!data?.ok) throw new Error(data?.error || "Unknown error");
-          setProfileEn(data.profile_en);
-          setProfileEs(data.profile_es);
-          setResultZip(externalZip);
-          updateSessionContext({ last_neighborhood_zip: externalZip, neighborhood_explored: true });
-          logEvent(data.cached ? "neighborhood_profile_cached" : "neighborhood_profile_generated", {
-            zip_code: externalZip, cached: data.cached, source: "quiz",
-          });
-        } catch (err: unknown) {
-          console.error("[NeighborhoodExplorer] Auto-explore error:", err);
-          toast.error(t("Something went wrong. Please try again.", "Algo salió mal. Intente de nuevo."));
-        } finally {
-          setLoading(false);
-        }
+        doExplore(externalZip);
       };
       runExplore();
     }
