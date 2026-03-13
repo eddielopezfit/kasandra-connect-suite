@@ -53,9 +53,8 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
     });
   }, []);
 
-  const handleExplore = async () => {
-    const trimmed = zip.trim();
-    if (!/^\d{5}$/.test(trimmed)) {
+  const doExplore = async (zipCode: string) => {
+    if (!/^\d{5}$/.test(zipCode)) {
       toast.error(t("Please enter a valid 5-digit ZIP code.", "Ingrese un código postal válido de 5 dígitos."));
       return;
     }
@@ -66,7 +65,7 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
 
     try {
       const { data, error } = await supabase.functions.invoke("neighborhood-profile", {
-        body: { zip_code: trimmed },
+        body: { zip_code: zipCode },
       });
 
       if (error) throw error;
@@ -74,18 +73,11 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
 
       setProfileEn(data.profile_en);
       setProfileEs(data.profile_es);
-      setResultZip(trimmed);
+      setResultZip(zipCode);
 
-      // Enrich session
-      updateSessionContext({
-        last_neighborhood_zip: trimmed,
-        neighborhood_explored: true,
-      });
-
-      // Analytics
+      updateSessionContext({ last_neighborhood_zip: zipCode, neighborhood_explored: true });
       logEvent(data.cached ? "neighborhood_profile_cached" : "neighborhood_profile_generated", {
-        zip_code: trimmed,
-        cached: data.cached,
+        zip_code: zipCode, cached: data.cached,
       });
     } catch (err: unknown) {
       console.error("[NeighborhoodExplorer] Error:", err);
@@ -99,6 +91,8 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
       setLoading(false);
     }
   };
+
+  const handleExplore = () => doExplore(zip.trim());
 
   // Handle external ZIP from quiz
   useEffect(() => {
