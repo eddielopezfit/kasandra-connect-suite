@@ -98,7 +98,7 @@ const V2HomeContent = () => {
         proactiveFiredRef.current = true;
 
         // Open the drawer — greeting engine handles the welcome message
-        openChat({ source: 'proactive_homepage' as any });
+        openChat({ source: 'proactive_homepage' });
       }
     };
 
