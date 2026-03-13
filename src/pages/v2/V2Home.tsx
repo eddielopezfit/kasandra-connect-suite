@@ -4,16 +4,7 @@ import JsonLd from "@/components/seo/JsonLd";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TrustBar from "@/components/v2/TrustBar";
-import TestimonialCard from "@/components/v2/TestimonialCard";
-import { primaryTestimonials, secondaryTestimonials } from "@/data/testimonials";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi,
-} from "@/components/ui/carousel";
+import TestimonialColumns from "@/components/v2/TestimonialColumns";
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Home,
