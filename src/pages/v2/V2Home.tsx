@@ -34,9 +34,11 @@ import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeighborhoodCards";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import CTASection from "@/components/v2/CTASection";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
+  const { isOpen, openChat } = useSelenaChat();
   useDocumentHead({
     titleEn: "Kasandra Prieto | Tucson Realtor & Bilingual Real Estate Agent",
     titleEs: "Kasandra Prieto | Agente de Bienes Raíces Bilingüe en Tucson",
