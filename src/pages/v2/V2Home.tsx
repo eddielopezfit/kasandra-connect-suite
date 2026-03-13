@@ -94,7 +94,7 @@ const V2HomeContent = () => {
       const scrollPercent = (scrollTop / docHeight) * 100;
       const elapsedMs = Date.now() - pageLoadTimeRef.current;
 
-      if (scrollPercent >= 40 && elapsedMs >= 15000) {
+      if (scrollPercent >= 50 && elapsedMs >= 15000) {
         proactiveFiredRef.current = true;
 
         // Open the drawer — greeting engine handles the welcome message
