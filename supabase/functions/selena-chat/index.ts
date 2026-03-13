@@ -107,6 +107,7 @@ interface ChatRequest {
     timeline_last_asked_turn?: number;
     turn_count?: number;
     // Journey State Engine
+    journey_state?: string;
     readiness_score?: number;
     // Level 3: Tool output data — actual result numbers/scores Selena can reference
     primary_priority?: string;
