@@ -67,6 +67,7 @@ export default function GlassmorphismHero({
   entrySource,
   pagePath = "/",
   backgroundImage,
+  showMarketPulse = true,
 }: GlassmorphismHeroProps = {}) {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
