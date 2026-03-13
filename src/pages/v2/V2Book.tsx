@@ -84,7 +84,6 @@ const V2BookContent = () => {
         </div>
       </section>
 
-
       {/* Trust signals — reduces cold feet at the booking moment */}
       <section className="bg-cc-navy border-t border-white/10 pb-8">
         <div className="container mx-auto px-4">

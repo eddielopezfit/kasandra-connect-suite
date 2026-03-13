@@ -49,10 +49,10 @@ const getHeadline = (
     );
   }
   
-  // Default first-time visitor
+  // Default first-time visitor — neutral framing
   return t(
-    "Not Sure Where to Start? That's Okay.",
-    "¿No Sabes Por Dónde Empezar? Está Bien."
+    "Your Tucson Real Estate Playbook",
+    "Tu Guía de Bienes Raíces en Tucson"
   );
 };
 
