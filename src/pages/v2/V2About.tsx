@@ -231,7 +231,7 @@ const V2AboutContent = () => {
                 to="/book"
                 onClick={() => logCTAClick({ cta_name: CTA_NAMES.TOOL_BOOK_CONSULTATION, destination: '/book', page_path: '/about', intent: 'neutral' })}
               >
-                {t("Book a Free Consultation", "Agendar una Consulta Gratuita")}
+                {t("Book a Strategy Session", "Agendar una Sesión de Estrategia")}
               </Link>
             </Button>
             <Button

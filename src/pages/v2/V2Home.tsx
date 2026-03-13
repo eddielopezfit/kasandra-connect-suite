@@ -121,7 +121,7 @@ const V2HomeContent = () => {
         knowsLanguage: ["en", "es"],
       }} />
       {/* Hero Section */}
-      <GlassmorphismHero />
+      <GlassmorphismHero showMarketPulse={false} />
 
       {/* Buyer / Seller Fork */}
       <section className="bg-cc-sand py-10">
