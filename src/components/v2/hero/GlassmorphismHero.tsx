@@ -199,9 +199,9 @@ export default function GlassmorphismHero({
           <div className="max-w-xl">
             {/* Badge */}
             <div className="hero-fade-in hero-delay-100 mb-6">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cc-gold/30 bg-cc-gold/10 text-cc-gold text-xs font-semibold uppercase tracking-wider text-center leading-tight">
+              <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-cc-gold/30 bg-cc-gold/10 text-cc-gold text-[10px] sm:text-xs font-semibold uppercase tracking-wide sm:tracking-wider text-center leading-tight max-w-[calc(100vw-3rem)]">
                 <TrendingUp className="w-3.5 h-3.5 shrink-0" />
-                {badgeText}
+                <span className="truncate">{badgeText}</span>
               </span>
             </div>
 
