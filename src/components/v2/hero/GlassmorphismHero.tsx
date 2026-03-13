@@ -282,16 +282,19 @@ export default function GlassmorphismHero({
                       icon={<TrendingUp className="w-5 h-5 text-cc-gold" />}
                       value={stats.saleToListRatio}
                       label={t("Sale-to-List Ratio", "Relación Venta/Lista")}
+                      insight={t("Buyers have slight negotiating room right now", "Los compradores tienen algo de margen de negociación")}
                     />
                     <StatItem
                       icon={<Clock className="w-5 h-5 text-cc-gold" />}
                       value={`${stats.daysOnMarket} ${t("days", "días")}`}
                       label={t("Median Days on Market", "Días Mediana en el Mercado")}
+                      insight={t("Overpriced homes sit for months — pricing strategy matters", "Las casas sobrevaloradas permanecen meses en el mercado")}
                     />
                     <StatItem
                       icon={<Home className="w-5 h-5 text-cc-gold" />}
                       value={`$${stats.holdingCostPerDay}/${t("day", "día")}`}
                       label={t("Holding Cost Per Day", "Costo Diario de Retención")}
+                      insight={t("Every month unsold costs sellers ~$540", "Cada mes sin vender cuesta ~$540 al vendedor")}
                     />
                   </div>
 
