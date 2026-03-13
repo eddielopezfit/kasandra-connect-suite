@@ -37,7 +37,6 @@ import CTASection from "@/components/v2/CTASection";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
-  const { openChat } = useSelenaChat();
   useDocumentHead({
     titleEn: "Kasandra Prieto | Tucson Realtor & Bilingual Real Estate Agent",
     titleEs: "Kasandra Prieto | Agente de Bienes Raíces Bilingüe en Tucson",
