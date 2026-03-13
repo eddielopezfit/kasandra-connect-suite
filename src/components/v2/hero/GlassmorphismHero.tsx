@@ -193,7 +193,7 @@ export default function GlassmorphismHero({
       </div>
 
       {/* Content */}
-      <div className="relative container mx-auto px-4 pt-20 pb-10 md:pt-24 md:pb-16 w-full">
+      <div className="relative container mx-auto px-4 pt-28 pb-10 md:pt-24 md:pb-16 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left column — copy */}
           <div className="max-w-xl">
