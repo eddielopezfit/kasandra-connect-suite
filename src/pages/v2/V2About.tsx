@@ -3,7 +3,8 @@ import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Award, Radio, Users, Gem, Star, MessageCircle } from "lucide-react";
+import { CheckCircle, MessageCircle } from "lucide-react";
+import CredentialsBentoGrid from "@/components/v2/CredentialsBentoGrid";
 import { Link } from "react-router-dom";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-community-neighborhood.png";
@@ -21,35 +22,8 @@ const V2AboutContent = () => {
     descriptionEs: "Conoce a Kasandra Prieto — residente de Tucson por más de 20 años, REALTOR® bilingüe, conductora de radio y defensora comunitaria.",
   });
 
-  const credentials = [
-    {
-      icon: Users,
-      title: t("Arizona Diaper Bank", "Arizona Diaper Bank"),
-      desc: t("Vice President, Governing Board", "Vicepresidenta, Junta Directiva"),
-    },
-    {
-      icon: Award,
-      title: t("Greater Tucson Leadership", "Greater Tucson Leadership"),
-      desc: t("Class of 2026", "Promoción 2026"),
-    },
-    {
-      icon: Radio,
-      title: t("Urbana 92.5 FM", "Urbana 92.5 FM"),
-      desc: t('Host of "Lifting You Up with Kasandra Prieto" — every Saturday at 9:30 AM', 'Conductora de "Lifting You Up with Kasandra Prieto" — cada sábado a las 9:30 AM'),
-    },
-    {
-      icon: Gem,
-      title: t("Certified Global Luxury Property Specialist", "Especialista Certificada en Propiedades de Lujo Global"),
-      desc: t("Luxury market expertise", "Experiencia en el mercado de lujo"),
-    },
-  ];
 
-  const recognitions = [
-    t("Coldwell Banker International Diamond Society (2024)", "Coldwell Banker International Diamond Society (2024)"),
-    t("Tucson Real Producers Rising Stars (October 2025)", "Tucson Real Producers Rising Stars (Octubre 2025)"),
-    t("Premios OZEA Award (October 2025)", "Premios OZEA Award (Octubre 2025)"),
-    t("100+ Five-Star Reviews on Birdeye", "100+ Reseñas de Cinco Estrellas en Birdeye"),
-  ];
+
 
   return (
     <>
@@ -163,40 +137,8 @@ const V2AboutContent = () => {
         </div>
       </section>
 
-      {/* Credentials Grid */}
-      <section className="bg-cc-sand py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-blue text-center mb-10">
-            {t("Leadership & Credentials", "Liderazgo y Credenciales")}
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-            {credentials.map((cred, i) => (
-              <div key={i} className="bg-white rounded-xl p-6 shadow-soft border border-cc-sand-dark/10 text-center">
-                <cred.icon className="w-8 h-8 text-cc-gold mx-auto mb-3" />
-                <h3 className="font-semibold text-cc-blue text-sm mb-1">{cred.title}</h3>
-                <p className="text-xs text-cc-text-muted">{cred.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Recognition Row */}
-      <section className="bg-cc-ivory py-12">
-        <div className="container mx-auto px-4">
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-cc-blue text-center mb-8">
-            {t("Recognition", "Reconocimientos")}
-          </h2>
-          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-            {recognitions.map((item, i) => (
-              <span key={i} className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-sm text-cc-charcoal border border-cc-sand-dark/15 shadow-sm">
-                <Star className="w-4 h-4 text-cc-gold flex-shrink-0" />
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Credentials Bento Grid */}
+      <CredentialsBentoGrid />
 
       {/* Podcast Link */}
       <div className="bg-cc-sand py-4 text-center">
