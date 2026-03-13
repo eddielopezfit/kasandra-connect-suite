@@ -14,6 +14,7 @@ import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 import { NeighborhoodExplorer, NeighborhoodQuiz } from "@/components/v2/neighborhood";
 import heroImage from "@/assets/hero-neighborhood-road.png";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
+import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 
 const PAGE_PATH = '/buy';
 const PAGE_INTENT = 'buy' as const;
