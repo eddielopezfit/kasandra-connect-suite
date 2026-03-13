@@ -90,7 +90,7 @@ const V2Footer = () => {
             {/* Social Links */}
             <div className="flex justify-center md:justify-end gap-3 mt-4">
               <a
-                href="https://www.instagram.com/kasandraprietore/"
+                href="https://www.instagram.com/prietorealestate/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-cc-gold transition-colors"

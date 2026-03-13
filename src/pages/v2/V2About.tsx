@@ -198,6 +198,13 @@ const V2AboutContent = () => {
         </div>
       </section>
 
+      {/* Podcast Link */}
+      <div className="bg-cc-sand py-4 text-center">
+        <Link to="/podcast" className="text-sm text-cc-gold hover:underline transition-colors">
+          🎙 {t("Listen to Lifting You Up on Urbana 92.5 FM →", "Escucha Lifting You Up en Urbana 92.5 FM →")}
+        </Link>
+      </div>
+
       {/* Personal Touch */}
       <section className="bg-cc-sand py-10">
         <div className="container mx-auto px-4 text-center">
