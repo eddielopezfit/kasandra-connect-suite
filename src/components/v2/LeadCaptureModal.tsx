@@ -119,7 +119,8 @@ const LeadCaptureModal = ({
           quiz_completed: context?.quiz_completed || false,
           has_viewed_report: context?.has_viewed_report || false,
           timeline: context?.timeline || null,
-          consent_communications: false, // Guardrail 3: no explicit consent checkbox in modal
+          consent_communications: consentChecked,
+          consent_timestamp: consentChecked ? new Date().toISOString() : null,
         },
       });
 
