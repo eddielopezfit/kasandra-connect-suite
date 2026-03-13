@@ -42,7 +42,8 @@ export type EntrySource =
   | 'seller_fork'
   | 'about_page'
   | 'contact_page'
-  | 'selena_ai_page';
+   | 'selena_ai_page'
+   | 'homepage_selena_section';
 
 export interface EntryContext {
   source: EntrySource;

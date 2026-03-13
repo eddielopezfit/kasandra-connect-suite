@@ -1,46 +1,75 @@
 
 
-# Fix Sprint: F-5, F-6, F-10, F-3, F-4
+## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
 
-Five fixes across 5 files. No database changes.
+### What We're Doing
 
-## F-5 — Sticky bar copy (V2Layout.tsx)
-Line 152: `"Book a Free Consultation"` → `"Book a Strategy Session"` / `"Agendar una Sesión de Estrategia"`
+Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
 
-## F-6 — About page CTA copy (V2About.tsx)
-Line 234: Same copy change as F-5.
+### What We Do NOT Import
 
-## F-10 — Homepage Selena section CTAs (V2Home.tsx + types.ts)
-After the compliance text (line 543), before the closing `</div>` of the left column, add:
-- Gold button: "Talk to Selena Now" → `openChat({ source: 'homepage_selena_section' })`
-- Text link: "Learn more about Selena →" → `/selena-ai`
+- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
+- No market stats with hard-coded numbers (stale data risk)
+- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
+- No standalone footer (GuideComplianceFooter already exists)
+- No mid-guide CTAs or interactive state that writes to session
 
-`openChat` is already imported (line 41). Add `'homepage_selena_section'` to `EntrySource` in `src/contexts/selena/types.ts` (after `'selena_ai_page'`).
+---
 
-## F-3 — Desktop nav tagline (V2Navigation.tsx)
-After line 79 (brokerage span), add a new line visible only on desktop (`hidden lg:block`):
+### Changes
+
+**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
+
+Add optional `variant` field and structured data:
+
+```typescript
+export interface GuideSection {
+  heading: string;
+  headingEs: string;
+  content: string;       // plain-text fallback always required
+  contentEs: string;
+  variant?: 'default' | 'comparison' | 'path-selector';
+  comparisonData?: {
+    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
+    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
+  };
+  pathData?: Array<{
+    id: string;
+    title: string; titleEs: string;
+    desc: string; descEs: string;
+  }>;
+}
 ```
-"Your Best Friend in Real Estate" / "Tu Mejor Amiga en Bienes Raíces"
-```
-Style: `text-xs text-cc-gold font-medium tracking-wide`
 
-## F-4 — Hero: conditional Market Pulse (GlassmorphismHero.tsx)
-Add prop `showMarketPulse?: boolean` (default `true`). When false, replace the right-column stats card with a simple social proof line:
-```
-"Trusted by 100+ Tucson families · 5-star rated"
-"Confiada por más de 100 familias · 5 estrellas"
-```
-Styled as centered text with a star icon, inside the same glow container.
+**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
 
-In V2Home.tsx line 124: pass `showMarketPulse={false}` to `<GlassmorphismHero />`. The /buy and /sell pages already pass explicit props and will keep the default `true`.
+Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
 
-## Files Changed
-| File | Change |
-|------|--------|
-| `src/components/v2/V2Layout.tsx` | 1 line — copy swap |
-| `src/pages/v2/V2About.tsx` | 1 line — copy swap |
-| `src/pages/v2/V2Home.tsx` | ~8 lines — add CTAs + prop |
-| `src/contexts/selena/types.ts` | 1 line — new EntrySource |
-| `src/components/v2/V2Navigation.tsx` | 3 lines — tagline |
-| `src/components/v2/hero/GlassmorphismHero.tsx` | ~20 lines — conditional right column |
+**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
+
+Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
+
+**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
+
+In the `.map()` loop, switch on `section.variant`:
+- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
+- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
+- default → current `whitespace-pre-line` text
+
+**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
+
+- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
+- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
+- Plain text `content`/`contentEs` stays as fallback
+
+**6. Export new components** (`src/components/v2/guides/index.ts`)
+
+Add exports for `GuideComparisonCards` and `GuidePathSelector`.
+
+### Governance Compliance
+
+- No mid-guide CTAs — these are educational visual enhancements only
+- Terminal routing stays in AuthorityCTABlock (unchanged)
+- Path selector is read-only visual engagement, does not write to session or navigate
+- All new components are bilingual via `useLanguage()`
 

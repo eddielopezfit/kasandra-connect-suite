@@ -149,7 +149,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
                            transition-all active:scale-95"
               >
                 <Calendar className="w-4 h-4" />
-                {t("Book a Free Consultation", "Agendar una Cita Gratis")}
+                {t("Book a Strategy Session", "Agendar una Sesión de Estrategia")}
               </Link>
             </div>
           </div>

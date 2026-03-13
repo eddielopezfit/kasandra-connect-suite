@@ -31,6 +31,8 @@ const StatItem = ({ value, label, icon }: StatItemProps) => (
 export interface GlassmorphismHeroProps {
   /** Badge text override */
   badge?: string;
+  /** Whether to show Market Pulse stats card (default true). When false, shows social proof. */
+  showMarketPulse?: boolean;
   /** Headline override (disables returning-visitor logic) */
   headline?: string;
   /** Subtext override (disables returning-visitor logic) */
@@ -65,6 +67,7 @@ export default function GlassmorphismHero({
   entrySource,
   pagePath = "/",
   backgroundImage,
+  showMarketPulse = true,
 }: GlassmorphismHeroProps = {}) {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
@@ -238,74 +241,85 @@ export default function GlassmorphismHero({
             </div>
           </div>
 
-          {/* Right column — glassmorphism stats card */}
+          {/* Right column — stats card or social proof */}
           <div className="hero-fade-in hero-delay-500 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-sm">
               {/* Glow effect */}
               <div className="absolute -inset-4 bg-cc-gold/10 rounded-3xl blur-2xl" />
 
-              {/* Glass card */}
-              <div className="relative rounded-2xl border border-cc-ivory/10 bg-cc-navy-light/40 backdrop-blur-xl p-6 shadow-luxury">
-                {/* Card header */}
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-lg bg-cc-gold/20 flex items-center justify-center">
-                    <Home className="w-5 h-5 text-cc-gold" />
+              {showMarketPulse ? (
+                /* Glass card — Market Pulse */
+                <div className="relative rounded-2xl border border-cc-ivory/10 bg-cc-navy-light/40 backdrop-blur-xl p-6 shadow-luxury">
+                  {/* Card header */}
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-lg bg-cc-gold/20 flex items-center justify-center">
+                      <Home className="w-5 h-5 text-cc-gold" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-cc-ivory">
+                        {t("Tucson Market Pulse", "Pulso del Mercado de Tucson")}
+                      </p>
+                      <p className="text-xs text-cc-ivory/50">
+                        {stats.verifiedDate
+                          ? stats.verifiedDate
+                          : t("Latest data", "Datos recientes")}
+                      </p>
+                    </div>
+                    {stats.isLive && (
+                      <span className="ml-auto inline-flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        LIVE
+                      </span>
+                    )}
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-cc-ivory">
-                      {t("Tucson Market Pulse", "Pulso del Mercado de Tucson")}
-                    </p>
-                    <p className="text-xs text-cc-ivory/50">
-                      {stats.verifiedDate
-                        ? stats.verifiedDate
-                        : t("Latest data", "Datos recientes")}
-                    </p>
+
+                  <div className="h-px bg-cc-ivory/10 mb-5" />
+
+                  <div className="space-y-5">
+                    <StatItem
+                      icon={<TrendingUp className="w-5 h-5 text-cc-gold" />}
+                      value={stats.saleToListRatio}
+                      label={t("Sale-to-List Ratio", "Relación Venta/Lista")}
+                    />
+                    <StatItem
+                      icon={<Clock className="w-5 h-5 text-cc-gold" />}
+                      value={`${stats.daysOnMarket} ${t("days", "días")}`}
+                      label={t("Median Days on Market", "Días Mediana en el Mercado")}
+                    />
+                    <StatItem
+                      icon={<Home className="w-5 h-5 text-cc-gold" />}
+                      value={`$${stats.holdingCostPerDay}/${t("day", "día")}`}
+                      label={t("Holding Cost Per Day", "Costo Diario de Retención")}
+                    />
                   </div>
-                  {stats.isLive && (
-                    <span className="ml-auto inline-flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      LIVE
+
+                  <div className="h-px bg-cc-ivory/10 my-5" />
+
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      {t("Data-Driven", "Datos en Tiempo Real")}
                     </span>
-                  )}
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cc-gold/10 text-cc-gold text-xs font-medium">
+                      <TrendingUp className="w-3 h-3" />
+                      {t("PREMIUM", "PREMIUM")}
+                    </span>
+                  </div>
                 </div>
-
-                {/* Divider */}
-                <div className="h-px bg-cc-ivory/10 mb-5" />
-
-                {/* Stats */}
-                <div className="space-y-5">
-                  <StatItem
-                    icon={<TrendingUp className="w-5 h-5 text-cc-gold" />}
-                    value={stats.saleToListRatio}
-                    label={t("Sale-to-List Ratio", "Relación Venta/Lista")}
-                  />
-                  <StatItem
-                    icon={<Clock className="w-5 h-5 text-cc-gold" />}
-                    value={`${stats.daysOnMarket} ${t("days", "días")}`}
-                    label={t("Median Days on Market", "Días Mediana en el Mercado")}
-                  />
-                  <StatItem
-                    icon={<Home className="w-5 h-5 text-cc-gold" />}
-                    value={`$${stats.holdingCostPerDay}/${t("day", "día")}`}
-                    label={t("Holding Cost Per Day", "Costo Diario de Retención")}
-                  />
+              ) : (
+                /* Social proof — homepage variant */
+                <div className="relative rounded-2xl border border-cc-ivory/10 bg-cc-navy-light/40 backdrop-blur-xl p-8 shadow-luxury flex flex-col items-center justify-center text-center gap-4">
+                  <div className="flex items-center gap-1 text-cc-gold text-2xl">
+                    ★★★★★
+                  </div>
+                  <p className="font-serif text-xl font-bold text-cc-ivory">
+                    {t("Trusted by 100+ Tucson families", "Confiada por más de 100 familias")}
+                  </p>
+                  <p className="text-sm text-cc-ivory/60">
+                    {t("5-star rated · Bilingual service", "5 estrellas · Servicio bilingüe")}
+                  </p>
                 </div>
-
-                {/* Divider */}
-                <div className="h-px bg-cc-ivory/10 my-5" />
-
-                {/* Footer tag */}
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    {t("Data-Driven", "Datos en Tiempo Real")}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cc-gold/10 text-cc-gold text-xs font-medium">
-                    <TrendingUp className="w-3 h-3" />
-                    {t("PREMIUM", "PREMIUM")}
-                  </span>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

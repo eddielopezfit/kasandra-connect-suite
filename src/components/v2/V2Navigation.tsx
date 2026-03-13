@@ -78,6 +78,9 @@ const V2Navigation = () => {
             <span className={`text-xs tracking-wider ${isScrolled ? "text-cc-slate/80" : "text-white/80"}`}>
               Corner Connect | Realty Executives Arizona Territory
             </span>
+            <span className="hidden lg:block text-xs text-cc-gold font-medium tracking-wide">
+              {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
+            </span>
           </div>
 
           {/* Desktop Nav */}
