@@ -1,7 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 
 const TrustBar = () => {
   const { t } = useLanguage();
+  const { data } = useGoogleReviews();
+  const reviewCount = data?.reviews?.length ?? 126;
 
   const platforms = ["Google", "Realtor.com", "Zillow"];
 
@@ -12,7 +15,7 @@ const TrustBar = () => {
         <div className="flex items-center gap-2">
           <span className="text-cc-gold tracking-wide">★★★★★</span>
           <span className="font-bold text-cc-ivory">4.9</span>
-          <span className="text-cc-ivory/70">· 126+ {t("reviews", "reseñas")}</span>
+          <span className="text-cc-ivory/70">· {reviewCount}+ {t("reviews", "reseñas")}</span>
         </div>
 
         {/* Divider */}
