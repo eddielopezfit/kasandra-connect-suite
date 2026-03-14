@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Users, TrendingUp, AlertTriangle, Sparkles, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { stripCitations } from "@/lib/utils/stripCitations";
 import { type NeighborhoodProfile } from "./NeighborhoodCard";
 
 interface NeighborhoodIntelligencePanelProps {
