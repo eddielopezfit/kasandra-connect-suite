@@ -1,75 +1,73 @@
 
 
-## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
+## V2SelenaAI Overhaul — Simulated Conversation Demo
 
-### What We're Doing
+### File 1: `src/components/v2/selena/SelenaConversationDemo.tsx` (new, ~200 lines)
 
-Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
+**iPhone-style chat frame:**
+- Outer: `bg-cc-navy rounded-3xl overflow-hidden shadow-luxury max-w-[600px] mx-auto`
+- Top bar: darker navy strip with green dot, "Selena" label, "AI Concierge • Bilingual" subtext
+- Scrollable message area with bottom padding
 
-### What We Do NOT Import
+**Message bubbles:**
+- User: `ml-auto bg-cc-gold text-cc-navy rounded-2xl rounded-tr-sm max-w-[80%]`
+- Selena: `mr-auto bg-white/10 text-cc-ivory rounded-2xl rounded-tl-sm max-w-[80%]`
 
-- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
-- No market stats with hard-coded numbers (stale data risk)
-- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
-- No standalone footer (GuideComplianceFooter already exists)
-- No mid-guide CTAs or interactive state that writes to session
+**Auto-play engine:**
+- `IntersectionObserver` triggers playback once (useRef flag)
+- State: `visibleMessages` array built up over time via `setTimeout` chain
+- Sequence per message pair:
+  1. User message fades in after 800ms
+  2. Typing indicator (3 CSS-animated dots) appears for 1200ms
+  3. Selena message revealed word-by-word (30ms/word) via a `displayedWords` counter in state
+- Total: ~25s for 6 messages
+- After complete: gold CTA button fades in + small replay icon
+
+**Conversation script (hardcoded array):**
+```
+[
+  { role: 'user', lang: 'en', text: "Do I qualify for a VA loan? I served 4 years active duty." },
+  { role: 'selena', lang: 'en', text: "Thank you for your service 🇺🇸 Yes — with 4 years active duty..." },
+  { role: 'user', lang: 'es', text: "¿Y si soy DACA? ¿Puedo comprar también?" },
+  { role: 'selena', lang: 'es', text: "¡Claro que sí! Los beneficiarios de DACA pueden calificar..." },
+  { role: 'user', lang: 'en', text: "That's amazing. How do I get started?" },
+  { role: 'selena', lang: 'en', text: "Let's start with a 20-minute strategy call with Kasandra..." },
+]
+```
+
+**Props:** `onStartChat: () => void` for the CTA callback.
 
 ---
 
-### Changes
+### File 2: `src/pages/v2/V2SelenaAI.tsx` (full rewrite)
 
-**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
+**Section 1 — Hero (lines 57-72 area, updated):**
+- Keep badge, h1, subtitle
+- Add primary gold CTA button immediately below subtitle: "Try Selena Now →" → `openChat`
+- Above the fold, no scroll needed
 
-Add optional `variant` field and structured data:
+**Section 2 — Conversation Demo (new):**
+- `bg-cc-navy py-16` section
+- Import and render `<SelenaConversationDemo onStartChat={...} />`
+- Caption below: "Real answers. Real situations. No scripts." — `text-cc-ivory/50 text-sm italic`
 
-```typescript
-export interface GuideSection {
-  heading: string;
-  headingEs: string;
-  content: string;       // plain-text fallback always required
-  contentEs: string;
-  variant?: 'default' | 'comparison' | 'path-selector';
-  comparisonData?: {
-    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-  };
-  pathData?: Array<{
-    id: string;
-    title: string; titleEs: string;
-    desc: string; descEs: string;
-  }>;
-}
-```
+**Section 3 — Feature Cards (existing doesItems, upgraded):**
+- Keep 4 cards in `sm:grid-cols-2`
+- Add hover effect: `border border-transparent hover:border-cc-gold/50 transition-all duration-300`
+- Remove the "What Selena Doesn't Do" section entirely (TOS feel)
 
-**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
+**Section 4 — Compliance (keep as-is, lines 108-118)**
 
-Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
+**Section 5 — Bottom CTA (upgraded):**
+- Primary: "Start Talking to Selena →" gold button → `openChat`
+- Secondary: ghost outline button "Book with Kasandra Instead" → navigate `/book`
+- Stack vertically with `gap-3`
 
-**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
+**Removed:** The "What Selena Doesn't Do" section — this is the TOS content driving people away. The compliance section already covers the legal requirements.
 
-Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
+---
 
-**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
-
-In the `.map()` loop, switch on `section.variant`:
-- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
-- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
-- default → current `whitespace-pre-line` text
-
-**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
-
-- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
-- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
-- Plain text `content`/`contentEs` stays as fallback
-
-**6. Export new components** (`src/components/v2/guides/index.ts`)
-
-Add exports for `GuideComparisonCards` and `GuidePathSelector`.
-
-### Governance Compliance
-
-- No mid-guide CTAs — these are educational visual enhancements only
-- Terminal routing stays in AuthorityCTABlock (unchanged)
-- Path selector is read-only visual engagement, does not write to session or navigate
-- All new components are bilingual via `useLanguage()`
+### No other files modified
+- `SelenaConversationDemo` receives `onStartChat` prop — no context dependency
+- Bilingual handled via `t()` passed from parent or inline since the demo script is hardcoded bilingual by design (both languages shown simultaneously as part of the demo)
 
