@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Users, TrendingUp, AlertTriangle, Lightbulb, Info, Signal, SignalZero } from "lucide-react";
+import { stripCitations } from "@/lib/utils/stripCitations";
 import type { MarketPulseData } from "./NeighborhoodExplorer";
 
 export interface NeighborhoodProfile {
