@@ -6,7 +6,7 @@ const data: GuideContentData = {
   category: 'Buying a Home',
   categoryEs: 'Comprando una Casa',
   author: 'Kasandra Prieto',
-  intro: "FHA loans are the most common path to homeownership for first-time buyers in Tucson — but the loan limit determines how much house they can finance. Here's exactly what the 2026 limits mean for buyers in Pima County and how to use this financing tool effectively.",
+  intro: "If you're worried about the down payment, FHA is probably the first conversation we should have. It's the most common loan I see first-time buyers use in Tucson — low down payment, flexible credit requirements, and it pairs beautifully with Pima County's assistance programs. Here's what the 2026 limits actually mean for you.",
   introEs: "Los préstamos FHA son el camino más común hacia la propiedad de vivienda para compradores primerizos en Tucson — pero el límite del préstamo determina cuánta casa pueden financiar. Aquí está exactamente lo que los límites de 2026 significan para los compradores en el Condado de Pima y cómo usar esta herramienta de financiamiento de manera efectiva.",
   sections: [
     {

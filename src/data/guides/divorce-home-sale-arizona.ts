@@ -6,7 +6,7 @@ const data: GuideContentData = {
   category: 'Hardship & Life Change',
   categoryEs: 'Dificultades y Cambios de Vida',
   author: 'Kasandra Prieto',
-  intro: "Selling a home during a divorce is one of the most emotionally and logistically complex real estate situations a person can face. Arizona's community property laws add another layer of complexity that doesn't apply in most other states. This guide gives you a clear, factual overview of how the process works — so you can make informed decisions during an already difficult time.",
+  intro: "There's no easy way to say this: selling a home during a divorce is hard. The logistics are complex, the emotions are high, and Arizona's community property laws add a layer that most people don't fully understand going in. I've been through this process with clients in Tucson, and the families who navigate it best are the ones who understand what's actually required before they're in the middle of it. Let me give you that picture.",
   introEs: "Vender una casa durante un divorcio es una de las situaciones inmobiliarias más complejas emocional y logísticamente que una persona puede enfrentar. Las leyes de propiedad comunitaria de Arizona agregan otra capa de complejidad que no aplica en la mayoría de los otros estados. Esta guía te da un resumen claro y factual de cómo funciona el proceso — para que puedas tomar decisiones informadas durante un momento ya difícil.",
   sections: [
     {

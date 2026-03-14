@@ -6,7 +6,7 @@ const data: GuideContentData = {
   category: 'Buying a Home',
   categoryEs: 'Comprando una Casa',
   author: 'Kasandra Prieto',
-  intro: "Bad credit doesn't automatically mean no mortgage. What it means is that your path to homeownership looks different — and requires more preparation. This guide covers the honest options, the realistic timelines, and the steps that actually move the needle for Tucson buyers dealing with credit challenges.",
+  intro: "I hear this one a lot: 'I have bad credit, so I can't buy a house.' And most of the time, that's not actually true. What's true is that your path looks different — and it might take a few extra months of preparation. I've helped buyers in Tucson work through credit challenges and get into their first homes. This is what I've seen actually work.",
   introEs: "El mal crédito no significa automáticamente que no hay hipoteca. Lo que significa es que tu camino hacia la propiedad de vivienda se ve diferente — y requiere más preparación. Esta guía cubre las opciones honestas, los plazos realistas y los pasos que realmente marcan la diferencia para los compradores de Tucson que enfrentan desafíos crediticios.",
   sections: [
     {

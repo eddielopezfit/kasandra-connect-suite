@@ -6,7 +6,7 @@ const data: GuideContentData = {
   category: 'Military & VA',
   categoryEs: 'Militares y VA',
   author: 'Kasandra Prieto',
-  intro: "The VA home loan is one of the most powerful homeownership benefits available to those who have served — and one of the most underutilized. In Tucson, with Davis-Monthan Air Force Base as a major employer and thousands of veterans in the community, VA loans are a significant part of the local real estate market. This guide covers everything you need to know to use this benefit effectively.",
+  intro: "First — thank you for your service. The VA loan benefit exists because of what you've done, and I want to make sure you use it fully. I've helped military families at Davis-Monthan and veterans all over Tucson get into homes with this benefit — zero down, no PMI, competitive rates. It's one of the strongest buyer tools in the market and too many veterans don't know the full picture. Let's change that.",
   introEs: "El préstamo hipotecario VA es uno de los beneficios de propiedad de vivienda más poderosos disponibles para quienes han servido — y uno de los más subutilizados. En Tucson, con la Base de la Fuerza Aérea Davis-Monthan como un empleador importante y miles de veteranos en la comunidad, los préstamos VA son una parte significativa del mercado inmobiliario local. Esta guía cubre todo lo que necesitas saber para usar este beneficio de manera efectiva.",
   sections: [
     {

@@ -6,7 +6,7 @@ const data: GuideContentData = {
   category: 'Buying a Home',
   categoryEs: 'Comprando una Casa',
   author: 'Kasandra Prieto',
-  intro: "If you're buying your first home — or haven't owned in the past three years — Pima County has more financial assistance available than most buyers realize. This guide covers every active program, how to combine them, and the realistic path from 'thinking about it' to keys in hand.",
+  intro: "I love this conversation. The moment I tell a first-time buyer everything that's available in Pima County — the programs, the income limits, how to stack them — I can see the relief on their face. It's more help than they thought existed, and they didn't know to ask. So here's the full picture, because you deserve to know what you qualify for before you talk to a single lender.",
   introEs: "Si estás comprando tu primera casa — o no has sido propietario en los últimos tres años — el Condado de Pima tiene más asistencia financiera disponible de lo que la mayoría de los compradores se da cuenta. Esta guía cubre cada programa activo, cómo combinarlos, y el camino realista desde 'pensándolo' hasta las llaves en mano.",
   sections: [
     {

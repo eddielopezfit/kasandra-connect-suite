@@ -6,7 +6,7 @@ const data: GuideContentData = {
   category: 'Understanding Your Value',
   categoryEs: 'Entendiendo Tu Valor',
   author: 'Kasandra Prieto',
-  intro: "Whether you're thinking about buying, selling, or just keeping an eye on what's happening, here's a clear-eyed look at where the Tucson market stands right now — without the spin, and with enough context to actually help you make decisions.",
+  intro: "I'm in this market every week — writing offers, reviewing CMAs, talking to buyers and sellers at every stage. So when people ask me 'how's the market?' I want to give you the real picture, not a headline. Here's what I'm actually seeing in Tucson right now.",
   introEs: "Ya sea que estés pensando en comprar, vender, o simplemente mantenerte al tanto de lo que está pasando, aquí tienes una mirada clara de dónde está el mercado de Tucson en este momento — sin exageraciones, y con suficiente contexto para ayudarte a tomar decisiones.",
   sections: [
     {

@@ -7,7 +7,7 @@ const data: GuideContentData = {
   categoryEs: 'Comprando una Casa',
   author: 'Kasandra Prieto',
   intro: "If you don't have a Social Security number but you do have an Individual Taxpayer Identification Number (ITIN), homeownership in Tucson is not out of reach. ITIN loans exist specifically for this situation — and they're more accessible than most people realize. This guide walks you through how they work, what to expect, and how to get started.",
-  introEs: "Si no tienes un número de Seguro Social pero sí tienes un Número de Identificación Personal del Contribuyente (ITIN), la propiedad de vivienda en Tucson no está fuera de alcance. Los préstamos ITIN existen específicamente para esta situación — y son más accesibles de lo que la mayoría de las personas cree. Esta guía te explica cómo funcionan, qué esperar y cómo comenzar.",
+  introEs: "He ayudado a familias en Tucson a comprar casas usando préstamos ITIN — y lo primero que siempre les digo es: la respuesta no es automáticamente no. Si tienes un ITIN y un historial de trabajo consistente, hay prestamistas en Tucson que trabajarán contigo. El camino se ve un poco diferente y requiere más preparación — pero es real. Déjame mostrarte lo que he visto funcionar.",
   sections: [
     {
       heading: 'What Is an ITIN Loan?',

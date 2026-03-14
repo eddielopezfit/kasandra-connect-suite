@@ -6,7 +6,7 @@ const data: GuideContentData = {
   category: 'Buying a Home',
   categoryEs: 'Comprando una Casa',
   author: 'Kasandra Prieto',
-  intro: "The biggest barrier most Tucson buyers face isn't qualifying for a mortgage — it's coming up with the down payment. Several programs exist specifically to close that gap, and many Tucson buyers don't know they exist. This guide covers what's currently available, who qualifies, and how to stack programs for maximum benefit.",
+  intro: "This is the conversation I have all the time: 'I can afford the monthly payment, I just don't have enough saved for the down payment.' If that's you — I have good news. Tucson has more down payment assistance than most people realize, and some of it can cover your entire down payment and closing costs. Let me show you what's actually available right now.",
   introEs: "La mayor barrera que enfrentan la mayoría de los compradores de Tucson no es calificar para una hipoteca — es reunir el pago inicial. Existen varios programas específicamente para cerrar esa brecha, y muchos compradores de Tucson no saben que existen. Esta guía cubre lo que está disponible actualmente, quién califica y cómo combinar programas para obtener el máximo beneficio.",
   sections: [
     {
