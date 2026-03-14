@@ -147,7 +147,13 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ reviews: shuffled, ok: true, placeName }),
+      JSON.stringify({
+        reviews: shuffled,
+        ok: true,
+        placeName,
+        totalCount: userRatingCount,
+        averageRating,
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
