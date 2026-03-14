@@ -98,6 +98,7 @@ const V2HomeContent = () => {
       }} />
       {/* Hero Section */}
       <GlassmorphismHero showMarketPulse={false} />
+      <CredibilityStats />
 
       {/* Buyer / Seller Fork */}
       <section className="bg-cc-sand py-10">
