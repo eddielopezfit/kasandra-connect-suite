@@ -203,7 +203,7 @@ const V2SellContent = () => {
       {/* Google Reviews — Social Proof */}
       <Suspense fallback={null}><GoogleReviewsSection /></Suspense>
 
-      {/* Your Selling Options — Navy/dark styled cards */}
+      {/* Your Selling Options — Premium Split-Panel Comparison */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
@@ -214,110 +214,129 @@ const V2SellContent = () => {
               {t("Your Selling Options", "Sus Opciones de Venta")}
             </h2>
           </div>
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {/* Traditional Listing — navy bg */}
-            <div className="bg-cc-navy p-8 rounded-2xl">
-              <h3 className="font-serif text-xl font-bold text-white mb-4">
-                {t("Traditional Listing", "Venta Tradicional")}
-              </h3>
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-white/90">{t("Maximum market exposure", "Máxima exposición al mercado")}</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-white/90">{t("Competitive offers from multiple buyers", "Ofertas competitivas de múltiples compradores")}</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-white/90">{t("Professional marketing and showings", "Marketing profesional y visitas")}</span>
-                </li>
-              </ul>
-              <Button 
-                asChild 
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            {/* LEFT — List on the Market */}
+            <div className="bg-cc-navy border-t-4 border-cc-gold rounded-2xl p-8 transition-all duration-200 hover:scale-[1.01] hover:shadow-luxury flex flex-col">
+              <div className="flex items-center gap-3 mb-5">
+                <span className="bg-cc-gold/20 text-cc-gold text-xs font-semibold px-3 py-1 rounded-full">
+                  {t("Maximum Value", "Máximo Valor")}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 mb-2">
+                <TrendingUp className="w-7 h-7 text-cc-gold" />
+                <h3 className="font-serif text-xl font-bold text-white">
+                  {t("List on the Market", "Listado en el Mercado")}
+                </h3>
+              </div>
+              <p className="text-white/60 text-sm mb-6">Via Realty Executives Arizona Territory</p>
+
+              <div className="space-y-4 mb-8 flex-1">
+                <div className="flex items-start gap-3">
+                  <Clock className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/90">{t("30–60 days typical", "30–60 días típico")}</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <DollarSign className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/90">{t("Full market competition drives price up", "La competencia del mercado sube el precio")}</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Users className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/90">{t("Thousands of qualified buyers see your home", "Miles de compradores calificados ven tu casa")}</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Shield className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/90">{t("Kasandra negotiates every offer for you", "Kasandra negocia cada oferta por ti")}</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Star className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-white/90">{t("Global Luxury certified representation", "Representación certificada Global Luxury")}</span>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => {
+                  handleCTAClick('sell_comparison_traditional', 'selena_chat');
+                  openChat({ source: 'sell_comparison_traditional', intent: 'sell' });
+                }}
                 className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full"
-                onClick={() => handleCTAClick(CTA_NAMES.TRADITIONAL_LISTING_GUIDE, '/guides/selling-for-top-dollar')}
               >
-                <Link to="/guides/selling-for-top-dollar">
-                  {t("Learn Listing Strategy", "Conocer Estrategia de Venta")}
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
+                <MessageCircle className="w-4 h-4 mr-2" />
+                {t("Talk to Selena About Listing", "Habla con Selena Sobre Listar")}
               </Button>
             </div>
 
-            {/* Cash Offer — dark slate bg */}
-            <div className="bg-cc-charcoal p-8 rounded-2xl border border-cc-gold/20">
-              <h3 className="font-serif text-xl font-bold text-white mb-4">
-                {t("Cash Offer Options", "Opciones de Oferta en Efectivo")}
-              </h3>
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-white/90">{t("Faster closing timeline", "Cierre más rápido")}</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-white/90">{t("Sell as-is without repairs", "Venda como está sin reparaciones")}</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-white/90">{t("Certainty over maximum price", "Certeza sobre precio máximo")}</span>
-                </li>
-              </ul>
-              <Button 
-                asChild 
+            {/* RIGHT — Cash Offer via Corner Connect */}
+            <div className="bg-cc-ivory border-t-4 border-cc-charcoal rounded-2xl p-8 transition-all duration-200 hover:scale-[1.01] hover:shadow-luxury flex flex-col border border-cc-sand-dark/30">
+              <div className="flex items-center gap-3 mb-5">
+                <span className="bg-cc-charcoal/10 text-cc-navy text-xs font-semibold px-3 py-1 rounded-full">
+                  {t("Fastest Close", "Cierre Más Rápido")}
+                </span>
+              </div>
+              <div className="flex items-center gap-3 mb-2">
+                <Zap className="w-7 h-7 text-cc-navy" />
+                <h3 className="font-serif text-xl font-bold text-cc-navy">
+                  {t("Cash Offer", "Oferta en Efectivo")}
+                </h3>
+              </div>
+              <p className="text-cc-charcoal/60 text-sm mb-6">Via Corner Connect Buyer Network</p>
+
+              <div className="space-y-4 mb-8 flex-1">
+                <div className="flex items-start gap-3">
+                  <Clock className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-cc-charcoal">{t("Close in 7–14 days", "Cierra en 7–14 días")}</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <DollarSign className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-cc-charcoal">{t("Certain close, no financing contingencies", "Cierre seguro, sin contingencias de financiamiento")}</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Home className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-cc-charcoal">{t("No showings, no open houses", "Sin visitas, sin casas abiertas")}</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Wrench className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-cc-charcoal">{t("As-is — no repairs required", "Como está — sin reparaciones requeridas")}</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Network className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
+                  <span className="text-sm text-cc-charcoal">{t("Kasandra's vetted buyer network", "Red de compradores verificados de Kasandra")}</span>
+                </div>
+              </div>
+
+              <Button
+                asChild
                 variant="outline"
-                className="w-full border-cc-gold text-cc-gold hover:bg-cc-gold hover:text-cc-navy font-semibold rounded-full"
+                className="w-full border-cc-navy text-cc-navy hover:bg-cc-navy hover:text-white font-semibold rounded-full"
                 onClick={() => handleCTAClick(CTA_NAMES.CASH_OFFER_OPTIONS, '/cash-offer-options')}
               >
                 <Link to="/cash-offer-options">
-                  {t("Explore Cash Options", "Explorar Opciones en Efectivo")}
+                  {t("See My Cash Options", "Ver Mis Opciones en Efectivo")}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
             </div>
-        </div>
+          </div>
 
-          {/* Decision Path CTA */}
-          <div className="max-w-4xl mx-auto mt-8">
-            <div className="bg-white rounded-2xl p-8 border border-cc-gold/30 text-center shadow-soft">
-              <span className="text-cc-gold font-semibold text-xs tracking-wider uppercase">
-                {t("Not Sure Which Path?", "¿No Está Seguro/a Cuál Camino?")}
-              </span>
-              <h3 className="font-serif text-2xl font-bold text-cc-navy mt-2 mb-3">
-                {t("Discover Your Best Path", "Descubra Su Mejor Camino")}
-              </h3>
-              <p className="text-cc-charcoal text-sm mb-6 max-w-lg mx-auto">
+          {/* Bottom Callout */}
+          <div className="max-w-5xl mx-auto mt-8">
+            <div className="bg-cc-sand rounded-xl py-6 px-8 text-center">
+              <p className="text-cc-charcoal text-sm max-w-2xl mx-auto mb-3">
                 {t(
-                  "Answer a few quick questions about your property and goals. Get a personalized recommendation — no pressure, no commitment.",
-                  "Responda algunas preguntas rápidas sobre su propiedad y objetivos. Obtenga una recomendación personalizada — sin presión, sin compromiso."
+                  "Not sure which path is right for you? Kasandra reviews both options with every seller — you decide with full information.",
+                  "¿No estás segura de qué camino es el correcto? Kasandra revisa ambas opciones con cada vendedor — tú decides con información completa."
                 )}
               </p>
-              <Button
-                asChild
-                className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
+              <button
+                onClick={() => {
+                  handleCTAClick('sell_comparison_undecided', 'selena_chat');
+                  openChat({ source: 'sell_comparison_undecided', intent: 'sell' });
+                }}
+                className="text-cc-gold hover:text-cc-gold-dark font-semibold text-sm transition-colors inline-flex items-center gap-1"
               >
-                <Link 
-                  to="/seller-decision"
-                  onClick={() => handleCTAClick('seller_decision_path', '/seller-decision')}
-                >
-                  {t("Start the Decision Tool", "Iniciar la Herramienta de Decisión")}
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="border-cc-gold/50 text-cc-navy font-medium rounded-full px-8 mt-3"
-              >
-                <Link
-                  to="/seller-readiness"
-                  onClick={() => handleCTAClick('seller_readiness_check', '/seller-readiness')}
-                >
-                  {t("Quick Readiness Check", "Check Rápido de Preparación")}
-                </Link>
-              </Button>
+                {t("Get Kasandra's Recommendation", "Obtén la Recomendación de Kasandra")}
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           </div>
         </div>
