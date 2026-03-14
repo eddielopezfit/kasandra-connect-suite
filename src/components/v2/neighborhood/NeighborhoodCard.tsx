@@ -146,8 +146,9 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
                 key={i}
                 className="bg-cc-sand text-cc-navy border-cc-sand-dark/30 font-medium px-3 py-1"
               >
-                {fit}
+                {stripCitations(fit)}
               </Badge>
+            ))}
             ))}
           </div>
         </div>
