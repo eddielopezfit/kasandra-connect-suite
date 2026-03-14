@@ -241,7 +241,7 @@ function GuidesContent() {
   const handleContinue = useCallback(() => {
     logEvent('hero_cta_click', { type: 'continue' });
     if (lastGuideId) {
-      navigate(`/v2/guides/${lastGuideId}`);
+      navigate(`/guides/${lastGuideId}`);
     } else {
       document.getElementById('guides-section')?.scrollIntoView({ behavior: 'smooth' });
     }
@@ -571,7 +571,7 @@ function GuidesContent() {
             <Button
               onClick={() => {
                 logEvent('cta_click', { source: 'guides_footer', stage: stageId, intent: activeIntent, type: 'selena' });
-                openChat({ source: 'guides_footer' as any });
+                openChat({ source: 'synthesis' });
               }}
               variant="outline"
               size="lg"

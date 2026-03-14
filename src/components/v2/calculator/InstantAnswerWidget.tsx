@@ -169,7 +169,7 @@ const InstantAnswerWidget = () => {
                 if (affordability) {
                   updateSessionContext({
                     tool_used: 'instant_answer',
-                    estimated_value: affordability.maxPrice,
+                    estimated_budget: affordability.maxPrice,
                   });
                 }
                 openChat({ source: 'instant_answer_affordability' });

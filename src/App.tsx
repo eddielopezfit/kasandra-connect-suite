@@ -46,6 +46,8 @@ import V2NeighborhoodDetail from "./pages/v2/V2NeighborhoodDetail";
 import V2OffMarketBuyer from "./pages/v2/V2OffMarketBuyer";
 import V2About from "./pages/v2/V2About";
 import V2Contact from "./pages/v2/V2Contact";
+import V2Privacy from "./pages/v2/V2Privacy";
+import V2Terms from "./pages/v2/V2Terms";
 import V2SelenaAI from "./pages/v2/V2SelenaAI";
 import SellerLanding from "./pages/ad/SellerLanding";
 import SellerQuiz from "./pages/ad/SellerQuiz";
@@ -105,6 +107,8 @@ const App = () => {
               <Route path="/about" element={<V2About />} />
               <Route path="/contact" element={<V2Contact />} />
               <Route path="/selena-ai" element={<V2SelenaAI />} />
+              <Route path="/privacy" element={<V2Privacy />} />
+              <Route path="/terms" element={<V2Terms />} />
 
               {/* Ad Funnel Routes (Isolated) */}
               <Route path="/ad/seller" element={<SellerLanding />} />

@@ -151,9 +151,19 @@ const V2Footer = () => {
           <p className="text-white/50 text-xs">
             © {currentYear} Kasandra Prieto. {t("All rights reserved.", "Todos los derechos reservados.")}
           </p>
-          <Link to="/selena-ai" className="text-xs text-white/40 hover:text-cc-gold transition-colors mt-1 inline-block">
-            Powered by Selena AI
-          </Link>
+          <div className="flex items-center justify-center gap-4 mt-2">
+            <Link to="/privacy" className="text-xs text-white/40 hover:text-cc-gold transition-colors">
+              {t("Privacy Policy", "Política de Privacidad")}
+            </Link>
+            <span className="text-white/20 text-xs">·</span>
+            <Link to="/terms" className="text-xs text-white/40 hover:text-cc-gold transition-colors">
+              {t("Terms of Service", "Términos de Servicio")}
+            </Link>
+            <span className="text-white/20 text-xs">·</span>
+            <Link to="/selena-ai" className="text-xs text-white/40 hover:text-cc-gold transition-colors">
+              Powered by Selena AI
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

@@ -395,6 +395,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
               guides_completed: getGuidesCompleted(),
               calculator_advantage: lastCalculatorAdvantage ?? undefined,
               estimated_value: context?.estimated_value,
+              estimated_budget: context?.estimated_budget,
               calculator_difference: context?.calculator_difference,
               mortgage_balance: context?.mortgage_balance,
               current_mode: context?.current_mode,
