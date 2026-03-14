@@ -149,7 +149,7 @@ const CompareColumn = ({
               {t("Seller Insights", "Para Vendedores")}
             </span>
           </div>
-          <p className="text-sm text-cc-charcoal leading-relaxed">{profile.seller_context}</p>
+          <p className="text-sm text-cc-charcoal leading-relaxed">{stripCitations(profile.seller_context)}</p>
         </div>
 
         {/* Market Context */}
