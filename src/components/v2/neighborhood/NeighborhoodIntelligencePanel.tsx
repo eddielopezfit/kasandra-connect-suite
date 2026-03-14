@@ -172,7 +172,7 @@ const NeighborhoodIntelligencePanel = ({ zipCode, neighborhoodName }: Neighborho
               </h3>
             </div>
             <p className="text-cc-charcoal leading-relaxed">
-              {profile.lifestyle_feel}
+              {stripCitations(profile.lifestyle_feel)}
             </p>
           </div>
 
