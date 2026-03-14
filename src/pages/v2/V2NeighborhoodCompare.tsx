@@ -121,7 +121,7 @@ const CompareColumn = ({
               {t("Lifestyle & Vibe", "Estilo de Vida")}
             </span>
           </div>
-          <p className="text-sm text-cc-charcoal leading-relaxed">{profile.lifestyle_feel}</p>
+          <p className="text-sm text-cc-charcoal leading-relaxed">{stripCitations(profile.lifestyle_feel)}</p>
         </div>
 
         {/* Best For */}
