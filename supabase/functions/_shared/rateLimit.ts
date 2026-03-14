@@ -21,8 +21,8 @@ const ENDPOINT_LIMITS: Record<string, RateLimitConfig> = {
   'neighborhood-profile': { maxRequests: 10, windowSeconds: 3600 },
   'save-decision-receipt': { maxRequests: 10, windowSeconds: 3600 },
   'get-decision-receipt': { maxRequests: 30, windowSeconds: 3600 },
-  'upsert-session-snapshot': { maxRequests: 10, windowSeconds: 3600 },
-  'get-session-snapshot': { maxRequests: 30, windowSeconds: 3600 },
+  'upsert-session-snapshot': { maxRequests: 60, windowSeconds: 3600 },
+  'get-session-snapshot': { maxRequests: 60, windowSeconds: 3600 },
 };
 
 // ─── In-memory fallback store ─────────────────────────────────────────────────
