@@ -64,7 +64,7 @@ function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' 
     : null;
 
   // Mortgage rate: from API response or fallback 6.5%
-  const rawRate = (pulse as Record<string, unknown>).mortgage_rate_30yr;
+  const rawRate = (pulse as unknown as Record<string, unknown>).mortgage_rate_30yr;
   const parsedRate = typeof rawRate === 'number' && rawRate >= 3 && rawRate <= 12
     ? rawRate / 100
     : 0.065;
