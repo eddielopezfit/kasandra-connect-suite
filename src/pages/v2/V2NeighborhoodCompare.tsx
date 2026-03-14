@@ -172,7 +172,7 @@ const CompareColumn = ({
         {/* Fun Fact */}
         <div className="flex items-start gap-2 pt-1 border-t border-cc-sand-dark/20">
           <Lightbulb className="w-4 h-4 text-cc-gold flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-cc-charcoal italic">{profile.fun_fact}</p>
+          <p className="text-xs text-cc-charcoal italic">{stripCitations(profile.fun_fact)}</p>
         </div>
       </div>
     </div>
