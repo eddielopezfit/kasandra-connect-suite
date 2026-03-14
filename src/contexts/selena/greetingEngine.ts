@@ -133,6 +133,8 @@ export function computeGreeting(
   const lastMessageIsUser = messages.length > 0 && messages[messages.length - 1].role === 'user';
 
   const shouldInjectGreeting = (() => {
+    // Fork cards always get a fresh greeting — explicit user intent declaration overrides everything
+    if (entryContext?.source === 'buyer_fork' || entryContext?.source === 'seller_fork') return true;
     // Never inject a greeting mid-conversation (after user has spoken) unless post-booking
     if (lastMessageIsUser && !isPostBooking) return false;
     if (storedHistoryExists && isBlockedSource && !hasRecoveryCandidate) return false;
@@ -145,7 +147,8 @@ export function computeGreeting(
         'market_intelligence', 'market_intelligence_result', 'neighborhood_compare', 'neighborhood_compare_result', 
         'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index',
         'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture',
-        'off_market_registered', 'off_market_capture', 'seller_timeline'];
+        'off_market_registered', 'off_market_capture', 'seller_timeline',
+        'buyer_fork', 'seller_fork'];
       return contextualSources.includes(entryContext?.source || '');
     }
     if (isMeaningfulSource && isAllowedGreetingSource) return true;

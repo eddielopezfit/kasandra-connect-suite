@@ -446,7 +446,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       const currentTurnCount = getSessionContext()?.turn_count ?? 0;
       updateSessionContext({ turn_count: currentTurnCount + 1 });
       
-      const mappedReplies = mapChipsToActionSpecs(data.suggestedReplies || [], languageRef.current);
+      // Use edge function detected language for chip resolution — respects auto-detected Spanish
+      const chipLanguage = (data.language === 'es' || data.language === 'en') ? data.language : languageRef.current;
+      const mappedReplies = mapChipsToActionSpecs(data.suggestedReplies || [], chipLanguage);
 
       const chipMeta: ChipMeta = {
         phase: data.chip_phase ?? data.chip_phase_floor ?? 0,
