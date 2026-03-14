@@ -58,6 +58,15 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
   return (
     <>
       <JsonLd data={jsonLdData} />
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://kasandraprietorealtor.com" },
+          { "@type": "ListItem", "position": 2, "name": "Neighborhoods", "item": "https://kasandraprietorealtor.com/neighborhoods" },
+          { "@type": "ListItem", "position": 3, "name": language === 'es' ? neighborhood.nameEs : neighborhood.name, "item": `https://kasandraprietorealtor.com/neighborhoods/${neighborhood.slug}` }
+        ]
+      }} />
 
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-cc-navy via-cc-navy to-cc-slate py-20 lg:py-28 overflow-hidden">

@@ -283,6 +283,8 @@ function GuideDetailContent() {
         description: t(guide.intro, guide.introEs).slice(0, 200),
         inLanguage: language,
         areaServed: { "@type": "City", name: "Tucson", containedInPlace: { "@type": "State", name: "Arizona" } },
+        datePublished: "2025-01-01",
+        dateModified: "2026-01-01",
       }} />
 
       {/* FAQPage schema — injected only when guide has faqItems */}
@@ -306,6 +308,17 @@ function GuideDetailContent() {
         const howToData = getHowToSchema(guideId, language);
         return howToData ? <JsonLd data={howToData as Record<string, unknown>} /> : null;
       })()}
+
+      {/* BreadcrumbList schema */}
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://kasandraprietorealtor.com" },
+          { "@type": "ListItem", "position": 2, "name": "Guides", "item": "https://kasandraprietorealtor.com/guides" },
+          { "@type": "ListItem", "position": 3, "name": t(guide.title, guide.titleEs), "item": `https://kasandraprietorealtor.com/guides/${guideId}` }
+        ]
+      }} />
 
       {/* Hero Section */}
       <section className="relative bg-cc-navy pt-32 pb-16">
