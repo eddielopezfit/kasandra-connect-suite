@@ -95,6 +95,15 @@ export function getLastGuideId(): string | null {
   }
 }
 
+export function clearLastGuideId(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(LAST_GUIDE_KEY);
+  } catch {
+    // ignore
+  }
+}
+
 /**
  * Set the last guide ID
  */

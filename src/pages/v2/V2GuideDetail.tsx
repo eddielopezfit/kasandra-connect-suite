@@ -17,6 +17,8 @@ import { markGuideOpened, setLastGuideId, getGuidesRead } from '@/lib/guides/per
 import { getGuideById, type GuideCategory } from "@/lib/guides/guideRegistry";
 import { getHowToSchema } from "@/lib/guides/howToSchemas";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { CognitiveProgressBar } from "@/components/v2/guides/CognitiveProgressBar";
+import { useCognitiveStage } from "@/hooks/useCognitiveStage";
 import { GUIDE_DATA_LOADERS, type GuideContentData } from "@/data/guides";
 import { parseInlineMarkdown } from "@/lib/utils/parseInlineMarkdown";
 import { validateRegistryLoadersOnce } from "@/lib/guides/validate";
@@ -25,6 +27,7 @@ import { validateRegistryLoadersOnce } from "@/lib/guides/validate";
 function GuideDetailContent() {
   const { guideId } = useParams<{ guideId: string }>();
   const { t, language } = useLanguage();
+  const { stage, shouldShowProgressBar } = useCognitiveStage();
   const [guide, setGuide] = useState<GuideContentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -260,6 +263,7 @@ function GuideDetailContent() {
 
   return (
     <>
+      <CognitiveProgressBar stage={stage} isVisible={shouldShowProgressBar} />
       {/* Article schema — authorship + description */}
       <JsonLd data={{
         "@context": "https://schema.org",

@@ -26,6 +26,7 @@ import {
   markGuideOpened,
   setLastGuideId,
   getLastGuideId,
+  clearLastGuideId,
   getIntent,
   isReturningVisitor,
   getRecommendedGuides,
@@ -198,6 +199,10 @@ function GuidesContent() {
   const { hasEngaged } = useRecommendationEngine(allGuides);
   
   useEffect(() => {
+    // Clear stale lastGuideId when no guides have been read — prevents false returning-visitor state
+    if (getGuidesRead().length === 0) {
+      clearLastGuideId();
+    }
     setGuidesReadState(getGuidesRead());
     setLastGuideIdState(getLastGuideId());
     logEvent('guides_page_view', { returning: isReturningVisitor() });
