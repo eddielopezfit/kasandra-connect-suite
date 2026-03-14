@@ -234,7 +234,7 @@ const NeighborhoodIntelligencePanel = ({ zipCode, neighborhoodName }: Neighborho
                     {t("Local Insight", "Dato Local")}
                   </h3>
                   <p className="text-cc-charcoal text-sm">
-                    {profile.fun_fact}
+                    {stripCitations(profile.fun_fact)}
                   </p>
                 </div>
               </div>
