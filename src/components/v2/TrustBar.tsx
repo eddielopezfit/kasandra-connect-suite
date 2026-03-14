@@ -1,7 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 
 const TrustBar = () => {
   const { t } = useLanguage();
+  const { data } = useGoogleReviews();
+  const reviewCount = data?.reviews?.length ?? 126;
 
   const platforms = ["Google", "Realtor.com", "Zillow"];
 
