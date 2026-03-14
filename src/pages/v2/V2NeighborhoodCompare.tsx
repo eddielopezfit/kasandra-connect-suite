@@ -155,7 +155,7 @@ const CompareColumn = ({
         {/* Market Context */}
         <div className="bg-cc-sand rounded-xl p-3 border border-cc-sand-dark/20">
           <p className="text-xs font-semibold text-cc-navy mb-1">{t("Market Context", "Contexto del Mercado")}</p>
-          <p className="text-sm text-cc-charcoal leading-relaxed">{profile.market_framing}</p>
+          <p className="text-sm text-cc-charcoal leading-relaxed">{stripCitations(profile.market_framing)}</p>
         </div>
 
         {/* Not Ideal For */}
