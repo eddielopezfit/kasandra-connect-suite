@@ -442,6 +442,13 @@ function GuidesContent() {
       <section className="bg-cc-ivory py-16 pb-24 md:pb-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+            {filteredGuides.length === 0 && searchQuery.trim() && (
+              <div className="col-span-full text-center py-16">
+                <p className="text-cc-charcoal/60 text-lg">
+                  {t(`No guides found for "${searchQuery}"`, `No se encontraron guías para "${searchQuery}"`)}
+                </p>
+              </div>
+            )}
             {filteredGuides.map((guide) => {
               const gridBadge = getGridBadge(guide.id, guide.category);
               const colors = getCategoryColor(guide.category);
