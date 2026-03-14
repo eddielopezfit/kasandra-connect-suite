@@ -168,7 +168,7 @@ serve(async (req) => {
     console.log(`[3/9] Research complete. Length: ${researchContext.length} chars`);
 
     // ── Gemini content generation ─────────────────────────────────
-    console.log("[3/8] Calling Gemini for content generation...");
+    console.log("[4/9] Calling Gemini for content generation...");
     const lovableKey = Deno.env.get("LOVABLE_API_KEY");
     if (!lovableKey) throw new Error("LOVABLE_API_KEY not configured");
 
