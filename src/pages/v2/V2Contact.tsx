@@ -36,7 +36,7 @@ const ContactForm = () => {
           tags: ["contact_form"],
         },
       });
-      logEvent("contact_form_submitted", { source: "contact_page" });
+      logEvent("form_submit", { source: "contact_page" });
       setSent(true);
       toast.success(t("Message sent! Kasandra will be in touch.", "¡Mensaje enviado! Kasandra se pondrá en contacto."));
     } catch {
