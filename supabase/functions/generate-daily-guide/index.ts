@@ -248,7 +248,7 @@ REQUIREMENTS:
 
     const geminiData = await geminiRes.json();
     let rawContent = geminiData.choices?.[0]?.message?.content || "";
-    console.log(`[3/8] Generation complete. Raw length: ${rawContent.length} chars`);
+    console.log(`[4/9] Generation complete. Raw length: ${rawContent.length} chars`);
 
     // Strip markdown code fences if present
     rawContent = rawContent
