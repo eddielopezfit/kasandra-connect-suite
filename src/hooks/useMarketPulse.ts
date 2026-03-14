@@ -36,6 +36,8 @@ export interface MarketStats {
   holdingCostPerDay: number;
   /** Average pre-sale prep spend */
   prepAvg: number;
+  /** Current 30-year fixed mortgage rate as decimal (e.g. 0.068) */
+  mortgageRate30yr: number;
   /** Human-readable verified date e.g. "January 2026" / "enero de 2026" */
   verifiedDate: string | null;
   /** Whether data came from live DB or fallback */
