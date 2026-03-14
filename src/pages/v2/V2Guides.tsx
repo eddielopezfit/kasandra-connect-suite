@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, DollarSign, Calendar, MessageCircle } from "lucide-react";
+import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, DollarSign, Calendar, MessageCircle, Search } from "lucide-react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/button";
@@ -176,6 +176,7 @@ function GuidesContent() {
   const { openChat, sendMessage } = useSelenaChat();
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeIntent, setActiveIntent] = useState<DecisionLaneIntent | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Derive guides from registry
   const allGuides = useMemo(() => getGuideCards(), []);
@@ -212,10 +213,23 @@ function GuidesContent() {
   const currentIntent = getIntent();
   const recommendedItems = useMemo(() => getRecommendedGuides(allGuides), [guidesRead, lastGuideId, allGuides]);
 
-  // Filter educational guides by active category
-  const filteredGuides = activeCategory === "all" 
-    ? educationalGuides 
-    : educationalGuides.filter(guide => guide.category === activeCategory);
+  // Filter educational guides by active category + search
+  const filteredGuides = useMemo(() => {
+    let guides = activeCategory === "all"
+      ? educationalGuides
+      : educationalGuides.filter(guide => guide.category === activeCategory);
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      guides = guides.filter(guide =>
+        guide.title.toLowerCase().includes(q) ||
+        (guide.titleEs ?? '').toLowerCase().includes(q) ||
+        guide.description.toLowerCase().includes(q) ||
+        (guide.descriptionEs ?? '').toLowerCase().includes(q)
+      );
+    }
+    return guides;
+  }, [activeCategory, educationalGuides, searchQuery]);
 
   const getCategoryLabel = (categoryId: string) => {
     const category = categories.find(c => c.id === categoryId);
@@ -382,6 +396,22 @@ function GuidesContent() {
         />
       )}
 
+      {/* Search Bar */}
+      <div className="bg-cc-ivory py-6 border-b border-cc-sand-dark/30">
+        <div className="container mx-auto px-4 flex justify-center">
+          <div className="relative w-full max-w-xl">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-cc-slate/50" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t("Search guides...", "Buscar guías...")}
+              className="w-full bg-white border border-cc-sand-dark/30 rounded-full pl-10 pr-5 py-3 text-cc-charcoal placeholder:text-cc-slate/50 focus:outline-none focus:ring-2 focus:ring-cc-gold/40 focus:border-cc-gold/30 transition-all"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Category Filter — Responsive Nav (stories removed from filter) */}
       {/* top-14 (56px) matches the scrolled nav height (py-3 + content).        */}
       {/* The guides section is always below the fold so the nav is always        */}
@@ -412,6 +442,13 @@ function GuidesContent() {
       <section className="bg-cc-ivory py-16 pb-24 md:pb-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+            {filteredGuides.length === 0 && searchQuery.trim() && (
+              <div className="col-span-full text-center py-16">
+                <p className="text-cc-charcoal/60 text-lg">
+                  {t(`No guides found for "${searchQuery}"`, `No se encontraron guías para "${searchQuery}"`)}
+                </p>
+              </div>
+            )}
             {filteredGuides.map((guide) => {
               const gridBadge = getGridBadge(guide.id, guide.category);
               const colors = getCategoryColor(guide.category);
