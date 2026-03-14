@@ -84,7 +84,7 @@ const data: GuideContentData = {
 
   externalLinks: [
     {
-      label: 'Pima Tucson Homebuyer's Solution — Official Site',
+      label: "Pima Tucson Homebuyer's Solution — Official Site",
       labelEs: 'Solución para Compradores Pima Tucson — Sitio Oficial',
       url: 'https://www.pimatucsonhomebuyers.com/',
       description: 'Official program information, income limits, and approved lender list for the PTHS down payment assistance program.',

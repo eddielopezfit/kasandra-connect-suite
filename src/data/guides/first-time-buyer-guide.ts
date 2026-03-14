@@ -136,8 +136,8 @@ const data: GuideContentData = {
       label: 'Arizona Housing Finance Authority',
       labelEs: 'Autoridad de Financiamiento de Vivienda de Arizona',
       url: 'https://www.azhousing.gov/',
-      description: 'Arizona's official housing finance agency — programs, income limits, and approved lenders for first-time buyers statewide.',
-      descriptionEs: 'Agencia oficial de financiamiento de vivienda de Arizona — programas, límites de ingresos y prestamistas aprobados para compradores primerizos.',
+      description: "Arizona's official housing finance agency — programs, income limits, and approved lenders for first-time buyers statewide.",
+      descriptionEs: "Agencia oficial de financiamiento de vivienda de Arizona — programas, límites de ingresos y prestamistas aprobados para compradores primerizos.",
     },
     {
       label: 'FHA Loan Limits — HUD.gov',

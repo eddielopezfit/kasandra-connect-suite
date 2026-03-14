@@ -101,8 +101,8 @@ const data: GuideContentData = {
       label: 'Find FHA-Approved Lenders in Arizona',
       labelEs: 'Encontrar Prestamistas Aprobados por FHA en Arizona',
       url: 'https://apps.hud.gov/apps/nclll/index.cfm',
-      description: 'Search for FHA-approved lenders in Tucson and Pima County through HUD's official lender locator.',
-      descriptionEs: 'Busque prestamistas aprobados por FHA en Tucson y el Condado de Pima a través del localizador oficial de prestamistas de HUD.',
+      description: "Search for FHA-approved lenders in Tucson and Pima County through HUD's official lender locator.",
+      descriptionEs: "Busque prestamistas aprobados por FHA en Tucson y el Condado de Pima a través del localizador oficial de prestamistas de HUD.",
     },
   ],
 };
