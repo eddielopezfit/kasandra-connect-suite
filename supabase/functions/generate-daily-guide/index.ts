@@ -295,10 +295,10 @@ REQUIREMENTS:
 
     // ── Generate guide_id ─────────────────────────────────────────
     const guideId = slugify(guideData.title as string) || slugify(topic);
-    console.log(`[6/8] Guide ID: ${guideId}`);
+    console.log(`[7/9] Guide ID: ${guideId}`);
 
     // ── Insert into guide_queue ───────────────────────────────────
-    console.log("[7/8] Inserting into guide_queue...");
+    console.log("[8/9] Inserting into guide_queue...");
     const { data: inserted, error: insertError } = await supabase
       .from("guide_queue")
       .insert({
