@@ -100,7 +100,7 @@ serve(async (req) => {
     const detailsResponse = await fetch(detailsUrl, {
       headers: {
         'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
-        'X-Goog-FieldMask': 'reviews',
+        'X-Goog-FieldMask': 'reviews,userRatingCount,rating',
       },
     });
 
