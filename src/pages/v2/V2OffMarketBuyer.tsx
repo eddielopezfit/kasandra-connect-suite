@@ -211,7 +211,7 @@ const V2OffMarketBuyerContent = () => {
 
       // Enrich session
       setFieldIfEmpty("intent", "buy");
-      updateSessionContext({ tool_used: "off_market_buyer", off_market_registered: true } as any);
+      updateSessionContext({ tool_used: "off_market_buyer", off_market_registered: true });
 
       logEvent("lead_capture", {
         source: "off_market_capture",
@@ -268,7 +268,7 @@ const V2OffMarketBuyerContent = () => {
                   const timelineLabel = TIMELINES.find(tl => tl.id === criteria.timeline)?.label || criteria.timeline;
                   const propLabel = PROPERTY_TYPES.find(p => p.id === criteria.property_type)?.label || criteria.property_type;
                   openChat({
-                    source: "off_market_registered" as any,
+                    source: "off_market_registered",
                     intent: "buy",
                     offMarketData: {
                       areas: areaLabels,

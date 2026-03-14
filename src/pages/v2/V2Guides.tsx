@@ -152,19 +152,6 @@ function getGuideThumbnail(guideId: string): string | null {
 }
 
 /** Get guide tier from registry for visual hierarchy */
-// Intent-aware CTA labels
-function getBookingCTA(intent: DecisionLaneIntent | null, t: (en: string, es: string) => string) {
-  switch (intent) {
-    case 'sell':
-    case 'cash':
-      return t("Book a Seller Consult", "Agendar Consulta de Vendedor");
-    case 'buy':
-      return t("Book a Buyer Consult", "Agendar Consulta de Comprador");
-    default:
-      return t("Book a Consultation", "Agendar una Cita");
-  }
-}
-
 // Inner component that uses Selena context (rendered inside V2Layout which provides SelenaChatProvider)
 function GuidesContent() {
   const { t } = useLanguage();
@@ -264,12 +251,6 @@ function GuidesContent() {
     handleGuideClick(guideId);
   }, [recommendedItems, handleGuideClick]);
   
-  const handleBookConsultation = useCallback(() => {
-    logEvent('consultation_cta_clicked', { stage: stageId, source: 'footer', intent: activeIntent });
-    trackJourneyAction('book');
-    const intentPayload = activeIntent === 'buy' ? 'buy' : activeIntent === 'cash' ? 'cash' : 'sell';
-    openChat({ source: 'hero', intent: intentPayload });
-  }, [openChat, stageId, activeIntent]);
   
   const handleAskSelena = useCallback((prefillMessage?: string) => {
     logEvent('ask_selena_clicked', { source: 'prompt', stage: stageId, hasPrefill: !!prefillMessage });

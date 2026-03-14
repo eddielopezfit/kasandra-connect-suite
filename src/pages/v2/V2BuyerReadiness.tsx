@@ -45,7 +45,7 @@ const V2BuyerReadinessContent = () => {
       const storedEmail = getStoredEmail();
       const ctx = getSessionContext();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const alreadyPrompted = !!(ctx as any)?.tool_buyer_readiness_capture_prompted;
+      const alreadyPrompted = !!ctx?.tool_buyer_readiness_capture_prompted;
 
       const alreadyKnown = !!leadId || !!storedEmail || alreadyPrompted;
 
@@ -55,7 +55,7 @@ const V2BuyerReadinessContent = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       updateSessionContext({
         tool_buyer_readiness_capture_prompted: true,
-      } as any);
+      });
 
       // Re-score returning leads on tool completion (no modal needed)
       if (leadId) {

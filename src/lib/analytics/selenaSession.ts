@@ -162,6 +162,11 @@ export interface SessionContext {
     timeline: string;
     propertyType: string;
   };
+  // Off-market registration
+  off_market_registered?: boolean;
+  // Readiness capture prompt tracking
+  tool_buyer_readiness_capture_prompted?: boolean;
+  tool_seller_readiness_capture_prompted?: boolean;
   neighborhood_compare_data?: {
     areasCompared: string[];
   };

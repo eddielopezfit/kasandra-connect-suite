@@ -34,7 +34,7 @@ Protected with `x-admin-secret` header auth:
 - `scrape-market-pulse` ✅ (Firecrawl — external API cost)
 - `generate-guide-image` ✅ (Lovable AI Gateway — external API cost)
 - `generate-all-guide-images` ✅ (batch — highest cost risk)
-- `generate-neighborhood-heroes` ⚠️ NOT protected — known security gap, fix before scaling
+- `generate-neighborhood-heroes (✅ PROTECTED — x-admin-secret check in place)` ⚠️ NOT protected — known security gap, fix before scaling
 
 **Required auth check pattern** (must be first thing after CORS check):
 ```typescript
