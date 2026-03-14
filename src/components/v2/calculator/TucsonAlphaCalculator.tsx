@@ -48,6 +48,7 @@ const TucsonAlphaCalculator = () => {
   const [marketOverrides, setMarketOverrides] = useState<MarketOverrides | undefined>();
   const [marketSource, setMarketSource] = useState<'live' | 'fallback'>('fallback');
   const [lastVerifiedDate, setLastVerifiedDate] = useState<string | null>(null);
+  const [liveMortgageRate, setLiveMortgageRate] = useState<number | null>(null);
 
   useEffect(() => {
     supabase.functions.invoke('get-market-pulse').then(({ data, error }) => {
@@ -59,6 +60,10 @@ const TucsonAlphaCalculator = () => {
         });
         setMarketSource('live');
         setLastVerifiedDate(data.last_verified_date ?? data.updated_at ?? null);
+        // Mortgage rate from scrape_log
+        if (typeof data.mortgage_rate_30yr === 'number' && data.mortgage_rate_30yr >= 3 && data.mortgage_rate_30yr <= 12) {
+          setLiveMortgageRate(data.mortgage_rate_30yr);
+        }
       }
     });
   }, []);
