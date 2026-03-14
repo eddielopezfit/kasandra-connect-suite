@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
  * Fix: Loading skeleton prevents blank white area while iframe loads.
  */
 const GHLBookingCalendar = () => {
-  const [viewportSize, setViewportSize] = useState<'mobile' | 'tablet' | 'desktop'>(' desktop');
+  const [viewportSize, setViewportSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   const [iframeLoaded, setIframeLoaded] = useState(false);
 
   useEffect(() => {
