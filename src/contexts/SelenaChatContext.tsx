@@ -277,7 +277,12 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
 
     const sessionContext = getSessionContext();
     const isMeaningfulSource = entryContext && entryContext.source !== 'floating' && entryContext.source !== 'proactive';
-    const storedHistoryExists = messages.length > 0 || !!localStorage.getItem(CHAT_HISTORY_KEY);
+    // Fork sources always start fresh — clear localStorage synchronously before greeting computation
+    const isForkSource = entryContext?.source === 'buyer_fork' || entryContext?.source === 'seller_fork';
+    if (isForkSource) {
+      localStorage.removeItem(CHAT_HISTORY_KEY);
+    }
+    const storedHistoryExists = isForkSource ? false : (messages.length > 0 || !!localStorage.getItem(CHAT_HISTORY_KEY));
     const hasContextualEntry = isMeaningfulSource && isNewEntry;
 
     // FIX 5: Pass session trail to greeting engine for trail-aware greetings
@@ -294,7 +299,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
 
       if (!result.greetingContent) {
         // No-op
-      } else if (messages.length > 0 && hasContextualEntry) {
+      } else if (!isForkSource && messages.length > 0 && hasContextualEntry) {
         const updatedMessages = [...messages, greeting];
         setMessages(updatedMessages);
         saveHistory(updatedMessages);

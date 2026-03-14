@@ -549,6 +549,17 @@ export function computeGreeting(
       { label: t("How much do I need total?", "¿Cuánto necesito en total?") },
       { label: t("Talk with Kasandra", "Hablar con Kasandra") },
     ];
+  } else if (entryContext?.source === 'buyer_fork' || entryContext?.source === 'seller_fork') {
+    // Fork cards = explicit first-time intent declaration — always fresh greeting, never returning user
+    greetingContent = t(
+      `Hello, I'm Selena — Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure. Whether you're thinking about buying, selling, or just understanding what's possible — I'm here to help.\n\nWhat brings you here today?`,
+      `Hola, soy Selena — la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión. Ya sea que esté pensando en comprar, vender, o simplemente entendiendo lo que es posible — estoy aquí para ayudarle.\n\n¿Qué le trae por aquí hoy?`
+    );
+    suggestedReplies = [
+      { label: t("I'm thinking about selling", "Estoy pensando en vender") },
+      { label: t("I'm looking to buy", "Estoy buscando comprar") },
+      { label: t("Just exploring for now", "Solo estoy explorando") },
+    ];
   } else if (entryContext?.source === 'hero') {
     greetingContent = t(
       `Hello, I'm Selena — Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure. Whether you're thinking about buying, selling, or just understanding what's possible — I'm here to help.\n\nWhat brings you here today?`,

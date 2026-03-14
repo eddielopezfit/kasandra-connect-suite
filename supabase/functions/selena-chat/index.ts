@@ -2762,7 +2762,14 @@ serve(async (req) => {
       }
     }
 
-    const language = context.language || "en";
+    const language = (() => {
+      const clientLang = context.language || 'en';
+      if (clientLang === 'es') return 'es';
+      // Auto-detect Spanish from user message — ensures chips + system prompt use correct language
+      const spanishSignals = /\b(quiero|necesito|busco|estoy|comprar|vender|casa|ayuda|hola|tengo|puedo|dónde|cómo|cuánto|gracias|por favor|quería|quisiera|podría|favor)\b/i;
+      if (spanishSignals.test(message)) return 'es';
+      return clientLang;
+    })();
     let leadId = context.lead_id;
 
     const detectedIntents = detectIntent(message, context.route);
