@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 import { useEffect, useRef, useState } from "react";
 
 interface StatConfig {
@@ -19,7 +20,6 @@ function useCountUp(target: number, active: boolean, duration = 1300) {
     const tick = (now: number) => {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
-      // easeOut cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setCurrent(Math.round(eased * target));
       if (progress < 1) raf = requestAnimationFrame(tick);
@@ -50,6 +50,9 @@ function AnimatedStat({ stat, active }: { stat: StatConfig; active: boolean }) {
 }
 
 const CredibilityStats = () => {
+  const { data } = useGoogleReviews();
+  // Use Google's totalCount (all reviews across the listing), fallback to 126
+  const reviewCount = data?.totalCount ?? 126;
   const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -66,7 +69,7 @@ const CredibilityStats = () => {
 
   const stats: StatConfig[] = [
     { value: 6000, suffix: "+", labelEn: "Pima County Transactions", labelEs: "Transacciones en el Condado Pima" },
-    { value: 126, suffix: "+", labelEn: "Five-Star Reviews", labelEs: "Reseñas de Cinco Estrellas" },
+    { value: reviewCount, suffix: "+", labelEn: "Five-Star Reviews", labelEs: "Reseñas de Cinco Estrellas" },
     { value: 20, suffix: "+", labelEn: "Years in Tucson", labelEs: "Años en Tucson" },
     { value: 2, suffix: "", labelEn: "Languages · EN / ES", labelEs: "Idiomas · EN / ES" },
   ];
