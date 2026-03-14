@@ -22,6 +22,7 @@ interface CalculatorInputsProps {
   onMotivationChange: (motivation: Motivation) => void;
   onTimelineChange: (timeline: Timeline) => void;
   onCalculate: () => void;
+  liveMortgageRate?: number | null;
 }
 
 const CalculatorInputs = ({
