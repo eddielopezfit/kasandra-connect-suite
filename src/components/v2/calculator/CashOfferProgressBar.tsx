@@ -49,7 +49,7 @@ const CashOfferProgressBar = ({ currentStage }: CashOfferProgressBarProps) => {
         {stages.map((stage, index) => (
           <span
             key={index}
-            className={`text-[10px] tracking-wider uppercase text-center transition-colors duration-300 ${
+            className={`text-[12px] tracking-wider uppercase text-center transition-colors duration-300 ${
               index <= currentStage
                 ? 'text-cc-gold font-semibold'
                 : 'text-cc-slate/60'

@@ -81,7 +81,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
             ) : (
               <SignalZero className="w-3 h-3 text-cc-slate" />
             )}
-            <span className={`text-[10px] font-medium ${isLive ? "text-green-700" : "text-cc-slate"}`}>
+            <span className={`text-[10px] font-medium ${isLive ? "text-green-700" : "text-cc-slate"}`} style={{fontSize: "12px"}}>
               {isLive
                 ? t(`Live · ${verifiedDate}`, `En vivo · ${verifiedDate}`)
                 : t("Tucson averages", "Promedios de Tucson")}
@@ -93,7 +93,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
           {/* Median Days on Market */}
           <div className="bg-white rounded-xl p-3 text-center border border-cc-sand-dark/20">
             <p className="text-2xl font-serif font-bold text-cc-navy">{domDays}</p>
-            <p className="text-[10px] text-cc-slate mt-0.5 leading-tight">
+            <p className="text-[12px] text-cc-slate mt-0.5 leading-tight">
               {t("Days on Market", "Días en Mercado")}
             </p>
           </div>
@@ -101,7 +101,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
           {/* Sale-to-List Ratio */}
           <div className="bg-white rounded-xl p-3 text-center border border-cc-sand-dark/20">
             <p className="text-2xl font-serif font-bold text-cc-navy">{saleToList}</p>
-            <p className="text-[10px] text-cc-slate mt-0.5 leading-tight">
+            <p className="text-[12px] text-cc-slate mt-0.5 leading-tight">
               {t("Sale-to-List Ratio", "Precio vs. Lista")}
             </p>
           </div>
@@ -109,13 +109,13 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
           {/* Median Price */}
           <div className="bg-white rounded-xl p-3 text-center border border-cc-sand-dark/20">
             <p className="text-2xl font-serif font-bold text-cc-navy">$365K</p>
-            <p className="text-[10px] text-cc-slate mt-0.5 leading-tight">
+            <p className="text-[12px] text-cc-slate mt-0.5 leading-tight">
               {t("Pima County Median", "Mediana del Condado")}
             </p>
           </div>
         </div>
 
-        <p className="text-[10px] text-cc-slate/70 mt-2 text-center">
+        <p className="text-[12px] text-cc-slate/70 mt-2 text-center">
           {t(
             "Pima County-wide averages. Individual neighborhoods vary.",
             "Promedios del Condado de Pima. Los vecindarios individuales varían."

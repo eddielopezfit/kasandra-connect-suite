@@ -35,7 +35,7 @@ export function ContinueReadingCard({ guideId, onClick, className }: ContinueRea
   return (
     <section className={cn('bg-cc-ivory py-4 border-b border-cc-sand-dark/50', className)}>
       <div className='container mx-auto px-4'>
-        <p className='text-xs font-medium text-cc-slate/60 uppercase tracking-wider mb-3'>
+        <p className='text-[12px] font-medium text-cc-slate/60 uppercase tracking-wider mb-3'>
           {t('Continue where you left off', 'Continúa donde lo dejaste')}
         </p>
         <Link

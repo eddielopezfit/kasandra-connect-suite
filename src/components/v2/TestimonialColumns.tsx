@@ -52,7 +52,7 @@ export default function TestimonialColumns() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="mb-14 text-center">
-          <span className="mb-3 inline-block font-sans text-xs font-semibold uppercase tracking-[0.2em] text-cc-gold">
+          <span className="mb-3 inline-block font-sans text-[13px] font-semibold uppercase tracking-[0.2em] text-cc-gold">
             {t("What My Clients Say", "Lo Que Dicen Mis Clientes")}
           </span>
           <h2 className="font-serif text-3xl font-bold text-white md:text-4xl lg:text-5xl">

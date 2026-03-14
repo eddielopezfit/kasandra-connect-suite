@@ -69,7 +69,7 @@ const StatItem = ({ value, label, icon, insight }: StatItemProps) => {
       </div>
       <div>
         <p className="text-lg font-bold text-cc-ivory">{prefix}{formatted}{suffix}</p>
-        <p className="text-xs text-cc-ivory/60">{label}</p>
+        <p className="text-[13px] text-cc-ivory/60">{label}</p>
         {insight && <p className="text-xs italic mt-0.5 text-cc-ivory/50">{insight}</p>}
       </div>
     </div>
@@ -247,19 +247,19 @@ export default function GlassmorphismHero({
           <div className="max-w-xl">
             {/* Badge */}
             <div className="hero-fade-in hero-delay-100 mb-6">
-              <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-cc-gold/30 bg-cc-gold/10 text-cc-gold text-[10px] sm:text-xs font-semibold uppercase tracking-wide sm:tracking-wider text-center leading-tight max-w-[calc(100vw-3rem)]">
+              <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-cc-gold/30 bg-cc-gold/10 text-cc-gold text-[11px] sm:text-[13px] font-semibold uppercase tracking-wide sm:tracking-wider text-center leading-tight max-w-[calc(100vw-3rem)]">
                 <TrendingUp className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">{badgeText}</span>
               </span>
             </div>
 
             {/* Tagline */}
-            <p className="hero-fade-in hero-delay-200 text-xs font-semibold uppercase tracking-widest text-cc-gold mb-3">
+            <p className="hero-fade-in hero-delay-200 text-[13px] font-semibold uppercase tracking-widest text-cc-gold mb-3">
               {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
             </p>
 
             {/* Headline */}
-            <h1 className="hero-fade-in hero-delay-300 font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-cc-ivory leading-[1.1] mb-6">
+            <h1 className="hero-fade-in hero-delay-300 font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-cc-ivory leading-[1.15] mb-6">
               {headline}
             </h1>
 

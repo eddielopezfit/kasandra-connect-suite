@@ -34,7 +34,7 @@ const V2AboutContent = () => {
         </div>
         <div className="relative container mx-auto px-4 pt-32 pb-16">
           <div className="max-w-3xl">
-            <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+            <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
               {t("About Kasandra", "Sobre Kasandra")}
             </span>
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mt-2 mb-6 text-white">
@@ -56,7 +56,7 @@ const V2AboutContent = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
             {/* Left — Video */}
             <div className="flex flex-col items-center">
-              <p className="text-cc-gold font-semibold text-sm tracking-wider uppercase mb-4">
+              <p className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase mb-4">
                 {t("Meet Kasandra (60 seconds)", "Conoce a Kasandra (60 segundos)")}
               </p>
               <div

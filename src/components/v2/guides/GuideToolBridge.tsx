@@ -446,7 +446,7 @@ export function GuideToolBridge({ guideId }: GuideToolBridgeProps) {
           {/* Eyebrow */}
           <div className="flex items-center gap-2 mb-3">
             <Icon className="w-4 h-4 text-cc-gold flex-shrink-0" />
-            <span className="text-cc-gold text-xs font-semibold tracking-widest uppercase">
+            <span className="text-cc-gold text-[12px] font-semibold tracking-widest uppercase">
               {eyebrow}
             </span>
           </div>

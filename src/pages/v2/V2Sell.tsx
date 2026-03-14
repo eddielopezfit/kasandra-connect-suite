@@ -207,7 +207,7 @@ const V2SellContent = () => {
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+            <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
               {t("The Choice Is Yours", "La Decisión Es Suya")}
             </span>
             <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mt-2">

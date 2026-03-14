@@ -142,17 +142,17 @@ const V2Footer = () => {
 
         {/* Disclaimer */}
         <div className="border-t border-white/20 pt-6 text-center">
-          <p className="text-xs text-white/60 max-w-3xl mx-auto mb-4">
+          <p className="text-[13px] text-white/60 max-w-3xl mx-auto mb-4">
             {t(
               "All information is deemed reliable but not guaranteed and should be independently verified. Kasandra Prieto is a licensed REALTOR® with Realty Executives Arizona Territory.",
               "Toda la información se considera confiable pero no está garantizada y debe ser verificada de forma independiente. Kasandra Prieto es una REALTOR® licenciada con Realty Executives Arizona Territory."
             )}
           </p>
-          <p className="text-white/50 text-xs">
+          <p className="text-white/50 text-[12px]">
             © {currentYear} Kasandra Prieto. {t("All rights reserved.", "Todos los derechos reservados.")}
           </p>
           <div className="flex items-center justify-center gap-4 mt-2">
-            <Link to="/privacy" className="text-xs text-white/40 hover:text-cc-gold transition-colors">
+            <Link to="/privacy" className="text-[12px] text-white/40 hover:text-cc-gold transition-colors">
               {t("Privacy Policy", "Política de Privacidad")}
             </Link>
             <span className="text-white/20 text-xs">·</span>

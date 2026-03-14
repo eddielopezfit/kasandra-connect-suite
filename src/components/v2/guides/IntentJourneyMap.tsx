@@ -197,7 +197,7 @@ export function IntentJourneyMap({
   return (
     <section className={cn('bg-white py-8 border-b border-cc-sand-dark', className)}>
       <div className='container mx-auto px-4'>
-        <p className='text-center text-xs font-medium text-cc-slate/60 uppercase tracking-wider mb-6'>
+        <p className='text-center text-[12px] font-medium text-cc-slate/60 uppercase tracking-wider mb-6'>
           {t('Your path forward', 'Tu camino a seguir')}
         </p>
 

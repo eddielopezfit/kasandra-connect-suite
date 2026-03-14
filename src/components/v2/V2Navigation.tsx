@@ -75,10 +75,10 @@ const V2Navigation = () => {
             <Link to="/" className={`font-serif text-xl font-bold tracking-wide ${isScrolled ? "text-cc-navy" : "text-white"}`}>
               KASANDRA PRIETO
             </Link>
-            <span className={`text-xs tracking-wider ${isScrolled ? "text-cc-slate/80" : "text-white/80"}`}>
+            <span className={`text-[11px] tracking-wider ${isScrolled ? "text-cc-slate/80" : "text-white/80"}`}>
               Corner Connect | Realty Executives Arizona Territory
             </span>
-            <span className="hidden lg:block text-xs text-cc-gold font-medium tracking-wide">
+            <span className="hidden lg:block text-[13px] text-cc-gold font-medium tracking-wide">
               {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
             </span>
           </div>

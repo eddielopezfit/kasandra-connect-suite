@@ -184,7 +184,7 @@ const V2HomeContent = () => {
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
-            <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+            <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
               {t("Run the Numbers", "Haz los Números")}
             </span>
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mt-2">
@@ -231,7 +231,7 @@ const V2HomeContent = () => {
 
             {/* Right Column - Copy + Images */}
             <div>
-              <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
                 {t("About Kasandra", "Sobre Kasandra")}
               </span>
               <h2 className="font-serif text-4xl xl:text-5xl font-bold text-cc-blue mt-2 mb-6">
@@ -289,7 +289,7 @@ const V2HomeContent = () => {
           {/* Tablet Layout (768-1023px) */}
           <div className="hidden md:block lg:hidden">
             <div className="text-center mb-8">
-              <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
                 {t("About Kasandra", "Sobre Kasandra")}
               </span>
               <h2 className="font-serif text-4xl font-bold text-cc-blue mt-2 mb-4">
@@ -358,7 +358,7 @@ const V2HomeContent = () => {
           {/* Mobile Layout (<=767px) */}
           <div className="md:hidden">
             <div className="text-center mb-6">
-              <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
                 {t("About Kasandra", "Sobre Kasandra")}
               </span>
               <h2 className="font-serif text-3xl font-bold text-cc-blue mt-2 mb-4">
@@ -449,7 +449,7 @@ const V2HomeContent = () => {
         <div className="container mx-auto px-4">
           {/* Section Header with Blue Band */}
           <div className="bg-cc-blue rounded-xl p-8 mb-12 text-center">
-            <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+            <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
               {t("How I Help", "Cómo Puedo Ayudarle")}
             </span>
             <h2 className="font-serif text-4xl md:text-5xl font-bold text-white mt-2">
@@ -526,7 +526,7 @@ const V2HomeContent = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
                 {t("24/7 Concierge", "Asistente 24/7")}
               </span>
               <h2 className="font-serif text-4xl md:text-5xl font-bold mt-2 mb-6">
@@ -610,7 +610,7 @@ const V2HomeContent = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
                 {t("Podcast & Radio", "Podcast y Radio")}
               </span>
               <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-blue mt-2 mb-6">
@@ -673,7 +673,7 @@ const V2HomeContent = () => {
               </div>
             </div>
             <div className="order-1 md:order-2">
-              <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
                 {t("Community Leadership", "Liderazgo Comunitario")}
               </span>
               <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-blue mt-2 mb-6">
