@@ -341,7 +341,7 @@ REQUIREMENTS:
     const sectionCount = ((guideData.sections as unknown[]) || []).length;
     const faqCount = ((guideData.faqItems as unknown[]) || []).length;
 
-    console.log(`[8/8] Complete. Guide "${guideData.title}" ready for review.`);
+    console.log(`[9/9] Complete. Guide "${guideData.title}" ready for review.`);
 
     return new Response(
       JSON.stringify({
