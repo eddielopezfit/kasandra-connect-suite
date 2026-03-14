@@ -122,7 +122,9 @@ serve(async (req) => {
     }
 
     const reviews: GoogleReview[] = detailsData.reviews || [];
-    console.log('Total reviews received:', reviews.length);
+    const userRatingCount: number | undefined = detailsData.userRatingCount;
+    const averageRating: number | undefined = detailsData.rating;
+    console.log('Total reviews received:', reviews.length, 'userRatingCount:', userRatingCount, 'averageRating:', averageRating);
 
     // Filter for 5-star reviews only
     const fiveStarReviews: FiveStarReview[] = reviews
