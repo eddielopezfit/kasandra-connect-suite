@@ -1,155 +1,194 @@
----
-name: kasandra-project-overview
-description: High-level overview of the Kasandra Connect Suite — stack, structure, production status, and architectural constraints. Read this first at the start of any Claude Code session on this repo.
----
-
 # Kasandra Connect Suite — Project Overview
+**Last Updated:** March 2026 (full sprint session)
+**Site:** kasandraprietorealtor.com
+**Lovable Hub:** kasandra-connect-suite.lovable.app
+**Repo:** github.com/eddielopezfit/kasandra-connect-suite (main branch)
+**Client:** Kasandra Prieto, Associate Broker, Corner Connect / Realty Executives Arizona Territory
 
-## What This Is
-A production AI-powered real estate Digital Concierge OS for Kasandra Prieto (Associate Broker, Corner Connect / Realty Executives Arizona Territory). Live at kasandraprietorealtor.com. Built by Performance Systems Group LLC (Eddie Lopez).
+---
+
+## Three-Tool Operating System
+- **This Chat** — Strategy, analysis, prompts, direct git push
+- **Lovable** — UI changes, new components, layout
+- **Claude Code** — Refactors, edge functions, surgical edits
+
+---
 
 ## Tech Stack
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 18 + Vite + TypeScript + Tailwind CSS + shadcn/ui |
-| Backend | Supabase — 26 Deno edge functions, 11 DB tables |
-| AI Gateway | Lovable AI Gateway — Gemini 3 Flash (primary), GPT-4o-mini (fallback) |
-| CRM | GoHighLevel (webhook integration via GHL_WEBHOOK_URL) |
-| Voice | ElevenLabs |
-| Data | Firecrawl (Redfin scraping), Perplexity (neighborhood profiles), Google Places, YouTube Data API |
-| State | TanStack Query v5 + Supabase Realtime |
-| Routing | React Router v6 — 35+ routes + redirects |
+- React 18 + Vite
+- 25+ Supabase Edge Functions (Deno runtime)
+- Gemini Flash via Lovable AI Gateway (env var: LOVABLE_API_KEY — NOT GEMINI_API_KEY)
+- TanStack Query, Tailwind/shadcn
+- GoHighLevel CRM integration (GHL_WEBHOOK_URL — not GHL_API_KEY for webhooks)
+- Firecrawl web scraping (FIRECRAWL_API_KEY)
+- Perplexity live research (PERPLEXITY_API_KEY)
+- ElevenLabs voice (future)
+- Google Places API (GOOGLE_PLACES_API_KEY)
 
-## Core AI — Selena
-Selena is the AI concierge. She is NOT a generic chatbot.
-- 4 psychological modes: Orientation → Clarity → Confidence → Handoff
-- 3 journey states: explore → evaluate → decide (separate from modes)
-- 14 dynamic context blocks assembled per request
-- Bilingual (EN/ES)
-- `max_tokens: 150` is intentional — do not change
-- GuardState hierarchy enforces brand/legal compliance on every response
+---
 
-## Production Security Status (CURRENT — March 2026)
-4 edge functions use x-admin-secret auth:
-- `scrape-market-pulse` ✅ protected
-- `generate-guide-image` ✅ protected
-- `generate-all-guide-images` ✅ protected
-- `generate-neighborhood-heroes` ✅ protected (added March 2026)
+## Kasandra Brand Voice — Critical Reference
+- Tagline: "Your Best Friend in Real Estate" / "Tu Mejor Amiga en Bienes Raíces"
+- Formality: 3/10 (very casual), Warmth: 10/10, Energy: 8/10
+- First-person always: "I've helped...", "I'm in this market every week..."
+- Signature phrases: "Let's turn those dreams into keys", "Hold your hand through the process"
+- Spanglish intentional: "cafecito", "amig@", "vamos juntos"
+- Never pressures — every CTA soft and warm
+- Celebrates every win
+- "Best friend" framing throughout — not agent, not advisor
 
-Remaining 22 edge functions have no auth — rate limit only or nothing.
-All paid API callers are now protected.
+---
 
-**Deleted stubs:**
-- `check-availability` — DELETED (was returning fake hardcoded slots)
-- `SlotPicker.tsx` — DELETED (UI component for the stub)
+## Corner Connect Strategic Positioning (CRITICAL)
+- Realty Executives Arizona Territory = licensed brokerage (MLS, compliance, Global Luxury cert)
+- Corner Connect = Kasandra's own team brand within Realty Executives
+- Cash offers come from Corner Connect's PERSONAL vetted buyer network — NOT an iBuyer
+- Approved framing: "Corner Connect isn't an iBuyer service — it's Kasandra's direct buyer network built over years in Tucson"
+- NEVER use "iBuyer" to describe Corner Connect
+- Selena KB updated with this positioning (both EN and ES prompts)
 
-## Brand Tokens
-| Token | Hex |
-|-------|-----|
-| `cc-navy` | #1F2A44 |
-| `cc-navy-dark` | #161E33 |
-| `cc-gold` | #E1B54A |
-| `cc-ivory` | #FAF8F5 |
-| `cc-sand` | #F5F1EB |
-| `cc-charcoal` | #2B2B2B |
+---
 
-Fonts: Playfair Display (serif headings), Inter (sans body)
+## Kasandra Contact Info (verified)
+- Phone: (520) 349-3248
+- Address: 4007 E Paradise Falls Dr, Suite 125, Tucson AZ 85712
+- License: #SA682372000
+- Brokerage: Corner Connect / Realty Executives Arizona Territory
+- Instagram: @prietorealestate
+- Facebook: facebook.com/prietorealestategroup
+- LinkedIn: linkedin.com/in/kasandraprieto
+- TikTok: @kasandraprieto
+- YouTube: @KasandraPrietoTucson
 
-## Homepage Structure (V2Home.tsx — ~740 lines)
-Render order: JsonLd → GlassmorphismHero (showMarketPulse={false}) → Buyer/Seller Fork → About (inline) → HomepageNeighborhoodCards → TrustBar → Services (inline) → Selena AI Section (inline, has CTAs) → Testimonials → Podcast → Community → CTASection
+---
 
-**WARNING:** About, Services, Selena AI Section, Testimonials, Podcast, Community are all INLINE JSX in V2Home.tsx — not separate components. Section reordering must be done in Claude Code, not Lovable, to avoid breakage.
+## Complete Route Map (35+ routes, all confirmed live)
+`/` `/buy` `/sell` `/cash-offer-options` `/guides` `/guides/:guideId`
+`/neighborhoods` `/neighborhoods/:slug` `/about` `/contact` `/selena-ai`
+`/book` `/book/confirmed` `/podcast` `/community` `/market`
+`/buyer-readiness` `/seller-readiness` `/cash-readiness` `/seller-decision`
+`/seller-timeline` `/off-market` `/buyer-closing-costs` `/neighborhood-compare`
+`/private-cash-review` `/thank-you`
+Dev-only (gated): `/qa-cta` `/qa-determinism`
 
-## New Pages Added (March 2026)
-- `/about` → V2About.tsx (~260 lines) — Kasandra bio, credentials bento, recognition
-- `/contact` → V2Contact.tsx (~140 lines) — Phone, address, social links, Selena CTA
-- `/selena-ai` → V2SelenaAI.tsx (~150 lines) — AI concierge explainer, compliance
+---
 
-## Key UX Features (March 2026)
-- **Buyer/Seller fork**: Below hero, two cards open Selena with `buyer_fork`/`seller_fork` source
-- **Proactive Selena trigger**: Fires at 50% scroll + 15s elapsed, single-fire, skips if already open
-- **GlassmorphismHero**: Accepts `showMarketPulse` prop — false on homepage (shows social proof), true on /buy and /sell
-- **ZIP explorer chips**: 85718, 85742, 85719, 85629 suggestion chips on /buy
-- **Neighborhood shimmer**: Animated pulse placeholder while card images load
-- **"Your Best Friend in Real Estate"**: Gold tagline above hero headline on all pages, gold text in desktop nav
+## Guide Library (33+ guides, all live)
 
-## Known Production Bugs (March 2026)
-- **Buyer chip rendering bug**: Buyer flow chips render as `[bracket text]` instead of clickable buttons. Seller flow works fine. Under investigation in selena-chat/index.ts.
-- **/buy and /sell blank render**: ~4 second white screen on cold load. Fast pages: /, /about, /cash-offer-options. Under investigation.
+### Existing Guides (pre-March 2026 sprint)
+first-time-buyer-guide, selling-for-top-dollar, buying-home-noncitizen-arizona,
+military-pcs-guide, cash-offer-guide, cash-vs-traditional-sale, cost-to-sell-tucson,
+divorce-selling, distressed-preforeclosure, home-prep-staging, how-long-to-sell-tucson,
+inherited-probate-property, life-change-selling, move-up-buyer, pricing-strategy,
+relocating-to-tucson, sell-now-or-wait, sell-or-rent-tucson, selling-for-top-dollar,
+senior-downsizing, tucson-neighborhoods, tucson-suburb-comparison, understanding-home-valuation,
+arizona-first-time-buyer-programs, arizona-real-estate-glossary, pima-county-property-taxes,
+capital-gains-home-sale-arizona, + story guides
 
-## Luxury Upgrade Queue (Next Sprints)
-Priority components from 21st.dev:
-1. Testimonials Columns (Efferd) — homepage
-2. Bento Grid (Aceternity) — /about credentials
-3. Two-column contact layout — /contact rebuild
-4. Timeline (Aceternity) — /buy buying process
-5. Pricing Comparison (Tommy Jepsen) — /sell options
+### New SEO Guides (March 2026 sprint — all written in Kasandra brand voice)
+- itin-loan-guide → "how to buy a house in Tucson with ITIN number"
+- tucson-market-update-2026 → "Tucson real estate market update 2026"
+- bad-credit-home-buying-tucson → "how to buy a house in Tucson with bad credit"
+- down-payment-assistance-tucson → "down payment assistance Tucson Arizona 2026"
+- fha-loan-pima-county-2026 → "FHA loan limits Pima County 2026"
+- divorce-home-sale-arizona → "selling house during divorce Arizona"
+- va-home-loan-tucson → "VA home loan Tucson Davis-Monthan AFB"
+- first-time-buyer-programs-pima-county → "first time home buyer programs Pima County 2026"
 
-## Deleted Files (March 2026 — do not re-introduce)
-- `src/hooks/useConsultationForm.ts` — deleted, zero imports
-- `src/components/v2/ConsultationFormFields.tsx` — deleted, zero imports
-- `src/components/v2/booking/SlotPicker.tsx` — deleted, was calling fake check-availability stub
+All guide intros rewritten in Kasandra first-person voice (commit d69d4d1)
 
-## Dev-Only Routes (properly gated behind import.meta.env.DEV)
-- `/qa-cta` → V2CTAQualityAssurance (redirects to / in production)
-- `/qa-determinism` → V2QADeterminism (redirects to / in production)
+---
 
-## GHL Integration
-All GHL calls use `GHL_WEBHOOK_URL` env var. 6 edge functions sync to GHL:
-submit-consultation-intake, submit-seller, upsert-lead-profile, update-lead-score, notify-handoff, selena-log-event
+## All Features Shipped (March 2026 Full Sprint)
 
-Pipeline routing: Cash / Sell / Buy / Dual / Explore — based on intent signals in notify-handoff.
+### Bug Fixes (8/8 verified passing)
+- Seller fork card → fresh greeting (not "Welcome back") ✅
+- Spanish chips auto-detect from user message in edge function ✅
+- Buyer chips no bracket text ✅
+- /buy + /sell no white flash on load ✅
+- All booking funnel routes confirmed ✅
+
+### Guide System Integrity
+- CognitiveProgressBar wired into V2GuideDetail.tsx
+- PersonalizedHero returning visitor fix (clearLastGuideId on mount)
+- Market data reconciled: all guides show $365K / 38 days
+- FHA year label corrected 2025→2026 in DACA guide
+- Guide search bar (filters EN+ES title+description simultaneously)
+
+### Luxury Upgrades — ALL COMPLETE
+- /sell Corner Connect split-panel comparison (Traditional vs Cash, Corner Connect framing)
+- /selena-ai full overhaul with SelenaConversationDemo.tsx (auto-playing bilingual VA/DACA conversation)
+- /contact two-column rebuild (portrait, response time badge, social icons, dual CTA)
+- /neighborhoods hover-reveal cards (stat pills, gold CTA, mobile fallback)
+- Animated Market Pulse counters — hero section AND /market page odometer
+- Instant Answer Widget (second viewport, affordability + home value tabs, Selena reads the number)
+- Aggregated trust bar: "★★★★★ 4.9 · 126+ reviews · Google · Realtor.com · Zillow"
+- Testimonials: show 6 by default + expand toggle "See all 12 reviews"
+
+### SEO & Schema
+- LocalBusiness + RealEstateAgent schema (homepage) — full spec with geo, aggregateRating, sameAs
+- Article schema on all guide pages (datePublished, dateModified, inLanguage)
+- BreadcrumbList on guide pages (Home > Guides > [title])
+- BreadcrumbList on neighborhood pages (Home > Neighborhoods > [name])
+- FAQPage schema on guides with FAQ sections (already existed, confirmed correct)
+
+### Selena Intelligence
+- Corner Connect KB block in both EN + ES system prompts (line 1245 EN, 1975 ES)
+- Instant Answer Widget context: Selena reads estimated_budget/estimated_value
+- estimated_budget added to context interface in edge function
+- Timeline chips added to chipsRegistry (ASAP, 1-3 months, 3-6 months, Just exploring) with EN/ES
+
+---
 
 ## Key Architectural Rules
-1. Never re-introduce deleted components (ConsultationIntakeForm, GHLCalendarEmbed, GoHighLevelForm, GoogleSignInButton are permanently deleted)
+1. Never re-introduce deleted components (ConsultationIntakeForm, GHLCalendarEmbed, GoHighLevelForm, GoogleSignInButton permanently deleted)
 2. Never expose GuardState internals to the client
-3. SelenaChatContext.tsx (React) and selena-chat/index.ts (Deno) are completely separate — never mix logic
+3. SelenaChatContext.tsx (React) and selena-chat/index.ts (Deno) are completely separate
 4. LOVABLE_API_KEY is the AI gateway env var — not GEMINI_API_KEY or OPENAI_API_KEY
 5. GHL_WEBHOOK_URL is the GHL env var — not GHL_API_KEY
+6. max_tokens: 150 in selena-chat is INTENTIONAL — do not change
+7. KB-0 is supreme, non-overrideable — never touch it
 
-## Environment Variables Summary
+---
+
+## Environment Variables
 **Client-side (VITE_):** VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY, VITE_SUPABASE_PROJECT_ID
 **Server-side:** SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, LOVABLE_API_KEY, GHL_WEBHOOK_URL, GHL_API_KEY, ADMIN_SECRET, FIRECRAWL_API_KEY, PERPLEXITY_API_KEY, GOOGLE_PLACES_API_KEY, YOUTUBE_API_KEY
 
-## Luxury Upgrades Completed (March 2026)
-- **Homepage testimonials**: Replaced dot-carousel with TestimonialColumns.tsx — staggered 3-col navy masonry, gold stars, real client names, source badges, Spanish review preserved
-- **About bento grid**: CredentialsBentoGrid.tsx — 6-cell asymmetric grid, Luxury Specialist as 2-col anchor with gold border, Diaper Bank logo embedded
-- **Market Pulse insight lines**: Plain-English translations under each metric (Sale-to-List, Days on Market, Holding Cost) on /buy and /sell
-- **Buying process timeline**: BuyingTimeline.tsx — animated vertical gold connector, scroll-triggered fade-up, alternating desktop layout, bilingual
-- **/sell blank render fixed**: GoogleReviewsSection lazy-loaded (commit 673c618)
+---
 
-## Phase 3-5 Completed (March 2026)
-**Guide System Integrity:**
-- CognitiveProgressBar wired into V2GuideDetail.tsx (commit b53cdfd)
-- PersonalizedHero returning visitor fix — clearLastGuideId() on mount (commit b53cdfd)
-- Market data reconciled: selling-for-top-dollar + first-time-buyer → $365K / 38 days (commit b53cdfd)
-- FHA year label corrected 2025→2026 in DACA guide (commit b53cdfd)
-- Guide search bar added to V2Guides.tsx — filters by title+description EN+ES (commit d650734)
+## Remaining Work Queue
 
-**Sell Page Luxury Upgrade:**
-- /sell split-panel comparison: "List on Market" (navy, Realty Executives) vs "Cash Offer" (ivory, Corner Connect)
-- Corner Connect framing: NOT an iBuyer — Kasandra's personal vetted buyer network
-- Bottom callout: "Not sure? Kasandra reviews both options with every seller"
-- EntrySource: sell_comparison_traditional + sell_comparison_undecided added (commit b51d5bc)
+### HIGH PRIORITY — Do Next Session
+- GHL dashboard: fix Privacy/Terms URLs on /book form (currently example.com) — 5 min dashboard fix
+- A2P 10DLC clearance → activate GHL Track A/B/C nurture sequences + SMS workflows
+- Automated daily guide pipeline: Supabase Edge Function (generate-daily-guide)
+  - Cron: 6 AM MST daily
+  - Topic selection → Perplexity research → Firecrawl data → Gemini generation
+  - status: 'pending_review' → GHL notification → Kasandra approves → publish
+  - NEVER auto-publish
 
-**Corner Connect KB in Selena (commit cb12305):**
-- CORNER CONNECT POSITIONING block added to both EN and ES system prompts
-- Selena knows: cash offer = Corner Connect vetted buyer network, NOT iBuyer
-- Never use "iBuyer" to describe Corner Connect
-- Approved framing phrases documented in KB
-
-**Schema Markup — SEO (Phase 5, in progress):**
-- LocalBusiness + RealEstateAgent schema on homepage (full spec with aggregateRating, sameAs, geo)
-- Article schema on guide pages (datePublished/dateModified added)
-- BreadcrumbList on guide pages (Home > Guides > [title])
-- BreadcrumbList on neighborhood pages (Home > Neighborhoods > [name])
-- FAQPage schema already existed on guides — confirmed correct, no changes needed
-
-## Remaining Luxury Upgrade Queue
-- `/contact` — Two-column with Kasandra headshot + form (Lovable)
-- `/selena-ai` — Expandable chat preview mockup (Lovable)
-- `/neighborhoods` — Display Cards with hover reveal (Lovable)
-- Aggregated review trust bar — "4.9 stars · 126+ reviews" (Lovable)
-- Instant Answer Widget — affordability + home value calculator (Lovable — approved plan ready)
+### MEDIUM PRIORITY
+- Google Rich Results validation (search.google.com/test/rich-results)
+- Kasandra review of 8 new guides before client-facing
+- IDX live listing integration (Phase 2 — requires IDX provider decision)
+- /selena-ai expandable chat preview (Page score was 5.5/10 before overhaul — verify improvement)
 - Unused dead code cleanup: getGuideTier, getBookingCTA, handleBookConsultation in V2Guides.tsx
-- GHL Privacy/Terms URLs — fix in GHL dashboard (currently pointing to example.com)
+
+### LOW PRIORITY
+- A2P SMS clearance → activate GHL nurture sequences
+- selena-chat/index.ts refactor — extract systemPrompt.ts (3,673 lines, monolith)
+- Unused Supabase secrets cleanup (keep GHL_LOCATION_ID — needed for GHL agents)
+- TypeScript type assertion: Math.max() in selena-chat/index.ts (no runtime impact)
+
+---
+
+## GHL Pipeline Structure
+Cash / Sell / Buy / Dual / Explore — based on intent signals in notify-handoff
+
+## Data Architecture Notes
+- `selena-chat/index.ts` = 3,673 lines (monolith — never let Lovable touch)
+- `SelenaChatContext.tsx` = ~700 lines
+- `chipsRegistry.ts` = 689 lines, 82+ entries (41+ semantic keys × EN+ES)
+- `greetingEngine.ts` = ~670 lines
+- `journeyState.ts` = 153 lines
