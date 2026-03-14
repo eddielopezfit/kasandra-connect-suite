@@ -258,7 +258,7 @@ REQUIREMENTS:
       .trim();
 
     // ── Parse JSON ────────────────────────────────────────────────
-    console.log("[4/8] Parsing generated JSON...");
+    console.log("[5/9] Parsing generated JSON...");
     let guideData: Record<string, unknown>;
     try {
       guideData = JSON.parse(rawContent);
