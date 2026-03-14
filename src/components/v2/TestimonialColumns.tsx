@@ -1,7 +1,8 @@
-import { Star } from "lucide-react";
+import { Star, ChevronDown, ChevronUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { allTestimonials, type Testimonial } from "@/data/testimonials";
+import { useState } from "react";
 
 /* ─── Single testimonial card ────────────────────────────── */
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
@@ -41,6 +42,10 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 /* ─── Main export ────────────────────────────────────────── */
 export default function TestimonialColumns() {
   const { t } = useLanguage();
+  const [showAll, setShowAll] = useState(false);
+
+  const visibleTestimonials = showAll ? allTestimonials : allTestimonials.slice(0, 6);
+  const hiddenCount = allTestimonials.length - 6;
 
   return (
     <section className="bg-cc-navy py-20 md:py-28">
@@ -53,13 +58,36 @@ export default function TestimonialColumns() {
           <h2 className="font-serif text-3xl font-bold text-white md:text-4xl lg:text-5xl">
             {t("Real Stories, Real Results", "Historias Reales, Resultados Reales")}
           </h2>
+          <p className="mt-4 text-white/50 text-sm">
+            {t("4.9 stars · 126+ verified reviews", "4.9 estrellas · 126+ reseñas verificadas")}
+          </p>
         </div>
 
-        {/* Uniform 3-column grid — equal card heights via flex-col */}
+        {/* 3-column grid — first 6 always visible */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {allTestimonials.map((testimonial) => (
+          {visibleTestimonials.map((testimonial) => (
             <TestimonialCard key={testimonial.id} testimonial={testimonial} />
           ))}
+        </div>
+
+        {/* Show more / show less toggle */}
+        <div className="mt-10 text-center">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="inline-flex items-center gap-2 rounded-full border border-cc-gold/30 px-6 py-3 text-sm font-semibold text-cc-gold transition-all duration-200 hover:border-cc-gold hover:bg-cc-gold/10"
+          >
+            {showAll ? (
+              <>
+                {t("Show less", "Ver menos")}
+                <ChevronUp className="h-4 w-4" />
+              </>
+            ) : (
+              <>
+                {t(`See all ${hiddenCount + 6} reviews`, `Ver las ${hiddenCount + 6} reseñas`)}
+                <ChevronDown className="h-4 w-4" />
+              </>
+            )}
+          </button>
         </div>
       </div>
     </section>
