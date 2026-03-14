@@ -26,10 +26,11 @@ import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeig
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import CTASection from "@/components/v2/CTASection";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
+import { updateSessionContext } from '@/lib/analytics/selenaSession';
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
-  const { isOpen, openChat, clearHistory, updateSessionContext } = useSelenaChat();
+  const { isOpen, openChat, clearHistory } = useSelenaChat();
   useDocumentHead({
     titleEn: "Kasandra Prieto | Tucson Realtor & Bilingual Real Estate Agent",
     titleEs: "Kasandra Prieto | Agente de Bienes Raíces Bilingüe en Tucson",
