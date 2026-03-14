@@ -597,15 +597,14 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       timeline_last_asked_turn: undefined,
     });
     
+    // Read context AFTER updateSessionContext so intent override is reflected
     const ctx = getSessionContext();
     const greeting: ChatMessage = {
       id: generateMessageId(),
       role: 'assistant',
-      content: ctx?.intent
-        ? t("Welcome back — we can pick up where you left off.", "Bienvenido/a de vuelta — podemos continuar donde lo dejamos.")
-        : t("Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?", "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"),
+      content: t("Hello, I'm Selena, Kasandra's digital real estate concierge.\n\nI'm here to help you explore your options calmly and without pressure.\n\nAre you looking to buy, sell, or just explore what's possible?", "Hola, soy Selena, la concierge digital de bienes raíces de Kasandra.\n\nEstoy aquí para ayudarle a explorar sus opciones con calma y sin presión.\n\n¿Está pensando en comprar, vender, o solo explorar qué es posible?"),
       timestamp: new Date().toISOString(),
-      suggestedReplies: ctx?.intent ? getPhaseAwareChips(t, ctx) : [
+      suggestedReplies: [
         { label: t("I'm thinking about selling", "Estoy pensando en vender") },
         { label: t("I'm looking to buy", "Estoy buscando comprar") },
         { label: t("Just exploring for now", "Solo estoy explorando") },

@@ -29,7 +29,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
-  const { isOpen, openChat } = useSelenaChat();
+  const { isOpen, openChat, clearHistory, updateSessionContext } = useSelenaChat();
   useDocumentHead({
     titleEn: "Kasandra Prieto | Tucson Realtor & Bilingual Real Estate Agent",
     titleEs: "Kasandra Prieto | Agente de Bienes Raíces Bilingüe en Tucson",
@@ -99,6 +99,8 @@ const V2HomeContent = () => {
             {/* Card A — Buyer */}
             <button
               onClick={() => {
+                updateSessionContext({ intent: 'buy' });
+                clearHistory();
                 openChat({ source: 'buyer_fork' });
               }}
               className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
@@ -117,6 +119,8 @@ const V2HomeContent = () => {
             {/* Card B — Seller */}
             <button
               onClick={() => {
+                updateSessionContext({ intent: 'sell' });
+                clearHistory();
                 openChat({ source: 'seller_fork' });
               }}
               className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
