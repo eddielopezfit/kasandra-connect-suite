@@ -8,6 +8,7 @@ import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { supabase } from "@/integrations/supabase/client";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { stripCitations } from "@/lib/utils/stripCitations";
 import { toast } from "sonner";
 import type { NeighborhoodProfile } from "@/components/v2/neighborhood/NeighborhoodCard";
 import {
