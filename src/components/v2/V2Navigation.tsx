@@ -148,17 +148,17 @@ const V2Navigation = () => {
           }`}>
           <div className={`mt-4 pb-4 border-t pt-4 space-y-0 ${isScrolled ? "bg-cc-sand border-cc-sand-dark/30" : "bg-cc-navy border-white/20"}`}>
             <div className="flex justify-center mb-4">
-              <LanguageToggle variant="dark" />
+              <LanguageToggle variant={isScrolled ? "light" : "dark"} />
             </div>
             {allLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block text-center py-3 text-base font-medium border-b border-white/10 last:border-b-0 ${
-                  isActive(link.href)
-                    ? "text-cc-gold"
-                    : "text-white/80 hover:text-white"
+                className={`block text-center py-3 text-base font-medium border-b last:border-b-0 ${
+                  isScrolled
+                    ? `border-cc-sand-dark/20 ${isActive(link.href) ? "text-cc-gold" : "text-cc-navy/80 hover:text-cc-navy"}`
+                    : `border-white/10 ${isActive(link.href) ? "text-cc-gold" : "text-white/80 hover:text-white"}`
                 }`}
               >
                 {link.label}
