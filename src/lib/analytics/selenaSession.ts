@@ -7,7 +7,7 @@ const SESSION_KEY = 'selena_session_id';
 const CONTEXT_KEY = 'selena_context_v2';
 const GUIDES_COMPLETED_KEY = 'selena_guides_completed';
 
-export type ToolUsed = 'tucson_alpha_calculator' | 'buyer_readiness' | 'seller_readiness' | 'cash_readiness' | 'report' | 'seller_decision';
+export type ToolUsed = 'tucson_alpha_calculator' | 'buyer_readiness' | 'seller_readiness' | 'cash_readiness' | 'report' | 'seller_decision' | 'instant_answer';
 export type CalculatorAdvantage = 'cash' | 'traditional' | 'consult';
 
 /**
