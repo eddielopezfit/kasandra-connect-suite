@@ -90,8 +90,18 @@ export function useMarketPulse(language: 'en' | 'es' = 'en') {
   useEffect(() => {
     supabase.functions.invoke("get-market-pulse").then(({ data, error }) => {
       if (!error && data?.days_to_close) {
-        setPulse(data as MarketPulse);
-        setIsLive(true);
+        // Sanity checks — reject obviously corrupted scrape data
+        const isSane =
+          (data.negotiation_gap ?? 0) > 0.005 &&
+          (data.negotiation_gap ?? 1) < 0.15 &&
+          (data.holding_cost_per_day ?? 0) >= 5 &&
+          (data.days_to_close ?? 0) >= 20 &&
+          (data.days_to_close ?? 999) <= 200;
+
+        if (isSane) {
+          setPulse(data as MarketPulse);
+          setIsLive(true);
+        }
       }
       setLoading(false);
     });
