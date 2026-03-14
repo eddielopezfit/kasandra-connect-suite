@@ -664,8 +664,6 @@ const V2HomeContent = () => {
         </div>
       </section>
 
-      {/* Why Corner Connect — Brokerage Trust */}
-      <WhyCornerConnect />
 
       {/* Final CTA */}
       <CTASection />
