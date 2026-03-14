@@ -115,6 +115,7 @@ interface ChatRequest {
     calculator_motivation?: string;
     // Calculator enrichment — sent from client when available (Fix 2)
     estimated_value?: number;
+    estimated_budget?: number;  // from Instant Answer affordability calculator
     mortgage_balance?: number;
     // Neighborhood intelligence — ZIP from Neighborhood Explorer / Seller Decision / Timeline
     last_neighborhood_zip?: string;
