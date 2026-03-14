@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
@@ -12,6 +12,60 @@ import {
   TrendingUp, Clock, DollarSign, BarChart2, Calendar,
   Signal, SignalZero, MessageCircle, ArrowRight, RefreshCw
 } from "lucide-react";
+
+// Animated number component — digits roll up on viewport entry
+function AnimatedStatValue({ value }: { value: string }) {
+  const [display, setDisplay] = useState(value === '—' ? '—' : '0');
+  const hasAnimated = useRef(false);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  const parseValue = (v: string) => {
+    const match = v.match(/^([^0-9]*?)([\d,.]+)(.*)$/);
+    if (!match) return null;
+    const numStr = match[2].replace(/,/g, '');
+    const decimals = numStr.includes('.') ? numStr.split('.')[1].length : 0;
+    return { prefix: match[1], num: parseFloat(numStr), suffix: match[3], decimals };
+  };
+
+  const animate = useCallback((v: string) => {
+    const parsed = parseValue(v);
+    if (!parsed) { setDisplay(v); return; }
+    const { prefix, num, suffix, decimals } = parsed;
+    const duration = 1400;
+    const start = performance.now();
+    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+    const tick = (now: number) => {
+      const elapsed = Math.min(now - start, duration);
+      const current = num * easeOut(elapsed / duration);
+      const formatted = decimals > 0
+        ? current.toFixed(decimals)
+        : Math.round(current).toLocaleString();
+      setDisplay(prefix + formatted + suffix);
+      if (elapsed < duration) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, []);
+
+  useEffect(() => {
+    if (value === '—') { setDisplay('—'); return; }
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true;
+          animate(value);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [value, animate]);
+
+  return <span ref={ref}>{display}</span>;
+}
+
 
 const V2MarketIntelligenceContent = () => {
   const { t, language } = useLanguage();
@@ -128,7 +182,7 @@ const V2MarketIntelligenceContent = () => {
                   <span className="text-xs font-semibold text-cc-slate uppercase tracking-wider">{label}</span>
                 </div>
                 <div className="flex items-baseline gap-1.5 mb-2">
-                  <span className="font-serif text-4xl font-bold text-cc-navy">{value}</span>
+                  <span className="font-serif text-4xl font-bold text-cc-navy"><AnimatedStatValue value={value} /></span>
                   {unit && <span className="text-cc-slate text-sm">{unit}</span>}
                 </div>
                 <p className="text-cc-text-muted text-sm leading-relaxed">{context}</p>
