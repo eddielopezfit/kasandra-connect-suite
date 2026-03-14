@@ -333,6 +333,31 @@ const V2MarketIntelligenceContent = () => {
           </div>
         </div>
       </section>
+
+      {/* Bottom CTA — capture high-intent market data visitors */}
+      <section className="py-16 bg-cc-navy">
+        <div className="container mx-auto px-4 max-w-3xl text-center">
+          <p className="text-cc-gold font-semibold text-sm tracking-wider uppercase mb-3">
+            {t("What This Means For You", "Qué Significa Para Ti")}
+          </p>
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
+            {t("Wondering how these numbers affect your home?", "¿Cómo afectan estos números a tu casa?")}
+          </h2>
+          <p className="text-cc-ivory/70 text-lg mb-8 max-w-xl mx-auto">
+            {t(
+              "Kasandra reviews these stats every week. She can tell you exactly what they mean for buying or selling in your specific neighborhood.",
+              "Kasandra revisa estas estadísticas cada semana. Puede decirte exactamente qué significan para comprar o vender en tu vecindario específico."
+            )}
+          </p>
+          <button
+            onClick={() => openChat({ source: 'market_intelligence_result' })}
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-4 text-base shadow-gold transition-all active:scale-95"
+          >
+            {t("Talk to Kasandra About This →", "Hablar con Kasandra Sobre Esto →")}
+          </button>
+        </div>
+      </section>
+
     </>
   );
 };

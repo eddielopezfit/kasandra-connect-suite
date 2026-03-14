@@ -189,7 +189,10 @@ Both profile_en and profile_es are required. The Spanish version should be a nat
     }
 
     // Strip any accidental markdown fences before parsing
-    const cleanContent = rawContent.replace(/```json|```/g, "").trim();
+    const cleanContent = rawContent
+      .replace(/```json|```/g, "")
+      .replace(/\[\d+\]/g, "")  // Strip Perplexity citation markers like [1][2][5]
+      .trim();
     const profiles = JSON.parse(cleanContent);
     const { profile_en, profile_es } = profiles;
 

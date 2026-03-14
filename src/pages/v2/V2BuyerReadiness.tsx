@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import V2Layout from "@/components/v2/V2Layout";
 import BuyerReadinessCheck from "@/components/v2/BuyerReadinessCheck";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import LeadCaptureModal from "@/components/v2/LeadCaptureModal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getSessionContext, updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
@@ -13,6 +14,12 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 const LEAD_ID_KEY = "selena_lead_id";
 
 const V2BuyerReadinessContent = () => {
+  useDocumentHead({
+    titleEn: "Buyer Readiness Quiz | Are You Ready to Buy in Tucson?",
+    titleEs: "Quiz de Preparación | ¿Estás Listo para Comprar en Tucson?",
+    descriptionEn: "Take the free 3-minute buyer readiness quiz and get a personalized readiness score with next steps from Kasandra Prieto.",
+    descriptionEs: "Toma el quiz gratuito de 3 minutos y obtén tu puntaje de preparación personalizado de Kasandra Prieto.",
+  });
   const { t } = useLanguage();
   const [showModal, setShowModal] = useState(false);
   const [showSaveLink, setShowSaveLink] = useState(false);
@@ -143,7 +150,7 @@ const V2BuyerReadinessContent = () => {
 
             {/* Fallback save link */}
             {showSaveLink && !captured && (
-              <div className="mt-6 text-center animate-fade-in">
+              <div className="mt-6 text-center">
                 <button
                   onClick={() => setShowModal(true)}
                   className="inline-flex items-center gap-2 text-sm text-cc-gold hover:text-cc-gold-dark underline underline-offset-2 transition-colors"

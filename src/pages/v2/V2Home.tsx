@@ -31,7 +31,7 @@ import { updateSessionContext } from '@/lib/analytics/selenaSession';
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
-  const { isOpen, openChat, clearHistory } = useSelenaChat();
+  const { openChat, clearHistory } = useSelenaChat();
   useDocumentHead({
     titleEn: "Kasandra Prieto | Tucson Realtor & Bilingual Real Estate Agent",
     titleEs: "Kasandra Prieto | Agente de Bienes Raíces Bilingüe en Tucson",
@@ -39,40 +39,6 @@ const V2HomeContent = () => {
     descriptionEs: "Orientación bilingüe de bienes raíces en Tucson. Asistente IA 24/7, opciones de oferta en efectivo y apoyo personalizado.",
   });
 
-  // ========== PROACTIVE SELENA TRIGGER ==========
-  const proactiveFiredRef = useRef(false);
-  const hasOpenedSelenaRef = useRef(false);
-  const pageLoadTimeRef = useRef(Date.now());
-
-  // Track if user opened Selena themselves
-  useEffect(() => {
-    if (isOpen && !proactiveFiredRef.current) {
-      hasOpenedSelenaRef.current = true;
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (proactiveFiredRef.current || hasOpenedSelenaRef.current) return;
-
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (docHeight <= 0) return;
-
-      const scrollPercent = (scrollTop / docHeight) * 100;
-      const elapsedMs = Date.now() - pageLoadTimeRef.current;
-
-      if (scrollPercent >= 50 && elapsedMs >= 15000) {
-        proactiveFiredRef.current = true;
-
-        // Open the drawer — greeting engine handles the welcome message
-        openChat({ source: 'proactive_homepage' });
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [openChat, t]);
 
   return (
     <>

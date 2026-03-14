@@ -141,7 +141,7 @@ const V2SellerReadinessContent = () => {
             <SellerReadinessCheck onScoreRevealed={handleScoreRevealed} />
 
             {showSaveLink && !captured && (
-              <div className="mt-6 text-center animate-fade-in">
+              <div className="mt-6 text-center ">
                 <button
                   onClick={() => setShowModal(true)}
                   className="inline-flex items-center gap-2 text-sm text-cc-gold hover:text-cc-gold-dark underline underline-offset-2 transition-colors"

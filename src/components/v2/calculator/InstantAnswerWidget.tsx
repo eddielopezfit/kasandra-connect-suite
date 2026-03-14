@@ -27,7 +27,7 @@ const InstantAnswerWidget = () => {
   }, [income, debts, downPercent]);
 
   // ===== TAB 2: Home Value =====
-  const [zipCode, setZipCode] = useState('');
+  const [zipCode, setZipCode] = useState('85718'); // Default to popular Tucson ZIP
   const [bedrooms, setBedrooms] = useState(3);
   const [bathrooms, setBathrooms] = useState(2);
   const [sqft, setSqft] = useState('1600');

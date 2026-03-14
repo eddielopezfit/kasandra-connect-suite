@@ -194,7 +194,11 @@ REQUIREMENTS:
     console.log(`[3/8] Generation complete. Raw length: ${rawContent.length} chars`);
 
     // Strip markdown code fences if present
-    rawContent = rawContent.replace(/^```json\s*/i, "").replace(/\s*```$/i, "").trim();
+    rawContent = rawContent
+      .replace(/^```json\s*/i, "")
+      .replace(/\s*```$/i, "")
+      .replace(/\[\d+\]/g, "")  // Strip any citation markers
+      .trim();
 
     // ── Parse JSON ────────────────────────────────────────────────
     console.log("[4/8] Parsing generated JSON...");

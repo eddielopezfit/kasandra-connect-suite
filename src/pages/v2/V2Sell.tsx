@@ -51,7 +51,7 @@ const V2SellContent = () => {
       {/* Hero */}
       <GlassmorphismHero
         badge={t("For Sellers", "Para Vendedores")}
-        headline={t("Know Your Home's Worth. Move on Your Terms.", "Conoce el valor de tu hogar. Muévete en tus términos.")}
+        headline={t("Know Your Worth. Sell on Your Terms.", "Conoce Tu Valor. Vende en Tus Términos.")}
         subtext={t(
           "Kasandra helps Tucson sellers price right, time the market, and close with confidence — with an AI concierge that answers every question before you even ask.",
           "Kasandra ayuda a vendedores en Tucson a fijar el precio correcto, aprovechar el mercado y cerrar con confianza — con un asistente de IA que responde cada pregunta antes de que la hagas."

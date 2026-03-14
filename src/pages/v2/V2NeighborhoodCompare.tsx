@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
@@ -182,6 +182,7 @@ const V2NeighborhoodCompareContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
   const [results, setResults] = useState<ZipResult[]>([]);
+  const resultsRef = useRef<HTMLDivElement>(null);
   const [loadingZip, setLoadingZip] = useState<string | null>(null);
 
   useDocumentHead({
@@ -203,6 +204,7 @@ const V2NeighborhoodCompareContent = () => {
       });
       if (error || !data?.profile_en) throw new Error("fetch failed");
       setResults(prev => [...prev, { zip, profileEn: data.profile_en, profileEs: data.profile_es }]);
+      setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
       logEvent("neighborhood_profile_generated", { zip_code: zip, source: "comparison_tool", cached: data.cached });
     } catch {
       toast.error(t("Couldn't load that ZIP. Try another.", "No se pudo cargar ese código postal. Intenta otro."));

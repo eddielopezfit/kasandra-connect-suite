@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
@@ -184,10 +184,11 @@ const V2BuyerClosingCostsContent = () => {
   const [inputs, setInputs] = useState<CalcInputs>({
     purchasePrice: "",
     loanType: "conventional",
-    downPctInput: "10",
+    downPctInput: "20",
     isFirstTimeBuyer: true,
   });
   const [calculated, setCalculated] = useState(false);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const upd = <K extends keyof CalcInputs>(k: K, v: CalcInputs[K]) =>
     setInputs(prev => ({ ...prev, [k]: v }));
@@ -213,6 +214,9 @@ const V2BuyerClosingCostsContent = () => {
     setCalculated(true);
     setFieldIfEmpty('intent', 'buy');
     logEvent('calculator_complete', { tool: 'buyer_closing_costs', price, loan_type: inputs.loanType });
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const chipClass = (active: boolean) =>
@@ -373,7 +377,7 @@ const V2BuyerClosingCostsContent = () => {
 
       {/* Results */}
       {calculated && lines.length > 0 && (
-        <section className="py-12 bg-white">
+        <section ref={resultsRef} className="py-12 bg-white">
           <div className="container mx-auto px-4 max-w-2xl">
             {/* Total banner */}
             <div className="bg-cc-navy rounded-2xl p-6 mb-8 text-center">
