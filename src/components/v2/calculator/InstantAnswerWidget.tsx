@@ -4,6 +4,7 @@ import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { updateSessionContext } from '@/lib/analytics/selenaSession';
 import { supabase } from '@/integrations/supabase/client';
 import { calculateAffordability } from '@/lib/calculator/affordabilityAlgorithm';
+import { useMarketPulse } from '@/hooks/useMarketPulse';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Calculator, Home } from 'lucide-react';
 
@@ -12,6 +13,7 @@ const fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD',
 const InstantAnswerWidget = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+  const { stats } = useMarketPulse();
   const [activeTab, setActiveTab] = useState<'afford' | 'value'>('afford');
 
   // ===== TAB 1: Affordability =====
@@ -23,8 +25,8 @@ const InstantAnswerWidget = () => {
     const inc = parseFloat(income.replace(/[^0-9.]/g, '')) || 0;
     const dbt = parseFloat(debts.replace(/[^0-9.]/g, '')) || 0;
     if (inc <= 0) return null;
-    return calculateAffordability(inc, dbt, downPercent);
-  }, [income, debts, downPercent]);
+    return calculateAffordability(inc, dbt, downPercent, stats.mortgageRate30yr);
+  }, [income, debts, downPercent, stats.mortgageRate30yr]);
 
   // ===== TAB 2: Home Value =====
   const [zipCode, setZipCode] = useState('85718'); // Default to popular Tucson ZIP
