@@ -23,6 +23,10 @@ export const GUIDE_DATA_LOADERS: Record<string, () => Promise<{ default: GuideCo
   'life-change-selling': () => import('./life-change-selling'),
   // Phase 3 — Local Domination Guides
   'military-pcs-guide': () => import('./military-pcs-guide'),
+  'divorce-home-sale-arizona': () => import('./divorce-home-sale-arizona'),
+  'va-home-loan-tucson': () => import('./va-home-loan-tucson'),
+  'first-time-buyer-programs-pima-county': () => import('./first-time-buyer-programs-pima-county'),
+
   'itin-loan-guide': () => import('./itin-loan-guide'),
   'tucson-market-update-2026': () => import('./tucson-market-update-2026'),
   'bad-credit-home-buying-tucson': () => import('./bad-credit-home-buying-tucson'),
