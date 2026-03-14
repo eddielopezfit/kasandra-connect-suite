@@ -213,10 +213,23 @@ function GuidesContent() {
   const currentIntent = getIntent();
   const recommendedItems = useMemo(() => getRecommendedGuides(allGuides), [guidesRead, lastGuideId, allGuides]);
 
-  // Filter educational guides by active category
-  const filteredGuides = activeCategory === "all" 
-    ? educationalGuides 
-    : educationalGuides.filter(guide => guide.category === activeCategory);
+  // Filter educational guides by active category + search
+  const filteredGuides = useMemo(() => {
+    let guides = activeCategory === "all"
+      ? educationalGuides
+      : educationalGuides.filter(guide => guide.category === activeCategory);
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      guides = guides.filter(guide =>
+        guide.title.toLowerCase().includes(q) ||
+        (guide.titleEs ?? '').toLowerCase().includes(q) ||
+        guide.description.toLowerCase().includes(q) ||
+        (guide.descriptionEs ?? '').toLowerCase().includes(q)
+      );
+    }
+    return guides;
+  }, [activeCategory, educationalGuides, searchQuery]);
 
   const getCategoryLabel = (categoryId: string) => {
     const category = categories.find(c => c.id === categoryId);
