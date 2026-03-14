@@ -320,7 +320,7 @@ REQUIREMENTS:
     console.log("[8/9] Inserted. Row ID:", inserted.id);
 
     // ── GHL notification (fire-and-forget) ────────────────────────
-    console.log("[8/8] Firing GHL webhook notification...");
+    console.log("[9/9] Firing GHL webhook notification...");
     const ghlUrl = Deno.env.get("GHL_WEBHOOK_URL");
     if (ghlUrl) {
       fetch(ghlUrl, {
