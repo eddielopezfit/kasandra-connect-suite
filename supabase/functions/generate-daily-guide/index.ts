@@ -310,7 +310,7 @@ REQUIREMENTS:
           ...guideData,
           author: "Kasandra Prieto",
         },
-        research_context: researchContext,
+        research_context: researchContext + (firecrawlContext ? `\n\n--- FIRECRAWL NEWS ---\n${firecrawlContext.slice(0, 2000)}` : ""),
         status: "pending_review",
       })
       .select()
