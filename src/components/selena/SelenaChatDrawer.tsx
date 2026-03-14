@@ -343,7 +343,7 @@ export function SelenaChatDrawer() {
               <ConciergeTabPanels
                 activeTab={activeTab}
                 onClose={handleCloseTabPanel}
-                onSendMessage={onSuggestedReplyClick}
+                onSendMessage={handleSuggestedReplyClick}
                 onActionClick={handleActionClick}
                 language={language}
                 leadId={leadId}
