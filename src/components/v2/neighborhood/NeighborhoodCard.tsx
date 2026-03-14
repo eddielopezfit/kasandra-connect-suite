@@ -149,7 +149,6 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
                 {stripCitations(fit)}
               </Badge>
             ))}
-            ))}
           </div>
         </div>
 
