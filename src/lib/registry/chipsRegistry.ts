@@ -23,7 +23,7 @@ export interface ChipRegistryEntry {
   label_en: string;
   label_es: string;
   normalized_key: string;
-  actionSpec: ActionSpec;
+  actionSpec?: ActionSpec;
   /** Optional semantic key for deterministic routing. If present, enables lookup by CHIP_KEYS. */
   chipKey?: ChipKey;
 }
