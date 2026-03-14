@@ -8,6 +8,7 @@ import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { supabase } from "@/integrations/supabase/client";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { stripCitations } from "@/lib/utils/stripCitations";
 import { toast } from "sonner";
 import type { NeighborhoodProfile } from "@/components/v2/neighborhood/NeighborhoodCard";
 import {
@@ -120,7 +121,7 @@ const CompareColumn = ({
               {t("Lifestyle & Vibe", "Estilo de Vida")}
             </span>
           </div>
-          <p className="text-sm text-cc-charcoal leading-relaxed">{profile.lifestyle_feel}</p>
+          <p className="text-sm text-cc-charcoal leading-relaxed">{stripCitations(profile.lifestyle_feel)}</p>
         </div>
 
         {/* Best For */}
@@ -134,7 +135,7 @@ const CompareColumn = ({
           <div className="flex flex-wrap gap-1.5">
             {profile.buyer_fit.map((fit, i) => (
               <Badge key={i} className="bg-cc-sand text-cc-navy border-cc-sand-dark/30 text-xs px-2 py-0.5">
-                {fit}
+                {stripCitations(fit)}
               </Badge>
             ))}
           </div>
@@ -148,13 +149,13 @@ const CompareColumn = ({
               {t("Seller Insights", "Para Vendedores")}
             </span>
           </div>
-          <p className="text-sm text-cc-charcoal leading-relaxed">{profile.seller_context}</p>
+          <p className="text-sm text-cc-charcoal leading-relaxed">{stripCitations(profile.seller_context)}</p>
         </div>
 
         {/* Market Context */}
         <div className="bg-cc-sand rounded-xl p-3 border border-cc-sand-dark/20">
           <p className="text-xs font-semibold text-cc-navy mb-1">{t("Market Context", "Contexto del Mercado")}</p>
-          <p className="text-sm text-cc-charcoal leading-relaxed">{profile.market_framing}</p>
+          <p className="text-sm text-cc-charcoal leading-relaxed">{stripCitations(profile.market_framing)}</p>
         </div>
 
         {/* Not Ideal For */}
@@ -165,13 +166,13 @@ const CompareColumn = ({
               {t("May Not Suit", "Puede No Ser Ideal")}
             </span>
           </div>
-          <p className="text-xs text-cc-text-muted leading-relaxed">{profile.not_ideal_for}</p>
+          <p className="text-xs text-cc-text-muted leading-relaxed">{stripCitations(profile.not_ideal_for)}</p>
         </div>
 
         {/* Fun Fact */}
         <div className="flex items-start gap-2 pt-1 border-t border-cc-sand-dark/20">
           <Lightbulb className="w-4 h-4 text-cc-gold flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-cc-charcoal italic">{profile.fun_fact}</p>
+          <p className="text-xs text-cc-charcoal italic">{stripCitations(profile.fun_fact)}</p>
         </div>
       </div>
     </div>

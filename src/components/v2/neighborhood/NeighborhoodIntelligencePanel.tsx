@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Users, TrendingUp, AlertTriangle, Sparkles, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { stripCitations } from "@/lib/utils/stripCitations";
 import { type NeighborhoodProfile } from "./NeighborhoodCard";
 
 interface NeighborhoodIntelligencePanelProps {
@@ -171,7 +172,7 @@ const NeighborhoodIntelligencePanel = ({ zipCode, neighborhoodName }: Neighborho
               </h3>
             </div>
             <p className="text-cc-charcoal leading-relaxed">
-              {profile.lifestyle_feel}
+              {stripCitations(profile.lifestyle_feel)}
             </p>
           </div>
 
@@ -187,7 +188,7 @@ const NeighborhoodIntelligencePanel = ({ zipCode, neighborhoodName }: Neighborho
               <div className="flex flex-wrap gap-2">
                 {profile.buyer_fit?.map((fit, idx) => (
                   <Badge key={idx} variant="secondary" className="bg-cc-sand text-cc-charcoal">
-                    {fit}
+                    {stripCitations(fit)}
                   </Badge>
                 ))}
               </div>
@@ -201,7 +202,7 @@ const NeighborhoodIntelligencePanel = ({ zipCode, neighborhoodName }: Neighborho
                 </h3>
               </div>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                {profile.market_framing}
+                {stripCitations(profile.market_framing)}
               </p>
             </div>
           </div>
@@ -216,7 +217,7 @@ const NeighborhoodIntelligencePanel = ({ zipCode, neighborhoodName }: Neighborho
                     {t("May Not Be Right For", "Puede No Ser Ideal Para")}
                   </h3>
                   <p className="text-amber-700 text-sm">
-                    {profile.not_ideal_for}
+                    {stripCitations(profile.not_ideal_for)}
                   </p>
                 </div>
               </div>
@@ -233,7 +234,7 @@ const NeighborhoodIntelligencePanel = ({ zipCode, neighborhoodName }: Neighborho
                     {t("Local Insight", "Dato Local")}
                   </h3>
                   <p className="text-cc-charcoal text-sm">
-                    {profile.fun_fact}
+                    {stripCitations(profile.fun_fact)}
                   </p>
                 </div>
               </div>

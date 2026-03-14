@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Users, TrendingUp, AlertTriangle, Lightbulb, Info, Signal, SignalZero } from "lucide-react";
+import { stripCitations } from "@/lib/utils/stripCitations";
 import type { MarketPulseData } from "./NeighborhoodExplorer";
 
 export interface NeighborhoodProfile {
@@ -130,7 +131,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
             <MapPin className="w-4 h-4 text-cc-gold" />
             {t("Lifestyle & Vibe", "Estilo de Vida")}
           </h4>
-          <p className="text-cc-charcoal leading-relaxed">{profile.lifestyle_feel}</p>
+          <p className="text-cc-charcoal leading-relaxed">{stripCitations(profile.lifestyle_feel)}</p>
         </div>
 
         {/* Buyer Fit Tags */}
@@ -145,7 +146,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
                 key={i}
                 className="bg-cc-sand text-cc-navy border-cc-sand-dark/30 font-medium px-3 py-1"
               >
-                {fit}
+                {stripCitations(fit)}
               </Badge>
             ))}
           </div>
@@ -157,7 +158,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
             <TrendingUp className="w-4 h-4 text-cc-gold" />
             {t("Seller Insights", "Para Vendedores")}
           </h4>
-          <p className="text-cc-charcoal leading-relaxed">{profile.seller_context}</p>
+          <p className="text-cc-charcoal leading-relaxed">{stripCitations(profile.seller_context)}</p>
         </div>
 
         {/* Market Framing */}
@@ -165,7 +166,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
           <h4 className="font-serif text-lg font-semibold text-cc-navy mb-2">
             {t("Market Context", "Contexto del Mercado")}
           </h4>
-          <p className="text-cc-charcoal leading-relaxed">{profile.market_framing}</p>
+          <p className="text-cc-charcoal leading-relaxed">{stripCitations(profile.market_framing)}</p>
         </div>
 
         {/* Not Ideal For — trust signal */}
@@ -174,13 +175,13 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
             <AlertTriangle className="w-4 h-4 text-cc-gold" />
             {t("May Not Be Ideal For", "Puede No Ser Ideal Para")}
           </h4>
-          <p className="text-cc-text-muted text-sm leading-relaxed">{profile.not_ideal_for}</p>
+          <p className="text-cc-text-muted text-sm leading-relaxed">{stripCitations(profile.not_ideal_for)}</p>
         </div>
 
         {/* Fun Fact */}
         <div className="flex items-start gap-3 pt-2 border-t border-cc-sand-dark/20">
           <Lightbulb className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-          <p className="text-cc-charcoal text-sm italic">{profile.fun_fact}</p>
+          <p className="text-cc-charcoal text-sm italic">{stripCitations(profile.fun_fact)}</p>
         </div>
       </div>
     </div>

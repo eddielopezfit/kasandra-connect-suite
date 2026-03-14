@@ -12,6 +12,7 @@ import { getSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { bridgeLeadIdToV2 } from "@/lib/analytics/bridgeLeadIdToV2";
 import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -336,9 +337,18 @@ const LeadCaptureModal = ({
               className="mt-0.5"
             />
             <label htmlFor="consent" className="text-[12px] leading-[1.4] text-cc-slate cursor-pointer select-none">
-              {t(
-                "By submitting, I agree to receive communications from Kasandra Prieto / Corner Connect Realty including SMS text messages. Message and data rates may apply. I understand I am communicating with an AI assistant. Reply STOP to opt out.",
-                "Al enviar, acepto recibir comunicaciones de Kasandra Prieto / Corner Connect Realty, incluidos mensajes de texto SMS. Se pueden aplicar tarifas de mensajes y datos. Entiendo que me comunico con un asistente de IA. Responde STOP para cancelar."
+              {language === "es" ? (
+                <>
+                  Al enviar, acepto recibir comunicaciones de Kasandra Prieto / Corner Connect Realty, incluidos mensajes de texto SMS. Se pueden aplicar tarifas de mensajes y datos. Entiendo que me comunico con un asistente de IA. Responde STOP para cancelar. Ver nuestra{" "}
+                  <Link to="/privacy" className="underline text-cc-gold hover:text-cc-gold-dark">Política de Privacidad</Link> y{" "}
+                  <Link to="/terms" className="underline text-cc-gold hover:text-cc-gold-dark">Términos de Servicio</Link>.
+                </>
+              ) : (
+                <>
+                  By submitting, I agree to receive communications from Kasandra Prieto / Corner Connect Realty including SMS text messages. Message and data rates may apply. I understand I am communicating with an AI assistant. Reply STOP to opt out. See our{" "}
+                  <Link to="/privacy" className="underline text-cc-gold hover:text-cc-gold-dark">Privacy Policy</Link> and{" "}
+                  <Link to="/terms" className="underline text-cc-gold hover:text-cc-gold-dark">Terms of Service</Link>.
+                </>
               )}
             </label>
           </div>
