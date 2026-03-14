@@ -317,7 +317,7 @@ REQUIREMENTS:
       .single();
 
     if (insertError) throw new Error(`DB insert failed: ${insertError.message}`);
-    console.log("[7/8] Inserted. Row ID:", inserted.id);
+    console.log("[8/9] Inserted. Row ID:", inserted.id);
 
     // ── GHL notification (fire-and-forget) ────────────────────────
     console.log("[8/8] Firing GHL webhook notification...");
