@@ -176,7 +176,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
             <AlertTriangle className="w-4 h-4 text-cc-gold" />
             {t("May Not Be Ideal For", "Puede No Ser Ideal Para")}
           </h4>
-          <p className="text-cc-text-muted text-sm leading-relaxed">{profile.not_ideal_for}</p>
+          <p className="text-cc-text-muted text-sm leading-relaxed">{stripCitations(profile.not_ideal_for)}</p>
         </div>
 
         {/* Fun Fact */}
