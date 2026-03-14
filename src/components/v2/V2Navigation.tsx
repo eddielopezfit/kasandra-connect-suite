@@ -61,127 +61,129 @@ const V2Navigation = () => {
     }`;
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-cc-sand/95 backdrop-blur-md shadow-md border-b border-white/[0.08] py-3"
-          : "bg-cc-navy py-4"
-      }`}
-    >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
-          {/* Logo & Brokerage */}
-          <div className="flex flex-col">
-            <Link to="/" className={`font-serif text-xl font-bold tracking-wide ${isScrolled ? "text-cc-navy" : "text-white"}`}>
-              KASANDRA PRIETO
-            </Link>
-            <span className={`text-xs tracking-wider ${isScrolled ? "text-cc-slate/80" : "text-white/80"}`}>
-              Corner Connect | Realty Executives Arizona Territory
-            </span>
-            <span className="hidden lg:block text-[13px] text-cc-gold font-medium tracking-wide">
-              {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
-            </span>
-          </div>
+    <>
+      {/* Mobile Menu Backdrop — outside nav so it covers the page */}
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/40 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-6">
-            {primaryLinks.map((link) => (
-              <Link key={link.href} to={link.href} className={linkClass(isActive(link.href))} aria-current={isActive(link.href) ? "page" : undefined}>
-                {link.label}
-                {isActive(link.href) && (
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cc-gold rounded-full" />
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? "bg-cc-sand/95 backdrop-blur-md shadow-md border-b border-white/[0.08] py-3"
+            : "bg-cc-navy py-4"
+        }`}
+      >
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between">
+            {/* Logo & Brokerage */}
+            <div className="flex flex-col">
+              <Link to="/" className={`font-serif text-xl font-bold tracking-wide ${isScrolled ? "text-cc-navy" : "text-white"}`}>
+                KASANDRA PRIETO
+              </Link>
+              <span className={`text-xs tracking-wider ${isScrolled ? "text-cc-slate/80" : "text-white/80"}`}>
+                Corner Connect | Realty Executives Arizona Territory
+              </span>
+              <span className="hidden lg:block text-[13px] text-cc-gold font-medium tracking-wide">
+                {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
+              </span>
+            </div>
+
+            {/* Desktop Nav */}
+            <div className="hidden lg:flex items-center gap-6">
+              {primaryLinks.map((link) => (
+                <Link key={link.href} to={link.href} className={linkClass(isActive(link.href))} aria-current={isActive(link.href) ? "page" : undefined}>
+                  {link.label}
+                  {isActive(link.href) && (
+                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cc-gold rounded-full" />
+                  )}
+                </Link>
+              ))}
+
+              {/* Explore Dropdown */}
+              <div ref={exploreRef} className="relative">
+                <button
+                  onClick={() => setIsExploreOpen(!isExploreOpen)}
+                  className={`${linkClass(isExploreActive)} inline-flex items-center gap-1`}
+                >
+                  {t("Explore", "Explorar")}
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExploreOpen ? "rotate-180" : ""}`} />
+                </button>
+                {isExploreOpen && (
+                  <div className="absolute top-full mt-2 right-0 w-48 bg-white rounded-xl shadow-xl shadow-black/40 border border-cc-gold/20 py-2 z-50">
+                    {exploreLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        to={link.href}
+                        onClick={() => setIsExploreOpen(false)}
+                        className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
+                          isActive(link.href)
+                            ? "text-cc-gold bg-cc-sand/50"
+                            : "text-cc-charcoal hover:text-cc-gold hover:bg-cc-navy/[0.06]"
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
                 )}
-              </Link>
-            ))}
-
-            {/* Explore Dropdown */}
-            <div ref={exploreRef} className="relative">
-              <button
-                onClick={() => setIsExploreOpen(!isExploreOpen)}
-                className={`${linkClass(isExploreActive)} inline-flex items-center gap-1`}
-              >
-                {t("Explore", "Explorar")}
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExploreOpen ? "rotate-180" : ""}`} />
-              </button>
-              {isExploreOpen && (
-                <div className="absolute top-full mt-2 right-0 w-48 bg-white rounded-xl shadow-xl shadow-black/40 border border-cc-gold/20 py-2 z-50">
-                  {exploreLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      to={link.href}
-                      onClick={() => setIsExploreOpen(false)}
-                      className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
-                        isActive(link.href)
-                          ? "text-cc-gold bg-cc-sand/50"
-                          : "text-cc-charcoal hover:text-cc-gold hover:bg-cc-navy/[0.06]"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
+              </div>
             </div>
-          </div>
 
-          {/* Right Side */}
-          <div className="hidden lg:flex items-center gap-4">
-            <LanguageToggle variant={isScrolled ? "light" : "dark"} />
-            <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 shadow-gold">
-              <Link to="/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
-            </Button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className={`lg:hidden p-2 ${isScrolled ? "text-cc-navy" : "text-white"}`}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-
-        {/* Mobile Menu Backdrop */}
-        {isMobileMenuOpen && (
-          <div
-            className="lg:hidden fixed inset-0 top-0 bg-black/40 z-[-1]"
-            onClick={() => setIsMobileMenuOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* Mobile Menu */}
-        <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-            isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
-          }`}>
-          <div className={`mt-4 pb-4 border-t pt-4 space-y-0 ${isScrolled ? "bg-cc-sand border-cc-sand-dark/30" : "bg-cc-navy border-white/20"}`}>
-            <div className="flex justify-center mb-4">
+            {/* Right Side */}
+            <div className="hidden lg:flex items-center gap-4">
               <LanguageToggle variant={isScrolled ? "light" : "dark"} />
+              <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 shadow-gold">
+                <Link to="/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
+              </Button>
             </div>
-            {allLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block text-center py-3 text-base font-medium border-b last:border-b-0 ${
-                  isScrolled
-                    ? `border-cc-sand-dark/20 ${isActive(link.href) ? "text-cc-gold" : "text-cc-navy/80 hover:text-cc-navy"}`
-                    : `border-white/10 ${isActive(link.href) ? "text-cc-gold" : "text-white/80 hover:text-white"}`
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Button asChild className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold">
-              <Link to="/book" onClick={() => setIsMobileMenuOpen(false)}>
-                {t("Book a Consultation", "Agendar una Cita")}
-              </Link>
-            </Button>
+
+            {/* Mobile Menu Button */}
+            <button
+              className={`lg:hidden p-2 ${isScrolled ? "text-cc-navy" : "text-white"}`}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+
+          {/* Mobile Menu */}
+          <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+              isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+            }`}>
+            <div className={`mt-4 pb-4 border-t pt-4 space-y-0 ${isScrolled ? "bg-cc-sand border-cc-sand-dark/30" : "bg-cc-navy border-white/20"}`}>
+              <div className="flex justify-center mb-4">
+                <LanguageToggle variant={isScrolled ? "light" : "dark"} />
+              </div>
+              {allLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`block text-center py-3 text-base font-medium border-b last:border-b-0 ${
+                    isScrolled
+                      ? `border-cc-sand-dark/20 ${isActive(link.href) ? "text-cc-gold" : "text-cc-navy/80 hover:text-cc-navy"}`
+                      : `border-white/10 ${isActive(link.href) ? "text-cc-gold" : "text-white/80 hover:text-white"}`
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <Button asChild className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold">
+                <Link to="/book" onClick={() => setIsMobileMenuOpen(false)}>
+                  {t("Book a Consultation", "Agendar una Cita")}
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 };
 
