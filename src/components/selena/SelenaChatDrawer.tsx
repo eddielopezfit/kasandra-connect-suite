@@ -207,18 +207,19 @@ export function SelenaChatDrawer() {
     bottomRef,
   };
 
-  // Find the last assistant message that carries suggestedReplies (not the last message overall)
-  const lastAssistantWithChips = [...messages].reverse().find(
-    (m) => m.role === 'assistant' && m.suggestedReplies && m.suggestedReplies.length > 0
-  );
+  // Only show chips from the most recent assistant message — never resurrect stale chips from prior context
+  const lastAssistantMessage = [...messages].reverse().find(m => m.role === 'assistant');
+  const currentChips = lastAssistantMessage?.suggestedReplies?.length
+    ? lastAssistantMessage.suggestedReplies
+    : undefined;
 
   const sharedChipsProps = {
-    suggestedReplies: lastAssistantWithChips?.suggestedReplies ?? suggestedReplies,
+    suggestedReplies: currentChips ?? suggestedReplies,
     isLoading,
     activeTab,
     messages,
     onSuggestedReplyClick: handleSuggestedReplyClick,
-    chipMeta: lastAssistantWithChips?.chipMeta,
+    chipMeta: lastAssistantMessage?.chipMeta,
   };
 
   const sharedBottomProps = {

@@ -653,6 +653,34 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     normalized_key: 'estimar costos de cierre',
     actionSpec: { type: 'navigate', path: '/buyer-closing-costs', label: { en: 'Estimate Closing Costs', es: 'Estimar Costos de Cierre' } },
   },
+  {
+    id: 'timeline-asap-en',
+    label_en: 'ASAP (0–30 days)',
+    label_es: 'Lo antes posible (0–30 días)',
+    normalized_key: 'asap (0-30 days)',
+    actionSpec: { type: 'message', label: { en: 'ASAP (0–30 days)', es: 'Lo antes posible (0–30 días)' } },
+  },
+  {
+    id: 'timeline-1-3-months-en',
+    label_en: '1–3 months',
+    label_es: '1–3 meses',
+    normalized_key: '1-3 months',
+    actionSpec: { type: 'message', label: { en: '1–3 months', es: '1–3 meses' } },
+  },
+  {
+    id: 'timeline-3-6-months-en',
+    label_en: '3–6 months',
+    label_es: '3–6 meses',
+    normalized_key: '3-6 months',
+    actionSpec: { type: 'message', label: { en: '3–6 months', es: '3–6 meses' } },
+  },
+  {
+    id: 'timeline-exploring-en',
+    label_en: 'Just exploring',
+    label_es: 'Solo explorando',
+    normalized_key: 'just exploring',
+    actionSpec: { type: 'message', label: { en: 'Just exploring', es: 'Solo explorando' } },
+  },
 ] as const;
 
 // ============= LOOKUP =============
