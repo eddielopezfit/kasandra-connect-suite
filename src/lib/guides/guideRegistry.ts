@@ -1174,7 +1174,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'sell',
     decisionStage: 'explore',
     sortOrder: 47,
-    authorityTheme: 'market_intelligence',
+    authorityTheme: 'valuation_insight',
     isCashGuide: false,
     authorityBridge: {
       en: "Market conditions change, and the numbers you read online are often weeks or months behind. Kasandra is in the Tucson market every week — she can tell you what the data actually means for your specific situation.",
