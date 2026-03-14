@@ -1,5 +1,4 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 import { useEffect, useRef, useState } from "react";
 
 interface StatConfig {
