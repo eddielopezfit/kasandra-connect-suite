@@ -15,7 +15,7 @@ const TrustBar = () => {
         <div className="flex items-center gap-2">
           <span className="text-cc-gold tracking-wide">★★★★★</span>
           <span className="font-bold text-cc-ivory">4.9</span>
-          <span className="text-cc-ivory/70">· 126+ {t("reviews", "reseñas")}</span>
+          <span className="text-cc-ivory/70">· {reviewCount}+ {t("reviews", "reseñas")}</span>
         </div>
 
         {/* Divider */}
