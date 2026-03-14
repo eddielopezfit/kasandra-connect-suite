@@ -120,10 +120,10 @@ export function ConciergeTabPanels({
   return (
     <div 
       className={cn(
-        "absolute bottom-full left-0 right-0 mb-0",
-        "bg-background border-t border-border rounded-t-xl shadow-lg",
-        "animate-in slide-in-from-bottom-4 duration-200",
-        "max-h-[50vh] overflow-y-auto"
+        "bg-background border-b border-border shadow-lg",
+        "animate-in slide-in-from-top-4 duration-200",
+        "max-h-[45vh] overflow-y-auto",
+        "overscroll-contain"
       )}
     >
       {/* Close handle */}

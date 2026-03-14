@@ -164,7 +164,7 @@ export function SelenaDrawerBottomSection({
           </Button>
         </div>
 
-        <p className="text-[10px] md:text-xs text-muted-foreground text-center mt-1.5">{disclaimer}</p>
+        <p className="text-[10px] text-muted-foreground text-center mt-1 leading-tight">{disclaimer}</p>
       </form>
     </div>
   );
