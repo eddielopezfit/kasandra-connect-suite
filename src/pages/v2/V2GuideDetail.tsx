@@ -477,8 +477,8 @@ function GuideDetailContent() {
         })}
 
         {/* External Sources — authoritative links for SEO trust signals */}
-        {guideData?.externalLinks?.length ? (
-          <ExternalSourcesFooter links={guideData.externalLinks} language={language as 'en' | 'es'} />
+        {guide?.externalLinks?.length ? (
+          <ExternalSourcesFooter links={guide.externalLinks} language={language as 'en' | 'es'} />
         ) : null}
 
         {/* Compliance Footer */}

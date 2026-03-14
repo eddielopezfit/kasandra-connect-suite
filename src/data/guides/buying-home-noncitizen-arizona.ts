@@ -46,7 +46,6 @@ const data: GuideContentData = {
       content: "I want to be transparent about a few things:\n\n**Immigration law is not my expertise — real estate is.** If you have questions about how homeownership could interact with your immigration case, a pending application, or your long-term status, please consult an immigration attorney. I can point you toward resources.\n\n**DACA program status is subject to political change.** As of early 2026, DACA remains in place and FHA lending to DACA recipients continues. But DACA's legal status has been challenged in courts and the program's future has been subject to ongoing political debate. I won't pretend that's not a reality.\n\n**The down payment and documentation bar is real.** ITIN loans require more cash at closing than FHA or conventional. If you're working toward homeownership with an ITIN, building that down payment and keeping clean tax filing history is the foundation.\n\n**Equity is equity regardless of status.** Whatever path you use to buy a home in Tucson, the equity you build is yours. Property ownership in Arizona doesn't require citizenship. The wealth-building reality of homeownership is available to you.",
       contentEs: "Quiero ser transparente sobre algunas cosas:\n\n**El derecho de inmigración no es mi área de experiencia — los bienes raíces sí lo son.** Si tienes preguntas sobre cómo la propiedad de vivienda podría interactuar con tu caso de inmigración, consulta a un abogado de inmigración.\n\n**El estatus del programa DACA está sujeto a cambios políticos.** A principios de 2026, DACA sigue vigente y los préstamos FHA a los beneficiarios de DACA continúan.\n\n**El patrimonio es patrimonio independientemente del estatus.** Cualquier camino que uses para comprar una casa en Tucson, el capital que construyes es tuyo.",
     },
-,
     {
       heading: '',
       headingEs: '',
@@ -87,7 +86,7 @@ const data: GuideContentData = {
         },
       ],
     },
-  ],,
+  ],
 
   externalLinks: [
     {
