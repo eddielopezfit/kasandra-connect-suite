@@ -30,7 +30,8 @@ import {
 import { ReportViewer } from '@/components/v2/ReportViewer';
 import LeadCaptureModal from '@/components/v2/LeadCaptureModal';
 
-import { ConciergeTab, JourneyIntent } from './ConciergeTabBar';
+import { ConciergeTab, JourneyIntent, ConciergeTabBar } from './ConciergeTabBar';
+import { ConciergeTabPanels } from './ConciergeTabPanels';
 import { SelenaDrawerHeaderControls } from './drawer/SelenaDrawerHeaderControls';
 import { SelenaDrawerMessagesArea } from './drawer/SelenaDrawerMessagesArea';
 import { SelenaDrawerSuggestedRepliesChips } from './drawer/SelenaDrawerSuggestedRepliesChips';
