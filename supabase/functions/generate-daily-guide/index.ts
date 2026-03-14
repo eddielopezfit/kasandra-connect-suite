@@ -231,7 +231,11 @@ REQUIREMENTS:
           { role: "system", content: systemPrompt },
           {
             role: "user",
-            content: `Topic: ${topic}\n\nResearch context:\n${researchContext}\n\nWrite a complete guide in Kasandra's voice. Return ONLY valid JSON.`,
+            content: `Topic: ${topic}\n\nResearch context:\n${researchContext}${
+              firecrawlContext
+                ? `\n\nRecent Arizona real estate news (reference where relevant — cite specifics, not URLs):\n${firecrawlContext.slice(0, 3000)}`
+                : ""
+            }\n\nWrite a complete guide in Kasandra's voice. Return ONLY valid JSON.`,
           },
         ],
       }),
