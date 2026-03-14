@@ -6,6 +6,28 @@ import { type NeighborhoodEntry, type RegionGroup } from "@/data/neighborhoods/n
 import { getNeighborhoodHeroUrl } from "@/lib/neighborhood/heroUrl";
 import { useState } from "react";
 
+// Per-neighborhood median price data (Pima County / Southern AZ — early 2026)
+// Source: Pima County MLS, Redfin, Zillow aggregated estimates
+const NEIGHBORHOOD_STATS: Record<string, { median: string; medianEs: string; days: number; label: string; labelEs: string }> = {
+  'tucson':           { median: '$285K', medianEs: '$285K', days: 35, label: 'Central Tucson', labelEs: 'Centro Tucson' },
+  'oro-valley':       { median: '$520K', medianEs: '$520K', days: 42, label: 'Premium suburb',  labelEs: 'Suburbio premium' },
+  'marana':           { median: '$385K', medianEs: '$385K', days: 36, label: 'Growing fast',    labelEs: 'Crecimiento rápido' },
+  'catalina':         { median: '$320K', medianEs: '$320K', days: 40, label: 'Mountain views',  labelEs: 'Vistas a montañas' },
+  'catalina-foothills': { median: '$610K', medianEs: '$610K', days: 48, label: 'Luxury enclave', labelEs: 'Enclave de lujo' },
+  'vail':             { median: '$365K', medianEs: '$365K', days: 32, label: 'Family favorite', labelEs: 'Favorito familiar' },
+  'sahuarita':        { median: '$310K', medianEs: '$310K', days: 38, label: 'Value leader',    labelEs: 'Mejor valor' },
+  'south-tucson':     { median: '$195K', medianEs: '$195K', days: 45, label: 'Entry-level buys',labelEs: 'Compras accesibles' },
+  'green-valley':     { median: '$285K', medianEs: '$285K', days: 50, label: 'Retirement haven',labelEs: 'Paraíso de retiro' },
+  'corona-de-tucson': { median: '$340K', medianEs: '$340K', days: 44, label: 'Rural acreage',   labelEs: 'Terreno rural' },
+  'sierra-vista':     { median: '$255K', medianEs: '$255K', days: 42, label: 'Military area',   labelEs: 'Zona militar' },
+  'rio-rico':         { median: '$230K', medianEs: '$230K', days: 55, label: 'Border lifestyle', labelEs: 'Estilo fronterizo' },
+  'nogales':          { median: '$180K', medianEs: '$180K', days: 58, label: 'Binational hub',  labelEs: 'Hub binacional' },
+  'red-rock':         { median: '$285K', medianEs: '$285K', days: 52, label: 'Rural Arizona',   labelEs: 'Arizona rural' },
+};
+
+const DEFAULT_STATS = { median: '$365K', medianEs: '$365K', days: 38, label: 'Tucson area', labelEs: 'Área Tucson' };
+
+
 const REGION_COLORS: Record<RegionGroup, string> = {
   central: 'bg-blue-100 text-blue-800',
   north: 'bg-green-100 text-green-800',
@@ -32,6 +54,7 @@ const NeighborhoodIndexCard = ({ neighborhood }: NeighborhoodIndexCardProps) => 
   const [loaded, setLoaded] = useState(false);
   const heroUrl = getNeighborhoodHeroUrl(neighborhood.slug);
   const displayName = language === 'es' ? neighborhood.nameEs : neighborhood.name;
+  const stats = NEIGHBORHOOD_STATS[neighborhood.slug] ?? DEFAULT_STATS;
 
   return (
     <Link to={`/neighborhoods/${neighborhood.slug}`}>
@@ -89,13 +112,13 @@ const NeighborhoodIndexCard = ({ neighborhood }: NeighborhoodIndexCardProps) => 
           {/* Stat pills */}
           <div className="flex flex-wrap gap-2">
             <span className="bg-white/10 rounded-full px-3 py-1 text-xs text-white/90 flex items-center gap-1.5">
-              <Home size={12} /> {t('Median $365K', 'Mediana $365K')}
+              <Home size={12} /> {language === 'es' ? stats.medianEs : stats.median}
             </span>
             <span className="bg-white/10 rounded-full px-3 py-1 text-xs text-white/90 flex items-center gap-1.5">
-              <Clock size={12} /> {t('38 days avg', '38 días prom')}
+              <Clock size={12} /> {stats.days} {t('days avg', 'días prom')}
             </span>
             <span className="bg-white/10 rounded-full px-3 py-1 text-xs text-white/90 flex items-center gap-1.5">
-              <Star size={12} /> {t('Top Tucson area', 'Top zona Tucson')}
+              <Star size={12} /> {language === 'es' ? stats.labelEs : stats.label}
             </span>
           </div>
 
