@@ -157,3 +157,32 @@ Fix B: Converted NeighborhoodExplorer + NeighborhoodQuiz to React.lazy() with Su
 ### TypeScript error in selena-chat/index.ts — OPEN ⚠️
 Math.max() returns `number` but variable expects `1 | 2 | 3`.
 Fix: Add type assertion `as 1 | 2 | 3` at the assignment. Low priority — does not affect runtime behavior.
+
+## Selena Voice Calibration (March 2026 — commit 7393212)
+20 changes applied to SYSTEM_PROMPT_EN and SYSTEM_PROMPT_ES:
+- Identity statement updated to "best friend" framing
+- Emoji exception: 🏡 on first intent declared, 🎉 on booking confirmed
+- Spanglish mirroring when visitor leads with mixed language
+- Booking language: "hold your hand through the whole process"
+- Post-booking: "Congratulations! 🎉 Kasandra is going to love meeting you"
+- NEW: Celebration & Milestone Moments block
+- NEW: Kasandra Signature Phrases block (verified from social media)
+- Kasandra positioning: "best friend" + "fighter" framing
+- Spanish register: warmth exception overrides usted default
+- Hard prohibitions narrowed with surgical emoji/exclamation exceptions
+- All 20 changes mirrored in SYSTEM_PROMPT_ES
+
+## Booking Funnel Fixes (March 2026)
+- Seller readiness quiz ready band → /book?intent=sell&source=readiness (commit f21d4a0)
+- Cash readiness quiz ready band → /book?intent=cash&source=readiness (commit f21d4a0)
+- Calculator "Review Strategy" → /book?intent=cash&source=calculator (commit f21d4a0)
+- Closing Cost Estimator → /book?intent=buy&source=closing_costs (Lovable)
+- ZIP Explorer → /book?intent=buy&source=zip_explorer (Lovable)
+- Neighborhood Compare → /book?intent=buy&source=neighborhood_compare (Lovable)
+- Guide Library bottom → /book (Lovable)
+- Build error: Math.max() type assertion as 1|2|3 (Lovable)
+
+## Greeting Engine + Chip Fixes (March 2026 — commit ff47c86)
+- buyer_fork + seller_fork added to isAllowedGreetingSource allowlist
+- forkIntentOverride forces correct intent regardless of stored session
+- chipGovernance.ts normalized text fallback now uses label_es/label_en based on language
