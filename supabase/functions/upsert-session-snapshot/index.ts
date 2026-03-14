@@ -26,10 +26,8 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Rate limiting
-    const forwarded = req.headers.get('x-forwarded-for');
-    const ip = forwarded?.split(',')[0]?.trim() || 'unknown';
-    const rl = await checkRateLimit(supabase, `ip:${ip}`, 'upsert-session-snapshot');
+    // Rate limiting — key by session_id (not IP) since this is a per-session endpoint
+    const rl = await checkRateLimit(supabase, `session:${session_id}`, 'upsert-session-snapshot');
     if (!rl.allowed) return rateLimitResponse(corsHeaders);
 
     // ── Guard 2: Fetch existing row for merge ──
