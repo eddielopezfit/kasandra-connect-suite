@@ -159,7 +159,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
             <TrendingUp className="w-4 h-4 text-cc-gold" />
             {t("Seller Insights", "Para Vendedores")}
           </h4>
-          <p className="text-cc-charcoal leading-relaxed">{profile.seller_context}</p>
+          <p className="text-cc-charcoal leading-relaxed">{stripCitations(profile.seller_context)}</p>
         </div>
 
         {/* Market Framing */}
