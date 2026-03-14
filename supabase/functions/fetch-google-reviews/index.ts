@@ -100,7 +100,7 @@ serve(async (req) => {
     const detailsResponse = await fetch(detailsUrl, {
       headers: {
         'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
-        'X-Goog-FieldMask': 'reviews,userRatingCount,rating',
+        'X-Goog-FieldMask': 'reviews',
       },
     });
 
@@ -122,9 +122,7 @@ serve(async (req) => {
     }
 
     const reviews: GoogleReview[] = detailsData.reviews || [];
-    const userRatingCount: number | undefined = detailsData.userRatingCount;
-    const averageRating: number | undefined = detailsData.rating;
-    console.log('Total reviews received:', reviews.length, 'userRatingCount:', userRatingCount, 'averageRating:', averageRating);
+    console.log('Total reviews received:', reviews.length);
 
     // Filter for 5-star reviews only
     const fiveStarReviews: FiveStarReview[] = reviews
@@ -147,13 +145,7 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({
-        reviews: shuffled,
-        ok: true,
-        placeName,
-        totalCount: userRatingCount,
-        averageRating,
-      }),
+      JSON.stringify({ reviews: shuffled, ok: true, placeName }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 

@@ -98,7 +98,7 @@ export function ConciergeTabBar({
   journeyStep 
 }: ConciergeTabBarProps) {
   return (
-    <div className="flex items-center justify-around border-b border-border bg-muted/30 px-1 py-0.5 shrink-0">
+    <div className="flex items-center justify-around border-t border-border bg-background/95 backdrop-blur-sm px-1 py-1 md:py-1.5 shrink-0">
       {TABS.map((tab) => {
         const config = TAB_CONFIG[tab];
         const Icon = config.icon;
@@ -111,20 +111,20 @@ export function ConciergeTabBar({
             key={tab}
             onClick={() => onTabChange(tab)}
             className={cn(
-              "flex flex-col items-center gap-0 px-2.5 py-1.5 rounded-md",
-              "text-[11px] font-medium transition-all duration-150",
-              "min-w-[56px] min-h-[40px]",
-              "active:scale-95",
+              "flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg",
+              "text-xs font-medium transition-all duration-200",
+              "min-w-[60px]",
               isActive
                 ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:text-foreground",
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+              // Highlight the start tab when showing journey progress
               hasProgress && !isActive && "text-primary/70"
             )}
             aria-pressed={isActive}
             aria-label={label}
           >
-            <Icon className={cn("w-3.5 h-3.5", (isActive || hasProgress) && "text-primary")} />
-            <span className="truncate max-w-[64px] leading-tight">{label}</span>
+            <Icon className={cn("w-4 h-4", (isActive || hasProgress) && "text-primary")} />
+            <span className="truncate max-w-[70px]">{label}</span>
           </button>
         );
       })}

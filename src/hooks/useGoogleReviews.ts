@@ -16,8 +16,6 @@ interface GoogleReviewsResponse {
   status?: string;
   error?: string;
   hint?: string;
-  totalCount?: number;
-  averageRating?: number;
 }
 
 const CACHE_KEY = 'cc_google_reviews_cache';
@@ -59,12 +57,10 @@ const FALLBACK_REVIEWS: GoogleReview[] = [
 
 interface CachedReviews {
   reviews: GoogleReview[];
-  totalCount?: number;
-  averageRating?: number;
   cachedAt: number;
 }
 
-async function fetchGoogleReviews(): Promise<GoogleReviewsResult> {
+async function fetchGoogleReviews(): Promise<{ reviews: GoogleReview[]; source: 'live' | 'cache' | 'fallback' }> {
   // Strategy 1: Try live API
   try {
     const { data, error } = await supabase.functions.invoke<GoogleReviewsResponse>(
@@ -75,8 +71,6 @@ async function fetchGoogleReviews(): Promise<GoogleReviewsResult> {
       // Cache successful response
       const cacheData: CachedReviews = {
         reviews: data.reviews,
-        totalCount: data.totalCount,
-        averageRating: data.averageRating,
         cachedAt: Date.now(),
       };
       try {
@@ -84,12 +78,7 @@ async function fetchGoogleReviews(): Promise<GoogleReviewsResult> {
       } catch (e) {
         logger.warn('[GoogleReviews] Failed to cache reviews:', e);
       }
-      return {
-        reviews: data.reviews,
-        totalCount: data.totalCount,
-        averageRating: data.averageRating,
-        source: 'live',
-      };
+      return { reviews: data.reviews, source: 'live' };
     }
 
     if (data?.error) {
@@ -103,15 +92,10 @@ async function fetchGoogleReviews(): Promise<GoogleReviewsResult> {
   try {
     const cached = localStorage.getItem(CACHE_KEY);
     if (cached) {
-      const parsed: CachedReviews = JSON.parse(cached);
-      if (Date.now() - parsed.cachedAt < CACHE_TTL_MS && parsed.reviews.length > 0) {
+      const { reviews, cachedAt }: CachedReviews = JSON.parse(cached);
+      if (Date.now() - cachedAt < CACHE_TTL_MS && reviews.length > 0) {
         if (import.meta.env.DEV) logger.log('[GoogleReviews] Using cached reviews');
-        return {
-          reviews: parsed.reviews,
-          totalCount: parsed.totalCount,
-          averageRating: parsed.averageRating,
-          source: 'cache',
-        };
+        return { reviews, source: 'cache' };
       }
     }
   } catch (e) {
@@ -127,8 +111,6 @@ export type ReviewsSource = 'live' | 'cache' | 'fallback';
 
 export interface GoogleReviewsResult {
   reviews: GoogleReview[];
-  totalCount?: number;
-  averageRating?: number;
   source: ReviewsSource;
 }
 

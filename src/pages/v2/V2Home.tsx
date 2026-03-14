@@ -25,9 +25,6 @@ import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeighborhoodCards";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import CTASection from "@/components/v2/CTASection";
-import CredibilityStats from "@/components/v2/CredibilityStats";
-import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-
 import { InstantAnswerWidget } from "@/components/v2/calculator";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { updateSessionContext } from '@/lib/analytics/selenaSession';
@@ -98,7 +95,6 @@ const V2HomeContent = () => {
       }} />
       {/* Hero Section */}
       <GlassmorphismHero showMarketPulse={false} />
-      <CredibilityStats />
 
       {/* Buyer / Seller Fork */}
       <section className="bg-cc-sand py-10">
@@ -574,7 +570,6 @@ const V2HomeContent = () => {
 
       {/* Social Proof — Staggered Masonry */}
       <TestimonialColumns />
-      <GoogleReviewsSection />
 
       {/* Podcast Section */}
       <section className="py-16 lg:py-20 bg-cc-blue-bg">
@@ -663,7 +658,6 @@ const V2HomeContent = () => {
           </div>
         </div>
       </section>
-
 
       {/* Final CTA */}
       <CTASection />

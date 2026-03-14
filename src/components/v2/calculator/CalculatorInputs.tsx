@@ -22,7 +22,6 @@ interface CalculatorInputsProps {
   onMotivationChange: (motivation: Motivation) => void;
   onTimelineChange: (timeline: Timeline) => void;
   onCalculate: () => void;
-  liveMortgageRate?: number | null;
 }
 
 const CalculatorInputs = ({
@@ -35,7 +34,6 @@ const CalculatorInputs = ({
   onMotivationChange,
   onTimelineChange,
   onCalculate,
-  liveMortgageRate,
 }: CalculatorInputsProps) => {
   const { t, language } = useLanguage();
   const [showMortgageField, setShowMortgageField] = useState(mortgageBalance > 0);
@@ -220,17 +218,6 @@ const CalculatorInputs = ({
           ))}
         </div>
       </div>
-
-      {/* Live Mortgage Rate Badge */}
-      {liveMortgageRate && (
-        <div className="flex items-center justify-center gap-2 text-sm text-cc-slate bg-cc-sand rounded-lg px-4 py-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-          {t(
-            `Using current AZ rate: ${liveMortgageRate.toFixed(2)}%`,
-            `Usando tasa actual de AZ: ${liveMortgageRate.toFixed(2)}%`
-          )}
-        </div>
-      )}
 
       {/* Calculate Button */}
       <Button

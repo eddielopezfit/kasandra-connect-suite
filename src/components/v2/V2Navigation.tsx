@@ -86,7 +86,7 @@ const V2Navigation = () => {
                 KASANDRA PRIETO
               </Link>
               <span className={`text-xs tracking-wider ${isScrolled ? "text-cc-slate/80" : "text-white/80"}`}>
-                {t("Associate Broker · Tucson, AZ", "Corredora Asociada · Tucson, AZ")}
+                Corner Connect | Realty Executives Arizona Territory
               </span>
               <span className="hidden lg:block text-[13px] text-cc-gold font-medium tracking-wide">
                 {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
