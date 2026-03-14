@@ -167,7 +167,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
           <h4 className="font-serif text-lg font-semibold text-cc-navy mb-2">
             {t("Market Context", "Contexto del Mercado")}
           </h4>
-          <p className="text-cc-charcoal leading-relaxed">{profile.market_framing}</p>
+          <p className="text-cc-charcoal leading-relaxed">{stripCitations(profile.market_framing)}</p>
         </div>
 
         {/* Not Ideal For — trust signal */}
