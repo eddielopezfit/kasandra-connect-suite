@@ -1,75 +1,58 @@
 
 
-## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
+# Plan: Mortgage Rate Auto-Scraping via Firecrawl
 
-### What We're Doing
+## What & Why
 
-Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
+The `affordabilityAlgorithm.ts` has a hardcoded `INTEREST_RATE = 0.065` (6.5%). When rates change, the calculator gives wrong max-price estimates. We'll scrape current AZ mortgage rates weekly using Firecrawl and store them in the existing `market_pulse_settings` table (via `scrape_log` jsonb), then pipe them into both calculators.
 
-### What We Do NOT Import
+## Architecture
 
-- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
-- No market stats with hard-coded numbers (stale data risk)
-- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
-- No standalone footer (GuideComplianceFooter already exists)
-- No mid-guide CTAs or interactive state that writes to session
-
----
-
-### Changes
-
-**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
-
-Add optional `variant` field and structured data:
-
-```typescript
-export interface GuideSection {
-  heading: string;
-  headingEs: string;
-  content: string;       // plain-text fallback always required
-  contentEs: string;
-  variant?: 'default' | 'comparison' | 'path-selector';
-  comparisonData?: {
-    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-  };
-  pathData?: Array<{
-    id: string;
-    title: string; titleEs: string;
-    desc: string; descEs: string;
-  }>;
-}
+```text
+Firecrawl (weekly)          market_pulse_settings
+    │                            │
+    ▼                            ▼
+scrape-market-pulse ──────► scrape_log.mortgage_rate_30yr
+    (already exists)             │
+                                 ▼
+                         get-market-pulse
+                                 │
+                    ┌────────────┴────────────┐
+                    ▼                         ▼
+          affordabilityAlgorithm    netToSellerAlgorithm
+          (INTEREST_RATE dynamic)   (already dynamic)
 ```
 
-**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
+## Changes
 
-Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
+### 1. Extend `scrape-market-pulse` edge function
+Add a second Firecrawl scrape targeting a mortgage rate source (e.g., Bankrate AZ rates page or Freddie Mac PMMS). Parse the 30-year fixed rate from the scraped markdown. Store in `scrape_log.mortgage_rate_30yr` alongside existing market metrics. No new DB columns needed — `scrape_log` is already jsonb.
 
-**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
+### 2. Extend `get-market-pulse` edge function
+Add `scrape_log` to the SELECT query (or extract `mortgage_rate_30yr` from it). Return a new `mortgage_rate_30yr` field in the response.
 
-Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
+### 3. Update `useMarketPulse` hook
+Expose `mortgageRate30yr` in `MarketStats` (fallback: `0.065`). Sanity check: reject rates outside 3%–12% range.
 
-**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
+### 4. Update `affordabilityAlgorithm.ts`
+Change `INTEREST_RATE` from hardcoded constant to a parameter with `0.065` default. Export a new function signature: `calculateAffordability(income, debts, downPercent, interestRate?)`.
 
-In the `.map()` loop, switch on `section.variant`:
-- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
-- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
-- default → current `whitespace-pre-line` text
+### 5. Update `TucsonAlphaCalculator.tsx`
+Already fetches `get-market-pulse`. Pass the live mortgage rate into `calculateAffordability` when available.
 
-**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
+### 6. Update `CalculatorInputs.tsx`
+Display the current rate as a read-only badge (e.g., "Current rate: 6.8%") so users see the calculator is using live data.
 
-- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
-- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
-- Plain text `content`/`contentEs` stays as fallback
+## Files Summary
 
-**6. Export new components** (`src/components/v2/guides/index.ts`)
+| File | Action |
+|------|--------|
+| `supabase/functions/scrape-market-pulse/index.ts` | **Modify** — add mortgage rate scrape + parse |
+| `supabase/functions/get-market-pulse/index.ts` | **Modify** — return mortgage rate from scrape_log |
+| `src/hooks/useMarketPulse.ts` | **Modify** — expose mortgageRate30yr |
+| `src/lib/calculator/affordabilityAlgorithm.ts` | **Modify** — parameterize interest rate |
+| `src/components/v2/calculator/TucsonAlphaCalculator.tsx` | **Modify** — pass live rate |
+| `src/components/v2/calculator/CalculatorInputs.tsx` | **Modify** — show current rate badge |
 
-Add exports for `GuideComparisonCards` and `GuidePathSelector`.
-
-### Governance Compliance
-
-- No mid-guide CTAs — these are educational visual enhancements only
-- Terminal routing stays in AuthorityCTABlock (unchanged)
-- Path selector is read-only visual engagement, does not write to session or navigate
-- All new components are bilingual via `useLanguage()`
+No new tables. No new edge functions. No new secrets. Uses existing Firecrawl connector + ADMIN_SECRET auth.
 
