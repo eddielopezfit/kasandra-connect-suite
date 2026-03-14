@@ -285,7 +285,7 @@ REQUIREMENTS:
 
     const failed = Object.entries(checks).filter(([, v]) => !v).map(([k]) => k);
     if (failed.length > 0) {
-      console.error("[5/8] Quality guardrails FAILED:", failed);
+      console.error("[6/9] Quality guardrails FAILED:", failed);
       return new Response(JSON.stringify({ error: "Quality guardrails failed", checks, failed }), {
         status: 422,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
