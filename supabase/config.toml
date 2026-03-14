@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.scrape-market-pulse]
 verify_jwt = false
+
+[functions.generate-daily-guide]
+verify_jwt = false
