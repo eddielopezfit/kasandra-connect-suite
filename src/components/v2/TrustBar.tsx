@@ -4,7 +4,8 @@ import { useGoogleReviews } from "@/hooks/useGoogleReviews";
 const TrustBar = () => {
   const { t } = useLanguage();
   const { data } = useGoogleReviews();
-  const reviewCount = data?.reviews?.length ?? 126;
+  // Use Google's totalCount (all reviews on the listing), fallback to 126
+  const reviewCount = data?.totalCount ?? 126;
 
   const platforms = ["Google", "Realtor.com", "Zillow"];
 
