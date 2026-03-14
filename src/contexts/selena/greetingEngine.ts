@@ -572,10 +572,7 @@ export function computeGreeting(
     ];
   } else {
     const sessionCtx = sessionContext;
-    // Fork card override — force correct intent regardless of stored session
-    const forkSource = entryContext?.source;
-    const forkIntentOverride = forkSource === 'seller_fork' ? 'sell' : forkSource === 'buyer_fork' ? 'buy' : null;
-    const declaredIntent = forkIntentOverride ?? sessionCtx?.intent;
+    const declaredIntent = sessionCtx?.intent;
     const declaredTimeline = sessionCtx?.timeline;
     const toolUsed = sessionCtx?.tool_used;
     const readinessScore = sessionCtx?.readiness_score;
