@@ -182,7 +182,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
         {/* Fun Fact */}
         <div className="flex items-start gap-3 pt-2 border-t border-cc-sand-dark/20">
           <Lightbulb className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-          <p className="text-cc-charcoal text-sm italic">{profile.fun_fact}</p>
+          <p className="text-cc-charcoal text-sm italic">{stripCitations(profile.fun_fact)}</p>
         </div>
       </div>
     </div>
