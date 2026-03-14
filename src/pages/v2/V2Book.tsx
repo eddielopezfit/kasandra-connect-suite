@@ -91,7 +91,7 @@ const V2BookContent = () => {
             <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-white/70">
               <span className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cc-gold inline-block" />
-                {t("6,000+ Pima County transactions", "6,000+ transacciones en el condado de Pima")}
+                {t("500+ families helped personally", "500+ familias ayudadas personalmente")}
               </span>
               <span className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cc-gold inline-block" />

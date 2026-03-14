@@ -68,7 +68,7 @@ const CredibilityStats = () => {
   }, []);
 
   const stats: StatConfig[] = [
-    { value: 6000, suffix: "+", labelEn: "Pima County Transactions", labelEs: "Transacciones en el Condado Pima" },
+    { value: 500, suffix: "+", labelEn: "Families Helped", labelEs: "Familias Ayudadas" },
     { value: reviewCount, suffix: "+", labelEn: "Five-Star Reviews", labelEs: "Reseñas de Cinco Estrellas" },
     { value: 20, suffix: "+", labelEn: "Years in Tucson", labelEs: "Años en Tucson" },
     { value: 2, suffix: "", labelEn: "Languages · EN / ES", labelEs: "Idiomas · EN / ES" },
