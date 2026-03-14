@@ -3,71 +3,45 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const TrustBar = () => {
   const { t } = useLanguage();
 
-  const trustEntities = [
-    {
-      name: "Arizona Diaper Bank",
-      role: t("Vice Chair, Governing Board", "Vicepresidenta, Junta Directiva"),
-    },
-    {
-      name: "Greater Tucson Leadership",
-      role: t("Class of 2026", "Promoción 2026"),
-    },
-    {
-      name: "Urbana 92.5 FM",
-      role: t("Radio Show Host", "Conductora de Radio"),
-    },
-    {
-      name: "Tucson Appliance",
-      role: t("Hispanic Community Spokeswoman", "Portavoz de la Comunidad Hispana"),
-    },
-    {
-      name: "Rumbo al Éxito",
-      role: t("Vice President", "Vicepresidenta"),
-    },
-    {
-      name: "Tucson Real Producers",
-      role: t("Top 200 Realtors, Rising Star", "Top 200 Realtors, Estrella en Ascenso"),
-    },
-  ];
-
-  // Double the items for seamless loop
-  const duplicatedEntities = [...trustEntities, ...trustEntities];
+  const platforms = ["Google", "Realtor.com", "Zillow"];
 
   return (
-    <section className="py-10 bg-white border-y border-border/30 overflow-hidden">
-      <div className="container mx-auto px-4 mb-6">
-        <p className="text-center text-xs font-medium text-cc-navy uppercase tracking-[0.2em]">
-          {t("Trusted by & Actively Involved With", "De Confianza y Activamente Involucrada Con")}
-        </p>
-      </div>
-      
-      <div className="relative">
-        {/* Fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10" />
-        
-        {/* Scrolling container */}
-        <div className="flex animate-marquee">
-          {duplicatedEntities.map((entity, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 px-8 md:px-12 flex items-center group"
-              title={`${entity.name} — ${entity.role}`}
+    <section className="bg-cc-navy py-2.5 px-6">
+      <div className="flex items-center justify-center gap-6 overflow-x-auto whitespace-nowrap text-sm scrollbar-hide">
+        {/* Rating cluster */}
+        <div className="flex items-center gap-2">
+          <span className="text-cc-gold tracking-wide">★★★★★</span>
+          <span className="font-bold text-cc-ivory">4.9</span>
+          <span className="text-cc-ivory/70">· 126+ {t("reviews", "reseñas")}</span>
+        </div>
+
+        {/* Divider */}
+        <span className="w-px h-4 bg-cc-ivory/20 flex-shrink-0" />
+
+        {/* Verified platforms cluster */}
+        <div className="flex items-center gap-2">
+          <span className="text-cc-gold/80 text-xs uppercase tracking-wider font-medium">
+            {t("Verified", "Verificado")}
+          </span>
+          {platforms.map((p) => (
+            <span
+              key={p}
+              className="bg-white/10 text-cc-ivory rounded-full px-2.5 py-0.5 text-xs font-medium"
             >
-              <div className="flex flex-col items-center text-center">
-                <span className="text-sm md:text-base font-serif font-semibold text-cc-charcoal/80 whitespace-nowrap group-hover:text-cc-navy transition-colors">
-                  {entity.name}
-                </span>
-                <span className="text-[10px] md:text-xs text-cc-gold font-semibold uppercase tracking-wider whitespace-nowrap mt-0.5">
-                  {entity.role}
-                </span>
-              </div>
-              {/* Soft separator */}
-              {index < duplicatedEntities.length - 1 && (
-                <span className="ml-8 md:ml-12 text-cc-slate/20">•</span>
-              )}
-            </div>
+              {p}
+            </span>
           ))}
+        </div>
+
+        {/* Divider */}
+        <span className="w-px h-4 bg-cc-ivory/20 flex-shrink-0" />
+
+        {/* Location cluster */}
+        <div className="flex items-center gap-1.5">
+          <span className="text-cc-ivory/70">
+            {t("Bilingual Service", "Servicio Bilingüe")}
+          </span>
+          <span className="text-cc-ivory/50">· Tucson, AZ</span>
         </div>
       </div>
     </section>
