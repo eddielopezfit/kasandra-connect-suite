@@ -217,7 +217,7 @@ const NeighborhoodIntelligencePanel = ({ zipCode, neighborhoodName }: Neighborho
                     {t("May Not Be Right For", "Puede No Ser Ideal Para")}
                   </h3>
                   <p className="text-amber-700 text-sm">
-                    {profile.not_ideal_for}
+                    {stripCitations(profile.not_ideal_for)}
                   </p>
                 </div>
               </div>
