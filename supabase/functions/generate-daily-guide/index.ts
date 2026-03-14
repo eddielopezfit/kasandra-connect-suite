@@ -72,12 +72,69 @@ serve(async (req) => {
         topic = `Tucson real estate market update ${monthYear}`;
       }
     }
-    console.log(`[1/8] Topic selected: "${topic}"`);
+    console.log(`[1/9] Topic selected: "${topic}"`);
+
+    // ── Firecrawl real-time news search ───────────────────────────
+    console.log("[2/9] Searching for recent AZ real estate news via Firecrawl...");
+    let firecrawlContext = "";
+    const firecrawlKey = Deno.env.get("FIRECRAWL_API_KEY");
+    if (firecrawlKey) {
+      try {
+        const searchRes = await fetch("https://api.firecrawl.dev/v1/search", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${firecrawlKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: `${topic} Arizona 2026`,
+            limit: 5,
+            lang: "en",
+            country: "US",
+            tbs: "qdr:m", // last month
+            scrapeOptions: { formats: ["markdown"] },
+          }),
+        });
+
+        if (searchRes.ok) {
+          const searchData = await searchRes.json();
+          const results = searchData.data || [];
+          if (results.length > 0) {
+            firecrawlContext = results
+              .map((r: { title?: string; url?: string; markdown?: string }, i: number) => {
+                const snippet = (r.markdown || "").slice(0, 600);
+                return `[Source ${i + 1}] ${r.title || "Untitled"}\nURL: ${r.url || "N/A"}\n${snippet}`;
+              })
+              .join("\n\n---\n\n");
+            console.log(`[2/9] Firecrawl returned ${results.length} results (${firecrawlContext.length} chars)`);
+          } else {
+            console.log("[2/9] Firecrawl returned 0 results — continuing without news context");
+          }
+        } else {
+          console.warn(`[2/9] Firecrawl search failed: ${searchRes.status} — continuing without news context`);
+        }
+      } catch (fcErr) {
+        console.warn("[2/9] Firecrawl search error (non-fatal):", fcErr);
+      }
+    } else {
+      console.log("[2/9] FIRECRAWL_API_KEY not set — skipping news search");
+    }
 
     // ── Perplexity research ───────────────────────────────────────
-    console.log("[2/8] Calling Perplexity for research...");
+    console.log("[3/9] Calling Perplexity for research...");
     const perplexityKey = Deno.env.get("PERPLEXITY_API_KEY");
     if (!perplexityKey) throw new Error("PERPLEXITY_API_KEY not configured");
+
+    const perplexityUserPrompt = `Research this topic for a Tucson real estate guide: "${topic}". Provide:
+1. Key facts and statistics specific to Tucson/Pima County
+2. Current program names and requirements (if applicable)
+3. Arizona-specific laws or regulations
+4. 3-5 FAQ questions a buyer/seller would ask
+5. 2-3 authoritative source URLs (HUD.gov, VA.gov, AHFA.com, ADRE.az.gov, Redfin, etc.)${
+      firecrawlContext
+        ? `\n\nRecent news context (use to ensure the guide reflects the latest developments):\n${firecrawlContext.slice(0, 2000)}`
+        : ""
+    }`;
 
     const perplexityRes = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
@@ -95,12 +152,7 @@ serve(async (req) => {
           },
           {
             role: "user",
-            content: `Research this topic for a Tucson real estate guide: "${topic}". Provide:
-1. Key facts and statistics specific to Tucson/Pima County
-2. Current program names and requirements (if applicable)
-3. Arizona-specific laws or regulations
-4. 3-5 FAQ questions a buyer/seller would ask
-5. 2-3 authoritative source URLs (HUD.gov, VA.gov, AHFA.com, ADRE.az.gov, Redfin, etc.)`,
+            content: perplexityUserPrompt,
           },
         ],
       }),
@@ -113,7 +165,7 @@ serve(async (req) => {
 
     const perplexityData = await perplexityRes.json();
     const researchContext = perplexityData.choices?.[0]?.message?.content || "";
-    console.log(`[2/8] Research complete. Length: ${researchContext.length} chars`);
+    console.log(`[3/9] Research complete. Length: ${researchContext.length} chars`);
 
     // ── Gemini content generation ─────────────────────────────────
     console.log("[3/8] Calling Gemini for content generation...");
