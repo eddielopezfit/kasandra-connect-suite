@@ -118,12 +118,38 @@ Pipeline routing: Cash / Sell / Buy / Dual / Explore — based on intent signals
 - **Buying process timeline**: BuyingTimeline.tsx — animated vertical gold connector, scroll-triggered fade-up, alternating desktop layout, bilingual
 - **/sell blank render fixed**: GoogleReviewsSection lazy-loaded (commit 673c618)
 
+## Phase 3-5 Completed (March 2026)
+**Guide System Integrity:**
+- CognitiveProgressBar wired into V2GuideDetail.tsx (commit b53cdfd)
+- PersonalizedHero returning visitor fix — clearLastGuideId() on mount (commit b53cdfd)
+- Market data reconciled: selling-for-top-dollar + first-time-buyer → $365K / 38 days (commit b53cdfd)
+- FHA year label corrected 2025→2026 in DACA guide (commit b53cdfd)
+- Guide search bar added to V2Guides.tsx — filters by title+description EN+ES (commit d650734)
+
+**Sell Page Luxury Upgrade:**
+- /sell split-panel comparison: "List on Market" (navy, Realty Executives) vs "Cash Offer" (ivory, Corner Connect)
+- Corner Connect framing: NOT an iBuyer — Kasandra's personal vetted buyer network
+- Bottom callout: "Not sure? Kasandra reviews both options with every seller"
+- EntrySource: sell_comparison_traditional + sell_comparison_undecided added (commit b51d5bc)
+
+**Corner Connect KB in Selena (commit cb12305):**
+- CORNER CONNECT POSITIONING block added to both EN and ES system prompts
+- Selena knows: cash offer = Corner Connect vetted buyer network, NOT iBuyer
+- Never use "iBuyer" to describe Corner Connect
+- Approved framing phrases documented in KB
+
+**Schema Markup — SEO (Phase 5, in progress):**
+- LocalBusiness + RealEstateAgent schema on homepage (full spec with aggregateRating, sameAs, geo)
+- Article schema on guide pages (datePublished/dateModified added)
+- BreadcrumbList on guide pages (Home > Guides > [title])
+- BreadcrumbList on neighborhood pages (Home > Neighborhoods > [name])
+- FAQPage schema already existed on guides — confirmed correct, no changes needed
+
 ## Remaining Luxury Upgrade Queue
-- `/sell` — Traditional vs Cash split-panel comparison (Lovable)
 - `/contact` — Two-column with Kasandra headshot + form (Lovable)
 - `/selena-ai` — Expandable chat preview mockup (Lovable)
 - `/neighborhoods` — Display Cards with hover reveal (Lovable)
-- Schema markup — LocalBusiness, Article, Review, BreadcrumbList (Claude Code)
 - Aggregated review trust bar — "4.9 stars · 126+ reviews" (Lovable)
 - Instant Answer Widget — affordability + home value calculator (Lovable — approved plan ready)
-- Entry source personalization — Selena opens knowing buyer/seller context (Claude Code — Phase 2 symphony)
+- Unused dead code cleanup: getGuideTier, getBookingCTA, handleBookConsultation in V2Guides.tsx
+- GHL Privacy/Terms URLs — fix in GHL dashboard (currently pointing to example.com)

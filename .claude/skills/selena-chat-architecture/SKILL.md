@@ -209,3 +209,26 @@ Fix: Add type assertion `as 1 | 2 | 3` at the assignment. Low priority — does 
 - Existing buyer session → seller fork → fresh greeting, history cleared ✅
 - Type "Quiero comprar" without toggle → response in Spanish, no stale English chips ✅
 - Toggle to Spanish manually → UI labels switch correctly ✅
+
+## Corner Connect Positioning KB (commit cb12305)
+CORNER CONNECT POSITIONING block added to both SYSTEM_PROMPT_EN and SYSTEM_PROMPT_ES.
+Location: After platform context line (EN line 1243, ES line 1958), before GEOGRAPHIC AWARENESS.
+
+Key directives:
+- Cash offer = Kasandra's personally vetted Corner Connect buyer network
+- NOT a random iBuyer or algorithm-based offer
+- Kasandra controls and reviews both sides of the transaction
+- Approved: "Corner Connect isn't an iBuyer service — it's Kasandra's direct buyer network built over years in Tucson"
+- NEVER use "iBuyer" to describe Corner Connect
+- NEVER frame cash offer as selling to a stranger
+
+## Current Production Status (March 2026 — fully verified 8/8)
+All verification tests passing:
+- Seller fork card → fresh "Hello I'm Selena" greeting (not "Welcome back") ✅
+- Existing buyer session → tap seller fork → history cleared, fresh greeting ✅  
+- Type in Spanish → chips appear in Spanish ✅
+- Toggle language manually → chips still correct ✅
+- Buyer chips → no bracket text ✅
+- /buy + /sell → no white flash on load ✅
+- Seller readiness quiz → routes to /book ✅
+- Cash readiness quiz → routes to /book ✅
