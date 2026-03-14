@@ -30,7 +30,8 @@ import {
 import { ReportViewer } from '@/components/v2/ReportViewer';
 import LeadCaptureModal from '@/components/v2/LeadCaptureModal';
 
-import { ConciergeTab, JourneyIntent } from './ConciergeTabBar';
+import { ConciergeTab, JourneyIntent, ConciergeTabBar } from './ConciergeTabBar';
+import { ConciergeTabPanels } from './ConciergeTabPanels';
 import { SelenaDrawerHeaderControls } from './drawer/SelenaDrawerHeaderControls';
 import { SelenaDrawerMessagesArea } from './drawer/SelenaDrawerMessagesArea';
 import { SelenaDrawerSuggestedRepliesChips } from './drawer/SelenaDrawerSuggestedRepliesChips';
@@ -303,19 +304,18 @@ export function SelenaChatDrawer() {
           }
         }}>
           <DrawerContent 
-            className="h-[85dvh] max-h-[700px] flex flex-col overflow-hidden"
+            className="h-[90dvh] max-h-[750px] flex flex-col overflow-hidden"
             style={{ paddingBottom: keyboardInset > 0 ? `${keyboardInset}px` : undefined }}
           >
-            {/* FIX 15 — Swipe drag handle indicator */}
-            <div className="mx-auto w-8 h-1 rounded-full bg-muted-foreground/30 mt-2 mb-1 shrink-0" />
-            <DrawerHeader className="border-b border-border px-4 py-3 shrink-0">
+            {/* Swipe drag handle */}
+            <div className="mx-auto w-8 h-1 rounded-full bg-muted-foreground/30 mt-2 mb-0.5 shrink-0" />
+            
+            {/* Compact header */}
+            <DrawerHeader className="border-b border-border px-3 py-2 shrink-0">
               <div className="flex items-center justify-between">
-                <DrawerTitle className="flex items-center gap-2 text-lg">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  <span>Selena</span>
-                  <span className="text-sm font-normal text-muted-foreground">
-                    {t('Digital Concierge', 'Concierge Digital')}
-                  </span>
+                <DrawerTitle className="flex items-center gap-1.5 text-base">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <span className="font-semibold">Selena</span>
                 </DrawerTitle>
                 
                 <SelenaDrawerHeaderControls
@@ -330,8 +330,35 @@ export function SelenaChatDrawer() {
               </div>
             </DrawerHeader>
 
+            {/* Tab bar — in header zone, above messages */}
+            <div className="shrink-0 relative">
+              <ConciergeTabBar
+                activeTab={activeTab}
+                onTabChange={handleTabChange}
+                language={language}
+                currentIntent={journeyContext.intent}
+                journeyStep={journeyContext.step}
+              />
+              {/* Tab panels slide down from tabs */}
+              <ConciergeTabPanels
+                activeTab={activeTab}
+                onClose={handleCloseTabPanel}
+                onSendMessage={handleSuggestedReplyClick}
+                onActionClick={handleActionClick}
+                language={language}
+                leadId={leadId}
+                closeDrawer={closeChat}
+                currentIntent={journeyContext.intent}
+              />
+            </div>
+
+            {/* Messages — maximum space */}
             <SelenaDrawerMessagesArea {...sharedMessagesProps} />
+            
+            {/* Chips — directly above input */}
             <SelenaDrawerSuggestedRepliesChips {...sharedChipsProps} />
+            
+            {/* Clean input section — no tabs between */}
             <SelenaDrawerBottomSection {...sharedBottomProps} />
           </DrawerContent>
         </Drawer>
