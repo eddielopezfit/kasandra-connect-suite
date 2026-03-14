@@ -574,6 +574,7 @@ const V2HomeContent = () => {
 
       {/* Social Proof — Staggered Masonry */}
       <TestimonialColumns />
+      <GoogleReviewsSection />
 
       {/* Podcast Section */}
       <section className="py-16 lg:py-20 bg-cc-blue-bg">
