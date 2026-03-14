@@ -1,75 +1,70 @@
 
 
-## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
+# Implementation Plan: Social Proof & Credibility Signals
 
-### What We're Doing
-
-Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
-
-### What We Do NOT Import
-
-- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
-- No market stats with hard-coded numbers (stale data risk)
-- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
-- No standalone footer (GuideComplianceFooter already exists)
-- No mid-guide CTAs or interactive state that writes to session
+## Overview
+Create two new components and modify two existing files to add credibility stats, live Google Reviews, a "Why Corner Connect" section, and dynamic TrustBar count to the homepage.
 
 ---
 
-### Changes
+## 1. Create `CredibilityStats.tsx` (New)
+**Path:** `src/components/v2/CredibilityStats.tsx`
 
-**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
+Horizontal stats band with 4 items:
+- **6,000+** Pima County Transactions
+- **126+** Five-Star Reviews (dynamic from `useGoogleReviews` → `reviews.length`)
+- **20+** Years in Tucson
+- **Bilingual** EN/ES Service
 
-Add optional `variant` field and structured data:
+Technical:
+- `IntersectionObserver` triggers animated count-up (reuse the `requestAnimationFrame` + `easeOut` pattern from `GlassmorphismHero.tsx` `StatItem`)
+- `data-section="credibility-stats"` attribute for analytics
+- Background: `bg-cc-ivory` with `cc-navy` text, `cc-gold` accent numbers
+- Responsive: 2x2 grid on mobile, 4-col on `md+`
+- Bilingual via `useLanguage().t()`
 
-```typescript
-export interface GuideSection {
-  heading: string;
-  headingEs: string;
-  content: string;       // plain-text fallback always required
-  contentEs: string;
-  variant?: 'default' | 'comparison' | 'path-selector';
-  comparisonData?: {
-    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-  };
-  pathData?: Array<{
-    id: string;
-    title: string; titleEs: string;
-    desc: string; descEs: string;
-  }>;
-}
-```
+## 2. Create `WhyCornerConnect.tsx` (New)
+**Path:** `src/components/v2/WhyCornerConnect.tsx`
 
-**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
+Trust section with brokerage credibility signals:
+- 6,000+ Pima County residential transactions
+- 9 years operating history
+- Realty Executives Arizona Territory backing
+- A+ BBB rating
+- Multi-language team
 
-Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
+Style: `bg-cc-sand` section following existing pattern (gold label, serif heading, icon+text grid). Bilingual.
 
-**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
+## 3. Modify `TrustBar.tsx`
+**Path:** `src/components/v2/TrustBar.tsx`
 
-Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
+- Import `useGoogleReviews`
+- Replace hardcoded `"126+"` with `data?.reviews?.length ?? 126` suffixed with `+`
+- Fallback to `126+` if hook is loading or returns no data
 
-**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
+## 4. Modify `V2Home.tsx`
+**Path:** `src/pages/v2/V2Home.tsx`
 
-In the `.map()` loop, switch on `section.variant`:
-- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
-- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
-- default → current `whitespace-pre-line` text
+Insert three new sections into the homepage layout:
 
-**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
+| Position | Component | After |
+|----------|-----------|-------|
+| After `GlassmorphismHero` (line 97) | `<CredibilityStats />` | Hero, before Buyer/Seller fork |
+| After `TestimonialColumns` (line 572) | `<GoogleReviewsSection />` | Testimonials, before Podcast |
+| Before `CTASection` (line 663) | `<WhyCornerConnect />` | Community section, before final CTA |
 
-- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
-- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
-- Plain text `content`/`contentEs` stays as fallback
+New imports: `CredibilityStats`, `WhyCornerConnect`, `GoogleReviewsSection`
 
-**6. Export new components** (`src/components/v2/guides/index.ts`)
+---
 
-Add exports for `GuideComparisonCards` and `GuidePathSelector`.
+## Files Summary
 
-### Governance Compliance
+| File | Action |
+|------|--------|
+| `src/components/v2/CredibilityStats.tsx` | **Create** |
+| `src/components/v2/WhyCornerConnect.tsx` | **Create** |
+| `src/components/v2/TrustBar.tsx` | **Modify** — dynamic review count |
+| `src/pages/v2/V2Home.tsx` | **Modify** — add 3 section imports + placements |
 
-- No mid-guide CTAs — these are educational visual enhancements only
-- Terminal routing stays in AuthorityCTABlock (unchanged)
-- Path selector is read-only visual engagement, does not write to session or navigate
-- All new components are bilingual via `useLanguage()`
+No database changes. No new edge functions. No new dependencies.
 
