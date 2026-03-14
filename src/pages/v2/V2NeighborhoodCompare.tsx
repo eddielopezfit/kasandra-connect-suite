@@ -135,7 +135,7 @@ const CompareColumn = ({
           <div className="flex flex-wrap gap-1.5">
             {profile.buyer_fit.map((fit, i) => (
               <Badge key={i} className="bg-cc-sand text-cc-navy border-cc-sand-dark/30 text-xs px-2 py-0.5">
-                {fit}
+                {stripCitations(fit)}
               </Badge>
             ))}
           </div>
