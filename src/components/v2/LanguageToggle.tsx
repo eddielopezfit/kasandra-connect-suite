@@ -7,7 +7,7 @@ interface LanguageToggleProps {
 const LanguageToggle = ({ variant = "light" }: LanguageToggleProps) => {
   const { language, setLanguage } = useLanguage();
 
-  const baseStyles = "px-2 py-0.5 rounded-sm transition-all duration-200 font-medium text-xs tracking-wide";
+  const baseStyles = "px-3 py-2 rounded-md transition-all duration-200 font-medium text-xs tracking-wide min-h-[44px] inline-flex items-center";
   
   const getButtonStyles = (isActive: boolean) => {
     if (variant === "dark") {

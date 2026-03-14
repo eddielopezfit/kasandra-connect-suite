@@ -69,7 +69,7 @@ const NeighborhoodsContent = () => {
       </section>
 
       {/* Filter Tabs */}
-      <section className="bg-cc-ivory border-b border-cc-sand-dark/20 sticky top-16 z-30">
+      <section className="bg-cc-ivory border-b border-cc-sand-dark/20 sticky top-[72px] z-[30]">
         <div className="container mx-auto px-4">
           <div className="flex overflow-x-auto py-4 gap-2 no-scrollbar">
             {(Object.keys(REGION_LABELS) as Array<RegionGroup | 'all'>).map((region) => (

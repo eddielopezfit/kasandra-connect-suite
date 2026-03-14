@@ -93,14 +93,24 @@ const NeighborhoodIndexCard = ({ neighborhood }: NeighborhoodIndexCardProps) => 
         </div>
 
         {/* Bottom content — always visible */}
-        <div className="absolute bottom-0 left-0 right-0 z-[2] flex items-end justify-between p-4">
-          <h3 className="font-serif text-2xl font-bold text-white drop-shadow-md">
-            {displayName}
-          </h3>
-          <span className="flex items-center gap-1 text-cc-gold text-sm font-medium flex-shrink-0">
-            {t('Explore', 'Explorar')}
-            <ArrowRight className="w-4 h-4" />
-          </span>
+        <div className="absolute bottom-0 left-0 right-0 z-[2] p-4">
+          <div className="flex items-end justify-between">
+            <h3 className="font-serif text-2xl font-bold text-white drop-shadow-md">
+              {displayName}
+            </h3>
+            <span className="flex items-center gap-1 text-cc-gold text-sm font-medium flex-shrink-0">
+              {t('Explore', 'Explorar')}
+              <ArrowRight className="w-4 h-4" />
+            </span>
+          </div>
+          {/* Touch-only condensed stats — hidden on hover devices (overlay shows them there) */}
+          <div className="flex items-center gap-2 mt-1.5 [@media(hover:hover)]:hidden">
+            <span className="text-[11px] text-white/75 font-medium">{language === 'es' ? stats.medianEs : stats.median}</span>
+            <span className="text-white/30 text-[10px]">·</span>
+            <span className="text-[11px] text-white/75">{stats.days} {t('days avg', 'días prom')}</span>
+            <span className="text-white/30 text-[10px]">·</span>
+            <span className="text-[11px] text-white/75">{language === 'es' ? stats.labelEs : stats.label}</span>
+          </div>
         </div>
 
         {/* Hover reveal overlay */}

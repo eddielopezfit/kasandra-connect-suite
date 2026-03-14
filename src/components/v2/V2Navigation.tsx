@@ -75,7 +75,7 @@ const V2Navigation = () => {
             <Link to="/" className={`font-serif text-xl font-bold tracking-wide ${isScrolled ? "text-cc-navy" : "text-white"}`}>
               KASANDRA PRIETO
             </Link>
-            <span className={`text-[11px] tracking-wider ${isScrolled ? "text-cc-slate/80" : "text-white/80"}`}>
+            <span className={`text-xs tracking-wider ${isScrolled ? "text-cc-slate/80" : "text-white/80"}`}>
               Corner Connect | Realty Executives Arizona Territory
             </span>
             <span className="hidden lg:block text-[13px] text-cc-gold font-medium tracking-wide">
@@ -86,7 +86,7 @@ const V2Navigation = () => {
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-6">
             {primaryLinks.map((link) => (
-              <Link key={link.href} to={link.href} className={linkClass(isActive(link.href))}>
+              <Link key={link.href} to={link.href} className={linkClass(isActive(link.href))} aria-current={isActive(link.href) ? "page" : undefined}>
                 {link.label}
                 {isActive(link.href) && (
                   <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cc-gold rounded-full" />
@@ -146,7 +146,7 @@ const V2Navigation = () => {
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
             isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
           }`}>
-          <div className={`mt-4 pb-4 border-t pt-4 space-y-0 bg-cc-navy ${isScrolled ? "border-white/10" : "border-white/20"}`}>
+          <div className={`mt-4 pb-4 border-t pt-4 space-y-0 ${isScrolled ? "bg-cc-sand border-cc-sand-dark/30" : "bg-cc-navy border-white/20"}`}>
             <div className="flex justify-center mb-4">
               <LanguageToggle variant="dark" />
             </div>
