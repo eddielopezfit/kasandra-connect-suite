@@ -11,13 +11,14 @@ interface AffordabilityResult {
 // Tucson-specific defaults
 const PROPERTY_TAX_RATE = 0.011;
 const ANNUAL_INSURANCE = 1200;
-const INTEREST_RATE = 0.065;
+const DEFAULT_INTEREST_RATE = 0.065;
 const LOAN_TERM_YEARS = 30;
 
 export function calculateAffordability(
   income: number,
   debts: number,
-  downPercent: number
+  downPercent: number,
+  interestRate: number = DEFAULT_INTEREST_RATE
 ): AffordabilityResult {
   if (income <= 0) return { maxPrice: 0, monthlyPayment: 0 };
 
@@ -31,7 +32,7 @@ export function calculateAffordability(
   if (maxMonthly <= 0) return { maxPrice: 0, monthlyPayment: 0 };
 
   // Amortization constants
-  const r = INTEREST_RATE / 12;
+  const r = interestRate / 12;
   const n = LOAN_TERM_YEARS * 12;
 
   // Iterative solve: maxPrice depends on tax (which depends on maxPrice)

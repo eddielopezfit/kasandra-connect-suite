@@ -14,6 +14,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // Redfin Tucson housing market page
 const REDFIN_TUCSON_URL = "https://www.redfin.com/city/18510/AZ/Tucson/housing-market";
+const BANKRATE_AZ_RATES_URL = "https://www.bankrate.com/mortgages/mortgage-rates/arizona/";
 
 interface MarketData {
   negotiation_gap: number | null;
@@ -289,6 +290,82 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    // Step 5: Scrape mortgage rates from Bankrate
+    let mortgageRate30yr: number | null = null;
+    try {
+      console.log("[scrape-market-pulse] Scraping Bankrate AZ mortgage rates...");
+      const rateRes = await fetch("https://api.firecrawl.dev/v1/scrape", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${firecrawlKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: BANKRATE_AZ_RATES_URL,
+          formats: ["markdown"],
+          onlyMainContent: true,
+          waitFor: 3000,
+        }),
+      });
+
+      const rateData = await rateRes.json();
+      const rateMd = rateData.data?.markdown || rateData.markdown || "";
+      console.log(`[scrape-market-pulse] Rate page: ${rateMd.length} chars`);
+
+      // Parse 30-year fixed rate patterns
+      const ratePatterns = [
+        /30[\s-]*year\s+fixed[^0-9]*?(\d\.\d{1,3})\s*%/i,
+        /(\d\.\d{1,3})\s*%\s*[^\n]*30[\s-]*year\s+fixed/i,
+        /30[\s-]*yr[^0-9]*?(\d\.\d{1,3})\s*%/i,
+        /(\d\.\d{1,3})\s*%\s*[^\n]*30[\s-]*yr/i,
+        // Generic "current.*rate" near a percentage
+        /current\s+(?:mortgage\s+)?rate[^0-9]*?(\d\.\d{1,3})\s*%/i,
+      ];
+
+      for (const p of ratePatterns) {
+        const m = rateMd.match(p);
+        if (m) {
+          const rate = parseFloat(m[1]);
+          // Sanity: 3%–12% range
+          if (rate >= 3 && rate <= 12) {
+            mortgageRate30yr = rate;
+            console.log(`[scrape-market-pulse] Parsed 30yr rate: ${rate}%`);
+            break;
+          }
+        }
+      }
+
+      if (mortgageRate30yr === null) {
+        console.warn("[scrape-market-pulse] Could not parse mortgage rate from Bankrate");
+      }
+    } catch (rateErr) {
+      console.error("[scrape-market-pulse] Mortgage rate scrape failed (non-fatal):", rateErr);
+    }
+
+    // Step 6: Merge mortgage rate into scrape_log
+    if (mortgageRate30yr !== null) {
+      // Re-read and merge into existing scrape_log update
+      const { data: currentRow } = await supabase
+        .from("market_pulse_settings")
+        .select("scrape_log")
+        .eq("market_name", "Tucson_Overall")
+        .single();
+
+      const existingLog = (currentRow?.scrape_log as Record<string, unknown>) ?? {};
+      await supabase
+        .from("market_pulse_settings")
+        .update({
+          scrape_log: {
+            ...existingLog,
+            ...(updatePayload.scrape_log as Record<string, unknown>),
+            mortgage_rate_30yr: mortgageRate30yr,
+            mortgage_rate_source: BANKRATE_AZ_RATES_URL,
+            mortgage_rate_scraped_at: new Date().toISOString(),
+          },
+        })
+        .eq("market_name", "Tucson_Overall");
+    }
+
     const result = {
       ok: true,
       updated_fields: {
@@ -298,6 +375,7 @@ Deno.serve(async (req: Request) => {
         median_list_price: parsed.median_list_price,
         active_listings: parsed.active_listings,
         price_cut_pct: parsed.price_cut_pct,
+        mortgage_rate_30yr: mortgageRate30yr,
       },
       source: REDFIN_TUCSON_URL,
       scraped_at: new Date().toISOString(),

@@ -36,6 +36,8 @@ export interface MarketStats {
   holdingCostPerDay: number;
   /** Average pre-sale prep spend */
   prepAvg: number;
+  /** Current 30-year fixed mortgage rate as decimal (e.g. 0.068) */
+  mortgageRate30yr: number;
   /** Human-readable verified date e.g. "January 2026" / "enero de 2026" */
   verifiedDate: string | null;
   /** Whether data came from live DB or fallback */
@@ -61,12 +63,19 @@ function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' 
       })
     : null;
 
+  // Mortgage rate: from API response or fallback 6.5%
+  const rawRate = (pulse as unknown as Record<string, unknown>).mortgage_rate_30yr;
+  const parsedRate = typeof rawRate === 'number' && rawRate >= 3 && rawRate <= 12
+    ? rawRate / 100
+    : 0.065;
+
   return {
     daysOnMarket,
     saleToListRatio,
     saleToListRaw,
     holdingCostPerDay: pulse.holding_cost_per_day ?? 42,
     prepAvg: pulse.market_ready_prep_avg ?? 4800,
+    mortgageRate30yr: parsedRate,
     verifiedDate,
     isLive,
   };
