@@ -14,6 +14,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // Redfin Tucson housing market page
 const REDFIN_TUCSON_URL = "https://www.redfin.com/city/18510/AZ/Tucson/housing-market";
+const BANKRATE_AZ_RATES_URL = "https://www.bankrate.com/mortgages/mortgage-rates/arizona/";
 
 interface MarketData {
   negotiation_gap: number | null;
