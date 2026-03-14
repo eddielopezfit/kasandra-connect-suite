@@ -129,8 +129,8 @@ const data: GuideContentData = {
       label: 'Pima County Down Payment Programs',
       labelEs: 'Programas de Pago Inicial del Condado de Pima',
       url: 'https://www.pimatucsonhomebuyers.com/',
-      description: 'Official source for Pima Tucson Homebuyer's Solution — the primary DPA program for Tucson area first-time buyers.',
-      descriptionEs: 'Fuente oficial para la Solución para Compradores Pima Tucson — el programa DPA principal para compradores primerizos del área de Tucson.',
+      description: "Official source for Pima Tucson Homebuyer's Solution — the primary DPA program for Tucson area first-time buyers.",
+      descriptionEs: "Fuente oficial para la Solución para Compradores Pima Tucson — el programa DPA principal para compradores primerizos del área de Tucson.",
     },
     {
       label: 'Arizona Housing Finance Authority',
