@@ -43,7 +43,9 @@ export type EntrySource =
   | 'about_page'
   | 'contact_page'
    | 'selena_ai_page'
-   | 'homepage_selena_section';
+   | 'homepage_selena_section'
+   | 'sell_comparison_traditional'
+   | 'sell_comparison_undecided';
 
 export interface EntryContext {
   source: EntrySource;
