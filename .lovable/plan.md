@@ -1,64 +1,75 @@
 
 
-## /contact Two-Column Rebuild
+## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
 
-### Overview
-Transform the current stacked-card contact page into a luxury two-column layout with Kasandra's portrait, a response-time promise, and smarter contact options. Single file modified: `src/pages/v2/V2Contact.tsx`.
+### What We're Doing
 
-### Layout
+Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
 
-```text
-┌──────────────────────────────────────────────────┐
-│  HERO — same navy bg, updated subtitle           │
-│  "Get in Touch" / "Ponerse en Contacto"          │
-│  + response promise badge below headline         │
-└──────────────────────────────────────────────────┘
+### What We Do NOT Import
 
-┌─────────────────────┬────────────────────────────┐
-│                     │                            │
-│  Kasandra portrait  │  Contact card (phone,      │
-│  (kasandra-         │  office, brokerage) +      │
-│  portrait.jpg)      │  "Talk to Selena" button   │
-│                     │  + social icons inline     │
-│  Rounded, shadow,   │                            │
-│  gold ring border   │  Response promise:         │
-│                     │  "I respond within 2 hrs   │
-│                     │  during business hours"    │
-│                     │                            │
-└─────────────────────┴────────────────────────────┘
-│  Mobile: stacks vertically, portrait on top       │
-└──────────────────────────────────────────────────┘
+- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
+- No market stats with hard-coded numbers (stale data risk)
+- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
+- No standalone footer (GuideComplianceFooter already exists)
+- No mid-guide CTAs or interactive state that writes to session
 
-┌──────────────────────────────────────────────────┐
-│  BOTTOM CTA                                       │
-│  Primary: "Book a Call with Kasandra" → /book     │
-│  Ghost: "Talk to Selena First" → openChat         │
-└──────────────────────────────────────────────────┘
+---
+
+### Changes
+
+**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
+
+Add optional `variant` field and structured data:
+
+```typescript
+export interface GuideSection {
+  heading: string;
+  headingEs: string;
+  content: string;       // plain-text fallback always required
+  contentEs: string;
+  variant?: 'default' | 'comparison' | 'path-selector';
+  comparisonData?: {
+    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
+    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
+  };
+  pathData?: Array<{
+    id: string;
+    title: string; titleEs: string;
+    desc: string; descEs: string;
+  }>;
+}
 ```
 
-### Changes to `V2Contact.tsx`
+**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
 
-**Hero section** (lines 39-52):
-- Add a response-promise pill below subtitle: `inline-flex bg-cc-gold/15 text-cc-gold rounded-full px-4 py-1.5 text-sm` with clock icon — "Typically responds within 2 hours" / "Responde en menos de 2 horas"
+Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
 
-**Contact section** (lines 54-87):
-- Replace `max-w-lg mx-auto` single card with `grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto`
-- Left column: Kasandra portrait (`kasandra-portrait.jpg`) in a `rounded-2xl overflow-hidden ring-4 ring-cc-gold/20 shadow-elevated` frame
-- Right column: existing contact details card + social icons moved inline here (remove separate social section)
-- Add personal note: "Whether you prefer a call, a text, or meeting Selena first — I'm here." in `text-cc-text-muted italic text-sm`
+**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
 
-**Social row** (lines 89-110):
-- Remove as standalone section — social icons move into right column of the two-column layout as a horizontal row beneath the contact card
+Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
 
-**Bottom CTA** (lines 112-129):
-- Upgrade to dual-button: Primary gold "Book a Call" → `/book`, Ghost outline "Talk to Selena First" → `openChat`
-- `bg-cc-sand` background for visual separation
+**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
 
-**Import additions**: `kasandraPortrait` from assets, `Clock`, `Calendar` from lucide-react, `Link` from react-router-dom.
+In the `.map()` loop, switch on `section.variant`:
+- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
+- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
+- default → current `whitespace-pre-line` text
 
-### Technical Notes
-- Mobile (< lg): single column, portrait above contact card
-- Uses existing `kasandra-portrait.jpg` asset already in `src/assets/`
-- No new components or files needed
-- Socials array stays as-is, just rendered in new location
+**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
+
+- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
+- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
+- Plain text `content`/`contentEs` stays as fallback
+
+**6. Export new components** (`src/components/v2/guides/index.ts`)
+
+Add exports for `GuideComparisonCards` and `GuidePathSelector`.
+
+### Governance Compliance
+
+- No mid-guide CTAs — these are educational visual enhancements only
+- Terminal routing stays in AuthorityCTABlock (unchanged)
+- Path selector is read-only visual engagement, does not write to session or navigate
+- All new components are bilingual via `useLanguage()`
 
