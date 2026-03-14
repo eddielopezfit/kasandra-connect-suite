@@ -74,26 +74,31 @@ export function SelenaDrawerBottomSection({
       className="shrink-0 relative bg-background"
       style={{ paddingBottom: isMobile ? "env(safe-area-inset-bottom, 0px)" : undefined }}
     >
-      <ConciergeTabPanels
-        activeTab={activeTab}
-        onClose={onCloseTabPanel}
-        onSendMessage={onSuggestedReplyClick}
-        onActionClick={onActionClick}
-        language={language}
-        leadId={leadId}
-        closeDrawer={closeDrawer}
-        currentIntent={currentIntent}
-      />
+      {/* Tab panels + tab bar — desktop only (on mobile these are in the header) */}
+      {!isMobile && (
+        <>
+          <ConciergeTabPanels
+            activeTab={activeTab}
+            onClose={onCloseTabPanel}
+            onSendMessage={onSuggestedReplyClick}
+            onActionClick={onActionClick}
+            language={language}
+            leadId={leadId}
+            closeDrawer={closeDrawer}
+            currentIntent={currentIntent}
+          />
 
-      <ConciergeTabBar
-        activeTab={activeTab}
-        onTabChange={onTabChange}
-        language={language}
-        currentIntent={currentIntent}
-        journeyStep={journeyStep}
-      />
+          <ConciergeTabBar
+            activeTab={activeTab}
+            onTabChange={onTabChange}
+            language={language}
+            currentIntent={currentIntent}
+            journeyStep={journeyStep}
+          />
+        </>
+      )}
 
-      <form onSubmit={handleSubmit} className="border-t border-border p-4 bg-background" style={{ paddingBottom: isMobile ? 'max(env(safe-area-inset-bottom, 0px), 8px)' : undefined }}>
+      <form onSubmit={handleSubmit} className="border-t border-border px-3 py-2.5 bg-background" style={{ paddingBottom: isMobile ? 'max(env(safe-area-inset-bottom, 0px), 4px)' : undefined }}>
         <div className="flex gap-2">
           {/* 
             ⚠️ REGRESSION TRIPWIRE - DO NOT MODIFY WITHOUT READING ⚠️
