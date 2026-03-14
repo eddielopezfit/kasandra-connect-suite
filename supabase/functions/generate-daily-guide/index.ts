@@ -267,7 +267,7 @@ REQUIREMENTS:
     }
 
     // ── Quality guardrails ────────────────────────────────────────
-    console.log("[5/8] Running quality guardrails...");
+    console.log("[6/9] Running quality guardrails...");
     const allEnText = [
       guideData.intro as string,
       ...((guideData.sections as Array<{ content: string }>) || []).map((s) => s.content),
