@@ -1,13 +1,115 @@
+import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
-import { Phone, MapPin, Building2, MessageCircle, Instagram, Facebook, Linkedin, Clock, Calendar } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Phone, MapPin, Building2, MessageCircle, Instagram, Facebook, Linkedin, Clock, Calendar, Send } from "lucide-react";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
+import { logEvent } from "@/lib/analytics/logEvent";
+import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import kasandraPortrait from "@/assets/kasandra-portrait.jpg";
+
+const ContactForm = () => {
+  const { t } = useLanguage();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSending(true);
+    try {
+      await supabase.functions.invoke("upsert-lead-profile", {
+        body: {
+          email: email.trim(),
+          name: name.trim() || undefined,
+          source: "contact_form",
+          tags: ["contact_form"],
+        },
+      });
+      logEvent("contact_form_submitted", { source: "contact_page" });
+      setSent(true);
+      toast.success(t("Message sent! Kasandra will be in touch.", "¡Mensaje enviado! Kasandra se pondrá en contacto."));
+    } catch {
+      toast.error(t("Something went wrong. Please try again.", "Algo salió mal. Inténtalo de nuevo."));
+    } finally {
+      setSending(false);
+    }
+  };
+
+  if (sent) {
+    return (
+      <div className="bg-white rounded-2xl shadow-soft border border-cc-sand-dark/10 p-8 text-center">
+        <div className="w-12 h-12 bg-cc-gold/15 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Send className="w-5 h-5 text-cc-gold" />
+        </div>
+        <h3 className="font-serif text-xl font-bold text-cc-navy mb-2">
+          {t("Thanks for reaching out!", "¡Gracias por escribirnos!")}
+        </h3>
+        <p className="text-cc-text-muted text-sm">
+          {t(
+            "Kasandra typically responds within 2 hours during business hours.",
+            "Kasandra normalmente responde en menos de 2 horas durante horario laboral."
+          )}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-soft border border-cc-sand-dark/10 p-8 space-y-4">
+      <h3 className="font-serif text-lg font-semibold text-cc-navy">
+        {t("Send a Message", "Enviar un Mensaje")}
+      </h3>
+      <Input
+        placeholder={t("Your name", "Tu nombre")}
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="border-cc-sand-dark/30"
+      />
+      <Input
+        type="email"
+        required
+        placeholder={t("Your email *", "Tu correo electrónico *")}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="border-cc-sand-dark/30"
+      />
+      <Textarea
+        placeholder={t(
+          "What can Kasandra help you with?",
+          "¿En qué puede ayudarte Kasandra?"
+        )}
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        rows={4}
+        className="border-cc-sand-dark/30 resize-none"
+      />
+      <Button
+        type="submit"
+        disabled={sending || !email.trim()}
+        className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold"
+      >
+        <Send className="w-4 h-4 mr-2" />
+        {sending
+          ? t("Sending...", "Enviando...")
+          : t("Send Message", "Enviar Mensaje")}
+      </Button>
+      <p className="text-[11px] text-cc-slate/70 text-center">
+        {t("No spam, ever. Just a real response from Kasandra.", "Sin spam, nunca. Solo una respuesta real de Kasandra.")}
+      </p>
+    </form>
+  );
+};
 
 const V2ContactContent = () => {
   const { t } = useLanguage();
@@ -62,16 +164,18 @@ const V2ContactContent = () => {
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-start">
             {/* Left — Portrait */}
-            <div className="rounded-2xl overflow-hidden ring-4 ring-cc-gold/20 shadow-elevated">
-              <img
-                src={kasandraPortrait}
-                alt="Kasandra Prieto — Tucson REALTOR®"
-                className="w-full h-full object-cover aspect-[3/4]"
-                loading="lazy"
-              />
+            <div className="space-y-6">
+              <div className="rounded-2xl overflow-hidden ring-4 ring-cc-gold/20 shadow-elevated">
+                <img
+                  src={kasandraPortrait}
+                  alt="Kasandra Prieto — Tucson REALTOR®"
+                  className="w-full h-full object-cover aspect-[3/4]"
+                  loading="lazy"
+                />
+              </div>
             </div>
 
-            {/* Right — Contact Details */}
+            {/* Right — Contact Details + Form */}
             <div className="space-y-6">
               <div className="bg-white rounded-2xl shadow-soft border border-cc-sand-dark/10 p-8 space-y-6">
                 <div className="flex items-start gap-4">
@@ -102,6 +206,9 @@ const V2ContactContent = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Contact Form */}
+              <ContactForm />
 
               {/* Personal note */}
               <p className="text-cc-text-muted italic text-sm px-1">
