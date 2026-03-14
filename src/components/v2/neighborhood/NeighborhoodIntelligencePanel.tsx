@@ -188,7 +188,7 @@ const NeighborhoodIntelligencePanel = ({ zipCode, neighborhoodName }: Neighborho
               <div className="flex flex-wrap gap-2">
                 {profile.buyer_fit?.map((fit, idx) => (
                   <Badge key={idx} variant="secondary" className="bg-cc-sand text-cc-charcoal">
-                    {fit}
+                    {stripCitations(fit)}
                   </Badge>
                 ))}
               </div>
