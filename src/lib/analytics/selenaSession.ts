@@ -130,6 +130,8 @@ export interface SessionContext {
   equity_pulse_value?: number;
   equity_pulse_recommendation?: string;
   mortgage_balance?: number;
+  // Instant Answer Machine
+  estimated_budget?: number;
   // Tool-specific entry data (typed fields to eliminate `as any` casts)
   closing_cost_data?: {
     purchasePrice: number;
