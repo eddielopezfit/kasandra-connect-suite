@@ -3380,6 +3380,28 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       }
     }
 
+    // --- Instant Answer tool output (affordability calculator + home value estimator) ---
+    const isInstantAnswer = toolUsed === 'instant_answer'
+      || (context.tools_completed ?? []).includes('instant_answer');
+
+    if (isInstantAnswer && context.estimated_budget) {
+      const budget = `$${Number(context.estimated_budget).toLocaleString()}`;
+      if (language === 'es') {
+        toolOutputHint += `\n\nRESULTADO DE HERRAMIENTA — CALCULADORA DE ASEQUIBILIDAD:\nPrecio máximo de compra estimado: ${budget}\n\nEl visitante usó la calculadora de asequibilidad y obtuvo un precio máximo de compra de ${budget}. Está en modo comprador. Referencia este número de forma natural cuando sea relevante. Pivote a reserva: "Kasandra puede ayudarte a alinear ese presupuesto con lo que está disponible en el mercado ahora mismo."`;
+      } else {
+        toolOutputHint += `\n\nTOOL RESULT — AFFORDABILITY CALCULATOR:\nEstimated maximum purchase price: ${budget}\n\nThe visitor used the affordability calculator and got a maximum purchase price of ${budget}. They are in buyer mode. Reference this number naturally when relevant. Booking pivot: "Kasandra can help you align that budget with what's available in the market right now."`;
+      }
+    }
+
+    if (isInstantAnswer && context.estimated_value && context.entry_source === 'instant_answer_value') {
+      if (language === 'es') {
+        toolOutputHint += `\n\nRESULTADO DE HERRAMIENTA — ESTIMADOR DE VALOR DEL HOGAR:\nEl visitante usó el estimador de valor y obtuvo un rango estimado. Está en modo vendedor. Referencia este contexto cuando sea relevante. Pivote a reserva: "Kasandra puede darte una valoración más precisa basada en las ventas recientes en tu área."`;
+      } else {
+        toolOutputHint += `\n\nTOOL RESULT — HOME VALUE ESTIMATOR:\nThe visitor used the home value estimator and got an estimated range. They are in seller mode. Reference this context when relevant. Booking pivot: "Kasandra can give you a more precise valuation based on recent sales in your area."`;
+      }
+    }
+
+
     // ============= JOURNEY STATE ENGINE =============
     // Guard 1: Coerce readiness_score to safe number
     const rawReadiness = Number(context.readiness_score);
