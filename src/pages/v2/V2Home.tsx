@@ -27,7 +27,7 @@ import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import CTASection from "@/components/v2/CTASection";
 import CredibilityStats from "@/components/v2/CredibilityStats";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-import WhyCornerConnect from "@/components/v2/WhyCornerConnect";
+
 import { InstantAnswerWidget } from "@/components/v2/calculator";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { updateSessionContext } from '@/lib/analytics/selenaSession';
