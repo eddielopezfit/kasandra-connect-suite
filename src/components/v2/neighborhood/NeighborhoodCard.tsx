@@ -131,7 +131,7 @@ const NeighborhoodCard = ({ profileEn, profileEs, zipCode, marketPulse }: Neighb
             <MapPin className="w-4 h-4 text-cc-gold" />
             {t("Lifestyle & Vibe", "Estilo de Vida")}
           </h4>
-          <p className="text-cc-charcoal leading-relaxed">{profile.lifestyle_feel}</p>
+          <p className="text-cc-charcoal leading-relaxed">{stripCitations(profile.lifestyle_feel)}</p>
         </div>
 
         {/* Buyer Fit Tags */}
