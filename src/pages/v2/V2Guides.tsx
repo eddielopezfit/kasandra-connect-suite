@@ -176,6 +176,7 @@ function GuidesContent() {
   const { openChat, sendMessage } = useSelenaChat();
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeIntent, setActiveIntent] = useState<DecisionLaneIntent | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Derive guides from registry
   const allGuides = useMemo(() => getGuideCards(), []);
