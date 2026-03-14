@@ -1,14 +1,17 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
+import { useNavigate } from "react-router-dom";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Clock, Globe, Map, ArrowRight, ShieldCheck, Scale, UserX } from "lucide-react";
+import { MessageCircle, Clock, Globe, Map, ArrowRight } from "lucide-react";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
+import SelenaConversationDemo from "@/components/v2/selena/SelenaConversationDemo";
 
 const V2SelenaAIContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+  const navigate = useNavigate();
 
   useDocumentHead({
     titleEn: "Meet Selena — AI Real Estate Concierge | Kasandra Prieto",
@@ -17,7 +20,12 @@ const V2SelenaAIContent = () => {
     descriptionEs: "Selena es la concierge de bienes raíces con IA de Kasandra. Disponible 24/7, bilingüe, sin presión.",
   });
 
-  const doesItems = [
+  const handleOpenChat = () => {
+    logCTAClick({ cta_name: CTA_NAMES.RESULT_CHAT_SELENA, destination: 'selena_drawer', page_path: '/selena-ai', intent: 'neutral' });
+    openChat({ source: 'selena_ai_page' });
+  };
+
+  const featureItems = [
     {
       icon: Clock,
       text: t("Answers your real estate questions 24/7", "Responde tus preguntas de bienes raíces 24/7"),
@@ -36,21 +44,6 @@ const V2SelenaAIContent = () => {
     },
   ];
 
-  const doesntItems = [
-    {
-      icon: ShieldCheck,
-      text: t("Selena is not a licensed real estate agent", "Selena no es una agente de bienes raíces con licencia"),
-    },
-    {
-      icon: Scale,
-      text: t("Selena does not provide legal or financial advice", "Selena no proporciona asesoramiento legal o financiero"),
-    },
-    {
-      icon: UserX,
-      text: t("Selena does not replace Kasandra — she prepares you to talk to her", "Selena no reemplaza a Kasandra — te prepara para hablar con ella"),
-    },
-  ];
-
   return (
     <>
       {/* Hero */}
@@ -62,42 +55,46 @@ const V2SelenaAIContent = () => {
           <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
             {t("Meet Selena", "Conoce a Selena")}
           </h1>
-          <p className="text-xl text-white/80 max-w-2xl mx-auto">
+          <p className="text-xl text-white/80 max-w-2xl mx-auto mb-8">
             {t(
               "Kasandra's AI real estate concierge. Available 24/7. Bilingual. No pressure.",
               "La concierge de bienes raíces con IA de Kasandra. Disponible 24/7. Bilingüe. Sin presión."
             )}
           </p>
+          <Button
+            size="lg"
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-10 shadow-gold"
+            onClick={handleOpenChat}
+          >
+            <MessageCircle className="w-5 h-5 mr-2" />
+            {t("Try Selena Now →", "Prueba Selena Ahora →")}
+          </Button>
         </div>
       </section>
 
-      {/* What Selena Does */}
+      {/* Simulated Conversation Demo */}
+      <section className="bg-cc-navy py-16 lg:py-20">
+        <div className="container mx-auto px-4">
+          <SelenaConversationDemo onStartChat={handleOpenChat} />
+          <p className="text-cc-ivory/50 text-sm italic text-center mt-6">
+            {t("Real answers. Real situations. No scripts.", "Respuestas reales. Situaciones reales. Sin guiones.")}
+          </p>
+        </div>
+      </section>
+
+      {/* Feature Cards */}
       <section className="bg-cc-ivory py-16">
         <div className="container mx-auto px-4">
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-blue text-center mb-10">
             {t("What Selena Does", "Lo Que Selena Hace")}
           </h2>
           <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {doesItems.map((item, i) => (
-              <div key={i} className="bg-white rounded-xl p-6 shadow-soft border border-cc-sand-dark/10 flex items-start gap-4">
+            {featureItems.map((item, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-xl p-6 shadow-soft border border-transparent hover:border-cc-gold/50 transition-all duration-300 flex items-start gap-4"
+              >
                 <item.icon className="w-6 h-6 text-cc-gold flex-shrink-0 mt-0.5" />
-                <p className="text-cc-charcoal text-sm">{item.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* What Selena Doesn't Do */}
-      <section className="bg-cc-sand py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-blue text-center mb-10">
-            {t("What Selena Doesn't Do", "Lo Que Selena No Hace")}
-          </h2>
-          <div className="max-w-2xl mx-auto space-y-4">
-            {doesntItems.map((item, i) => (
-              <div key={i} className="bg-white rounded-xl p-5 shadow-soft border border-cc-sand-dark/10 flex items-start gap-4">
-                <item.icon className="w-5 h-5 text-cc-slate flex-shrink-0 mt-0.5" />
                 <p className="text-cc-charcoal text-sm">{item.text}</p>
               </div>
             ))}
@@ -119,20 +116,25 @@ const V2SelenaAIContent = () => {
 
       {/* Bottom CTA */}
       <section className="bg-cc-navy py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-6">
+        <div className="container mx-auto px-4 text-center flex flex-col items-center gap-3">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
             {t("Ready to Try?", "¿Lista para Probar?")}
           </h2>
           <Button
             size="lg"
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-10 shadow-gold"
-            onClick={() => {
-              logCTAClick({ cta_name: CTA_NAMES.RESULT_CHAT_SELENA, destination: 'selena_drawer', page_path: '/selena-ai', intent: 'neutral' });
-              openChat({ source: 'selena_ai_page' });
-            }}
+            onClick={handleOpenChat}
           >
             <MessageCircle className="w-5 h-5 mr-2" />
-            {t("Talk to Selena Now", "Habla con Selena Ahora")}
+            {t("Start Talking to Selena →", "Empieza a Hablar con Selena →")}
+          </Button>
+          <Button
+            variant="ghost"
+            size="lg"
+            className="text-white/70 hover:text-white hover:bg-white/10 rounded-full"
+            onClick={() => navigate("/book")}
+          >
+            {t("Book with Kasandra Instead", "Agenda con Kasandra")}
           </Button>
         </div>
       </section>
