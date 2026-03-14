@@ -166,7 +166,7 @@ const CompareColumn = ({
               {t("May Not Suit", "Puede No Ser Ideal")}
             </span>
           </div>
-          <p className="text-xs text-cc-text-muted leading-relaxed">{profile.not_ideal_for}</p>
+          <p className="text-xs text-cc-text-muted leading-relaxed">{stripCitations(profile.not_ideal_for)}</p>
         </div>
 
         {/* Fun Fact */}
