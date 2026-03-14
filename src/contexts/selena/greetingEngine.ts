@@ -123,7 +123,8 @@ export function computeGreeting(
     'market_intelligence', 'market_intelligence_result', 'neighborhood_compare', 'neighborhood_compare_result', 
     'buyer_closing_costs', 'neighborhood_detail', 'neighborhoods_index',
     'buyer_readiness_capture', 'seller_readiness_capture', 'cash_readiness_capture',
-    'off_market_registered', 'off_market_capture', 'seller_timeline'
+    'off_market_registered', 'off_market_capture', 'seller_timeline',
+    'buyer_fork', 'seller_fork'
   ].includes(entryContext.source);
 
   const hasRecoveryCandidate = !sessionContext?.recovery_shown && !!sessionContext?.booking_chips_shown_at;
@@ -557,7 +558,10 @@ export function computeGreeting(
     ];
   } else {
     const sessionCtx = sessionContext;
-    const declaredIntent = sessionCtx?.intent;
+    // Fork card override — force correct intent regardless of stored session
+    const forkSource = entryContext?.source;
+    const forkIntentOverride = forkSource === 'seller_fork' ? 'sell' : forkSource === 'buyer_fork' ? 'buy' : null;
+    const declaredIntent = forkIntentOverride ?? sessionCtx?.intent;
     const declaredTimeline = sessionCtx?.timeline;
     const toolUsed = sessionCtx?.tool_used;
     const readinessScore = sessionCtx?.readiness_score;

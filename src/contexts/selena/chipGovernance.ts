@@ -86,7 +86,8 @@ function resolveReply(
   // 2. Try normalized text lookup (fallback for LLM hallucinations / raw labels)
   const byText = findChipByNormalizedKey(reply);
   if (byText) {
-    return { label: reply, actionSpec: byText.actionSpec };
+    const label = language === 'es' ? byText.label_es : byText.label_en;
+    return { label, actionSpec: byText.actionSpec };
   }
 
   // 3. Unmatched — log drift
