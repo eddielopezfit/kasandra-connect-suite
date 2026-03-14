@@ -1,75 +1,33 @@
 
 
-## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
+## TrustBar → Premium Social Proof Bar
 
-### What We're Doing
+### Current State
+The component renders a marquee-scrolling list of 6 community organizations (Arizona Diaper Bank, Greater Tucson Leadership, etc.) on a white background. It's a "trusted by" bar with entity names and roles.
 
-Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
+### New Design
+Replace entirely with a single-line dark navy bar showing consolidated review social proof:
 
-### What We Do NOT Import
-
-- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
-- No market stats with hard-coded numbers (stale data risk)
-- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
-- No standalone footer (GuideComplianceFooter already exists)
-- No mid-guide CTAs or interactive state that writes to session
-
----
-
-### Changes
-
-**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
-
-Add optional `variant` field and structured data:
-
-```typescript
-export interface GuideSection {
-  heading: string;
-  headingEs: string;
-  content: string;       // plain-text fallback always required
-  contentEs: string;
-  variant?: 'default' | 'comparison' | 'path-selector';
-  comparisonData?: {
-    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-  };
-  pathData?: Array<{
-    id: string;
-    title: string; titleEs: string;
-    desc: string; descEs: string;
-  }>;
-}
+```text
+┌────────────────────────────────────────────────────────────────────┐
+│  ★★★★★ 4.9 · 126+ reviews  │  Verified: Google Realtor.com Zillow  │  Bilingual · Tucson, AZ  │
+└────────────────────────────────────────────────────────────────────┘
 ```
 
-**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
+### Changes to `src/components/v2/TrustBar.tsx`
 
-Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
+**Full rewrite** — remove all existing content (marquee, entities array, duplicated list).
 
-**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
+Replace with:
+- `<section className="bg-cc-navy py-2.5 px-6">`
+- Inner: `flex items-center justify-center gap-6 overflow-x-auto whitespace-nowrap text-sm`
+- **Left cluster**: 5 gold star characters (`★`) in `text-cc-gold`, bold "4.9" in `text-cc-ivory`, "· 126+ reviews" in `text-cc-ivory/70`
+- **Divider**: `<span className="w-px h-4 bg-cc-ivory/20" />`
+- **Middle cluster**: Small "Verified" label in `text-cc-gold/80 text-xs uppercase tracking-wider` above a row of 3 platform pills — each pill: `bg-white/10 text-cc-ivory rounded-full px-2.5 py-0.5 text-xs font-medium`
+- **Divider**: same vertical line
+- **Right cluster**: "Bilingual Service" in `text-cc-ivory/70`, "· Tucson, AZ" in `text-cc-ivory/50`
+- Bilingual via `t()` for "reviews", "Verified", "Bilingual Service"
+- Mobile: horizontal scroll, no wrapping — `overflow-x-auto whitespace-nowrap`, hide scrollbar with `scrollbar-hide` or `-webkit-scrollbar: none`
 
-Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
-
-**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
-
-In the `.map()` loop, switch on `section.variant`:
-- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
-- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
-- default → current `whitespace-pre-line` text
-
-**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
-
-- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
-- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
-- Plain text `content`/`contentEs` stays as fallback
-
-**6. Export new components** (`src/components/v2/guides/index.ts`)
-
-Add exports for `GuideComparisonCards` and `GuidePathSelector`.
-
-### Governance Compliance
-
-- No mid-guide CTAs — these are educational visual enhancements only
-- Terminal routing stays in AuthorityCTABlock (unchanged)
-- Path selector is read-only visual engagement, does not write to session or navigate
-- All new components are bilingual via `useLanguage()`
+Single file change. No new dependencies.
 
