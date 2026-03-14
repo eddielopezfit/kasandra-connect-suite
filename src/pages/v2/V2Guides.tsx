@@ -152,10 +152,6 @@ function getGuideThumbnail(guideId: string): string | null {
 }
 
 /** Get guide tier from registry for visual hierarchy */
-function getGuideTier(guideId: string): number {
-  return GUIDE_REGISTRY.find(g => g.id === guideId)?.tier ?? 2;
-}
-
 // Intent-aware CTA labels
 function getBookingCTA(intent: DecisionLaneIntent | null, t: (en: string, es: string) => string) {
   switch (intent) {

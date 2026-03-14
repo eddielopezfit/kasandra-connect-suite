@@ -6,7 +6,7 @@ import { useMarketPulse } from "@/hooks/useMarketPulse";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { isReturningVisitor, getIntent, getGuidesRead } from "@/lib/guides/personalization";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import heroImage from "@/assets/hero-bg.jpg";
 import type { EntrySource } from "@/contexts/selena/types";
 
@@ -17,18 +17,64 @@ interface StatItemProps {
   insight?: string;
 }
 
-const StatItem = ({ value, label, icon, insight }: StatItemProps) => (
-  <div className="flex items-center gap-3">
-    <div className="w-10 h-10 rounded-lg bg-cc-gold/10 flex items-center justify-center shrink-0">
-      {icon}
+function parseStatValue(value: string): { prefix: string; num: number; suffix: string; decimals: number } {
+  const match = value.match(/^([^0-9]*?)([\d,.]+)(.*)$/);
+  if (!match) return { prefix: '', num: 0, suffix: value, decimals: 0 };
+  const numStr = match[2].replace(/,/g, '');
+  const decimals = numStr.includes('.') ? numStr.split('.')[1].length : 0;
+  return { prefix: match[1], num: parseFloat(numStr), suffix: match[3], decimals };
+}
+
+const StatItem = ({ value, label, icon, insight }: StatItemProps) => {
+  const { prefix, num, suffix, decimals } = parseStatValue(value);
+  const [displayNum, setDisplayNum] = useState(0);
+  const hasAnimated = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const animate = useCallback(() => {
+    if (hasAnimated.current) return;
+    hasAnimated.current = true;
+    const duration = 1200;
+    const start = performance.now();
+    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+    const tick = (now: number) => {
+      const elapsed = Math.min(now - start, duration);
+      const t = elapsed / duration;
+      setDisplayNum(num * easeOut(t));
+      if (elapsed < duration) requestAnimationFrame(tick);
+      else setDisplayNum(num);
+    };
+    requestAnimationFrame(tick);
+  }, [num]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => { if (entries[0].isIntersecting) animate(); },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [animate]);
+
+  const formatted = decimals > 0
+    ? displayNum.toFixed(decimals)
+    : Math.round(displayNum).toString();
+
+  return (
+    <div ref={containerRef} className="flex items-center gap-3">
+      <div className="w-10 h-10 rounded-lg bg-cc-gold/10 flex items-center justify-center shrink-0">
+        {icon}
+      </div>
+      <div>
+        <p className="text-lg font-bold text-cc-ivory">{prefix}{formatted}{suffix}</p>
+        <p className="text-xs text-cc-ivory/60">{label}</p>
+        {insight && <p className="text-xs italic mt-0.5 text-cc-ivory/50">{insight}</p>}
+      </div>
     </div>
-    <div>
-      <p className="text-lg font-bold text-cc-ivory">{value}</p>
-      <p className="text-xs text-cc-ivory/60">{label}</p>
-      {insight && <p className="text-xs italic mt-0.5 text-cc-ivory/50">{insight}</p>}
-    </div>
-  </div>
-);
+  );
+};
 
 export interface GlassmorphismHeroProps {
   /** Badge text override */
