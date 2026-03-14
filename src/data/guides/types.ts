@@ -73,6 +73,14 @@ export interface GuideSection {
   faqItems?: FaqItem[];
 }
 
+export interface ExternalLink {
+  label: string;
+  labelEs: string;
+  url: string;
+  description: string;
+  descriptionEs: string;
+}
+
 export interface GuideContentData {
   title: string;
   titleEs: string;
@@ -82,4 +90,6 @@ export interface GuideContentData {
   intro: string;
   introEs: string;
   sections: GuideSection[];
+  /** Authoritative external sources for this guide — renders as trust footer, boosts SEO */
+  externalLinks?: ExternalLink[];
 }

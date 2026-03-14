@@ -80,6 +80,37 @@ const data: GuideContentData = {
         },
       ],
     },
+  ],,
+
+  externalLinks: [
+    {
+      label: 'Pima Tucson Homebuyer's Solution — Official Site',
+      labelEs: 'Solución para Compradores Pima Tucson — Sitio Oficial',
+      url: 'https://www.pimatucsonhomebuyers.com/',
+      description: 'Official program information, income limits, and approved lender list for the PTHS down payment assistance program.',
+      descriptionEs: 'Información oficial del programa, límites de ingresos y lista de prestamistas aprobados para el programa de asistencia PTHS.',
+    },
+    {
+      label: 'CIC Tucson — HOME Program',
+      labelEs: 'CIC Tucson — Programa HOME',
+      url: 'https://cictucson.org/downpayment-assistance/',
+      description: 'Apply for the City of Tucson / Pima County HOME Program providing up to 20% down payment assistance.',
+      descriptionEs: 'Solicite el Programa HOME de la Ciudad de Tucson / Condado de Pima que proporciona hasta el 20% de asistencia para el pago inicial.',
+    },
+    {
+      label: 'Lighthouse Program — Pima IDA',
+      labelEs: 'Programa Lighthouse — Pima IDA',
+      url: 'https://www.housinginnovationhub.org/program-lighthouse',
+      description: 'Current round information and application portal for the Lighthouse down payment + below-market rate program.',
+      descriptionEs: 'Información de la ronda actual y portal de solicitud para el programa Lighthouse de pago inicial + tasa por debajo del mercado.',
+    },
+    {
+      label: 'Arizona Home Plus Program',
+      labelEs: 'Programa Arizona Home Plus',
+      url: 'https://homeplusaz.com/',
+      description: 'Statewide Arizona down payment assistance program available in Pima County.',
+      descriptionEs: 'Programa estatal de asistencia para pago inicial de Arizona disponible en el Condado de Pima.',
+    },
   ],
 };
 

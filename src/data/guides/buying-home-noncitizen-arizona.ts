@@ -87,6 +87,30 @@ const data: GuideContentData = {
         },
       ],
     },
+  ],,
+
+  externalLinks: [
+    {
+      label: 'DACA FHA Eligibility — HUD.gov',
+      labelEs: 'Elegibilidad FHA para DACA — HUD.gov',
+      url: 'https://www.hud.gov/sites/dfiles/SFH/documents/SFH_FHA_INFO_2021-09.pdf',
+      description: 'Official HUD guidance confirming DACA recipients are eligible for FHA-insured mortgage loans as of 2021.',
+      descriptionEs: 'Guía oficial de HUD confirmando que los beneficiarios de DACA son elegibles para préstamos hipotecarios asegurados por FHA desde 2021.',
+    },
+    {
+      label: 'Non-Citizen Home Buying — CFPB',
+      labelEs: 'Compra de Vivienda para No Ciudadanos — CFPB',
+      url: 'https://www.consumerfinance.gov/owning-a-home/',
+      description: 'Consumer Financial Protection Bureau resources on homeownership for non-citizens and immigrant families.',
+      descriptionEs: 'Recursos de la Oficina de Protección Financiera del Consumidor sobre propiedad de vivienda para no ciudadanos y familias inmigrantes.',
+    },
+    {
+      label: 'Arizona Real Estate Law — ADRE',
+      labelEs: 'Ley Inmobiliaria de Arizona — ADRE',
+      url: 'https://azre.gov/',
+      description: 'Arizona Department of Real Estate — official licensing, regulations, and homeowner protections.',
+      descriptionEs: 'Departamento de Bienes Raíces de Arizona — licencias oficiales, regulaciones y protecciones para propietarios.',
+    },
   ],
 };
 

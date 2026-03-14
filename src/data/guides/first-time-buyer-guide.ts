@@ -122,6 +122,30 @@ const data: GuideContentData = {
         },
       ],
     },
+  ],,
+
+  externalLinks: [
+    {
+      label: 'Pima County Down Payment Programs',
+      labelEs: 'Programas de Pago Inicial del Condado de Pima',
+      url: 'https://www.pimatucsonhomebuyers.com/',
+      description: 'Official source for Pima Tucson Homebuyer's Solution — the primary DPA program for Tucson area first-time buyers.',
+      descriptionEs: 'Fuente oficial para la Solución para Compradores Pima Tucson — el programa DPA principal para compradores primerizos del área de Tucson.',
+    },
+    {
+      label: 'Arizona Housing Finance Authority',
+      labelEs: 'Autoridad de Financiamiento de Vivienda de Arizona',
+      url: 'https://www.azhousing.gov/',
+      description: 'Arizona's official housing finance agency — programs, income limits, and approved lenders for first-time buyers statewide.',
+      descriptionEs: 'Agencia oficial de financiamiento de vivienda de Arizona — programas, límites de ingresos y prestamistas aprobados para compradores primerizos.',
+    },
+    {
+      label: 'FHA Loan Limits — HUD.gov',
+      labelEs: 'Límites de Préstamos FHA — HUD.gov',
+      url: 'https://www.hud.gov/program_offices/housing/sfh/lender/origination/mortgage_limits',
+      description: 'Verify current FHA loan limits for Pima County directly from HUD.',
+      descriptionEs: 'Verifique los límites actuales del préstamo FHA para el Condado de Pima directamente de HUD.',
+    },
   ],
 };
 

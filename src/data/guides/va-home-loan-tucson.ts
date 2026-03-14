@@ -80,6 +80,30 @@ const data: GuideContentData = {
         },
       ],
     },
+  ],,
+
+  externalLinks: [
+    {
+      label: 'VA Home Loans — Official VA.gov',
+      labelEs: 'Préstamos VA — VA.gov Oficial',
+      url: 'https://www.benefits.va.gov/homeloans/',
+      description: 'Verify current VA loan eligibility requirements, funding fees, and 2026 loan limits directly from the U.S. Department of Veterans Affairs.',
+      descriptionEs: 'Verifique los requisitos de elegibilidad actuales del préstamo VA, tarifas de financiamiento y límites de préstamo 2026 directamente del Departamento de Asuntos de Veteranos.',
+    },
+    {
+      label: 'Certificate of Eligibility — VA.gov',
+      labelEs: 'Certificado de Elegibilidad — VA.gov',
+      url: 'https://www.va.gov/housing-assistance/home-loans/eligibility/',
+      description: 'Apply for your Certificate of Eligibility (COE) online — the first step in the VA loan process.',
+      descriptionEs: 'Solicite su Certificado de Elegibilidad (COE) en línea — el primer paso en el proceso del préstamo VA.',
+    },
+    {
+      label: 'Davis-Monthan AFB Housing Office',
+      labelEs: 'Oficina de Vivienda de Davis-Monthan AFB',
+      url: 'https://www.dm.af.mil/Units/Mission-Support/Military-Family-Housing/',
+      description: 'Official housing resources for service members at Davis-Monthan Air Force Base in Tucson.',
+      descriptionEs: 'Recursos oficiales de vivienda para miembros del servicio en la Base de la Fuerza Aérea Davis-Monthan en Tucson.',
+    },
   ],
 };
 

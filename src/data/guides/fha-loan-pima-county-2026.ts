@@ -80,6 +80,30 @@ const data: GuideContentData = {
         },
       ],
     },
+  ],,
+
+  externalLinks: [
+    {
+      label: 'FHA Loan Limits 2026 — HUD.gov',
+      labelEs: 'Límites de Préstamos FHA 2026 — HUD.gov',
+      url: 'https://www.hud.gov/program_offices/housing/sfh/lender/origination/mortgage_limits',
+      description: 'Verify the current 2026 FHA loan limits for Pima County directly from the U.S. Department of Housing and Urban Development.',
+      descriptionEs: 'Verifique los límites actuales del préstamo FHA 2026 para el Condado de Pima directamente del Departamento de Vivienda y Desarrollo Urbano de EE.UU.',
+    },
+    {
+      label: 'FHA Requirements — HUD.gov',
+      labelEs: 'Requisitos FHA — HUD.gov',
+      url: 'https://www.hud.gov/buying/loans',
+      description: 'Official FHA loan requirements, down payment minimums, and credit score guidelines from HUD.',
+      descriptionEs: 'Requisitos oficiales del préstamo FHA, mínimos de pago inicial y pautas de puntaje de crédito de HUD.',
+    },
+    {
+      label: 'Find FHA-Approved Lenders in Arizona',
+      labelEs: 'Encontrar Prestamistas Aprobados por FHA en Arizona',
+      url: 'https://apps.hud.gov/apps/nclll/index.cfm',
+      description: 'Search for FHA-approved lenders in Tucson and Pima County through HUD's official lender locator.',
+      descriptionEs: 'Busque prestamistas aprobados por FHA en Tucson y el Condado de Pima a través del localizador oficial de prestamistas de HUD.',
+    },
   ],
 };
 

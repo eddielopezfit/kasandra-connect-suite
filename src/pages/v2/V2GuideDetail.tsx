@@ -20,8 +20,47 @@ import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { CognitiveProgressBar } from "@/components/v2/guides/CognitiveProgressBar";
 import { useCognitiveStage } from "@/hooks/useCognitiveStage";
 import { GUIDE_DATA_LOADERS, type GuideContentData } from "@/data/guides";
+import type { ExternalLink } from "@/data/guides/types";
 import { parseInlineMarkdown } from "@/lib/utils/parseInlineMarkdown";
 import { validateRegistryLoadersOnce } from "@/lib/guides/validate";
+
+// External authoritative sources — renders when guide has externalLinks
+function ExternalSourcesFooter({ links, language }: { links: ExternalLink[]; language: 'en' | 'es' }) {
+  if (!links?.length) return null;
+  return (
+    <div className="bg-cc-sand border-t border-cc-sand-dark/30 px-5 sm:px-8 py-6">
+      <h4 className="text-xs font-semibold uppercase tracking-widest text-cc-navy/50 mb-4">
+        {language === 'es' ? 'Verificar esta información' : 'Verify This Information'}
+      </h4>
+      <div className="grid sm:grid-cols-2 gap-3">
+        {links.map((link, i) => (
+          <a
+            key={i}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-start gap-3 group rounded-xl bg-white border border-cc-sand-dark/30 p-4 hover:border-cc-gold/50 hover:shadow-soft transition-all duration-200"
+          >
+            <div className="w-6 h-6 rounded-full bg-cc-gold/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-cc-gold/20 transition-colors">
+              <svg className="w-3 h-3 text-cc-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-cc-navy group-hover:text-cc-gold transition-colors leading-snug">
+                {language === 'es' ? link.labelEs : link.label}
+              </p>
+              <p className="text-xs text-cc-charcoal/60 mt-0.5 leading-relaxed">
+                {language === 'es' ? link.descriptionEs : link.description}
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 
 // Inner component — must be rendered inside V2Layout (which provides SelenaChatProvider)
 function GuideDetailContent() {
@@ -436,6 +475,11 @@ function GuideDetailContent() {
             </div>
           );
         })}
+
+        {/* External Sources — authoritative links for SEO trust signals */}
+        {guideData?.externalLinks?.length ? (
+          <ExternalSourcesFooter links={guideData.externalLinks} language={language as 'en' | 'es'} />
+        ) : null}
 
         {/* Compliance Footer */}
         <GuideComplianceFooter />
