@@ -186,3 +186,26 @@ Fix: Add type assertion `as 1 | 2 | 3` at the assignment. Low priority — does 
 - buyer_fork + seller_fork added to isAllowedGreetingSource allowlist
 - forkIntentOverride forces correct intent regardless of stored session
 - chipGovernance.ts normalized text fallback now uses label_es/label_en based on language
+
+## Session & Greeting Fixes (March 2026)
+
+### Fork Card Greeting (commits 1bba443, 0f6816b, eae6222)
+- buyer_fork + seller_fork added to greetingEngine shouldInjectGreeting override (always true)
+- Dedicated fork greeting block added BEFORE generic else clause in greetingEngine.ts
+- Fork sources clear localStorage synchronously in openChat before computeGreeting
+- isForkSource flag prevents appending to old messages — always setMessages([greeting])
+- Dead forkIntentOverride code removed from else block
+
+### Spanish Chip Auto-Detection (commits eae6222, 28793aa, 3f263ec)
+- Edge function: Spanish auto-detected from user message using regex signals
+  (quiero, necesito, busco, comprar, vender, etc.)
+- chipGovernance.ts: normalized text fallback now uses label_es/label_en based on language
+- SelenaChatContext.tsx: chip language uses data.language from edge function response
+- SelenaChatDrawer.tsx: stale chip prevention — only shows chips from most recent assistant message
+- chipsRegistry.ts: 4 timeline chips added (ASAP, 1-3 months, 3-6 months, Just exploring) with EN/ES labels
+
+### Verification Status (March 2026 — all passing)
+- Seller fork fresh session → "Hello, I'm Selena..." + 3 neutral chips ✅
+- Existing buyer session → seller fork → fresh greeting, history cleared ✅
+- Type "Quiero comprar" without toggle → response in Spanish, no stale English chips ✅
+- Toggle to Spanish manually → UI labels switch correctly ✅
