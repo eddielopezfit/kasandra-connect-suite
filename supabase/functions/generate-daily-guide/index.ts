@@ -291,7 +291,7 @@ REQUIREMENTS:
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    console.log("[5/8] All quality checks passed:", checks);
+    console.log("[6/9] All quality checks passed:", checks);
 
     // ── Generate guide_id ─────────────────────────────────────────
     const guideId = slugify(guideData.title as string) || slugify(topic);
