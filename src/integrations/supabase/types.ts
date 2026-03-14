@@ -71,6 +71,51 @@ export type Database = {
         }
         Relationships: []
       }
+      guide_queue: {
+        Row: {
+          content_json: Json
+          generated_at: string | null
+          guide_id: string
+          id: string
+          notes: string | null
+          published_at: string | null
+          research_context: string | null
+          reviewed_at: string | null
+          status: string | null
+          title_en: string
+          title_es: string
+          topic: string
+        }
+        Insert: {
+          content_json: Json
+          generated_at?: string | null
+          guide_id: string
+          id?: string
+          notes?: string | null
+          published_at?: string | null
+          research_context?: string | null
+          reviewed_at?: string | null
+          status?: string | null
+          title_en: string
+          title_es: string
+          topic: string
+        }
+        Update: {
+          content_json?: Json
+          generated_at?: string | null
+          guide_id?: string
+          id?: string
+          notes?: string | null
+          published_at?: string | null
+          research_context?: string | null
+          reviewed_at?: string | null
+          status?: string | null
+          title_en?: string
+          title_es?: string
+          topic?: string
+        }
+        Relationships: []
+      }
       lead_handoffs: {
         Row: {
           booking_url: string | null
