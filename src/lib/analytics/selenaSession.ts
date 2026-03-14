@@ -7,7 +7,7 @@ const SESSION_KEY = 'selena_session_id';
 const CONTEXT_KEY = 'selena_context_v2';
 const GUIDES_COMPLETED_KEY = 'selena_guides_completed';
 
-export type ToolUsed = 'tucson_alpha_calculator' | 'buyer_readiness' | 'seller_readiness' | 'cash_readiness' | 'report' | 'seller_decision';
+export type ToolUsed = 'tucson_alpha_calculator' | 'buyer_readiness' | 'seller_readiness' | 'cash_readiness' | 'report' | 'seller_decision' | 'instant_answer';
 export type CalculatorAdvantage = 'cash' | 'traditional' | 'consult';
 
 /**
@@ -130,6 +130,8 @@ export interface SessionContext {
   equity_pulse_value?: number;
   equity_pulse_recommendation?: string;
   mortgage_balance?: number;
+  // Instant Answer Machine
+  estimated_budget?: number;
   // Tool-specific entry data (typed fields to eliminate `as any` casts)
   closing_cost_data?: {
     purchasePrice: number;

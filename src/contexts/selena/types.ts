@@ -45,7 +45,9 @@ export type EntrySource =
    | 'selena_ai_page'
    | 'homepage_selena_section'
    | 'sell_comparison_traditional'
-   | 'sell_comparison_undecided';
+   | 'sell_comparison_undecided'
+   | 'instant_answer_affordability'
+   | 'instant_answer_value';
 
 export interface EntryContext {
   source: EntrySource;

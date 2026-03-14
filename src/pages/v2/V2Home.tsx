@@ -25,6 +25,7 @@ import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeighborhoodCards";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import CTASection from "@/components/v2/CTASection";
+import { InstantAnswerWidget } from "@/components/v2/calculator";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { updateSessionContext } from '@/lib/analytics/selenaSession';
 
@@ -501,6 +502,21 @@ const V2HomeContent = () => {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Instant Answer Machine */}
+      <section className="py-16 lg:py-20 bg-cc-ivory">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-10">
+            <span className="text-cc-gold font-semibold text-sm tracking-wider uppercase">
+              {t("Run the Numbers", "Haz los Números")}
+            </span>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mt-2">
+              {t("Instant Answers, Zero Pressure", "Respuestas Inmediatas, Cero Presión")}
+            </h2>
+          </div>
+          <InstantAnswerWidget />
         </div>
       </section>
 
