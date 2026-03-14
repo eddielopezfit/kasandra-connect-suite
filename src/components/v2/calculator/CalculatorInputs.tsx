@@ -35,6 +35,7 @@ const CalculatorInputs = ({
   onMotivationChange,
   onTimelineChange,
   onCalculate,
+  liveMortgageRate,
 }: CalculatorInputsProps) => {
   const { t, language } = useLanguage();
   const [showMortgageField, setShowMortgageField] = useState(mortgageBalance > 0);
