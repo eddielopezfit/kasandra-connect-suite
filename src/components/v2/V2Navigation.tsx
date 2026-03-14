@@ -142,6 +142,15 @@ const V2Navigation = () => {
           </button>
         </div>
 
+        {/* Mobile Menu Backdrop */}
+        {isMobileMenuOpen && (
+          <div
+            className="lg:hidden fixed inset-0 top-0 bg-black/40 z-[-1]"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
         {/* Mobile Menu */}
         <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
             isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
