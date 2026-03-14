@@ -396,6 +396,22 @@ function GuidesContent() {
         />
       )}
 
+      {/* Search Bar */}
+      <div className="bg-cc-ivory py-6 border-b border-cc-sand-dark/30">
+        <div className="container mx-auto px-4 flex justify-center">
+          <div className="relative w-full max-w-xl">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-cc-slate/50" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t("Search guides...", "Buscar guías...")}
+              className="w-full bg-white border border-cc-sand-dark/30 rounded-full pl-10 pr-5 py-3 text-cc-charcoal placeholder:text-cc-slate/50 focus:outline-none focus:ring-2 focus:ring-cc-gold/40 focus:border-cc-gold/30 transition-all"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Category Filter — Responsive Nav (stories removed from filter) */}
       {/* top-14 (56px) matches the scrolled nav height (py-3 + content).        */}
       {/* The guides section is always below the fold so the nav is always        */}
