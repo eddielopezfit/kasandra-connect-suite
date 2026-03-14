@@ -1163,7 +1163,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     keywords: ['tucson real estate market 2026', 'tucson housing market', 'tucson home prices', 'pima county market', 'mercado inmobiliario tucson', 'when to buy tucson'],
     tier: 1,
     lifeEvent: undefined,
-    assetSlots: { disclaimer: 'market_data' },
+    assetSlots: { disclaimer: 'financial' },
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'tucson-market-update-2026' }, label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
       secondaryActions: [
@@ -1174,7 +1174,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     decisionIntent: 'sell',
     decisionStage: 'explore',
     sortOrder: 47,
-    authorityTheme: 'market_intelligence',
+    authorityTheme: 'valuation_insight',
     isCashGuide: false,
     authorityBridge: {
       en: "Market conditions change, and the numbers you read online are often weeks or months behind. Kasandra is in the Tucson market every week — she can tell you what the data actually means for your specific situation.",
