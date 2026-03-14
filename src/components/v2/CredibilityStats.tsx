@@ -50,8 +50,6 @@ function AnimatedStat({ stat, active }: { stat: StatConfig; active: boolean }) {
 }
 
 const CredibilityStats = () => {
-  const { data } = useGoogleReviews();
-  const reviewCount = data?.reviews?.length ?? 126;
   const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
