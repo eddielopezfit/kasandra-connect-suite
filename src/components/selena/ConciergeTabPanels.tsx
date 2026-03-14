@@ -127,10 +127,10 @@ export function ConciergeTabPanels({
       )}
     >
       {/* Close handle */}
-      <div className="flex justify-center py-2 border-b border-border/50">
+      <div className="flex justify-center pt-1 pb-0.5">
         <button 
           onClick={onClose}
-          className="w-10 h-1 rounded-full bg-muted-foreground/30 hover:bg-muted-foreground/50 transition-colors"
+          className="w-8 h-1 rounded-full bg-muted-foreground/20 hover:bg-muted-foreground/40 transition-colors"
           aria-label={t('Close panel', 'Cerrar panel')}
         />
       </div>
