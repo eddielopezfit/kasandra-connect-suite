@@ -32,7 +32,7 @@ export function calculateAffordability(
   if (maxMonthly <= 0) return { maxPrice: 0, monthlyPayment: 0 };
 
   // Amortization constants
-  const r = INTEREST_RATE / 12;
+  const r = interestRate / 12;
   const n = LOAN_TERM_YEARS * 12;
 
   // Iterative solve: maxPrice depends on tax (which depends on maxPrice)

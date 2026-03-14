@@ -264,6 +264,7 @@ const TucsonAlphaCalculator = () => {
                 onMotivationChange={setMotivation}
                 onTimelineChange={setTimeline}
                 onCalculate={handleCalculate}
+                liveMortgageRate={liveMortgageRate}
               />
             </div>
           )}
