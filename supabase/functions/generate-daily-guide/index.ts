@@ -172,8 +172,9 @@ REQUIREMENTS:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.0-flash-001",
-        max_tokens: 4000,
+        model: "google/gemini-2.5-flash",
+        max_tokens: 8000,
+        response_format: { type: "json_object" },
         messages: [
           { role: "system", content: systemPrompt },
           {
