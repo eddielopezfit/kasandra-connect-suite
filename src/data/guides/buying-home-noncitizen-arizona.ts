@@ -87,7 +87,7 @@ const data: GuideContentData = {
         },
       ],
     },
-  ],,
+  ],
 
   externalLinks: [
     {

@@ -80,7 +80,7 @@ const data: GuideContentData = {
         },
       ],
     },
-  ],,
+  ],
 
   externalLinks: [
     {
