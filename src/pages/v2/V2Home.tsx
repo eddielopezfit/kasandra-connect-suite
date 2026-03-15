@@ -450,7 +450,9 @@ const V2HomeContent = () => {
       </section>
 
       {/* Neighborhood Cards */}
-      <HomepageNeighborhoodCards />
+      <Suspense fallback={<div className="h-64 bg-cc-sand/50 animate-pulse" />}>
+        <LazyHomepageNeighborhoodCards />
+      </Suspense>
 
       {/* Trust Bar */}
       <TrustBar />
