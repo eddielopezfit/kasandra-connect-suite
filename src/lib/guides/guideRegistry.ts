@@ -791,6 +791,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
 
   // --- tucson-neighborhoods ---
   {
+    id: 'tucson-neighborhoods',
     path: '/guides/tucson-neighborhoods',
     titleEn: "Tucson Neighborhoods: A Buyer's Area Guide",
     titleEs: 'Vecindarios de Tucson: Guía de Áreas para Compradores',
