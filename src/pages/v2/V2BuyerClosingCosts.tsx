@@ -213,8 +213,13 @@ const V2BuyerClosingCostsContent = () => {
 
   const handleCalculate = () => {
     if (price < 50000) return;
+    if (!toolStarted) {
+      logEvent('tool_started', { tool: 'buyer_closing_costs' });
+      setToolStarted(true);
+    }
     setCalculated(true);
     setFieldIfEmpty('intent', 'buy');
+    logEvent('tool_completed', { tool: 'buyer_closing_costs', price, loan_type: inputs.loanType });
     logEvent('calculator_complete', { tool: 'buyer_closing_costs', price, loan_type: inputs.loanType });
     setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });

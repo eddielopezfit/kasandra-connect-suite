@@ -717,6 +717,7 @@ const V2SellerTimeline = () => {
         close_window: wizardData.closeWindow,
         readiness: wizardData.readiness,
       });
+      logEvent('tool_completed', { tool: 'seller_timeline', close_window: wizardData.closeWindow, readiness: wizardData.readiness });
       goTo(4);
     },
     [goTo, wizardData]
