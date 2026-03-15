@@ -1,3 +1,13 @@
+/**
+ * V2PrivateCashReview — Gated Post-Calculator Conversion Surface
+ *
+ * This page is NOT a duplicate of /cash-offer-options. It serves a distinct role:
+ * - Gated behind PhoneVerificationGate (returning leads only)
+ * - Linked from CalculatorNextSteps.tsx after cash comparison
+ * - noindex: true (not a public landing page)
+ * - Shows personalized analysis for leads who already have a report
+ * - Routes all CTAs through Selena for pre-booking qualification
+ */
 import { useRef, useEffect, useState } from "react";
 import V2Layout from "@/components/v2/V2Layout";
 import { useDocumentHead } from "@/hooks/useDocumentHead";

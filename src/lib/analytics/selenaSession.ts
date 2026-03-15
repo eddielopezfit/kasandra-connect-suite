@@ -13,6 +13,8 @@ export type CalculatorAdvantage = 'cash' | 'traditional' | 'consult';
 /**
  * Canonical Intent type
  * 'cash' is the only valid value for cash offers (legacy 'cash_offer' is normalized)
+ * NOTE: 'investor' is passively supported but has NO dedicated content path (no guide, tool, or quiz).
+ * Do NOT surface in UI, greeting chips, or navigation until investor-specific content exists.
  */
 export type Intent = 'buy' | 'sell' | 'cash' | 'investor' | 'explore' | 'dual';
 
