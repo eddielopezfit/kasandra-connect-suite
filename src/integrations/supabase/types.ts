@@ -593,6 +593,7 @@ export type Database = {
     }
     Functions: {
       cleanup_rate_limits: { Args: never; Returns: undefined }
+      invoke_refresh_market_pulse: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
