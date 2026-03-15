@@ -135,6 +135,40 @@ export const GUIDE_CHIP_MAP: GuideChipMapType = {
   'arizona-real-estate-glossary': [
     { en: 'Browse guides', es: 'Explorar guías', intentCategory: 'neutral' },
   ],
+
+  // --- New SEO Guides (March 2026 sprint) ---
+  'itin-loan-guide': [
+    { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación', intentCategory: 'buy' },
+    { en: 'Talk with Kasandra', es: 'Hablar con Kasandra', intentCategory: 'buy' },
+  ],
+  'bad-credit-home-buying-tucson': [
+    { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación', intentCategory: 'buy' },
+    { en: 'First-Time Buyer Programs', es: 'Programas para Compradores', intentCategory: 'buy' },
+  ],
+  'down-payment-assistance-tucson': [
+    { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación', intentCategory: 'buy' },
+    { en: 'First-Time Buyer Programs', es: 'Programas para Compradores', intentCategory: 'buy' },
+  ],
+  'fha-loan-pima-county-2026': [
+    { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación', intentCategory: 'buy' },
+    { en: 'Estimate Closing Costs', es: 'Estimar Costos de Cierre', intentCategory: 'buy' },
+  ],
+  'va-home-loan-tucson': [
+    { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación', intentCategory: 'buy' },
+    { en: 'Talk with Kasandra', es: 'Hablar con Kasandra', intentCategory: 'buy' },
+  ],
+  'first-time-buyer-programs-pima-county': [
+    { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación', intentCategory: 'buy' },
+    { en: 'Estimate Closing Costs', es: 'Estimar Costos de Cierre', intentCategory: 'buy' },
+  ],
+  'divorce-home-sale-arizona': [
+    { en: 'Get my selling options', es: 'Ver mis opciones de venta', intentCategory: 'sell' },
+    { en: 'Compare cash vs. listing', es: 'Comparar efectivo vs. listado', intentCategory: 'sell' },
+  ],
+  'tucson-market-update-2026': [
+    { en: 'Tucson Market Data', es: 'Datos del Mercado Tucson', intentCategory: 'neutral' },
+    { en: 'Get my selling options', es: 'Ver mis opciones de venta', intentCategory: 'neutral' },
+  ],
 };
 
 /**
