@@ -13,6 +13,7 @@
  */
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -144,6 +145,11 @@ serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Rate limit (30 req/hour per session/IP)
+    const rlKey = extractRateLimitKey(req, { session_id: sessionId } as Record<string, unknown>);
+    const { allowed } = await checkRateLimit(supabase, rlKey, 'selena-log-event');
+    if (!allowed) return rateLimitResponse(corsHeaders);
 
     // Log to event_log table
     const { error } = await supabase

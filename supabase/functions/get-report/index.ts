@@ -1,4 +1,5 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -67,6 +68,11 @@ serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Rate limit (30 req/hour per IP)
+    const rlKey = extractRateLimitKey(req, { lead_id, session_id } as Record<string, unknown>);
+    const { allowed } = await checkRateLimit(supabase, rlKey, 'get-report');
+    if (!allowed) return rateLimitResponse(corsHeaders);
 
     // Session ownership verification [audit SEC-05]
     // When session_id is provided, verify it matches the stored session for this lead
