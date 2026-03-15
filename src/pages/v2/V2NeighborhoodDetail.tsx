@@ -24,7 +24,13 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
   const heroUrl = getNeighborhoodHeroUrl(neighborhood.slug);
   useEffect(() => {
     logEvent('neighborhood_page_view', { slug: neighborhood.slug, region: neighborhood.regionGroup });
-  }, [neighborhood.slug, neighborhood.regionGroup]);
+    updateSessionContext({
+      last_neighborhood_zip: neighborhood.primaryZip,
+      neighborhood_explored: true,
+      last_seen_page_type: 'page',
+      last_seen_page_path: `/neighborhoods/${neighborhood.slug}`,
+    });
+  }, [neighborhood.slug, neighborhood.regionGroup, neighborhood.primaryZip]);
 
   const handleSelenaOpen = () => {
     openChat({
