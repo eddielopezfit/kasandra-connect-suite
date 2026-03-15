@@ -74,6 +74,11 @@ export const CHIP_KEYS = {
   INTENT_SELL: 'intent_sell',
   INTENT_BUY: 'intent_buy',
   INTENT_EXPLORE: 'intent_explore',
+
+  // === New Tools (Cleanup Pass) ===
+  AFFORDABILITY_CALCULATOR: 'affordability_calculator',
+  BAH_CALCULATOR: 'bah_calculator',
+  HOME_VALUATION: 'home_valuation',
 } as const;
 
 export type ChipKey = typeof CHIP_KEYS[keyof typeof CHIP_KEYS];
