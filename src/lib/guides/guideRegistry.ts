@@ -1124,7 +1124,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     funnelStage: 'tofu',
     keywords: ['itin', 'itin loan', 'no social security', 'sin numero seguro social', 'undocumented', 'non-citizen', 'buy without ssn', 'itin mortgage tucson'],
     tier: 1,
-    lifeEvent: undefined,
+    lifeEvent: 'first_time_buying',
     assetSlots: { disclaimer: 'financial' },
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'itin-loan-guide' }, label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
