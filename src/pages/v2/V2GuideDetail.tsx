@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
-import { useEffect, useState, useRef, useCallback } from "react";
-import { MessageCircle } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { ArrowLeft, User, MessageCircle } from "lucide-react";
 import { ArrowLeft, User } from "lucide-react";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
