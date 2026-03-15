@@ -96,31 +96,9 @@ serve(async (req) => {
       // Use the pre-selected slot
       bookingUrl = selected_slot.booking_url;
     } else {
-      // Fetch available slots
-      try {
-        const availabilityResponse = await fetch(`${supabaseUrl}/functions/v1/check-availability`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${supabaseServiceKey}`,
-          },
-          body: JSON.stringify({
-            lead_id,
-            channel,
-            preferred_window: 'today',
-          }),
-        });
-
-        const availabilityData = await availabilityResponse.json();
-        if (availabilityData.ok && availabilityData.slots?.length > 0) {
-          slots = availabilityData.slots;
-          // Use the first available slot as primary booking URL
-          bookingUrl = slots[0].booking_url;
-        }
-      } catch (availabilityError) {
-        console.warn('[create-handoff] Could not fetch availability:', availabilityError);
-        // Continue without slots - fallback flow will handle this
-      }
+      // TODO: Replace with real GHL calendar API integration
+      slots = [];
+      bookingUrl = '';
     }
 
     // If no slots available and no pre-selected slot, use generic booking URL
@@ -207,7 +185,8 @@ serve(async (req) => {
         ok: true,
         handoff_id: handoff.id,
         booking_url: bookingUrl,
-        slots,
+        slots: [],
+        stub_note: "real availability pending GHL calendar integration",
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
