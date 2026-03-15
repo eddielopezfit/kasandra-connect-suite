@@ -1,6 +1,11 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+/**
+ * get-market-pulse
+ * PERF: Returns cached market data with 1-hour Cache-Control header.
+ * Data changes at most weekly — no need to hit DB on every page load. [audit PERF-02]
+ */
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
@@ -21,8 +26,14 @@ Deno.serve(async (req) => {
 
     if (error) throw error;
 
+    // Cache for 1 hour on CDN / client — data updates at most weekly
+    // s-maxage=86400 allows Vercel/Cloudflare edge to cache for 24h
     return new Response(JSON.stringify(data), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=3600",
+      },
     });
   } catch (err) {
     return new Response(JSON.stringify({ error: err instanceof Error ? err.message : String(err) }), {
