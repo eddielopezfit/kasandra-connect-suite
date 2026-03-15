@@ -1200,7 +1200,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     funnelStage: 'tofu',
     keywords: ['bad credit home loan tucson', 'low credit score mortgage arizona', 'buy house bad credit tucson', 'fha 580 tucson', 'credit repair homebuyer'],
     tier: 1,
-    lifeEvent: undefined,
+    lifeEvent: 'first_time_buying',
     assetSlots: { disclaimer: 'financial' },
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'bad-credit-home-buying-tucson' }, label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
