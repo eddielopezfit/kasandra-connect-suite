@@ -188,6 +188,7 @@ const V2BuyerClosingCostsContent = () => {
     isFirstTimeBuyer: true,
   });
   const [calculated, setCalculated] = useState(false);
+  const [toolStarted, setToolStarted] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const upd = <K extends keyof CalcInputs>(k: K, v: CalcInputs[K]) =>
