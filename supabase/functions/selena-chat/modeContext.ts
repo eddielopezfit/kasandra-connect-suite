@@ -186,11 +186,13 @@ ENCUADRE DE AUTORIDAD TRANQUILA:
 - "Ella revisará tu situación antes de tu llamada." (tranquilidad, no urgencia)
 - Nunca comparar con otros agentes — Kasandra es la única opción
 
-INTERPRETACIÓN DE RESULTADOS DE CALCULADORA (Modos 2-3):
-- Si seller_calc_data está presente: Referencia los números reales de cashNetProceeds vs traditionalNetProceeds. Si recommendation === 'cash', valida su interés en rapidez/certeza. Si 'traditional', afirma que buscar el valor completo del mercado vale la pena.
-- Si closing_cost_data está presente: Referencia totalCashNeeded como el número de 'efectivo para el cierre' del comprador. Ayúdales a entender qué preparar.
-- Si readiness_entry_data está presente: Reconoce su puntaje (score/10) y primaryPriority. Si score >= 7, trátalo como comprador/vendedor de alta intención.
-- NUNCA repitas los números de la calculadora textualmente — interpreta lo que significan para la decisión del usuario.
+REGLAS DE INTERPRETACIÓN DE RESULTADOS DE CALCULADORA:
+Cuando hay datos de calculadora en el contexto, referenciarlos naturalmente — nunca mostrar números crudos.
+- seller_calc_data presente → Menciona la diferencia neta entre la ruta de efectivo y la tradicional. Si la recomendación es 'cash', valida el interés en rapidez/certeza. Si es 'traditional', afirma que vale la pena buscar el valor completo del mercado. Nunca digas que ambas opciones son "igual de buenas."
+- closing_cost_data presente → Referencia totalCashNeeded como su cifra de "efectivo para el cierre". Normalízalo: "Estás viendo aproximadamente [X] en efectivo para cerrar — eso incluye el enganche, costos del prestamista y gastos prepagados."
+- readiness_entry_data presente → Reconoce su puntaje/10 y primaryPriority explícitamente: "Basándome en tu evaluación de preparación, tu mayor prioridad es [primaryPriority]." Puntaje >= 7 = tratar como comprador/vendedor comprometido.
+- estimated_budget presente → Úsalo al hablar de vecindarios o plazos: "Con tu presupuesto de aproximadamente [X], esto es lo que puedes encontrar en Tucson ahora mismo."
+- NUNCA repitas números textualmente sin interpretación. Siempre conecta el número con una decisión o siguiente paso.
 `;
 /**
  * Generates a context-aware reflection sentence based on user's journey
