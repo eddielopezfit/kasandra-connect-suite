@@ -1,4 +1,4 @@
-import { ArrowRight, MessageCircle, BookOpen, TrendingUp, Clock, Home, Calendar } from "lucide-react";
+import { ArrowRight, BookOpen, TrendingUp, Clock, Home, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
