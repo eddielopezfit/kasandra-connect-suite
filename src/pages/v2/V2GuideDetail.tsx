@@ -303,10 +303,10 @@ function GuideDetailContent() {
       descEs: 'Todo lo que un comprador primerizo en Tucson necesita  -  financiamiento, programas de pago inicial, inspecciones y consejos del mercado de Pima County.',
     },
     'selling-for-top-dollar': {
-      titleEn: 'How to Sell Your Tucson Home for Top Dollar in 2026  -  Kasandra Prieto',
-      titleEs: 'Cómo Vender tu Casa en Tucson al Mejor Precio en 2026  -  Kasandra Prieto',
-      descEn: 'Proven strategies to maximize your Tucson home sale price  -  pricing, staging, timing, and negotiation tactics from a local bilingual REALTOR®.',
-      descEs: 'Estrategias comprobadas para maximizar el precio de venta de tu casa en Tucson  -  precio, presentación, timing y tácticas de negociación.',
+      titleEn: 'How to Sell Your Tucson Home for Top Dollar in 2026 — Pima County Selling Guide',
+      titleEs: 'Cómo Vender tu Casa en Tucson al Mejor Precio en 2026 — Guía de Venta en Pima County',
+      descEn: 'Proven strategies to maximize your Tucson home sale price in Pima County — pricing, staging, timing, and negotiation tactics from a local bilingual REALTOR®.',
+      descEs: 'Estrategias comprobadas para maximizar el precio de venta de tu casa en Tucson y Pima County — precio, presentación, timing y tácticas de negociación.',
     },
     'cash-offer-guide': {
       titleEn: 'How Cash Offers Work in Tucson  -  Complete Seller Guide (2026)',

@@ -190,6 +190,47 @@ const V2SellContent = () => {
         </div>
       </section>
 
+      {/* Seller Planning Tools Strip */}
+      <section className="bg-white border-b border-cc-sand-dark/20 py-6">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <p className="text-xs font-semibold text-cc-navy/50 uppercase tracking-wider text-center mb-4">
+            {t("Seller Planning Tools", "Herramientas de Planificación")}
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            <Link
+              to="/market"
+              onClick={() => handleCTAClick('sell_tool_market', '/market')}
+              className="flex flex-col items-center gap-2 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all text-center"
+            >
+              <TrendingUp className="w-5 h-5 text-cc-gold" />
+              <span className="text-xs font-semibold text-cc-navy leading-tight">
+                {t("Market Data", "Datos del Mercado")}
+              </span>
+            </Link>
+            <Link
+              to="/seller-timeline"
+              onClick={() => handleCTAClick('sell_tool_timeline', '/seller-timeline')}
+              className="flex flex-col items-center gap-2 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all text-center"
+            >
+              <Clock className="w-5 h-5 text-cc-gold" />
+              <span className="text-xs font-semibold text-cc-navy leading-tight">
+                {t("Selling Timeline", "Cronograma de Venta")}
+              </span>
+            </Link>
+            <Link
+              to="/cash-offer-options"
+              onClick={() => handleCTAClick('sell_tool_calculator', '/cash-offer-options')}
+              className="flex flex-col items-center gap-2 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all text-center"
+            >
+              <DollarSign className="w-5 h-5 text-cc-gold" />
+              <span className="text-xs font-semibold text-cc-navy leading-tight">
+                {t("Cash vs. Listing", "Efectivo vs. Listado")}
+              </span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Guide */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
