@@ -145,7 +145,27 @@ function GuideDetailContent() {
     }
   }, [guideId, guide, guideTitle]);
 
-  // Renders a single media slot
+  // IntersectionObserver for synthesis CTA (~70% scroll sentinel)
+  useEffect(() => {
+    const el = synthesisSentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !synthesisTracked.current) {
+          setSynthesisVisible(true);
+          synthesisTracked.current = true;
+          if (guideId) {
+            logEvent('guide_synthesis_cta_shown', { guideId });
+          }
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [guideId, guide]);
+
   const MediaSlotRenderer = ({ slot }: { slot: MediaSlot }) => {
     if (slot.type === 'pull-quote-image') {
       return <GuidePullQuote quote={slot.quote} quoteEs={slot.quoteEs} />;
