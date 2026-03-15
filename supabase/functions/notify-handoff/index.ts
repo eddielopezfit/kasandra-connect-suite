@@ -1,6 +1,12 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+/**
+ * notify-handoff
+ * UX-05: GHL webhook failures now logged to event_log for observability.
+ * Previously fire-and-forget — missed leads were invisible. [audit UX-05]
+ */
 const GHL_WEBHOOK_URL = Deno.env.get("GHL_WEBHOOK_URL") ?? "";
 
 function derivePipelineStage(context: Record<string, unknown>): string {
@@ -204,6 +210,31 @@ serve(async (req) => {
     if (!ghlRes.ok) {
       const errText = await ghlRes.text();
       console.error("[notify-handoff] GHL webhook failed:", ghlRes.status, errText);
+
+      // Log failure to event_log for observability — no more silent missed leads [audit UX-05]
+      try {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL");
+        const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+        if (supabaseUrl && supabaseKey) {
+          const supabase = createClient(supabaseUrl, supabaseKey);
+          await supabase.from("event_log").insert({
+            event_type: "handoff_notify_failed",
+            session_id: body.context?.session_id || body.contact?.email || "unknown",
+            event_payload: {
+              contact_phone: body.contact?.phone || null,
+              contact_email: body.contact?.email || null,
+              ghl_status: ghlRes.status,
+              ghl_error: errText?.slice(0, 500) || "unknown",
+              pipeline_stage: pipelineStage,
+              timestamp: new Date().toISOString(),
+            },
+          });
+          console.warn("[notify-handoff] Failure logged to event_log for:", body.contact?.email || body.contact?.phone);
+        }
+      } catch (logErr) {
+        console.error("[notify-handoff] Failed to log failure to event_log:", logErr);
+      }
+
       return new Response(
         JSON.stringify({ error: "GHL webhook failed", status: ghlRes.status }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -218,6 +249,23 @@ serve(async (req) => {
 
   } catch (err) {
     console.error("[notify-handoff] Unexpected error:", err);
+    // Log unexpected failures too
+    try {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL");
+      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (supabaseUrl && supabaseKey) {
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        await supabase.from("event_log").insert({
+          event_type: "handoff_notify_failed",
+          session_id: "unknown",
+          event_payload: {
+            error: String((err as Error)?.message ?? err),
+            type: "unexpected_error",
+            timestamp: new Date().toISOString(),
+          },
+        });
+      }
+    } catch (_) { /* best effort */ }
     return new Response(
       JSON.stringify({ error: "Internal error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
