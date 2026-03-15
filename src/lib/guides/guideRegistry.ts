@@ -114,7 +114,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'open_chat', payload: { source: 'guide', guideId: 'first-time-buyer-guide', lifeEvent: 'first_time_buying' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
       ],
-      relatedGuideIds: ['selling-for-top-dollar', 'cash-offer-guide', 'first-time-buyer-story'],
+      relatedGuideIds: ['selling-for-top-dollar', 'cash-offer-guide', 'arizona-real-estate-glossary', 'first-time-buyer-story'],
     },
     decisionIntent: 'buy',
     decisionStage: 'explore',
@@ -145,7 +145,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'open_chat', payload: { source: 'guide', guideId: 'selling-for-top-dollar', lifeEvent: 'general_selling' }, label: { en: 'What does this mean for me?', es: '¿Qué significa esto para mí?' } },
       ],
-      relatedGuideIds: ['cash-offer-guide', 'understanding-home-valuation', 'sell-now-or-wait', 'life-change-selling'],
+      relatedGuideIds: ['cash-offer-guide', 'understanding-home-valuation', 'sell-now-or-wait', 'seller-stressful-market-story'],
     },
     decisionIntent: 'sell',
     decisionStage: 'explore',
@@ -176,7 +176,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare my options', es: 'Comparar mis opciones' } },
       ],
-      relatedGuideIds: ['selling-for-top-dollar', 'understanding-home-valuation', 'cash-vs-traditional-sale'],
+      relatedGuideIds: ['selling-for-top-dollar', 'understanding-home-valuation', 'move-up-buyer', 'tucson-market-update-2026'],
     },
     decisionIntent: 'cash',
     decisionStage: 'compare',
@@ -216,7 +216,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare my options', es: 'Comparar mis opciones' } },
       ],
-      relatedGuideIds: ['cash-offer-guide', 'selling-for-top-dollar'],
+      relatedGuideIds: ['cash-offer-guide', 'selling-for-top-dollar', 'distressed-preforeclosure'],
     },
     decisionIntent: 'life_event',
     decisionStage: 'explore',
@@ -480,7 +480,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'open_tool', toolId: 'seller-readiness', label: { en: 'Check my seller readiness', es: 'Verificar mi preparación para vender' } },
       ],
-      relatedGuideIds: ['sell-now-or-wait', 'selling-for-top-dollar', 'cash-vs-traditional-sale'],
+      relatedGuideIds: ['sell-now-or-wait', 'selling-for-top-dollar', 'divorce-selling'],
     },
     decisionIntent: 'life_event',
     decisionStage: 'decide',
@@ -701,7 +701,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Check my readiness', es: 'Verificar mi preparación' } },
       ],
-      relatedGuideIds: ['tucson-neighborhoods', 'first-time-buyer-guide', 'pima-county-property-taxes'],
+      relatedGuideIds: ['tucson-neighborhoods', 'first-time-buyer-guide', 'military-pcs-guide'],
     },
     decisionIntent: 'buy',
     decisionStage: 'explore',
@@ -810,7 +810,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Check my readiness', es: 'Verificar mi preparación' } },
       ],
-      relatedGuideIds: ['relocating-to-tucson', 'first-time-buyer-guide', 'pima-county-property-taxes'],
+      relatedGuideIds: ['relocating-to-tucson', 'first-time-buyer-guide', 'tucson-suburb-comparison'],
     },
     decisionIntent: 'buy',
     decisionStage: 'explore',
@@ -974,7 +974,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'arizona-first-time-buyer-programs', lifeEvent: 'first_time_buyer' }, label: { en: 'Find out what I qualify for', es: 'Averiguar para qué califico' } },
       secondaryActions: [],
-      relatedGuideIds: ['first-time-buyer-guide', 'first-time-buyer-story'],
+      relatedGuideIds: ['first-time-buyer-guide', 'budget-buyer-story', 'first-time-buyer-story'],
     },
     decisionIntent: 'buy',
     decisionStage: 'explore',
@@ -1005,7 +1005,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'capital-gains-home-sale-arizona', lifeEvent: 'general_selling' }, label: { en: 'Talk through my tax situation', es: 'Hablar sobre mi situación fiscal' } },
       secondaryActions: [],
-      relatedGuideIds: ['cost-to-sell-tucson', 'selling-for-top-dollar'],
+      relatedGuideIds: ['cost-to-sell-tucson', 'selling-for-top-dollar', 'sell-or-rent-tucson'],
     },
     decisionIntent: 'sell',
     decisionStage: 'compare',
@@ -1098,7 +1098,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'buying-home-noncitizen-arizona', lifeEvent: 'first_time_buyer' }, label: { en: 'Talk through my options', es: 'Hablar sobre mis opciones' } },
       secondaryActions: [],
-      relatedGuideIds: ['first-time-buyer-guide', 'arizona-first-time-buyer-programs'],
+      relatedGuideIds: ['first-time-buyer-guide', 'itin-loan-guide', 'spanish-speaking-client-story'],
     },
     decisionIntent: 'buy',
     decisionStage: 'explore',
