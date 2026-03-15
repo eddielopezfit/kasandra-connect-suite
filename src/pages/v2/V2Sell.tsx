@@ -17,6 +17,7 @@ import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import heroSellBg from "@/assets/hero-sell-tucson-aerial.png";
+import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
 
 const PAGE_PATH = '/sell';
 const PAGE_INTENT = 'sell' as const;
