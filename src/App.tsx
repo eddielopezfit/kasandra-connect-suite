@@ -113,6 +113,9 @@ const App = () => {
                 <Route path="/about" element={<V2About />} />
                 <Route path="/contact" element={<V2Contact />} />
                 <Route path="/selena-ai" element={<V2SelenaAI />} />
+                <Route path="/affordability-calculator" element={<V2AffordabilityCalculator />} />
+                <Route path="/bah-calculator" element={<V2BAHCalculator />} />
+                <Route path="/home-valuation" element={<V2HomeValuation />} />
                 <Route path="/privacy" element={<V2Privacy />} />
                 <Route path="/terms" element={<V2Terms />} />
 

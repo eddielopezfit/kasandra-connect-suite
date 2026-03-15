@@ -58,6 +58,7 @@ export type EntrySource =
     | 'home_valuation';
 
 export interface EntryContext {
+  estimatedBudget?: number;
   source: EntrySource;
   calculatorAdvantage?: 'cash' | 'traditional' | 'consult';
   calculatorDifference?: number;

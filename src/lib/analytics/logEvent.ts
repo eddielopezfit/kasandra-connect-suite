@@ -158,7 +158,10 @@ export type EventType =
   | 'neighborhood_page_view'
   // Guide Synthesis CTA
   | 'guide_synthesis_cta_shown'
-  | 'guide_synthesis_cta_click';
+  | 'guide_synthesis_cta_click'
+  // Valuation request (Phase: 5 High-Impact Tools)
+  | 'valuation_request_started'
+  | 'valuation_request_completed';
 
 export interface EventPayload {
   [key: string]: unknown;

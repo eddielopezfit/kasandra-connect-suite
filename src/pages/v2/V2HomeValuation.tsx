@@ -422,7 +422,7 @@ const V2HomeValuationContent = () => {
                 </p>
                 <div className="space-y-3">
                   <Button
-                    onClick={() => openChat({ source: "home_valuation", intent: "sell" })}
+                    onClick={() => openChat({ source: "home_valuation" as const, intent: "sell" })}
                     className="bg-cc-navy text-white rounded-full px-8 font-semibold"
                   >
                     <MessageCircle className="w-4 h-4 mr-2" />

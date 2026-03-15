@@ -275,7 +275,7 @@ const V2AffordabilityCalculatorContent = () => {
               </p>
               <Button
                 onClick={() => openChat({
-                  source: "affordability_calculator",
+                  source: "affordability_calculator" as const,
                   intent: "buy",
                   estimatedBudget: result.maxPrice,
                 })}

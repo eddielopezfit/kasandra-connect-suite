@@ -285,7 +285,7 @@ const V2BAHCalculatorContent = () => {
               </p>
               <Button
                 onClick={() => openChat({
-                  source: "bah_calculator",
+                  source: "bah_calculator" as const,
                   intent: "buy",
                   estimatedBudget: result.maxPrice,
                 })}
