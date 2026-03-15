@@ -1320,7 +1320,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'va-home-loan-tucson', lifeEvent: 'military_va_purchase' }, label: { en: 'Talk about my VA options', es: 'Hablar sobre mis opciones VA' } },
       secondaryActions: [
-        { type: 'navigate', path: '/buyer-readiness', label: { en: 'Check my buyer readiness', es: 'Verificar mi preparación' } },
+        { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Check my buyer readiness', es: 'Verificar mi preparación' } },
       ],
       relatedGuideIds: ['military-pcs-guide', 'first-time-buyer-guide', 'tucson-neighborhoods'],
     },
