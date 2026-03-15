@@ -667,7 +667,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Review tax implications of selling',
         nameEs: 'Revisa las implicaciones fiscales de vender',
-        text: 'Seniors often qualify for the full $250K/$500K federal capital gains exclusion. Arizona's flat 2.5% rate applies to gains above the exclusion. Consult a CPA before closing  -  Kasandra can refer you.',
+        text: "Seniors often qualify for the full $250K/$500K federal capital gains exclusion. Arizona's flat 2.5% rate applies to gains above the exclusion. Consult a CPA before closing  -  Kasandra can refer you.",
         textEs: 'Los mayores a menudo califican para la exclusión completa de ganancias de capital de $250K/$500K. La tasa plana del 2.5% de Arizona se aplica a las ganancias sobre la exclusión.',
       },
     ],
