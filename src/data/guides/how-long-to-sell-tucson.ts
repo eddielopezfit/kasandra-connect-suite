@@ -58,8 +58,8 @@ const data: GuideContentData = {
         {
           question: "How long does it take to sell a house in Tucson right now?",
           questionEs: "¿Cuánto tiempo tarda vender una casa en Tucson ahora mismo?",
-          answer: "The current median days on market in Tucson is 38 days (January 2026 data). That's the middle of the distribution — half of homes sell faster, half take longer. A correctly priced home in good condition in a desirable ZIP code can easily go under contract in 10–21 days. An overpriced home or one needing significant work can sit 60–90+ days. From accepted offer to close typically adds 30–45 days for financed buyers.",
-          answerEs: "La mediana actual de días en el mercado en Tucson es de 38 días (datos de enero de 2026). Esa es la mitad de la distribución — la mitad de las casas se venden más rápido, la mitad tarda más. Una casa con precio correcto en buena condición en un código postal deseable puede fácilmente estar bajo contrato en 10–21 días.",
+          answer: "The current median days on market in Tucson is 38 days (March 2026 data). That's the middle of the distribution — half of homes sell faster, half take longer. A correctly priced home in good condition in a desirable ZIP code can easily go under contract in 10–21 days. An overpriced home or one needing significant work can sit 60–90+ days. From accepted offer to close typically adds 30–45 days for financed buyers.",
+          answerEs: "La mediana actual de días en el mercado en Tucson es de 38 días (datos de marzo de 2026). Esa es la mitad de la distribución — la mitad de las casas se venden más rápido, la mitad tarda más. Una casa con precio correcto en buena condición en un código postal deseable puede fácilmente estar bajo contrato en 10–21 días.",
         },
         {
           question: "What is the best time of year to sell a house in Tucson?",
