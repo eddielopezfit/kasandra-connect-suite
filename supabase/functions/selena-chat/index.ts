@@ -50,6 +50,8 @@ import {
   detectMode, 
   MODE_INSTRUCTIONS_EN, 
   MODE_INSTRUCTIONS_ES,
+  TOPIC_HINTS_EN,
+  TOPIC_HINTS_ES,
   type ConversationMode,
   type ConversationState,
 } from "./modeContext.ts";
