@@ -1140,11 +1140,27 @@ const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
     en: ["Check my buying power", "Take readiness check", "Browse guides"],
     es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
   },
+  "how much house can i afford": {
+    en: ["Check my buying power", "Take readiness check", "Browse guides"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
+  },
+  "can i afford": {
+    en: ["Check my buying power", "Take readiness check", "Browse guides"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
+  },
   "cuanto puedo pagar": {
     en: ["Check my buying power", "Take readiness check", "Browse guides"],
     es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
   },
   "what is my home worth": {
+    en: ["Get my market analysis", "Get my selling options", "Compare cash vs. listing"],
+    es: ["Obtener mi análisis", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
+  },
+  "what's my home worth": {
+    en: ["Get my market analysis", "Get my selling options", "Compare cash vs. listing"],
+    es: ["Obtener mi análisis", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
+  },
+  "home value before i sell": {
     en: ["Get my market analysis", "Get my selling options", "Compare cash vs. listing"],
     es: ["Obtener mi análisis", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
   },
@@ -3930,12 +3946,25 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       suggestedReplies = language === 'es'
         ? ["Estimar mis ganancias netas", "Hablar con Kasandra"]
         : ["Estimate my net proceeds", "Talk with Kasandra"];
-    } else if (canApplyJourneyChips && journey.stageChips.length > 0) {
-      // Journey State Engine chips (Layer 5)
-      suggestedReplies = journey.stageChips;
     } else {
-      // Use governed phase chips (fallback)
-      suggestedReplies = chips;
+      // Layer 5: Keyword-triggered chips (PROGRESSION_MAP) — highest specificity
+      // getSuggestedReplies checks PROGRESSION_MAP first, then falls back to intent-based statics.
+      // We detect a keyword hit by passing the user message — if PROGRESSION_MAP matches,
+      // it returns keyword-specific chips different from the intent-based fallback.
+      const keywordChips = getSuggestedReplies(context.intent, language, message);
+      const fallbackChips = getSuggestedReplies(context.intent, language);
+      const hasKeywordHit = keywordChips.length > 0 && JSON.stringify(keywordChips) !== JSON.stringify(fallbackChips);
+      
+      if (hasKeywordHit) {
+        // Keyword override — use PROGRESSION_MAP match
+        suggestedReplies = keywordChips;
+      } else if (canApplyJourneyChips && journey.stageChips.length > 0) {
+        // Layer 6: Journey State Engine chips
+        suggestedReplies = journey.stageChips;
+      } else {
+        // Layer 7: Governed phase chips (fallback)
+        suggestedReplies = chips;
+      }
     }
 
     // Guard 4: If journey_state !== 'decide', strip booking-only chips/actions

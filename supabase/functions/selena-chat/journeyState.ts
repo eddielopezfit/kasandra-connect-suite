@@ -30,6 +30,10 @@ const CHIP_KEYS = {
   BUYER_READINESS: 'buyer_readiness',
   CASH_READINESS: 'cash_readiness',
   BROWSE_GUIDES: 'browse_guides',
+  // New tools (March 2026 — available for evaluate-state rotation)
+  AFFORDABILITY_CALCULATOR: 'affordability_calculator',
+  BAH_CALCULATOR: 'bah_calculator',
+  HOME_VALUATION: 'home_valuation',
 } as const;
 
 const DECIDE_TOOLS = ['tucson_alpha_calculator', 'seller_decision'];
@@ -123,9 +127,9 @@ export function classifyJourneyState(input: {
   ) {
     let chips: string[];
     if (intent === 'sell' || intent === 'cash') {
-      chips = [CHIP_KEYS.COMPARE_CASH_LISTING, CHIP_KEYS.GET_SELLING_OPTIONS];
+      chips = [CHIP_KEYS.HOME_VALUATION, CHIP_KEYS.GET_SELLING_OPTIONS];
     } else if (intent === 'buy') {
-      chips = [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES];
+      chips = [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.BROWSE_GUIDES];
     } else if (intent === 'invest') {
       // FIX-SIM-12: investor evaluate chips
       chips = [CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.GET_SELLING_OPTIONS];
