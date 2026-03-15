@@ -33,6 +33,7 @@ import { updateSessionContext } from '@/lib/analytics/selenaSession';
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const { openChat, clearHistory } = useSelenaChat();
   const [ytLoaded, setYtLoaded] = useState(false);
   useDocumentHead({
