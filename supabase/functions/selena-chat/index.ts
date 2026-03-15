@@ -48,7 +48,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { 
   detectMode, 
-  getModeSuggestedReplies, 
   MODE_INSTRUCTIONS_EN, 
   MODE_INSTRUCTIONS_ES,
   type ConversationMode,
@@ -56,6 +55,7 @@ import {
 } from "./modeContext.ts";
 import { buildGuardState, applyGuardRules } from "./guardState.ts";
 import { classifyJourneyState } from "./journeyState.ts";
+import { generateEntryGreeting, type EntryContext } from "./entryGreetings.ts";
 
 interface ChatMessage {
   role: "user" | "assistant";
