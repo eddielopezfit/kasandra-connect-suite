@@ -928,6 +928,10 @@ const DESTINATION_TO_CHIP_KEY: Record<string, string> = {
   '/cash-offer-options': CHIP_KEYS.ESTIMATE_PROCEEDS,
   '/book': CHIP_KEYS.TALK_WITH_KASANDRA,
   '/seller-decision': CHIP_KEYS.GET_SELLING_OPTIONS,
+  // New tools (March 2026 connection pass)
+  '/affordability-calculator': CHIP_KEYS.AFFORDABILITY_CALCULATOR,
+  '/bah-calculator': CHIP_KEYS.BAH_CALCULATOR,
+  '/home-valuation': CHIP_KEYS.HOME_VALUATION,
 };
 
 // Legacy reverse lookup (kept for display-string resolution in filterChipsForCompletedTools)
@@ -940,6 +944,10 @@ const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
   '/cash-offer-options': { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
   '/book': { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' },
   '/seller-decision': { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
+  // New tools (March 2026 connection pass)
+  '/affordability-calculator': { en: 'Check my buying power', es: 'Verificar poder de compra' },
+  '/bah-calculator': { en: 'BAH buying power', es: 'Poder de compra BAH' },
+  '/home-valuation': { en: 'Get my market analysis', es: 'Obtener mi análisis' },
 };
 
 const GUIDE_DELIVERY_AFFIRMATIVE = /^(yes|sure|yeah|yep|ok|okay|please|show me|tell me more|sí|si|claro|por favor|muéstrame|muestrame)$/i;
