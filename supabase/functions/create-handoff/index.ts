@@ -142,26 +142,42 @@ serve(async (req) => {
     }
 
     // ============================================
+    // ============================================
+    // Fetch lead profile for notify-handoff payload
+    // ============================================
+    const { data: lead } = await supabase
+      .from('lead_profiles')
+      .select('email, phone, name, intent, language, session_id')
+      .eq('id', lead_id)
+      .single();
+
+    // ============================================
     // Notify Kasandra (background call to notify-handoff)
     // ============================================
-    const notificationPayload = {
-      type: 'PRIORITY_HANDOFF',
-      timestamp: new Date().toISOString(),
-      lead_id,
-      handoff_id: handoff.id,
-      priority,
-      channel,
-      reason,
-      summary_md,
-      summary_json,
-      recommended_next_step,
-      booking_url: bookingUrl,
-      slots_available: slots.length,
-      selected_slot: selected_slot || null,
+    const nameParts = (lead?.name ?? '').split(' ');
+    const notifyPayload = {
+      contact: {
+        email: lead?.email ?? '',
+        phone: lead?.phone ?? '',
+        firstName: nameParts[0] ?? '',
+        lastName: nameParts.slice(1).join(' '),
+      },
+      context: {
+        intent: lead?.intent ?? '',
+        language: lead?.language ?? 'en',
+        selena_lead_id: lead_id,
+        session_id: lead?.session_id ?? '',
+        readiness_score: 0,
+        journey_state: priority === 'hot' ? 'decide' : 'qualify',
+        summary_md,
+        handoff_id: handoff.id,
+        priority,
+        channel,
+      },
     };
-    
-    console.log('[create-handoff] 🔔 NOTIFICATION TO KASANDRA:', JSON.stringify(notificationPayload, null, 2));
-    
+
+    console.log('[create-handoff] 🔔 NOTIFICATION TO KASANDRA:', JSON.stringify(notifyPayload, null, 2));
+
     // Fire notify-handoff in background (don't await)
     fetch(`${supabaseUrl}/functions/v1/notify-handoff`, {
       method: 'POST',
@@ -169,10 +185,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${supabaseServiceKey}`,
       },
-      body: JSON.stringify({
-        lead_id,
-        handoff_id: handoff.id,
-      }),
+      body: JSON.stringify(notifyPayload),
     }).catch(err => {
       console.error('[create-handoff] Failed to trigger notify-handoff:', err);
     });
