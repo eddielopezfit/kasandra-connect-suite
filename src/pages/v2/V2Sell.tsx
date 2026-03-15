@@ -9,7 +9,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
-import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar, BarChart3 } from "lucide-react";
+import { Shield, TrendingUp, FileText, Handshake, AlertCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar, BarChart3 } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
@@ -326,16 +326,16 @@ const V2SellContent = () => {
                 </div>
               </div>
 
-              <Button
+              <button
                 onClick={() => {
                   handleCTAClick('sell_comparison_traditional', 'selena_chat');
                   openChat({ source: 'sell_comparison_traditional', intent: 'sell' });
                 }}
-                className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full"
+                className="text-cc-gold hover:text-cc-gold-dark text-sm font-semibold underline underline-offset-2 transition-colors inline-flex items-center gap-1 mt-2"
               >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                {t("Talk to Selena About Listing", "Habla con Selena Sobre Listar")}
-              </Button>
+                {t("Ask Selena about listing", "Pregúntale a Selena sobre listar")}
+                <ArrowRight className="w-3 h-3" />
+              </button>
             </div>
 
             {/* RIGHT — Cash Offer via Corner Connect */}
@@ -439,14 +439,12 @@ const V2SellContent = () => {
                 {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
               </Link>
             </Button>
-            <Button 
-              variant="ghost"
+            <button
               onClick={handleSelenaRoute}
-              className="text-white/80 hover:text-cc-gold font-medium rounded-full px-8"
+              className="text-white/60 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
             >
-              <MessageCircle className="w-4 h-4 mr-2" />
               {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
-            </Button>
+            </button>
           </div>
         </div>
       </section>

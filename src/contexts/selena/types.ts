@@ -55,7 +55,8 @@ export type EntrySource =
     | 'guide_synthesis'
     | 'affordability_calculator'
     | 'bah_calculator'
-    | 'home_valuation';
+    | 'home_valuation'
+    | 'cash_offer_bottom';
 
 export interface EntryContext {
   estimatedBudget?: number;

@@ -8,7 +8,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { buyerTestimonials } from "@/data/testimonials";
-import { Search, DollarSign, CheckCircle, MessageCircle, Calendar, Calculator, Shield } from "lucide-react";
+import { Search, DollarSign, CheckCircle, Calendar, Calculator, Shield } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
@@ -276,14 +276,12 @@ const V2BuyContent = () => {
                 {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
               </Link>
             </Button>
-            <Button 
-              variant="ghost"
+            <button
               onClick={handleSelenaRoute}
-              className="text-white/80 hover:text-cc-gold font-medium rounded-full px-8"
+              className="text-white/60 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
             >
-              <MessageCircle className="w-4 h-4 mr-2" />
               {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
-            </Button>
+            </button>
           </div>
         </div>
       </section>

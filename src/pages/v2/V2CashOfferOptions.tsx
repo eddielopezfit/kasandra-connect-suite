@@ -6,7 +6,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, MessageCircle, Sparkles, Calendar } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, Sparkles, Calendar } from "lucide-react";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-cash-calm.png";
 
@@ -53,9 +53,9 @@ const V2CashOfferOptionsContent = () => {
               </button>
               <button
                 onClick={() => openChat({ source: 'cash_offer_options_hero', intent: 'cash' })}
-                className="inline-flex items-center gap-2 border-2 border-white/40 hover:border-white text-white font-medium px-6 py-3 rounded-full transition-all"
+                className="text-white/70 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
               >
-                {t("Ask Selena a Question", "Preguntarle a Selena")}
+                {t("Or ask Selena a question", "O pregúntale a Selena")}
               </button>
             </div>
           </div>
@@ -175,24 +175,7 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
-      {/* Selena Prompt — between comparison and warning */}
-      <section className="py-10 bg-cc-navy">
-        <div className="container mx-auto px-4 text-center">
-          <p className="max-w-xl mx-auto mb-4 text-white">
-            {t(
-              "Not sure which path fits your situation? Ask Selena — she can walk you through both options based on your specific home.",
-              "¿No está seguro qué camino se adapta a su situación? Pregúntele a Selena — ella puede guiarle por ambas opciones según su casa."
-            )}
-          </p>
-          <Button
-            onClick={() => openChat({ source: 'calculator', intent: 'cash' })}
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
-          >
-            <MessageCircle className="mr-2 h-4 w-4" />
-            {t("Ask Selena About My Options", "Pregúntale a Selena Sobre Mis Opciones")}
-          </Button>
-        </div>
-      </section>
+      {/* Removed duplicate Selena mid-page section — Selena is accessible via floating bubble + hero text link */}
 
       {/* Warning Section */}
       <section className="py-12 bg-cc-gold/10">
@@ -300,49 +283,14 @@ const V2CashOfferOptionsContent = () => {
           </div>
         </div>
       </section>
-      <section className="py-16 lg:py-20 bg-cc-ivory">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">
-            {t("Complimentary Cash Offer Review", "Revisión Complementaria de Oferta en Efectivo")}
-          </h2>
-          <p className="text-cc-charcoal max-w-2xl mx-auto mb-8">
-            {t(
-              "Already received a cash offer? I'll help you review it—check for red flags, compare it to potential market value, and make sure you understand exactly what you're signing.",
-              "¿Ya recibió una oferta en efectivo? Le ayudaré a revisarla—verificar señales de alerta, compararla con el valor potencial de mercado, y asegurar que entienda exactamente lo que está firmando."
-            )}
-          </p>
-          <div className="bg-white rounded-xl p-8 max-w-xl mx-auto shadow-elevated border border-cc-sand-dark/30">
-            <p className="text-sm text-cc-slate mb-6">
-              {t(
-                "This is an educational service to help you understand your options. For specific legal or tax advice, please consult qualified professionals.",
-                "Este es un servicio educativo para ayudarle a entender sus opciones. Para consejos legales o fiscales específicos, por favor consulte profesionales calificados."
-              )}
-            </p>
-            <Button 
-              asChild
-              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
-            >
-              <Link
-                to="/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options"
-                onClick={() => {
-                  logCTAClick({ cta_name: 'cash_offer_book_review', destination: '/book?intent=sell&callType=cash_offer_review&source=hub_cash_offer_options', page_path: '/cash-offer-options', intent: 'sell' });
-                }}
-              >
-                <MessageCircle className="w-5 h-5 mr-2" />
-                {t("Book a Cash Offer Review", "Agendar una Revisión de Oferta en Efectivo")}
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-      {/* Bottom Booking CTA */}
-      <section className="py-14 bg-cc-sand">
+      {/* Single Bottom CTA — merged from previous two sections */}
+      <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-xl mx-auto">
-            <h3 className="font-serif text-2xl font-bold text-cc-navy mb-3">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
               {t("Want Expert Guidance on Your Options?", "¿Quiere Orientación Experta Sobre Sus Opciones?")}
-            </h3>
-            <p className="text-cc-charcoal text-sm mb-6">
+            </h2>
+            <p className="text-white/80 text-sm mb-6">
               {t(
                 "Kasandra reviews both cash and traditional paths with every seller — you decide with full information.",
                 "Kasandra revisa tanto el camino de efectivo como el tradicional con cada vendedor — usted decide con información completa."
@@ -357,6 +305,12 @@ const V2CashOfferOptionsContent = () => {
                 {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
               </Link>
             </Button>
+            <button
+              onClick={() => openChat({ source: 'cash_offer_bottom', intent: 'cash' })}
+              className="block mx-auto mt-3 text-white/60 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
+            >
+              {t("Or talk to Selena first", "O habla primero con Selena")}
+            </button>
           </div>
         </div>
       </section>
