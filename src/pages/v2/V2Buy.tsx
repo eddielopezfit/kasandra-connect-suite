@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import JsonLd from "@/components/seo/JsonLd";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
