@@ -16,6 +16,7 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import { markGuideOpened, setLastGuideId, getGuidesRead } from '@/lib/guides/personalization';
 import { getGuideById, type GuideCategory } from "@/lib/guides/guideRegistry";
 import { getHowToSchema } from "@/lib/guides/howToSchemas";
+import { RelatedGuides } from "@/components/v2/guides/RelatedGuides";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { CognitiveProgressBar } from "@/components/v2/guides/CognitiveProgressBar";
@@ -510,6 +511,15 @@ function GuideDetailContent() {
           <GuideReadNext
             currentGuideId={guideId}
             currentCategory={safeCategory}
+          />
+        )}
+
+        {/* Related Guides — UX-06: same-category guide pathway */}
+        {guideId && (
+          <RelatedGuides
+            currentGuideId={guideId}
+            currentCategory={safeCategory}
+            maxGuides={3}
           />
         )}
 
