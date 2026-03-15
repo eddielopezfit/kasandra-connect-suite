@@ -1,6 +1,13 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { computeLeadScore, shouldSkipScoreLog } from "../_shared/normalizeLead.ts";
+import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
+
+/**
+ * update-lead-score
+ * SECURITY: Rate limited to 10 req/min per session/IP.
+ * Prevents anonymous callers from bulk-corrupting lead scoring data. [audit CRIT-04]
+ */
 
 interface UpdateScoreInput {
   lead_id: string;
@@ -35,6 +42,11 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Rate limiting: 10 req/min per session/IP — prevents bulk lead score corruption
+    const rlKey = extractRateLimitKey(req, input);
+    const rl = await checkRateLimit(supabase, rlKey, 'update-lead-score', 10);
+    if (!rl.allowed) return rateLimitResponse(corsHeaders);
 
     // Fetch existing lead to merge signals
     const { data: lead, error: fetchError } = await supabase
