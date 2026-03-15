@@ -1183,9 +1183,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Market conditions change, and the numbers you read online are often weeks or months behind. Kasandra is in the Tucson market every week — she can tell you what the data actually means for your specific situation.",
       es: "Las condiciones del mercado cambian, y los números que lees en línea a menudo tienen semanas o meses de retraso. Kasandra está en el mercado de Tucson cada semana — puede decirte lo que los datos realmente significan para tu situación específica.",
     },
+    lastVerifiedDate: '2026-03-15',
   },
-
-  // --- bad-credit-home-buying-tucson ---
   {
     id: 'bad-credit-home-buying-tucson',
     path: '/guides/bad-credit-home-buying-tucson',
