@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface MarketPulse {
   market_name: string;
-  negotiation_gap: number | null;       // e.g. 0.024 → 97.6% sale-to-list
-  days_to_close: number | null;         // escrow days (subtract ~30 for DOM)
-  holding_cost_per_day: number | null;  // $ per day on market
-  market_ready_prep_avg: number | null; // avg pre-sale prep spend
+  negotiation_gap: number | null;
+  days_to_close: number | null;
+  holding_cost_per_day: number | null;
+  market_ready_prep_avg: number | null;
   last_verified_date: string | null;
   updated_at: string;
 }
@@ -21,24 +21,13 @@ export const MARKET_FALLBACK: MarketPulse = {
   updated_at: new Date().toISOString(),
 };
 
-/**
- * Derived human-readable stats from raw MarketPulse data.
- * These are the values guides and tools display to end users.
- */
 export interface MarketStats {
-  /** Median days on market (days_to_close minus ~30 escrow days) */
   daysOnMarket: number;
-  /** e.g. "97.6%" */
   saleToListRatio: string;
-  /** Raw number e.g. 0.976 */
   saleToListRaw: number;
-  /** $ per day holding cost */
   holdingCostPerDay: number;
-  /** Average pre-sale prep spend */
   prepAvg: number;
-  /** Human-readable verified date e.g. "January 2026" / "enero de 2026" */
   verifiedDate: string | null;
-  /** Whether data came from live DB or fallback */
   isLive: boolean;
 }
 
@@ -72,45 +61,40 @@ function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' 
   };
 }
 
+async function fetchMarketPulse(): Promise<MarketPulse> {
+  const { data, error } = await supabase.functions.invoke("get-market-pulse");
+  if (error || !data?.days_to_close) throw new Error("No data");
+
+  const isSane =
+    (data.negotiation_gap ?? 0) > 0.005 &&
+    (data.negotiation_gap ?? 1) < 0.15 &&
+    (data.holding_cost_per_day ?? 0) >= 5 &&
+    (data.days_to_close ?? 0) >= 20 &&
+    (data.days_to_close ?? 999) <= 200;
+
+  if (!isSane) throw new Error("Insane data");
+  return data as MarketPulse;
+}
+
 /**
- * useMarketPulse
- *
- * Shared hook for live Tucson market stats.
- * Used by guides, tools, and any component needing current market data.
- *
- * Accepts optional language param for locale-aware date formatting.
- * Returns derived human-readable stats + raw pulse + loading state.
- * Falls back gracefully if the edge function is unavailable.
+ * useMarketPulse — cached via React Query (30-min staleTime).
  */
 export function useMarketPulse(language: 'en' | 'es' = 'en') {
-  const [pulse, setPulse] = useState<MarketPulse>(MARKET_FALLBACK);
-  const [isLive, setIsLive] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useQuery({
+    queryKey: ['market-pulse'],
+    queryFn: fetchMarketPulse,
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+    retry: 1,
+  });
 
-  useEffect(() => {
-    supabase.functions.invoke("get-market-pulse").then(({ data, error }) => {
-      if (!error && data?.days_to_close) {
-        // Sanity checks — reject obviously corrupted scrape data
-        const isSane =
-          (data.negotiation_gap ?? 0) > 0.005 &&
-          (data.negotiation_gap ?? 1) < 0.15 &&
-          (data.holding_cost_per_day ?? 0) >= 5 &&
-          (data.days_to_close ?? 0) >= 20 &&
-          (data.days_to_close ?? 999) <= 200;
-
-        if (isSane) {
-          setPulse(data as MarketPulse);
-          setIsLive(true);
-        }
-      }
-      setLoading(false);
-    });
-  }, []);
+  const pulse = data ?? MARKET_FALLBACK;
+  const isLive = !!data;
 
   return {
     pulse,
     stats: deriveStats(pulse, isLive, language),
     isLive,
-    loading,
+    loading: isLoading,
   };
 }

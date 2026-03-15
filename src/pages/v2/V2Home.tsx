@@ -4,8 +4,10 @@ import JsonLd from "@/components/seo/JsonLd";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TrustBar from "@/components/v2/TrustBar";
-import TestimonialColumns from "@/components/v2/TestimonialColumns";
-import { useEffect, useRef } from "react";
+import { lazy, Suspense, useState, useEffect, useRef } from "react";
+const TestimonialColumns = lazy(() => import("@/components/v2/TestimonialColumns"));
+const LazyHomepageNeighborhoodCards = lazy(() => import("@/components/v2/neighborhood/HomepageNeighborhoodCards"));
+const LazyInstantAnswerWidget = lazy(() => import("@/components/v2/calculator/InstantAnswerWidget"));
 import {
   Home,
   Shield,
@@ -24,16 +26,15 @@ import {
 } from "lucide-react";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
-import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeighborhoodCards";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import CTASection from "@/components/v2/CTASection";
-import { InstantAnswerWidget } from "@/components/v2/calculator";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { updateSessionContext } from '@/lib/analytics/selenaSession';
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
   const { openChat, clearHistory } = useSelenaChat();
+  const [ytLoaded, setYtLoaded] = useState(false);
   useDocumentHead({
     titleEn: "Tucson Real Estate | Kasandra Prieto — Bilingual REALTOR® & Concierge",
     titleEs: "Bienes Raíces en Tucson | Kasandra Prieto — REALTOR® Bilingüe y Concierge",
@@ -197,7 +198,9 @@ const V2HomeContent = () => {
               {t("Instant Answers, Zero Pressure", "Respuestas Inmediatas, Cero Presión")}
             </h2>
           </div>
-          <InstantAnswerWidget />
+          <Suspense fallback={<div className="h-64 bg-cc-sand/50 rounded-2xl animate-pulse" />}>
+            <LazyInstantAnswerWidget />
+          </Suspense>
         </div>
       </section>
 
@@ -220,6 +223,7 @@ const V2HomeContent = () => {
                   src="/videos/kasandra-welcome.mp4"
                   controls
                   playsInline
+                  preload="none"
                   poster={kasandraHeadshot}
                   className="w-full h-full object-contain bg-cc-navy"
                   style={{ aspectRatio: '9/16' }}
@@ -322,6 +326,7 @@ const V2HomeContent = () => {
                   src="/videos/kasandra-welcome.mp4"
                   controls
                   playsInline
+                  preload="none"
                   poster={kasandraHeadshot}
                   className="w-full h-full object-contain"
                 >
@@ -403,6 +408,7 @@ const V2HomeContent = () => {
                   src="/videos/kasandra-welcome.mp4"
                   controls
                   playsInline
+                  preload="none"
                   poster={kasandraHeadshot}
                   className="w-full h-full object-contain"
                 >
@@ -445,7 +451,9 @@ const V2HomeContent = () => {
       </section>
 
       {/* Neighborhood Cards */}
-      <HomepageNeighborhoodCards />
+      <Suspense fallback={<div className="h-64 bg-cc-sand/50 animate-pulse" />}>
+        <LazyHomepageNeighborhoodCards />
+      </Suspense>
 
       {/* Trust Bar */}
       <TrustBar />
@@ -609,7 +617,9 @@ const V2HomeContent = () => {
       </section>
 
       {/* Social Proof — Staggered Masonry */}
-      <TestimonialColumns />
+      <Suspense fallback={<div className="h-64 bg-cc-ivory animate-pulse" />}>
+        <TestimonialColumns />
+      </Suspense>
 
       {/* Podcast Section */}
       <section className="py-16 lg:py-20 bg-cc-blue-bg">
@@ -640,14 +650,32 @@ const V2HomeContent = () => {
               </Link>
             </div>
             <div className="bg-white rounded-2xl p-4 shadow-elevated">
-              <div className="aspect-video rounded-lg overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/xmJ62GGtKgo"
-                  title="Lifting You Up with Kasandra Prieto"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                />
+              <div className="aspect-video rounded-lg overflow-hidden relative">
+                {ytLoaded ? (
+                  <iframe
+                    src="https://www.youtube.com/embed/xmJ62GGtKgo?autoplay=1"
+                    title="Lifting You Up with Kasandra Prieto"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                ) : (
+                  <button
+                    onClick={() => setYtLoaded(true)}
+                    className="w-full h-full bg-cc-navy flex items-center justify-center group cursor-pointer"
+                    aria-label="Play video"
+                  >
+                    <img
+                      src="https://img.youtube.com/vi/xmJ62GGtKgo/hqdefault.jpg"
+                      alt="Lifting You Up podcast episode thumbnail"
+                      className="absolute inset-0 w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="relative z-10 w-16 h-16 rounded-full bg-cc-gold/90 flex items-center justify-center shadow-lg group-hover:bg-cc-gold transition-colors">
+                      <svg viewBox="0 0 24 24" className="w-7 h-7 text-cc-navy ml-1" fill="currentColor"><polygon points="5,3 19,12 5,21" /></svg>
+                    </div>
+                  </button>
+                )}
               </div>
             </div>
           </div>

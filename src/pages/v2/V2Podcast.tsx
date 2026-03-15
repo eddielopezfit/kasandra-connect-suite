@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Link } from "react-router-dom";
@@ -12,6 +13,7 @@ import heroImage from "@/assets/hero-podcast-homes.png";
 const V2PodcastContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+  const [ytLoaded, setYtLoaded] = useState(false);
   useDocumentHead({
     titleEn: "Lifting You Up Podcast | Tucson Real Estate & Community",
     titleEs: "Podcast Lifting You Up | Bienes Raíces y Comunidad en Tucson",
@@ -115,14 +117,32 @@ const V2PodcastContent = () => {
               </div>
             </div>
             <div className="bg-white rounded-2xl p-4 shadow-elevated border border-cc-sand-dark/30">
-              <div className="aspect-video rounded-lg overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/xmJ62GGtKgo"
-                  title="Lifting You Up with Kasandra Prieto"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                />
+              <div className="aspect-video rounded-lg overflow-hidden relative">
+                {ytLoaded ? (
+                  <iframe
+                    src="https://www.youtube.com/embed/xmJ62GGtKgo?autoplay=1"
+                    title="Lifting You Up with Kasandra Prieto"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                ) : (
+                  <button
+                    onClick={() => setYtLoaded(true)}
+                    className="w-full h-full bg-cc-navy flex items-center justify-center group cursor-pointer"
+                    aria-label="Play video"
+                  >
+                    <img
+                      src="https://img.youtube.com/vi/xmJ62GGtKgo/hqdefault.jpg"
+                      alt="Lifting You Up podcast episode thumbnail"
+                      className="absolute inset-0 w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="relative z-10 w-16 h-16 rounded-full bg-cc-gold/90 flex items-center justify-center shadow-lg group-hover:bg-cc-gold transition-colors">
+                      <svg viewBox="0 0 24 24" className="w-7 h-7 text-cc-navy ml-1" fill="currentColor"><polygon points="5,3 19,12 5,21" /></svg>
+                    </div>
+                  </button>
+                )}
               </div>
               <p className="text-center text-sm text-cc-slate mt-3">
                 {t("Episodes available on YouTube", "Episodios disponibles en YouTube")}
@@ -132,7 +152,7 @@ const V2PodcastContent = () => {
         </div>
       </section>
 
-      {/* Selena Trust Bridge — listeners thinking about real estate */}
+      {/* Selena Trust Bridge */}
       <section className="py-14 bg-cc-sand">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto bg-white rounded-2xl p-8 border border-cc-sand-dark/30 shadow-soft text-center">
