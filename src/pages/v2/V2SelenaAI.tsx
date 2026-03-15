@@ -102,6 +102,44 @@ const V2SelenaAIContent = () => {
         </div>
       </section>
 
+      {/* Try Selena Right Now — inline CTA band */}
+      <section className="bg-cc-navy py-16 lg:py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
+            {t("Try Selena Right Now", "Prueba a Selena Ahora Mismo")}
+          </h2>
+          <p className="text-white/80 text-lg max-w-2xl mx-auto mb-8">
+            {t(
+              "Ask anything — what to expect when buying, how cash offers work, what your home might be worth.",
+              "Pregunta lo que quieras — qué esperar al comprar, cómo funcionan las ofertas en efectivo, cuánto podría valer tu casa."
+            )}
+          </p>
+          <Button
+            size="lg"
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-10 shadow-gold mb-8"
+            onClick={() => openChat({ source: 'selena_ai_page_demo' })}
+          >
+            <MessageCircle className="w-5 h-5 mr-2" />
+            {t("Start Talking to Selena", "Empieza a Hablar con Selena")}
+          </Button>
+          <div className="flex flex-wrap justify-center gap-3">
+            {[
+              { en: "How does a cash offer work?", es: "¿Cómo funciona una oferta en efectivo?" },
+              { en: "Am I ready to buy?", es: "¿Estoy lista para comprar?" },
+              { en: "What's my home worth?", es: "¿Cuánto vale mi casa?" },
+            ].map((chip) => (
+              <button
+                key={chip.en}
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-full border border-white/20 transition-colors"
+                onClick={() => openChat({ source: 'selena_ai_page_demo', prefillMessage: t(chip.en, chip.es) })}
+              >
+                {t(chip.en, chip.es)}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Compliance */}
       <section className="bg-cc-ivory py-10">
         <div className="container mx-auto px-4 text-center">
