@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import SellerFunnelLayout from "@/components/ad/SellerFunnelLayout";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -85,6 +86,15 @@ const SellerResultContent = () => {
       localStorage.setItem('cc_net_sheet_difference', String(calculations.difference));
     }
   }, [calculations.difference]);
+
+  // noindex: paid ad funnel result page — should not be indexed [audit SEO-04]
+  useDocumentHead({
+    titleEn: "Your Home Net Sheet — Tucson | Kasandra Prieto",
+    titleEs: "Tu Reporte Neto — Tucson | Kasandra Prieto",
+    descriptionEn: "Your personalized Tucson home sale comparison: cash offer vs. traditional listing.",
+    descriptionEs: "Tu comparación personalizada de venta en Tucson: oferta en efectivo vs. listado.",
+    noindex: true,
+  });
 
   // ViewContent — once per page load
   useEffect(() => {
