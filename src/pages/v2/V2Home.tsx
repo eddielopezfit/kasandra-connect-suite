@@ -19,6 +19,8 @@ import {
   Calendar,
   CheckCircle,
   ArrowRight,
+  DollarSign,
+  Banknote,
 } from "lucide-react";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
