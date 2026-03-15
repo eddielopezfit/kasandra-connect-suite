@@ -194,8 +194,9 @@ const V2BuyerClosingCostsContent = () => {
     setInputs(prev => ({ ...prev, [k]: v }));
 
   const price = parseFloat(inputs.purchasePrice.replace(/,/g, "")) || 0;
+  const isCash = inputs.loanType === "cash";
   const downPct = parseFloat(inputs.downPctInput) || 10;
-  const downAmt = price * (downPct / 100);
+  const downAmt = isCash ? 0 : price * (downPct / 100);
   const loanAmt = price - downAmt;
 
   const minDown = inputs.loanType === "fha" ? 3.5 : inputs.loanType === "va" ? 0 : 3;
@@ -207,7 +208,7 @@ const V2BuyerClosingCostsContent = () => {
 
   const totLow = lines.reduce((s, l) => s + l.low, 0);
   const totHigh = lines.reduce((s, l) => s + l.high, 0);
-  const cashNeeded = downAmt + (totLow + totHigh) / 2;
+  const cashNeeded = (isCash ? price : downAmt) + (totLow + totHigh) / 2;
 
   const handleCalculate = () => {
     if (price < 50000) return;
@@ -386,10 +387,16 @@ const V2BuyerClosingCostsContent = () => {
               </p>
               <p className="font-serif text-4xl font-bold text-white">{fmtRange(totLow, totHigh)}</p>
               <p className="text-white/60 text-sm mt-2">
-                {t(
-                  `Total cash needed at closing (including ${fmt(downAmt)} down): ~${fmt(cashNeeded)}`,
-                  `Total de efectivo necesario al cierre (incluyendo ${fmt(downAmt)} de enganche): ~${fmt(cashNeeded)}`
-                )}
+                {isCash
+                  ? t(
+                      `Total cash needed at closing: ~${fmt(cashNeeded)}`,
+                      `Total de efectivo necesario al cierre: ~${fmt(cashNeeded)}`
+                    )
+                  : t(
+                      `Total cash needed at closing (including ${fmt(downAmt)} down): ~${fmt(cashNeeded)}`,
+                      `Total de efectivo necesario al cierre (incluyendo ${fmt(downAmt)} de enganche): ~${fmt(cashNeeded)}`
+                    )
+                }
               </p>
             </div>
 
