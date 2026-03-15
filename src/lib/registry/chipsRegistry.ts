@@ -658,21 +658,21 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'ASAP (0–30 days)',
     label_es: 'Lo antes posible (0–30 días)',
     normalized_key: 'asap (0-30 days)',
-    actionSpec: { type: 'navigate', path: '/seller-timeline', label: { en: 'ASAP (0–30 days)', es: 'Lo antes posible (0–30 días)' } },
+    actionSpec: { type: 'navigate', path: '/seller-timeline?timeline=asap', label: { en: 'ASAP (0–30 days)', es: 'Lo antes posible (0–30 días)' } },
   },
   {
     id: 'timeline-1-3-months-en',
     label_en: '1–3 months',
     label_es: '1–3 meses',
     normalized_key: '1-3 months',
-    actionSpec: { type: 'navigate', path: '/seller-timeline', label: { en: '1–3 months', es: '1–3 meses' } },
+    actionSpec: { type: 'navigate', path: '/seller-timeline?timeline=1-3months', label: { en: '1–3 months', es: '1–3 meses' } },
   },
   {
     id: 'timeline-3-6-months-en',
     label_en: '3–6 months',
     label_es: '3–6 meses',
     normalized_key: '3-6 months',
-    actionSpec: { type: 'navigate', path: '/seller-timeline', label: { en: '3–6 months', es: '3–6 meses' } },
+    actionSpec: { type: 'navigate', path: '/seller-timeline?timeline=3-6months', label: { en: '3–6 months', es: '3–6 meses' } },
   },
   {
     id: 'timeline-exploring-en',
@@ -680,6 +680,37 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_es: 'Solo explorando',
     normalized_key: 'just exploring',
     actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Just exploring', es: 'Solo explorando' } },
+  },
+
+  // --- Greeting safety nets: "How much is my home worth?" ---
+  {
+    id: 'legacy-how-much-worth-en',
+    label_en: 'How much is my home worth?',
+    label_es: '¿Cuánto vale mi casa?',
+    normalized_key: 'how much is my home worth',
+    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+  },
+  {
+    id: 'legacy-how-much-worth-es',
+    label_en: 'How much is my home worth?',
+    label_es: '¿Cuánto vale mi casa?',
+    normalized_key: 'cuanto vale mi casa',
+    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+  },
+  // --- Greeting safety net: "I'm ready to talk to Kasandra" ---
+  {
+    id: 'legacy-ready-talk-en',
+    label_en: "I'm ready to talk to Kasandra",
+    label_es: 'Estoy lista para hablar con Kasandra',
+    normalized_key: "im ready to talk to kasandra",
+    actionSpec: { type: 'book', label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
+  },
+  {
+    id: 'legacy-ready-talk-es',
+    label_en: "I'm ready to talk to Kasandra",
+    label_es: 'Estoy lista para hablar con Kasandra',
+    normalized_key: 'estoy lista para hablar con kasandra',
+    actionSpec: { type: 'book', label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
   },
 
   // === PHASE 1 — INTENT DECLARATION CHIPS ===

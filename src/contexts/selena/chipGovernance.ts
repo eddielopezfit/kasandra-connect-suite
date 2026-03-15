@@ -224,11 +224,18 @@ export function getPhaseAwareChips(
 
   if (floor >= 3) {
     const keys = filterAndReplace([CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA]);
+    // Escape hatch: if both primary chips are blocked, offer Browse Guides as fallback
+    if (keys.length === 0) {
+      keys.push(CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.TALK_WITH_KASANDRA);
+    } else if (keys.length === 1) {
+      // Always ensure at least 2 chips to prevent single-chip dead end
+      const fallback = keys[0] === CHIP_KEYS.TALK_WITH_KASANDRA
+        ? CHIP_KEYS.BROWSE_GUIDES
+        : CHIP_KEYS.TALK_WITH_KASANDRA;
+      if (!isBlocked(fallback)) keys.push(fallback);
+    }
     const labels = keys.map(resolveLabel);
-    return mapChipsToActionSpecs(
-      labels.length ? labels : [resolveLabel(CHIP_KEYS.TALK_WITH_KASANDRA)],
-      lang as 'en' | 'es',
-    );
+    return mapChipsToActionSpecs(labels, lang as 'en' | 'es');
   }
   if (floor >= 2 && (intent === 'sell' || intent === 'cash')) {
     const keys = filterAndReplace([CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.COMPARE_CASH_LISTING]);
@@ -247,10 +254,12 @@ export function getPhaseAwareChips(
     );
   }
   if (floor >= 2 && intent) {
-    return [
-      { label: t("What are my options?", "¿Cuáles son mis opciones?") },
-      { label: t("I have a question", "Tengo una pregunta") },
-    ];
+    // Explore / generic intent at Phase 2+ → ActionSpec-backed chips (no dead ends)
+    const keys = filterAndReplace([CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.EXPLORE_NEIGHBORHOODS]);
+    const labels = keys.length
+      ? keys.map(resolveLabel)
+      : [resolveLabel(CHIP_KEYS.BROWSE_GUIDES)];
+    return mapChipsToActionSpecs(labels, lang as 'en' | 'es');
   }
   return [
     { label: t("I'm thinking about selling", "Estoy pensando en vender") },
