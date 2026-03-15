@@ -3180,12 +3180,32 @@ serve(async (req) => {
         const cachedPulse = getCached<Record<string, unknown>>(pulseCacheKey);
         const pulse = cachedPulse ?? (rlUrl && rlKey ? await (async () => {
           const pulseClient = createClient(rlUrl, rlKey);
+          // Try new market_pulse table first (automated pipeline)
+          const { data: newPulse } = await pulseClient
+            .from("market_pulse")
+            .select("sale_to_list_ratio, median_days_on_market, holding_cost_per_day, source_links")
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (newPulse) {
+            // Normalize to legacy format for downstream code
+            const normalized = {
+              days_to_close: (newPulse.median_days_on_market as number) + 30,
+              holding_cost_per_day: newPulse.holding_cost_per_day,
+              negotiation_gap: parseFloat((1 - Number(newPulse.sale_to_list_ratio)).toFixed(4)),
+              scrape_log: null,
+              _source: 'market_pulse',
+            };
+            setCache(pulseCacheKey, normalized, 3600000);
+            return normalized;
+          }
+          // Fallback to legacy market_pulse_settings
           const { data } = await pulseClient
             .from("market_pulse_settings")
             .select("days_to_close, holding_cost_per_day, negotiation_gap, scrape_log")
             .eq("market_name", "Tucson_Overall")
             .single();
-          if (data) setCache(pulseCacheKey, data, 3600000); // 1 hour TTL
+          if (data) setCache(pulseCacheKey, data, 3600000);
           return data;
         })() : null);
         if (cachedPulse) console.log('[Selena] Market pulse cache HIT');

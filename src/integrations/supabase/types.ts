@@ -312,6 +312,42 @@ export type Database = {
           },
         ]
       }
+      market_pulse: {
+        Row: {
+          created_at: string
+          holding_cost_per_day: number
+          id: string
+          median_days_on_market: number
+          month: string
+          prep_avg: number
+          sale_to_list_ratio: number
+          source_links: Json
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          holding_cost_per_day?: number
+          id?: string
+          median_days_on_market: number
+          month: string
+          prep_avg?: number
+          sale_to_list_ratio: number
+          source_links?: Json
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          holding_cost_per_day?: number
+          id?: string
+          median_days_on_market?: number
+          month?: string
+          prep_avg?: number
+          sale_to_list_ratio?: number
+          source_links?: Json
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       market_pulse_settings: {
         Row: {
           days_to_close: number

@@ -3,8 +3,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 /**
  * get-market-pulse
- * PERF: Returns cached market data with 1-hour Cache-Control header.
- * Data changes at most weekly — no need to hit DB on every page load. [audit PERF-02]
+ * 
+ * Returns the latest market_pulse row (new automated pipeline table).
+ * Falls back to legacy market_pulse_settings if no rows exist yet.
+ * 
+ * PERF: 1-hour Cache-Control. Data changes at most monthly.
  */
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
@@ -18,6 +21,48 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Try new market_pulse table first (latest row by created_at)
+    const { data: pulseData, error: pulseError } = await supabase
+      .from("market_pulse")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (pulseData && !pulseError) {
+      // Return in a normalized format the UI hook expects
+      const response = {
+        source: "market_pulse",
+        month: pulseData.month,
+        sale_to_list_ratio: pulseData.sale_to_list_ratio,
+        median_days_on_market: pulseData.median_days_on_market,
+        holding_cost_per_day: pulseData.holding_cost_per_day,
+        prep_avg: pulseData.prep_avg,
+        source_links: pulseData.source_links,
+        verified_at: pulseData.verified_at,
+        created_at: pulseData.created_at,
+        // Legacy compat fields for existing hook
+        market_name: "Tucson_Overall",
+        negotiation_gap: parseFloat((1 - Number(pulseData.sale_to_list_ratio)).toFixed(4)),
+        days_to_close: pulseData.median_days_on_market + 30,
+        market_ready_prep_avg: pulseData.prep_avg,
+        last_verified_date: pulseData.verified_at
+          ? new Date(pulseData.verified_at).toISOString().split("T")[0]
+          : null,
+        updated_at: pulseData.created_at,
+      };
+
+      return new Response(JSON.stringify(response), {
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+          "Cache-Control": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=3600",
+        },
+      });
+    }
+
+    // Fallback: legacy market_pulse_settings table
+    console.log("[get-market-pulse] No market_pulse rows, falling back to market_pulse_settings");
     const { data, error } = await supabase
       .from("market_pulse_settings")
       .select("market_name, negotiation_gap, days_to_close, holding_cost_per_day, market_ready_prep_avg, last_verified_date, updated_at")
@@ -26,9 +71,7 @@ Deno.serve(async (req) => {
 
     if (error) throw error;
 
-    // Cache for 1 hour on CDN / client — data updates at most weekly
-    // s-maxage=86400 allows Vercel/Cloudflare edge to cache for 24h
-    return new Response(JSON.stringify(data), {
+    return new Response(JSON.stringify({ ...data, source: "market_pulse_settings" }), {
       headers: {
         ...corsHeaders,
         "Content-Type": "application/json",
