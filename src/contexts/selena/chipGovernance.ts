@@ -58,6 +58,16 @@ const GUIDE_BLOCKED_CHIPS: Record<string, ChipKey[]> = {
   'tucson-suburb-comparison': [CHIP_KEYS.GUIDE_SUBURB_COMPARE],
   'buying-home-noncitizen-arizona': [CHIP_KEYS.GUIDE_NONCITIZEN],
   'arizona-real-estate-glossary': [CHIP_KEYS.GUIDE_GLOSSARY],
+
+  // New SEO guides (March 2026) — suppress readiness/FTB chips once read
+  'itin-loan-guide': [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BUYER_READINESS_SHORT],
+  'bad-credit-home-buying-tucson': [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BUYER_READINESS_SHORT],
+  'down-payment-assistance-tucson': [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BUYER_READINESS_SHORT],
+  'fha-loan-pima-county-2026': [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BUYER_READINESS_SHORT],
+  'va-home-loan-tucson': [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BUYER_READINESS_SHORT, CHIP_KEYS.GUIDE_MILITARY],
+  'first-time-buyer-programs-pima-county': [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.GUIDE_FTB_PROGRAMS],
+  'divorce-home-sale-arizona': [CHIP_KEYS.GUIDE_DIVORCE],
+  'tucson-market-update-2026': [CHIP_KEYS.TUCSON_MARKET_DATA],
 };
 
 // ============= SEMANTIC KEY → LOCALIZED LABEL RESOLUTION =============
