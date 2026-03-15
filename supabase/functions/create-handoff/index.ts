@@ -145,11 +145,11 @@ serve(async (req) => {
     // ============================================
     // Fetch lead profile for notify-handoff payload
     // ============================================
-    const { data: lead } = await supabase
+    const { data: leadProfile } = await supabase
       .from('lead_profiles')
-      .select('email, phone, name, intent, language, session_id')
+      .select('email, phone, name, intent, language, session_id, lead_score')
       .eq('id', lead_id)
-      .single();
+      .maybeSingle();
 
     // ============================================
     // Notify Kasandra (background call to notify-handoff)
