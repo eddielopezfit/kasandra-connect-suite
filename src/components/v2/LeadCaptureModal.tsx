@@ -258,14 +258,11 @@ const LeadCaptureModal = ({
             </div>
           </div>
 
-          {/* Name (optional) */}
+          {/* Name */}
           <div className="space-y-2">
             <Label htmlFor="name" className="text-cc-charcoal font-medium flex items-center gap-2">
               <User className="w-4 h-4 text-cc-gold" />
               {t("Name", "Nombre")}
-              <span className="text-cc-slate text-xs font-normal">
-                ({t("optional", "opcional")})
-              </span>
             </Label>
             <Input
               id="name"
@@ -277,15 +274,19 @@ const LeadCaptureModal = ({
               autoComplete="name"
               autoFocus
             />
+            <p className="text-xs text-cc-slate mt-1">
+              {t("So Kasandra knows who she's talking to",
+                 "Para que Kasandra sepa con quién habla")}
+            </p>
           </div>
 
-          {/* Phone (optional) */}
+          {/* Phone (recommended) */}
           <div className="space-y-2">
             <Label htmlFor="phone" className="text-cc-charcoal font-medium flex items-center gap-2">
               <Phone className="w-4 h-4 text-cc-gold" />
               {t("Phone", "Teléfono")}
               <span className="text-cc-slate text-xs font-normal">
-                ({t("optional", "opcional")})
+                ({t("recommended", "recomendado")})
               </span>
             </Label>
             <Input
@@ -297,6 +298,10 @@ const LeadCaptureModal = ({
               className="border-cc-sand-dark focus:border-cc-gold focus:ring-cc-gold/20 bg-white"
               autoComplete="tel"
             />
+            <p className="text-xs text-cc-slate mt-1">
+              {t("Fastest way for Kasandra to reach you",
+                 "La forma más rápida para que Kasandra te contacte")}
+            </p>
           </div>
 
           {/* TCPA Consent */}
