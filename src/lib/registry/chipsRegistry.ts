@@ -684,20 +684,20 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Just exploring', es: 'Solo explorando' } },
   },
 
-  // --- Greeting safety nets: "How much is my home worth?" ---
+  // --- Greeting safety nets: "How much is my home worth?" → home-valuation ---
   {
     id: 'legacy-how-much-worth-en',
     label_en: 'How much is my home worth?',
     label_es: '¿Cuánto vale mi casa?',
     normalized_key: 'how much is my home worth',
-    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/home-valuation', label: { en: 'Get my market analysis', es: 'Obtener mi análisis de mercado' } },
   },
   {
     id: 'legacy-how-much-worth-es',
     label_en: 'How much is my home worth?',
     label_es: '¿Cuánto vale mi casa?',
     normalized_key: 'cuanto vale mi casa',
-    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/home-valuation', label: { en: 'Get my market analysis', es: 'Obtener mi análisis de mercado' } },
   },
   // --- Greeting safety net: "I'm ready to talk to Kasandra" ---
   {
