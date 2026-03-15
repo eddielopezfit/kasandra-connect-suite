@@ -1,75 +1,130 @@
 
 
-## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
+# Security Audit Report
 
-### What We're Doing
+## 1. RLS Policies — Status: STRONG
 
-Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
+All 10 tables have RLS enabled with restrictive policies. Sensitive tables (`lead_profiles`, `lead_handoffs`, `lead_reports`, `seller_leads`, `decision_receipts`, `market_pulse_settings`, `neighborhood_profiles`, `guide_queue`, `session_snapshots`) deny all public SELECT/INSERT/UPDATE/DELETE. Data access is exclusively through edge functions using `SUPABASE_SERVICE_ROLE_KEY`.
 
-### What We Do NOT Import
+`event_log` correctly allows anonymous INSERT (telemetry) but denies public SELECT (no data leakage). `rate_limits` denies all public access.
 
-- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
-- No market stats with hard-coded numbers (stale data risk)
-- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
-- No standalone footer (GuideComplianceFooter already exists)
-- No mid-guide CTAs or interactive state that writes to session
+**No issues found.**
 
 ---
 
-### Changes
+## 2. Exposed API Keys — Status: LOW RISK
 
-**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
+| Location | Key Type | Risk |
+|---|---|---|
+| `src/integrations/supabase/client.ts` | Anon/publishable key | Expected — this is a public key by design |
+| `src/lib/guides/guideMediaSlots.ts` | Hardcoded project ID in storage URL | Low — public bucket, no secret |
+| `.env` | `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` | Expected — Vite env vars are client-side by design |
 
-Add optional `variant` field and structured data:
+All service-role keys are server-side only (`Deno.env.get`). No secrets leaked to client bundle.
 
-```typescript
-export interface GuideSection {
-  heading: string;
-  headingEs: string;
-  content: string;       // plain-text fallback always required
-  contentEs: string;
-  variant?: 'default' | 'comparison' | 'path-selector';
-  comparisonData?: {
-    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-  };
-  pathData?: Array<{
-    id: string;
-    title: string; titleEs: string;
-    desc: string; descEs: string;
-  }>;
-}
-```
+**No issues found.**
 
-**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
+---
 
-Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
+## 3. Webhook Endpoints — Status: 2 ISSUES
 
-**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
+### CRITICAL: `create-handoff` — No Rate Limiting, No Auth
+This function accepts any POST request, validates a UUID format for `lead_id`, then writes to `lead_handoffs` AND fires a background call to `notify-handoff` (which triggers the GHL webhook to Kasandra). An attacker who guesses or obtains a valid `lead_id` UUID can:
+- Spam Kasandra's phone/inbox with fake handoff notifications
+- Flood the `lead_handoffs` table
+- Trigger unlimited GHL webhook calls
 
-Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
+**Fix:** Add `checkRateLimit` (5 req/hour per IP) and validate that `lead_id` exists in `lead_profiles` before creating the handoff record.
 
-**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
+### MEDIUM: `selena-log-event` — No Rate Limiting
+Accepts any POST with a `sessionId` and `eventType`. While it only inserts to `event_log` (low-cost), the HANDOFF_EVENTS (`book_click`, `priority_call_click`) trigger GHL webhook calls without any rate limiting. An attacker could flood GHL with booking intent notifications.
 
-In the `.map()` loop, switch on `section.variant`:
-- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
-- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
-- default → current `whitespace-pre-line` text
+**Fix:** Add `checkRateLimit` (30 req/hour per IP).
 
-**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
+---
 
-- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
-- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
-- Plain text `content`/`contentEs` stays as fallback
+## 4. Authentication Flows — Status: 2 ISSUES
 
-**6. Export new components** (`src/components/v2/guides/index.ts`)
+### HIGH: `lead_id` Stored in localStorage — UUID-Based Access Control
+The entire authorization model for private pages (`PhoneVerificationGate`, `ReportViewer`, readiness checks) relies on a `lead_id` UUID stored in `localStorage`. This UUID is:
+- Returned in plaintext from `verify-lead-phone`, `upsert-lead-profile`, `submit-seller`, `submit-consultation-intake`
+- Used as the sole credential to access reports (`get-report`), session snapshots, and lead data
+- Guessable if an attacker brute-forces UUIDs (mitigated by UUID v4 entropy, but still a design smell)
 
-Add exports for `GuideComparisonCards` and `GuidePathSelector`.
+The `get-report` function has a partial fix (SEC-05: optional `session_id` cross-check), but `session_id` is also a client-generated UUID stored in localStorage — it provides no real additional security.
 
-### Governance Compliance
+**Risk:** If a `lead_id` is leaked (e.g., via shared URL with `?lead_id=` parameter, browser extension, or XSS), the attacker gets full access to that lead's reports and data.
 
-- No mid-guide CTAs — these are educational visual enhancements only
-- Terminal routing stays in AuthorityCTABlock (unchanged)
-- Path selector is read-only visual engagement, does not write to session or navigate
-- All new components are bilingual via `useLanguage()`
+**Fix (P2):** This is an architectural limitation of the no-auth design. Document as accepted risk. For future hardening, consider short-lived signed tokens from the backend instead of raw UUIDs.
+
+### MEDIUM: `get-report` — No Rate Limiting
+No rate limiting on report retrieval. An attacker could enumerate report UUIDs.
+
+**Fix:** Add `checkRateLimit` (30 req/hour per IP).
+
+---
+
+## 5. Form Abuse — Status: GOOD (with 1 gap)
+
+### Rate Limiting Coverage
+
+| Function | Rate Limited | Limit |
+|---|---|---|
+| `selena-chat` | Yes | 30/min |
+| `submit-consultation-intake` | Yes | 5/hour |
+| `submit-seller` | Yes | 5/hour |
+| `upsert-lead-profile` | Yes | 10/hour |
+| `verify-lead-phone` | Yes | 5/min |
+| `generate-report` | Yes | 5/hour |
+| `update-lead-score` | Yes | 10/min |
+| `neighborhood-profile` | Yes | 10/hour |
+| `upsert-session-snapshot` | Yes | 60/hour |
+| `get-session-snapshot` | Yes | 60/hour |
+| `get-decision-receipt` | Yes | 30/hour |
+| `save-decision-receipt` | Yes | 10/hour |
+| **`create-handoff`** | **NO** | — |
+| **`selena-log-event`** | **NO** | — |
+| **`get-report`** | **NO** | — |
+| **`get-last-report-id`** | **NO** | — |
+| **`save-buyer-criteria`** | Check needed | — |
+
+### Input Validation
+All form-handling functions validate email format, sanitize inputs (`.trim()`, `.slice()` length limits), and use parameterized queries via Supabase SDK (no SQL injection risk).
+
+### `dangerouslySetInnerHTML`
+Only used in `JsonLd.tsx` (developer-controlled schema data) and `chart.tsx` (theme CSS). No user-supplied content is rendered unsafely.
+
+---
+
+## 6. Cost-Bearing Function Protection — Status: GOOD
+
+All 5 cost-bearing functions are protected with `x-admin-secret`:
+- `scrape-market-pulse` ✅
+- `generate-guide-image` ✅
+- `generate-all-guide-images` ✅
+- `generate-neighborhood-heroes` ✅
+- `generate-daily-guide` ✅
+
+---
+
+## Implementation Plan (Priority Order)
+
+### P0 — Rate-limit `create-handoff` + validate `lead_id` exists (CRITICAL)
+**File:** `supabase/functions/create-handoff/index.ts`
+- Add `checkRateLimit` import and enforce 5 req/hour per IP
+- Before inserting handoff, verify `lead_id` exists in `lead_profiles` (already fetched at line 148 — just add a guard if `!leadProfile`)
+
+### P1 — Rate-limit `selena-log-event` (MEDIUM)
+**File:** `supabase/functions/selena-log-event/index.ts`
+- Add `checkRateLimit` (30 req/hour per IP/session)
+
+### P2 — Rate-limit `get-report` and `get-last-report-id` (MEDIUM)
+**Files:** `supabase/functions/get-report/index.ts`, `supabase/functions/get-last-report-id/index.ts`
+- Add `checkRateLimit` (30 req/hour per IP)
+
+### P3 — Rate-limit `save-buyer-criteria` (verify first)
+**File:** `supabase/functions/save-buyer-criteria/index.ts`
+- Verify and add rate limiting if missing
+
+**Total: 4-5 files changed. All changes follow the existing `checkRateLimit` pattern — copy from any rate-limited function.**
 
