@@ -79,10 +79,9 @@ const CTASection = () => {
               });
               openChat({ source: "cta_section", intent: "explore" });
             }}
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
+            className="text-cc-ivory/60 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
           >
-            <MessageCircle className="w-4 h-4" />
-            {t("Talk to Selena First", "Habla Primero con Selena")}
+            {t("Or talk to Selena first", "O habla primero con Selena")}
           </button>
         </div>
       </div>

@@ -276,14 +276,12 @@ const V2BuyContent = () => {
                 {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
               </Link>
             </Button>
-            <Button 
-              variant="ghost"
+            <button
               onClick={handleSelenaRoute}
-              className="text-white/80 hover:text-cc-gold font-medium rounded-full px-8"
+              className="text-white/60 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
             >
-              <MessageCircle className="w-4 h-4 mr-2" />
               {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
-            </Button>
+            </button>
           </div>
         </div>
       </section>
