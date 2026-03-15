@@ -289,11 +289,96 @@ function GuideDetailContent() {
       descEn: 'Current Tucson days on market, what slows down a sale, and how to sell faster with the right strategy — from a local Realtor.',
       descEs: 'Días actuales en el mercado en Tucson, qué retrasa una venta y cómo vender más rápido con la estrategia correcta.',
     },
-    'move-up-buyer': {
-      titleEn: 'Buying Up in Tucson: How to Buy and Sell at the Same Time – Kasandra Prieto',
-      titleEs: 'Comprar Casa Más Grande en Tucson: Comprar y Vender al Mismo Tiempo',
-      descEn: 'Bridge loans, contingent offers, and the timing strategy for Tucson homeowners who need to buy before or while selling their current home.',
-      descEs: 'Préstamos puente, ofertas contingentes y la estrategia de tiempo para propietarios de Tucson que necesitan comprar antes o mientras venden.',
+        'move-up-buyer': {
+      titleEn: 'Move-Up Buyer Guide: Selling & Buying at the Same Time in Tucson',
+      titleEs: 'Guía para Comprar y Vender al Mismo Tiempo en Tucson',
+      descEn: 'How to sell your current home and buy your next one in Tucson without getting stuck owning two properties — or missing out on the right house.',
+      descEs: 'Cómo vender tu casa actual y comprar la siguiente en Tucson sin quedar atrapado con dos propiedades ni perder la casa correcta.',
+    },
+    // SEO-SPRINT-01: 15 new seoOverrides — previously using guide.title fallback
+    'first-time-buyer-guide': {
+      titleEn: 'First-Time Home Buyer Guide in Tucson, AZ (2026) — Kasandra Prieto',
+      titleEs: 'Guía para Compradores de Primera Vivienda en Tucson, AZ (2026) — Kasandra Prieto',
+      descEn: 'Everything a first-time buyer in Tucson needs — financing, down payment programs, inspections, and Pima County market tips. Free bilingual guide.',
+      descEs: 'Todo lo que un comprador primerizo en Tucson necesita — financiamiento, programas de pago inicial, inspecciones y consejos del mercado de Pima County.',
+    },
+    'selling-for-top-dollar': {
+      titleEn: 'How to Sell Your Tucson Home for Top Dollar in 2026 — Kasandra Prieto',
+      titleEs: 'Cómo Vender tu Casa en Tucson al Mejor Precio en 2026 — Kasandra Prieto',
+      descEn: 'Proven strategies to maximize your Tucson home sale price — pricing, staging, timing, and negotiation tactics from a local bilingual REALTOR®.',
+      descEs: 'Estrategias comprobadas para maximizar el precio de venta de tu casa en Tucson — precio, presentación, timing y tácticas de negociación.',
+    },
+    'cash-offer-guide': {
+      titleEn: 'How Cash Offers Work in Tucson — Complete Seller Guide (2026)',
+      titleEs: 'Cómo Funcionan las Ofertas en Efectivo en Tucson — Guía Completa (2026)',
+      descEn: 'Everything Tucson sellers need to know about cash offers — what's included, what to watch for, and how to compare a cash deal vs. listing on market.',
+      descEs: 'Todo lo que los vendedores de Tucson deben saber sobre las ofertas en efectivo — qué incluyen, qué vigilar y cómo comparar con listar en el mercado.',
+    },
+    'inherited-probate-property': {
+      titleEn: 'Selling an Inherited Home in Tucson — Arizona Probate & Estate Guide',
+      titleEs: 'Vender una Casa Heredada en Tucson — Guía de Sucesión en Arizona',
+      descEn: 'Inherited a property in Tucson or Pima County? Understand Arizona probate, your selling options, and how to protect the family's interests.',
+      descEs: '¿Heredaste una propiedad en Tucson? Entiende el proceso de sucesión en Arizona, tus opciones de venta y cómo proteger los intereses de la familia.',
+    },
+    'understanding-home-valuation': {
+      titleEn: 'How Tucson Homes Are Valued: CMA & Appraisal Guide 2026 — Kasandra Prieto',
+      titleEs: 'Cómo Se Valoran las Casas en Tucson: Guía de CMA y Avalúo 2026',
+      descEn: 'Understand how your Tucson home's value is determined — CMAs, appraisals, price per sq ft, and the factors that really move the number in Pima County.',
+      descEs: 'Entiende cómo se determina el valor de tu casa en Tucson — CMAs, avalúos, precio por pie cuadrado y los factores que mueven el número en Pima County.',
+    },
+    'sell-now-or-wait': {
+      titleEn: 'Should You Sell Your Tucson Home Now or Wait? (2026 Market Analysis)',
+      titleEs: '¿Deberías Vender tu Casa en Tucson Ahora o Esperar? (Análisis 2026)',
+      descEn: 'Data-backed 2026 analysis: is now the right time to sell in Tucson, and what does waiting actually cost Pima County sellers? Honest numbers.',
+      descEs: 'Análisis respaldado por datos 2026: ¿es ahora el momento de vender en Tucson y cuánto cuesta esperar a los vendedores de Pima County?',
+    },
+    'life-change-selling': {
+      titleEn: 'Selling Your Tucson Home After a Life Change — Calm, Honest Guide',
+      titleEs: 'Vender tu Casa en Tucson Después de un Cambio de Vida — Guía Clara',
+      descEn: 'Job change, divorce, family loss, or relocation — how to sell your Tucson home during a major life transition without rushing into the wrong decision.',
+      descEs: 'Cambio de trabajo, divorcio, pérdida familiar o traslado — cómo vender tu casa en Tucson durante una transición de vida sin apresurarte.',
+    },
+    'tucson-market-update-2026': {
+      titleEn: 'Tucson Real Estate Market Update 2026 | Buyer & Seller Outlook',
+      titleEs: 'Actualización del Mercado Inmobiliario de Tucson 2026 | Perspectiva',
+      descEn: 'Comprehensive Tucson real estate market update for 2026 — inventory, price trends, days on market, and what buyers and sellers should know right now.',
+      descEs: 'Actualización completa del mercado de Tucson 2026 — inventario, tendencias de precio, días en el mercado y lo que compradores y vendedores deben saber.',
+    },
+    'bad-credit-home-buying-tucson': {
+      titleEn: 'Buying a Home in Tucson with Bad Credit (2026) — Real Options Explained',
+      titleEs: 'Comprar Casa en Tucson con Mal Crédito (2026) — Opciones Reales',
+      descEn: 'Can you buy a home in Tucson with a low credit score? Yes. FHA minimums, credit repair timelines, and local Pima County lenders who can help.',
+      descEs: '¿Puedes comprar una casa en Tucson con mal crédito? Sí. Mínimos FHA, plazos de reparación y prestamistas locales de Pima County que pueden ayudar.',
+    },
+    'down-payment-assistance-tucson': {
+      titleEn: 'Down Payment Assistance in Tucson, AZ (2026) — Up to $20K Available',
+      titleEs: 'Asistencia para el Pago Inicial en Tucson, AZ (2026) — Hasta $20K',
+      descEn: 'Up to $20,000 in down payment assistance for Tucson buyers in 2026. HOME Plus, Pima IDA, and ADOH programs — see if you qualify, no commitment.',
+      descEs: 'Hasta $20,000 en asistencia para el pago inicial para compradores de Tucson en 2026. HOME Plus, Pima IDA y programas ADOH.',
+    },
+    'fha-loan-pima-county-2026': {
+      titleEn: 'FHA Loan Limits for Pima County, AZ (2026) — First-Time Buyer Guide',
+      titleEs: 'Límites de Préstamos FHA para Pima County, AZ (2026) — Guía Primeriza',
+      descEn: 'FHA loan limits for Pima County in 2026, eligibility requirements, and how Tucson first-time buyers qualify and close with an FHA mortgage.',
+      descEs: 'Límites de préstamos FHA para Pima County en 2026, requisitos de elegibilidad y cómo los compradores primerizos de Tucson califican.',
+    },
+    'itin-loan-guide': {
+      titleEn: 'ITIN Home Loans in Tucson, AZ — Buying Without SSN (2026 Guide)',
+      titleEs: 'Préstamos ITIN para Comprar Casa en Tucson, AZ (Guía 2026)',
+      descEn: 'Buy a home in Tucson without a Social Security number using an ITIN mortgage. Requirements, lenders, and the full process explained in English & Spanish.',
+      descEs: 'Compra una casa en Tucson sin Seguro Social con un préstamo ITIN. Requisitos, prestamistas y el proceso completo explicado en inglés y español.',
+    },
+    'divorce-home-sale-arizona': {
+      titleEn: 'Selling a Home During Arizona Divorce (2026) — Community Property Rules',
+      titleEs: 'Venta de Casa en Divorcio en Arizona (2026) — Propiedad Comunitaria',
+      descEn: 'How Arizona community property law affects your home sale during divorce — who keeps what, how to split proceeds, and how to sell without court delays.',
+      descEs: 'Cómo la ley de propiedad comunitaria de Arizona afecta tu venta en el divorcio — quién se queda con qué y cómo vender sin retrasos judiciales.',
+    },
+    'first-time-buyer-programs-pima-county': {
+      titleEn: 'First-Time Buyer Programs in Pima County, AZ (2026) — Full List',
+      titleEs: 'Programas para Compradores Primerizos en Pima County, AZ (2026)',
+      descEn: 'Every first-time buyer program in Pima County for 2026 — grants, deferred loans, and below-market mortgages. See what you qualify for — free, no sign-up.',
+      descEs: 'Todos los programas para compradores primerizos en Pima County 2026 — becas, préstamos diferidos e hipotecas accesibles. Ve para qué calificas.',
     },
   };
 
