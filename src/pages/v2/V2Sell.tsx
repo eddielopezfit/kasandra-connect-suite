@@ -326,16 +326,16 @@ const V2SellContent = () => {
                 </div>
               </div>
 
-              <Button
+              <button
                 onClick={() => {
                   handleCTAClick('sell_comparison_traditional', 'selena_chat');
                   openChat({ source: 'sell_comparison_traditional', intent: 'sell' });
                 }}
-                className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full"
+                className="text-cc-gold hover:text-cc-gold-dark text-sm font-semibold underline underline-offset-2 transition-colors inline-flex items-center gap-1 mt-2"
               >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                {t("Talk to Selena About Listing", "Habla con Selena Sobre Listar")}
-              </Button>
+                {t("Ask Selena about listing", "Pregúntale a Selena sobre listar")}
+                <ArrowRight className="w-3 h-3" />
+              </button>
             </div>
 
             {/* RIGHT — Cash Offer via Corner Connect */}
