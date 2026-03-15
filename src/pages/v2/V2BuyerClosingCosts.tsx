@@ -194,8 +194,9 @@ const V2BuyerClosingCostsContent = () => {
     setInputs(prev => ({ ...prev, [k]: v }));
 
   const price = parseFloat(inputs.purchasePrice.replace(/,/g, "")) || 0;
+  const isCash = inputs.loanType === "cash";
   const downPct = parseFloat(inputs.downPctInput) || 10;
-  const downAmt = price * (downPct / 100);
+  const downAmt = isCash ? 0 : price * (downPct / 100);
   const loanAmt = price - downAmt;
 
   const minDown = inputs.loanType === "fha" ? 3.5 : inputs.loanType === "va" ? 0 : 3;
