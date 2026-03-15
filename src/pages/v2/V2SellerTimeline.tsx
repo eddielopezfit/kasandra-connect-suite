@@ -729,7 +729,7 @@ const V2SellerTimeline = () => {
   }, [goTo]);
 
   return (
-    <QuizFunnelLayout showSelena={isComplete}>
+    <V2Layout>
       <div className="container mx-auto max-w-2xl px-4 py-8">
         {/* Progress bar */}
         {!isComplete && (
