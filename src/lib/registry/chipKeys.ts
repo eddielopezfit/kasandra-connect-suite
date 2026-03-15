@@ -139,4 +139,9 @@ export const CHIP_KEY_TO_DESTINATION: Record<ChipKey, string> = {
   [CHIP_KEYS.LEGACY_CASH_VS_TRADITIONAL]: '/cash-offer-options',
   [CHIP_KEYS.LEGACY_CASH_VS_VENTA_TRADICIONAL]: '/cash-offer-options',
   [CHIP_KEYS.ESTIMATE_NET_PROCEEDS_CAPS]: '/cash-offer-options',
+
+  // Phase 1 Intent Declaration
+  [CHIP_KEYS.INTENT_SELL]: '/seller-decision',
+  [CHIP_KEYS.INTENT_BUY]: '/buyer-readiness',
+  [CHIP_KEYS.INTENT_EXPLORE]: '/guides',
 };
