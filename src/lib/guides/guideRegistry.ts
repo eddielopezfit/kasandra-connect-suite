@@ -1326,7 +1326,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     },
     decisionIntent: 'buy',
     decisionStage: 'explore',
-    sortOrder: 35,
+    sortOrder: 46,
     authorityTheme: 'military_transition',
     isCashGuide: false,
   },
