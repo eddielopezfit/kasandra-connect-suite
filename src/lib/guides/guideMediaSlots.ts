@@ -648,4 +648,113 @@ export const GUIDE_MEDIA_SLOTS: Record<string, MediaSlot[]> = {
       src: `${STORAGE_BASE}/guides/how-long-to-sell-tucson/hero.jpg`,
     },
   ],
+
+  // ─── SEO Guides (Tier 1) — Registered 2026-03-15 audit ──────────────────────
+
+  'itin-loan-guide': [
+    {
+      id: 'itin-orientation',
+      variant: 'orientation' as const,
+      afterSection: -1,
+      type: 'image' as const,
+      purpose: 'Arizona desert home at golden hour — aspiration of homeownership',
+      alt: 'A Tucson home at sunset representing homeownership for ITIN buyers',
+      altEs: 'Una casa en Tucson al atardecer que representa la propiedad para compradores ITIN',
+      src: `${STORAGE_BASE}/guides/itin-loan-guide/hero.jpg`,
+    },
+  ],
+
+  'bad-credit-home-buying-tucson': [
+    {
+      id: 'bcb-orientation',
+      variant: 'orientation' as const,
+      afterSection: -1,
+      type: 'image' as const,
+      purpose: 'Front door of a Tucson home — optimism, a path forward',
+      alt: 'Front door of a Tucson home representing a path to homeownership',
+      altEs: 'Puerta principal de una casa en Tucson que representa el camino a la propiedad',
+      src: `${STORAGE_BASE}/guides/bad-credit-home-buying-tucson/hero.jpg`,
+    },
+  ],
+
+  'down-payment-assistance-tucson': [
+    {
+      id: 'dpa-orientation',
+      variant: 'orientation' as const,
+      afterSection: -1,
+      type: 'image' as const,
+      purpose: 'Keys in hand in front of Tucson home — assistance made it possible',
+      alt: 'House keys in hand in front of a Tucson home',
+      altEs: 'Llaves en mano frente a una casa en Tucson',
+      src: `${STORAGE_BASE}/guides/down-payment-assistance-tucson/hero.jpg`,
+    },
+  ],
+
+  'fha-loan-pima-county-2026': [
+    {
+      id: 'fha-orientation',
+      variant: 'orientation' as const,
+      afterSection: -1,
+      type: 'image' as const,
+      purpose: 'Tucson neighborhood street at golden hour — attainable market',
+      alt: 'A Tucson neighborhood street at golden hour',
+      altEs: 'Una calle de vecindario en Tucson al atardecer',
+      src: `${STORAGE_BASE}/guides/fha-loan-pima-county-2026/hero.jpg`,
+    },
+  ],
+
+  'tucson-market-update-2026': [
+    {
+      id: 'tmu-orientation',
+      variant: 'orientation' as const,
+      afterSection: -1,
+      type: 'image' as const,
+      purpose: 'Tucson skyline or Catalina Mountains — local market identity',
+      alt: 'Tucson skyline with the Santa Catalina Mountains',
+      altEs: 'Horizonte de Tucson con las Montañas Santa Catalina',
+      src: `${STORAGE_BASE}/guides/tucson-market-update-2026/hero.jpg`,
+    },
+  ],
+
+  // ─── Newly Registered Ghost Guides — Audit 2026-03-15 ───────────────────────
+
+  'va-home-loan-tucson': [
+    {
+      id: 'va-orientation',
+      variant: 'orientation' as const,
+      afterSection: -1,
+      type: 'image' as const,
+      purpose: 'American flag outside a Tucson home — veteran homeownership pride',
+      alt: 'American flag outside a Tucson home near Davis-Monthan AFB',
+      altEs: 'Bandera americana frente a una casa en Tucson cerca de la Base Davis-Monthan',
+      src: `${STORAGE_BASE}/guides/va-home-loan-tucson/hero.jpg`,
+    },
+  ],
+
+  'divorce-home-sale-arizona': [
+    {
+      id: 'dvh-orientation',
+      variant: 'orientation' as const,
+      afterSection: -1,
+      type: 'image' as const,
+      purpose: 'A quiet Tucson home exterior at dusk — transition, moving forward',
+      alt: 'A Tucson home at dusk representing a new chapter after divorce',
+      altEs: 'Una casa en Tucson al atardecer que representa un nuevo capítulo después del divorcio',
+      src: `${STORAGE_BASE}/guides/divorce-home-sale-arizona/hero.jpg`,
+    },
+  ],
+
+  'first-time-buyer-programs-pima-county': [
+    {
+      id: 'ftbp-orientation',
+      variant: 'orientation' as const,
+      afterSection: -1,
+      type: 'image' as const,
+      purpose: 'First-time buyer receiving keys — programs made it happen',
+      alt: 'First-time home buyer receiving keys to their Tucson home',
+      altEs: 'Comprador de primera vivienda recibiendo las llaves de su casa en Tucson',
+      src: `${STORAGE_BASE}/guides/first-time-buyer-programs-pima-county/hero.jpg`,
+    },
+  ],
+
 };
