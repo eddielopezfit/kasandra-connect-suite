@@ -4,7 +4,7 @@ import BuyerReadinessCheck from "@/components/v2/BuyerReadinessCheck";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import LeadCaptureModal from "@/components/v2/LeadCaptureModal";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getSessionContext, updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { getSessionContext, updateSessionContext, setFieldIfEmpty, syncLeadScore } from "@/lib/analytics/selenaSession";
 import { getStoredEmail } from "@/lib/analytics/bridgeLeadIdToV2";
 import { supabase } from "@/integrations/supabase/client";
 import { Save } from "lucide-react";
@@ -39,6 +39,9 @@ const V2BuyerReadinessContent = () => {
         readiness_score: data.readiness_score,
         primary_priority: data.primary_priority,
       });
+      // Fire-and-forget lead score sync
+      const storedLeadId = localStorage.getItem(LEAD_ID_KEY);
+      if (storedLeadId) void syncLeadScore(storedLeadId, data.readiness_score);
       // P1.1: Persist snapshot after quiz completion
       import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
 

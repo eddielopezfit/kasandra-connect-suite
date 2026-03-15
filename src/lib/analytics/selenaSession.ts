@@ -357,6 +357,22 @@ export function updateSessionContext(updates: Partial<SessionContext>): SessionC
 }
 
 /**
+ * Fire-and-forget lead score sync to edge function.
+ * Non-critical — swallows errors silently.
+ */
+export async function syncLeadScore(leadId: string, score: number): Promise<void> {
+  if (!leadId || score === undefined) return;
+  try {
+    const { supabase } = await import('@/integrations/supabase/client');
+    await supabase.functions.invoke('update-lead-score', {
+      body: { lead_id: leadId, score }
+    });
+  } catch {
+    // fire-and-forget — non-critical
+  }
+}
+
+/**
  * Empty = null | undefined | '' | []
  * NOT empty = 0 (valid number), false (valid boolean), any non-empty value
  */

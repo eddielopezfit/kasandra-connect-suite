@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import ReadinessSnapshot from "@/components/v2/ReadinessSnapshot";
-import { updateSessionContext, setFieldIfEmpty, getSessionContext } from "@/lib/analytics/selenaSession";
+import { updateSessionContext, setFieldIfEmpty, getSessionContext, syncLeadScore } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -202,6 +202,9 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
       last_tool_completed: 'buyer_readiness',
       tools_completed: [...new Set([...(ctx?.tools_completed ?? []), 'buyer_readiness'])],
     });
+    // Fire-and-forget lead score sync
+    const storedLeadId = localStorage.getItem('selena_lead_id');
+    if (storedLeadId) void syncLeadScore(storedLeadId, readiness_score);
 
     // Analytics
     logEvent("quiz_complete", {
