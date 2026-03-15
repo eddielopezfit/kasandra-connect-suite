@@ -84,10 +84,12 @@ export function SelenaChatDrawer() {
   const { t, language, setLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState<ConciergeTab | null>(null);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const location = useLocation();
   const { keyboardInset, isKeyboardOpen } = useKeyboardInset();
   
   // Compute journey context for tab bar
