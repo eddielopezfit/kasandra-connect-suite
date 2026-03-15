@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { logEvent } from "@/lib/analytics/logEvent";
 
 interface LanguageToggleProps {
   variant?: "light" | "dark";
