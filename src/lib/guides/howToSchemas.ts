@@ -559,7 +559,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Consider your involvement and risk tolerance',
         nameEs: 'Considera tu disponibilidad y tolerancia al riesgo',
-        text: 'Being a landlord in Arizona means handling tenant issues, maintenance, and compliance with ARS Title 33. If you're relocating out of Tucson, factor in remote management costs.',
+        text: "Being a landlord in Arizona means handling tenant issues, maintenance, and compliance with ARS Title 33. If you're relocating out of Tucson, factor in remote management costs.",
         textEs: 'Ser arrendador en Arizona significa manejar problemas de inquilinos, mantenimiento y cumplimiento. Si te mudas fuera de Tucson, considera los costos de gestión remota.',
       },
       {
