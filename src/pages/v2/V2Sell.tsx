@@ -48,6 +48,25 @@ const V2SellContent = () => {
 
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Tucson Home Selling Services",
+        "description": "Full-service home selling in Tucson and Pima County — traditional listing, cash offer options, and bilingual REALTOR® representation.",
+        "provider": {
+          "@type": "RealEstateAgent",
+          "name": "Kasandra Prieto, REALTOR®",
+          "url": "https://kasandraprietorealtor.com",
+          "telephone": "+15203493248",
+          "areaServed": ["Tucson, AZ", "Pima County, AZ"],
+          "knowsLanguage": ["en", "es"]
+        },
+        "areaServed": {
+          "@type": "Place",
+          "name": "Tucson, AZ and Pima County"
+        },
+        "serviceType": "Real Estate Listing and Cash Offer Services"
+      }} />
       {/* Hero */}
       <GlassmorphismHero
         badge={t("For Sellers", "Para Vendedores")}
