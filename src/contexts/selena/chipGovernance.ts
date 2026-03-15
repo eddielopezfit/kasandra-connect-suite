@@ -254,10 +254,12 @@ export function getPhaseAwareChips(
     );
   }
   if (floor >= 2 && intent) {
-    return [
-      { label: t("What are my options?", "¿Cuáles son mis opciones?") },
-      { label: t("I have a question", "Tengo una pregunta") },
-    ];
+    // Explore / generic intent at Phase 2+ → ActionSpec-backed chips (no dead ends)
+    const keys = filterAndReplace([CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.EXPLORE_NEIGHBORHOODS]);
+    const labels = keys.length
+      ? keys.map(resolveLabel)
+      : [resolveLabel(CHIP_KEYS.BROWSE_GUIDES)];
+    return mapChipsToActionSpecs(labels, lang as 'en' | 'es');
   }
   return [
     { label: t("I'm thinking about selling", "Estoy pensando en vender") },
