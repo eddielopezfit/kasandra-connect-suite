@@ -788,8 +788,9 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     },
     lastVerifiedDate: '2026-03-15',
   },
+
+  // --- tucson-neighborhoods ---
   {
-    id: 'tucson-neighborhoods',
     path: '/guides/tucson-neighborhoods',
     titleEn: "Tucson Neighborhoods: A Buyer's Area Guide",
     titleEs: 'Vecindarios de Tucson: Guía de Áreas para Compradores',
