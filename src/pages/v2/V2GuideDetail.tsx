@@ -72,7 +72,6 @@ function GuideDetailContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [synthesisVisible, setSynthesisVisible] = useState(false);
   const synthesisTracked = useRef(false);
-  const synthesisSentinelRef = useRef<HTMLDivElement | null>(null);
   const { openChat } = useSelenaChat();
 
   // Registry entry for metadata (readTime, tier, destinations, etc.)
@@ -144,25 +143,22 @@ function GuideDetailContent() {
     }
   }, [guideId, guide, guideTitle]);
 
-  // IntersectionObserver for synthesis CTA (~70% scroll sentinel)
+  // Scroll listener for synthesis CTA (60% threshold)
   useEffect(() => {
-    const el = synthesisSentinelRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !synthesisTracked.current) {
-          setSynthesisVisible(true);
-          synthesisTracked.current = true;
-          if (guideId) {
-            logEvent('guide_synthesis_cta_shown', { guideId });
-          }
-          observer.disconnect();
+    const handleScroll = () => {
+      if (synthesisTracked.current) return;
+      const ratio = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      if (ratio > 0.6) {
+        setSynthesisVisible(true);
+        synthesisTracked.current = true;
+        if (guideId) {
+          logEvent('guide_synthesis_cta_shown', { guideId });
         }
-      },
-      { threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [guideId, guide]);
 
   const MediaSlotRenderer = ({ slot }: { slot: MediaSlot }) => {
@@ -507,7 +503,6 @@ function GuideDetailContent() {
         ) : null}
 
         {/* Compliance Footer */}
-        <div ref={synthesisSentinelRef} />
         <GuideComplianceFooter />
 
         {/* Read Next — guide-to-guide pathway. Keeps users in the hub. */}
@@ -535,14 +530,17 @@ function GuideDetailContent() {
         <GuideCTAGuardrail guideId={guideId} />
       </article>
 
-      {/* Selena Synthesis CTA — appears after 70%+ scroll */}
+      {/* Selena Synthesis CTA — appears after 60%+ scroll */}
       {synthesisVisible && (
         <section className="bg-cc-navy py-10">
           <div className="container mx-auto px-4 max-w-3xl text-center">
-            <p className="text-white/80 text-lg mb-5">
+            <p className="text-white text-xl font-serif font-semibold mb-2">
+              {t("You've done the research.", "Ya hiciste la investigación.")}
+            </p>
+            <p className="text-white/70 text-base mb-6">
               {t(
-                "You've done the research. Want Selena to help you apply this to your situation?",
-                "Ya hiciste la investigación. ¿Quieres que Selena te ayude a aplicar esto a tu situación?"
+                "Want Selena to help you apply this to your situation?",
+                "¿Quieres que Selena te ayude a aplicar esto a tu situación?"
               )}
             </p>
             <button
@@ -551,15 +549,15 @@ function GuideDetailContent() {
                 openChat({
                   source: 'guide_synthesis',
                   prefillMessage: t(
-                    `I just read the "${guideTitle}" guide — can you help me apply this to my situation?`,
-                    `Acabo de leer la guía "${guideTitle}" — ¿puedes ayudarme a aplicar esto a mi situación?`
+                    `I just read "${guide.title}" — can you help me apply this to my situation?`,
+                    `Acabo de leer "${guide.titleEs || guide.title}" — ¿puedes ayudarme a aplicar esto a mi situación?`
                   ),
                 });
               }}
               className="inline-flex items-center gap-2 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold px-8 py-3 rounded-full transition-colors"
             >
               <MessageCircle className="w-5 h-5" />
-              {t("Ask Selena About This", "Pregúntale a Selena Sobre Esto")}
+              {t("Ask Selena About This", "Pregúntale a Selena")}
             </button>
           </div>
         </section>
