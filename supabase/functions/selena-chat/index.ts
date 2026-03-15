@@ -507,10 +507,8 @@ function getGovernedChips(
     }
   }
 
-  // PHASE 1: Intent unknown — conversational labels (not routable, no semantic key needed)
-  const chips = language === 'es'
-    ? ["Estoy pensando en vender", "Estoy buscando comprar", "Solo estoy explorando"]
-    : ["I'm thinking about selling", "I'm looking to buy", "Just exploring"];
+  // PHASE 1: Intent unknown — semantic keys for deterministic routing
+  const chips = [CHIP_KEYS.INTENT_SELL, CHIP_KEYS.INTENT_BUY, CHIP_KEYS.INTENT_EXPLORE];
   return { chips, phase: 1, escalated: false };
 }
 
