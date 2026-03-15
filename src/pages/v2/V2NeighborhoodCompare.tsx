@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { supabase } from "@/integrations/supabase/client";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+
 import { stripCitations } from "@/lib/utils/stripCitations";
 import { toast } from "sonner";
 import type { NeighborhoodProfile } from "@/components/v2/neighborhood/NeighborhoodCard";
@@ -185,6 +185,7 @@ const V2NeighborhoodCompareContent = () => {
   const [results, setResults] = useState<ZipResult[]>([]);
   const resultsRef = useRef<HTMLDivElement>(null);
   const [loadingZip, setLoadingZip] = useState<string | null>(null);
+  const [toolStarted, setToolStarted] = useState(false);
 
   useDocumentHead({
     titleEn: "Compare Tucson Neighborhoods Side by Side | ZIP Code Comparison",
@@ -198,13 +199,21 @@ const V2NeighborhoodCompareContent = () => {
       toast.info(t("Compare up to 3 ZIPs at once.", "Compara hasta 3 códigos postales a la vez."));
       return;
     }
+    if (!toolStarted) {
+      logEvent('tool_started', { tool: 'neighborhood_compare' });
+      setToolStarted(true);
+    }
     setLoadingZip(zip);
     try {
       const { data, error } = await supabase.functions.invoke("neighborhood-profile", {
         body: { zip_code: zip },
       });
       if (error || !data?.profile_en) throw new Error("fetch failed");
-      setResults(prev => [...prev, { zip, profileEn: data.profile_en, profileEs: data.profile_es }]);
+      const newResults = [...results, { zip, profileEn: data.profile_en, profileEs: data.profile_es }];
+      setResults(newResults);
+      if (newResults.length >= 2) {
+        logEvent('tool_completed', { tool: 'neighborhood_compare', zips_compared: newResults.map(r => r.zip) });
+      }
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
       logEvent("neighborhood_profile_generated", { zip_code: zip, source: "comparison_tool", cached: data.cached });
     } catch {

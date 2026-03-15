@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { logEvent } from "@/lib/analytics/logEvent";
 
 interface LanguageToggleProps {
   variant?: "light" | "dark";
@@ -29,7 +30,7 @@ const LanguageToggle = ({ variant = "light" }: LanguageToggleProps) => {
       aria-label={language === "en" ? "Language selection" : "Selección de idioma"}
     >
       <button
-        onClick={() => setLanguage("en")}
+        onClick={() => { if (language !== "en") { logEvent("ui_language_toggle", { from: "es", to: "en", source: "nav" }); } setLanguage("en"); }}
         className={getButtonStyles(language === "en")}
         aria-label="Switch to English"
         aria-pressed={language === "en"}
@@ -39,7 +40,7 @@ const LanguageToggle = ({ variant = "light" }: LanguageToggleProps) => {
       </button>
       <span className={variant === "dark" ? "text-white/30" : "text-cc-slate/40"}>|</span>
       <button
-        onClick={() => setLanguage("es")}
+        onClick={() => { if (language !== "es") { logEvent("ui_language_toggle", { from: "en", to: "es", source: "nav" }); } setLanguage("es"); }}
         className={getButtonStyles(language === "es")}
         aria-label="Cambiar a Español"
         aria-pressed={language === "es"}

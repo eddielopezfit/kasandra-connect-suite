@@ -660,6 +660,7 @@ const V2SellerTimeline = () => {
     (closeWindow: CloseWindow) => {
       setWizardData(prev => ({ ...prev, closeWindow }));
       setFieldIfEmpty("intent", "sell");
+      logEvent('tool_started', { tool: 'seller_timeline' });
       updateSessionContext({
         last_quiz_id: "seller_timeline",
         timeline:
@@ -716,6 +717,7 @@ const V2SellerTimeline = () => {
         close_window: wizardData.closeWindow,
         readiness: wizardData.readiness,
       });
+      logEvent('tool_completed', { tool: 'seller_timeline', close_window: wizardData.closeWindow, readiness: wizardData.readiness });
       goTo(4);
     },
     [goTo, wizardData]
