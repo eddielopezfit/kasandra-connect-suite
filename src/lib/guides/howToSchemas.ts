@@ -735,7 +735,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Consider personal timeline above all',
         nameEs: 'Considera tu plazo personal por encima de todo',
-        text: 'Market timing matters less than personal readiness. The best time to sell is when it aligns with your life. Kasandra's role is to give you honest data  -  not pressure you to list or wait.',
+        text: "Market timing matters less than personal readiness. The best time to sell is when it aligns with your life. Kasandra's role is to give you honest data  -  not pressure you to list or wait.",
         textEs: 'El timing del mercado importa menos que tu preparación personal. El mejor momento para vender es cuando se alinea con tu vida. El rol de Kasandra es darte datos honestos.',
       },
     ],
