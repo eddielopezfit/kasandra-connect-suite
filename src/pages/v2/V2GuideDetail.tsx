@@ -72,7 +72,6 @@ function GuideDetailContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [synthesisVisible, setSynthesisVisible] = useState(false);
   const synthesisTracked = useRef(false);
-  const synthesisSentinelRef = useRef<HTMLDivElement | null>(null);
   const { openChat } = useSelenaChat();
 
   // Registry entry for metadata (readTime, tier, destinations, etc.)
