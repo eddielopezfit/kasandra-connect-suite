@@ -554,7 +554,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare my options', es: 'Comparar mis opciones' } },
       ],
-      relatedGuideIds: ['selling-for-top-dollar', 'cash-offer-guide', 'life-change-selling'],
+      relatedGuideIds: ['selling-for-top-dollar', 'cash-offer-guide', 'life-change-selling', 'divorce-home-sale-arizona'],
     },
     decisionIntent: 'life_event',
     decisionStage: 'explore',
