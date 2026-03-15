@@ -11,6 +11,7 @@ import NeighborhoodSplitCTA from "@/components/v2/neighborhood/NeighborhoodSplit
 import RelatedNeighborhoodsRail from "@/components/v2/neighborhood/RelatedNeighborhoodsRail";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logEvent } from "@/lib/analytics/logEvent";
+import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { useEffect, useState } from "react";
 import { type NeighborhoodEntry } from "@/data/neighborhoods/neighborhoodRegistry";
 import { getNeighborhoodHeroUrl } from "@/lib/neighborhood/heroUrl";
@@ -23,7 +24,13 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
   const heroUrl = getNeighborhoodHeroUrl(neighborhood.slug);
   useEffect(() => {
     logEvent('neighborhood_page_view', { slug: neighborhood.slug, region: neighborhood.regionGroup });
-  }, [neighborhood.slug, neighborhood.regionGroup]);
+    updateSessionContext({
+      last_neighborhood_zip: neighborhood.primaryZip,
+      neighborhood_explored: true,
+      last_seen_page_type: 'page',
+      last_seen_page_path: `/neighborhoods/${neighborhood.slug}`,
+    });
+  }, [neighborhood.slug, neighborhood.regionGroup, neighborhood.primaryZip]);
 
   const handleSelenaOpen = () => {
     openChat({
