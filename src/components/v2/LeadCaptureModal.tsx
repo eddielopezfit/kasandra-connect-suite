@@ -344,7 +344,7 @@ const LeadCaptureModal = ({
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                t("Save & Continue", "Guardar y Continuar")
+                t("Send My Game Plan", "Enviar Mi Plan")
               )}
             </Button>
           </div>
