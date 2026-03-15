@@ -195,9 +195,7 @@ export default function GlassmorphismHero({
       );
 
   const primaryLabel = primaryLabelOverride
-    || (returningContext.isReturning
-      ? t("Continue with Selena", "Continuar con Selena")
-      : t("Talk to Selena", "Habla con Selena"));
+    || t("Book a Strategy Call", "Agenda una Llamada de Estrategia");
 
   const secondaryLabel = secondaryLabelOverride
     || (returningContext.isReturning
@@ -210,6 +208,8 @@ export default function GlassmorphismHero({
       && (returningContext.intent === "sell" || returningContext.intent === "cash")
       ? "/seller-decision"
       : "/guides");
+
+  const primaryLink = `/book?intent=${resolvedIntent}&source=${entrySource || 'hero'}`;
 
   const badgeText = badge || t("AI Concierge · Bilingual", "Concierge IA · Bilingüe");
 
