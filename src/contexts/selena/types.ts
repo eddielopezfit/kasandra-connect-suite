@@ -52,9 +52,13 @@ export type EntrySource =
    | 'instant_answer_affordability'
     | 'instant_answer_value'
     | 'footer_cta'
-    | 'guide_synthesis';
+    | 'guide_synthesis'
+    | 'affordability_calculator'
+    | 'bah_calculator'
+    | 'home_valuation';
 
 export interface EntryContext {
+  estimatedBudget?: number;
   source: EntrySource;
   calculatorAdvantage?: 'cash' | 'traditional' | 'consult';
   calculatorDifference?: number;
