@@ -462,7 +462,7 @@ const V2SellContent = () => {
           </div>
         </div>
       </section>
-      <StickyMobileBookingBar intent="sell" source="sell_hub_sticky" />
+      
     </>
   );
 };

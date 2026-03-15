@@ -267,7 +267,7 @@ const V2BuyContent = () => {
           </div>
         </div>
       </section>
-      <StickyMobileBookingBar intent="buy" source="buy_hub_sticky" />
+      
     </>
   );
 };
