@@ -112,23 +112,42 @@ const CalculatorInputs = ({
 
       {/* Mortgage Balance — optional */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <Label className="text-cc-charcoal font-medium flex items-center gap-2 text-base">
-            <Landmark className="w-5 h-5 text-cc-gold" />
-            {t("Remaining Mortgage Balance", "Saldo Restante de Hipoteca")}
-          </Label>
+        {!showMortgageField ? (
           <button
-            onClick={() => {
-              setShowMortgageField(!showMortgageField);
-              if (showMortgageField) onMortgageBalanceChange(0);
-            }}
-            className="text-xs text-cc-gold hover:text-cc-gold-dark underline underline-offset-2 transition-colors"
+            onClick={() => setShowMortgageField(true)}
+            className="w-full p-4 text-left rounded-xl border-2 border-dashed border-cc-sand-dark hover:border-cc-gold/50 bg-cc-sand/50 hover:bg-cc-gold/5 transition-all group"
           >
-            {showMortgageField
-              ? t("Remove", "Quitar")
-              : t("I have a mortgage", "Tengo hipoteca")}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-cc-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <Landmark className="w-5 h-5 text-cc-gold" />
+              </div>
+              <div className="flex-1">
+                <span className="font-semibold text-cc-navy text-sm block">
+                  {t("I have a mortgage", "Tengo hipoteca")}
+                </span>
+                <span className="text-xs text-cc-slate mt-0.5 block">
+                  {t("Add your balance to see true net proceeds", "Agrega tu saldo para ver ganancias netas reales")}
+                </span>
+              </div>
+            </div>
           </button>
-        </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <Label className="text-cc-charcoal font-medium flex items-center gap-2 text-base">
+              <Landmark className="w-5 h-5 text-cc-gold" />
+              {t("Mortgage Balance", "Saldo de Hipoteca")}
+            </Label>
+            <button
+              onClick={() => {
+                setShowMortgageField(false);
+                onMortgageBalanceChange(0);
+              }}
+              className="text-xs text-cc-slate hover:text-red-500 underline underline-offset-2 transition-colors"
+            >
+              {t("Remove", "Quitar")}
+            </button>
+          </div>
+        )}
 
         {showMortgageField && (
           <div className="bg-cc-sand rounded-xl p-5 space-y-3">
