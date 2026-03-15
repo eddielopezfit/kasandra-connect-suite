@@ -1076,6 +1076,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 59,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-15',
   },
 
   {
