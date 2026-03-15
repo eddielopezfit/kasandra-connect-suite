@@ -1,75 +1,119 @@
 
 
-## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
+# Performance Audit Report
 
-### What We're Doing
+## 1. JS Bundle — Critical Issues
 
-Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
+### 1A. Duplicate Sticky Mobile Booking Bars (BUG)
+`V2Layout.tsx` renders a **global** sticky booking bar on every mobile page (lines 139–156). Meanwhile, `V2Sell.tsx` and `V2Buy.tsx` each render their own `StickyMobileBookingBar` component. On `/sell` and `/buy`, mobile users see **two overlapping fixed-bottom bars** — one from the layout, one from the page. The page-level component is now redundant.
 
-### What We Do NOT Import
+**Fix:** Remove `StickyMobileBookingBar` imports and usage from `V2Sell.tsx` and `V2Buy.tsx`. The global one in `V2Layout` already covers them.
 
-- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
-- No market stats with hard-coded numbers (stale data risk)
-- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
-- No standalone footer (GuideComplianceFooter already exists)
-- No mid-guide CTAs or interactive state that writes to session
+### 1B. YouTube iframe Eager-Loading
+Homepage and Podcast page both embed a YouTube iframe with no lazy-loading. Each iframe loads ~800KB of YouTube JS + CSS on page load. On the homepage, this iframe is buried 13 sections deep — most users never scroll to it.
+
+**Fix:** Replace direct `<iframe>` with a "click-to-play" thumbnail pattern: show a static image + play button, load the iframe only on click. This eliminates ~800KB from initial load on two pages.
+
+### 1C. Homepage Video Eager-Loading
+The homepage has a `<video src="/videos/kasandra-welcome.mp4">` without `preload="none"`. The browser begins downloading the MP4 immediately. This video is in the "About" section (section 5 of 13) — most users never reach it.
+
+**Fix:** Add `preload="none"` to all three video instances on the homepage (desktop, tablet, mobile layouts).
+
+### 1D. Hero Images Are PNGs
+Eight hero images are imported as `.png` files (200-500KB each). These are above-the-fold background images loaded on every hub page.
+
+**Fix:** Convert to WebP (60-70% smaller). This is a manual asset step — flag for future but don't block on it.
+
+## 2. Component Hydration
+
+### 2A. `framer-motion` Loaded on 3 Components
+`framer-motion` (~45KB gzipped) is imported by `ReadinessSnapshot`, `GoogleReviewsSection`, and `EquityPulseSection`. `GoogleReviewsSection` is already lazy-loaded. The other two are not.
+
+**Status:** Acceptable — framer-motion is already in the `ui-heavy-vendor` chunk (shared with recharts). No action needed.
+
+### 2B. `SelenaChatContext` — Double Snapshot Restoration
+Both `V2Layout.tsx` (lines 31-96) and `SelenaChatContext.tsx` (lines 134-160) independently call `get-session-snapshot` on mount. This fires **two identical edge function calls** per page load.
+
+**Fix:** Remove the snapshot restoration from `SelenaChatContext.tsx` — `V2Layout` already handles it and runs first.
+
+### 2C. `QueryClient` Created Outside Component
+`QueryClient` is instantiated at module scope (line 54 of `App.tsx`): `const queryClient = new QueryClient()`. This is correct and avoids re-creation on re-renders. No issue.
+
+## 3. Supabase Query Efficiency
+
+### 3A. `useMarketPulse` — No Caching
+`useMarketPulse` calls `get-market-pulse` via `supabase.functions.invoke()` with raw `useEffect` — no React Query caching. Every component mounting this hook fires a fresh edge function call. The `GlassmorphismHero` uses it, meaning every page load triggers this call.
+
+**Fix:** Migrate `useMarketPulse` to use `useQuery` from `@tanstack/react-query` with a 30-minute `staleTime` (same pattern as `useYouTubeVideos`). This eliminates redundant calls across navigation.
+
+### 3B. `get-session-snapshot` — Called Twice (see 2B above)
+
+## 4. Image Loading
+
+### 4A. Hero Background Pattern
+`GlassmorphismHero` uses `background-image: url(...)` via inline style. This bypasses `loading="lazy"` — the image downloads immediately regardless of viewport position. For sub-pages this is correct (hero is always visible). For the homepage, the hero image is a ~300KB JPG that loads correctly as above-fold content.
+
+**Status:** Correct behavior. No change needed.
+
+### 4B. Missing `fetchpriority="high"` on Hero Images
+The hero `<img>` tags on internal sections (headshots, lifestyle photos) correctly use `loading="lazy"`. No above-fold `<img>` elements are missing lazy loading.
+
+**Status:** Good. No change needed.
+
+## 5. Lazy Loading Opportunities
+
+### 5A. `TestimonialColumns` — Not Lazy-Loaded
+`TestimonialColumns` is imported eagerly on the homepage but renders as section 11 of 13. It should be lazy-loaded.
+
+**Fix:** `const TestimonialColumns = lazy(() => import("@/components/v2/TestimonialColumns"));`
+
+### 5B. `HomepageNeighborhoodCards` — Not Lazy-Loaded
+Section 8 of 13 on homepage. Renders 6 neighborhood cards with images.
+
+**Fix:** `const HomepageNeighborhoodCards = lazy(() => import("@/components/v2/neighborhood/HomepageNeighborhoodCards"));`
+
+### 5C. `InstantAnswerWidget` — Not Lazy-Loaded
+Section 4 of 13. Contains calculator logic and recharts dependency.
+
+**Fix:** `const InstantAnswerWidget = lazy(() => import("@/components/v2/calculator/InstantAnswerWidget"));` — Note: this is already imported via the barrel `calculator/index.ts`. Need to convert to direct lazy import.
+
+## 6. Mobile Performance
+
+### 6A. Dual Sticky Bars (see 1A) — Z-Index Collision
+Both sticky bars use `z-[40]` / `z-40`. On `/sell` mobile, they stack on top of each other. The Selena FAB uses `z-50` with a bottom offset of `calc(5rem + env(safe-area-inset-bottom))` which accounts for one bar, not two.
+
+**Fix:** Removing the page-level `StickyMobileBookingBar` from Sell/Buy resolves this entirely.
+
+### 6B. Homepage Scroll Depth — 13 Sections
+On mobile, the homepage is 15+ screen heights. No mid-page conversion anchors until the very bottom `CTASection`.
+
+**Status:** Already addressed in the conversion optimization work. No additional change needed.
 
 ---
 
-### Changes
+## Implementation Plan (6 changes)
 
-**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
+### P0 — Remove Duplicate Sticky Bars (bug)
+**Files:** `src/pages/v2/V2Sell.tsx`, `src/pages/v2/V2Buy.tsx`
+Remove `StickyMobileBookingBar` import and usage from both files. Delete `src/components/v2/StickyMobileBookingBar.tsx`.
 
-Add optional `variant` field and structured data:
+### P1 — Migrate `useMarketPulse` to React Query
+**File:** `src/hooks/useMarketPulse.ts`
+Wrap the edge function call in `useQuery` with 30-min `staleTime`. Eliminates redundant calls across page navigations.
 
-```typescript
-export interface GuideSection {
-  heading: string;
-  headingEs: string;
-  content: string;       // plain-text fallback always required
-  contentEs: string;
-  variant?: 'default' | 'comparison' | 'path-selector';
-  comparisonData?: {
-    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-  };
-  pathData?: Array<{
-    id: string;
-    title: string; titleEs: string;
-    desc: string; descEs: string;
-  }>;
-}
-```
+### P2 — Remove Duplicate Snapshot Restoration
+**File:** `src/contexts/SelenaChatContext.tsx`
+Remove lines 134-160 (the `get-session-snapshot` call). `V2Layout` already handles this.
 
-**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
+### P3 — Add `preload="none"` to Homepage Videos
+**File:** `src/pages/v2/V2Home.tsx`
+Add `preload="none"` to all 3 `<video>` elements (desktop, tablet, mobile layouts).
 
-Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
+### P4 — YouTube Click-to-Play
+**Files:** `src/pages/v2/V2Home.tsx`, `src/pages/v2/V2Podcast.tsx`
+Replace direct YouTube `<iframe>` with a thumbnail + play button that loads the iframe on click. Saves ~800KB per page.
 
-**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
-
-Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
-
-**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
-
-In the `.map()` loop, switch on `section.variant`:
-- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
-- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
-- default → current `whitespace-pre-line` text
-
-**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
-
-- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
-- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
-- Plain text `content`/`contentEs` stays as fallback
-
-**6. Export new components** (`src/components/v2/guides/index.ts`)
-
-Add exports for `GuideComparisonCards` and `GuidePathSelector`.
-
-### Governance Compliance
-
-- No mid-guide CTAs — these are educational visual enhancements only
-- Terminal routing stays in AuthorityCTABlock (unchanged)
-- Path selector is read-only visual engagement, does not write to session or navigate
-- All new components are bilingual via `useLanguage()`
+### P5 — Lazy-Load Below-Fold Homepage Sections
+**File:** `src/pages/v2/V2Home.tsx`
+Convert `TestimonialColumns`, `HomepageNeighborhoodCards`, and `InstantAnswerWidget` to `lazy()` imports with `<Suspense>` wrappers.
 
