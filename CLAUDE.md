@@ -42,7 +42,7 @@ Cost-bearing functions require `x-admin-secret` header:
 - `scrape-market-pulse` ✅ protected
 - `generate-guide-image` ✅ protected
 - `generate-all-guide-images` ✅ protected
-- `generate-neighborhood-heroes` ⚠️ NOT protected — known gap, do not call in production without fixing
+- `generate-neighborhood-heroes` ✅ protected (patched March 2026)
 
 ### 3. Environment Variables — Correct Names
 ```
