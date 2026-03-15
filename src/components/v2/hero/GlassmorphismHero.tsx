@@ -331,13 +331,11 @@ export default function GlassmorphismHero({
                       <Home className="w-5 h-5 text-cc-gold" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-cc-ivory">
+                    <p className="text-sm font-semibold text-cc-ivory">
                         {t("Tucson Market Pulse", "Pulso del Mercado de Tucson")}
                       </p>
                       <p className="text-xs text-cc-ivory/50">
-                        {stats.verifiedDate
-                          ? stats.verifiedDate
-                          : t("Latest data", "Datos recientes")}
+                        {stats.month}
                       </p>
                     </div>
                     {stats.isLive && (
