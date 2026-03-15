@@ -684,7 +684,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: "I'm thinking about selling",
     label_es: 'Estoy pensando en vender',
     normalized_key: "im thinking about selling",
-    actionSpec: { type: 'open_chat', label: { en: "I'm thinking about selling", es: 'Estoy pensando en vender' } },
+    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: "I'm thinking about selling", es: 'Estoy pensando en vender' } },
     chipKey: CHIP_KEYS.INTENT_SELL,
   },
   {
@@ -692,7 +692,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: "I'm thinking about selling",
     label_es: 'Estoy pensando en vender',
     normalized_key: 'estoy pensando en vender',
-    actionSpec: { type: 'open_chat', label: { en: "I'm thinking about selling", es: 'Estoy pensando en vender' } },
+    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: "I'm thinking about selling", es: 'Estoy pensando en vender' } },
     chipKey: CHIP_KEYS.INTENT_SELL,
   },
   {
@@ -700,7 +700,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: "I'm looking to buy",
     label_es: 'Estoy buscando comprar',
     normalized_key: "im looking to buy",
-    actionSpec: { type: 'open_chat', label: { en: "I'm looking to buy", es: 'Estoy buscando comprar' } },
+    actionSpec: { type: 'navigate', path: '/buyer-readiness', label: { en: "I'm looking to buy", es: 'Estoy buscando comprar' } },
     chipKey: CHIP_KEYS.INTENT_BUY,
   },
   {
@@ -708,7 +708,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: "I'm looking to buy",
     label_es: 'Estoy buscando comprar',
     normalized_key: 'estoy buscando comprar',
-    actionSpec: { type: 'open_chat', label: { en: "I'm looking to buy", es: 'Estoy buscando comprar' } },
+    actionSpec: { type: 'navigate', path: '/buyer-readiness', label: { en: "I'm looking to buy", es: 'Estoy buscando comprar' } },
     chipKey: CHIP_KEYS.INTENT_BUY,
   },
   {
@@ -716,7 +716,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Just exploring',
     label_es: 'Solo explorando',
     normalized_key: 'just exploring for now',
-    actionSpec: { type: 'open_chat', label: { en: 'Just exploring', es: 'Solo explorando' } },
+    actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Just exploring', es: 'Solo explorando' } },
     chipKey: CHIP_KEYS.INTENT_EXPLORE,
   },
   {
@@ -724,7 +724,7 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     label_en: 'Just exploring',
     label_es: 'Solo explorando',
     normalized_key: 'solo estoy explorando',
-    actionSpec: { type: 'open_chat', label: { en: 'Just exploring', es: 'Solo explorando' } },
+    actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Just exploring', es: 'Solo explorando' } },
     chipKey: CHIP_KEYS.INTENT_EXPLORE,
   },
 ] as const;
