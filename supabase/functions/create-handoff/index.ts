@@ -151,6 +151,23 @@ serve(async (req) => {
       .eq('id', lead_id)
       .maybeSingle();
 
+    // Fetch latest session snapshot for rich context
+    let snapshot: Record<string, unknown> | null = null;
+    if (leadProfile?.session_id) {
+      const { data: snapshotData } = await supabase
+        .from('session_snapshots')
+        .select('*')
+        .eq('session_id', leadProfile.session_id)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      snapshot = snapshotData;
+    }
+
+    // Unpack JSONB buckets for field access
+    const ctxJson = (snapshot?.context_json as Record<string, unknown>) ?? {};
+    const calcData = (snapshot?.calculator_data as Record<string, unknown>) ?? {};
+
     // ============================================
     // Notify Kasandra (background call to notify-handoff)
     // ============================================
@@ -167,13 +184,28 @@ serve(async (req) => {
         language: leadProfile?.language ?? 'en',
         selena_lead_id: lead_id,
         session_id: leadProfile?.session_id ?? '',
-        readiness_score: leadProfile?.lead_score ?? 0,
+        readiness_score: (snapshot?.readiness_score as number) ?? leadProfile?.lead_score ?? 0,
         journey_state: priority === 'hot' ? 'decide' : 'qualify',
         handoff_id: handoff.id,
         priority,
         channel,
         reason: reason ?? '',
         summary_md,
+        // Session snapshot enrichment
+        tools_completed: (snapshot?.tools_used as string[]) ?? [],
+        guides_consumed: (snapshot?.guides_read as string[]) ?? [],
+        budget: (calcData.budget as number) ?? null,
+        budget_max: (calcData.budget_max as number) ?? null,
+        bedrooms: (ctxJson.bedrooms as number) ?? null,
+        bathrooms: (ctxJson.bathrooms as number) ?? null,
+        timeline: (ctxJson.timeline as string) ?? null,
+        pre_approved: (ctxJson.pre_approved as boolean) ?? null,
+        property_type: (ctxJson.property_type as string) ?? null,
+        target_neighborhoods: (ctxJson.target_neighborhoods as string[]) ?? null,
+        quiz_completed: (ctxJson.quiz_completed as boolean) ?? false,
+        utm_source: (ctxJson.utm_source as string) ?? null,
+        utm_campaign: (ctxJson.utm_campaign as string) ?? null,
+        page_path: (snapshot?.last_page as string) ?? null,
       },
     };
 
