@@ -224,11 +224,18 @@ export function getPhaseAwareChips(
 
   if (floor >= 3) {
     const keys = filterAndReplace([CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA]);
+    // Escape hatch: if both primary chips are blocked, offer Browse Guides as fallback
+    if (keys.length === 0) {
+      keys.push(CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.TALK_WITH_KASANDRA);
+    } else if (keys.length === 1) {
+      // Always ensure at least 2 chips to prevent single-chip dead end
+      const fallback = keys[0] === CHIP_KEYS.TALK_WITH_KASANDRA
+        ? CHIP_KEYS.BROWSE_GUIDES
+        : CHIP_KEYS.TALK_WITH_KASANDRA;
+      if (!isBlocked(fallback)) keys.push(fallback);
+    }
     const labels = keys.map(resolveLabel);
-    return mapChipsToActionSpecs(
-      labels.length ? labels : [resolveLabel(CHIP_KEYS.TALK_WITH_KASANDRA)],
-      lang as 'en' | 'es',
-    );
+    return mapChipsToActionSpecs(labels, lang as 'en' | 'es');
   }
   if (floor >= 2 && (intent === 'sell' || intent === 'cash')) {
     const keys = filterAndReplace([CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.COMPARE_CASH_LISTING]);
