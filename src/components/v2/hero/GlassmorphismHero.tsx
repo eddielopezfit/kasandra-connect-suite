@@ -331,13 +331,11 @@ export default function GlassmorphismHero({
                       <Home className="w-5 h-5 text-cc-gold" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-cc-ivory">
+                    <p className="text-sm font-semibold text-cc-ivory">
                         {t("Tucson Market Pulse", "Pulso del Mercado de Tucson")}
                       </p>
                       <p className="text-xs text-cc-ivory/50">
-                        {stats.verifiedDate
-                          ? stats.verifiedDate
-                          : t("Latest data", "Datos recientes")}
+                        {stats.month}
                       </p>
                     </div>
                     {stats.isLive && (
@@ -355,19 +353,19 @@ export default function GlassmorphismHero({
                       icon={<TrendingUp className="w-5 h-5 text-cc-gold" />}
                       value={stats.saleToListRatio}
                       label={t("Sale-to-List Ratio", "Relación Venta/Lista")}
-                      insight={t("Buyers have slight negotiating room right now", "Los compradores tienen algo de margen de negociación")}
+                      insight={stats.insights.saleToList}
                     />
                     <StatItem
                       icon={<Clock className="w-5 h-5 text-cc-gold" />}
                       value={`${stats.daysOnMarket} ${t("days", "días")}`}
                       label={t("Median Days on Market", "Días Mediana en el Mercado")}
-                      insight={t("Overpriced homes sit for months — pricing strategy matters", "Las casas sobrevaloradas permanecen meses en el mercado")}
+                      insight={stats.insights.daysOnMarket}
                     />
                     <StatItem
                       icon={<Home className="w-5 h-5 text-cc-gold" />}
                       value={`$${stats.holdingCostPerDay}/${t("day", "día")}`}
                       label={t("Holding Cost Per Day", "Costo Diario de Retención")}
-                      insight={t("Every month unsold costs sellers ~$540", "Cada mes sin vender cuesta ~$540 al vendedor")}
+                      insight={stats.insights.holdingCost}
                     />
                   </div>
 

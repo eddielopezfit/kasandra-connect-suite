@@ -88,7 +88,7 @@ const V2MarketIntelligenceContent = () => {
   const saleToListPct = pulseStats.saleToListRatio;
   const holdingCost = pulseStats.holdingCostPerDay;
   const prepCost = pulseStats.prepAvg;
-  const verifiedDate = pulseStats.verifiedDate;
+  const monthLabel = pulseStats.month;
 
   const sellerImplication =
     dom <= 20 ? t("Fast-moving market — well-priced homes are moving quickly.", "Mercado activo — casas bien valuadas se están vendiendo rápido.")
@@ -146,13 +146,13 @@ const V2MarketIntelligenceContent = () => {
                 <Signal className="w-4 h-4 text-green-400" />
                 <span className="text-green-400 text-sm font-medium">
                   {t("Live Data", "Datos en Vivo")}
-                  {verifiedDate && ` · ${verifiedDate}`}
+                  {` · ${pulseStats.month}`}
                 </span>
               </>
             ) : (
               <>
                 <SignalZero className="w-4 h-4 text-cc-gold/60" />
-                <span className="text-cc-gold/60 text-sm">{t("Tucson market averages", "Promedios del mercado de Tucson")}</span>
+                <span className="text-cc-gold/60 text-sm">{pulseStats.month}</span>
               </>
             )}
           </div>
@@ -329,9 +329,9 @@ const V2MarketIntelligenceContent = () => {
           <div className="flex items-center gap-3 text-cc-slate text-sm">
             <RefreshCw className="w-4 h-4" />
             <span>
-              {isLive && verifiedDate
-                ? t(`Market data updated ${verifiedDate} via Redfin Tucson.`, `Datos del mercado actualizados ${verifiedDate} vía Redfin Tucson.`)
-                : t("Market data is refreshed weekly via Redfin Tucson.", "Los datos del mercado se actualizan semanalmente vía Redfin Tucson.")}
+              {isLive
+                ? t(`Market data updated ${monthLabel} via Redfin Tucson.`, `Datos del mercado actualizados ${monthLabel} vía Redfin Tucson.`)
+                : t(`Market data for ${monthLabel} via Redfin Tucson.`, `Datos del mercado de ${monthLabel} vía Redfin Tucson.`)}
               {" "}
               {t(
                 "All figures are estimates — not guarantees. Kasandra can explain what current conditions mean for your specific property.",
