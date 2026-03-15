@@ -231,6 +231,8 @@ Deno.serve(async (req) => {
           selena_source: input.source || "lead_capture_modal",
           selena_lead_score: scoreResult.lead_score,
           
+          notes: input.notes || null,
+          
           // Legacy fields
           lead_id: leadId,
           session_id: input.session_id || null,
