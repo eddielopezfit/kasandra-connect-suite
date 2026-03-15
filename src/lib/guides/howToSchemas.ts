@@ -523,7 +523,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
         textEs: 'Las ofertas en efectivo cierran en 7-30 días. Los listados tradicionales promedian 45-90 días en Tucson. Si necesitas rapidez, el efectivo gana en certeza.',
       },
       {
-        name: 'Evaluate your home's condition',
+        name: "Evaluate your home's condition",
         nameEs: 'Evalúa el estado de tu casa',
         text: 'Cash buyers purchase as-is  -  no repairs, no inspections. Traditional listings require your home to pass buyer inspections. Factor in repair costs (average $8,000-$15,000 in Tucson) when comparing.',
         textEs: 'Los compradores en efectivo compran tal como está  -  sin reparaciones ni inspecciones. Los listados tradicionales requieren pasar inspecciones. Considera los costos de reparación.',
