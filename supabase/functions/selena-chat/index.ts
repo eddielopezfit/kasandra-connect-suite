@@ -48,7 +48,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { 
   detectMode, 
-  getModeSuggestedReplies, 
   MODE_INSTRUCTIONS_EN, 
   MODE_INSTRUCTIONS_ES,
   type ConversationMode,
@@ -56,6 +55,7 @@ import {
 } from "./modeContext.ts";
 import { buildGuardState, applyGuardRules } from "./guardState.ts";
 import { classifyJourneyState } from "./journeyState.ts";
+import { generateEntryGreeting, type EntryContext } from "./entryGreetings.ts";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -471,7 +471,7 @@ function getGovernedChips(
   intent: string | undefined,
   timeline: string | null,
   engagement: SessionEngagementState,
-  language: 'en' | 'es',
+  _language: 'en' | 'es',
 ): { chips: string[]; phase: 1 | 2 | 3; escalated: boolean } {
   const hasIntent = !!intent && intent !== 'explore';
   const isAsap = timeline === 'asap';
@@ -507,10 +507,8 @@ function getGovernedChips(
     }
   }
 
-  // PHASE 1: Intent unknown — conversational labels (not routable, no semantic key needed)
-  const chips = language === 'es'
-    ? ["Estoy pensando en vender", "Estoy buscando comprar", "Solo estoy explorando"]
-    : ["I'm thinking about selling", "I'm looking to buy", "Just exploring"];
+  // PHASE 1: Intent unknown — semantic keys for deterministic routing
+  const chips = [CHIP_KEYS.INTENT_SELL, CHIP_KEYS.INTENT_BUY, CHIP_KEYS.INTENT_EXPLORE];
   return { chips, phase: 1, escalated: false };
 }
 
@@ -631,6 +629,10 @@ const CHIP_KEYS = {
   LEGACY_CASH_VS_TRADITIONAL: 'legacy_cash_vs_traditional',
   LEGACY_CASH_VS_VENTA_TRADICIONAL: 'legacy_cash_vs_venta_tradicional',
   ESTIMATE_NET_PROCEEDS_CAPS: 'estimate_net_proceeds_caps',
+  // Phase 1 intent declaration chips
+  INTENT_SELL: 'intent_sell',
+  INTENT_BUY: 'intent_buy',
+  INTENT_EXPLORE: 'intent_explore',
 } as const;
 
 /** Semantic chip key → destination path */
@@ -678,6 +680,10 @@ const CHIP_KEY_DESTINATION: Record<string, string> = {
   [CHIP_KEYS.LEGACY_CASH_VS_TRADITIONAL]: '/cash-offer-options',
   [CHIP_KEYS.LEGACY_CASH_VS_VENTA_TRADICIONAL]: '/cash-offer-options',
   [CHIP_KEYS.ESTIMATE_NET_PROCEEDS_CAPS]: '/cash-offer-options',
+  // Phase 1 intent declaration chips
+  [CHIP_KEYS.INTENT_SELL]: '/seller-decision',
+  [CHIP_KEYS.INTENT_BUY]: '/buyer-readiness',
+  [CHIP_KEYS.INTENT_EXPLORE]: '/guides',
 };
 
 /**
@@ -3514,6 +3520,41 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         : `\n\nGUIDE MODE: User opened chat from guide "${guideTitle}". Restrict suggestions to: understanding the guide, using related tools, or asking questions. Do NOT suggest unrelated guides or tools. Do NOT cross-sell or introduce urgency.`;
     }
 
+    // ============= ENTRY GREETING HINT (FIX 1) =============
+    // On first turn with a recognized entry_source, inject personalized greeting context
+    // so the AI adapts its Mode 1 response to how the user arrived.
+    let entryGreetingHint = "";
+    const ENTRY_SOURCES_WITH_GREETINGS = ['guide_handoff', 'calculator', 'neighborhood_detail', 'floating', 'synthesis', 'quiz_result', 'post_booking'];
+    if (
+      conversationState.userTurns <= 1 &&
+      context.entry_source &&
+      ENTRY_SOURCES_WITH_GREETINGS.includes(context.entry_source)
+    ) {
+      try {
+        const entryCtx: EntryContext = {
+          source: context.entry_source as EntryContext['source'],
+          language,
+          calculatorAdvantage: context.calculator_advantage as EntryContext['calculatorAdvantage'],
+          calculatorDifference: context.calculator_difference,
+          guideId: context.entry_guide_id ?? undefined,
+          guideTitle: context.entry_guide_title ?? undefined,
+          guidesReadCount: context.guides_read ?? 0,
+          intent: primaryIntent,
+          closingCostData: context.closing_cost_data,
+          sellerCalcData: context.seller_calc_data as EntryContext['sellerCalcData'],
+          readinessData: context.readiness_entry_data as EntryContext['readinessData'],
+        };
+        const greeting = generateEntryGreeting(entryCtx);
+        if (greeting?.content) {
+          entryGreetingHint = language === 'es'
+            ? `\n\nCONTEXTO DE ENTRADA: El usuario llegó desde "${context.entry_source}". Adapte su primera respuesta a este tono: "${greeting.content.substring(0, 200)}..."`
+            : `\n\nENTRY CONTEXT: User arrived from "${context.entry_source}". Adapt your first response to this tone: "${greeting.content.substring(0, 200)}..."`;
+        }
+      } catch {
+        // Silent fail — entry greeting is a bonus, not a requirement
+      }
+    }
+
     const modeHint = language === "es"
       ? `\n\nMODO ACTUAL: ${currentMode} (${modeContext.modeName}). Ajusta el tono y las sugerencias según este modo.`
       : `\n\nCURRENT MODE: ${currentMode} (${modeContext.modeName}). Adjust tone and suggestions for this mode.`;
@@ -3573,7 +3614,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     }
 
     const messagesPayload = [
-      { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
+      { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + entryGreetingHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
       ...history.slice(-6), // Extended to -6 to support loop detection context
       { role: "user", content: message }
     ];
