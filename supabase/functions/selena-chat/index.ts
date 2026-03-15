@@ -534,6 +534,18 @@ function getGovernedChips(
       return { chips: [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 3, escalated: true };
     }
 
+    // FIX-SIM-11: Dual intent (sell + buy simultaneously) — dedicated chip path
+    if (intent === 'dual') {
+      if (phase2TurnCount <= 1) {
+        return { chips: [CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.COMPARE_CASH_LISTING], phase: 2, escalated: false };
+      }
+      if (phase2TurnCount === 2) {
+        return { chips: [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.BUYER_READINESS], phase: 2, escalated: false };
+      }
+      // Turn 3+: they need a live conversation — escalate to booking
+      return { chips: [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 3, escalated: true };
+    }
+
     if (intent === 'sell' || intent === 'cash') {
       // FIX-SIM-05: Rotate sell chips based on turn count (prevents static repetition)
       if (engagement.hasAskedValue || phase2TurnCount >= 3) {
@@ -3540,6 +3552,8 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       isInheritedHome,
       timeline: timeline || context.timeline || undefined,
       hasTrustSignal,
+      // FIX-SIM-09: pass user turn count so journeyState can advance explore→evaluate after 3+ turns
+      user_turn_count: conversationState.userTurns,
     });
 
     let governanceHint = "";
@@ -3658,6 +3672,17 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     const modeHint = language === "es"
       ? `\n\nMODO ACTUAL: ${currentMode} (${modeContext.modeName}). Ajusta el tono y las sugerencias según este modo.`
       : `\n\nCURRENT MODE: ${currentMode} (${modeContext.modeName}). Adjust tone and suggestions for this mode.`;
+
+    // ============= FIX-SIM-10: PHASE 3 REPETITION NUDGE =============
+    // If we're in Phase 3 AND the chip history shows 2+ identical Phase 3 turns,
+    // inject a softening nudge so the user knows they can reach Kasandra directly.
+    // This prevents silent dead-ends when a user hasn't clicked after multiple Phase 3 turns.
+    const phase3ChipHistory = engagement.chipHistory;
+    const recentPhase3Turns = phase3ChipHistory.filter(m =>
+      /estimate.*proceeds|talk.*kasandra|hablar.*kasandra|estimar.*ganancias/i.test(m)
+    ).length;
+    const isPhase3RepetitionActive = phase === 3 && recentPhase3Turns >= 2;
+    // (nudge injected below after reply is generated, before response)
 
     // ============= FIRST SELLER TURN INTERCEPT =============
     // If user just declared selling intent on their first turn, short-circuit
@@ -3869,6 +3894,18 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // they take absolute priority over all other chip governance.
     if (guardRules.chipOverrides) {
       suggestedReplies = guardRules.chipOverrides;
+    }
+
+    // ============= FIX-SIM-10: PHASE 3 REPETITION — SOFT NUDGE =============
+    // If user has been shown Phase 3 chips 2+ times without clicking, add a
+    // direct-reach nudge to the reply text so they know there's a live path.
+    if (isPhase3RepetitionActive && !guardRules.chipOverrides && !guardState.containment_active) {
+      const nudge = language === 'es'
+        ? ' Si prefiere hablar directamente, Kasandra está disponible — solo haga clic en "Hablar con Kasandra" o llame al (520) 349-3248.'
+        : ' If you'd like to connect directly, Kasandra is available — just click "Talk with Kasandra" or call (520) 349-3248.';
+      if (!reply.includes('349-3248') && !reply.includes('Talk with Kasandra' or call')) {
+        reply = reply.trimEnd() + nudge;
+      }
     }
 
     // ============= STRUCTURAL GUIDE DELIVERY ENFORCEMENT =============
