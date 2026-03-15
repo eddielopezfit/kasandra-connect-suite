@@ -118,12 +118,15 @@ export function classifyJourneyState(input: {
   // FIX-SIM-09: 3+ user turns with known intent = evaluate (no tool required)
   // Prevents "explore forever" dead-end for engaged users who haven't clicked a tool.
   const turnBasedEvaluate = (user_turn_count ?? 0) >= 3 && !!intent && intent !== 'explore';
+  // FIX-AUDIT-01: seller who provided timeline has passed orientation → evaluate
+  const timelineQualified = !!timeline && (intent === 'sell' || intent === 'cash');
 
   if (
     readiness_score >= 30 ||
     tools_completed.length >= 1 ||
     guides_read_count >= 2 ||
-    turnBasedEvaluate
+    turnBasedEvaluate ||
+    timelineQualified
   ) {
     let chips: string[];
     if (intent === 'sell' || intent === 'cash') {
