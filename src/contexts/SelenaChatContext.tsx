@@ -130,6 +130,35 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     }
   }, [hasInitialized, language]);
 
+  // P1.1: Restore session snapshot from server (once per session, silent)
+  useEffect(() => {
+    if (!hasInitialized) return;
+    const ctx = getSessionContext();
+    if (!ctx?.session_id || ctx.restored_from_snapshot) return;
+
+    (async () => {
+      try {
+        const { supabase } = await import('@/integrations/supabase/client');
+        const { data } = await supabase.functions.invoke('get-session-snapshot', {
+          body: { session_id: ctx.session_id }
+        });
+        if (!data) return;
+        updateSessionContext({
+          intent: data.intent ?? undefined,
+          timeline: data.timeline ?? undefined,
+          readiness_score: data.readiness_score ?? undefined,
+          tools_completed: data.tools_completed ?? undefined,
+          guides_completed: data.guides_completed ?? undefined,
+          quiz_completed: data.quiz_completed ?? undefined,
+          last_neighborhood_zip: data.last_neighborhood_zip ?? undefined,
+          restored_from_snapshot: true,
+        });
+      } catch {
+        // Silent — snapshot restoration is non-critical
+      }
+    })();
+  }, [hasInitialized]);
+
   useEffect(() => {
     if (hasInitialized) {
       updateSessionContext({ last_page: location.pathname });
