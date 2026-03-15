@@ -10,6 +10,13 @@ export interface MarketPulse {
   market_ready_prep_avg: number | null;
   last_verified_date: string | null;
   updated_at: string;
+  // New fields from automated pipeline
+  source?: string;
+  month?: string;
+  sale_to_list_ratio?: number;
+  median_days_on_market?: number;
+  source_links?: unknown;
+  verified_at?: string;
 }
 
 /** Fallback values driven by the monthly config file */
@@ -39,41 +46,56 @@ export interface MarketStats {
   verifiedDate: string | null;
   isLive: boolean;
   insights: MarketInsights;
+  sourceLinks?: unknown;
 }
 
 function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' = 'en'): MarketStats {
-  const daysOnMarket = pulse.days_to_close
-    ? Math.max(1, Math.round(pulse.days_to_close - 30))
-    : tucsonMarketPulse.medianDaysOnMarket;
+  // If data comes from new market_pulse table, use direct fields
+  const isNewPipeline = pulse.source === "market_pulse";
 
-  const saleToListRaw = pulse.negotiation_gap
-    ? 1 - pulse.negotiation_gap
-    : tucsonMarketPulse.saleToListRaw;
+  let daysOnMarket: number;
+  let saleToListRaw: number;
+
+  if (isNewPipeline && pulse.median_days_on_market != null && pulse.sale_to_list_ratio != null) {
+    daysOnMarket = pulse.median_days_on_market;
+    saleToListRaw = Number(pulse.sale_to_list_ratio);
+  } else {
+    daysOnMarket = pulse.days_to_close
+      ? Math.max(1, Math.round(pulse.days_to_close - 30))
+      : tucsonMarketPulse.medianDaysOnMarket;
+    saleToListRaw = pulse.negotiation_gap
+      ? 1 - pulse.negotiation_gap
+      : tucsonMarketPulse.saleToListRaw;
+  }
 
   const saleToListRatio = `${(saleToListRaw * 100).toFixed(1)}%`;
-
   const locale = language === 'es' ? 'es-US' : 'en-US';
 
-  // When DB is live AND has a verified date, derive month from that date
-  // to prevent showing config month label over stale DB numbers.
-  // Otherwise, use the config month as the intentional display source.
+  // Month label: prefer DB month field, then derive from verified date, then config
   let month: string;
   let verifiedDate: string | null;
 
-  if (isLive && pulse.last_verified_date) {
+  if (isNewPipeline && pulse.month) {
+    // New pipeline provides month directly (e.g. "March 2026")
+    if (language === 'es') {
+      // Translate month to Spanish
+      const d = new Date(pulse.month + " 1");
+      month = d.toLocaleDateString('es-US', { month: 'long', year: 'numeric' });
+    } else {
+      month = pulse.month;
+    }
+    verifiedDate = pulse.verified_at ? new Date(pulse.verified_at).toLocaleDateString(locale, { month: 'long', year: 'numeric' }) : month;
+  } else if (isLive && pulse.last_verified_date) {
     const d = new Date(pulse.last_verified_date);
     month = d.toLocaleDateString(locale, { month: "long", year: "numeric" });
-    verifiedDate = month; // same value — "March 2026"
+    verifiedDate = month;
   } else {
     month = tucsonMarketPulse.month[language];
     verifiedDate = null;
   }
 
-  const insights: MarketInsights = {
-    saleToList: tucsonMarketPulse.insights.saleToList[language],
-    daysOnMarket: tucsonMarketPulse.insights.daysOnMarket[language],
-    holdingCost: tucsonMarketPulse.insights.holdingCost[language],
-  };
+  // Generate dynamic insights based on actual data
+  const insights: MarketInsights = generateInsights(saleToListRaw, daysOnMarket, pulse.holding_cost_per_day ?? tucsonMarketPulse.holdingCostPerDay, language);
 
   return {
     month,
@@ -85,19 +107,63 @@ function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' 
     verifiedDate,
     isLive,
     insights,
+    sourceLinks: isNewPipeline ? pulse.source_links : undefined,
+  };
+}
+
+/**
+ * Generate insight copy dynamically based on actual market data values
+ */
+function generateInsights(stl: number, dom: number, holdingCost: number, language: 'en' | 'es'): MarketInsights {
+  const monthlyHolding = Math.round(holdingCost * 30);
+
+  if (language === 'es') {
+    return {
+      saleToList: stl >= 1.0
+        ? "Las casas se están vendiendo por encima del precio pedido."
+        : stl >= 0.98
+          ? "Los compradores tienen poco margen de negociación."
+          : "Los compradores aún tienen algo de margen.",
+      daysOnMarket: dom <= 21
+        ? "Las casas con buen precio se venden en unas 3 semanas."
+        : dom <= 35
+          ? "Las casas con buen precio se venden en unas 4-5 semanas."
+          : `Las casas con buen precio se venden en unas ${Math.round(dom / 7)} semanas.`,
+      holdingCost: `Cada mes sin vender cuesta ~$${monthlyHolding.toLocaleString()} al vendedor.`,
+    };
+  }
+
+  return {
+    saleToList: stl >= 1.0
+      ? "Homes are selling above asking price."
+      : stl >= 0.98
+        ? "Buyers have little negotiating room."
+        : "Buyers still have slight negotiating room.",
+    daysOnMarket: dom <= 21
+      ? "Homes priced correctly are selling in about 3 weeks."
+      : dom <= 35
+        ? "Homes priced correctly are selling in about 4-5 weeks."
+        : `Homes priced correctly are selling in about ${Math.round(dom / 7)} weeks.`,
+    holdingCost: `Every month unsold costs sellers about $${monthlyHolding.toLocaleString()}.`,
   };
 }
 
 async function fetchMarketPulse(): Promise<MarketPulse> {
   const { data, error } = await supabase.functions.invoke("get-market-pulse");
-  if (error || !data?.days_to_close) throw new Error("No data");
+  if (error || !data) throw new Error("No data");
+
+  // Support both new pipeline and legacy format
+  const daysToClose = data.days_to_close ?? (data.median_days_on_market ? data.median_days_on_market + 30 : null);
+  if (!daysToClose) throw new Error("No data");
+
+  const negotiationGap = data.negotiation_gap ?? (data.sale_to_list_ratio ? 1 - Number(data.sale_to_list_ratio) : null);
 
   const isSane =
-    (data.negotiation_gap ?? 0) > 0.005 &&
-    (data.negotiation_gap ?? 1) < 0.15 &&
+    (negotiationGap ?? 0) > -0.05 && // Allow up to 5% over asking (hot markets)
+    (negotiationGap ?? 1) < 0.15 &&
     (data.holding_cost_per_day ?? 0) >= 5 &&
-    (data.days_to_close ?? 0) >= 20 &&
-    (data.days_to_close ?? 999) <= 200;
+    daysToClose >= 20 &&
+    daysToClose <= 200;
 
   if (!isSane) throw new Error("Insane data");
   return data as MarketPulse;
@@ -105,7 +171,7 @@ async function fetchMarketPulse(): Promise<MarketPulse> {
 
 /**
  * useMarketPulse — cached via React Query (30-min staleTime).
- * Falls back to config-driven values when DB is unavailable.
+ * Reads from automated pipeline (market_pulse table) with fallback to config.
  */
 export function useMarketPulse(language: 'en' | 'es' = 'en') {
   const { data, isLoading } = useQuery({
