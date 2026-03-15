@@ -707,6 +707,10 @@ const CHIP_KEYS = {
   INTENT_SELL: 'intent_sell',
   INTENT_BUY: 'intent_buy',
   INTENT_EXPLORE: 'intent_explore',
+  // New tools (March 2026 connection pass)
+  AFFORDABILITY_CALCULATOR: 'affordability_calculator',
+  BAH_CALCULATOR: 'bah_calculator',
+  HOME_VALUATION: 'home_valuation',
 } as const;
 
 /** Semantic chip key → destination path */
