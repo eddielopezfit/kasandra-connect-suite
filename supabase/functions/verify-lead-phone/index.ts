@@ -1,5 +1,12 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
+
+/**
+ * verify-lead-phone
+ * SECURITY: Rate limited to 5 req/min per IP — prevents phone number enumeration
+ * and lead UUID harvesting. [audit SEC-03]
+ */
 
 interface VerifyPhoneRequest {
   phone: string;
@@ -11,30 +18,33 @@ interface VerifyPhoneResponse {
   error?: string;
 }
 
-// Normalize phone number for consistent matching
 function normalizePhone(phone: string): string {
-  // Remove all non-digit characters
   const digits = phone.replace(/\D/g, '');
-  
-  // If starts with 1 and is 11 digits, remove leading 1 (US country code)
   if (digits.length === 11 && digits.startsWith('1')) {
     return digits.slice(1);
   }
-  
   return digits;
 }
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { phone }: VerifyPhoneRequest = await req.json();
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Validate phone input
+    // Rate limiting: 5 req/min per IP — prevents phone enumeration attacks
+    const rlKey = extractRateLimitKey(req, {});
+    const rl = await checkRateLimit(supabase, rlKey, 'verify-lead-phone', 5);
+    if (!rl.allowed) return rateLimitResponse(corsHeaders);
+
+    const body = await req.json();
+    const { phone }: VerifyPhoneRequest = body;
+
     if (!phone || typeof phone !== 'string') {
       console.error("[verify-lead-phone] Validation failed: Missing phone");
       return new Response(
@@ -45,7 +55,6 @@ Deno.serve(async (req) => {
 
     const normalizedPhone = normalizePhone(phone);
 
-    // Require at least 10 digits for a valid US phone number
     if (normalizedPhone.length < 10) {
       console.error("[verify-lead-phone] Validation failed: Invalid phone format");
       return new Response(
@@ -59,13 +68,6 @@ Deno.serve(async (req) => {
       normalizedLength: normalizedPhone.length,
     });
 
-    // Initialize Supabase client with service role
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    // Query lead_profiles for matching phone
-    // Try multiple formats since phone storage may vary
     const { data: lead, error: queryError } = await supabase
       .from('lead_profiles')
       .select('id, name, email')
@@ -97,7 +99,6 @@ Deno.serve(async (req) => {
       hasName: !!lead.name,
     });
 
-    // Log successful verification event
     await supabase.from('event_log').insert({
       event_type: 'phone_verification_success',
       session_id: lead.id,
