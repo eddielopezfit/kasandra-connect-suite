@@ -185,7 +185,8 @@ serve(async (req) => {
         ok: true,
         handoff_id: handoff.id,
         booking_url: bookingUrl,
-        slots,
+        slots: [],
+        stub_note: "real availability pending GHL calendar integration",
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
