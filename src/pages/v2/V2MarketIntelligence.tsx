@@ -329,9 +329,9 @@ const V2MarketIntelligenceContent = () => {
           <div className="flex items-center gap-3 text-cc-slate text-sm">
             <RefreshCw className="w-4 h-4" />
             <span>
-              {isLive && verifiedDate
-                ? t(`Market data updated ${verifiedDate} via Redfin Tucson.`, `Datos del mercado actualizados ${verifiedDate} vía Redfin Tucson.`)
-                : t("Market data is refreshed weekly via Redfin Tucson.", "Los datos del mercado se actualizan semanalmente vía Redfin Tucson.")}
+              {isLive
+                ? t(`Market data updated ${monthLabel} via Redfin Tucson.`, `Datos del mercado actualizados ${monthLabel} vía Redfin Tucson.`)
+                : t(`Market data for ${monthLabel} via Redfin Tucson.`, `Datos del mercado de ${monthLabel} vía Redfin Tucson.`)}
               {" "}
               {t(
                 "All figures are estimates — not guarantees. Kasandra can explain what current conditions mean for your specific property.",

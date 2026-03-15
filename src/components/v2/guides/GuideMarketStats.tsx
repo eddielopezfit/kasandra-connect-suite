@@ -30,8 +30,8 @@ export function GuideMarketStats({ variant = 'seller-full' }: GuideMarketStatsPr
     ? t("Live Tucson Data", "Datos en Vivo de Tucson")
     : t("Estimated — Verify with Kasandra", "Estimado — Verifica con Kasandra");
 
-  const verifiedLabel = stats.verifiedDate
-    ? t(`Verified ${stats.verifiedDate}`, `Verificado ${stats.verifiedDate}`)
+  const verifiedLabel = stats.month
+    ? stats.month
     : t("Data sourced from Pima County MLS", "Datos del MLS del Condado de Pima");
 
   const statCards = [
