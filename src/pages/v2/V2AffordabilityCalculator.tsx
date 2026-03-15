@@ -161,7 +161,7 @@ const V2AffordabilityCalculatorContent = () => {
                   max={50}
                   step={1}
                   placeholder={t("Custom %", "% Personalizado")}
-                  value={downPct}
+                  value={[3, 5, 10, 20].includes(parseFloat(downPct)) ? '' : downPct}
                   onChange={e => { setDownPct(e.target.value); setCalculated(false); }}
                   className="w-28 px-4 py-2.5 rounded-full border border-cc-sand-dark/40 focus:border-cc-navy/40 focus:outline-none text-sm text-cc-charcoal"
                 />
