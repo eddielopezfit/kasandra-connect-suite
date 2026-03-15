@@ -243,20 +243,22 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Browse guides', es: 'Explorar guías' } },
   },
 
-  // --- Legacy safety net: "What's my home worth?" → seller-decision ---
+  // --- Legacy safety net: "What's my home worth?" → home-valuation ---
   {
     id: 'legacy-home-worth-en',
     label_en: "What's my home worth?",
     label_es: '¿Cuánto vale mi casa?',
     normalized_key: "what's my home worth",
-    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/home-valuation', label: { en: 'Get my market analysis', es: 'Obtener mi análisis de mercado' } },
+    chipKey: CHIP_KEYS.HOME_VALUATION,
   },
   {
     id: 'legacy-home-worth-es',
     label_en: "What's my home worth?",
     label_es: '¿Cuánto vale mi casa?',
     normalized_key: 'cuanto vale mi casa',
-    actionSpec: { type: 'navigate', path: '/seller-decision', label: { en: 'Get my selling options', es: 'Ver mis opciones de venta' } },
+    actionSpec: { type: 'navigate', path: '/home-valuation', label: { en: 'Get my market analysis', es: 'Obtener mi análisis de mercado' } },
+    chipKey: CHIP_KEYS.HOME_VALUATION,
   },
 
   // --- Legacy safety net: "Compare cash vs. traditional" → cash-comparison ---
