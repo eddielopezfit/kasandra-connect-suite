@@ -18,6 +18,7 @@ import { markGuideOpened, setLastGuideId, getGuidesRead } from '@/lib/guides/per
 import { getGuideById, type GuideCategory } from "@/lib/guides/guideRegistry";
 import { getHowToSchema } from "@/lib/guides/howToSchemas";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { CognitiveProgressBar } from "@/components/v2/guides/CognitiveProgressBar";
 import { useCognitiveStage } from "@/hooks/useCognitiveStage";
 import { GUIDE_DATA_LOADERS, type GuideContentData } from "@/data/guides";
