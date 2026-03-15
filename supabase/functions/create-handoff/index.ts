@@ -89,6 +89,25 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Rate limit (5 req/hour per IP)
+    const rlKey = extractRateLimitKey(req, { lead_id });
+    const { allowed } = await checkRateLimit(supabase, rlKey, 'create-handoff');
+    if (!allowed) return rateLimitResponse(corsHeaders);
+
+    // Validate lead_id exists in lead_profiles before creating handoff
+    const { data: leadExists } = await supabase
+      .from('lead_profiles')
+      .select('id')
+      .eq('id', lead_id)
+      .maybeSingle();
+
+    if (!leadExists) {
+      return new Response(
+        JSON.stringify({ ok: false, error: 'Invalid lead_id' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Call check-availability to get slots (unless a slot is already selected)
     let slots: TimeSlot[] = [];
     let bookingUrl = '';

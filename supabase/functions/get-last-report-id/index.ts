@@ -61,6 +61,11 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Rate limit (30 req/hour per IP)
+    const rlKey = extractRateLimitKey(req, { lead_id, session_id } as Record<string, unknown>);
+    const { allowed } = await checkRateLimit(supabase, rlKey, 'get-last-report-id');
+    if (!allowed) return rateLimitResponse(corsHeaders);
+
     // Session ownership verification [audit SEC-05]
     if (session_id) {
       const { data: leadCheck } = await supabase

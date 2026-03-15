@@ -146,6 +146,11 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Rate limit (30 req/hour per session/IP)
+    const rlKey = extractRateLimitKey(req, { session_id: sessionId } as Record<string, unknown>);
+    const { allowed } = await checkRateLimit(supabase, rlKey, 'selena-log-event');
+    if (!allowed) return rateLimitResponse(corsHeaders);
+
     // Log to event_log table
     const { error } = await supabase
       .from("event_log")

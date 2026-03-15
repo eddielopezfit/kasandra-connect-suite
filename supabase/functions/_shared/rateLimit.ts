@@ -23,6 +23,10 @@ const ENDPOINT_LIMITS: Record<string, RateLimitConfig> = {
   'get-decision-receipt': { maxRequests: 30, windowSeconds: 3600 },
   'upsert-session-snapshot': { maxRequests: 60, windowSeconds: 3600 },
   'get-session-snapshot': { maxRequests: 60, windowSeconds: 3600 },
+  'create-handoff': { maxRequests: 5, windowSeconds: 3600 },
+  'selena-log-event': { maxRequests: 30, windowSeconds: 3600 },
+  'get-report': { maxRequests: 30, windowSeconds: 3600 },
+  'get-last-report-id': { maxRequests: 30, windowSeconds: 3600 },
 };
 
 // ─── In-memory fallback store ─────────────────────────────────────────────────
