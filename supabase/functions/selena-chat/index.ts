@@ -3901,9 +3901,9 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // direct-reach nudge to the reply text so they know there's a live path.
     if (isPhase3RepetitionActive && !guardRules.chipOverrides && !guardState.containment_active) {
       const nudge = language === 'es'
-        ? ' Si prefiere hablar directamente, Kasandra está disponible — solo haga clic en "Hablar con Kasandra" o llame al (520) 349-3248.'
-        : ' If you'd like to connect directly, Kasandra is available — just click "Talk with Kasandra" or call (520) 349-3248.';
-      if (!reply.includes('349-3248') && !reply.includes('Talk with Kasandra' or call')) {
+        ? ' Si prefiere hablar directamente, Kasandra está disponible - solo haga clic en "Hablar con Kasandra" o llame al (520) 349-3248.'
+        : ' If you'd like to connect directly, Kasandra is available - just click "Talk with Kasandra" or call (520) 349-3248.';
+      if (!reply.includes('349-3248') && !reply.includes('Talk with Kasandra')) {
         reply = reply.trimEnd() + nudge;
       }
     }
