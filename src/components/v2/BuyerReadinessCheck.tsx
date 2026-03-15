@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import ReadinessSnapshot from "@/components/v2/ReadinessSnapshot";
-import { updateSessionContext, setFieldIfEmpty, getSessionContext } from "@/lib/analytics/selenaSession";
+import { updateSessionContext, setFieldIfEmpty, getSessionContext, syncLeadScore } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 
 // ─── Types ───────────────────────────────────────────────────────────────────

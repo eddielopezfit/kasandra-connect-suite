@@ -4,7 +4,7 @@ import { useDocumentHead } from "@/hooks/useDocumentHead";
 import CashReadinessCheck from "@/components/v2/CashReadinessCheck";
 import LeadCaptureModal from "@/components/v2/LeadCaptureModal";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getSessionContext, updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { getSessionContext, updateSessionContext, setFieldIfEmpty, syncLeadScore } from "@/lib/analytics/selenaSession";
 import { getStoredEmail } from "@/lib/analytics/bridgeLeadIdToV2";
 import { supabase } from "@/integrations/supabase/client";
 import { Save } from "lucide-react";
