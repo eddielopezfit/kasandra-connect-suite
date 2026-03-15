@@ -11,6 +11,7 @@ import NeighborhoodSplitCTA from "@/components/v2/neighborhood/NeighborhoodSplit
 import RelatedNeighborhoodsRail from "@/components/v2/neighborhood/RelatedNeighborhoodsRail";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logEvent } from "@/lib/analytics/logEvent";
+import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { useEffect, useState } from "react";
 import { type NeighborhoodEntry } from "@/data/neighborhoods/neighborhoodRegistry";
 import { getNeighborhoodHeroUrl } from "@/lib/neighborhood/heroUrl";
