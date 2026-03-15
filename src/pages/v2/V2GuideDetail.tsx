@@ -26,7 +26,7 @@ import type { ExternalLink } from "@/data/guides/types";
 import { parseInlineMarkdown } from "@/lib/utils/parseInlineMarkdown";
 import { validateRegistryLoadersOnce } from "@/lib/guides/validate";
 
-// External authoritative sources — renders when guide has externalLinks
+// External authoritative sources  -  renders when guide has externalLinks
 function ExternalSourcesFooter({ links, language }: { links: ExternalLink[]; language: 'en' | 'es' }) {
   if (!links?.length) return null;
   return (
@@ -64,7 +64,7 @@ function ExternalSourcesFooter({ links, language }: { links: ExternalLink[]; lan
 }
 
 
-// Inner component — must be rendered inside V2Layout (which provides SelenaChatProvider)
+// Inner component  -  must be rendered inside V2Layout (which provides SelenaChatProvider)
 function GuideDetailContent() {
   const { guideId } = useParams<{ guideId: string }>();
   const { t, language } = useLanguage();
@@ -132,7 +132,7 @@ function GuideDetailContent() {
       markGuideOpened(guideId);
       setLastGuideId(guideId);
 
-      // Derive guides_read from the unique localStorage array — not a naive
+      // Derive guides_read from the unique localStorage array  -  not a naive
       // increment. Previous bug: `prevGuideId !== guideId` only blocked same-
       // guide consecutive re-entry; returning to any earlier guide re-counted it.
       // Now: length of the deduped array is always the canonical unique count.
@@ -169,11 +169,11 @@ function GuideDetailContent() {
     if (slot.type === 'video') {
       return <GuideVideo src={slot.src} posterSrc={slot.posterSrc} alt={slot.alt} altEs={slot.altEs} />;
     }
-    // image & checklist-image — not rendered in guide body (hero card only)
+    // image & checklist-image  -  not rendered in guide body (hero card only)
     return null;
   };
 
-  // Per-guide SEO overrides — keyed by guideId
+  // Per-guide SEO overrides  -  keyed by guideId
   const seoOverrides: Record<string, { titleEn: string; titleEs: string; descEn: string; descEs: string }> = {
     'cash-vs-traditional-sale': {
       titleEn: 'Cash Offer vs. Listing in Tucson – Kasandra Prieto',
@@ -202,8 +202,8 @@ function GuideDetailContent() {
     'pricing-strategy': {
       titleEn: 'How to Price Your Tucson Home to Sell in 2026 – Kasandra Prieto',
       titleEs: 'Cómo Fijar el Precio de tu Casa en Tucson para Vender en 2026 – Kasandra Prieto',
-      descEn: 'The real strategy behind Tucson home pricing — why overpricing costs more than it saves, and how to price correctly from day one.',
-      descEs: 'La estrategia real detrás de los precios de casas en Tucson — por qué sobrevalorar cuesta más de lo que ahorra.',
+      descEn: 'The real strategy behind Tucson home pricing  -  why overpricing costs more than it saves, and how to price correctly from day one.',
+      descEs: 'La estrategia real detrás de los precios de casas en Tucson  -  por qué sobrevalorar cuesta más de lo que ahorra.',
     },
     'military-pcs-guide': {
       titleEn: 'Military PCS to Tucson: Buying a Home Near Davis-Monthan AFB – Kasandra Prieto',
@@ -220,8 +220,8 @@ function GuideDetailContent() {
     'senior-downsizing': {
       titleEn: 'Senior Downsizing in Tucson: Selling and Moving Forward – Kasandra Prieto',
       titleEs: 'Reducción de Vivienda para Mayores en Tucson – Kasandra Prieto',
-      descEn: 'A calm guide to downsizing your Tucson home — timing, what to do with possessions, and community options for Arizona seniors.',
-      descEs: 'Una guía tranquila para reducir tu vivienda en Tucson — tiempos, qué hacer con las pertenencias y opciones de comunidad para mayores en Arizona.',
+      descEn: 'A calm guide to downsizing your Tucson home  -  timing, what to do with possessions, and community options for Arizona seniors.',
+      descEs: 'Una guía tranquila para reducir tu vivienda en Tucson  -  tiempos, qué hacer con las pertenencias y opciones de comunidad para mayores en Arizona.',
     },
     'distressed-preforeclosure': {
       titleEn: 'Facing Foreclosure in Tucson? Your Options in Arizona – Kasandra Prieto',
@@ -232,14 +232,14 @@ function GuideDetailContent() {
     'relocating-to-tucson': {
       titleEn: 'Moving to Tucson, Arizona in 2026 – Neighborhood Guide & Relocation Tips',
       titleEs: 'Mudarse a Tucson, Arizona en 2026 – Guía de Vecindarios y Consejos',
-      descEn: 'Everything you need to know before relocating to Tucson — best neighborhoods, cost of living, climate, and buying your first home here.',
-      descEs: 'Todo lo que necesitas saber antes de mudarte a Tucson — mejores vecindarios, costo de vida, clima y cómo comprar tu primera casa aquí.',
+      descEn: 'Everything you need to know before relocating to Tucson  -  best neighborhoods, cost of living, climate, and buying your first home here.',
+      descEs: 'Todo lo que necesitas saber antes de mudarte a Tucson  -  mejores vecindarios, costo de vida, clima y cómo comprar tu primera casa aquí.',
     },
     'tucson-neighborhoods': {
       titleEn: 'Best Neighborhoods in Tucson, AZ (2026) – Buyer\'s Guide – Kasandra Prieto',
       titleEs: 'Los Mejores Vecindarios de Tucson, AZ (2026) – Guía para Compradores',
-      descEn: 'Foothills, Marana, Vail, Downtown Tucson and more — a neighborhood-by-neighborhood breakdown for buyers from local Realtor Kasandra Prieto.',
-      descEs: 'Foothills, Marana, Vail, Centro de Tucson y más — análisis vecindario por vecindario para compradores de la Realtor local Kasandra Prieto.',
+      descEn: 'Foothills, Marana, Vail, Downtown Tucson and more  -  a neighborhood-by-neighborhood breakdown for buyers from local Realtor Kasandra Prieto.',
+      descEs: 'Foothills, Marana, Vail, Centro de Tucson y más  -  análisis vecindario por vecindario para compradores de la Realtor local Kasandra Prieto.',
     },
     'tucson-suburb-comparison': {
       titleEn: 'Marana vs Vail vs Sahuarita: Tucson Suburb Comparison 2026 – Kasandra Prieto',
@@ -256,7 +256,7 @@ function GuideDetailContent() {
     'buying-home-noncitizen-arizona': {
       titleEn: 'Buying a Home in Arizona as a Non-Citizen or DACA Recipient – Kasandra Prieto',
       titleEs: 'Comprar Casa en Arizona sin Ser Ciudadano o con DACA – Kasandra Prieto',
-      descEn: 'Yes, non-citizens can buy homes in Arizona. Mortgage options for ITIN, green card, and DACA buyers in Tucson — explained clearly.',
+      descEn: 'Yes, non-citizens can buy homes in Arizona. Mortgage options for ITIN, green card, and DACA buyers in Tucson  -  explained clearly.',
       descEs: 'Sí, los no ciudadanos pueden comprar casas en Arizona. Opciones de hipoteca para compradores con ITIN, tarjeta verde y DACA en Tucson.',
     },
     'pima-county-property-taxes': {
@@ -268,8 +268,8 @@ function GuideDetailContent() {
     'arizona-real-estate-glossary': {
       titleEn: 'Arizona Real Estate Terms Glossary (2026) – Kasandra Prieto',
       titleEs: 'Glosario de Términos de Bienes Raíces en Arizona (2026) – Kasandra Prieto',
-      descEn: 'Plain-language definitions of Arizona real estate terms — escrow, contingency, earnest money, title, and more for Tucson buyers and sellers.',
-      descEs: 'Definiciones en lenguaje sencillo de términos de bienes raíces en Arizona — depósito en garantía, contingencia, señal y más.',
+      descEn: 'Plain-language definitions of Arizona real estate terms  -  escrow, contingency, earnest money, title, and more for Tucson buyers and sellers.',
+      descEs: 'Definiciones en lenguaje sencillo de términos de bienes raíces en Arizona  -  depósito en garantía, contingencia, señal y más.',
     },
     'capital-gains-home-sale-arizona': {
       titleEn: 'Capital Gains When Selling Your Home in Arizona (2026) – Kasandra Prieto',
@@ -286,45 +286,45 @@ function GuideDetailContent() {
     'how-long-to-sell-tucson': {
       titleEn: 'How Long Does It Take to Sell a House in Tucson? (2026) – Kasandra Prieto',
       titleEs: '¿Cuánto Tiempo Tarda en Venderse una Casa en Tucson? (2026)',
-      descEn: 'Current Tucson days on market, what slows down a sale, and how to sell faster with the right strategy — from a local Realtor.',
+      descEn: 'Current Tucson days on market, what slows down a sale, and how to sell faster with the right strategy  -  from a local Realtor.',
       descEs: 'Días actuales en el mercado en Tucson, qué retrasa una venta y cómo vender más rápido con la estrategia correcta.',
     },
         'move-up-buyer': {
       titleEn: 'Move-Up Buyer Guide: Selling & Buying at the Same Time in Tucson',
       titleEs: 'Guía para Comprar y Vender al Mismo Tiempo en Tucson',
-      descEn: 'How to sell your current home and buy your next one in Tucson without getting stuck owning two properties — or missing out on the right house.',
+      descEn: 'How to sell your current home and buy your next one in Tucson without getting stuck owning two properties  -  or missing out on the right house.',
       descEs: 'Cómo vender tu casa actual y comprar la siguiente en Tucson sin quedar atrapado con dos propiedades ni perder la casa correcta.',
     },
-    // SEO-SPRINT-01: 15 new seoOverrides — previously using guide.title fallback
+    // SEO-SPRINT-01: 15 new seoOverrides  -  previously using guide.title fallback
     'first-time-buyer-guide': {
-      titleEn: 'First-Time Home Buyer Guide in Tucson, AZ (2026) — Kasandra Prieto',
-      titleEs: 'Guía para Compradores de Primera Vivienda en Tucson, AZ (2026) — Kasandra Prieto',
-      descEn: 'Everything a first-time buyer in Tucson needs — financing, down payment programs, inspections, and Pima County market tips. Free bilingual guide.',
-      descEs: 'Todo lo que un comprador primerizo en Tucson necesita — financiamiento, programas de pago inicial, inspecciones y consejos del mercado de Pima County.',
+      titleEn: 'First-Time Home Buyer Guide in Tucson, AZ (2026)  -  Kasandra Prieto',
+      titleEs: 'Guía para Compradores de Primera Vivienda en Tucson, AZ (2026)  -  Kasandra Prieto',
+      descEn: 'Everything a first-time buyer in Tucson needs  -  financing, down payment programs, inspections, and Pima County market tips. Free bilingual guide.',
+      descEs: 'Todo lo que un comprador primerizo en Tucson necesita  -  financiamiento, programas de pago inicial, inspecciones y consejos del mercado de Pima County.',
     },
     'selling-for-top-dollar': {
-      titleEn: 'How to Sell Your Tucson Home for Top Dollar in 2026 — Kasandra Prieto',
-      titleEs: 'Cómo Vender tu Casa en Tucson al Mejor Precio en 2026 — Kasandra Prieto',
-      descEn: 'Proven strategies to maximize your Tucson home sale price — pricing, staging, timing, and negotiation tactics from a local bilingual REALTOR®.',
-      descEs: 'Estrategias comprobadas para maximizar el precio de venta de tu casa en Tucson — precio, presentación, timing y tácticas de negociación.',
+      titleEn: 'How to Sell Your Tucson Home for Top Dollar in 2026  -  Kasandra Prieto',
+      titleEs: 'Cómo Vender tu Casa en Tucson al Mejor Precio en 2026  -  Kasandra Prieto',
+      descEn: 'Proven strategies to maximize your Tucson home sale price  -  pricing, staging, timing, and negotiation tactics from a local bilingual REALTOR®.',
+      descEs: 'Estrategias comprobadas para maximizar el precio de venta de tu casa en Tucson  -  precio, presentación, timing y tácticas de negociación.',
     },
     'cash-offer-guide': {
-      titleEn: 'How Cash Offers Work in Tucson — Complete Seller Guide (2026)',
-      titleEs: 'Cómo Funcionan las Ofertas en Efectivo en Tucson — Guía Completa (2026)',
-      descEn: 'Everything Tucson sellers need to know about cash offers — what's included, what to watch for, and how to compare a cash deal vs. listing on market.',
-      descEs: 'Todo lo que los vendedores de Tucson deben saber sobre las ofertas en efectivo — qué incluyen, qué vigilar y cómo comparar con listar en el mercado.',
+      titleEn: 'How Cash Offers Work in Tucson  -  Complete Seller Guide (2026)',
+      titleEs: 'Cómo Funcionan las Ofertas en Efectivo en Tucson  -  Guía Completa (2026)',
+      descEn: 'Everything Tucson sellers need to know about cash offers  -  what's included, what to watch for, and how to compare a cash deal vs. listing on market.',
+      descEs: 'Todo lo que los vendedores de Tucson deben saber sobre las ofertas en efectivo  -  qué incluyen, qué vigilar y cómo comparar con listar en el mercado.',
     },
     'inherited-probate-property': {
-      titleEn: 'Selling an Inherited Home in Tucson — Arizona Probate & Estate Guide',
-      titleEs: 'Vender una Casa Heredada en Tucson — Guía de Sucesión en Arizona',
+      titleEn: 'Selling an Inherited Home in Tucson  -  Arizona Probate & Estate Guide',
+      titleEs: 'Vender una Casa Heredada en Tucson  -  Guía de Sucesión en Arizona',
       descEn: 'Inherited a property in Tucson or Pima County? Understand Arizona probate, your selling options, and how to protect the family's interests.',
       descEs: '¿Heredaste una propiedad en Tucson? Entiende el proceso de sucesión en Arizona, tus opciones de venta y cómo proteger los intereses de la familia.',
     },
     'understanding-home-valuation': {
-      titleEn: 'How Tucson Homes Are Valued: CMA & Appraisal Guide 2026 — Kasandra Prieto',
+      titleEn: 'How Tucson Homes Are Valued: CMA & Appraisal Guide 2026  -  Kasandra Prieto',
       titleEs: 'Cómo Se Valoran las Casas en Tucson: Guía de CMA y Avalúo 2026',
-      descEn: 'Understand how your Tucson home's value is determined — CMAs, appraisals, price per sq ft, and the factors that really move the number in Pima County.',
-      descEs: 'Entiende cómo se determina el valor de tu casa en Tucson — CMAs, avalúos, precio por pie cuadrado y los factores que mueven el número en Pima County.',
+      descEn: 'Understand how your Tucson home's value is determined  -  CMAs, appraisals, price per sq ft, and the factors that really move the number in Pima County.',
+      descEs: 'Entiende cómo se determina el valor de tu casa en Tucson  -  CMAs, avalúos, precio por pie cuadrado y los factores que mueven el número en Pima County.',
     },
     'sell-now-or-wait': {
       titleEn: 'Should You Sell Your Tucson Home Now or Wait? (2026 Market Analysis)',
@@ -333,52 +333,52 @@ function GuideDetailContent() {
       descEs: 'Análisis respaldado por datos 2026: ¿es ahora el momento de vender en Tucson y cuánto cuesta esperar a los vendedores de Pima County?',
     },
     'life-change-selling': {
-      titleEn: 'Selling Your Tucson Home After a Life Change — Calm, Honest Guide',
-      titleEs: 'Vender tu Casa en Tucson Después de un Cambio de Vida — Guía Clara',
-      descEn: 'Job change, divorce, family loss, or relocation — how to sell your Tucson home during a major life transition without rushing into the wrong decision.',
-      descEs: 'Cambio de trabajo, divorcio, pérdida familiar o traslado — cómo vender tu casa en Tucson durante una transición de vida sin apresurarte.',
+      titleEn: 'Selling Your Tucson Home After a Life Change  -  Calm, Honest Guide',
+      titleEs: 'Vender tu Casa en Tucson Después de un Cambio de Vida  -  Guía Clara',
+      descEn: 'Job change, divorce, family loss, or relocation  -  how to sell your Tucson home during a major life transition without rushing into the wrong decision.',
+      descEs: 'Cambio de trabajo, divorcio, pérdida familiar o traslado  -  cómo vender tu casa en Tucson durante una transición de vida sin apresurarte.',
     },
     'tucson-market-update-2026': {
       titleEn: 'Tucson Real Estate Market Update 2026 | Buyer & Seller Outlook',
       titleEs: 'Actualización del Mercado Inmobiliario de Tucson 2026 | Perspectiva',
-      descEn: 'Comprehensive Tucson real estate market update for 2026 — inventory, price trends, days on market, and what buyers and sellers should know right now.',
-      descEs: 'Actualización completa del mercado de Tucson 2026 — inventario, tendencias de precio, días en el mercado y lo que compradores y vendedores deben saber.',
+      descEn: 'Comprehensive Tucson real estate market update for 2026  -  inventory, price trends, days on market, and what buyers and sellers should know right now.',
+      descEs: 'Actualización completa del mercado de Tucson 2026  -  inventario, tendencias de precio, días en el mercado y lo que compradores y vendedores deben saber.',
     },
     'bad-credit-home-buying-tucson': {
-      titleEn: 'Buying a Home in Tucson with Bad Credit (2026) — Real Options Explained',
-      titleEs: 'Comprar Casa en Tucson con Mal Crédito (2026) — Opciones Reales',
+      titleEn: 'Buying a Home in Tucson with Bad Credit (2026)  -  Real Options Explained',
+      titleEs: 'Comprar Casa en Tucson con Mal Crédito (2026)  -  Opciones Reales',
       descEn: 'Can you buy a home in Tucson with a low credit score? Yes. FHA minimums, credit repair timelines, and local Pima County lenders who can help.',
       descEs: '¿Puedes comprar una casa en Tucson con mal crédito? Sí. Mínimos FHA, plazos de reparación y prestamistas locales de Pima County que pueden ayudar.',
     },
     'down-payment-assistance-tucson': {
-      titleEn: 'Down Payment Assistance in Tucson, AZ (2026) — Up to $20K Available',
-      titleEs: 'Asistencia para el Pago Inicial en Tucson, AZ (2026) — Hasta $20K',
-      descEn: 'Up to $20,000 in down payment assistance for Tucson buyers in 2026. HOME Plus, Pima IDA, and ADOH programs — see if you qualify, no commitment.',
+      titleEn: 'Down Payment Assistance in Tucson, AZ (2026)  -  Up to $20K Available',
+      titleEs: 'Asistencia para el Pago Inicial en Tucson, AZ (2026)  -  Hasta $20K',
+      descEn: 'Up to $20,000 in down payment assistance for Tucson buyers in 2026. HOME Plus, Pima IDA, and ADOH programs  -  see if you qualify, no commitment.',
       descEs: 'Hasta $20,000 en asistencia para el pago inicial para compradores de Tucson en 2026. HOME Plus, Pima IDA y programas ADOH.',
     },
     'fha-loan-pima-county-2026': {
-      titleEn: 'FHA Loan Limits for Pima County, AZ (2026) — First-Time Buyer Guide',
-      titleEs: 'Límites de Préstamos FHA para Pima County, AZ (2026) — Guía Primeriza',
+      titleEn: 'FHA Loan Limits for Pima County, AZ (2026)  -  First-Time Buyer Guide',
+      titleEs: 'Límites de Préstamos FHA para Pima County, AZ (2026)  -  Guía Primeriza',
       descEn: 'FHA loan limits for Pima County in 2026, eligibility requirements, and how Tucson first-time buyers qualify and close with an FHA mortgage.',
       descEs: 'Límites de préstamos FHA para Pima County en 2026, requisitos de elegibilidad y cómo los compradores primerizos de Tucson califican.',
     },
     'itin-loan-guide': {
-      titleEn: 'ITIN Home Loans in Tucson, AZ — Buying Without SSN (2026 Guide)',
+      titleEn: 'ITIN Home Loans in Tucson, AZ  -  Buying Without SSN (2026 Guide)',
       titleEs: 'Préstamos ITIN para Comprar Casa en Tucson, AZ (Guía 2026)',
       descEn: 'Buy a home in Tucson without a Social Security number using an ITIN mortgage. Requirements, lenders, and the full process explained in English & Spanish.',
       descEs: 'Compra una casa en Tucson sin Seguro Social con un préstamo ITIN. Requisitos, prestamistas y el proceso completo explicado en inglés y español.',
     },
     'divorce-home-sale-arizona': {
-      titleEn: 'Selling a Home During Arizona Divorce (2026) — Community Property Rules',
-      titleEs: 'Venta de Casa en Divorcio en Arizona (2026) — Propiedad Comunitaria',
-      descEn: 'How Arizona community property law affects your home sale during divorce — who keeps what, how to split proceeds, and how to sell without court delays.',
-      descEs: 'Cómo la ley de propiedad comunitaria de Arizona afecta tu venta en el divorcio — quién se queda con qué y cómo vender sin retrasos judiciales.',
+      titleEn: 'Selling a Home During Arizona Divorce (2026)  -  Community Property Rules',
+      titleEs: 'Venta de Casa en Divorcio en Arizona (2026)  -  Propiedad Comunitaria',
+      descEn: 'How Arizona community property law affects your home sale during divorce  -  who keeps what, how to split proceeds, and how to sell without court delays.',
+      descEs: 'Cómo la ley de propiedad comunitaria de Arizona afecta tu venta en el divorcio  -  quién se queda con qué y cómo vender sin retrasos judiciales.',
     },
     'first-time-buyer-programs-pima-county': {
-      titleEn: 'First-Time Buyer Programs in Pima County, AZ (2026) — Full List',
+      titleEn: 'First-Time Buyer Programs in Pima County, AZ (2026)  -  Full List',
       titleEs: 'Programas para Compradores Primerizos en Pima County, AZ (2026)',
-      descEn: 'Every first-time buyer program in Pima County for 2026 — grants, deferred loans, and below-market mortgages. See what you qualify for — free, no sign-up.',
-      descEs: 'Todos los programas para compradores primerizos en Pima County 2026 — becas, préstamos diferidos e hipotecas accesibles. Ve para qué calificas.',
+      descEn: 'Every first-time buyer program in Pima County for 2026  -  grants, deferred loans, and below-market mortgages. See what you qualify for  -  free, no sign-up.',
+      descEs: 'Todos los programas para compradores primerizos en Pima County 2026  -  becas, préstamos diferidos e hipotecas accesibles. Ve para qué calificas.',
     },
   };
 
@@ -410,7 +410,7 @@ function GuideDetailContent() {
   return (
     <>
       <CognitiveProgressBar stage={stage} isVisible={shouldShowProgressBar} />
-      {/* Article schema — authorship + description */}
+      {/* Article schema  -  authorship + description */}
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "Article",
@@ -433,7 +433,7 @@ function GuideDetailContent() {
         dateModified: "2026-01-01",
       }} />
 
-      {/* FAQPage schema — injected only when guide has faqItems */}
+      {/* FAQPage schema  -  injected only when guide has faqItems */}
       {allFaqItems.length > 0 && (
         <JsonLd data={{
           "@context": "https://schema.org",
@@ -449,7 +449,7 @@ function GuideDetailContent() {
         }} />
       )}
 
-      {/* HowTo schema — injected for process guides (cost-to-sell, home-prep, pricing, timeline) */}
+      {/* HowTo schema  -  injected for process guides (cost-to-sell, home-prep, pricing, timeline) */}
       {guideId && (() => {
         const howToData = getHowToSchema(guideId, language);
         return howToData ? <JsonLd data={howToData as Record<string, unknown>} /> : null;
@@ -500,7 +500,7 @@ function GuideDetailContent() {
 
       {/* Article Content */}
       <article className="bg-cc-sand">
-        {/* Intro — clean, no exit ramp */}
+        {/* Intro  -  clean, no exit ramp */}
         <section className="bg-white py-12 border-b border-cc-sand-dark">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
@@ -519,7 +519,7 @@ function GuideDetailContent() {
           return introSlots.map((slot) => <MediaSlotRenderer key={slot.id} slot={slot} />);
         })()}
 
-        {/* Content Sections with Per-Guide Media Slots — no mid-guide interruptions */}
+        {/* Content Sections with Per-Guide Media Slots  -  no mid-guide interruptions */}
         {guide.sections.map((section, index) => {
           const slots = guideId ? getGovernedMediaSlots(guideId) : [];
           const sectionSlots = slots.filter((s) => s.afterSection === index);
@@ -583,7 +583,7 @@ function GuideDetailContent() {
           );
         })}
 
-        {/* External Sources — authoritative links for SEO trust signals */}
+        {/* External Sources  -  authoritative links for SEO trust signals */}
         {guide?.externalLinks?.length ? (
           <ExternalSourcesFooter links={guide.externalLinks} language={language as 'en' | 'es'} />
         ) : null}
@@ -591,7 +591,7 @@ function GuideDetailContent() {
         {/* Compliance Footer */}
         <GuideComplianceFooter />
 
-        {/* Read Next — guide-to-guide pathway. Keeps users in the hub. */}
+        {/* Read Next  -  guide-to-guide pathway. Keeps users in the hub. */}
         {guideId && (
           <GuideReadNext
             currentGuideId={guideId}
@@ -599,7 +599,7 @@ function GuideDetailContent() {
           />
         )}
 
-        {/* Related Guides — UX-06: same-category guide pathway */}
+        {/* Related Guides  -  UX-06: same-category guide pathway */}
         {guideId && (
           <RelatedGuides
             currentGuideId={guideId}
@@ -608,7 +608,7 @@ function GuideDetailContent() {
           />
         )}
 
-        {/* Authority CTA Block — Tier 1 + Tier 2 only. Tier 3 stories end in silence. */}
+        {/* Authority CTA Block  -  Tier 1 + Tier 2 only. Tier 3 stories end in silence. */}
         {registryEntry?.tier !== 3 && (
           <AuthorityCTABlock 
             guideId={guideId || 'unknown'}
@@ -625,7 +625,7 @@ function GuideDetailContent() {
         <GuideCTAGuardrail guideId={guideId} />
       </article>
 
-      {/* Selena Synthesis CTA — appears after 60%+ scroll */}
+      {/* Selena Synthesis CTA  -  appears after 60%+ scroll */}
       {synthesisVisible && (
         <section className="bg-cc-navy py-10">
           <div className="container mx-auto px-4 max-w-3xl text-center">
@@ -644,8 +644,8 @@ function GuideDetailContent() {
                 openChat({
                   source: 'guide_synthesis',
                   prefillMessage: t(
-                    `I just read "${guide.title}" — can you help me apply this to my situation?`,
-                    `Acabo de leer "${guide.titleEs || guide.title}" — ¿puedes ayudarme a aplicar esto a mi situación?`
+                    `I just read "${guide.title}"  -  can you help me apply this to my situation?`,
+                    `Acabo de leer "${guide.titleEs || guide.title}"  -  ¿puedes ayudarme a aplicar esto a mi situación?`
                   ),
                 });
               }}
