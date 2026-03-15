@@ -133,7 +133,7 @@ const NeighborhoodsContent = () => {
               className="text-white/80 hover:text-cc-gold font-medium rounded-full px-8"
               onClick={() => {
                 logCTAClick({ cta_name: CTA_NAMES.RESULT_CHAT_SELENA, destination: 'selena_drawer', page_path: '/neighborhoods', intent: 'buy' });
-                openChat({ source: 'neighborhoods_bottom', intent: 'buy' });
+                openChat({ source: 'neighborhoods_index', intent: 'buy' });
               }}
             >
               <MessageCircle className="w-4 h-4 mr-2" />

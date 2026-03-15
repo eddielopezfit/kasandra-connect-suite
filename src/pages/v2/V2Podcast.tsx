@@ -1,5 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import { Link } from "react-router-dom";
 import JsonLd from "@/components/seo/JsonLd";
 import V2Layout from "@/components/v2/V2Layout";
 import { Radio, Youtube, Users, TrendingUp, Heart, MessageCircle, Calendar } from "lucide-react";
