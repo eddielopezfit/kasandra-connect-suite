@@ -10,7 +10,7 @@ import SelenaConversationDemo from "@/components/v2/selena/SelenaConversationDem
 import JsonLd from "@/components/seo/JsonLd";
 
 const V2SelenaAIContent = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
   const navigate = useNavigate();
 
