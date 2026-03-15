@@ -19,6 +19,8 @@ import {
   Calendar,
   CheckCircle,
   ArrowRight,
+  DollarSign,
+  Banknote,
 } from "lucide-react";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
@@ -100,9 +102,9 @@ const V2HomeContent = () => {
       <section className="bg-cc-sand py-10">
         <div className="container mx-auto px-4 max-w-3xl">
           <p className="text-center text-sm font-semibold uppercase tracking-widest text-cc-navy/50 mb-6">
-            {t("What brings you here today?", "¿Qué te trae hoy?")}
+            {t("Where are you in your journey?", "¿En qué etapa estás?")}
           </p>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Card A — Buyer */}
             <button
               onClick={() => {
@@ -118,7 +120,7 @@ const V2HomeContent = () => {
                   {t("I'm looking to buy", "Quiero comprar")}
                 </p>
                 <p className="text-sm text-cc-charcoal/60 mt-1">
-                  {t("Find your home in Tucson", "Encuentra tu hogar en Tucson")}
+                  {t("Get your free buying game plan", "Obtén tu plan gratuito de compra")}
                 </p>
               </div>
             </button>
@@ -132,13 +134,33 @@ const V2HomeContent = () => {
               }}
               className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
             >
-              <ArrowRight className="w-7 h-7 text-cc-gold" />
+              <DollarSign className="w-7 h-7 text-cc-gold" />
               <div>
                 <p className="font-semibold text-cc-navy text-base leading-snug">
                   {t("I'm looking to sell", "Quiero vender")}
                 </p>
                 <p className="text-sm text-cc-charcoal/60 mt-1">
-                  {t("See what your home is worth", "Descubre el valor de tu propiedad")}
+                  {t("Find out your home's real value", "Descubre el valor real de tu casa")}
+                </p>
+              </div>
+            </button>
+
+            {/* Card C — Cash Offer */}
+            <button
+              onClick={() => {
+                updateSessionContext({ intent: 'cash' });
+                clearHistory();
+                openChat({ source: 'cash_fork' });
+              }}
+              className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
+            >
+              <Banknote className="w-7 h-7 text-cc-gold" />
+              <div>
+                <p className="font-semibold text-cc-navy text-base leading-snug">
+                  {t("I want a cash offer", "Quiero una oferta en efectivo")}
+                </p>
+                <p className="text-sm text-cc-charcoal/60 mt-1">
+                  {t("Close in days, skip the showings", "Cierra en días, sin visitas")}
                 </p>
               </div>
             </button>
