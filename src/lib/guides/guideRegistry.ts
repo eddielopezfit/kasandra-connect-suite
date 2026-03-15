@@ -1124,7 +1124,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     funnelStage: 'tofu',
     keywords: ['itin', 'itin loan', 'no social security', 'sin numero seguro social', 'undocumented', 'non-citizen', 'buy without ssn', 'itin mortgage tucson'],
     tier: 1,
-    lifeEvent: undefined,
+    lifeEvent: 'first_time_buying',
     assetSlots: { disclaimer: 'financial' },
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'itin-loan-guide' }, label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
@@ -1162,7 +1162,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     funnelStage: 'tofu',
     keywords: ['tucson real estate market 2026', 'tucson housing market', 'tucson home prices', 'pima county market', 'mercado inmobiliario tucson', 'when to buy tucson'],
     tier: 1,
-    lifeEvent: undefined,
+    lifeEvent: 'general_selling',
     assetSlots: { disclaimer: 'financial' },
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'tucson-market-update-2026' }, label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
@@ -1200,7 +1200,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     funnelStage: 'tofu',
     keywords: ['bad credit home loan tucson', 'low credit score mortgage arizona', 'buy house bad credit tucson', 'fha 580 tucson', 'credit repair homebuyer'],
     tier: 1,
-    lifeEvent: undefined,
+    lifeEvent: 'first_time_buying',
     assetSlots: { disclaimer: 'financial' },
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'bad-credit-home-buying-tucson' }, label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
@@ -1238,7 +1238,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     funnelStage: 'tofu',
     keywords: ['down payment assistance tucson', 'pima county dpa', 'pths program', 'lighthouse program tucson', 'home program tucson', 'ayuda pago inicial tucson'],
     tier: 1,
-    lifeEvent: undefined,
+    lifeEvent: 'first_time_buying',
     assetSlots: { disclaimer: 'financial' },
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'down-payment-assistance-tucson' }, label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
@@ -1276,7 +1276,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     funnelStage: 'tofu',
     keywords: ['fha loan limits pima county 2026', 'fha loan tucson', 'fha vs conventional arizona', 'fha down payment tucson', 'limite prestamo fha tucson'],
     tier: 1,
-    lifeEvent: undefined,
+    lifeEvent: 'first_time_buying',
     assetSlots: { disclaimer: 'financial' },
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'fha-loan-pima-county-2026' }, label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
@@ -1320,13 +1320,13 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'va-home-loan-tucson', lifeEvent: 'military_va_purchase' }, label: { en: 'Talk about my VA options', es: 'Hablar sobre mis opciones VA' } },
       secondaryActions: [
-        { type: 'navigate', path: '/buyer-readiness', label: { en: 'Check my buyer readiness', es: 'Verificar mi preparación' } },
+        { type: 'open_tool', toolId: 'buyer-readiness', label: { en: 'Check my buyer readiness', es: 'Verificar mi preparación' } },
       ],
       relatedGuideIds: ['military-pcs-guide', 'first-time-buyer-guide', 'tucson-neighborhoods'],
     },
     decisionIntent: 'buy',
     decisionStage: 'explore',
-    sortOrder: 35,
+    sortOrder: 46,
     authorityTheme: 'military_transition',
     isCashGuide: false,
   },
@@ -1358,7 +1358,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     },
     decisionIntent: 'sell',
     decisionStage: 'explore',
-    sortOrder: 36,
+    sortOrder: 41,
     authorityTheme: 'divorce_guidance',
     isCashGuide: false,
   },
