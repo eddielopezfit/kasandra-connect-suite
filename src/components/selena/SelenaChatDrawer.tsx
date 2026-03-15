@@ -368,7 +368,38 @@ export function SelenaChatDrawer() {
                   t={t}
                 />
               </div>
+              {sourcePage && (
+                <div className="px-4 py-1.5 border-b border-border/50 shrink-0">
+                  <button
+                    onClick={closeChat}
+                    className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                  >
+                    <ArrowLeft className="w-3 h-3" />
+                    {t(`Back to ${sourcePage.label.en}`, `Volver a ${sourcePage.label.es}`)}
+                  </button>
+                </div>
+              )}
             </DrawerHeader>
+
+            {/* First-open onboarding overlay (P3) */}
+            {showOnboarding && (
+              <div className="absolute inset-0 z-10 bg-background/95 flex items-center justify-center p-6" onClick={dismissOnboarding}>
+                <div className="bg-card rounded-2xl p-6 shadow-lg max-w-xs text-center space-y-4 border border-border">
+                  <Sparkles className="w-8 h-8 text-primary mx-auto" />
+                  <h3 className="font-serif text-lg font-semibold text-foreground">
+                    {t("Hi, I'm Selena!", "¡Hola, soy Selena!")}
+                  </h3>
+                  <ul className="text-sm text-muted-foreground text-left space-y-2">
+                    <li>✨ {t("Explore neighborhoods & market data", "Explora vecindarios y datos del mercado")}</li>
+                    <li>📊 {t("Run the numbers on your home", "Calcula los números de tu casa")}</li>
+                    <li>📅 {t("Connect you with Kasandra when you're ready", "Conectarte con Kasandra cuando estés lista/o")}</li>
+                  </ul>
+                  <p className="text-xs text-muted-foreground/70">
+                    {t("Tap anywhere to start", "Toca en cualquier lugar para comenzar")}
+                  </p>
+                </div>
+              </div>
+            )}
 
             <SelenaDrawerMessagesArea {...sharedMessagesProps} />
             <SelenaDrawerSuggestedRepliesChips {...sharedChipsProps} />
