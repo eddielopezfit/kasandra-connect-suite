@@ -185,6 +185,7 @@ const V2NeighborhoodCompareContent = () => {
   const [results, setResults] = useState<ZipResult[]>([]);
   const resultsRef = useRef<HTMLDivElement>(null);
   const [loadingZip, setLoadingZip] = useState<string | null>(null);
+  const [toolStarted, setToolStarted] = useState(false);
 
   useDocumentHead({
     titleEn: "Compare Tucson Neighborhoods Side by Side | ZIP Code Comparison",
