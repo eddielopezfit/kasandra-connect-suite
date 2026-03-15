@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import arizonaDiaperBankLogo from "@/assets/arizona-diaper-bank-logo.jpg";
 import rumboAlExitoLogo from "@/assets/rumbo-al-exito-logo.jpg";
 import tucsonApplianceLogo from "@/assets/tucson-appliance-logo.jpg";
-import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
+import { lazy, Suspense } from "react";
+const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-community-neighborhood.png";
 
