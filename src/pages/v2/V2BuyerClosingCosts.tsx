@@ -332,7 +332,7 @@ const V2BuyerClosingCostsContent = () => {
                     max={80}
                     step={0.5}
                     placeholder={t("Custom %", "% Personalizado")}
-                    value={inputs.downPctInput}
+                    value={[3, 3.5, 5, 10, 20].includes(parseFloat(inputs.downPctInput)) ? '' : inputs.downPctInput}
                     onChange={e => { upd("downPctInput", e.target.value); setCalculated(false); }}
                     className="w-28 px-4 py-2.5 rounded-full border border-cc-sand-dark/40 focus:border-cc-navy/40 focus:outline-none text-sm text-cc-charcoal"
                   />
@@ -378,6 +378,11 @@ const V2BuyerClosingCostsContent = () => {
               <DollarSign className="w-5 h-5 mr-2" />
               {t("Estimate My Closing Costs", "Estimar Mis Costos de Cierre")}
             </Button>
+            {price < 50000 && (
+              <p className="text-xs text-cc-slate text-center mt-2">
+                {t("Enter a purchase price of at least $50,000 to estimate.", "Ingresa un precio de compra de al menos $50,000 para estimar.")}
+              </p>
+            )}
           </div>
         </div>
       </section>

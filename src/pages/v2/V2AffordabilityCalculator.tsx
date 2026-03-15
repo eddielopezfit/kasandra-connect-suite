@@ -161,7 +161,7 @@ const V2AffordabilityCalculatorContent = () => {
                   max={50}
                   step={1}
                   placeholder={t("Custom %", "% Personalizado")}
-                  value={downPct}
+                  value={[3, 5, 10, 20].includes(parseFloat(downPct)) ? '' : downPct}
                   onChange={e => { setDownPct(e.target.value); setCalculated(false); }}
                   className="w-28 px-4 py-2.5 rounded-full border border-cc-sand-dark/40 focus:border-cc-navy/40 focus:outline-none text-sm text-cc-charcoal"
                 />
@@ -205,6 +205,11 @@ const V2AffordabilityCalculatorContent = () => {
               <Home className="w-5 h-5 mr-2" />
               {t("Calculate My Buying Power", "Calcular Mi Poder de Compra")}
             </Button>
+            {incomeNum < 20000 && (
+              <p className="text-xs text-cc-slate text-center mt-2">
+                {t("Enter an annual income of at least $20,000 to calculate.", "Ingresa un ingreso anual de al menos $20,000 para calcular.")}
+              </p>
+            )}
           </div>
         </div>
       </section>

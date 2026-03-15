@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
-import QuizFunnelLayout from "@/components/v2/QuizFunnelLayout";
+import V2Layout from "@/components/v2/V2Layout";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
@@ -729,7 +729,7 @@ const V2SellerTimeline = () => {
   }, [goTo]);
 
   return (
-    <QuizFunnelLayout showSelena={isComplete}>
+    <V2Layout>
       <div className="container mx-auto max-w-2xl px-4 py-8">
         {/* Progress bar */}
         {!isComplete && (
@@ -765,7 +765,7 @@ const V2SellerTimeline = () => {
           <StepPhasePlan wizardData={wizardData} onRestart={handleRestart} />
         )}
       </div>
-    </QuizFunnelLayout>
+    </V2Layout>
   );
 };
 

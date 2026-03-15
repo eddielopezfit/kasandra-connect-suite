@@ -33,10 +33,36 @@ const V2BookContent = () => {
   });
 
   const callType = searchParams.get("callType");
+  const intent = searchParams.get("intent") || "direct";
+  const source = searchParams.get("source");
+
+  // Contextual prep note based on how the user arrived
+  const getContextNote = () => {
+    if (source === 'calculator' && intent === 'cash') {
+      return {
+        en: "Kasandra will review your cash vs. listing comparison before your call.",
+        es: "Kasandra revisará su comparación de efectivo vs. venta antes de su llamada.",
+      };
+    }
+    if (source === 'affordability_calculator' || intent === 'buy') {
+      return {
+        en: "Kasandra will review your affordability results before your call.",
+        es: "Kasandra revisará sus resultados de asequibilidad antes de su llamada.",
+      };
+    }
+    if (intent === 'sell') {
+      return {
+        en: "Kasandra will review your selling situation before your call.",
+        es: "Kasandra revisará su situación de venta antes de su llamada.",
+      };
+    }
+    return null;
+  };
+
+  const contextNote = getContextNote();
 
   // Condition 1: lightweight analytics — log page view + intent + UTMs
   useEffect(() => {
-    const intent = searchParams.get("intent") || "direct";
     const utm_source = searchParams.get("utm_source");
     const utm_campaign = searchParams.get("utm_campaign");
     const utm_medium = searchParams.get("utm_medium");
@@ -52,7 +78,7 @@ const V2BookContent = () => {
       ...(utm_content && { utm_content }),
       ...(utm_term && { utm_term }),
     });
-  }, [searchParams, callType]);
+  }, [searchParams, callType, intent]);
 
   return (
     <>
@@ -91,7 +117,7 @@ const V2BookContent = () => {
             <div className="flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-white/70">
               <span className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cc-gold inline-block" />
-                {t("6,000+ Pima County transactions", "6,000+ transacciones en el condado de Pima")}
+                {t("Realty Executives · Pima County Specialist", "Realty Executives · Especialista en Condado de Pima")}
               </span>
               <span className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cc-gold inline-block" />
@@ -110,6 +136,13 @@ const V2BookContent = () => {
       <section className="py-8 md:py-12 bg-cc-ivory w-full">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
+            {contextNote && (
+              <div className="bg-cc-sand rounded-xl p-4 mb-6 text-center border border-cc-sand-dark/30">
+                <p className="text-sm text-cc-charcoal">
+                  {t(contextNote.en, contextNote.es)}
+                </p>
+              </div>
+            )}
             <GHLBookingCalendar />
           </div>
         </div>

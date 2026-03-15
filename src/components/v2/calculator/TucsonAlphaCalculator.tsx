@@ -11,7 +11,7 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import { trackJourneyAction } from "@/lib/guides/personalization";
 import { updateSessionContext, setFieldIfEmpty, getSessionContext } from "@/lib/analytics/selenaSession";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, Calculator, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, Calculator, Sparkles, TrendingUp } from "lucide-react";
 
 import CashOfferProgressBar, { type CalculatorStage } from "./CashOfferProgressBar";
 import CalculatorInputs from "./CalculatorInputs";
@@ -300,7 +300,7 @@ const TucsonAlphaCalculator = () => {
             </div>
           )}
 
-          {/* Step 3: Next Steps */}
+          {/* Step 3: Your Decision — personalized final stage */}
           {currentStep === 3 && (
             <div>
               <div className="flex items-center justify-between mb-6">
@@ -312,23 +312,58 @@ const TucsonAlphaCalculator = () => {
                   {t("Back to Results", "Volver a Resultados")}
                 </button>
                 <span className="text-sm text-cc-slate font-medium">
-                  {t("Next Steps", "Próximos Pasos")}
+                  {t("Your Decision", "Tu Decisión")}
                 </span>
               </div>
 
-              <div className="text-center mb-8">
-                <h3 className="font-serif text-xl md:text-2xl font-bold text-cc-navy mb-2">
-                  {t(
-                    "You've Got Options",
-                    "Tienes Opciones"
-                  )}
-                </h3>
-                <p className="text-cc-charcoal">
-                  {t(
-                    "There's no right or wrong answer—only what's right for you.",
-                    "No hay respuesta correcta o incorrecta—solo lo que es correcto para ti."
-                  )}
-                </p>
+              {/* Personalized recommendation summary */}
+              <div className="bg-cc-sand rounded-2xl p-6 mb-8 text-center">
+                {results?.recommendation === 'cash' ? (
+                  <>
+                    <div className="w-12 h-12 bg-cc-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Sparkles className="w-6 h-6 text-cc-gold" />
+                    </div>
+                    <h3 className="font-serif text-xl md:text-2xl font-bold text-cc-navy mb-2">
+                      {t("A Cash Offer Could Work in Your Favor", "Una Oferta en Efectivo Podría Funcionar a Tu Favor")}
+                    </h3>
+                    <p className="text-cc-charcoal text-sm max-w-md mx-auto">
+                      {t(
+                        "Based on your numbers, the speed and certainty of a cash offer could net you more after time costs. Here's how to move forward.",
+                        "Según tus números, la rapidez y certeza de una oferta en efectivo podría darte más después de los costos de tiempo. Así puedes avanzar."
+                      )}
+                    </p>
+                  </>
+                ) : results?.recommendation === 'traditional' ? (
+                  <>
+                    <div className="w-12 h-12 bg-cc-navy/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <TrendingUp className="w-6 h-6 text-cc-navy" />
+                    </div>
+                    <h3 className="font-serif text-xl md:text-2xl font-bold text-cc-navy mb-2">
+                      {t("A Traditional Listing Could Maximize Your Return", "Una Venta Tradicional Podría Maximizar Tu Retorno")}
+                    </h3>
+                    <p className="text-cc-charcoal text-sm max-w-md mx-auto">
+                      {t(
+                        "Based on your numbers, listing on the market with the right strategy could get you the best price. Here's how to get started.",
+                        "Según tus números, vender en el mercado con la estrategia correcta podría darte el mejor precio. Así puedes comenzar."
+                      )}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-12 h-12 bg-cc-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Calculator className="w-6 h-6 text-cc-gold" />
+                    </div>
+                    <h3 className="font-serif text-xl md:text-2xl font-bold text-cc-navy mb-2">
+                      {t("Your Situation Deserves a Closer Look", "Tu Situación Merece una Revisión Más Detallada")}
+                    </h3>
+                    <p className="text-cc-charcoal text-sm max-w-md mx-auto">
+                      {t(
+                        "The numbers are close—your best option depends on your timeline and priorities. A quick conversation can clarify the path forward.",
+                        "Los números están parejos—tu mejor opción depende de tu cronograma y prioridades. Una conversación rápida puede aclarar el camino."
+                      )}
+                    </p>
+                  </>
+                )}
               </div>
 
               <CalculatorNextSteps
