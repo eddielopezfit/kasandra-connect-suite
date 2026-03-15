@@ -332,7 +332,7 @@ const V2BuyerClosingCostsContent = () => {
                     max={80}
                     step={0.5}
                     placeholder={t("Custom %", "% Personalizado")}
-                    value={inputs.downPctInput}
+                    value={[3, 3.5, 5, 10, 20].includes(parseFloat(inputs.downPctInput)) ? '' : inputs.downPctInput}
                     onChange={e => { upd("downPctInput", e.target.value); setCalculated(false); }}
                     className="w-28 px-4 py-2.5 rounded-full border border-cc-sand-dark/40 focus:border-cc-navy/40 focus:outline-none text-sm text-cc-charcoal"
                   />
