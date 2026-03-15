@@ -783,8 +783,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
     marketInsight: {
-      en: "In January 2026, Tucson homes sold at 97.64% of list price with a median of 38 days on market. Homes that required price reductions averaged 2–3x longer on market — and netted less after carrying costs.",
-      es: "En enero de 2026, las casas en Tucson se vendieron al 97.64% del precio de lista con una mediana de 38 días en mercado. Las casas que requirieron reducciones de precio promediaron 2–3 veces más tiempo en mercado.",
+      en: "In March 2026, Tucson homes sold at 97.64% of list price with a median of 38 days on market. Homes that required price reductions averaged 2–3x longer on market — and netted less after carrying costs.",
+      es: "En marzo de 2026, las casas en Tucson se vendieron al 97.64% del precio de lista con una mediana de 38 días en mercado. Las casas que requirieron reducciones de precio promediaron 2–3 veces más tiempo en mercado.",
     },
     lastVerifiedDate: '2026-03-15',
   },
