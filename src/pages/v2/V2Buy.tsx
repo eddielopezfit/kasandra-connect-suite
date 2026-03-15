@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import JsonLd from "@/components/seo/JsonLd";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -60,10 +61,29 @@ const V2BuyContent = () => {
 
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Tucson Home Buying Services",
+        "description": "Step-by-step home buying guidance in Tucson — down payment assistance, bilingual support, neighborhood intelligence, and AI readiness tools.",
+        "provider": {
+          "@type": "RealEstateAgent",
+          "name": "Kasandra Prieto, REALTOR®",
+          "url": "https://kasandraprietorealtor.com",
+          "telephone": "+15203493248",
+          "areaServed": ["Tucson, AZ", "Pima County, AZ"],
+          "knowsLanguage": ["en", "es"]
+        },
+        "areaServed": {
+          "@type": "Place",
+          "name": "Tucson, AZ and Pima County"
+        },
+        "serviceType": "Buyer Representation and Home Search Services"
+      }} />
       {/* Hero */}
       <GlassmorphismHero
         badge={t("For Buyers", "Para Compradores")}
-        headline={t("Find Your Tucson Home with Confidence.", "Encuentra tu hogar en Tucson con confianza.")}
+        headline={t("Buy a Home in Tucson with Confidence.", "Compre una Casa en Tucson con Confianza.")}
         subtext={t(
           "Kasandra guides buyers through every step — from first search to closed door — with honesty, expertise, and an AI concierge built for you.",
           "Kasandra guía a compradores en cada paso — desde la primera búsqueda hasta el cierre — con honestidad, experiencia y un asistente de IA diseñado para ti."

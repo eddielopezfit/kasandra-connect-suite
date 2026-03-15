@@ -182,10 +182,10 @@ function GuideDetailContent() {
       descEs: 'Conoce las diferencias entre una oferta rápida en efectivo y listar tu casa en Tucson. Pasos claros de la Realtor Kasandra Prieto.',
     },
     'cost-to-sell-tucson': {
-      titleEn: 'What Does It Cost to Sell a House in Tucson? (2026) – Kasandra Prieto',
-      titleEs: '¿Cuánto Cuesta Vender una Casa en Tucson? (2026) – Kasandra Prieto',
-      descEn: 'Full breakdown of Tucson seller costs: agent commission, closing costs, pre-sale prep, and holding costs. Real numbers for 2026.',
-      descEs: 'Desglose completo de los costos de vender en Tucson: comisión, gastos de cierre, preparación y costos de tenencia. Números reales para 2026.',
+      titleEn: 'What Does It Cost to Sell a House in Tucson? (2026) — Pima County Seller Guide',
+      titleEs: '¿Cuánto Cuesta Vender una Casa en Tucson? (2026) — Guía para Vendedores de Pima County',
+      descEn: 'Full breakdown of Pima County seller costs: agent commission, closing costs, pre-sale prep, and holding costs. Real Tucson numbers for 2026.',
+      descEs: 'Desglose completo de los costos de vender en Pima County: comisión, gastos de cierre, preparación y costos de tenencia. Números reales para 2026.',
     },
     'selling-for-loss': {
       titleEn: 'Selling Your Home for Less Than You Owe in Tucson – Kasandra Prieto',
@@ -303,10 +303,10 @@ function GuideDetailContent() {
       descEs: 'Todo lo que un comprador primerizo en Tucson necesita  -  financiamiento, programas de pago inicial, inspecciones y consejos del mercado de Pima County.',
     },
     'selling-for-top-dollar': {
-      titleEn: 'How to Sell Your Tucson Home for Top Dollar in 2026  -  Kasandra Prieto',
-      titleEs: 'Cómo Vender tu Casa en Tucson al Mejor Precio en 2026  -  Kasandra Prieto',
-      descEn: 'Proven strategies to maximize your Tucson home sale price  -  pricing, staging, timing, and negotiation tactics from a local bilingual REALTOR®.',
-      descEs: 'Estrategias comprobadas para maximizar el precio de venta de tu casa en Tucson  -  precio, presentación, timing y tácticas de negociación.',
+      titleEn: 'How to Sell Your Tucson Home for Top Dollar in 2026 — Pima County Selling Guide',
+      titleEs: 'Cómo Vender tu Casa en Tucson al Mejor Precio en 2026 — Guía de Venta en Pima County',
+      descEn: 'Proven strategies to maximize your Tucson home sale price in Pima County — pricing, staging, timing, and negotiation tactics from a local bilingual REALTOR®.',
+      descEs: 'Estrategias comprobadas para maximizar el precio de venta de tu casa en Tucson y Pima County — precio, presentación, timing y tácticas de negociación.',
     },
     'cash-offer-guide': {
       titleEn: 'How Cash Offers Work in Tucson  -  Complete Seller Guide (2026)',

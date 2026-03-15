@@ -1,4 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from "react";
+import JsonLd from "@/components/seo/JsonLd";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -25,10 +26,10 @@ const V2SellContent = () => {
   const { openChat } = useSelenaChat();
   const [leadName, setLeadName] = useState<string | null>(null);
   useDocumentHead({
-    titleEn: "Sell Your Tucson Home | Cash Offer & Traditional Listing Options",
-    titleEs: "Venda Su Casa en Tucson | Opciones de Oferta en Efectivo y Venta Tradicional",
-    descriptionEn: "Explore your selling options in Tucson. Market-based pricing, cash offer review, and full disclosure support from a bilingual REALTOR®.",
-    descriptionEs: "Explore sus opciones de venta en Tucson. Precios de mercado, revisión de ofertas en efectivo y apoyo bilingüe.",
+    titleEn: "Tucson Home Selling | Cash Offer & Traditional Listing — Kasandra Prieto",
+    titleEs: "Venta de Casas en Tucson | Oferta en Efectivo y Venta Tradicional — Kasandra Prieto",
+    descriptionEn: "Tucson home selling options — cash offer review, traditional listing, and market-based pricing. Bilingual REALTOR® serving Pima County with 20+ years of experience.",
+    descriptionEs: "Opciones de venta de casas en Tucson — ofertas en efectivo, listado tradicional y precios de mercado. REALTOR® bilingüe con 20+ años en Pima County.",
   });
 
   useEffect(() => {
@@ -48,10 +49,29 @@ const V2SellContent = () => {
 
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Tucson Home Selling Services",
+        "description": "Full-service home selling in Tucson and Pima County — traditional listing, cash offer options, and bilingual REALTOR® representation.",
+        "provider": {
+          "@type": "RealEstateAgent",
+          "name": "Kasandra Prieto, REALTOR®",
+          "url": "https://kasandraprietorealtor.com",
+          "telephone": "+15203493248",
+          "areaServed": ["Tucson, AZ", "Pima County, AZ"],
+          "knowsLanguage": ["en", "es"]
+        },
+        "areaServed": {
+          "@type": "Place",
+          "name": "Tucson, AZ and Pima County"
+        },
+        "serviceType": "Real Estate Listing and Cash Offer Services"
+      }} />
       {/* Hero */}
       <GlassmorphismHero
         badge={t("For Sellers", "Para Vendedores")}
-        headline={t("Know Your Worth. Sell on Your Terms.", "Conoce Tu Valor. Vende en Tus Términos.")}
+        headline={t("Tucson Home Selling: Know Your Worth. Sell on Your Terms.", "Venta de Casas en Tucson: Conoce Tu Valor. Vende en Tus Términos.")}
         subtext={t(
           "Kasandra helps Tucson sellers price right, time the market, and close with confidence — with an AI concierge that answers every question before you even ask.",
           "Kasandra ayuda a vendedores en Tucson a fijar el precio correcto, aprovechar el mercado y cerrar con confianza — con un asistente de IA que responde cada pregunta antes de que la hagas."
@@ -166,6 +186,47 @@ const V2SellContent = () => {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Seller Planning Tools Strip */}
+      <section className="bg-white border-b border-cc-sand-dark/20 py-6">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <p className="text-xs font-semibold text-cc-navy/50 uppercase tracking-wider text-center mb-4">
+            {t("Seller Planning Tools", "Herramientas de Planificación")}
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            <Link
+              to="/market"
+              onClick={() => handleCTAClick('sell_tool_market', '/market')}
+              className="flex flex-col items-center gap-2 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all text-center"
+            >
+              <TrendingUp className="w-5 h-5 text-cc-gold" />
+              <span className="text-xs font-semibold text-cc-navy leading-tight">
+                {t("Market Data", "Datos del Mercado")}
+              </span>
+            </Link>
+            <Link
+              to="/seller-timeline"
+              onClick={() => handleCTAClick('sell_tool_timeline', '/seller-timeline')}
+              className="flex flex-col items-center gap-2 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all text-center"
+            >
+              <Clock className="w-5 h-5 text-cc-gold" />
+              <span className="text-xs font-semibold text-cc-navy leading-tight">
+                {t("Selling Timeline", "Cronograma de Venta")}
+              </span>
+            </Link>
+            <Link
+              to="/cash-offer-options"
+              onClick={() => handleCTAClick('sell_tool_calculator', '/cash-offer-options')}
+              className="flex flex-col items-center gap-2 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all text-center"
+            >
+              <DollarSign className="w-5 h-5 text-cc-gold" />
+              <span className="text-xs font-semibold text-cc-navy leading-tight">
+                {t("Cash vs. Listing", "Efectivo vs. Listado")}
+              </span>
+            </Link>
           </div>
         </div>
       </section>

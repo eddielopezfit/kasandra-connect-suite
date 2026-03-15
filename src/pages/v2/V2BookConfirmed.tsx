@@ -101,6 +101,7 @@ const V2BookConfirmedContent = () => {
     titleEs: "Reserva Confirmada | Kasandra Prieto, Realtor en Tucson",
     descriptionEn: "Your consultation with Kasandra Prieto is scheduled. Bilingual real estate service in Tucson.",
     descriptionEs: "Su consulta con Kasandra Prieto está agendada. Servicio bilingüe de bienes raíces en Tucson.",
+    noindex: true,
   });
 
   const booking = useMemo(
