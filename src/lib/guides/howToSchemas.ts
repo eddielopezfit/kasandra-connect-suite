@@ -439,7 +439,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Price to attract, not to test',
         nameEs: 'Fija el precio para atraer, no para probar',
-        text: 'In Tucson's market, overpriced homes sit and accumulate stigma. Homes priced 2-3% below peak attract multiple offers and often close above list. Strategic pricing = top dollar.',
+        text: "In Tucson's market, overpriced homes sit and accumulate stigma. Homes priced 2-3% below peak attract multiple offers and often close above list. Strategic pricing = top dollar.",
         textEs: 'En el mercado de Tucson, las casas sobrevaloradas se estancan y acumulan estigma. Las casas con precio 2-3% por debajo del pico atraen múltiples ofertas.',
       },
       {
@@ -523,7 +523,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
         textEs: 'Las ofertas en efectivo cierran en 7-30 días. Los listados tradicionales promedian 45-90 días en Tucson. Si necesitas rapidez, el efectivo gana en certeza.',
       },
       {
-        name: 'Evaluate your home's condition',
+        name: "Evaluate your home's condition",
         nameEs: 'Evalúa el estado de tu casa',
         text: 'Cash buyers purchase as-is  -  no repairs, no inspections. Traditional listings require your home to pass buyer inspections. Factor in repair costs (average $8,000-$15,000 in Tucson) when comparing.',
         textEs: 'Los compradores en efectivo compran tal como está  -  sin reparaciones ni inspecciones. Los listados tradicionales requieren pasar inspecciones. Considera los costos de reparación.',
@@ -559,7 +559,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Consider your involvement and risk tolerance',
         nameEs: 'Considera tu disponibilidad y tolerancia al riesgo',
-        text: 'Being a landlord in Arizona means handling tenant issues, maintenance, and compliance with ARS Title 33. If you're relocating out of Tucson, factor in remote management costs.',
+        text: "Being a landlord in Arizona means handling tenant issues, maintenance, and compliance with ARS Title 33. If you're relocating out of Tucson, factor in remote management costs.",
         textEs: 'Ser arrendador en Arizona significa manejar problemas de inquilinos, mantenimiento y cumplimiento. Si te mudas fuera de Tucson, considera los costos de gestión remota.',
       },
       {
@@ -667,7 +667,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Review tax implications of selling',
         nameEs: 'Revisa las implicaciones fiscales de vender',
-        text: 'Seniors often qualify for the full $250K/$500K federal capital gains exclusion. Arizona's flat 2.5% rate applies to gains above the exclusion. Consult a CPA before closing  -  Kasandra can refer you.',
+        text: "Seniors often qualify for the full $250K/$500K federal capital gains exclusion. Arizona's flat 2.5% rate applies to gains above the exclusion. Consult a CPA before closing  -  Kasandra can refer you.",
         textEs: 'Los mayores a menudo califican para la exclusión completa de ganancias de capital de $250K/$500K. La tasa plana del 2.5% de Arizona se aplica a las ganancias sobre la exclusión.',
       },
     ],
@@ -689,11 +689,11 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Contact your lender  -  request a hardship review',
         nameEs: 'Contacta a tu prestamista  -  solicita una revisión de dificultades',
-        text: 'Call your servicer's loss mitigation department. Request a forbearance, loan modification, or repayment plan. Document every call. This can pause foreclosure proceedings while options are evaluated.',
+        text: "Call your servicer's loss mitigation department. Request a forbearance, loan modification, or repayment plan. Document every call. This can pause foreclosure proceedings while options are evaluated.",
         textEs: 'Llama al departamento de mitigación de pérdidas de tu prestamista. Solicita una moratoria, modificación de préstamo o plan de pago. Documenta cada llamada.',
       },
       {
-        name: 'Evaluate a short sale if you're underwater',
+        name: "Evaluate a short sale if you're underwater",
         nameEs: 'Evalúa una venta corta si debes más de lo que vale la casa',
         text: 'A short sale lets you sell for less than you owe with lender approval. It damages credit less than foreclosure, avoids a deficiency judgment in most Arizona cases, and stops the clock.',
         textEs: 'Una venta corta te permite vender por menos de lo que debes con aprobación del prestamista. Daña menos el crédito que una ejecución y evita una sentencia de deficiencia en Arizona.',
@@ -717,7 +717,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Check current Tucson market conditions',
         nameEs: 'Revisa las condiciones actuales del mercado de Tucson',
-        text: 'Review days-on-market (DOM), list-to-sale price ratio, and active inventory in your ZIP code. Kasandra's market intelligence page has live Tucson housing data updated monthly.',
+        text: "Review days-on-market (DOM), list-to-sale price ratio, and active inventory in your ZIP code. Kasandra's market intelligence page has live Tucson housing data updated monthly.",
         textEs: 'Revisa los días en el mercado (DOM), la relación precio lista vs. venta e inventario activo en tu código postal. La página de inteligencia de mercado de Kasandra tiene datos en vivo.',
       },
       {
@@ -735,7 +735,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Consider personal timeline above all',
         nameEs: 'Considera tu plazo personal por encima de todo',
-        text: 'Market timing matters less than personal readiness. The best time to sell is when it aligns with your life. Kasandra's role is to give you honest data  -  not pressure you to list or wait.',
+        text: "Market timing matters less than personal readiness. The best time to sell is when it aligns with your life. Kasandra's role is to give you honest data  -  not pressure you to list or wait.",
         textEs: 'El timing del mercado importa menos que tu preparación personal. El mejor momento para vender es cuando se alinea con tu vida. El rol de Kasandra es darte datos honestos.',
       },
     ],
@@ -751,13 +751,13 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Get pre-approved for your next purchase',
         nameEs: 'Obtén preaprobación para tu próxima compra',
-        text: 'Before listing your current home, get pre-approved using your existing equity + income. Your lender needs to underwrite the purchase independently of your sale  -  contingency offers are harder to win in Tucson's market.',
+        text: "Before listing your current home, get pre-approved using your existing equity + income. Your lender needs to underwrite the purchase independently of your sale  -  contingency offers are harder to win in Tucson's market.",
         textEs: 'Antes de listar tu casa, obtén preaprobación usando tu capital actual + ingresos. Las ofertas contingentes son más difíciles de ganar en el mercado de Tucson.',
       },
       {
         name: 'Understand your bridge options',
         nameEs: 'Entiende tus opciones de financiamiento puente',
-        text: 'Options: (1) sell first, rent temporarily, then buy; (2) bridge loan using existing equity; (3) HELOC on current home; (4) contingency offer (risky in seller's market). Each has cost implications.',
+        text: "Options: (1) sell first, rent temporarily, then buy; (2) bridge loan using existing equity; (3) HELOC on current home; (4) contingency offer (risky in seller's market). Each has cost implications.",
         textEs: 'Opciones: (1) vender primero, rentar temporalmente, luego comprar; (2) préstamo puente usando el capital actual; (3) HELOC en la casa actual; (4) oferta contingente.',
       },
       {
@@ -769,7 +769,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Coordinate closings within the same 30-day window',
         nameEs: 'Coordina los cierres dentro de la misma ventana de 30 días',
-        text: 'The cleanest move-up strategy: close on the sale and purchase within 5-10 days of each other. Kasandra coordinates both transactions as a dual-agent or with a trusted buyer's agent referral.',
+        text: "The cleanest move-up strategy: close on the sale and purchase within 5-10 days of each other. Kasandra coordinates both transactions as a dual-agent or with a trusted buyer's agent referral.",
         textEs: 'La estrategia de actualización más limpia: cierra la venta y la compra con 5-10 días de diferencia. Kasandra coordina ambas transacciones.',
       },
     ],

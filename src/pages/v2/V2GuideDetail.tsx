@@ -311,19 +311,19 @@ function GuideDetailContent() {
     'cash-offer-guide': {
       titleEn: 'How Cash Offers Work in Tucson  -  Complete Seller Guide (2026)',
       titleEs: 'Cómo Funcionan las Ofertas en Efectivo en Tucson  -  Guía Completa (2026)',
-      descEn: 'Everything Tucson sellers need to know about cash offers  -  what's included, what to watch for, and how to compare a cash deal vs. listing on market.',
+      descEn: "Everything Tucson sellers need to know about cash offers  -  what's included, what to watch for, and how to compare a cash deal vs. listing on market.",
       descEs: 'Todo lo que los vendedores de Tucson deben saber sobre las ofertas en efectivo  -  qué incluyen, qué vigilar y cómo comparar con listar en el mercado.',
     },
     'inherited-probate-property': {
       titleEn: 'Selling an Inherited Home in Tucson  -  Arizona Probate & Estate Guide',
       titleEs: 'Vender una Casa Heredada en Tucson  -  Guía de Sucesión en Arizona',
-      descEn: 'Inherited a property in Tucson or Pima County? Understand Arizona probate, your selling options, and how to protect the family's interests.',
+      descEn: "Inherited a property in Tucson or Pima County? Understand Arizona probate, your selling options, and how to protect the family's interests.",
       descEs: '¿Heredaste una propiedad en Tucson? Entiende el proceso de sucesión en Arizona, tus opciones de venta y cómo proteger los intereses de la familia.',
     },
     'understanding-home-valuation': {
       titleEn: 'How Tucson Homes Are Valued: CMA & Appraisal Guide 2026  -  Kasandra Prieto',
       titleEs: 'Cómo Se Valoran las Casas en Tucson: Guía de CMA y Avalúo 2026',
-      descEn: 'Understand how your Tucson home's value is determined  -  CMAs, appraisals, price per sq ft, and the factors that really move the number in Pima County.',
+      descEn: "Understand how your Tucson home's value is determined  -  CMAs, appraisals, price per sq ft, and the factors that really move the number in Pima County.",
       descEs: 'Entiende cómo se determina el valor de tu casa en Tucson  -  CMAs, avalúos, precio por pie cuadrado y los factores que mueven el número en Pima County.',
     },
     'sell-now-or-wait': {
