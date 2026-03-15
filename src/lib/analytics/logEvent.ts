@@ -155,7 +155,10 @@ export type EventType =
   | 'equity_pulse_saved'
   | 'equity_pulse_shared'
   // Neighborhood Intelligence Hub
-  | 'neighborhood_page_view';
+  | 'neighborhood_page_view'
+  // Guide Synthesis CTA
+  | 'guide_synthesis_cta_shown'
+  | 'guide_synthesis_cta_click';
 
 export interface EventPayload {
   [key: string]: unknown;
