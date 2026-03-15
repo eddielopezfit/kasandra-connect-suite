@@ -153,48 +153,19 @@ const LeadCaptureModal = ({
         is_new: data.is_new,
       });
 
-      // Fire-and-forget handoff to GHL via notify-handoff edge function
+      // Fire-and-forget: write handoff record to lead_handoffs, then notify GHL
+      // create-handoff calls notify-handoff internally — no direct call needed
       const handoffContext = getSessionContext();
-      const nameParts = name.trim().split(' ');
-      supabase.functions.invoke('notify-handoff', {
+      supabase.functions.invoke('create-handoff', {
         body: {
-          contact: {
-            firstName: nameParts[0] || '',
-            lastName: nameParts.slice(1).join(' ') || '',
-            phone: phone.trim() || '',
-            email: email.trim().toLowerCase(),
-          },
-          context: {
-            selena_lead_id: leadId,
-            session_id: handoffContext?.session_id ?? '',
-            intent: handoffContext?.intent ?? '',
-            language,
-            journey_state: handoffContext?.journey_state ?? 'explore',
-            chip_phase_floor: handoffContext?.chip_phase_floor ?? 0,
-            guides_consumed: handoffContext?.guides_completed ?? [],
-            tools_completed: handoffContext?.tools_completed ?? [],
-            readiness_score: handoffContext?.readiness_score ?? 0,
-            inherited_home: handoffContext?.inherited_home ?? false,
-            trust_signal_detected: handoffContext?.trust_signal_detected ?? false,
-            timeline: handoffContext?.timeline ?? '',
-            estimated_value: handoffContext?.estimated_value ?? '',
-            property_condition: handoffContext?.property_condition_raw ?? '',
-            situation: handoffContext?.situation ?? '',
-            entry_source: handoffContext?.entry_source ?? source,
-            page_path: window.location.pathname,
-            utm_source: handoffContext?.utm_source ?? '',
-            utm_campaign: handoffContext?.utm_campaign ?? '',
-            quiz_completed: handoffContext?.quiz_completed ?? false,
-            quiz_result_path: handoffContext?.quiz_result_path ?? '',
-            primary_priority: handoffContext?.primary_priority ?? '',
-            sms_consent: consentChecked,
-            ai_disclosure_accepted: consentChecked,
-            consent_timestamp: consentChecked ? new Date().toISOString() : null,
-          },
+          lead_id: leadId,
+          channel: 'call' as const,
+          priority: (handoffContext?.readiness_score ?? 0) >= 3 ? 'hot' as const : 'warm' as const,
+          summary_md: `Lead captured via ${source}. Intent: ${handoffContext?.intent ?? 'unknown'}. Timeline: ${handoffContext?.timeline ?? 'unknown'}. Readiness score: ${handoffContext?.readiness_score ?? 0}. Path: ${window.location.pathname}.`,
+          contact_pref: 'call' as const,
         },
-      }).then(({ error: handoffErr }) => {
-        if (handoffErr) console.error('[LeadCapture] Handoff failed:', handoffErr);
-        else console.log('[LeadCapture] Handoff successful');
+      }).then(({ error: createErr }) => {
+        if (createErr) console.error('[LeadCapture] create-handoff failed:', createErr);
       });
 
       // Success callback

@@ -387,10 +387,16 @@ const V2BuyerClosingCostsContent = () => {
               </p>
               <p className="font-serif text-4xl font-bold text-white">{fmtRange(totLow, totHigh)}</p>
               <p className="text-white/60 text-sm mt-2">
-                {t(
-                  `Total cash needed at closing (including ${fmt(downAmt)} down): ~${fmt(cashNeeded)}`,
-                  `Total de efectivo necesario al cierre (incluyendo ${fmt(downAmt)} de enganche): ~${fmt(cashNeeded)}`
-                )}
+                {isCash
+                  ? t(
+                      `Total cash needed at closing: ~${fmt(cashNeeded)}`,
+                      `Total de efectivo necesario al cierre: ~${fmt(cashNeeded)}`
+                    )
+                  : t(
+                      `Total cash needed at closing (including ${fmt(downAmt)} down): ~${fmt(cashNeeded)}`,
+                      `Total de efectivo necesario al cierre (incluyendo ${fmt(downAmt)} de enganche): ~${fmt(cashNeeded)}`
+                    )
+                }
               </p>
             </div>
 
