@@ -6,7 +6,8 @@
  */
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Sparkles, FileText, Loader2, MessageCircle } from 'lucide-react';
+import { Sparkles, FileText, Loader2, MessageCircle, ArrowLeft, X } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { useKeyboardInset } from '@/hooks/useKeyboardInset';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
