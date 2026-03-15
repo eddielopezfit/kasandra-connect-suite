@@ -149,4 +149,9 @@ export const CHIP_KEY_TO_DESTINATION: Record<ChipKey, string> = {
   [CHIP_KEYS.INTENT_SELL]: '/seller-decision',
   [CHIP_KEYS.INTENT_BUY]: '/buyer-readiness',
   [CHIP_KEYS.INTENT_EXPLORE]: '/guides',
+
+  // New Tools (Cleanup Pass)
+  [CHIP_KEYS.AFFORDABILITY_CALCULATOR]: '/affordability-calculator',
+  [CHIP_KEYS.BAH_CALCULATOR]: '/bah-calculator',
+  [CHIP_KEYS.HOME_VALUATION]: '/home-valuation',
 };
