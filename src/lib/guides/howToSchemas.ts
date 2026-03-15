@@ -10,7 +10,9 @@
  *   - Guide must be evergreen (not time-bound to a specific date)
  *
  * Qualified guides: cost-to-sell, home-prep-staging, pricing-strategy,
- *   how-long-to-sell (framed as timeline steps)
+ *   how-long-to-sell (framed as timeline steps),
+ *   first-time-buyer-guide, va-home-loan-tucson, fha-loan-pima-county-2026,
+ *   down-payment-assistance-tucson, itin-loan-guide
  *
  * Schema.org spec: https://schema.org/HowTo
  */
@@ -182,6 +184,238 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
         nameEs: "Cierra y entrega la posesión",
         text: "The closing appointment takes 1–2 hours. You'll sign the deed and closing documents. Funds are wired to your account (or cashier's check) typically same-day or next business day. Hand over keys, garage openers, and any documentation on appliances and systems. Your possession date is negotiated in the contract.",
         textEs: "La cita de cierre toma 1–2 horas. Firmarás la escritura y los documentos de cierre. Los fondos se transfieren a tu cuenta típicamente el mismo día o el siguiente día hábil. Entrega las llaves, controles del garaje y documentación de electrodomésticos y sistemas.",
+      },
+    ],
+  },
+
+  // ─── SEO-03/06: Buyer Guide HowTo Schemas ──────────────────────────────────
+
+  'first-time-buyer-guide': {
+    name: "How to Buy Your First Home in Tucson, Arizona",
+    nameEs: "Cómo Comprar tu Primera Casa en Tucson, Arizona",
+    description: "A step-by-step process for first-time home buyers in Tucson — from checking credit and getting pre-approved through closing day.",
+    descriptionEs: "Un proceso paso a paso para compradores de primera vivienda en Tucson — desde revisar tu crédito y obtener pre-aprobación hasta el día del cierre.",
+    totalTime: "P8W",
+    steps: [
+      {
+        name: "Check your credit and build your financial baseline",
+        nameEs: "Revisa tu crédito y establece tu base financiera",
+        text: "Pull your free credit report at AnnualCreditReport.com. For a conventional loan in Tucson, you'll need a 620+ score; FHA accepts 580+. Pay down revolving balances to below 30% utilization and avoid opening new credit lines for at least 6 months before applying. Fix any errors you find — disputes can take 30–60 days to resolve.",
+        textEs: "Obtén tu reporte de crédito gratuito en AnnualCreditReport.com. Para un préstamo convencional en Tucson necesitarás 620+; FHA acepta 580+. Reduce los saldos rotativos por debajo del 30% de utilización y evita abrir nuevas líneas de crédito por al menos 6 meses antes de aplicar.",
+      },
+      {
+        name: "Research down payment assistance programs",
+        nameEs: "Investiga programas de asistencia para el pago inicial",
+        text: "Arizona offers several first-time buyer programs: HOME Plus provides up to 5% down payment assistance as a forgivable grant. Pima Tucson Homebuyers Solution offers low-rate mortgages with DPA. FHA loans require only 3.5% down with a 580 score. Income and purchase price limits apply — confirm eligibility before selecting a program.",
+        textEs: "Arizona ofrece varios programas para compradores primerizos: HOME Plus ofrece hasta 5% de asistencia para el pago inicial como una subvención perdonable. Pima Tucson Homebuyers Solution ofrece hipotecas de bajo interés con asistencia para el pago inicial. Los préstamos FHA requieren solo 3.5% con 580 puntos.",
+      },
+      {
+        name: "Get pre-approved — not just pre-qualified",
+        nameEs: "Obtén una pre-aprobación — no solo una pre-calificación",
+        text: "Pre-qualification is a soft estimate; pre-approval is a lender's written commitment based on verified income, assets, and credit. In Tucson's competitive market, sellers take pre-approved buyers seriously. Gather: 2 years of W-2s or tax returns, 2 months of pay stubs, 3 months of bank statements, and your government-issued ID.",
+        textEs: "La pre-calificación es una estimación suave; la pre-aprobación es el compromiso escrito de un prestamista basado en ingresos, activos y crédito verificados. En el mercado competitivo de Tucson, los vendedores toman en serio a los compradores pre-aprobados.",
+      },
+      {
+        name: "Search neighborhoods and attend showings",
+        nameEs: "Busca vecindarios y asiste a visitas",
+        text: "Identify your non-negotiables: commute to work, school district, proximity to base (if military), price range, and minimum square footage. Tour homes with your agent in person — photos flatter. In Tucson, check HVAC age, roof condition, and water heater age at every showing. Make notes immediately after each visit before details blur.",
+        textEs: "Identifica tus elementos no negociables: tiempo de viaje al trabajo, distrito escolar, proximidad a la base (si es militar), rango de precio y metros cuadrados mínimos. Visita casas en persona con tu agente. En Tucson, verifica la edad del HVAC, condición del techo y la edad del calentador de agua.",
+      },
+      {
+        name: "Make an offer, negotiate, and go under contract",
+        nameEs: "Haz una oferta, negocia y firma el contrato",
+        text: "Your agent will prepare a purchase contract based on current market comps. Include an earnest money deposit (typically 1% of purchase price in Tucson). Negotiate inspection contingencies and possession dates. Once both parties sign, you're under contract — typically 30–45 days to closing from this point.",
+        textEs: "Tu agente preparará un contrato de compra basado en comparables del mercado actual. Incluye un depósito de buena fe (típicamente 1% del precio de compra en Tucson). Negocia contingencias de inspección y fechas de posesión.",
+      },
+      {
+        name: "Complete due diligence and close",
+        nameEs: "Completa la debida diligencia y cierra",
+        text: "Schedule a home inspection within the first 10 days of contract (Arizona BINSR period). Review the inspection report and negotiate repairs or credits. Your lender will order an appraisal. Complete final walkthrough the day before closing. At closing, bring government-issued ID and a cashier's check or wire for your closing costs and down payment.",
+        textEs: "Programa una inspección del hogar dentro de los primeros 10 días del contrato (período BINSR de Arizona). Revisa el informe de inspección y negocia reparaciones o créditos. Tu prestamista ordenará una tasación. Completa el recorrido final el día antes del cierre.",
+      },
+    ],
+  },
+
+  'va-home-loan-tucson': {
+    name: "How to Use a VA Loan to Buy a Home in Tucson",
+    nameEs: "Cómo Usar un Préstamo VA para Comprar una Casa en Tucson",
+    description: "A step-by-step guide to using your VA home loan benefit to buy near Davis-Monthan AFB or anywhere in the Tucson area — from eligibility through closing.",
+    descriptionEs: "Una guía paso a paso para usar tu beneficio de préstamo VA para comprar cerca de la Base Davis-Monthan o en cualquier parte del área de Tucson — desde elegibilidad hasta el cierre.",
+    totalTime: "P6W",
+    steps: [
+      {
+        name: "Confirm your VA loan eligibility",
+        nameEs: "Confirma tu elegibilidad para el préstamo VA",
+        text: "VA loans are available to active-duty service members, veterans, National Guard, and surviving spouses. Obtain your Certificate of Eligibility (COE) through eBenefits, your lender, or by mailing VA Form 26-1880. Most lenders can pull your COE electronically in minutes. No minimum credit score is set by VA, but most lenders require 620+.",
+        textEs: "Los préstamos VA están disponibles para militares en servicio activo, veteranos, Guardia Nacional y cónyuges sobrevivientes. Obtén tu Certificado de Elegibilidad (COE) a través de eBenefits, tu prestamista o enviando el Formulario VA 26-1880 por correo.",
+      },
+      {
+        name: "Understand VA loan benefits in Tucson",
+        nameEs: "Entiende los beneficios del préstamo VA en Tucson",
+        text: "VA loans offer: zero down payment (no PMI), competitive interest rates below conventional, seller can pay up to 4% in concessions, and no prepayment penalty. The 2026 VA loan limit in Pima County has no set cap for buyers with full entitlement — you can buy up to your approved amount with no down payment required.",
+        textEs: "Los préstamos VA ofrecen: cero pago inicial (sin PMI), tasas de interés competitivas por debajo de los convencionales, el vendedor puede pagar hasta 4% en concesiones y sin penalidad por pago anticipado.",
+      },
+      {
+        name: "Get pre-approved with a VA-experienced lender",
+        nameEs: "Obtén pre-aprobación con un prestamista con experiencia en VA",
+        text: "Choose a lender experienced with VA loans — they understand the appraisal process and Minimum Property Requirements (MPRs). Gather: DD-214 (discharge), recent LES (if active duty), W-2s for 2 years, pay stubs for 30 days, and bank statements for 60 days. VA loans may take slightly longer to close — factor 45–60 days.",
+        textEs: "Elige un prestamista con experiencia en préstamos VA que entienda el proceso de tasación y los Requisitos Mínimos de Propiedad (MPRs). Reúne: DD-214, LES reciente (si estás en servicio activo), W-2s de 2 años y estados de cuenta bancarios de 60 días.",
+      },
+      {
+        name: "Find a VA-savvy real estate agent and search homes",
+        nameEs: "Encuentra un agente inmobiliario con experiencia en VA y busca casas",
+        text: "Work with an agent who understands VA Minimum Property Requirements — the property must be safe, sound, and sanitary. Common VA MPR issues in Tucson: peeling paint, roof deficiencies, water heater not strapped, missing handrails. Your agent should know to flag these before writing offers to avoid costly surprises during the VA appraisal.",
+        textEs: "Trabaja con un agente que entienda los Requisitos Mínimos de Propiedad VA. Problemas comunes de MPR VA en Tucson: pintura descascarada, deficiencias en el techo, calentador de agua sin correa, barandillas faltantes.",
+      },
+      {
+        name: "Make an offer and navigate the VA appraisal",
+        nameEs: "Haz una oferta y navega la tasación VA",
+        text: "Write a competitive offer — VA buyers are equally competitive as conventional buyers when working with experienced agents. The VA will assign an appraiser who checks both value and MPRs. If the appraisal comes in low, negotiate with the seller or use your Tidewater option to provide comps before the value is finalized.",
+        textEs: "Escribe una oferta competitiva. La VA asignará un tasador que verifica tanto el valor como los MPRs. Si la tasación resulta baja, negocia con el vendedor o usa tu opción Tidewater para proporcionar comparables antes de que el valor sea finalizado.",
+      },
+      {
+        name: "Close and take ownership",
+        nameEs: "Cierra y toma posesión",
+        text: "VA loans require a VA Funding Fee (0.5%–3.3% of loan amount, depending on use and down payment) — this can be financed into the loan. Veterans with 10%+ service-connected disability are exempt. At closing, review the Closing Disclosure, sign documents, and receive your keys. Your COE entitlement is restored when you sell or refinance.",
+        textEs: "Los préstamos VA requieren una Tarifa de Financiamiento VA (0.5%–3.3% del monto del préstamo) — esto puede financiarse en el préstamo. Los veteranos con 10%+ de discapacidad por servicio están exentos. Al cerrar, revisa la Divulgación de Cierre, firma los documentos y recibe tus llaves.",
+      },
+    ],
+  },
+
+  'fha-loan-pima-county-2026': {
+    name: "How to Get an FHA Loan to Buy a Home in Pima County (2026)",
+    nameEs: "Cómo Obtener un Préstamo FHA para Comprar una Casa en el Condado de Pima (2026)",
+    description: "A step-by-step guide to qualifying for and using an FHA loan to purchase a home in Tucson or Pima County, Arizona — current 2026 loan limits, requirements, and process.",
+    descriptionEs: "Una guía paso a paso para calificar y usar un préstamo FHA para comprar una casa en Tucson o el Condado de Pima, Arizona — límites de préstamo 2026 actuales, requisitos y proceso.",
+    totalTime: "P7W",
+    steps: [
+      {
+        name: "Understand 2026 FHA loan limits for Pima County",
+        nameEs: "Entiende los límites de préstamo FHA 2026 para el Condado de Pima",
+        text: "For 2026, the FHA loan limit for a single-family home in Pima County is $524,225 (standard area limit). FHA loans are government-backed mortgages insured by HUD, allowing lower credit scores and down payments than conventional loans. They're especially useful for buyers with credit scores between 580–619 who don't qualify for conventional financing.",
+        textEs: "Para 2026, el límite de préstamo FHA para una casa unifamiliar en el Condado de Pima es $524,225. Los préstamos FHA son hipotecas respaldadas por el gobierno aseguradas por HUD, permitiendo puntajes de crédito y pagos iniciales más bajos que los préstamos convencionales.",
+      },
+      {
+        name: "Check your credit score and debt-to-income ratio",
+        nameEs: "Verifica tu puntaje de crédito y relación deuda-ingresos",
+        text: "FHA minimum: 580 credit score for 3.5% down; 500–579 requires 10% down. Your debt-to-income ratio (DTI) should be below 43% (total monthly debts ÷ gross monthly income). FHA allows up to 57% DTI with compensating factors. Calculate your DTI: add up all monthly debt payments and divide by gross monthly income.",
+        textEs: "Mínimo FHA: 580 de puntaje de crédito para 3.5% de pago inicial; 500–579 requiere 10% de pago inicial. Tu relación deuda-ingresos (DTI) debe estar por debajo del 43%. FHA permite hasta 57% DTI con factores compensatorios.",
+      },
+      {
+        name: "Understand FHA mortgage insurance requirements",
+        nameEs: "Entiende los requisitos de seguro hipotecario FHA",
+        text: "FHA loans require two types of mortgage insurance: upfront MIP (1.75% of loan amount, typically financed into the loan) and annual MIP (0.55%–1.05% of loan amount, paid monthly). For loans with less than 10% down, MIP stays for the life of the loan. For 10%+ down, MIP falls off after 11 years. Factor monthly MIP into your budget.",
+        textEs: "Los préstamos FHA requieren dos tipos de seguro hipotecario: MIP inicial (1.75% del monto del préstamo, típicamente financiado en el préstamo) y MIP anual (0.55%–1.05%, pagado mensualmente). Con menos del 10% de pago inicial, el MIP permanece por la vida del préstamo.",
+      },
+      {
+        name: "Get pre-approved and find an FHA-approved property",
+        nameEs: "Obtén pre-aprobación y encuentra una propiedad aprobada por FHA",
+        text: "Apply with a HUD-approved FHA lender. Most homes in Tucson qualify for FHA, but the property must meet FHA Minimum Property Standards: functioning utilities, no major safety hazards, adequate roof and foundation condition. Condos must be on HUD's approved condo list. New construction requires FHA builder certification.",
+        textEs: "Solicita con un prestamista FHA aprobado por HUD. La mayoría de las casas en Tucson califican para FHA, pero la propiedad debe cumplir con los Estándares Mínimos de Propiedad FHA: servicios públicos funcionando, sin peligros de seguridad mayores, condición adecuada de techo y cimentación.",
+      },
+      {
+        name: "Make your offer and complete the FHA appraisal",
+        nameEs: "Haz tu oferta y completa la tasación FHA",
+        text: "FHA appraisals check both value and property condition. The appraiser will flag health and safety issues that must be repaired before closing. Common FHA appraisal flags in Tucson: roof with less than 3 years remaining life, exposed wiring, broken windows, missing handrails. Budget for potential seller repair requests or negotiate a repair credit.",
+        textEs: "Las tasaciones FHA verifican tanto el valor como la condición de la propiedad. El tasador señalará problemas de salud y seguridad que deben repararse antes del cierre. Problemas comunes de tasación FHA en Tucson: techo con menos de 3 años de vida útil, cableado expuesto, ventanas rotas.",
+      },
+      {
+        name: "Close your FHA loan",
+        nameEs: "Cierra tu préstamo FHA",
+        text: "At closing, you'll pay your 3.5% down payment, closing costs (typically 2–5% of the loan), and the upfront MIP (if not financing it into the loan). FHA closing costs in Tucson typically run $5,000–$10,000 on a $300,000 home. Down payment assistance programs like HOME Plus can cover your down payment and some closing costs — stack them with FHA for maximum benefit.",
+        textEs: "Al cerrar, pagarás tu pago inicial del 3.5%, costos de cierre (típicamente 2–5% del préstamo) y el MIP inicial. Los costos de cierre FHA en Tucson típicamente son $5,000–$10,000 en una casa de $300,000. Los programas de asistencia para el pago inicial como HOME Plus pueden cubrir tu pago inicial.",
+      },
+    ],
+  },
+
+  'down-payment-assistance-tucson': {
+    name: "How to Get Down Payment Assistance to Buy a Home in Tucson",
+    nameEs: "Cómo Obtener Asistencia para el Pago Inicial para Comprar una Casa en Tucson",
+    description: "A step-by-step guide to finding, qualifying for, and stacking down payment assistance programs available to Tucson and Pima County home buyers in 2026.",
+    descriptionEs: "Una guía paso a paso para encontrar, calificar y combinar programas de asistencia para el pago inicial disponibles para compradores de casas en Tucson y el Condado de Pima en 2026.",
+    totalTime: "P4W",
+    steps: [
+      {
+        name: "Know which programs are available in Tucson",
+        nameEs: "Conoce qué programas están disponibles en Tucson",
+        text: "Key down payment assistance programs for Tucson buyers: (1) HOME Plus — up to 5% DPA as a forgivable grant, available statewide with FHA, VA, USDA, or conventional loans. (2) Pima/Tucson Homebuyers Solution — below-market rate first mortgage + DPA for income-qualified buyers. (3) ADOH programs — Arizona Department of Housing grants for low-to-moderate income. (4) USDA Rural Development — 100% financing for eligible rural areas outside Tucson proper.",
+        textEs: "Programas clave de asistencia para el pago inicial para compradores de Tucson: (1) HOME Plus — hasta 5% DPA como subvención perdonable. (2) Pima/Tucson Homebuyers Solution — hipoteca de primera con tasa por debajo del mercado + DPA. (3) Programas ADOH. (4) Desarrollo Rural USDA — financiamiento al 100% para áreas rurales elegibles.",
+      },
+      {
+        name: "Check your income and purchase price eligibility",
+        nameEs: "Verifica tu elegibilidad de ingresos y precio de compra",
+        text: "Most DPA programs in Arizona have income limits based on area median income (AMI). For Pima County in 2026, HOME Plus income limit is typically 80–120% AMI depending on household size. Purchase price limits also apply — verify current limits at the program's official source. First-time buyer requirement applies to most programs (no ownership in 3 years counts as first-time).",
+        textEs: "La mayoría de los programas DPA en Arizona tienen límites de ingresos basados en el ingreso mediano del área (AMI). Para el Condado de Pima en 2026, el límite de ingresos de HOME Plus es típicamente 80–120% AMI según el tamaño del hogar.",
+      },
+      {
+        name: "Complete a HUD-approved homebuyer education course",
+        nameEs: "Completa un curso de educación para compradores aprobado por HUD",
+        text: "Most DPA programs require a HUD-approved homebuyer education course. Options: online (Frameworks, eHomeAmerica — typically $75–$99, takes 6–8 hours) or in-person through local nonprofits. You'll receive a completion certificate — keep this as lenders will request it. Complete this before submitting your loan application to avoid delays.",
+        textEs: "La mayoría de los programas DPA requieren un curso de educación para compradores aprobado por HUD. Opciones: en línea (Frameworks, eHomeAmerica — típicamente $75–$99, toma 6–8 horas) o en persona a través de organizaciones sin fines de lucro locales.",
+      },
+      {
+        name: "Find a participating lender and apply",
+        nameEs: "Encuentra un prestamista participante y solicita",
+        text: "DPA programs are delivered through approved lenders — not all lenders participate. Ask specifically: 'Do you originate HOME Plus loans?' or 'Are you a Pima Tucson Homebuyers Solution participating lender?' Apply simultaneously for your first mortgage and DPA program — they're bundled. Provide all income verification documents upfront to speed the process.",
+        textEs: "Los programas DPA se entregan a través de prestamistas aprobados. Pregunta específicamente: '¿Originan préstamos HOME Plus?' Aplica simultáneamente para tu primera hipoteca y el programa DPA. Proporciona todos los documentos de verificación de ingresos por adelantado.",
+      },
+      {
+        name: "Stack programs for maximum benefit",
+        nameEs: "Combina programas para el máximo beneficio",
+        text: "DPA programs can often be layered. Example stack: FHA loan (3.5% down) + HOME Plus grant (covers 5% → zero out of pocket for down payment) + seller concessions for closing costs. Or: USDA loan (0% down) + ADOH grant for closing costs. Work with your lender to identify the optimal stack for your income level and target price range.",
+        textEs: "Los programas DPA a menudo se pueden combinar. Ejemplo: préstamo FHA (3.5% de pago inicial) + subvención HOME Plus (cubre 5% → cero de tu bolsillo para el pago inicial) + concesiones del vendedor para los costos de cierre.",
+      },
+      {
+        name: "Close and maintain program compliance",
+        nameEs: "Cierra y mantén el cumplimiento del programa",
+        text: "Some DPA grants are forgivable only if you stay in the home for a minimum period (typically 3 years for HOME Plus). If you sell or refinance before the compliance period, you may owe back a portion of the grant. Read your DPA agreement carefully — your lender must disclose all recapture provisions. For forgivable grants, the compliance period forgives automatically with no action needed.",
+        textEs: "Algunas subvenciones DPA son perdonables solo si permaneces en la casa por un período mínimo (típicamente 3 años para HOME Plus). Si vendes o refinancias antes del período de cumplimiento, es posible que debas devolver una parte de la subvención.",
+      },
+    ],
+  },
+
+  'itin-loan-guide': {
+    name: "How to Buy a Home in Tucson with an ITIN (No Social Security Number)",
+    nameEs: "Cómo Comprar una Casa en Tucson con un ITIN (Sin Número de Seguro Social)",
+    description: "A step-by-step guide for non-citizens and undocumented buyers to purchase a home in Tucson using an ITIN mortgage — what's required, which lenders offer them, and how to prepare.",
+    descriptionEs: "Una guía paso a paso para no ciudadanos y compradores indocumentados para comprar una casa en Tucson usando una hipoteca ITIN — qué se requiere, qué prestamistas las ofrecen y cómo prepararse.",
+    totalTime: "P10W",
+    steps: [
+      {
+        name: "Understand your legal right to buy property in Arizona",
+        nameEs: "Entiende tu derecho legal a comprar propiedad en Arizona",
+        text: "U.S. federal and Arizona law do not restrict home ownership based on immigration status. Non-citizens — including undocumented immigrants — can legally own real property in Arizona. An ITIN (Individual Taxpayer Identification Number) is a tax processing number issued by the IRS that can substitute for a Social Security number in mortgage applications with participating lenders.",
+        textEs: "Las leyes federales de EE.UU. y de Arizona no restringen la propiedad de vivienda basándose en el estatus migratorio. Los no ciudadanos, incluidos los inmigrantes indocumentados, pueden poseer legalmente bienes raíces en Arizona. Un ITIN es un número de procesamiento de impuestos emitido por el IRS que puede sustituir al número de Seguro Social con prestamistas participantes.",
+      },
+      {
+        name: "Obtain your ITIN if you don't have one",
+        nameEs: "Obtén tu ITIN si no tienes uno",
+        text: "Apply for an ITIN by filing IRS Form W-7 with a valid federal income tax return and identity/foreign status documentation (passport, national ID, or birth certificate + photo ID). Processing takes 7–11 weeks. Some Acceptance Agents — including many tax preparers and Certifying Acceptance Agents (CAAs) — can expedite the process. Your ITIN is separate from your immigration status.",
+        textEs: "Solicita un ITIN presentando el Formulario W-7 del IRS con una declaración de impuestos federal válida y documentación de identidad (pasaporte, identificación nacional o acta de nacimiento + identificación con foto). El procesamiento tarda 7–11 semanas.",
+      },
+      {
+        name: "Build a credit profile using your ITIN",
+        nameEs: "Construye un perfil de crédito usando tu ITIN",
+        text: "ITIN mortgage lenders typically require 12–24 months of credit history under your ITIN. Build credit with: a secured credit card (deposit $200–$500, use and pay monthly), a credit-builder loan from a credit union, or by becoming an authorized user on a family member's account. Keep utilization below 30% and pay on time every month. Some ITIN lenders accept non-traditional credit (rent, utilities, insurance payments).",
+        textEs: "Los prestamistas de hipotecas ITIN típicamente requieren 12–24 meses de historial de crédito bajo tu ITIN. Construye crédito con: una tarjeta de crédito asegurada, un préstamo constructor de crédito de una cooperativa de crédito o como usuario autorizado en la cuenta de un familiar.",
+      },
+      {
+        name: "Find ITIN mortgage lenders in Tucson",
+        nameEs: "Encuentra prestamistas de hipotecas ITIN en Tucson",
+        text: "ITIN loans are not offered by all lenders — ask specifically: 'Do you offer ITIN mortgages?' Look for community banks, credit unions, and non-QM (non-qualified mortgage) lenders. Down payment requirements for ITIN loans are typically 10–20%. Interest rates are slightly higher than conventional loans due to the non-QM classification. Avoid anyone who promises a Social Security number is not needed for any loan type without disclosing it's an ITIN product.",
+        textEs: "Los préstamos ITIN no los ofrecen todos los prestamistas. Busca bancos comunitarios, cooperativas de crédito y prestamistas no-QM. Los requisitos de pago inicial para préstamos ITIN son típicamente 10–20%. Las tasas de interés son ligeramente más altas que los préstamos convencionales.",
+      },
+      {
+        name: "Prepare your documentation package",
+        nameEs: "Prepara tu paquete de documentación",
+        text: "ITIN lender documentation typically requires: ITIN number and IRS assignment letter, 2 years of tax returns filed with ITIN, 12–24 months of bank statements (for bank statement loans), proof of employment or self-employment income, identification (passport or consular ID), and reference letters if using non-traditional credit. Organize everything before contacting a lender.",
+        textEs: "La documentación del prestamista ITIN típicamente requiere: número ITIN y carta de asignación del IRS, 2 años de declaraciones de impuestos, 12–24 meses de estados de cuenta bancarios, prueba de empleo o ingresos por trabajo independiente e identificación (pasaporte o identificación consular).",
+      },
+      {
+        name: "Buy and close on your Tucson home",
+        nameEs: "Compra y cierra en tu casa en Tucson",
+        text: "Once pre-approved, the buying process mirrors a conventional purchase: find a property, make an offer, inspection, appraisal, and close. ITIN closings may take slightly longer (45–60 days). Title companies in Tucson regularly handle ITIN transactions — your immigration status is not disclosed or recorded in public records. You have full ownership rights as a property owner in Arizona regardless of immigration status.",
+        textEs: "Una vez pre-aprobado, el proceso de compra es similar a una compra convencional: encontrar una propiedad, hacer una oferta, inspección, tasación y cierre. Los cierres ITIN pueden tomar un poco más de tiempo (45–60 días). Tu estatus migratorio no se divulga ni se registra en los registros públicos.",
       },
     ],
   },
