@@ -419,6 +419,361 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       },
     ],
   },
+
+
+  // SEO-SPRINT-02: HowTo schemas for 10 high-priority guides
+
+  'selling-for-top-dollar': {
+    name: 'How to Sell Your Tucson Home for Top Dollar',
+    nameEs: 'Cómo Vender tu Casa en Tucson al Mejor Precio',
+    description: 'Step-by-step guide to maximizing your Tucson home sale price through strategic pricing, staging, and negotiation.',
+    descriptionEs: 'Guía paso a paso para maximizar el precio de venta de tu casa en Tucson con precios estratégicos, presentación y negociación.',
+    totalTime: 'P60D',
+    steps: [
+      {
+        name: 'Get a Comparative Market Analysis (CMA)',
+        nameEs: 'Obten un Análisis Comparativo de Mercado (CMA)',
+        text: 'Before pricing, get a free CMA from Kasandra Prieto. A CMA shows recent sales of similar Tucson homes in your ZIP code — the baseline for smart pricing.',
+        textEs: 'Antes de fijar el precio, obtén un CMA gratuito de Kasandra Prieto. Un CMA muestra ventas recientes de casas similares en tu código postal de Tucson.',
+      },
+      {
+        name: 'Price to attract, not to test',
+        nameEs: 'Fija el precio para atraer, no para probar',
+        text: 'In Tucson's market, overpriced homes sit and accumulate stigma. Homes priced 2–3% below peak attract multiple offers and often close above list. Strategic pricing = top dollar.',
+        textEs: 'En el mercado de Tucson, las casas sobrevaloradas se estancan y acumulan estigma. Las casas con precio 2-3% por debajo del pico atraen múltiples ofertas.',
+      },
+      {
+        name: 'Complete targeted pre-sale improvements',
+        nameEs: 'Completa mejoras previas a la venta específicas',
+        text: 'Focus on curb appeal, deep cleaning, and desert-specific landscaping. Avoid over-improving. Kitchen and bath refreshes (paint, hardware) yield 80–120% ROI in Tucson.',
+        textEs: 'Concéntrate en el atractivo exterior, limpieza profunda y jardinería específica del desierto. Evita mejorar en exceso. Los retoques de cocina y baño ofrecen 80-120% de retorno.',
+      },
+      {
+        name: 'Stage for Tucson buyers',
+        nameEs: 'Prepara la casa para compradores de Tucson',
+        text: 'Stage to highlight indoor-outdoor living, natural light, and desert views. Remove personalization. Professional photos with golden-hour lighting are non-negotiable for top-dollar results.',
+        textEs: 'Prepara la casa para destacar la vida interior-exterior, la luz natural y las vistas al desierto. Fotos profesionales con luz dorada son imprescindibles.',
+      },
+      {
+        name: 'Negotiate from strength, not desperation',
+        nameEs: 'Negocia desde una posición de fuerza, no de desesperación',
+        text: 'Kasandra uses proven negotiation tactics: counter-offer strategy, inspection response frameworks, and appraisal gap management to protect your net proceeds at every step.',
+        textEs: 'Kasandra usa tácticas de negociación comprobadas: estrategia de contraoferta, respuesta a inspecciones y manejo de brechas de tasación para proteger tus ganancias.',
+      },
+    ],
+  },
+
+  'inherited-probate-property': {
+    name: 'How to Sell an Inherited Home in Tucson Through Probate',
+    nameEs: 'Cómo Vender una Casa Heredada en Tucson a Través de Sucesión',
+    description: 'Step-by-step process for Tucson families navigating probate and selling an inherited property in Arizona.',
+    descriptionEs: 'Proceso paso a paso para familias de Tucson que navegan la sucesión y venden una propiedad heredada en Arizona.',
+    totalTime: 'P120D',
+    steps: [
+      {
+        name: 'Confirm whether probate is required',
+        nameEs: 'Confirma si se requiere proceso de sucesión',
+        text: 'In Arizona, probate is generally required if the estate is over $100,000 in real property. Check if the home had a living trust or joint tenancy — those bypass probate entirely.',
+        textEs: 'En Arizona, la sucesión generalmente es requerida si el patrimonio supera $100,000 en bienes raíces. Verifica si la casa tenía un fideicomiso — eso omite la sucesión.',
+      },
+      {
+        name: 'File for Letters Testamentary or Administration',
+        nameEs: 'Solicita Cartas Testamentarias o de Administración',
+        text: 'File with Pima County Superior Court to be appointed Personal Representative. This gives you legal authority to sell the property. Timeline: 3–6 weeks for standard cases.',
+        textEs: 'Presenta en el Tribunal Superior del Condado Pima para ser nombrado Representante Personal. Esto te da autoridad legal para vender. Plazo: 3-6 semanas.',
+      },
+      {
+        name: 'Get a professional home valuation',
+        nameEs: 'Obtén una valuación profesional de la vivienda',
+        text: 'Get a licensed appraisal for estate tax and probate purposes, plus a CMA for pricing. Kasandra provides free CMAs for inherited properties throughout Tucson and Pima County.',
+        textEs: 'Obtén un avalúo con licencia para fines fiscales y de sucesión, más un CMA para precios. Kasandra proporciona CMAs gratuitos para propiedades heredadas en Tucson.',
+      },
+      {
+        name: 'Choose your selling path: cash offer vs. listing',
+        nameEs: 'Elige tu camino de venta: oferta en efectivo vs. listado',
+        text: 'Inherited homes often need repairs that reduce traditional listing appeal. A cash offer through Corner Connect closes in 7–30 days with no repairs required — ideal for estates with timelines.',
+        textEs: 'Las casas heredadas a menudo necesitan reparaciones. Una oferta en efectivo cierra en 7-30 días sin reparaciones requeridas — ideal para herencias con plazos.',
+      },
+      {
+        name: 'Close and distribute proceeds',
+        nameEs: 'Cierra y distribuye los fondos',
+        text: 'After probate court approval, the sale closes and proceeds are distributed to heirs per the will or intestate succession law. Kasandra coordinates directly with estate attorneys throughout Tucson.',
+        textEs: 'Tras la aprobación del tribunal, la venta se cierra y los fondos se distribuyen a los herederos. Kasandra coordina directamente con abogados de sucesiones en Tucson.',
+      },
+    ],
+  },
+
+  'cash-vs-traditional-sale': {
+    name: 'How to Decide Between a Cash Offer and Traditional Listing in Tucson',
+    nameEs: 'Cómo Decidir Entre Oferta en Efectivo y Venta Tradicional en Tucson',
+    description: 'A structured comparison to help Tucson homeowners choose the right selling path based on their timeline, equity, and goals.',
+    descriptionEs: 'Comparación estructurada para ayudar a propietarios de Tucson a elegir el camino de venta correcto según su plazo, capital y metas.',
+    totalTime: 'P7D',
+    steps: [
+      {
+        name: 'Estimate your net proceeds for both paths',
+        nameEs: 'Estima tus ganancias netas para ambos caminos',
+        text: 'Use the free Tucson net proceeds calculator on this site. Enter your estimated home value and see side-by-side cash vs. traditional net numbers after commissions, closing costs, and holding costs.',
+        textEs: 'Usa la calculadora gratuita de ganancias netas de Tucson. Ingresa el valor estimado de tu casa y ve los números netos de efectivo vs. tradicional lado a lado.',
+      },
+      {
+        name: 'Assess your timeline',
+        nameEs: 'Evalúa tu plazo',
+        text: 'Cash offers close in 7–30 days. Traditional listings average 45–90 days in Tucson (2026). If you need speed — relocation, estate, financial urgency — cash wins on certainty, even if the net is slightly lower.',
+        textEs: 'Las ofertas en efectivo cierran en 7-30 días. Los listados tradicionales promedian 45-90 días en Tucson. Si necesitas rapidez, el efectivo gana en certeza.',
+      },
+      {
+        name: 'Evaluate your home's condition',
+        nameEs: 'Evalúa el estado de tu casa',
+        text: 'Cash buyers purchase as-is — no repairs, no inspections. Traditional listings require your home to pass buyer inspections. Factor in repair costs (average $8,000–$15,000 in Tucson) when comparing.',
+        textEs: 'Los compradores en efectivo compran tal como está — sin reparaciones ni inspecciones. Los listados tradicionales requieren pasar inspecciones. Considera los costos de reparación.',
+      },
+      {
+        name: 'Compare certainty vs. potential upside',
+        nameEs: 'Compara certeza vs. potencial de ganancia',
+        text: 'Traditional listings have upside — multiple offers can push price above asking. But 23% of Tucson traditional sales fall through after acceptance. Cash offers have ~98% close rate.',
+        textEs: 'Los listados tradicionales tienen potencial de ganancia — múltiples ofertas pueden superar el precio pedido. Pero el 23% de las ventas tradicionales fracasan. Las ofertas en efectivo cierran ~98%.',
+      },
+    ],
+  },
+
+  'sell-or-rent-tucson': {
+    name: 'How to Decide Whether to Sell or Rent Your Tucson Home',
+    nameEs: 'Cómo Decidir si Vender o Rentar tu Casa en Tucson',
+    description: 'A financial and lifestyle framework for Tucson homeowners deciding between selling for proceeds vs. keeping as a rental investment.',
+    descriptionEs: 'Marco financiero y de estilo de vida para propietarios de Tucson que deciden entre vender o mantener como propiedad de renta.',
+    totalTime: 'P14D',
+    steps: [
+      {
+        name: 'Calculate your potential net proceeds from selling',
+        nameEs: 'Calcula tus ganancias netas potenciales de vender',
+        text: 'Get a CMA and estimate closing costs (5–8% of sale price in Tucson). Subtract your remaining mortgage balance. This is your equity-out number if you sell today.',
+        textEs: 'Obtén un CMA y estima los costos de cierre (5-8% del precio de venta en Tucson). Resta tu saldo hipotecario restante. Este es tu número de capital si vendes hoy.',
+      },
+      {
+        name: 'Estimate rental cash flow',
+        nameEs: 'Estima el flujo de caja por renta',
+        text: 'Research comparable Tucson rentals in your ZIP. Subtract: mortgage payment, property management (8–10%), insurance, taxes, vacancy (7–10% of annual rent), and repairs. Is the net positive?',
+        textEs: 'Investiga rentas comparables en tu código postal de Tucson. Resta: pago de hipoteca, administración de propiedad (8-10%), seguro, impuestos, vacancia (7-10%) y reparaciones.',
+      },
+      {
+        name: 'Consider your involvement and risk tolerance',
+        nameEs: 'Considera tu disponibilidad y tolerancia al riesgo',
+        text: 'Being a landlord in Arizona means handling tenant issues, maintenance, and compliance with ARS Title 33. If you're relocating out of Tucson, factor in remote management costs.',
+        textEs: 'Ser arrendador en Arizona significa manejar problemas de inquilinos, mantenimiento y cumplimiento. Si te mudas fuera de Tucson, considera los costos de gestión remota.',
+      },
+      {
+        name: 'Run the 5-year scenario',
+        nameEs: 'Ejecuta el escenario a 5 años',
+        text: 'Model both paths over 5 years: selling today and reinvesting vs. holding as rental. Tucson home appreciation has averaged 4.2% annually — but rental income compounds too. Compare total wealth at year 5.',
+        textEs: 'Modela ambos caminos a 5 años: vender hoy y reinvertir vs. mantener como renta. La apreciación de casas en Tucson ha promediado 4.2% anual. Compara la riqueza total al año 5.',
+      },
+    ],
+  },
+
+  'capital-gains-home-sale-arizona': {
+    name: 'How to Handle Capital Gains When Selling Your Tucson Home',
+    nameEs: 'Cómo Manejar las Ganancias de Capital al Vender tu Casa en Tucson',
+    description: 'Understanding federal and Arizona capital gains tax exemptions, exclusions, and strategies for Tucson homeowners.',
+    descriptionEs: 'Entendiendo las exenciones de impuestos sobre ganancias de capital federales y de Arizona para propietarios de Tucson.',
+    totalTime: 'P30D',
+    steps: [
+      {
+        name: 'Check if you qualify for the primary residence exclusion',
+        nameEs: 'Verifica si calificas para la exclusión de residencia principal',
+        text: 'Under IRS Section 121, single filers can exclude up to $250,000 in capital gains; married filing jointly, up to $500,000. You must have lived in the home 2 of the last 5 years.',
+        textEs: 'Bajo la Sección 121 del IRS, los solteros pueden excluir hasta $250,000 en ganancias de capital; casados declarando conjuntamente, hasta $500,000. Debes haber vivido en la casa 2 de los últimos 5 años.',
+      },
+      {
+        name: 'Calculate your adjusted cost basis',
+        nameEs: 'Calcula tu base de costo ajustado',
+        text: 'Start with your original purchase price. Add qualifying improvements (roof, HVAC, additions) and subtract depreciation if the home was ever rented. This is your adjusted basis.',
+        textEs: 'Comienza con tu precio de compra original. Agrega mejoras calificadas y resta la depreciación si la casa alguna vez fue rentada. Esta es tu base ajustada.',
+      },
+      {
+        name: 'Determine Arizona state tax liability',
+        nameEs: 'Determina la obligación del impuesto estatal de Arizona',
+        text: 'Arizona taxes capital gains as ordinary income (2.5% flat rate as of 2023 reforms). If you exceed the federal exclusion, the excess gain is taxable at both federal (15–20%) and Arizona rates.',
+        textEs: 'Arizona grava las ganancias de capital como ingresos ordinarios (tasa fija del 2.5% desde las reformas de 2023). Si superas la exclusión federal, la ganancia excedente está gravada.',
+      },
+      {
+        name: 'Consult a CPA before closing',
+        nameEs: 'Consulta un CPA antes del cierre',
+        text: 'Kasandra works with Tucson CPAs and can provide referrals. A pre-sale tax consultation costs $200–$500 but can save thousands in avoidable capital gains tax.',
+        textEs: 'Kasandra trabaja con CPAs de Tucson y puede dar referencias. Una consulta fiscal previa a la venta cuesta $200-$500 pero puede ahorrar miles en impuestos sobre ganancias de capital.',
+      },
+    ],
+  },
+
+  'divorce-selling': {
+    name: 'How to Sell a Home During Divorce in Arizona',
+    nameEs: 'Cómo Vender una Casa Durante un Divorcio en Arizona',
+    description: 'A step-by-step process for Tucson couples navigating home sale during divorce under Arizona community property law.',
+    descriptionEs: 'Proceso paso a paso para parejas de Tucson que venden su casa durante un divorcio bajo la ley de propiedad comunitaria de Arizona.',
+    totalTime: 'P90D',
+    steps: [
+      {
+        name: 'Understand Arizona community property rules',
+        nameEs: 'Entiende las reglas de propiedad comunitaria de Arizona',
+        text: 'Arizona is a community property state. Any home purchased during marriage is typically owned 50/50. Homes owned before marriage or received as gifts/inheritance may be separate property.',
+        textEs: 'Arizona es un estado de propiedad comunitaria. Cualquier casa comprada durante el matrimonio generalmente es 50/50. Las casas de antes del matrimonio pueden ser propiedad separada.',
+      },
+      {
+        name: 'Agree on the disposition of the home',
+        nameEs: 'Acuerden la disposición de la casa',
+        text: 'Options: (1) Sell now and split proceeds, (2) one spouse buys out the other, (3) deferred sale until children leave school. Document the agreement in a Marital Settlement Agreement (MSA).',
+        textEs: 'Opciones: (1) Vender ahora y dividir fondos, (2) un cónyuge compra la parte del otro, (3) venta diferida hasta que los hijos terminen la escuela. Documenta en un Acuerdo de Liquidación Marital.',
+      },
+      {
+        name: 'List with a neutral REALTOR®',
+        nameEs: 'Lista con un REALTOR® neutral',
+        text: 'Use a single bilingual agent — like Kasandra Prieto — both parties trust to avoid coordination problems. Kasandra has worked with divorce sales in Tucson and prioritizes efficiency and fairness.',
+        textEs: 'Usa un solo agente bilingüe en quien ambas partes confíen para evitar problemas de coordinación. Kasandra ha trabajado con ventas de divorcio en Tucson.',
+      },
+      {
+        name: 'Coordinate timing with your divorce decree',
+        nameEs: 'Coordina el timing con tu decreto de divorcio',
+        text: 'If your divorce is finalized before the home sells, ensure the decree specifies how proceeds are divided and who handles decisions (repairs, price reductions, offer acceptance).',
+        textEs: 'Si tu divorcio se finaliza antes de vender la casa, asegúrate de que el decreto especifique cómo se dividen los fondos y quién toma decisiones sobre reparaciones y aceptación de oferta.',
+      },
+    ],
+  },
+
+  'senior-downsizing': {
+    name: 'How to Downsize Your Tucson Home as a Senior',
+    nameEs: 'Cómo Reducir tu Vivienda en Tucson como Mayor de Edad',
+    description: 'A calm, step-by-step guide for Tucson seniors planning to downsize — timing, possessions, community options, and selling the family home.',
+    descriptionEs: 'Guía tranquila y paso a paso para mayores de Tucson que planean reducir su vivienda — timing, pertenencias, opciones de comunidad y venta de la casa familiar.',
+    totalTime: 'P120D',
+    steps: [
+      {
+        name: 'Start with the "why" — clarify your goals',
+        nameEs: 'Comienza con el "por qué" — clarifica tus metas',
+        text: 'Common reasons to downsize in Tucson: reduce maintenance, access equity, move closer to family, transition to age-restricted communities (55+), or simplify daily life. Your reason shapes your timeline.',
+        textEs: 'Razones comunes para reducir en Tucson: reducir mantenimiento, acceder al capital, mudarte cerca de la familia o simplificar la vida diaria. Tu razón da forma a tu plazo.',
+      },
+      {
+        name: 'Sort belongings with a system',
+        nameEs: 'Organiza las pertenencias con un sistema',
+        text: 'Use the "keep, gift, sell, donate" framework room by room. Start 3–4 months before listing. Tucson has estate sale services and senior move managers who specialize in this process.',
+        textEs: 'Usa el marco "guardar, regalar, vender, donar" habitación por habitación. Comienza 3-4 meses antes de listar. Tucson tiene servicios de ventas de herencia especializados.',
+      },
+      {
+        name: 'Explore your next home options in Tucson',
+        nameEs: 'Explora tus opciones de próxima vivienda en Tucson',
+        text: 'Tucson has active adult communities (Sun City Vistoso, Saddlebrooke), independent living, assisted living, and smaller single-family homes. Define your ideal next step before listing your current home.',
+        textEs: 'Tucson tiene comunidades para adultos activos (Sun City Vistoso, Saddlebrooke), vida independiente, asistida y casas unifamiliares más pequeñas. Define tu próximo paso antes de listar.',
+      },
+      {
+        name: 'Review tax implications of selling',
+        nameEs: 'Revisa las implicaciones fiscales de vender',
+        text: 'Seniors often qualify for the full $250K/$500K federal capital gains exclusion. Arizona's flat 2.5% rate applies to gains above the exclusion. Consult a CPA before closing — Kasandra can refer you.',
+        textEs: 'Los mayores a menudo califican para la exclusión completa de ganancias de capital de $250K/$500K. La tasa plana del 2.5% de Arizona se aplica a las ganancias sobre la exclusión.',
+      },
+    ],
+  },
+
+  'distressed-preforeclosure': {
+    name: 'How to Avoid Foreclosure by Selling Your Tucson Home',
+    nameEs: 'Cómo Evitar la Ejecución Hipotecaria Vendiendo tu Casa en Tucson',
+    description: 'Options and steps for Tucson homeowners facing foreclosure — short sale, loan modification, or selling before the bank acts.',
+    descriptionEs: 'Opciones y pasos para propietarios de Tucson que enfrentan ejecución hipotecaria — venta corta, modificación de préstamo o vender antes de que el banco actúe.',
+    totalTime: 'P30D',
+    steps: [
+      {
+        name: 'Understand Arizona foreclosure timelines',
+        nameEs: 'Entiende los plazos de ejecución hipotecaria en Arizona',
+        text: 'Arizona allows non-judicial (trustee sale) foreclosure. Once a Notice of Trustee Sale is filed, you have 91 days before the auction. Acting within those 91 days is critical — contact Kasandra immediately.',
+        textEs: 'Arizona permite la ejecución hipotecaria no judicial. Una vez presentado el Aviso de Venta del Fiduciario, tienes 91 días antes de la subasta. Actuar dentro de esos 91 días es crítico.',
+      },
+      {
+        name: 'Contact your lender — request a hardship review',
+        nameEs: 'Contacta a tu prestamista — solicita una revisión de dificultades',
+        text: 'Call your servicer's loss mitigation department. Request a forbearance, loan modification, or repayment plan. Document every call. This can pause foreclosure proceedings while options are evaluated.',
+        textEs: 'Llama al departamento de mitigación de pérdidas de tu prestamista. Solicita una moratoria, modificación de préstamo o plan de pago. Documenta cada llamada.',
+      },
+      {
+        name: 'Evaluate a short sale if you're underwater',
+        nameEs: 'Evalúa una venta corta si debes más de lo que vale la casa',
+        text: 'A short sale lets you sell for less than you owe with lender approval. It damages credit less than foreclosure, avoids a deficiency judgment in most Arizona cases, and stops the clock.',
+        textEs: 'Una venta corta te permite vender por menos de lo que debes con aprobación del prestamista. Daña menos el crédito que una ejecución y evita una sentencia de deficiencia en Arizona.',
+      },
+      {
+        name: 'Sell quickly before the trustee sale date',
+        nameEs: 'Vende rápido antes de la fecha de subasta',
+        text: 'If you have equity, a quick cash sale (7–14 days) via Corner Connect pays off the mortgage, stops foreclosure, and returns remaining equity to you. This is the fastest, cleanest exit.',
+        textEs: 'Si tienes capital, una venta rápida en efectivo (7-14 días) a través de Corner Connect paga la hipoteca, detiene la ejecución y te devuelve el capital restante.',
+      },
+    ],
+  },
+
+  'sell-now-or-wait': {
+    name: 'How to Decide Whether to Sell Your Tucson Home Now or Wait',
+    nameEs: 'Cómo Decidir si Vender tu Casa en Tucson Ahora o Esperar',
+    description: 'A data-driven framework for Tucson sellers evaluating market timing in 2026.',
+    descriptionEs: 'Marco basado en datos para vendedores de Tucson que evalúan el timing del mercado en 2026.',
+    totalTime: 'P14D',
+    steps: [
+      {
+        name: 'Check current Tucson market conditions',
+        nameEs: 'Revisa las condiciones actuales del mercado de Tucson',
+        text: 'Review days-on-market (DOM), list-to-sale price ratio, and active inventory in your ZIP code. Kasandra's market intelligence page has live Tucson housing data updated monthly.',
+        textEs: 'Revisa los días en el mercado (DOM), la relación precio lista vs. venta e inventario activo en tu código postal. La página de inteligencia de mercado de Kasandra tiene datos en vivo.',
+      },
+      {
+        name: 'Calculate your carrying cost of waiting',
+        nameEs: 'Calcula tu costo de espera',
+        text: 'Every month you wait costs: mortgage payment, taxes, insurance, HOA (if applicable), and maintenance. In Tucson, average monthly holding cost is $1,800–$3,200 depending on home value.',
+        textEs: 'Cada mes que esperas cuesta: pago de hipoteca, impuestos, seguro, HOA y mantenimiento. En Tucson, el costo de espera mensual promedio es $1,800-$3,200 según el valor de la casa.',
+      },
+      {
+        name: 'Model your net at different sale prices',
+        nameEs: 'Modela tu neto a diferentes precios de venta',
+        text: 'Use the net proceeds calculator to model: what if I sell today for $X vs. wait 6 months for $X+5%? Subtract 6 months of holding costs from the higher figure. Is the net difference worth the wait?',
+        textEs: 'Usa la calculadora de ganancias netas para modelar: ¿qué pasa si vendo hoy por $X vs. espero 6 meses por $X+5%? Resta 6 meses de costos de tenencia. ¿Vale la pena la diferencia?',
+      },
+      {
+        name: 'Consider personal timeline above all',
+        nameEs: 'Considera tu plazo personal por encima de todo',
+        text: 'Market timing matters less than personal readiness. The best time to sell is when it aligns with your life. Kasandra's role is to give you honest data — not pressure you to list or wait.',
+        textEs: 'El timing del mercado importa menos que tu preparación personal. El mejor momento para vender es cuando se alinea con tu vida. El rol de Kasandra es darte datos honestos.',
+      },
+    ],
+  },
+
+  'move-up-buyer': {
+    name: 'How to Buy Your Next Home While Selling Your Current Tucson Home',
+    nameEs: 'Cómo Comprar tu Próxima Casa Mientras Vendes tu Casa Actual en Tucson',
+    description: 'Step-by-step guide for Tucson move-up buyers coordinating the simultaneous sale and purchase without owning two homes.',
+    descriptionEs: 'Guía paso a paso para compradores de actualización en Tucson que coordinan la venta y compra simultánea sin tener dos casas.',
+    totalTime: 'P90D',
+    steps: [
+      {
+        name: 'Get pre-approved for your next purchase',
+        nameEs: 'Obtén preaprobación para tu próxima compra',
+        text: 'Before listing your current home, get pre-approved using your existing equity + income. Your lender needs to underwrite the purchase independently of your sale — contingency offers are harder to win in Tucson's market.',
+        textEs: 'Antes de listar tu casa, obtén preaprobación usando tu capital actual + ingresos. Las ofertas contingentes son más difíciles de ganar en el mercado de Tucson.',
+      },
+      {
+        name: 'Understand your bridge options',
+        nameEs: 'Entiende tus opciones de financiamiento puente',
+        text: 'Options: (1) sell first, rent temporarily, then buy; (2) bridge loan using existing equity; (3) HELOC on current home; (4) contingency offer (risky in seller's market). Each has cost implications.',
+        textEs: 'Opciones: (1) vender primero, rentar temporalmente, luego comprar; (2) préstamo puente usando el capital actual; (3) HELOC en la casa actual; (4) oferta contingente.',
+      },
+      {
+        name: 'List your current home strategically',
+        nameEs: 'Lista tu casa actual estratégicamente',
+        text: 'Use a sale-leaseback if available: sell your home but negotiate a 30–60 day post-close occupancy so you have time to find and close on your next Tucson home. Kasandra structures these routinely.',
+        textEs: 'Usa un leaseback de venta si está disponible: vende tu casa pero negocia 30-60 días de ocupación posterior al cierre para tener tiempo de encontrar y cerrar tu próxima casa.',
+      },
+      {
+        name: 'Coordinate closings within the same 30-day window',
+        nameEs: 'Coordina los cierres dentro de la misma ventana de 30 días',
+        text: 'The cleanest move-up strategy: close on the sale and purchase within 5–10 days of each other. Kasandra coordinates both transactions as a dual-agent or with a trusted buyer's agent referral.',
+        textEs: 'La estrategia de actualización más limpia: cierra la venta y la compra con 5-10 días de diferencia. Kasandra coordina ambas transacciones.',
+      },
+    ],
+  },
 };
 
 /**
