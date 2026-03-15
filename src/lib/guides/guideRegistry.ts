@@ -1386,7 +1386,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'open_chat', payload: { source: 'guide', guideId: 'first-time-buyer-programs-pima-county', lifeEvent: 'first_time_buying' }, label: { en: 'Help me find my program', es: 'Ayúdame a encontrar mi programa' } },
       ],
-      relatedGuideIds: ['first-time-buyer-guide', 'down-payment-assistance-tucson', 'fha-loan-pima-county-2026'],
+      relatedGuideIds: ['first-time-buyer-guide', 'arizona-first-time-buyer-programs', 'down-payment-assistance-tucson', 'fha-loan-pima-county-2026'],
     },
     decisionIntent: 'buy',
     decisionStage: 'explore',
