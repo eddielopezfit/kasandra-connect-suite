@@ -45,6 +45,7 @@ export type EntrySource =
   | 'contact_page'
    | 'selena_ai_page'
    | 'homepage_selena_section'
+   | 'homepage_banner'
    | 'sell_comparison_traditional'
    | 'sell_comparison_undecided'
    | 'instant_answer_affordability'
