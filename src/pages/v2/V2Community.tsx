@@ -48,7 +48,7 @@ const V2CommunityContent = () => {
       </section>
 
       {/* Google Reviews Section */}
-      <GoogleReviewsSection />
+      <Suspense fallback={<div className="py-16 flex justify-center"><div className="animate-pulse h-40 w-full max-w-4xl rounded-2xl bg-muted" /></div>}><GoogleReviewsSection /></Suspense>
 
       {/* Selena mid-page trust prompt — trust formed here → action */}
       <section className="py-10 bg-cc-navy">
