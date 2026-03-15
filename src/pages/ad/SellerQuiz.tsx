@@ -9,6 +9,7 @@ import { initAdFunnelSession } from "@/lib/analytics/initAdFunnelSession";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { track, trackCustom } from "@/lib/metaPixel";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 
 // Value ranges kept here for reference (used in SellerResult calculator)
 // "under-200k": 175000, "200-350k": 275000, "350-500k": 425000, "over-500k": 600000
@@ -83,6 +84,15 @@ const SellerQuiz = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [addressInput, setAddressInput] = useState("");
+
+  // noindex: paid ad funnel page — should not be indexed by search engines [audit SEO-04]
+  useDocumentHead({
+    titleEn: "Home Sale Quiz — Tucson | Kasandra Prieto",
+    titleEs: "Quiz de Venta — Tucson | Kasandra Prieto",
+    descriptionEn: "Answer 5 quick questions to get your personalized Tucson home net sheet.",
+    descriptionEs: "Responde 5 preguntas rápidas para obtener tu reporte neto personalizado.",
+    noindex: true,
+  });
 
   const quizSteps = useMemo(() => getQuizSteps(t), [t]);
 
