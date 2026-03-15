@@ -69,6 +69,11 @@ export const CHIP_KEYS = {
   LEGACY_CASH_VS_TRADITIONAL: 'legacy_cash_vs_traditional',
   LEGACY_CASH_VS_VENTA_TRADICIONAL: 'legacy_cash_vs_venta_tradicional',
   ESTIMATE_NET_PROCEEDS_CAPS: 'estimate_net_proceeds_caps',
+
+  // === Phase 1 Intent Declaration ===
+  INTENT_SELL: 'intent_sell',
+  INTENT_BUY: 'intent_buy',
+  INTENT_EXPLORE: 'intent_explore',
 } as const;
 
 export type ChipKey = typeof CHIP_KEYS[keyof typeof CHIP_KEYS];
