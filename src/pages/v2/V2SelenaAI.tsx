@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { MessageCircle, Clock, Globe, Map, ArrowRight } from "lucide-react";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import SelenaConversationDemo from "@/components/v2/selena/SelenaConversationDemo";
+import JsonLd from "@/components/seo/JsonLd";
 
 const V2SelenaAIContent = () => {
   const { t } = useLanguage();
@@ -19,6 +20,37 @@ const V2SelenaAIContent = () => {
     descriptionEn: "Selena is Kasandra's AI real estate concierge. Available 24/7, bilingual, no pressure. Ask questions, explore neighborhoods, and get guided to the right next step.",
     descriptionEs: "Selena es la concierge de bienes raíces con IA de Kasandra. Disponible 24/7, bilingüe, sin presión.",
   });
+
+  const selenaAppSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Selena AI",
+    "alternateName": language === "es" ? "Selena — Concierge de Bienes Raíces con IA" : "Selena — AI Real Estate Concierge",
+    "applicationCategory": "RealEstateApplication",
+    "operatingSystem": "Web",
+    "description": language === "es"
+      ? "Concierge de bienes raíces con IA. Disponible 24/7, bilingüe, sin presión. Ayuda a compradores y vendedores en Tucson a tomar decisiones informadas."
+      : "AI real estate concierge by Kasandra Prieto. Available 24/7, bilingual, no pressure. Guides Tucson buyers and sellers to informed decisions.",
+    "url": "https://kasandraprietorealtor.com/selena-ai",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+    },
+    "provider": {
+      "@type": "RealEstateAgent",
+      "name": "Kasandra Prieto, REALTOR®",
+      "url": "https://kasandraprietorealtor.com",
+    },
+    "featureList": [
+      "24/7 availability",
+      "Bilingual English and Spanish",
+      "Neighborhood comparison",
+      "Cash vs listing calculator",
+      "Buyer and seller readiness assessment",
+      "Human handoff to licensed REALTOR®",
+    ],
+  };
 
   const handleOpenChat = () => {
     logCTAClick({ cta_name: CTA_NAMES.RESULT_CHAT_SELENA, destination: 'selena_drawer', page_path: '/selena-ai', intent: 'neutral' });
@@ -46,6 +78,8 @@ const V2SelenaAIContent = () => {
 
   return (
     <>
+      {/* Selena AI structured data — WebApplication schema [audit SEO-05] */}
+      <JsonLd data={selenaAppSchema} />
       {/* Hero */}
       <section className="bg-cc-navy pt-32 pb-16">
         <div className="container mx-auto px-4 text-center">
