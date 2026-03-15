@@ -1276,7 +1276,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     funnelStage: 'tofu',
     keywords: ['fha loan limits pima county 2026', 'fha loan tucson', 'fha vs conventional arizona', 'fha down payment tucson', 'limite prestamo fha tucson'],
     tier: 1,
-    lifeEvent: undefined,
+    lifeEvent: 'first_time_buying',
     assetSlots: { disclaimer: 'financial' },
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'fha-loan-pima-county-2026' }, label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
