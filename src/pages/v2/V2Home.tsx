@@ -168,7 +168,25 @@ const V2HomeContent = () => {
         </div>
       </section>
 
-      {/* Instant Answer Machine */}
+      {/* Selena Prompt Banner */}
+      <div className="bg-cc-navy py-3 px-4">
+        <div className="container mx-auto max-w-3xl flex items-center justify-between gap-4 flex-wrap">
+          <p className="text-white/80 text-sm">
+            {t(
+              "Have a quick question? Selena is available right now.",
+              "¿Tienes una pregunta rápida? Selena está disponible ahora."
+            )}
+          </p>
+          <button
+            onClick={() => openChat({ source: 'homepage_banner' })}
+            className="text-cc-gold text-sm font-semibold whitespace-nowrap hover:underline flex items-center gap-1"
+          >
+            <MessageCircle className="w-4 h-4" />
+            {t("Ask Selena →", "Pregúntale a Selena →")}
+          </button>
+        </div>
+      </div>
+
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10">
