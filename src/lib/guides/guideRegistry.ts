@@ -86,6 +86,8 @@ export interface GuideRegistryEntry {
   isCashGuide?: boolean;
   authorityBridge?: { en: string; es: string };
   marketInsight?: { en: string; es: string };
+  /** YYYY-MM-DD — set on market-sensitive guides. Internal only, never surfaced to visitors. */
+  lastVerifiedDate?: string;
 }
 
 export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
@@ -454,6 +456,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 32,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-15',
   },
 
   // --- life-change-selling ---
@@ -554,7 +557,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'run_calculator', calculatorId: 'cash-comparison', label: { en: 'Compare my options', es: 'Comparar mis opciones' } },
       ],
-      relatedGuideIds: ['selling-for-top-dollar', 'cash-offer-guide', 'life-change-selling'],
+      relatedGuideIds: ['selling-for-top-dollar', 'cash-offer-guide', 'life-change-selling', 'divorce-home-sale-arizona'],
     },
     decisionIntent: 'life_event',
     decisionStage: 'explore',
@@ -783,6 +786,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "In January 2026, Tucson homes sold at 97.64% of list price with a median of 38 days on market. Homes that required price reductions averaged 2–3x longer on market — and netted less after carrying costs.",
       es: "En enero de 2026, las casas en Tucson se vendieron al 97.64% del precio de lista con una mediana de 38 días en mercado. Las casas que requirieron reducciones de precio promediaron 2–3 veces más tiempo en mercado.",
     },
+    lastVerifiedDate: '2026-03-15',
   },
 
   // --- tucson-neighborhoods ---
@@ -974,7 +978,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'arizona-first-time-buyer-programs', lifeEvent: 'first_time_buyer' }, label: { en: 'Find out what I qualify for', es: 'Averiguar para qué califico' } },
       secondaryActions: [],
-      relatedGuideIds: ['first-time-buyer-guide', 'budget-buyer-story', 'first-time-buyer-story'],
+      relatedGuideIds: ['first-time-buyer-guide', 'first-time-buyer-programs-pima-county', 'budget-buyer-story', 'first-time-buyer-story'],
     },
     decisionIntent: 'buy',
     decisionStage: 'explore',
@@ -1074,6 +1078,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 59,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-15',
   },
 
   {
@@ -1180,9 +1185,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Market conditions change, and the numbers you read online are often weeks or months behind. Kasandra is in the Tucson market every week — she can tell you what the data actually means for your specific situation.",
       es: "Las condiciones del mercado cambian, y los números que lees en línea a menudo tienen semanas o meses de retraso. Kasandra está en el mercado de Tucson cada semana — puede decirte lo que los datos realmente significan para tu situación específica.",
     },
+    lastVerifiedDate: '2026-03-15',
   },
-
-  // --- bad-credit-home-buying-tucson ---
   {
     id: 'bad-credit-home-buying-tucson',
     path: '/guides/bad-credit-home-buying-tucson',
@@ -1256,9 +1260,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Down payment assistance in Tucson is more accessible than most buyers realize. Kasandra has walked dozens of buyers through PTHS, HOME, and Lighthouse programs — she can tell you which ones you're likely to qualify for and make the right lender introduction.",
       es: "La asistencia para pago inicial en Tucson es más accesible de lo que la mayoría de los compradores se dan cuenta. Kasandra ha guiado a decenas de compradores a través de los programas PTHS, HOME y Lighthouse.",
     },
+    lastVerifiedDate: '2026-03-15',
   },
-
-  // --- fha-loan-pima-county-2026 ---
   {
     id: 'fha-loan-pima-county-2026',
     path: '/guides/fha-loan-pima-county-2026',
@@ -1294,6 +1297,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "FHA loans are the most common first home purchase tool in Tucson — and they pair powerfully with local DPA programs. Kasandra can help you understand if FHA is the right fit and connect you with lenders who specialize in first-time buyers.",
       es: "Los préstamos FHA son la herramienta de compra de primera vivienda más común en Tucson — y se combinan poderosamente con los programas DPA locales. Kasandra puede ayudarte a entender si FHA es la opción correcta.",
     },
+    lastVerifiedDate: '2026-03-15',
   },
 
 
@@ -1386,7 +1390,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       secondaryActions: [
         { type: 'open_chat', payload: { source: 'guide', guideId: 'first-time-buyer-programs-pima-county', lifeEvent: 'first_time_buying' }, label: { en: 'Help me find my program', es: 'Ayúdame a encontrar mi programa' } },
       ],
-      relatedGuideIds: ['first-time-buyer-guide', 'down-payment-assistance-tucson', 'fha-loan-pima-county-2026'],
+      relatedGuideIds: ['first-time-buyer-guide', 'arizona-first-time-buyer-programs', 'down-payment-assistance-tucson', 'fha-loan-pima-county-2026'],
     },
     decisionIntent: 'buy',
     decisionStage: 'explore',

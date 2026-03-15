@@ -9,7 +9,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
-import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar } from "lucide-react";
+import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar, BarChart3 } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
@@ -197,7 +197,7 @@ const V2SellContent = () => {
           <p className="text-xs font-semibold text-cc-navy/50 uppercase tracking-wider text-center mb-4">
             {t("Seller Planning Tools", "Herramientas de Planificación")}
           </p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Link
               to="/market"
               onClick={() => handleCTAClick('sell_tool_market', '/market')}
@@ -226,6 +226,16 @@ const V2SellContent = () => {
               <DollarSign className="w-5 h-5 text-cc-gold" />
               <span className="text-xs font-semibold text-cc-navy leading-tight">
                 {t("Cash vs. Listing", "Efectivo vs. Listado")}
+              </span>
+            </Link>
+            <Link
+              to="/home-valuation"
+              onClick={() => handleCTAClick('sell_tool_valuation', '/home-valuation')}
+              className="flex flex-col items-center gap-2 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all text-center"
+            >
+              <BarChart3 className="w-5 h-5 text-cc-gold" />
+              <span className="text-xs font-semibold text-cc-navy leading-tight">
+                {t("Home Valuation", "Valoración de Casa")}
               </span>
             </Link>
           </div>

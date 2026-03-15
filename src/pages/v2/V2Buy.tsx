@@ -8,7 +8,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { buyerTestimonials } from "@/data/testimonials";
-import { Search, DollarSign, CheckCircle, MessageCircle, Calendar } from "lucide-react";
+import { Search, DollarSign, CheckCircle, MessageCircle, Calendar, Calculator, Shield } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
@@ -104,7 +104,7 @@ const V2BuyContent = () => {
           <p className="text-xs font-semibold text-cc-navy/50 uppercase tracking-wider text-center mb-4">
             {t("Buyer Planning Tools", "Herramientas de Planificación")}
           </p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Link
               to="/buyer-closing-costs"
               onClick={() => handleCTAClick('sub_hero_closing_costs', '/buyer-closing-costs')}
@@ -123,6 +123,26 @@ const V2BuyContent = () => {
               <Search className="w-5 h-5 text-cc-gold flex-shrink-0" />
               <span className="text-sm font-semibold text-cc-navy leading-tight">
                 {t("Compare Neighborhoods", "Comparar Vecindarios")}
+              </span>
+            </Link>
+            <Link
+              to="/affordability-calculator"
+              onClick={() => handleCTAClick('sub_hero_affordability', '/affordability-calculator')}
+              className="flex items-center gap-3 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all group"
+            >
+              <Calculator className="w-5 h-5 text-cc-gold flex-shrink-0" />
+              <span className="text-sm font-semibold text-cc-navy leading-tight">
+                {t("Check Buying Power", "Verificar Poder de Compra")}
+              </span>
+            </Link>
+            <Link
+              to="/bah-calculator"
+              onClick={() => handleCTAClick('sub_hero_bah', '/bah-calculator')}
+              className="flex items-center gap-3 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all group"
+            >
+              <Shield className="w-5 h-5 text-cc-gold flex-shrink-0" />
+              <span className="text-sm font-semibold text-cc-navy leading-tight">
+                {t("BAH Calculator", "Calculadora BAH")}
               </span>
             </Link>
           </div>

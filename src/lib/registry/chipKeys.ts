@@ -74,6 +74,11 @@ export const CHIP_KEYS = {
   INTENT_SELL: 'intent_sell',
   INTENT_BUY: 'intent_buy',
   INTENT_EXPLORE: 'intent_explore',
+
+  // === New Tools (Cleanup Pass) ===
+  AFFORDABILITY_CALCULATOR: 'affordability_calculator',
+  BAH_CALCULATOR: 'bah_calculator',
+  HOME_VALUATION: 'home_valuation',
 } as const;
 
 export type ChipKey = typeof CHIP_KEYS[keyof typeof CHIP_KEYS];
@@ -144,4 +149,9 @@ export const CHIP_KEY_TO_DESTINATION: Record<ChipKey, string> = {
   [CHIP_KEYS.INTENT_SELL]: '/seller-decision',
   [CHIP_KEYS.INTENT_BUY]: '/buyer-readiness',
   [CHIP_KEYS.INTENT_EXPLORE]: '/guides',
+
+  // New Tools (Cleanup Pass)
+  [CHIP_KEYS.AFFORDABILITY_CALCULATOR]: '/affordability-calculator',
+  [CHIP_KEYS.BAH_CALCULATOR]: '/bah-calculator',
+  [CHIP_KEYS.HOME_VALUATION]: '/home-valuation',
 };
