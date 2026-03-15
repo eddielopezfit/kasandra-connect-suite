@@ -561,10 +561,10 @@ function getGovernedChips(
           : [CHIP_KEYS.SELLER_READINESS, CHIP_KEYS.ESTIMATE_PROCEEDS];
         return { chips, phase: 2, escalated: false };
       }
-      // Turn 1-2: show initial sell chips
+      // Turn 1-2: show initial sell chips (HOME_VALUATION replaces COMPARE_CASH_LISTING as early seller entry)
       const chips = intent === 'cash'
         ? [CHIP_KEYS.CASH_READINESS, CHIP_KEYS.COMPARE_CASH_LISTING]
-        : [CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.COMPARE_CASH_LISTING];
+        : [CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.HOME_VALUATION];
       return { chips, phase: 2, escalated: false };
     }
 
