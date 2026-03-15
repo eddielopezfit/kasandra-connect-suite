@@ -203,12 +203,14 @@ function GuidesContent() {
       : educationalGuides.filter(guide => guide.category === activeCategory);
 
     if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
+      // Normalize hyphens so "first time" matches "First-Time" and vice versa
+      const normalize = (s: string) => s.toLowerCase().replace(/-/g, ' ');
+      const q = normalize(searchQuery.trim());
       guides = guides.filter(guide =>
-        guide.title.toLowerCase().includes(q) ||
-        (guide.titleEs ?? '').toLowerCase().includes(q) ||
-        guide.description.toLowerCase().includes(q) ||
-        (guide.descriptionEs ?? '').toLowerCase().includes(q)
+        normalize(guide.title).includes(q) ||
+        normalize(guide.titleEs ?? '').includes(q) ||
+        normalize(guide.description).includes(q) ||
+        normalize(guide.descriptionEs ?? '').includes(q)
       );
     }
     return guides;
