@@ -86,6 +86,8 @@ export interface GuideRegistryEntry {
   isCashGuide?: boolean;
   authorityBridge?: { en: string; es: string };
   marketInsight?: { en: string; es: string };
+  /** YYYY-MM-DD — set on market-sensitive guides. Internal only, never surfaced to visitors. */
+  lastVerifiedDate?: string;
 }
 
 export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
