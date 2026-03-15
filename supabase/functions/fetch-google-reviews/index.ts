@@ -1,5 +1,13 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
+
+/**
+ * fetch-google-reviews
+ * PERF: Added Cache-Control header — reviews update rarely, don't hit Places API on every render.
+ * SECURITY: Rate limited to 5 req/min per IP — prevents API quota burn attacks. [audit PERF-03]
+ */
 
 // Search query to find Kasandra Prieto's business listing
 const SEARCH_QUERY = 'Kasandra Prieto Realtor Tucson Arizona';
@@ -26,12 +34,21 @@ interface FiveStarReview {
 
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Rate limiting: 5 req/min per IP — prevents Google Places API quota burn
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (supabaseUrl && supabaseKey) {
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      const rlKey = extractRateLimitKey(req, {});
+      const rl = await checkRateLimit(supabase, rlKey, 'fetch-google-reviews', 5);
+      if (!rl.allowed) return rateLimitResponse(corsHeaders);
+    }
+
     const GOOGLE_PLACES_API_KEY = Deno.env.get('GOOGLE_PLACES_API_KEY');
 
     if (!GOOGLE_PLACES_API_KEY) {
