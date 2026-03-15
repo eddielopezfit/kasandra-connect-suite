@@ -71,6 +71,10 @@ function GuideDetailContent() {
   const { stage, shouldShowProgressBar } = useCognitiveStage();
   const [guide, setGuide] = useState<GuideContentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [synthesisVisible, setSynthesisVisible] = useState(false);
+  const synthesisTracked = useRef(false);
+  const synthesisSentinelRef = useRef<HTMLDivElement | null>(null);
+  const { openChat } = useSelenaChat();
 
   // Registry entry for metadata (readTime, tier, destinations, etc.)
   const registryEntry = guideId ? getGuideById(guideId) : undefined;
