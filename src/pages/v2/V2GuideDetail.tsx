@@ -143,25 +143,22 @@ function GuideDetailContent() {
     }
   }, [guideId, guide, guideTitle]);
 
-  // IntersectionObserver for synthesis CTA (~70% scroll sentinel)
+  // Scroll listener for synthesis CTA (60% threshold)
   useEffect(() => {
-    const el = synthesisSentinelRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !synthesisTracked.current) {
-          setSynthesisVisible(true);
-          synthesisTracked.current = true;
-          if (guideId) {
-            logEvent('guide_synthesis_cta_shown', { guideId });
-          }
-          observer.disconnect();
+    const handleScroll = () => {
+      if (synthesisTracked.current) return;
+      const ratio = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      if (ratio > 0.6) {
+        setSynthesisVisible(true);
+        synthesisTracked.current = true;
+        if (guideId) {
+          logEvent('guide_synthesis_cta_shown', { guideId });
         }
-      },
-      { threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [guideId, guide]);
 
   const MediaSlotRenderer = ({ slot }: { slot: MediaSlot }) => {
