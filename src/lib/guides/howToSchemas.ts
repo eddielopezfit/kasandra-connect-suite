@@ -693,7 +693,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
         textEs: 'Llama al departamento de mitigación de pérdidas de tu prestamista. Solicita una moratoria, modificación de préstamo o plan de pago. Documenta cada llamada.',
       },
       {
-        name: 'Evaluate a short sale if you're underwater',
+        name: "Evaluate a short sale if you're underwater",
         nameEs: 'Evalúa una venta corta si debes más de lo que vale la casa',
         text: 'A short sale lets you sell for less than you owe with lender approval. It damages credit less than foreclosure, avoids a deficiency judgment in most Arizona cases, and stops the clock.',
         textEs: 'Una venta corta te permite vender por menos de lo que debes con aprobación del prestamista. Daña menos el crédito que una ejecución y evita una sentencia de deficiencia en Arizona.',
