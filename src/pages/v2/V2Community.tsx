@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import arizonaDiaperBankLogo from "@/assets/arizona-diaper-bank-logo.jpg";
 import rumboAlExitoLogo from "@/assets/rumbo-al-exito-logo.jpg";
 import tucsonApplianceLogo from "@/assets/tucson-appliance-logo.jpg";
-import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
+import { lazy, Suspense } from "react";
+const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-community-neighborhood.png";
 
@@ -47,7 +48,7 @@ const V2CommunityContent = () => {
       </section>
 
       {/* Google Reviews Section */}
-      <GoogleReviewsSection />
+      <Suspense fallback={<div className="py-16 flex justify-center"><div className="animate-pulse h-40 w-full max-w-4xl rounded-2xl bg-muted" /></div>}><GoogleReviewsSection /></Suspense>
 
       {/* Selena mid-page trust prompt — trust formed here → action */}
       <section className="py-10 bg-cc-navy">

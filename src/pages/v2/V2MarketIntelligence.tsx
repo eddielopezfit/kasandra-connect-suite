@@ -182,10 +182,18 @@ const V2MarketIntelligenceContent = () => {
                   <span className="text-[13px] font-semibold text-cc-slate uppercase tracking-wider">{label}</span>
                 </div>
                 <div className="flex items-baseline gap-1.5 mb-2">
-                  <span className="font-serif text-4xl font-bold text-cc-navy"><AnimatedStatValue value={value} /></span>
-                  {unit && <span className="text-cc-slate text-sm">{unit}</span>}
+                  {loading ? (
+                    <div className="animate-pulse h-10 w-24 rounded-lg bg-muted" />
+                  ) : (
+                    <span className="font-serif text-4xl font-bold text-cc-navy"><AnimatedStatValue value={value} /></span>
+                  )}
+                  {unit && !loading && <span className="text-cc-slate text-sm">{unit}</span>}
                 </div>
-                <p className="text-cc-text-muted text-sm leading-relaxed">{context}</p>
+                {loading ? (
+                  <div className="animate-pulse h-4 w-full rounded bg-muted mt-1" />
+                ) : (
+                  <p className="text-cc-text-muted text-sm leading-relaxed">{context}</p>
+                )}
               </div>
             ))}
           </div>
