@@ -311,7 +311,7 @@ function GuideDetailContent() {
     'cash-offer-guide': {
       titleEn: 'How Cash Offers Work in Tucson  -  Complete Seller Guide (2026)',
       titleEs: 'Cómo Funcionan las Ofertas en Efectivo en Tucson  -  Guía Completa (2026)',
-      descEn: 'Everything Tucson sellers need to know about cash offers  -  what's included, what to watch for, and how to compare a cash deal vs. listing on market.',
+      descEn: "Everything Tucson sellers need to know about cash offers  -  what's included, what to watch for, and how to compare a cash deal vs. listing on market.",
       descEs: 'Todo lo que los vendedores de Tucson deben saber sobre las ofertas en efectivo  -  qué incluyen, qué vigilar y cómo comparar con listar en el mercado.',
     },
     'inherited-probate-property': {
