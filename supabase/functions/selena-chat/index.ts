@@ -1140,11 +1140,27 @@ const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
     en: ["Check my buying power", "Take readiness check", "Browse guides"],
     es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
   },
+  "how much house can i afford": {
+    en: ["Check my buying power", "Take readiness check", "Browse guides"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
+  },
+  "can i afford": {
+    en: ["Check my buying power", "Take readiness check", "Browse guides"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
+  },
   "cuanto puedo pagar": {
     en: ["Check my buying power", "Take readiness check", "Browse guides"],
     es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
   },
   "what is my home worth": {
+    en: ["Get my market analysis", "Get my selling options", "Compare cash vs. listing"],
+    es: ["Obtener mi análisis", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
+  },
+  "what's my home worth": {
+    en: ["Get my market analysis", "Get my selling options", "Compare cash vs. listing"],
+    es: ["Obtener mi análisis", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
+  },
+  "home value before i sell": {
     en: ["Get my market analysis", "Get my selling options", "Compare cash vs. listing"],
     es: ["Obtener mi análisis", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
   },
