@@ -67,13 +67,13 @@ const LeadCaptureModal = ({
   const isMobile = useIsMobile();
 
   const defaultTitle = {
-    en: "Let's personalize your experience",
-    es: "Personalicemos tu experiencia",
+    en: "Your Tucson game plan is ready",
+    es: "Tu plan de Tucson está listo",
   };
 
   const defaultSubtitle = {
-    en: "So I can save your progress and provide tailored guidance, what's the best email to reach you?",
-    es: "Para poder guardar tu progreso y brindarte orientación personalizada, ¿cuál es el mejor correo para contactarte?",
+    en: "Enter your email and I'll save your results, personalize Selena's guidance, and make sure Kasandra has everything she needs if you want to connect.",
+    es: "Ingresa tu correo y guardaré tus resultados, personalizaré la orientación de Selena y me aseguraré de que Kasandra tenga todo si deseas conectarte.",
   };
 
   const displayTitle = title || defaultTitle;
@@ -344,7 +344,7 @@ const LeadCaptureModal = ({
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                t("Save & Continue", "Guardar y Continuar")
+                t("Send My Game Plan", "Enviar Mi Plan")
               )}
             </Button>
           </div>
