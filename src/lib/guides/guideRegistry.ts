@@ -1258,9 +1258,8 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Down payment assistance in Tucson is more accessible than most buyers realize. Kasandra has walked dozens of buyers through PTHS, HOME, and Lighthouse programs — she can tell you which ones you're likely to qualify for and make the right lender introduction.",
       es: "La asistencia para pago inicial en Tucson es más accesible de lo que la mayoría de los compradores se dan cuenta. Kasandra ha guiado a decenas de compradores a través de los programas PTHS, HOME y Lighthouse.",
     },
+    lastVerifiedDate: '2026-03-15',
   },
-
-  // --- fha-loan-pima-county-2026 ---
   {
     id: 'fha-loan-pima-county-2026',
     path: '/guides/fha-loan-pima-county-2026',
