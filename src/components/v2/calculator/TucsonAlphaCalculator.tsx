@@ -11,7 +11,7 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import { trackJourneyAction } from "@/lib/guides/personalization";
 import { updateSessionContext, setFieldIfEmpty, getSessionContext } from "@/lib/analytics/selenaSession";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, Calculator, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeft, Calculator, Sparkles, TrendingUp } from "lucide-react";
 
 import CashOfferProgressBar, { type CalculatorStage } from "./CashOfferProgressBar";
 import CalculatorInputs from "./CalculatorInputs";
