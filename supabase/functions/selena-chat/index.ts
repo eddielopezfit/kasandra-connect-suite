@@ -3520,6 +3520,41 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         : `\n\nGUIDE MODE: User opened chat from guide "${guideTitle}". Restrict suggestions to: understanding the guide, using related tools, or asking questions. Do NOT suggest unrelated guides or tools. Do NOT cross-sell or introduce urgency.`;
     }
 
+    // ============= ENTRY GREETING HINT (FIX 1) =============
+    // On first turn with a recognized entry_source, inject personalized greeting context
+    // so the AI adapts its Mode 1 response to how the user arrived.
+    let entryGreetingHint = "";
+    const ENTRY_SOURCES_WITH_GREETINGS = ['guide_handoff', 'calculator', 'neighborhood_detail', 'floating', 'synthesis', 'quiz_result', 'post_booking'];
+    if (
+      conversationState.userTurns <= 1 &&
+      context.entry_source &&
+      ENTRY_SOURCES_WITH_GREETINGS.includes(context.entry_source)
+    ) {
+      try {
+        const entryCtx: EntryContext = {
+          source: context.entry_source as EntryContext['source'],
+          language,
+          calculatorAdvantage: context.calculator_advantage as EntryContext['calculatorAdvantage'],
+          calculatorDifference: context.calculator_difference,
+          guideId: context.entry_guide_id ?? undefined,
+          guideTitle: context.entry_guide_title ?? undefined,
+          guidesReadCount: context.guides_read ?? 0,
+          intent: primaryIntent,
+          closingCostData: context.closing_cost_data,
+          sellerCalcData: context.seller_calc_data as EntryContext['sellerCalcData'],
+          readinessData: context.readiness_entry_data as EntryContext['readinessData'],
+        };
+        const greeting = generateEntryGreeting(entryCtx);
+        if (greeting?.content) {
+          entryGreetingHint = language === 'es'
+            ? `\n\nCONTEXTO DE ENTRADA: El usuario llegó desde "${context.entry_source}". Adapte su primera respuesta a este tono: "${greeting.content.substring(0, 200)}..."`
+            : `\n\nENTRY CONTEXT: User arrived from "${context.entry_source}". Adapt your first response to this tone: "${greeting.content.substring(0, 200)}..."`;
+        }
+      } catch {
+        // Silent fail — entry greeting is a bonus, not a requirement
+      }
+    }
+
     const modeHint = language === "es"
       ? `\n\nMODO ACTUAL: ${currentMode} (${modeContext.modeName}). Ajusta el tono y las sugerencias según este modo.`
       : `\n\nCURRENT MODE: ${currentMode} (${modeContext.modeName}). Adjust tone and suggestions for this mode.`;
