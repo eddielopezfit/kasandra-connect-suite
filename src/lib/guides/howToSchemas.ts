@@ -439,7 +439,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Price to attract, not to test',
         nameEs: 'Fija el precio para atraer, no para probar',
-        text: 'In Tucson's market, overpriced homes sit and accumulate stigma. Homes priced 2-3% below peak attract multiple offers and often close above list. Strategic pricing = top dollar.',
+        text: "In Tucson's market, overpriced homes sit and accumulate stigma. Homes priced 2-3% below peak attract multiple offers and often close above list. Strategic pricing = top dollar.",
         textEs: 'En el mercado de Tucson, las casas sobrevaloradas se estancan y acumulan estigma. Las casas con precio 2-3% por debajo del pico atraen múltiples ofertas.',
       },
       {
