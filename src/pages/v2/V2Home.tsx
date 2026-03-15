@@ -4,8 +4,10 @@ import JsonLd from "@/components/seo/JsonLd";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TrustBar from "@/components/v2/TrustBar";
-import TestimonialColumns from "@/components/v2/TestimonialColumns";
-import { useEffect, useRef } from "react";
+import { lazy, Suspense, useState, useEffect, useRef } from "react";
+const TestimonialColumns = lazy(() => import("@/components/v2/TestimonialColumns"));
+const LazyHomepageNeighborhoodCards = lazy(() => import("@/components/v2/neighborhood/HomepageNeighborhoodCards"));
+const LazyInstantAnswerWidget = lazy(() => import("@/components/v2/calculator/InstantAnswerWidget"));
 import {
   Home,
   Shield,
