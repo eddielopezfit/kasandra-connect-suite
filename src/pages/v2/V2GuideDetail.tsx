@@ -503,7 +503,6 @@ function GuideDetailContent() {
         ) : null}
 
         {/* Compliance Footer */}
-        <div ref={synthesisSentinelRef} />
         <GuideComplianceFooter />
 
         {/* Read Next — guide-to-guide pathway. Keeps users in the hub. */}
