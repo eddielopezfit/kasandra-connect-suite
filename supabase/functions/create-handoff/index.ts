@@ -145,34 +145,35 @@ serve(async (req) => {
     // ============================================
     // Fetch lead profile for notify-handoff payload
     // ============================================
-    const { data: lead } = await supabase
+    const { data: leadProfile } = await supabase
       .from('lead_profiles')
-      .select('email, phone, name, intent, language, session_id')
+      .select('email, phone, name, intent, language, session_id, lead_score')
       .eq('id', lead_id)
-      .single();
+      .maybeSingle();
 
     // ============================================
     // Notify Kasandra (background call to notify-handoff)
     // ============================================
-    const nameParts = (lead?.name ?? '').split(' ');
+    const nameParts = (leadProfile?.name ?? '').trim().split(' ');
     const notifyPayload = {
       contact: {
-        email: lead?.email ?? '',
-        phone: lead?.phone ?? '',
+        email: leadProfile?.email ?? '',
+        phone: leadProfile?.phone ?? '',
         firstName: nameParts[0] ?? '',
-        lastName: nameParts.slice(1).join(' '),
+        lastName: nameParts.slice(1).join(' ') ?? '',
       },
       context: {
-        intent: lead?.intent ?? '',
-        language: lead?.language ?? 'en',
+        intent: leadProfile?.intent ?? '',
+        language: leadProfile?.language ?? 'en',
         selena_lead_id: lead_id,
-        session_id: lead?.session_id ?? '',
-        readiness_score: 0,
+        session_id: leadProfile?.session_id ?? '',
+        readiness_score: leadProfile?.lead_score ?? 0,
         journey_state: priority === 'hot' ? 'decide' : 'qualify',
-        summary_md,
         handoff_id: handoff.id,
         priority,
         channel,
+        reason: reason ?? '',
+        summary_md,
       },
     };
 
