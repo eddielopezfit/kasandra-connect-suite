@@ -12,6 +12,13 @@ function isValidUUID(id: string): boolean {
 interface GetReportRequest {
   lead_id: string;
   report_id: string;
+  /**
+   * session_id: Optional session ownership token.
+   * When provided, we cross-check it against the session_id stored in lead_profiles
+   * to prevent UUID-based unauthorized access. [audit SEC-05]
+   * Not required for backward compat but logged when missing.
+   */
+  session_id?: string;
 }
 
 serve(async (req) => {
@@ -22,7 +29,7 @@ serve(async (req) => {
   }
 
   try {
-    const { lead_id, report_id }: GetReportRequest = await req.json();
+    const { lead_id, report_id, session_id }: GetReportRequest = await req.json();
 
     // Validate required fields
     if (!lead_id || !report_id) {
@@ -60,6 +67,26 @@ serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Session ownership verification [audit SEC-05]
+    // When session_id is provided, verify it matches the stored session for this lead
+    if (session_id) {
+      const { data: leadCheck } = await supabase
+        .from("lead_profiles")
+        .select("session_id")
+        .eq("id", lead_id)
+        .maybeSingle();
+
+      if (leadCheck && leadCheck.session_id && leadCheck.session_id !== session_id) {
+        console.warn("[get-report] Session mismatch for lead_id:", lead_id);
+        return new Response(
+          JSON.stringify({ ok: false, error: "Report not found" }),
+          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    } else {
+      console.warn("[get-report] No session_id provided for lead_id:", lead_id, "— access without session verification");
+    }
 
     // Query the report with both id and lead_id for security
     const { data: report, error } = await supabase
