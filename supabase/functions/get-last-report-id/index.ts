@@ -4,6 +4,7 @@
  */
 
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
