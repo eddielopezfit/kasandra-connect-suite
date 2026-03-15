@@ -757,7 +757,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Understand your bridge options',
         nameEs: 'Entiende tus opciones de financiamiento puente',
-        text: 'Options: (1) sell first, rent temporarily, then buy; (2) bridge loan using existing equity; (3) HELOC on current home; (4) contingency offer (risky in seller's market). Each has cost implications.',
+        text: "Options: (1) sell first, rent temporarily, then buy; (2) bridge loan using existing equity; (3) HELOC on current home; (4) contingency offer (risky in seller's market). Each has cost implications.",
         textEs: 'Opciones: (1) vender primero, rentar temporalmente, luego comprar; (2) préstamo puente usando el capital actual; (3) HELOC en la casa actual; (4) oferta contingente.',
       },
       {
