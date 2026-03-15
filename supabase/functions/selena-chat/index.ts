@@ -762,6 +762,10 @@ const CHIP_KEY_DESTINATION: Record<string, string> = {
   [CHIP_KEYS.INTENT_SELL]: '/seller-decision',
   [CHIP_KEYS.INTENT_BUY]: '/buyer-readiness',
   [CHIP_KEYS.INTENT_EXPLORE]: '/guides',
+  // New tools (March 2026 connection pass)
+  [CHIP_KEYS.AFFORDABILITY_CALCULATOR]: '/affordability-calculator',
+  [CHIP_KEYS.BAH_CALCULATOR]: '/bah-calculator',
+  [CHIP_KEYS.HOME_VALUATION]: '/home-valuation',
 };
 
 /**
