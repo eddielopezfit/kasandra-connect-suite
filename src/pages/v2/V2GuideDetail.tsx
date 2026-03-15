@@ -323,7 +323,7 @@ function GuideDetailContent() {
     'understanding-home-valuation': {
       titleEn: 'How Tucson Homes Are Valued: CMA & Appraisal Guide 2026  -  Kasandra Prieto',
       titleEs: 'Cómo Se Valoran las Casas en Tucson: Guía de CMA y Avalúo 2026',
-      descEn: 'Understand how your Tucson home's value is determined  -  CMAs, appraisals, price per sq ft, and the factors that really move the number in Pima County.',
+      descEn: "Understand how your Tucson home's value is determined  -  CMAs, appraisals, price per sq ft, and the factors that really move the number in Pima County.",
       descEs: 'Entiende cómo se determina el valor de tu casa en Tucson  -  CMAs, avalúos, precio por pie cuadrado y los factores que mueven el número en Pima County.',
     },
     'sell-now-or-wait': {

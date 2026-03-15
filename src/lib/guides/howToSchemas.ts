@@ -769,7 +769,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Coordinate closings within the same 30-day window',
         nameEs: 'Coordina los cierres dentro de la misma ventana de 30 días',
-        text: 'The cleanest move-up strategy: close on the sale and purchase within 5-10 days of each other. Kasandra coordinates both transactions as a dual-agent or with a trusted buyer's agent referral.',
+        text: "The cleanest move-up strategy: close on the sale and purchase within 5-10 days of each other. Kasandra coordinates both transactions as a dual-agent or with a trusted buyer's agent referral.",
         textEs: 'La estrategia de actualización más limpia: cierra la venta y la compra con 5-10 días de diferencia. Kasandra coordina ambas transacciones.',
       },
     ],
