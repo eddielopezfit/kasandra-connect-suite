@@ -175,24 +175,7 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
-      {/* Selena Prompt — between comparison and warning */}
-      <section className="py-10 bg-cc-navy">
-        <div className="container mx-auto px-4 text-center">
-          <p className="max-w-xl mx-auto mb-4 text-white">
-            {t(
-              "Not sure which path fits your situation? Ask Selena — she can walk you through both options based on your specific home.",
-              "¿No está seguro qué camino se adapta a su situación? Pregúntele a Selena — ella puede guiarle por ambas opciones según su casa."
-            )}
-          </p>
-          <Button
-            onClick={() => openChat({ source: 'calculator', intent: 'cash' })}
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
-          >
-            <MessageCircle className="mr-2 h-4 w-4" />
-            {t("Ask Selena About My Options", "Pregúntale a Selena Sobre Mis Opciones")}
-          </Button>
-        </div>
-      </section>
+      {/* Removed duplicate Selena mid-page section — Selena is accessible via floating bubble + hero text link */}
 
       {/* Warning Section */}
       <section className="py-12 bg-cc-gold/10">
