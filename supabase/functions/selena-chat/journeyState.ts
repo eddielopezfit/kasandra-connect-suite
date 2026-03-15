@@ -33,7 +33,8 @@ const CHIP_KEYS = {
 } as const;
 
 const DECIDE_TOOLS = ['tucson_alpha_calculator', 'seller_decision'];
-const DECIDE_INTENTS = ['buy', 'sell', 'cash'];
+// FIX-SIM-12: 'invest' can reach decide state after tool completion
+const DECIDE_INTENTS = ['buy', 'sell', 'cash', 'invest'];
 
 export function classifyJourneyState(input: {
   readiness_score: number;
@@ -44,8 +45,10 @@ export function classifyJourneyState(input: {
   isInheritedHome?: boolean;
   timeline?: string;
   hasTrustSignal?: boolean;
+  // FIX-SIM-09: user turn count for turn-based evaluate advancement
+  user_turn_count?: number;
 }): JourneyClassification {
-  const { readiness_score, tools_completed, guides_read_count, intent, language, isInheritedHome, timeline, hasTrustSignal } = input;
+  const { readiness_score, tools_completed, guides_read_count, intent, language, isInheritedHome, timeline, hasTrustSignal, user_turn_count } = input;
   const isEs = language === 'es';
 
   // ── HIGHEST PRIORITY: Inherited home + ASAP = immediate decide ──
@@ -108,16 +111,24 @@ export function classifyJourneyState(input: {
   }
 
   // ── evaluate ──
+  // FIX-SIM-09: 3+ user turns with known intent = evaluate (no tool required)
+  // Prevents "explore forever" dead-end for engaged users who haven't clicked a tool.
+  const turnBasedEvaluate = (user_turn_count ?? 0) >= 3 && !!intent && intent !== 'explore';
+
   if (
     readiness_score >= 30 ||
     tools_completed.length >= 1 ||
-    guides_read_count >= 2
+    guides_read_count >= 2 ||
+    turnBasedEvaluate
   ) {
     let chips: string[];
     if (intent === 'sell' || intent === 'cash') {
       chips = [CHIP_KEYS.COMPARE_CASH_LISTING, CHIP_KEYS.GET_SELLING_OPTIONS];
     } else if (intent === 'buy') {
       chips = [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES];
+    } else if (intent === 'invest') {
+      // FIX-SIM-12: investor evaluate chips
+      chips = [CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.GET_SELLING_OPTIONS];
     } else {
       chips = [CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.GET_SELLING_OPTIONS];
     }
@@ -139,6 +150,9 @@ export function classifyJourneyState(input: {
     chips = [CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.BROWSE_GUIDES];
   } else if (intent === 'cash') {
     chips = [CHIP_KEYS.CASH_READINESS, CHIP_KEYS.BROWSE_GUIDES];
+  } else if (intent === 'invest') {
+    // FIX-SIM-12: investor explore chips — sell-or-rent guide + market data
+    chips = [CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.BROWSE_GUIDES];
   } else {
     chips = [CHIP_KEYS.BROWSE_GUIDES];
   }
