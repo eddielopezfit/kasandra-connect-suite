@@ -3155,6 +3155,15 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       'relocating-to-tucson': [{ en: 'Explore Tucson neighborhoods', es: 'Explorar vecindarios de Tucson' }],
       'tucson-neighborhoods': [{ en: 'Compare Neighborhoods', es: 'Comparar Vecindarios' }],
       'tucson-suburb-comparison': [{ en: 'Compare Neighborhoods', es: 'Comparar Vecindarios' }],
+      // New SEO guides (March 2026 sprint)
+      'itin-loan-guide': [{ en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' }],
+      'bad-credit-home-buying-tucson': [{ en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' }],
+      'down-payment-assistance-tucson': [{ en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' }],
+      'fha-loan-pima-county-2026': [{ en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' }],
+      'va-home-loan-tucson': [{ en: 'Talk with Kasandra', es: 'Hablar con Kasandra' }],
+      'first-time-buyer-programs-pima-county': [{ en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' }],
+      'divorce-home-sale-arizona': [{ en: 'Get my selling options', es: 'Ver mis opciones de venta' }],
+      'tucson-market-update-2026': [{ en: 'Tucson Market Data', es: 'Datos del Mercado Tucson' }],
     };
     const guideId = context.last_guide_id;
     if (guideId && phase <= 2 && GUIDE_CHIP_MAP[guideId]) {
