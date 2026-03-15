@@ -14,6 +14,10 @@ function isValidUUID(id: string): boolean {
 
 interface GetLastReportRequest {
   lead_id: string;
+  /**
+   * session_id: Optional session ownership token for ownership verification. [audit SEC-05]
+   */
+  session_id?: string;
 }
 
 Deno.serve(async (req) => {
@@ -25,7 +29,7 @@ Deno.serve(async (req) => {
 
   try {
     const body: GetLastReportRequest = await req.json();
-    const { lead_id } = body;
+    const { lead_id, session_id } = body;
 
     // Validate lead_id
     if (!lead_id || typeof lead_id !== "string") {
@@ -55,6 +59,23 @@ Deno.serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Session ownership verification [audit SEC-05]
+    if (session_id) {
+      const { data: leadCheck } = await supabase
+        .from("lead_profiles")
+        .select("session_id")
+        .eq("id", lead_id)
+        .maybeSingle();
+
+      if (leadCheck && leadCheck.session_id && leadCheck.session_id !== session_id) {
+        console.warn("[get-last-report-id] Session mismatch for lead_id:", lead_id);
+        return new Response(
+          JSON.stringify({ ok: true, report_id: null, has_reports: false }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
 
     // Query for the most recent report
     const { data: report, error } = await supabase
