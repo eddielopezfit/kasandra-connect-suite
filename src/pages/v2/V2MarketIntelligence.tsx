@@ -88,7 +88,7 @@ const V2MarketIntelligenceContent = () => {
   const saleToListPct = pulseStats.saleToListRatio;
   const holdingCost = pulseStats.holdingCostPerDay;
   const prepCost = pulseStats.prepAvg;
-  const verifiedDate = pulseStats.verifiedDate;
+  const monthLabel = pulseStats.month;
 
   const sellerImplication =
     dom <= 20 ? t("Fast-moving market — well-priced homes are moving quickly.", "Mercado activo — casas bien valuadas se están vendiendo rápido.")
