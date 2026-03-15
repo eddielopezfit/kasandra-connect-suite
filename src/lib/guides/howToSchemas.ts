@@ -751,7 +751,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Get pre-approved for your next purchase',
         nameEs: 'Obtén preaprobación para tu próxima compra',
-        text: 'Before listing your current home, get pre-approved using your existing equity + income. Your lender needs to underwrite the purchase independently of your sale  -  contingency offers are harder to win in Tucson's market.',
+        text: "Before listing your current home, get pre-approved using your existing equity + income. Your lender needs to underwrite the purchase independently of your sale  -  contingency offers are harder to win in Tucson's market.",
         textEs: 'Antes de listar tu casa, obtén preaprobación usando tu capital actual + ingresos. Las ofertas contingentes son más difíciles de ganar en el mercado de Tucson.',
       },
       {
