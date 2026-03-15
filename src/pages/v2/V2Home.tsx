@@ -325,6 +325,7 @@ const V2HomeContent = () => {
                   src="/videos/kasandra-welcome.mp4"
                   controls
                   playsInline
+                  preload="none"
                   poster={kasandraHeadshot}
                   className="w-full h-full object-contain"
                 >
