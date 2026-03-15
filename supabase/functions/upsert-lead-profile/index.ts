@@ -23,6 +23,7 @@ interface UpsertLeadInput {
   has_viewed_report?: boolean;
   consent_communications?: boolean; // Guardrail 3: default false, only true when explicitly collected
   timeline?: string;
+  notes?: string;
 }
 
 Deno.serve(async (req) => {
