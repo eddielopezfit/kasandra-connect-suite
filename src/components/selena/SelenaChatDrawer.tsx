@@ -111,6 +111,42 @@ export function SelenaChatDrawer() {
   }, [messages.length, isLoading, isKeyboardOpen]);
 
 
+  // Show onboarding on first open (P3)
+  useEffect(() => {
+    if (isOpen && !localStorage.getItem('selena_onboarded')) {
+      setShowOnboarding(true);
+    }
+  }, [isOpen]);
+
+  const dismissOnboarding = useCallback(() => {
+    setShowOnboarding(false);
+    localStorage.setItem('selena_onboarded', '1');
+  }, []);
+
+  // Compute source page for "Return to" link (P6)
+  const sourcePage = useMemo(() => {
+    const path = location.pathname;
+    if (path === '/' || path === '') return null;
+    const segments: Record<string, { en: string; es: string }> = {
+      '/buy': { en: 'Buy', es: 'Comprar' },
+      '/sell': { en: 'Sell', es: 'Vender' },
+      '/cash-offer-options': { en: 'Cash Offers', es: 'Ofertas en Efectivo' },
+      '/guides': { en: 'Guides', es: 'Guías' },
+      '/book': { en: 'Book', es: 'Reservar' },
+      '/about': { en: 'About', es: 'Acerca de' },
+      '/contact': { en: 'Contact', es: 'Contacto' },
+      '/podcast': { en: 'Podcast', es: 'Podcast' },
+      '/community': { en: 'Community', es: 'Comunidad' },
+      '/neighborhoods': { en: 'Neighborhoods', es: 'Vecindarios' },
+    };
+    // Match exact or prefix (for guide detail pages)
+    if (path.startsWith('/guides/')) return { path, label: { en: 'Guide', es: 'Guía' } };
+    if (path.startsWith('/neighborhoods/')) return { path, label: { en: 'Neighborhood', es: 'Vecindario' } };
+    const match = segments[path];
+    if (match) return { path, label: match };
+    return null;
+  }, [location.pathname]);
+
   // Close tab panel when drawer closes & remove body scroll lock
   useEffect(() => {
     if (!isOpen) {

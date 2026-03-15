@@ -34,7 +34,7 @@ import { updateSessionContext } from '@/lib/analytics/selenaSession';
 const V2HomeContent = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const { openChat, clearHistory } = useSelenaChat();
+  const { openChat } = useSelenaChat();
   const [ytLoaded, setYtLoaded] = useState(false);
   useDocumentHead({
     titleEn: "Tucson Real Estate | Kasandra Prieto — Bilingual REALTOR® & Concierge",
