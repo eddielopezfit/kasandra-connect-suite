@@ -10,6 +10,10 @@ interface DocumentHeadOptions {
   descriptionEs: string;
   ogImage?: string;
   canonical?: string;
+  /** Override og:type. Defaults to "website". Use "article" for guide detail pages. */
+  ogType?: string;
+  /** If true, adds noindex,nofollow robots meta — use for ad funnel and dev pages. */
+  noindex?: boolean;
 }
 
 const DEFAULT_TITLE = "Kasandra Prieto | Tucson Realtor & Podcast Host";
@@ -40,6 +44,11 @@ function upsertLink(rel: string, href: string, hreflang?: string) {
   el.setAttribute("href", href);
 }
 
+function removeNoindexTag() {
+  const existing = document.querySelector('meta[name="robots"][content="noindex, nofollow"]');
+  if (existing) existing.remove();
+}
+
 export function useDocumentHead({
   titleEn,
   titleEs,
@@ -47,6 +56,8 @@ export function useDocumentHead({
   descriptionEs,
   ogImage,
   canonical,
+  ogType = "website",
+  noindex = false,
 }: DocumentHeadOptions) {
   const { language } = useLanguage();
 
@@ -63,17 +74,24 @@ export function useDocumentHead({
     upsertMeta("property", "og:title", title);
     upsertMeta("property", "og:description", description);
     upsertMeta("property", "og:image", image);
-    upsertMeta("property", "og:type", "article");
+    // FIX: was hardcoded "article" — now defaults to "website", override per page
+    upsertMeta("property", "og:type", ogType);
     upsertMeta("property", "og:site_name", "Kasandra Prieto | Corner Connect");
     upsertMeta("name", "twitter:card", "summary_large_image");
     upsertMeta("name", "twitter:title", title);
     upsertMeta("name", "twitter:description", description);
     upsertMeta("name", "twitter:image", image);
 
+    // noindex for ad funnel and dev-only pages
+    if (noindex) {
+      upsertMeta("name", "robots", "noindex, nofollow");
+    }
+
     // Canonical + hreflang
+    // FIX: was appending ?lang=es — same URL serves both languages via LanguageContext
     upsertLink("canonical", canonicalUrl);
     upsertLink("alternate", canonicalUrl, "en");
-    upsertLink("alternate", canonicalUrl + (canonicalUrl.includes('?') ? '&' : '?') + 'lang=es', "es");
+    upsertLink("alternate", canonicalUrl, "es");
     upsertLink("alternate", canonicalUrl, "x-default");
 
     return () => {
@@ -82,7 +100,9 @@ export function useDocumentHead({
       upsertMeta("property", "og:title", DEFAULT_TITLE);
       upsertMeta("property", "og:description", DEFAULT_DESC);
       upsertMeta("property", "og:image", OG_IMAGE);
+      upsertMeta("property", "og:type", "website");
       upsertMeta("name", "twitter:image", OG_IMAGE);
+      if (noindex) removeNoindexTag();
     };
-  }, [language, titleEn, titleEs, descriptionEn, descriptionEs, ogImage, canonical]);
+  }, [language, titleEn, titleEs, descriptionEn, descriptionEs, ogImage, canonical, ogType, noindex]);
 }
