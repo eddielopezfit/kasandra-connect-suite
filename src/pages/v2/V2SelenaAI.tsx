@@ -138,6 +138,7 @@ const V2SelenaAIContent = () => {
             ))}
           </div>
         </div>
+      </section>
 
       {/* Compliance */}
       <section className="bg-cc-ivory py-10">
