@@ -23,3 +23,9 @@ verify_jwt = false
 
 [functions.generate-daily-guide]
 verify_jwt = false
+
+[functions.refresh-market-pulse]
+verify_jwt = false
+
+[functions.get-market-pulse]
+verify_jwt = false

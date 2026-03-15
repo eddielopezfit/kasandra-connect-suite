@@ -252,15 +252,9 @@ Deno.serve(async (req: Request) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Admin-only gate: accept x-admin-secret OR cron trigger (pg_cron uses anon key)
-  const authHeader = req.headers.get("x-admin-secret");
-  let isCron = false;
-  try {
-    const body = await req.clone().json();
-    isCron = body?.triggered_by === "pg_cron";
-  } catch (_e) { /* not JSON body */ }
-
-  if (authHeader !== Deno.env.get("ADMIN_SECRET") && !isCron) {
+  // Admin-only gate: single x-admin-secret auth path (manual + pg_cron via vault)
+  const adminSecret = req.headers.get("x-admin-secret");
+  if (adminSecret !== Deno.env.get("ADMIN_SECRET")) {
     return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
