@@ -66,8 +66,10 @@ export function isActionValid(spec: ActionSpec): boolean {
       return (KNOWN_CALCULATORS as readonly string[]).includes(spec.calculatorId);
     case 'open_chat':
       return (VALID_ENTRY_SOURCES as readonly string[]).includes(spec.payload.source);
-    case 'navigate':
-      return (NAVIGATE_WHITELIST as readonly string[]).includes(spec.path);
+    case 'navigate': {
+      const basePath = spec.path.split('?')[0];
+      return (NAVIGATE_WHITELIST as readonly string[]).includes(basePath);
+    }
     case 'book':
       return true;
     case 'call_contact':
