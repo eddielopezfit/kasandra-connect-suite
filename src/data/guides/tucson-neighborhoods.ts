@@ -16,7 +16,7 @@ const data: GuideContentData = {
       content: "Before diving into neighborhoods, here's the market picture you're buying into:",
       contentEs: "Antes de sumergirte en los vecindarios, aquí está el panorama del mercado en el que estás comprando:",
       statsData: [
-        { value: '$365K', valueEs: '$365K', label: 'Median single-family home price, Jan 2026 (townhomes/condos: $300K)', labelEs: 'Precio medio de casa unifamiliar, ene 2026 (casas adosadas/condominios: $300K)' },
+        { value: '$365K', valueEs: '$365K', label: 'Median single-family home price, Mar 2026 (townhomes/condos: $300K)', labelEs: 'Precio medio de casa unifamiliar, mar 2026 (casas adosadas/condominios: $300K)' },
         { value: '38 days', valueEs: '38 días', label: 'Median days on market — well-priced homes in good locations move faster', labelEs: 'Mediana de días en mercado — casas bien valoradas en buenas ubicaciones se mueven más rápido' },
         { value: '4.92 months', valueEs: '4.92 meses', label: 'Supply inventory — balanced market, both buyers and sellers have reasonable leverage', labelEs: 'Inventario de suministro — mercado equilibrado, tanto compradores como vendedores tienen apalancamiento razonable' },
         { value: '97.64%', valueEs: '97.64%', label: 'Sale-to-list ratio — expect to negotiate 2–3% below ask in most areas', labelEs: 'Relación venta-lista — espera negociar 2–3% por debajo del pedido en la mayoría de las áreas' },

@@ -105,8 +105,8 @@ const data: GuideContentData = {
         {
           question: "How long does it take to sell a home in Tucson right now?",
           questionEs: "¿Cuánto tiempo tarda vender una casa en Tucson ahora mismo?",
-          answer: "The Tucson median days on market is 38 days right now (January 2026). Priced-right homes in good condition often go faster — sometimes in under 2 weeks. Overpriced homes or those needing significant repairs can sit 60–90 days. Timeline also depends on your neighborhood, price range, and time of year. Spring is historically our strongest season in Pima County. I'll give you an honest estimate based on your specific property.",
-          answerEs: "La mediana de días en el mercado en Tucson es de 38 días ahora mismo (enero 2026). Las casas con precio correcto y buena condición a menudo se van más rápido — a veces en menos de 2 semanas. Las sobrevaloradas o que necesitan reparaciones significativas pueden permanecer 60–90 días.",
+          answer: "The Tucson median days on market is 38 days right now (March 2026). Priced-right homes in good condition often go faster — sometimes in under 2 weeks. Overpriced homes or those needing significant repairs can sit 60–90 days. Timeline also depends on your neighborhood, price range, and time of year. Spring is historically our strongest season in Pima County. I'll give you an honest estimate based on your specific property.",
+          answerEs: "La mediana de días en el mercado en Tucson es de 38 días ahora mismo (marzo 2026). Las casas con precio correcto y buena condición a menudo se van más rápido — a veces en menos de 2 semanas. Las sobrevaloradas o que necesitan reparaciones significativas pueden permanecer 60–90 días.",
         },
       ],
     },
