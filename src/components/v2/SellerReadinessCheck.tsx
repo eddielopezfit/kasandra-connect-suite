@@ -202,6 +202,9 @@ const SellerReadinessCheck = ({ onScoreRevealed }: SellerReadinessCheckProps) =>
       last_tool_completed: 'seller_readiness',
       tools_completed: [...new Set([...(ctx?.tools_completed ?? []), 'seller_readiness'])],
     });
+    // Fire-and-forget lead score sync
+    const storedLeadId = localStorage.getItem('selena_lead_id');
+    if (storedLeadId) void syncLeadScore(storedLeadId, readiness_score);
 
     // Analytics
     logEvent("quiz_complete", {

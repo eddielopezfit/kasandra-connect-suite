@@ -38,6 +38,9 @@ const V2CashReadinessContent = () => {
         readiness_score: data.readiness_score,
         primary_priority: data.primary_priority,
       });
+      // Fire-and-forget lead score sync
+      const storedLeadId = localStorage.getItem(LEAD_ID_KEY);
+      if (storedLeadId) void syncLeadScore(storedLeadId, data.readiness_score);
       // P1.1: Persist snapshot after quiz completion
       import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
 
