@@ -40,6 +40,8 @@ const V2Navigation = () => {
   const exploreLinks = [
     { href: "/neighborhoods", label: t("Neighborhoods", "Vecindarios") },
     { href: "/guides", label: t("Guides", "Guías") },
+    { href: "/selena-ai", label: t("Meet Selena AI", "Conoce a Selena AI") },
+    { href: "/market", label: t("Market Intel", "Intel del Mercado") },
     { href: "/podcast", label: t("Podcast", "Podcast") },
     { href: "/community", label: t("Community", "Comunidad") },
     { href: "/about", label: t("About", "Sobre Mí") },
