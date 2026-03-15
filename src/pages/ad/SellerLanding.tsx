@@ -6,9 +6,19 @@ import SelenaTextTrigger from "@/components/ad/SelenaTextTrigger";
 import { initAdFunnelSession } from "@/lib/analytics/initAdFunnelSession";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { track, trackCustom } from "@/lib/metaPixel";
+import { useDocumentHead } from "@/hooks/useDocumentHead";
 
 const SellerLanding = () => {
   const { t } = useLanguage();
+
+  // noindex: paid ad funnel page — should not be indexed by search engines [audit SEO-04]
+  useDocumentHead({
+    titleEn: "Free Net Sheet — Tucson Home Sale Analysis | Kasandra Prieto",
+    titleEs: "Reporte Gratuito — Análisis de Venta en Tucson | Kasandra Prieto",
+    descriptionEn: "Compare cash offer vs. traditional listing for your Tucson home. Free, no obligation.",
+    descriptionEs: "Compara oferta en efectivo vs. listado tradicional para tu casa en Tucson. Gratis, sin compromiso.",
+    noindex: true,
+  });
 
   useEffect(() => {
     initAdFunnelSession();
