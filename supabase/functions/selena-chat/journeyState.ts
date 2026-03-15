@@ -30,6 +30,10 @@ const CHIP_KEYS = {
   BUYER_READINESS: 'buyer_readiness',
   CASH_READINESS: 'cash_readiness',
   BROWSE_GUIDES: 'browse_guides',
+  // New tools (March 2026 — available for evaluate-state rotation)
+  AFFORDABILITY_CALCULATOR: 'affordability_calculator',
+  BAH_CALCULATOR: 'bah_calculator',
+  HOME_VALUATION: 'home_valuation',
 } as const;
 
 const DECIDE_TOOLS = ['tucson_alpha_calculator', 'seller_decision'];

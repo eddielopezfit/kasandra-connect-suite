@@ -3930,10 +3930,21 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       suggestedReplies = language === 'es'
         ? ["Estimar mis ganancias netas", "Hablar con Kasandra"]
         : ["Estimate my net proceeds", "Talk with Kasandra"];
-    } else if (canApplyJourneyChips && journey.stageChips.length > 0) {
-      // Journey State Engine chips (Layer 5)
-      suggestedReplies = journey.stageChips;
     } else {
+      // Layer 5: Keyword-triggered chips (PROGRESSION_MAP) — highest specificity
+      const keywordChips = getSuggestedReplies(context.intent, language, message);
+      const hasKeywordHit = keywordChips.length > 0 && keywordChips !== getSuggestedReplies(context.intent, language);
+      
+      if (hasKeywordHit) {
+        // Keyword override — use PROGRESSION_MAP match
+        suggestedReplies = keywordChips;
+      } else if (canApplyJourneyChips && journey.stageChips.length > 0) {
+        // Layer 6: Journey State Engine chips
+        suggestedReplies = journey.stageChips;
+      } else {
+        // Layer 7: Governed phase chips (fallback)
+        suggestedReplies = chips;
+      }
       // Use governed phase chips (fallback)
       suggestedReplies = chips;
     }
