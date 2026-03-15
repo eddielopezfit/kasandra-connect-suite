@@ -317,7 +317,7 @@ function GuideDetailContent() {
     'inherited-probate-property': {
       titleEn: 'Selling an Inherited Home in Tucson  -  Arizona Probate & Estate Guide',
       titleEs: 'Vender una Casa Heredada en Tucson  -  Guía de Sucesión en Arizona',
-      descEn: 'Inherited a property in Tucson or Pima County? Understand Arizona probate, your selling options, and how to protect the family's interests.',
+      descEn: "Inherited a property in Tucson or Pima County? Understand Arizona probate, your selling options, and how to protect the family's interests.",
       descEs: '¿Heredaste una propiedad en Tucson? Entiende el proceso de sucesión en Arizona, tus opciones de venta y cómo proteger los intereses de la familia.',
     },
     'understanding-home-valuation': {
