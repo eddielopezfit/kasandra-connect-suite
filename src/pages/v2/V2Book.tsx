@@ -33,10 +33,36 @@ const V2BookContent = () => {
   });
 
   const callType = searchParams.get("callType");
+  const intent = searchParams.get("intent") || "direct";
+  const source = searchParams.get("source");
+
+  // Contextual prep note based on how the user arrived
+  const getContextNote = () => {
+    if (source === 'calculator' && intent === 'cash') {
+      return {
+        en: "Kasandra will review your cash vs. listing comparison before your call.",
+        es: "Kasandra revisará su comparación de efectivo vs. venta antes de su llamada.",
+      };
+    }
+    if (source === 'affordability_calculator' || intent === 'buy') {
+      return {
+        en: "Kasandra will review your affordability results before your call.",
+        es: "Kasandra revisará sus resultados de asequibilidad antes de su llamada.",
+      };
+    }
+    if (intent === 'sell') {
+      return {
+        en: "Kasandra will review your selling situation before your call.",
+        es: "Kasandra revisará su situación de venta antes de su llamada.",
+      };
+    }
+    return null;
+  };
+
+  const contextNote = getContextNote();
 
   // Condition 1: lightweight analytics — log page view + intent + UTMs
   useEffect(() => {
-    const intent = searchParams.get("intent") || "direct";
     const utm_source = searchParams.get("utm_source");
     const utm_campaign = searchParams.get("utm_campaign");
     const utm_medium = searchParams.get("utm_medium");
@@ -52,7 +78,7 @@ const V2BookContent = () => {
       ...(utm_content && { utm_content }),
       ...(utm_term && { utm_term }),
     });
-  }, [searchParams, callType]);
+  }, [searchParams, callType, intent]);
 
   return (
     <>
