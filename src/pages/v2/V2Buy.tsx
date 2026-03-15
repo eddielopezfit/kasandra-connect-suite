@@ -242,20 +242,28 @@ const V2BuyContent = () => {
               "Hablemos sobre sus metas de compra de casa y creemos un plan que funcione para usted."
             )}
           </p>
-          <Button 
-            onClick={handleSelenaRoute}
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 py-3 text-sm sm:px-10 sm:py-6 sm:text-lg shadow-gold"
-          >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            <span className="sm:hidden">{t("Ask Selena", "Pregúntale a Selena")}</span>
-            <span className="hidden sm:inline">{t("Ask Selena to Help Me Get Started", "Pídale a Selena que me Ayude a Empezar")}</span>
-          </Button>
-          <p className="text-white/60 text-sm mt-4 max-w-md mx-auto">
-            {t(
-              "Selena will ask a few quick questions so Kasandra is prepared.",
-              "Selena hará unas preguntas rápidas para que Kasandra esté preparada."
-            )}
-          </p>
+          <div className="flex flex-col items-center gap-3">
+            <Button 
+              asChild
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 py-3 text-sm sm:px-10 sm:py-6 sm:text-lg shadow-gold"
+            >
+              <Link
+                to="/book?intent=buy&source=buy_hub_bottom"
+                onClick={() => logCTAClick({ cta_name: 'buy_hub_book_call', destination: '/book', page_path: '/buy', intent: 'buy' })}
+              >
+                <Calendar className="w-5 h-5 mr-2" />
+                {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
+              </Link>
+            </Button>
+            <Button 
+              variant="ghost"
+              onClick={handleSelenaRoute}
+              className="text-white/80 hover:text-cc-gold font-medium rounded-full px-8"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
+            </Button>
+          </div>
         </div>
       </section>
     </>

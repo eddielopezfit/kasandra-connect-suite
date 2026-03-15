@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import V2Layout from "@/components/v2/V2Layout";
-import { Radio, Youtube, Users, TrendingUp, Heart, MessageCircle } from "lucide-react";
+import { Radio, Youtube, Users, TrendingUp, Heart, MessageCircle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";

@@ -92,6 +92,9 @@ const NeighborhoodsContent = () => {
         </div>
       </section>
 
+      {/* Trust Bar */}
+      <TrustBar />
+
       {/* Grid */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
@@ -99,6 +102,43 @@ const NeighborhoodsContent = () => {
             {filteredNeighborhoods.map((neighborhood) => (
               <NeighborhoodIndexCard key={neighborhood.slug} neighborhood={neighborhood} />
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
+            {t("Found a Neighborhood You Like?", "¿Encontraste un Vecindario que Te Gusta?")}
+          </h2>
+          <p className="text-white/80 max-w-2xl mx-auto mb-8">
+            {t(
+              "Let's talk about what's available and what fits your budget in the areas you're exploring.",
+              "Hablemos sobre lo que está disponible y lo que cabe en tu presupuesto en las áreas que estás explorando."
+            )}
+          </p>
+          <div className="flex flex-col items-center gap-3">
+            <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-10 py-6 text-lg shadow-gold">
+              <Link
+                to="/book?intent=buy&source=neighborhoods_bottom"
+                onClick={() => logCTAClick({ cta_name: 'neighborhoods_book_call', destination: '/book', page_path: '/neighborhoods', intent: 'buy' })}
+              >
+                <Calendar className="w-5 h-5 mr-2" />
+                {t("Book a Neighborhood Tour", "Agenda un Recorrido de Vecindario")}
+              </Link>
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-white/80 hover:text-cc-gold font-medium rounded-full px-8"
+              onClick={() => {
+                logCTAClick({ cta_name: CTA_NAMES.RESULT_CHAT_SELENA, destination: 'selena_drawer', page_path: '/neighborhoods', intent: 'buy' });
+                openChat({ source: 'neighborhoods_bottom', intent: 'buy' });
+              }}
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              {t("Ask Selena About Neighborhoods", "Pregúntale a Selena Sobre Vecindarios")}
+            </Button>
           </div>
         </div>
       </section>
