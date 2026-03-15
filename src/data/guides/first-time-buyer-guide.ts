@@ -105,7 +105,7 @@ const data: GuideContentData = {
         {
           question: "How long does it take to buy a house in Tucson?",
           questionEs: "¿Cuánto tiempo tarda comprar una casa en Tucson?",
-          answer: "From first conversation to keys, most Tucson buyers are looking at 60–90 days total. Pre-approval usually takes 3–7 business days — that's always the first step. House hunting is the most variable part: some of my clients found their home in two weeks, others searched for two months. Once you're under contract, financing purchases typically close in 30–45 days. Tucson's median days on market right now is 38 days (January 2026). The process feels long until it doesn't — and then it moves fast.",
+          answer: "From first conversation to keys, most Tucson buyers are looking at 60–90 days total. Pre-approval usually takes 3–7 business days — that's always the first step. House hunting is the most variable part: some of my clients found their home in two weeks, others searched for two months. Once you're under contract, financing purchases typically close in 30–45 days. Tucson's median days on market right now is 38 days (March 2026). The process feels long until it doesn't — and then it moves fast.",
           answerEs: "Desde la primera conversación hasta las llaves, la mayoría de los compradores de Tucson miran 60–90 días en total. La preaprobación generalmente toma 3–7 días hábiles — ese es siempre el primer paso. La búsqueda de casa es la parte más variable. Una vez bajo contrato, las compras financiadas típicamente cierran en 30–45 días. El proceso se siente largo hasta que no lo es — y luego avanza rápido.",
         },
         {
