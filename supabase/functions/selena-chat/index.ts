@@ -561,10 +561,10 @@ function getGovernedChips(
           : [CHIP_KEYS.SELLER_READINESS, CHIP_KEYS.ESTIMATE_PROCEEDS];
         return { chips, phase: 2, escalated: false };
       }
-      // Turn 1-2: show initial sell chips
+      // Turn 1-2: show initial sell chips (HOME_VALUATION replaces COMPARE_CASH_LISTING as early seller entry)
       const chips = intent === 'cash'
         ? [CHIP_KEYS.CASH_READINESS, CHIP_KEYS.COMPARE_CASH_LISTING]
-        : [CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.COMPARE_CASH_LISTING];
+        : [CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.HOME_VALUATION];
       return { chips, phase: 2, escalated: false };
     }
 
@@ -574,7 +574,8 @@ function getGovernedChips(
         return { chips: [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET], phase: 2, escalated: false };
       }
       if (phase2TurnCount === 2) {
-        return { chips: [CHIP_KEYS.ESTIMATE_CLOSING_COSTS, CHIP_KEYS.COMPARE_NEIGHBORHOODS, CHIP_KEYS.BROWSE_BUYER_GUIDES], phase: 2, escalated: false };
+        // Turn 2: surface affordability calculator alongside neighborhood tools
+        return { chips: [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.COMPARE_NEIGHBORHOODS, CHIP_KEYS.ESTIMATE_CLOSING_COSTS], phase: 2, escalated: false };
       }
       // Turn 3+: progress toward decision
       return { chips: [CHIP_KEYS.BUYER_READINESS_CHECK, CHIP_KEYS.FIND_OFF_MARKET, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 2, escalated: false };
@@ -707,6 +708,10 @@ const CHIP_KEYS = {
   INTENT_SELL: 'intent_sell',
   INTENT_BUY: 'intent_buy',
   INTENT_EXPLORE: 'intent_explore',
+  // New tools (March 2026 connection pass)
+  AFFORDABILITY_CALCULATOR: 'affordability_calculator',
+  BAH_CALCULATOR: 'bah_calculator',
+  HOME_VALUATION: 'home_valuation',
 } as const;
 
 /** Semantic chip key → destination path */
@@ -758,6 +763,10 @@ const CHIP_KEY_DESTINATION: Record<string, string> = {
   [CHIP_KEYS.INTENT_SELL]: '/seller-decision',
   [CHIP_KEYS.INTENT_BUY]: '/buyer-readiness',
   [CHIP_KEYS.INTENT_EXPLORE]: '/guides',
+  // New tools (March 2026 connection pass)
+  [CHIP_KEYS.AFFORDABILITY_CALCULATOR]: '/affordability-calculator',
+  [CHIP_KEYS.BAH_CALCULATOR]: '/bah-calculator',
+  [CHIP_KEYS.HOME_VALUATION]: '/home-valuation',
 };
 
 /**
@@ -861,6 +870,27 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Reservar una consulta': '/book',
   'Abrir la calculadora': '/cash-offer-options',
   'Ver la calculadora': '/cash-offer-options',
+
+  // New tools — EN (March 2026 connection pass)
+  'Check my buying power': '/affordability-calculator',
+  'Check buying power': '/affordability-calculator',
+  'Affordability calculator': '/affordability-calculator',
+  'BAH buying power': '/bah-calculator',
+  'Calculate BAH buying power': '/bah-calculator',
+  'BAH calculator': '/bah-calculator',
+  'Get my market analysis': '/home-valuation',
+  'Home valuation': '/home-valuation',
+  "What's my home worth?": '/home-valuation',
+  'How much is my home worth?': '/home-valuation',
+
+  // New tools — ES (March 2026 connection pass)
+  'Verificar poder de compra': '/affordability-calculator',
+  'Calculadora de asequibilidad': '/affordability-calculator',
+  'Poder de compra BAH': '/bah-calculator',
+  'Calculadora BAH': '/bah-calculator',
+  'Obtener mi análisis': '/home-valuation',
+  'Valuación de mi casa': '/home-valuation',
+  '¿Cuánto vale mi casa?': '/home-valuation',
 };
 
 // Tool ID → destination paths it blocks (the routes the tool lives on)
@@ -898,6 +928,10 @@ const DESTINATION_TO_CHIP_KEY: Record<string, string> = {
   '/cash-offer-options': CHIP_KEYS.ESTIMATE_PROCEEDS,
   '/book': CHIP_KEYS.TALK_WITH_KASANDRA,
   '/seller-decision': CHIP_KEYS.GET_SELLING_OPTIONS,
+  // New tools (March 2026 connection pass)
+  '/affordability-calculator': CHIP_KEYS.AFFORDABILITY_CALCULATOR,
+  '/bah-calculator': CHIP_KEYS.BAH_CALCULATOR,
+  '/home-valuation': CHIP_KEYS.HOME_VALUATION,
 };
 
 // Legacy reverse lookup (kept for display-string resolution in filterChipsForCompletedTools)
@@ -910,6 +944,10 @@ const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
   '/cash-offer-options': { en: 'Estimate my net proceeds', es: 'Estimar mis ganancias netas' },
   '/book': { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' },
   '/seller-decision': { en: 'Get my selling options', es: 'Ver mis opciones de venta' },
+  // New tools (March 2026 connection pass)
+  '/affordability-calculator': { en: 'Check my buying power', es: 'Verificar poder de compra' },
+  '/bah-calculator': { en: 'BAH buying power', es: 'Poder de compra BAH' },
+  '/home-valuation': { en: 'Get my market analysis', es: 'Obtener mi análisis' },
 };
 
 const GUIDE_DELIVERY_AFFIRMATIVE = /^(yes|sure|yeah|yep|ok|okay|please|show me|tell me more|sí|si|claro|por favor|muéstrame|muestrame)$/i;
@@ -1096,6 +1134,43 @@ const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
   "sell or rent": {
     en: ["View sell-or-rent guide", "Estimate net proceeds", "Talk with Kasandra"],
     es: ["Ver guía vender o rentar", "Estimar ganancias netas", "Hablar con Kasandra"]
+  },
+  // New tool progressions (March 2026 connection pass)
+  "how much can i afford": {
+    en: ["Check my buying power", "Take readiness check", "Browse guides"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
+  },
+  "cuanto puedo pagar": {
+    en: ["Check my buying power", "Take readiness check", "Browse guides"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
+  },
+  "what is my home worth": {
+    en: ["Get my market analysis", "Get my selling options", "Compare cash vs. listing"],
+    es: ["Obtener mi análisis", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
+  },
+  "cuanto vale mi casa": {
+    en: ["Get my market analysis", "Get my selling options", "Compare cash vs. listing"],
+    es: ["Obtener mi análisis", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
+  },
+  "bah": {
+    en: ["BAH buying power", "Military & VA guide", "Take readiness check"],
+    es: ["Poder de compra BAH", "Guía militar y VA", "Tomar evaluación de preparación"]
+  },
+  "pcs": {
+    en: ["BAH buying power", "Military & VA guide", "Browse guides"],
+    es: ["Poder de compra BAH", "Guía militar y VA", "Explorar guías"]
+  },
+  "davis-monthan": {
+    en: ["BAH buying power", "Military & VA guide", "Explore neighborhoods"],
+    es: ["Poder de compra BAH", "Guía militar y VA", "Explorar vecindarios"]
+  },
+  "affordability": {
+    en: ["Check my buying power", "Take readiness check", "Browse buyer guides"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
+  },
+  "home value": {
+    en: ["Get my market analysis", "Get my selling options", "Talk with Kasandra"],
+    es: ["Obtener mi análisis", "Ver mis opciones de venta", "Hablar con Kasandra"]
   }
 };
 
