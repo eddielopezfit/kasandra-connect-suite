@@ -25,10 +25,10 @@ const V2SellContent = () => {
   const { openChat } = useSelenaChat();
   const [leadName, setLeadName] = useState<string | null>(null);
   useDocumentHead({
-    titleEn: "Sell Your Tucson Home | Cash Offer & Traditional Listing Options",
-    titleEs: "Venda Su Casa en Tucson | Opciones de Oferta en Efectivo y Venta Tradicional",
-    descriptionEn: "Explore your selling options in Tucson. Market-based pricing, cash offer review, and full disclosure support from a bilingual REALTOR®.",
-    descriptionEs: "Explore sus opciones de venta en Tucson. Precios de mercado, revisión de ofertas en efectivo y apoyo bilingüe.",
+    titleEn: "Tucson Home Selling | Cash Offer & Traditional Listing — Kasandra Prieto",
+    titleEs: "Venta de Casas en Tucson | Oferta en Efectivo y Venta Tradicional — Kasandra Prieto",
+    descriptionEn: "Tucson home selling options — cash offer review, traditional listing, and market-based pricing. Bilingual REALTOR® serving Pima County with 20+ years of experience.",
+    descriptionEs: "Opciones de venta de casas en Tucson — ofertas en efectivo, listado tradicional y precios de mercado. REALTOR® bilingüe con 20+ años en Pima County.",
   });
 
   useEffect(() => {
