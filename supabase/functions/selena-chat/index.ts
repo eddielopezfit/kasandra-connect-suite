@@ -1126,6 +1126,43 @@ const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
   "sell or rent": {
     en: ["View sell-or-rent guide", "Estimate net proceeds", "Talk with Kasandra"],
     es: ["Ver guía vender o rentar", "Estimar ganancias netas", "Hablar con Kasandra"]
+  },
+  // New tool progressions (March 2026 connection pass)
+  "how much can i afford": {
+    en: ["Check my buying power", "Take readiness check", "Browse guides"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
+  },
+  "cuanto puedo pagar": {
+    en: ["Check my buying power", "Take readiness check", "Browse guides"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
+  },
+  "what is my home worth": {
+    en: ["Get my market analysis", "Get my selling options", "Compare cash vs. listing"],
+    es: ["Obtener mi análisis", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
+  },
+  "cuanto vale mi casa": {
+    en: ["Get my market analysis", "Get my selling options", "Compare cash vs. listing"],
+    es: ["Obtener mi análisis", "Ver mis opciones de venta", "Comparar efectivo vs. listado"]
+  },
+  "bah": {
+    en: ["BAH buying power", "Military & VA guide", "Take readiness check"],
+    es: ["Poder de compra BAH", "Guía militar y VA", "Tomar evaluación de preparación"]
+  },
+  "pcs": {
+    en: ["BAH buying power", "Military & VA guide", "Browse guides"],
+    es: ["Poder de compra BAH", "Guía militar y VA", "Explorar guías"]
+  },
+  "davis-monthan": {
+    en: ["BAH buying power", "Military & VA guide", "Explore neighborhoods"],
+    es: ["Poder de compra BAH", "Guía militar y VA", "Explorar vecindarios"]
+  },
+  "affordability": {
+    en: ["Check my buying power", "Take readiness check", "Browse buyer guides"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Explorar guías"]
+  },
+  "home value": {
+    en: ["Get my market analysis", "Get my selling options", "Talk with Kasandra"],
+    es: ["Obtener mi análisis", "Ver mis opciones de venta", "Hablar con Kasandra"]
   }
 };
 
