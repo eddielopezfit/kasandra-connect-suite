@@ -34,6 +34,7 @@ const ContactForm = () => {
           name: name.trim() || undefined,
           source: "contact_form",
           tags: ["contact_form"],
+          notes: message.trim() || undefined,
         },
       });
       logEvent("form_submit", { source: "contact_page" });

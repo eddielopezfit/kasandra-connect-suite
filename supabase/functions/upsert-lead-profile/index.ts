@@ -23,6 +23,7 @@ interface UpsertLeadInput {
   has_viewed_report?: boolean;
   consent_communications?: boolean; // Guardrail 3: default false, only true when explicitly collected
   timeline?: string;
+  notes?: string;
 }
 
 Deno.serve(async (req) => {
@@ -229,6 +230,8 @@ Deno.serve(async (req) => {
           selena_language_raw: input.language || "en",
           selena_source: input.source || "lead_capture_modal",
           selena_lead_score: scoreResult.lead_score,
+          
+          notes: input.notes || null,
           
           // Legacy fields
           lead_id: leadId,

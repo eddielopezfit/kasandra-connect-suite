@@ -6,7 +6,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, MessageCircle, Sparkles } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, MessageCircle, Sparkles, Calendar } from "lucide-react";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-cash-calm.png";
 
@@ -330,6 +330,31 @@ const V2CashOfferOptionsContent = () => {
               >
                 <MessageCircle className="w-5 h-5 mr-2" />
                 {t("Book a Cash Offer Review", "Agendar una Revisión de Oferta en Efectivo")}
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+      {/* Bottom Booking CTA */}
+      <section className="py-14 bg-cc-sand">
+        <div className="container mx-auto px-4 text-center">
+          <div className="max-w-xl mx-auto">
+            <h3 className="font-serif text-2xl font-bold text-cc-navy mb-3">
+              {t("Want Expert Guidance on Your Options?", "¿Quiere Orientación Experta Sobre Sus Opciones?")}
+            </h3>
+            <p className="text-cc-charcoal text-sm mb-6">
+              {t(
+                "Kasandra reviews both cash and traditional paths with every seller — you decide with full information.",
+                "Kasandra revisa tanto el camino de efectivo como el tradicional con cada vendedor — usted decide con información completa."
+              )}
+            </p>
+            <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
+              <Link
+                to="/book?intent=sell&source=cash_offer_bottom"
+                onClick={() => logCTAClick({ cta_name: 'cash_offer_bottom_book', destination: '/book', page_path: '/cash-offer-options', intent: 'sell' })}
+              >
+                <Calendar className="w-5 h-5 mr-2" />
+                {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
               </Link>
             </Button>
           </div>

@@ -1,8 +1,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import { Link } from "react-router-dom";
 import JsonLd from "@/components/seo/JsonLd";
 import V2Layout from "@/components/v2/V2Layout";
-import { Radio, Youtube, Users, TrendingUp, Heart, MessageCircle } from "lucide-react";
+import { Radio, Youtube, Users, TrendingUp, Heart, MessageCircle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
@@ -164,25 +165,34 @@ const V2PodcastContent = () => {
         </div>
       </section>
 
-      {/* Listen CTA */}
-      <section className="py-16 lg:py-20 bg-cc-navy">
+      {/* Booking CTA */}
+      <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
-            {t("Never Miss an Episode", "No Se Pierda Ningún Episodio")}
+            {t("Thinking About Real Estate?", "¿Pensando en Bienes Raíces?")}
           </h2>
           <p className="text-white/80 max-w-2xl mx-auto mb-8">
             {t(
-              "Tune in every Saturday at 9:30 AM on Urbana 92.5 FM or subscribe on YouTube to catch all episodes.",
-              "Sintonize cada sábado a las 9:30 AM en Urbana 92.5 FM o suscríbase en YouTube para ver todos los episodios."
+              "Whether you're buying, selling, or just exploring — let's have a conversation about your goals.",
+              "Ya sea que estés comprando, vendiendo, o solo explorando — tengamos una conversación sobre tus metas."
             )}
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex flex-col items-center gap-3">
+            <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-10 py-6 text-lg shadow-gold">
+              <Link
+                to="/book?source=podcast_page"
+                onClick={() => logCTAClick({ cta_name: 'podcast_book_call', destination: '/book', page_path: '/podcast', intent: 'explore' })}
+              >
+                <Calendar className="w-5 h-5 mr-2" />
+                {t("Book a Call with Kasandra", "Agenda una Llamada con Kasandra")}
+              </Link>
+            </Button>
             <a
               href="https://www.youtube.com/@KasandraPrietoTucson"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
+              <Button variant="ghost" className="text-white/80 hover:text-cc-gold font-medium rounded-full px-8">
                 <Youtube className="w-5 h-5 mr-2" />
                 {t("Subscribe on YouTube", "Suscribirse en YouTube")}
               </Button>

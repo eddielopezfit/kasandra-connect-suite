@@ -1,82 +1,75 @@
 
 
-# Conversion Optimization Audit
+## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
 
-## Page-by-Page CTA Analysis
+### What We're Doing
 
-| Page | Terminal CTA | Issue | Severity |
-|---|---|---|---|
-| `/` (Home) | CTASection → `/book` + Selena | Strong. Journey fork + tools + final CTA. | OK |
-| `/sell` | Bottom CTA → Selena only | **No direct `/book` CTA.** High-intent sellers must go through Selena to book. | HIGH |
-| `/buy` | Bottom CTA → Selena only | **No direct `/book` CTA.** Same issue as Sell. | HIGH |
-| `/cash-offer-options` | Calculator next steps + Selena | Good tool-to-CTA bridge. Missing direct `/book` fallback at bottom. | MEDIUM |
-| `/guides` | SelenaSynthesisFooter | Good — contextual. | OK |
-| `/neighborhoods` | Hero Selena CTA only | **No bottom CTA.** User scrolls 15 cards and hits footer with no conversion point. | HIGH |
-| `/community` | Bottom CTA → Selena only | **No `/book` option** at bottom. Mid-page Selena prompt is good. | MEDIUM |
-| `/podcast` | Bottom CTA → YouTube subscribe only | **Zero conversion CTA.** Page ends with external YouTube link — complete funnel leak. | CRITICAL |
-| `/about` | Bottom → `/book` + Selena | Strong dual-path. | OK |
-| `/contact` | Bottom → `/book` + Selena | Good. | OK |
-| `/selena-ai` | Bottom → Selena + `/book` | Good. | OK |
-| `/market` | Needs check — but likely Selena-only | MEDIUM |
+Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
+
+### What We Do NOT Import
+
+- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
+- No market stats with hard-coded numbers (stale data risk)
+- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
+- No standalone footer (GuideComplianceFooter already exists)
+- No mid-guide CTAs or interactive state that writes to session
 
 ---
 
-## Critical Issues
+### Changes
 
-### 1. CRITICAL: `/podcast` — Zero Conversion Path
-The podcast page ends with "Subscribe on YouTube" — an external link that sends visitors off-site. No `/book` CTA, no Selena prompt at the bottom. This is the only page in the entire site that leaks 100% of traffic to an external destination without a conversion opportunity.
+**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
 
-### 2. HIGH: `/sell` and `/buy` — Missing Direct Booking CTA
-Both hub pages terminate with "Ask Selena" as the sole CTA. For high-intent visitors who are ready to book, forcing them through Selena adds an unnecessary step. The `/about` page already demonstrates the correct dual-CTA pattern (Book + Selena fallback).
+Add optional `variant` field and structured data:
 
-### 3. HIGH: `/neighborhoods` — No Bottom CTA
-After browsing 15 neighborhood cards, there is no conversion prompt. The page simply ends with the grid. Visitors who scrolled the entire page have high engagement but no next step.
+```typescript
+export interface GuideSection {
+  heading: string;
+  headingEs: string;
+  content: string;       // plain-text fallback always required
+  contentEs: string;
+  variant?: 'default' | 'comparison' | 'path-selector';
+  comparisonData?: {
+    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
+    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
+  };
+  pathData?: Array<{
+    id: string;
+    title: string; titleEs: string;
+    desc: string; descEs: string;
+  }>;
+}
+```
 
-### 4. MEDIUM: `/cash-offer-options` — No Bottom Booking Fallback
-The calculator flow handles conversion well, but visitors who skip the calculator and scroll to the bottom only see educational content. The final section has no CTA.
+**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
 
-### 5. MEDIUM: Homepage Section Count — Cognitive Overload
-The homepage has **10 distinct sections** before the final CTA (Hero → Fork → Banner → Calculator → About → Neighborhoods → TrustBar → Services → Selena AI → Testimonials → Podcast → Community → CTA). On mobile, this is ~15+ screen heights. Users in the "Evaluating" cognitive stage may fatigue before reaching the conversion point.
+Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
 
----
+**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
 
-## Funnel Friction Points
+Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
 
-### Long Decision Paths
-- **Sell page flow**: Hero → 3-step process → 4 cards → Tool strip → Guide → Testimonials → Reviews → Comparison panels → Bottom CTA = **9 scroll sections** before conversion
-- **Homepage**: 13 sections before final CTA
+**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
 
-### Cognitive Friction
-- **Contact form** captures email but does NOT pass the message body to any backend — the `message` field is collected but never sent to the edge function. Users think they sent a message; Kasandra never sees it.
-- **Sell/Buy bottom CTAs** say "Ask Selena to Set Up My Call" — this implies booking but actually opens generic Selena chat. Expectation mismatch.
+In the `.map()` loop, switch on `section.variant`:
+- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
+- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
+- default → current `whitespace-pre-line` text
 
-### Trust Signal Gaps
-- **Google Reviews** section is lazy-loaded and may not render if API fails — no static fallback testimonials on the Sell page below the fold
-- **No trust signals on `/neighborhoods`** — no credentials, no reviews, no testimonials
+**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
 
----
+- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
+- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
+- Plain text `content`/`contentEs` stays as fallback
 
-## Implementation Plan
+**6. Export new components** (`src/components/v2/guides/index.ts`)
 
-### P0 — Fix Contact Form Data Loss (Bug)
-**File:** `src/pages/v2/V2Contact.tsx`
-The `handleSubmit` function calls `upsert-lead-profile` but does not include the `message` field. Fix: add `notes: message.trim()` to the edge function body.
+Add exports for `GuideComparisonCards` and `GuidePathSelector`.
 
-### P1 — Add Dual-CTA (Book + Selena) to 4 Pages
-Apply the same pattern used on `/about`:
-1. **`/sell`** (line ~407): Replace Selena-only bottom CTA with Book primary + Selena secondary
-2. **`/buy`** (line ~234): Same treatment
-3. **`/neighborhoods`** (line ~101): Add a full bottom CTA section before closing
-4. **`/podcast`** (line ~168): Replace YouTube-only bottom with Book primary + YouTube secondary + Selena tertiary
+### Governance Compliance
 
-### P2 — Add Mid-Page Booking Anchor on `/cash-offer-options`
-After the "When Cash Makes Sense" section (line ~277), add a compact `/book` CTA for users who don't want to use the calculator.
-
-### P3 — Sticky Mobile CTA on Sell + Buy Pages
-Add a fixed-bottom "Book a Call" bar on mobile (visible after scrolling past the hero) to short-circuit the long scroll. Uses the same pattern as the Selena floating button but for booking.
-
-### P4 — Trust Signal on Neighborhoods Page
-Add a compact TrustBar or credentials strip between the hero and the grid on `/neighborhoods`.
-
-**Total: ~6 files changed. No structural refactors. All changes follow existing component patterns.**
+- No mid-guide CTAs — these are educational visual enhancements only
+- Terminal routing stays in AuthorityCTABlock (unchanged)
+- Path selector is read-only visual engagement, does not write to session or navigate
+- All new components are bilingual via `useLanguage()`
 

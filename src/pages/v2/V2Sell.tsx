@@ -9,7 +9,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
-import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock } from "lucide-react";
+import { Shield, TrendingUp, FileText, Handshake, CheckCircle, AlertCircle, MessageCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
@@ -17,6 +17,7 @@ import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import heroSellBg from "@/assets/hero-sell-tucson-aerial.png";
+import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
 
 const PAGE_PATH = '/sell';
 const PAGE_INTENT = 'sell' as const;
@@ -415,20 +416,28 @@ const V2SellContent = () => {
               "Hablemos sobre su casa y creemos una estrategia de venta que funcione para su situación."
             )}
           </p>
-          <Button 
-            onClick={handleSelenaRoute}
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 py-3 text-sm sm:px-10 sm:py-6 sm:text-lg shadow-gold"
-          >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            <span className="sm:hidden">{t("Ask Selena", "Pregúntale a Selena")}</span>
-            <span className="hidden sm:inline">{t("Ask Selena to Set Up My Call", "Pídale a Selena que Programe Mi Llamada")}</span>
-          </Button>
-          <p className="text-white/60 text-sm mt-4 max-w-md mx-auto">
-            {t(
-              "Selena will ask a few quick questions so Kasandra is prepared.",
-              "Selena hará unas preguntas rápidas para que Kasandra esté preparada."
-            )}
-          </p>
+          <div className="flex flex-col items-center gap-3">
+            <Button 
+              asChild
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 py-3 text-sm sm:px-10 sm:py-6 sm:text-lg shadow-gold"
+            >
+              <Link
+                to="/book?intent=sell&source=sell_hub_bottom"
+                onClick={() => logCTAClick({ cta_name: 'sell_hub_book_call', destination: '/book', page_path: '/sell', intent: 'sell' })}
+              >
+                <Calendar className="w-5 h-5 mr-2" />
+                {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
+              </Link>
+            </Button>
+            <Button 
+              variant="ghost"
+              onClick={handleSelenaRoute}
+              className="text-white/80 hover:text-cc-gold font-medium rounded-full px-8"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -453,6 +462,7 @@ const V2SellContent = () => {
           </div>
         </div>
       </section>
+      <StickyMobileBookingBar intent="sell" source="sell_hub_sticky" />
     </>
   );
 };
