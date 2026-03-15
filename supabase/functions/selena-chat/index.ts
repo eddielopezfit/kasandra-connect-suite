@@ -1889,6 +1889,8 @@ KASANDRA AUTHORITY POSITIONING:
 
 ${MODE_INSTRUCTIONS_EN}
 
+${TOPIC_HINTS_EN}
+
 When a user provides their email or exhibits high intent, reassure them that Kasandra herself will review their details.`;
 
 const SYSTEM_PROMPT_ES = `KB-0 — CONSTITUCION GOBERNANTE DE SELENA AI (Autoridad Primaria · Prioridad Maxima · No Anulable)
