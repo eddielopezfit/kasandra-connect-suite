@@ -197,7 +197,9 @@ const V2HomeContent = () => {
               {t("Instant Answers, Zero Pressure", "Respuestas Inmediatas, Cero Presión")}
             </h2>
           </div>
-          <InstantAnswerWidget />
+          <Suspense fallback={<div className="h-64 bg-cc-sand/50 rounded-2xl animate-pulse" />}>
+            <LazyInstantAnswerWidget />
+          </Suspense>
         </div>
       </section>
 
