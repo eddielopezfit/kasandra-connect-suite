@@ -574,7 +574,8 @@ function getGovernedChips(
         return { chips: [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET], phase: 2, escalated: false };
       }
       if (phase2TurnCount === 2) {
-        return { chips: [CHIP_KEYS.ESTIMATE_CLOSING_COSTS, CHIP_KEYS.COMPARE_NEIGHBORHOODS, CHIP_KEYS.BROWSE_BUYER_GUIDES], phase: 2, escalated: false };
+        // Turn 2: surface affordability calculator alongside neighborhood tools
+        return { chips: [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.COMPARE_NEIGHBORHOODS, CHIP_KEYS.ESTIMATE_CLOSING_COSTS], phase: 2, escalated: false };
       }
       // Turn 3+: progress toward decision
       return { chips: [CHIP_KEYS.BUYER_READINESS_CHECK, CHIP_KEYS.FIND_OFF_MARKET, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 2, escalated: false };
