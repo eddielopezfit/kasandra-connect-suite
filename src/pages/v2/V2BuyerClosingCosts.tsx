@@ -208,7 +208,7 @@ const V2BuyerClosingCostsContent = () => {
 
   const totLow = lines.reduce((s, l) => s + l.low, 0);
   const totHigh = lines.reduce((s, l) => s + l.high, 0);
-  const cashNeeded = downAmt + (totLow + totHigh) / 2;
+  const cashNeeded = (isCash ? price : downAmt) + (totLow + totHigh) / 2;
 
   const handleCalculate = () => {
     if (price < 50000) return;
