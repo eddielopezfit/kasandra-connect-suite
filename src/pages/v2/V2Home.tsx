@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TrustBar from "@/components/v2/TrustBar";
-import { lazy, Suspense, useState, useEffect, useRef } from "react";
+import { lazy, Suspense, useState } from "react";
 const TestimonialColumns = lazy(() => import("@/components/v2/TestimonialColumns"));
 const LazyHomepageNeighborhoodCards = lazy(() => import("@/components/v2/neighborhood/HomepageNeighborhoodCards"));
 const LazyInstantAnswerWidget = lazy(() => import("@/components/v2/calculator/InstantAnswerWidget"));
@@ -33,7 +33,8 @@ import { updateSessionContext } from '@/lib/analytics/selenaSession';
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
-  const { openChat, clearHistory } = useSelenaChat();
+  const navigate = useNavigate();
+  const { openChat } = useSelenaChat();
   const [ytLoaded, setYtLoaded] = useState(false);
   useDocumentHead({
     titleEn: "Tucson Real Estate | Kasandra Prieto — Bilingual REALTOR® & Concierge",
@@ -110,8 +111,7 @@ const V2HomeContent = () => {
             <button
               onClick={() => {
                 updateSessionContext({ intent: 'buy' });
-                clearHistory();
-                openChat({ source: 'buyer_fork' });
+                navigate('/buy');
               }}
               className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
             >
@@ -130,8 +130,7 @@ const V2HomeContent = () => {
             <button
               onClick={() => {
                 updateSessionContext({ intent: 'sell' });
-                clearHistory();
-                openChat({ source: 'seller_fork' });
+                navigate('/sell');
               }}
               className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
             >
@@ -150,8 +149,7 @@ const V2HomeContent = () => {
             <button
               onClick={() => {
                 updateSessionContext({ intent: 'cash' });
-                clearHistory();
-                openChat({ source: 'cash_fork' });
+                navigate('/cash-offer-options');
               }}
               className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
             >

@@ -334,8 +334,8 @@ function GuidesContent() {
       />
 
       {/* BLUE OCEAN — Feature 6: Intent Journey Map */}
-      {/* Appears only when intent is set. Visual 4-step path with guide + tool previews. */}
-      {activeIntent && (
+      {/* Only show after first guide read to reduce pre-grid cognitive load */}
+      {activeIntent && guidesReadCount > 0 && (
         <IntentJourneyMap
           intent={activeIntent}
           currentStep={Math.min(4, Math.max(1, stage.level - 1)) as 1 | 2 | 3 | 4}
@@ -343,22 +343,24 @@ function GuidesContent() {
       )}
 
       {/* BLUE OCEAN — Feature 4: Contextual Selena Prompt */}
-      {/* Stage-aware message between Decision Lane and grid. Uses getSelenaPromptForStage(). */}
-      <div className="bg-cc-ivory pt-2 pb-4 border-b border-cc-sand-dark/30">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <ContextualSelenaPrompt
-            stageId={stageId}
-            guidesReadCount={guidesReadCount}
-            onAskSelena={handleAskSelena}
-            onRequestSummary={handleRequestSummary}
-            variant="compact"
-          />
+      {/* Only show after user has read at least 1 guide */}
+      {guidesReadCount > 0 && (
+        <div className="bg-cc-ivory pt-2 pb-4 border-b border-cc-sand-dark/30">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <ContextualSelenaPrompt
+              stageId={stageId}
+              guidesReadCount={guidesReadCount}
+              onAskSelena={handleAskSelena}
+              onRequestSummary={handleRequestSummary}
+              variant="compact"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* BLUE OCEAN — Feature 3: Continue Reading Card */}
-      {/* Netflix-style prominent card when user has a guide in progress */}
-      {lastGuideId && (
+      {/* Only show when user has a guide in progress AND has read guides */}
+      {lastGuideId && guidesReadCount > 0 && (
         <ContinueReadingCard
           guideId={lastGuideId}
           onClick={handleGuideClick}

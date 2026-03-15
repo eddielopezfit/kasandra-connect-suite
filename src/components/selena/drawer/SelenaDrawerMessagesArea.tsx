@@ -1,12 +1,22 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Home, DollarSign, HelpCircle, MapPin } from "lucide-react";
 import type { ChatAction, ChatMessage } from "@/contexts/SelenaChatContext";
+
+const EXAMPLE_QUESTIONS = [
+  { en: "What's my home worth?", es: "¿Cuánto vale mi casa?", icon: DollarSign },
+  { en: "Am I ready to buy?", es: "¿Estoy listo para comprar?", icon: Home },
+  { en: "How do cash offers work?", es: "¿Cómo funcionan las ofertas en efectivo?", icon: HelpCircle },
+  { en: "What neighborhoods fit my budget?", es: "¿Qué vecindarios se ajustan a mi presupuesto?", icon: MapPin },
+];
 
 export function SelenaDrawerMessagesArea({
   messages,
   isLoading,
   onActionClick,
   onMessagesAreaClick,
+  onSendMessage,
   scrollRef,
   bottomRef,
 }: {
@@ -14,9 +24,13 @@ export function SelenaDrawerMessagesArea({
   isLoading: boolean;
   onActionClick: (action: ChatAction) => void;
   onMessagesAreaClick: () => void;
+  onSendMessage?: (text: string) => void;
   scrollRef: React.RefObject<HTMLDivElement>;
   bottomRef: React.RefObject<HTMLDivElement>;
 }) {
+  const { language } = useLanguage();
+  const t = (en: string, es: string) => language === 'es' ? es : en;
+
   return (
     // ⚠️ SCROLL STABILITY: This ScrollArea MUST persist across renders.
     // NEVER wrap in conditional rendering or add key={...} that changes during chat.
@@ -28,6 +42,36 @@ export function SelenaDrawerMessagesArea({
       style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
     >
       <div className="space-y-4 pb-2">
+        {/* Empty-state example questions (P4) */}
+        {messages.length === 0 && !isLoading && onSendMessage && (
+          <div className="space-y-3 py-4">
+            <p className="text-xs text-muted-foreground text-center mb-3">
+              {t("Try asking:", "Intenta preguntar:")}
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {EXAMPLE_QUESTIONS.map((q) => {
+                const Icon = q.icon;
+                return (
+                  <button
+                    key={q.en}
+                    onClick={() => onSendMessage(t(q.en, q.es))}
+                    className={cn(
+                      "flex items-start gap-2 p-3 rounded-xl text-left",
+                      "bg-muted/50 hover:bg-muted border border-border/50 hover:border-border",
+                      "transition-all duration-200 group"
+                    )}
+                  >
+                    <Icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                    <span className="text-xs text-foreground leading-snug">
+                      {t(q.en, q.es)}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} onActionClick={onActionClick} />
         ))}

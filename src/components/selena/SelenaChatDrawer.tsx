@@ -6,7 +6,8 @@
  */
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Sparkles, FileText, Loader2, MessageCircle } from 'lucide-react';
+import { Sparkles, FileText, Loader2, MessageCircle, ArrowLeft, X } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { useKeyboardInset } from '@/hooks/useKeyboardInset';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -83,10 +84,12 @@ export function SelenaChatDrawer() {
   const { t, language, setLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState<ConciergeTab | null>(null);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   
   const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const location = useLocation();
   const { keyboardInset, isKeyboardOpen } = useKeyboardInset();
   
   // Compute journey context for tab bar
@@ -107,6 +110,42 @@ export function SelenaChatDrawer() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages.length, isLoading, isKeyboardOpen]);
 
+
+  // Show onboarding on first open (P3)
+  useEffect(() => {
+    if (isOpen && !localStorage.getItem('selena_onboarded')) {
+      setShowOnboarding(true);
+    }
+  }, [isOpen]);
+
+  const dismissOnboarding = useCallback(() => {
+    setShowOnboarding(false);
+    localStorage.setItem('selena_onboarded', '1');
+  }, []);
+
+  // Compute source page for "Return to" link (P6)
+  const sourcePage = useMemo(() => {
+    const path = location.pathname;
+    if (path === '/' || path === '') return null;
+    const segments: Record<string, { en: string; es: string }> = {
+      '/buy': { en: 'Buy', es: 'Comprar' },
+      '/sell': { en: 'Sell', es: 'Vender' },
+      '/cash-offer-options': { en: 'Cash Offers', es: 'Ofertas en Efectivo' },
+      '/guides': { en: 'Guides', es: 'Guías' },
+      '/book': { en: 'Book', es: 'Reservar' },
+      '/about': { en: 'About', es: 'Acerca de' },
+      '/contact': { en: 'Contact', es: 'Contacto' },
+      '/podcast': { en: 'Podcast', es: 'Podcast' },
+      '/community': { en: 'Community', es: 'Comunidad' },
+      '/neighborhoods': { en: 'Neighborhoods', es: 'Vecindarios' },
+    };
+    // Match exact or prefix (for guide detail pages)
+    if (path.startsWith('/guides/')) return { path, label: { en: 'Guide', es: 'Guía' } };
+    if (path.startsWith('/neighborhoods/')) return { path, label: { en: 'Neighborhood', es: 'Vecindario' } };
+    const match = segments[path];
+    if (match) return { path, label: match };
+    return null;
+  }, [location.pathname]);
 
   // Close tab panel when drawer closes & remove body scroll lock
   useEffect(() => {
@@ -203,6 +242,7 @@ export function SelenaChatDrawer() {
     isLoading,
     onActionClick: handleActionClick,
     onMessagesAreaClick: handleMessagesAreaClick,
+    onSendMessage: handleSubmitText,
     scrollRef,
     bottomRef,
   };
@@ -328,7 +368,38 @@ export function SelenaChatDrawer() {
                   t={t}
                 />
               </div>
+              {sourcePage && (
+                <div className="px-4 py-1.5 border-b border-border/50 shrink-0">
+                  <button
+                    onClick={closeChat}
+                    className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                  >
+                    <ArrowLeft className="w-3 h-3" />
+                    {t(`Back to ${sourcePage.label.en}`, `Volver a ${sourcePage.label.es}`)}
+                  </button>
+                </div>
+              )}
             </DrawerHeader>
+
+            {/* First-open onboarding overlay (P3) */}
+            {showOnboarding && (
+              <div className="absolute inset-0 z-10 bg-background/95 flex items-center justify-center p-6" onClick={dismissOnboarding}>
+                <div className="bg-card rounded-2xl p-6 shadow-lg max-w-xs text-center space-y-4 border border-border">
+                  <Sparkles className="w-8 h-8 text-primary mx-auto" />
+                  <h3 className="font-serif text-lg font-semibold text-foreground">
+                    {t("Hi, I'm Selena!", "¡Hola, soy Selena!")}
+                  </h3>
+                  <ul className="text-sm text-muted-foreground text-left space-y-2">
+                    <li>✨ {t("Explore neighborhoods & market data", "Explora vecindarios y datos del mercado")}</li>
+                    <li>📊 {t("Run the numbers on your home", "Calcula los números de tu casa")}</li>
+                    <li>📅 {t("Connect you with Kasandra when you're ready", "Conectarte con Kasandra cuando estés lista/o")}</li>
+                  </ul>
+                  <p className="text-xs text-muted-foreground/70">
+                    {t("Tap anywhere to start", "Toca en cualquier lugar para comenzar")}
+                  </p>
+                </div>
+              </div>
+            )}
 
             <SelenaDrawerMessagesArea {...sharedMessagesProps} />
             <SelenaDrawerSuggestedRepliesChips {...sharedChipsProps} />
@@ -407,8 +478,39 @@ export function SelenaChatDrawer() {
                 onMinimize={handleMinimize}
                 t={t}
               />
+              {sourcePage && (
+                <div className="px-4 py-1.5 border-b border-border/50 shrink-0">
+                  <button
+                    onClick={closeChat}
+                    className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                  >
+                    <ArrowLeft className="w-3 h-3" />
+                    {t(`Back to ${sourcePage.label.en}`, `Volver a ${sourcePage.label.es}`)}
+                  </button>
+                </div>
+              )}
             </div>
           </SheetHeader>
+
+          {/* First-open onboarding overlay (P3) */}
+          {showOnboarding && (
+            <div className="absolute inset-0 z-10 bg-background/95 flex items-center justify-center p-6" onClick={dismissOnboarding}>
+              <div className="bg-card rounded-2xl p-6 shadow-lg max-w-xs text-center space-y-4 border border-border">
+                <Sparkles className="w-8 h-8 text-primary mx-auto" />
+                <h3 className="font-serif text-lg font-semibold text-foreground">
+                  {t("Hi, I'm Selena!", "¡Hola, soy Selena!")}
+                </h3>
+                <ul className="text-sm text-muted-foreground text-left space-y-2">
+                  <li>✨ {t("Explore neighborhoods & market data", "Explora vecindarios y datos del mercado")}</li>
+                  <li>📊 {t("Run the numbers on your home", "Calcula los números de tu casa")}</li>
+                  <li>📅 {t("Connect you with Kasandra when you're ready", "Conectarte con Kasandra cuando estés lista/o")}</li>
+                </ul>
+                <p className="text-xs text-muted-foreground/70">
+                  {t("Click anywhere to start", "Haz clic en cualquier lugar para comenzar")}
+                </p>
+              </div>
+            </div>
+          )}
 
           <SelenaDrawerMessagesArea {...sharedMessagesProps} />
           <SelenaDrawerSuggestedRepliesChips {...sharedChipsProps} />

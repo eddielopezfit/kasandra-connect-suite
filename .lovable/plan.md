@@ -1,100 +1,75 @@
 
 
-# Digital Concierge Hub — UX Audit
+## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
 
-## Confusion Points
+### What We're Doing
 
-### 1. Homepage Intent Fork Opens Chat Instead of Navigating (HIGH)
-The 3-card journey fork ("I'm looking to buy / sell / cash offer") opens the Selena chat drawer. Users clicking "I'm looking to buy" expect to land on `/buy` — not a chat window. The card text says "Get your free buying game plan" which implies a page or tool, not a conversation. This creates an immediate expectation mismatch on the first meaningful interaction.
+Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
 
-**Fix:** Change the intent fork cards to navigate to the corresponding hub page (`/buy`, `/sell`, `/cash-offer-options`) while still setting the session intent. Open Selena as a secondary action (toast or banner on the destination page), not the primary click result.
+### What We Do NOT Import
 
-### 2. Guides Hub Has 7 Layers Before the Grid (HIGH)
-On `/guides`, a first-time visitor sees: Hero → CognitiveProgressBar → DecisionLane → IntentJourneyMap → ContextualSelenaPrompt → ContinueReadingCard → RecommendedCarousel → SearchBar → CategoryNav → Grid. That's **9 distinct UI layers** before a single guide card is visible. On mobile, this is 6+ screen heights of meta-navigation before content.
-
-The DecisionLane, IntentJourneyMap, and ContextualSelenaPrompt all serve similar purposes (intent routing + Selena prompt). The cognitive overhead is high for a first-time visitor who just wants to browse.
-
-**Fix:** Collapse the pre-grid sections. For first-time visitors (no intent set, no guides read), show only: Hero → DecisionLane → CategoryNav → Grid. Move the IntentJourneyMap inside a collapsible "Your Journey" sidebar or accordion within the grid section. Show the ContextualSelenaPrompt only after the user has read 1+ guides (it already has stage awareness — just gate visibility).
-
-### 3. "Start Here" Tab in Selena Duplicates Homepage Fork (MEDIUM)
-The ConciergeTabBar's "Start Here" panel shows the same 3 intent choices ("I'm thinking about selling", "I'm looking to buy", "Just exploring") that the homepage fork already presented. If a user already declared intent on the homepage, the "Start Here" tab correctly shows next steps — but for new users opening Selena from a guide page, it resets them to intent selection even though their browsing context (e.g., reading a selling guide) already implies intent.
-
-**Fix:** When Selena opens from a guide page (`source: 'guide_handoff'`), infer intent from the guide category and skip the intent selection step. The `openChat` call already passes `guideCategory` — use it to pre-set `effectiveIntent` in the Start Here panel.
-
-### 4. "My Options" Tab Shows Seller Tools to Explorers (MEDIUM)
-When no intent is set, the "My Options" panel shows all 3 options with seller-focused "See what I might walk away with" as the first card. For a user who opened Selena from a buyer guide, this is confusing — the first option is about selling.
-
-**Fix:** When `effectiveIntent` is undefined and the user opened from a buyer guide/page, default to buyer-first ordering. Use the current page path as a fallback signal.
+- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
+- No market stats with hard-coded numbers (stale data risk)
+- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
+- No standalone footer (GuideComplianceFooter already exists)
+- No mid-guide CTAs or interactive state that writes to session
 
 ---
 
-## Cognitive Overload
+### Changes
 
-### 5. Homepage: 14 Sections, No Mid-Page Anchoring (HIGH)
-The homepage has 14 sections. After the intent fork (section 2), users enter a long scroll with no wayfinding. There's no visual indicator of "where am I" or "what's next." The sections alternate between brand content (About, Community) and functional content (Calculator, Services, Selena AI) with no clear grouping.
+**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
 
-**Fix:** Add a thin "section progress" indicator on the right edge (desktop) or use distinct background color groupings to create visual "chapters": Discovery (Hero → Fork → Calculator), Trust (About → TrustBar → Testimonials), Services (Services → Selena AI), Community (Podcast → Community → CTA). This groups the 14 sections into 4 cognitive chunks.
+Add optional `variant` field and structured data:
 
-### 6. Guides Grid: 30+ Cards With No Hierarchy Cues (MEDIUM)
-When "All Guides" is selected, 30+ cards render in a flat 3-column grid. Tier 1 cards have images but Tier 2/3 cards are visually identical. Users scanning the grid have no way to identify "start here" vs "deep dive" without reading every title.
+```typescript
+export interface GuideSection {
+  heading: string;
+  headingEs: string;
+  content: string;       // plain-text fallback always required
+  contentEs: string;
+  variant?: 'default' | 'comparison' | 'path-selector';
+  comparisonData?: {
+    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
+    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
+  };
+  pathData?: Array<{
+    id: string;
+    title: string; titleEs: string;
+    desc: string; descEs: string;
+  }>;
+}
+```
 
-**Fix:** Already partially addressed by the thumbnail system. Add a subtle "Start Here" badge to the top 3 guides in each category for first-time visitors (similar to how Netflix surfaces "Top 10" within genres).
+**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
 
----
+Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
 
-## Unclear Paths
+**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
 
-### 7. Selena Chat Has No "Back to Site" Navigation (MEDIUM)
-Inside the Selena chat drawer, the ConciergeTabPanels offer navigation to guides and tools, but there's no breadcrumb or "return to where I was" option. If a user opened Selena from `/guides/cash-offer-guide`, engaged in conversation, then wants to return to that guide, they must close the drawer and manually navigate back.
+Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
 
-**Fix:** Add a small "Return to [Guide Name]" link at the top of the chat when opened from a specific page context. The `source` and `guideId` are already tracked in the open event.
+**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
 
-### 8. Calculator → Report → Book Flow Has No Visual Thread (LOW)
-Users who complete the Instant Answer Widget on the homepage get results inline but no clear "next step" beyond the results. The calculator exists as a standalone section with no explicit connection to the Selena chat or booking flow below it.
+In the `.map()` loop, switch on `section.variant`:
+- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
+- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
+- default → current `whitespace-pre-line` text
 
-**Fix:** After calculator results render, show a contextual CTA: "Want Kasandra to review these numbers with you?" → `/book`. This bridges the self-service tool to the human consultation.
+**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
 
----
+- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
+- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
+- Plain text `content`/`contentEs` stays as fallback
 
-## Missing Guidance
+**6. Export new components** (`src/components/v2/guides/index.ts`)
 
-### 9. No Onboarding for Selena Chat (HIGH)
-When Selena opens for the first time, the user sees an empty chat with a greeting message and suggested reply chips. There's no explanation of what Selena can do, what the tabs mean, or how the concierge system works. The 4-tab bar (Start Here, Guides, My Options, Talk) is unexplained.
+Add exports for `GuideComparisonCards` and `GuidePathSelector`.
 
-**Fix:** Add a one-time "first open" state that shows a 3-bullet overlay: "I can help you explore neighborhoods, run the numbers on your home, or connect you with Kasandra." This dismisses on first interaction and never shows again (stored in localStorage).
+### Governance Compliance
 
-### 10. No "What Can I Ask?" Prompt in Empty Chat (MEDIUM)
-When the chat has no messages (fresh session), the only guidance is the greeting and chips. There's no placeholder content explaining Selena's capabilities in the message area itself.
-
-**Fix:** Show 3-4 example question cards in the empty message area (like ChatGPT's initial state): "What's my home worth?", "Am I ready to buy?", "How do cash offers work?", "What neighborhoods fit my budget?" These send the message on click.
-
----
-
-## Implementation Plan
-
-### P1 — Fix Intent Fork Navigation (Homepage)
-**File:** `src/pages/v2/V2Home.tsx` (lines 110-167)
-Change the 3 fork buttons from `openChat()` to `navigate()` calls to `/buy`, `/sell`, `/cash-offer-options`. Keep `updateSessionContext({ intent })` but remove `clearHistory()` and `openChat()`. Add a Selena banner on the destination pages if not already present.
-
-### P2 — Collapse Guides Pre-Grid Layers
-**File:** `src/pages/v2/V2Guides.tsx` (lines 300-400)
-Gate `IntentJourneyMap`, `ContextualSelenaPrompt`, and `ContinueReadingCard` behind `guidesReadCount > 0`. First-time visitors see only Hero → DecisionLane → CategoryNav → Grid. Returning visitors get the full layered experience.
-
-### P3 — Add Selena First-Open Onboarding
-**File:** `src/components/selena/SelenaChatDrawer.tsx`
-Add a `selena_onboarded` localStorage flag. On first open, render a dismissible overlay card with 3 capability bullets and example prompts. Dismiss on any interaction.
-
-### P4 — Add Empty-State Example Questions
-**File:** `src/components/selena/drawer/SelenaDrawerMessagesArea.tsx`
-When `messages.length === 0`, render 4 clickable example question cards in the message area. Each sends its text as a message on click.
-
-### P5 — Infer Intent from Guide Context in Selena
-**File:** `src/components/selena/ConciergeTabPanels.tsx` (StartHerePanel)
-When `effectiveIntent` is undefined, check if the chat was opened with a `guideCategory` source. Map `buying` → `buy`, `selling`/`valuation` → `sell`, `cash` → `cash`. Skip the intent selection step and show next steps directly.
-
-### P6 — Add "Return to" Context Link in Chat
-**File:** `src/components/selena/SelenaChatDrawer.tsx`
-Track the `source` page path when chat opens. If the user navigated away, show a small "← Back to [page name]" link below the header.
-
-**Total: 6 files changed. No structural refactors. All changes follow existing patterns.**
+- No mid-guide CTAs — these are educational visual enhancements only
+- Terminal routing stays in AuthorityCTABlock (unchanged)
+- Path selector is read-only visual engagement, does not write to session or navigate
+- All new components are bilingual via `useLanguage()`
 

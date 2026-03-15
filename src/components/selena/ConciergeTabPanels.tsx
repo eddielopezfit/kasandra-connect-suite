@@ -75,11 +75,33 @@ export function ConciergeTabPanels({
 
   // effectiveIntent is the single source of truth for all child panels
   const [effectiveIntent, setEffectiveIntent] = useState<Intent | undefined>(() => {
-    return getSessionContext()?.intent as Intent | undefined;
+    // P5: Infer intent from guide category if no explicit intent set
+    const stored = getSessionContext()?.intent as Intent | undefined;
+    if (stored) return stored;
+    const ctx = getSessionContext();
+    const guideCategory = ctx?.entry_guide_category as string | undefined;
+    if (guideCategory) {
+      if (guideCategory === 'buying') return 'buy';
+      if (guideCategory === 'selling' || guideCategory === 'valuation') return 'sell';
+      if (guideCategory === 'cash') return 'cash';
+    }
+    return undefined;
   });
 
   useEffect(() => {
-    setEffectiveIntent(getSessionContext()?.intent as Intent | undefined);
+    const stored = getSessionContext()?.intent as Intent | undefined;
+    if (stored) {
+      setEffectiveIntent(stored);
+      return;
+    }
+    const ctx = getSessionContext();
+    const guideCategory = ctx?.entry_guide_category as string | undefined;
+    if (guideCategory) {
+      if (guideCategory === 'buying') { setEffectiveIntent('buy'); return; }
+      if (guideCategory === 'selling' || guideCategory === 'valuation') { setEffectiveIntent('sell'); return; }
+      if (guideCategory === 'cash') { setEffectiveIntent('cash'); return; }
+    }
+    setEffectiveIntent(undefined);
   }, [activeTab, currentIntent]);
 
   if (!activeTab) return null;
