@@ -50,8 +50,9 @@ export type EntrySource =
    | 'sell_comparison_traditional'
    | 'sell_comparison_undecided'
    | 'instant_answer_affordability'
-   | 'instant_answer_value'
-   | 'guide_synthesis';
+    | 'instant_answer_value'
+    | 'footer_cta'
+    | 'guide_synthesis';
 
 export interface EntryContext {
   source: EntrySource;
