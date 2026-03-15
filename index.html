@@ -3,27 +3,116 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Kasandra Prieto | Tucson Realtor &amp; Podcast Host</title>
-    <meta name="description" content="Your best friend in real estate. Serving the Tucson community with integrity, heart, and bilingual expertise. Realtor, podcast host, and community leader.">
+
+    <!-- SEO: Homepage-optimized title and description (useDocumentHead overrides per route at runtime) -->
+    <title>Tucson Real Estate Agent | Kasandra Prieto — Bilingual REALTOR®</title>
+    <meta name="description" content="Kasandra Prieto is Tucson's trusted bilingual REALTOR®. Cash offers, traditional listings, buyer guidance, and 24/7 AI concierge — serving Pima County in English and Spanish.">
     <meta name="author" content="Kasandra Prieto" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 
-    
-    
+    <!-- Canonical -->
+    <link rel="canonical" href="https://kasandraprietorealtor.com/" />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/og-kasandra.jpg">
+    <meta property="og:site_name" content="Kasandra Prieto | Corner Connect" />
+    <meta property="og:url" content="https://kasandraprietorealtor.com/" />
+    <meta property="og:title" content="Tucson Real Estate Agent | Kasandra Prieto — Bilingual REALTOR®" />
+    <meta property="og:description" content="Kasandra Prieto is Tucson's trusted bilingual REALTOR®. Cash offers, traditional listings, buyer guidance, and 24/7 AI concierge — serving Pima County in English and Spanish." />
+    <meta property="og:image" content="https://kasandraprietorealtor.com/og-kasandra.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="es_MX" />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@KasandraPrieto" />
-    <meta name="twitter:image" content="/og-kasandra.jpg">
+    <meta name="twitter:title" content="Tucson Real Estate Agent | Kasandra Prieto — Bilingual REALTOR®" />
+    <meta name="twitter:description" content="Kasandra Prieto is Tucson's trusted bilingual REALTOR®. Cash offers, traditional listings, buyer guidance, and 24/7 AI concierge — serving Pima County." />
+    <meta name="twitter:image" content="https://kasandraprietorealtor.com/og-kasandra.jpg" />
 
+    <!-- Geo targeting -->
+    <meta name="geo.region" content="US-AZ" />
+    <meta name="geo.placename" content="Tucson, Arizona" />
+    <meta name="geo.position" content="32.2226;-110.9747" />
+    <meta name="ICBM" content="32.2226, -110.9747" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <meta property="og:title" content="Kasandra Prieto | Tucson Realtor &amp; Podcast Host">
-  <meta name="twitter:title" content="Kasandra Prieto | Tucson Realtor &amp; Podcast Host">
-  <meta property="og:description" content="Your best friend in real estate. Serving the Tucson community with integrity, heart, and bilingual expertise. Realtor, podcast host, and community leader.">
-  <meta name="twitter:description" content="Your best friend in real estate. Serving the Tucson community with integrity, heart, and bilingual expertise. Realtor, podcast host, and community leader.">
-</head>
+
+    <!-- SEO: LocalBusiness + RealEstateAgent schema — rendered in <head> for Googlebot (no JS required) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": ["RealEstateAgent", "LocalBusiness"],
+      "@id": "https://kasandraprietorealtor.com/#business",
+      "name": "Kasandra Prieto — Realty Executives Arizona Territory",
+      "alternateName": "Corner Connect",
+      "url": "https://kasandraprietorealtor.com",
+      "logo": "https://kasandraprietorealtor.com/og-kasandra.jpg",
+      "image": "https://kasandraprietorealtor.com/og-kasandra.jpg",
+      "description": "Bilingual REALTOR® serving Tucson and Pima County. Cash offers, traditional listings, first-time buyer programs, and AI-powered real estate concierge.",
+      "telephone": "+15203493248",
+      "email": "kasandra@cornerconnect.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Tucson",
+        "addressRegion": "AZ",
+        "addressCountry": "US",
+        "postalCode": "85701"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 32.2226,
+        "longitude": -110.9747
+      },
+      "areaServed": [
+        {"@type": "City", "name": "Tucson"},
+        {"@type": "AdministrativeArea", "name": "Pima County"},
+        {"@type": "City", "name": "Marana"},
+        {"@type": "City", "name": "Oro Valley"},
+        {"@type": "City", "name": "Sahuarita"},
+        {"@type": "City", "name": "Green Valley"}
+      ],
+      "knowsLanguage": ["en", "es"],
+      "priceRange": "$$",
+      "openingHours": "Mo-Su 00:00-24:00",
+      "sameAs": [
+        "https://www.realtor.com/realestateagents/kasandraprieto",
+        "https://www.zillow.com/profile/KasandraPrieto"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Real Estate Services",
+        "itemListElement": [
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Home Selling — Traditional Listing"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Cash Offer Evaluation"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "First-Time Home Buyer Guidance"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Bilingual Real Estate Consulting"}}
+        ]
+      }
+    }
+    </script>
+
+    <!-- SEO: WebSite schema with SearchAction (enables Google Sitelinks Search Box) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://kasandraprietorealtor.com/#website",
+      "url": "https://kasandraprietorealtor.com",
+      "name": "Kasandra Prieto | Tucson Real Estate",
+      "description": "Digital concierge real estate hub for buyers and sellers in Tucson and Pima County.",
+      "inLanguage": ["en", "es"],
+      "publisher": {
+        "@id": "https://kasandraprietorealtor.com/#business"
+      }
+    }
+    </script>
+  </head>
 
   <body>
     <div id="root"></div>
