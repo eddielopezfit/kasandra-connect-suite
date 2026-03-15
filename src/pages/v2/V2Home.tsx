@@ -26,10 +26,8 @@ import {
 } from "lucide-react";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
-import HomepageNeighborhoodCards from "@/components/v2/neighborhood/HomepageNeighborhoodCards";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import CTASection from "@/components/v2/CTASection";
-import { InstantAnswerWidget } from "@/components/v2/calculator";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { updateSessionContext } from '@/lib/analytics/selenaSession';
 
