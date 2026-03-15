@@ -869,6 +869,27 @@ const CHIP_DESTINATION: Record<string, string> = {
   'Reservar una consulta': '/book',
   'Abrir la calculadora': '/cash-offer-options',
   'Ver la calculadora': '/cash-offer-options',
+
+  // New tools — EN (March 2026 connection pass)
+  'Check my buying power': '/affordability-calculator',
+  'Check buying power': '/affordability-calculator',
+  'Affordability calculator': '/affordability-calculator',
+  'BAH buying power': '/bah-calculator',
+  'Calculate BAH buying power': '/bah-calculator',
+  'BAH calculator': '/bah-calculator',
+  'Get my market analysis': '/home-valuation',
+  'Home valuation': '/home-valuation',
+  "What's my home worth?": '/home-valuation',
+  'How much is my home worth?': '/home-valuation',
+
+  // New tools — ES (March 2026 connection pass)
+  'Verificar poder de compra': '/affordability-calculator',
+  'Calculadora de asequibilidad': '/affordability-calculator',
+  'Poder de compra BAH': '/bah-calculator',
+  'Calculadora BAH': '/bah-calculator',
+  'Obtener mi análisis': '/home-valuation',
+  'Valuación de mi casa': '/home-valuation',
+  '¿Cuánto vale mi casa?': '/home-valuation',
 };
 
 // Tool ID → destination paths it blocks (the routes the tool lives on)
