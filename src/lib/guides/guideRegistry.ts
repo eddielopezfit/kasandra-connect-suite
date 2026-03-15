@@ -456,6 +456,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 32,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-15',
   },
 
   // --- life-change-selling ---
