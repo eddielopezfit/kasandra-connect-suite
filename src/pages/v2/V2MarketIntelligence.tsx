@@ -146,13 +146,13 @@ const V2MarketIntelligenceContent = () => {
                 <Signal className="w-4 h-4 text-green-400" />
                 <span className="text-green-400 text-sm font-medium">
                   {t("Live Data", "Datos en Vivo")}
-                  {verifiedDate && ` · ${verifiedDate}`}
+                  {` · ${pulseStats.month}`}
                 </span>
               </>
             ) : (
               <>
                 <SignalZero className="w-4 h-4 text-cc-gold/60" />
-                <span className="text-cc-gold/60 text-sm">{t("Tucson market averages", "Promedios del mercado de Tucson")}</span>
+                <span className="text-cc-gold/60 text-sm">{pulseStats.month}</span>
               </>
             )}
           </div>
