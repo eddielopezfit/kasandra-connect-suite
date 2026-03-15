@@ -23,6 +23,16 @@ const IMAGE_SLOTS = [
   { guideId: "capital-gains-home-sale-arizona", slotName: "hero", variation: "Empty driveway of a well-maintained Tucson home, desert landscaping, late day light casting long shadows suggesting time and transition." },
   { guideId: "sell-or-rent-tucson", slotName: "hero", variation: "Single-family home with a detached casita or guesthouse visible in the background, warm desert light, sense of optionality and decision, well-maintained yard, terracotta and sand palette." },
   { guideId: "how-long-to-sell-tucson", slotName: "hero", variation: "A Tucson residential street at dusk with long shadows stretching across the road, sense of time passing, warm amber and gold tones fading to deep blue at the horizon." },
+
+  // ─── New Guides (Audit 2026-03-15) — 5 SEO + 3 Ghost Guides ─────────────────
+  { guideId: "itin-loan-guide", slotName: "hero", variation: "A welcoming Tucson desert neighborhood at golden hour — sun-warmed stucco homes, mature saguaro cactus, clean gravel front yards, warm amber light, quiet residential street, sense of belonging and homeownership aspiration." },
+  { guideId: "bad-credit-home-buying-tucson", slotName: "hero", variation: "Front door of a modest well-maintained Tucson home painted in a hopeful warm color — teal or terracotta — desert landscaping, warm afternoon light washing across the entry, sense of a path forward and new beginning." },
+  { guideId: "down-payment-assistance-tucson", slotName: "hero", variation: "Close-up of a hand holding a brass house key in front of a blurred Tucson desert home exterior, warm golden light, shallow depth of field, sense of the moment keys are handed over, muted warm tones." },
+  { guideId: "fha-loan-pima-county-2026", slotName: "hero", variation: "Quiet Tucson neighborhood street at late afternoon, modest starter homes on both sides, desert landscaping, long shadows stretching across the road, warm amber and gold palette, sense of attainability and community." },
+  { guideId: "tucson-market-update-2026", slotName: "hero", variation: "Elevated wide view of the Tucson basin at golden hour looking toward the Santa Catalina Mountains, city grid below with warm amber desert light across the valley, sense of scale and local market perspective." },
+  { guideId: "va-home-loan-tucson", slotName: "hero", variation: "Wide view near Davis-Monthan Air Force Base area in Tucson — open desert terrain, Catalina Mountains visible on the horizon, warm military-desert dusk light, no personnel or vehicles, calm and dignified." },
+  { guideId: "divorce-home-sale-arizona", slotName: "hero", variation: "Single-story adobe home at dusk — front porch empty, desert plants casting long shadows on the walkway, transitional light between day and evening, warm terracotta and muted sand tones, quiet and dignified, no drama." },
+  { guideId: "first-time-buyer-programs-pima-county", slotName: "hero", variation: "A first-time buyer's starter home with a freshly painted front door in a bright hopeful color, neat desert landscaping, clean pathway, warm welcoming afternoon light, sense of accomplishment and new beginnings." },
 ];
 
 serve(async (req) => {
