@@ -974,7 +974,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'arizona-first-time-buyer-programs', lifeEvent: 'first_time_buyer' }, label: { en: 'Find out what I qualify for', es: 'Averiguar para qué califico' } },
       secondaryActions: [],
-      relatedGuideIds: ['first-time-buyer-guide', 'budget-buyer-story', 'first-time-buyer-story'],
+      relatedGuideIds: ['first-time-buyer-guide', 'first-time-buyer-programs-pima-county', 'budget-buyer-story', 'first-time-buyer-story'],
     },
     decisionIntent: 'buy',
     decisionStage: 'explore',

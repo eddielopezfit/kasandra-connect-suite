@@ -764,6 +764,56 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     actionSpec: { type: 'navigate', path: '/guides', label: { en: 'Just exploring', es: 'Solo explorando' } },
     chipKey: CHIP_KEYS.INTENT_EXPLORE,
   },
+
+  // === NEW TOOLS — Affordability, BAH, Home Valuation ===
+  {
+    id: 'tool-affordability-en',
+    label_en: 'Check my buying power',
+    label_es: 'Verificar poder de compra',
+    normalized_key: 'check my buying power',
+    actionSpec: { type: 'navigate', path: '/affordability-calculator', label: { en: 'Check my buying power', es: 'Verificar poder de compra' } },
+    chipKey: CHIP_KEYS.AFFORDABILITY_CALCULATOR,
+  },
+  {
+    id: 'tool-affordability-es',
+    label_en: 'Check my buying power',
+    label_es: 'Verificar poder de compra',
+    normalized_key: 'verificar poder de compra',
+    actionSpec: { type: 'navigate', path: '/affordability-calculator', label: { en: 'Check my buying power', es: 'Verificar poder de compra' } },
+    chipKey: CHIP_KEYS.AFFORDABILITY_CALCULATOR,
+  },
+  {
+    id: 'tool-bah-en',
+    label_en: 'BAH buying power',
+    label_es: 'Poder de compra BAH',
+    normalized_key: 'bah buying power',
+    actionSpec: { type: 'navigate', path: '/bah-calculator', label: { en: 'BAH buying power', es: 'Poder de compra BAH' } },
+    chipKey: CHIP_KEYS.BAH_CALCULATOR,
+  },
+  {
+    id: 'tool-bah-es',
+    label_en: 'BAH buying power',
+    label_es: 'Poder de compra BAH',
+    normalized_key: 'poder de compra bah',
+    actionSpec: { type: 'navigate', path: '/bah-calculator', label: { en: 'BAH buying power', es: 'Poder de compra BAH' } },
+    chipKey: CHIP_KEYS.BAH_CALCULATOR,
+  },
+  {
+    id: 'tool-home-valuation-en',
+    label_en: 'Get my market analysis',
+    label_es: 'Obtener mi análisis de mercado',
+    normalized_key: 'get my market analysis',
+    actionSpec: { type: 'navigate', path: '/home-valuation', label: { en: 'Get my market analysis', es: 'Obtener mi análisis de mercado' } },
+    chipKey: CHIP_KEYS.HOME_VALUATION,
+  },
+  {
+    id: 'tool-home-valuation-es',
+    label_en: 'Get my market analysis',
+    label_es: 'Obtener mi análisis de mercado',
+    normalized_key: 'obtener mi analisis de mercado',
+    actionSpec: { type: 'navigate', path: '/home-valuation', label: { en: 'Get my market analysis', es: 'Obtener mi análisis de mercado' } },
+    chipKey: CHIP_KEYS.HOME_VALUATION,
+  },
 ] as const;
 
 // ============= LOOKUP =============
