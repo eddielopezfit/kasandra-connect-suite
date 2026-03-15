@@ -1,75 +1,32 @@
 
 
-## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
+## Plan: 5 High-Impact Tools — Revised Blueprint
 
-### What We're Doing
+### Approved Revisions (4)
 
-Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
+1. **No semantic drift on buyer_criteria**: Property details for valuation requests are stored in the handoff payload (`summary_json` + `summary_md`), NOT in `lead_profiles.buyer_criteria`. The `buyer_criteria` field remains buyer-only.
 
-### What We Do NOT Import
+2. **Home valuation requires name, email, phone**: All three fields are required — this is a high-intent seller lead, not a low-friction opt-in.
 
-- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
-- No market stats with hard-coded numbers (stale data risk)
-- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
-- No standalone footer (GuideComplianceFooter already exists)
-- No mid-guide CTAs or interactive state that writes to session
+3. **Explicit source attribution on all 3 tools**:
+   - `source=website` on all lead_profiles upserts
+   - `tool_origin=affordability_calculator` / `bah_calculator` / `home_valuation` in event payloads and handoff metadata
+
+4. **No hardcoded market delta in Selena low-offer routing**: The modeContext hint references "current market negotiation context" dynamically via Market Pulse data rather than a fixed 2.5% number.
 
 ---
 
-### Changes
+### Implementation Phases
 
-**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
-
-Add optional `variant` field and structured data:
-
-```typescript
-export interface GuideSection {
-  heading: string;
-  headingEs: string;
-  content: string;       // plain-text fallback always required
-  contentEs: string;
-  variant?: 'default' | 'comparison' | 'path-selector';
-  comparisonData?: {
-    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-  };
-  pathData?: Array<{
-    id: string;
-    title: string; titleEs: string;
-    desc: string; descEs: string;
-  }>;
-}
-```
-
-**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
-
-Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
-
-**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
-
-Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
-
-**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
-
-In the `.map()` loop, switch on `section.variant`:
-- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
-- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
-- default → current `whitespace-pre-line` text
-
-**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
-
-- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
-- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
-- Plain text `content`/`contentEs` stays as fallback
-
-**6. Export new components** (`src/components/v2/guides/index.ts`)
-
-Add exports for `GuideComparisonCards` and `GuidePathSelector`.
-
-### Governance Compliance
-
-- No mid-guide CTAs — these are educational visual enhancements only
-- Terminal routing stays in AuthorityCTABlock (unchanged)
-- Path selector is read-only visual engagement, does not write to session or navigate
-- All new components are bilingual via `useLanguage()`
-
+| Phase | Task | Files |
+|-------|------|-------|
+| 1 | Expand affordabilityAlgorithm (PMI, credit tiers, breakdown) | `src/lib/calculator/affordabilityAlgorithm.ts` |
+| 2 | Create bahMortgageAlgorithm | `src/lib/calculator/bahMortgageAlgorithm.ts` |
+| 3 | Build V2AffordabilityCalculator page | `src/pages/v2/V2AffordabilityCalculator.tsx` |
+| 4 | Build V2BAHCalculator page | `src/pages/v2/V2BAHCalculator.tsx` |
+| 5 | Create submit-valuation-request edge function | `supabase/functions/submit-valuation-request/index.ts` |
+| 6 | Build V2HomeValuation page (3-step, all fields required) | `src/pages/v2/V2HomeValuation.tsx` |
+| 7 | Register routes in App.tsx | `src/App.tsx` |
+| 8 | Add analytics event types | `src/lib/analytics/logEvent.ts` |
+| 9 | Add Selena keyword hints (4 blocks) | `supabase/functions/selena-chat/modeContext.ts` |
+| 10 | Add SEO route meta | `src/lib/seo/seoRouteMeta.ts` |
