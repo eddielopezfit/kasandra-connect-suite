@@ -717,7 +717,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Check current Tucson market conditions',
         nameEs: 'Revisa las condiciones actuales del mercado de Tucson',
-        text: 'Review days-on-market (DOM), list-to-sale price ratio, and active inventory in your ZIP code. Kasandra's market intelligence page has live Tucson housing data updated monthly.',
+        text: "Review days-on-market (DOM), list-to-sale price ratio, and active inventory in your ZIP code. Kasandra's market intelligence page has live Tucson housing data updated monthly.",
         textEs: 'Revisa los días en el mercado (DOM), la relación precio lista vs. venta e inventario activo en tu código postal. La página de inteligencia de mercado de Kasandra tiene datos en vivo.',
       },
       {
