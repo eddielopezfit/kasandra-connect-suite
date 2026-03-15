@@ -269,23 +269,50 @@ export default function GlassmorphismHero({
             </p>
 
             {/* CTA buttons */}
-            <div className="hero-fade-in hero-delay-400 flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={handleTalkToSelena}
+            <div className="hero-fade-in hero-delay-400 flex flex-col sm:flex-row gap-4 items-start">
+              <Link
+                to={primaryLink}
+                onClick={() => logCTAClick({
+                  cta_name: 'hero_book_call',
+                  destination: primaryLink,
+                  page_path: pagePath,
+                  intent: resolvedIntent as any,
+                })}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-cc-gold text-cc-navy font-semibold text-base shadow-gold hover:bg-cc-gold-dark hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cc-gold/50 focus:ring-offset-2 focus:ring-offset-cc-navy"
               >
-                <MessageCircle className="w-5 h-5" />
+                <Calendar className="w-5 h-5" />
                 {primaryLabel}
-              </button>
-
-              <Link
-                to={secondaryLink}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
-              >
-                {secondaryIcon || <BookOpen className="w-5 h-5" />}
-                {secondaryLabel}
-                <ArrowRight className="w-4 h-4" />
               </Link>
+
+              {secondaryLabelOverride && secondaryLinkOverride ? (
+                <Link
+                  to={secondaryLink}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
+                >
+                  {secondaryIcon || <BookOpen className="w-5 h-5" />}
+                  {secondaryLabel}
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              ) : (
+                <Link
+                  to={secondaryLink}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
+                >
+                  {secondaryIcon || <BookOpen className="w-5 h-5" />}
+                  {secondaryLabel}
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              )}
+            </div>
+
+            {/* Selena text link — always present as tertiary */}
+            <div className="hero-fade-in hero-delay-500 mt-3">
+              <button
+                onClick={handleTalkToSelena}
+                className="text-cc-ivory/60 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
+              >
+                {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
+              </button>
             </div>
           </div>
 
