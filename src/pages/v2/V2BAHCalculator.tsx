@@ -257,11 +257,11 @@ const V2BAHCalculatorContent = () => {
               )}
 
               {isDisabilityExempt && (
-                <div className="flex items-center justify-between p-4 rounded-xl border bg-green-50 border-green-200">
-                  <span className="text-sm font-semibold text-green-800">
+                <div className="flex items-center justify-between p-4 rounded-xl border bg-cc-gold/10 border-cc-gold/30">
+                  <span className="text-sm font-semibold text-cc-navy">
                     {t("VA Funding Fee: Exempt ✓", "Cargo VA: Exento ✓")}
                   </span>
-                  <span className="text-sm font-semibold text-green-800">{fmt(0)}</span>
+                  <span className="text-sm font-semibold text-cc-navy">{fmt(0)}</span>
                 </div>
               )}
             </div>

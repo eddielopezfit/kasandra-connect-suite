@@ -206,4 +206,22 @@ export const GUIDE_ROUTE_META: Record<string, RouteMeta> = {
     canonical: 'https://kasandraprietorealtor.com/guides/first-time-buyer-programs-pima-county',
     schemaType: 'HowTo',
   },
+  '/affordability-calculator': {
+    title: 'Affordability Calculator | How Much Home Can You Afford? — Kasandra Prieto',
+    description: 'Calculate your Tucson home buying power with DTI analysis, PMI estimates, and credit score adjustments. Free tool — no login required.',
+    canonical: 'https://kasandraprietorealtor.com/affordability-calculator',
+    schemaType: 'WebApplication',
+  },
+  '/bah-calculator': {
+    title: 'BAH Calculator | Military Home Buying Power in Tucson — Kasandra Prieto',
+    description: 'Turn your BAH into Tucson home buying power. VA loan calculator for Davis-Monthan AFB families — $0 down, no PMI, funding fee estimates.',
+    canonical: 'https://kasandraprietorealtor.com/bah-calculator',
+    schemaType: 'WebApplication',
+  },
+  '/home-valuation': {
+    title: 'Free Home Valuation | Personalized CMA — Kasandra Prieto',
+    description: 'Get a personalized comparative market analysis for your Tucson home — not an algorithm. Kasandra reviews active, pending, and sold data.',
+    canonical: 'https://kasandraprietorealtor.com/home-valuation',
+    schemaType: 'Service',
+  },
 };
