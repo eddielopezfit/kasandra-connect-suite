@@ -1295,6 +1295,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "FHA loans are the most common first home purchase tool in Tucson — and they pair powerfully with local DPA programs. Kasandra can help you understand if FHA is the right fit and connect you with lenders who specialize in first-time buyers.",
       es: "Los préstamos FHA son la herramienta de compra de primera vivienda más común en Tucson — y se combinan poderosamente con los programas DPA locales. Kasandra puede ayudarte a entender si FHA es la opción correcta.",
     },
+    lastVerifiedDate: '2026-03-15',
   },
 
 
