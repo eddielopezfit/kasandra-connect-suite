@@ -189,7 +189,7 @@ const INTENT_PRIORITY: Record<string, number> = {
   explore: 5,
 };
 
-type CanonicalIntent = "buy" | "sell" | "cash" | "dual" | "explore";
+type CanonicalIntent = "buy" | "sell" | "cash" | "dual" | "explore" | "invest";
 
 /**
  * Picks the highest-priority intent from detected intents
@@ -211,7 +211,8 @@ function normalizeIntent(raw: string): CanonicalIntent | null {
   if (v === "cash_offer") return "cash";
   if (v === "exploring") return "explore";
   if (v === "ready") return null; // 'ready' is urgency/timeline, not intent
-  if (v === "buy" || v === "sell" || v === "cash" || v === "dual" || v === "explore") return v;
+  if (v === "investor" || v === "invest" || v === "rental" || v === "flip") return "invest";
+  if (v === "buy" || v === "sell" || v === "cash" || v === "dual" || v === "explore" || v === "invest") return v;
   return null;
 }
 
@@ -341,18 +342,42 @@ function detectIntent(message: string, route: string = ''): string[] {
     intents.push("cash");
   }
   
-  // Single intent detection (only if no dual detected)
-  if (!intents.includes("dual")) {
+  // FIX-SIM-01: Investor/landlord/flip intent detection
+  // Words: investor, rental, flip, cap rate, ROI, landlord, Airbnb, short-term, investment property
+  if (/investor|invest|rental property|flip|flipper|cap rate|\broi\b|landlord|airbnb|short.?term rental|investment property|propiedad de inversión|arrendador|renta|flipear|rendimiento/i.test(lower)) {
+    intents.push("invest");
+  }
+  
+  // Single intent detection (only if no dual/invest detected)
+  if (!intents.includes("dual") && !intents.includes("invest")) {
     if (/buy|comprar|purchase|busco casa|looking for a home/.test(lower)) intents.push("buy");
     if (/sell|vender|selling|list|listar/.test(lower)) intents.push("sell");
     if (/exploring|curious|thinking|quizás|no sé|just looking/.test(lower)) intents.push("explore");
     if (route.includes("cash-offer") || route.includes("seller")) intents.push("sell");
   }
+
+  // FIX-SIM-02: Topic-signal intent advancement
+  // If message is a topic-specific question (not an explicit intent declaration),
+  // infer the most likely intent to prevent STUCK_PHASE1.
+  if (intents.length === 0) {
+    // Seller-topic signals
+    if (/cma|comparative market|what.*listing|how.*list|seller|closing cost|days on market|net proceed|staging|home prep|what.*worth|home value|valuation|cuánto vale/i.test(lower)) {
+      intents.push("sell");
+    }
+    // Buyer-topic signals
+    else if (/pre.?approv|mortgage|down payment|first.?time buyer|what should i prepare|earnest money|inspection|closing|move.?in|neighborhood|school district|ftb|fha|va loan/i.test(lower)) {
+      intents.push("buy");
+    }
+    // Market/timing questions — nudge to explore so Phase 1 still shows routing chips
+    else if (/is now a good time|market|interest rate|good time to|when should|right time|should i wait/i.test(lower)) {
+      intents.push("explore");
+    }
+  }
   
   // Normalize and dedupe, filter out nulls
   const normalized = intents.map(normalizeIntent).filter((i): i is CanonicalIntent => i !== null);
   
-  // Priority order for primaryIntent: cash > dual > sell > buy > explore
+  // Priority order for primaryIntent: cash > dual > invest > sell > buy > explore
   // This ensures Router decisions are consistent
   return normalized.length > 0 ? [...new Set(normalized)] : ["explore"];
 }
@@ -477,6 +502,12 @@ function getGovernedChips(
   const isAsap = timeline === 'asap';
   const isLooping = detectLoop(engagement.chipHistory);
 
+  // FIX-SIM-03: Turn count for chip rotation (prevents CHIP_REPETITION)
+  // Count how many Phase 2 turns user has seen to rotate chips over time
+  const phase2TurnCount = engagement.chipHistory.filter(
+    m => !/^(intent_sell|intent_buy|intent_explore|i'm thinking|just looking|exploring)/.test(m)
+  ).length;
+
   // PHASE 3 triggers: proceeds asked, compared 2+ times, ASAP timeline, or looping
   const enterPhase3 =
     engagement.hasAskedProceeds ||
@@ -489,21 +520,50 @@ function getGovernedChips(
     return { chips, phase: 3, escalated: isLooping || engagement.hasComparedOptions >= 2 };
   }
 
-  // PHASE 2: Intent known — MAX 2 chips, no guides unless first time
+  // PHASE 2: Intent known — rotate chips to prevent repetition
   if (hasIntent) {
+    // FIX-SIM-04: Investor / landlord / flip path — dedicated chip sequence
+    if (intent === 'invest') {
+      if (phase2TurnCount <= 1) {
+        return { chips: [CHIP_KEYS.GUIDE_SELL_OR_RENT, CHIP_KEYS.TUCSON_MARKET_DATA], phase: 2, escalated: false };
+      }
+      if (phase2TurnCount === 2) {
+        return { chips: [CHIP_KEYS.COMPARE_CASH_LISTING, CHIP_KEYS.BROWSE_GUIDES], phase: 2, escalated: false };
+      }
+      // After 3+ turns escalate to booking
+      return { chips: [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 3, escalated: true };
+    }
+
     if (intent === 'sell' || intent === 'cash') {
-      if (engagement.hasAskedValue) {
-        const chips = [CHIP_KEYS.COMPARE_CASH_LISTING, CHIP_KEYS.GET_SELLING_OPTIONS];
+      // FIX-SIM-05: Rotate sell chips based on turn count (prevents static repetition)
+      if (engagement.hasAskedValue || phase2TurnCount >= 3) {
+        // Turn 3+: shift to proceeds path
+        return { chips: [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 3, escalated: true };
+      }
+      if (phase2TurnCount >= 2 && engagement.hasComparedOptions >= 1) {
+        // Turn 2 + already compared: show readiness path
+        const chips = intent === 'cash'
+          ? [CHIP_KEYS.CASH_READINESS, CHIP_KEYS.ESTIMATE_PROCEEDS]
+          : [CHIP_KEYS.SELLER_READINESS, CHIP_KEYS.ESTIMATE_PROCEEDS];
         return { chips, phase: 2, escalated: false };
       }
+      // Turn 1-2: show initial sell chips
       const chips = intent === 'cash'
         ? [CHIP_KEYS.CASH_READINESS, CHIP_KEYS.COMPARE_CASH_LISTING]
         : [CHIP_KEYS.GET_SELLING_OPTIONS, CHIP_KEYS.COMPARE_CASH_LISTING];
       return { chips, phase: 2, escalated: false };
     }
+
     if (intent === 'buy') {
-      const chips = [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET];
-      return { chips, phase: 2, escalated: false };
+      // FIX-SIM-06: Rotate buy chips — cycle through 3 chip sets to prevent repetition
+      if (phase2TurnCount <= 1) {
+        return { chips: [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET], phase: 2, escalated: false };
+      }
+      if (phase2TurnCount === 2) {
+        return { chips: [CHIP_KEYS.ESTIMATE_CLOSING_COSTS, CHIP_KEYS.COMPARE_NEIGHBORHOODS, CHIP_KEYS.BROWSE_BUYER_GUIDES], phase: 2, escalated: false };
+      }
+      // Turn 3+: progress toward decision
+      return { chips: [CHIP_KEYS.BUYER_READINESS_CHECK, CHIP_KEYS.FIND_OFF_MARKET, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 2, escalated: false };
     }
   }
 
@@ -997,11 +1057,36 @@ const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
   'just exploring': {
     en: ["Tell me about selling", "Tell me about buying", "What are my options?"],
     es: ["Cuéntame sobre vender", "Cuéntame sobre comprar", "¿Cuáles son mis opciones?"]
+  },
+  // FIX-SIM-07: Investor / landlord / flip path progressions
+  "i'm an investor": {
+    en: ["Sell or keep as rental?", "View Tucson market data", "Talk with Kasandra"],
+    es: ["¿Vender o mantener como renta?", "Ver datos del mercado en Tucson", "Hablar con Kasandra"]
+  },
+  "i'm looking at investment properties": {
+    en: ["Analyze rental yield", "Compare neighborhoods", "Get off-market access"],
+    es: ["Analizar rendimiento de renta", "Comparar vecindarios", "Acceder a propiedades fuera del mercado"]
+  },
+  "rental property": {
+    en: ["Sell or keep as rental?", "Estimate cash flow", "Talk with Kasandra"],
+    es: ["¿Vender o mantener como renta?", "Estimar flujo de caja", "Hablar con Kasandra"]
+  },
+  "flip": {
+    en: ["View Tucson market data", "Get off-market access", "Talk with Kasandra"],
+    es: ["Ver datos del mercado en Tucson", "Acceder a propiedades fuera del mercado", "Hablar con Kasandra"]
+  },
+  "cap rate": {
+    en: ["Talk with Kasandra", "View market data", "Get off-market access"],
+    es: ["Hablar con Kasandra", "Ver datos del mercado", "Acceder a propiedades fuera del mercado"]
+  },
+  "sell or rent": {
+    en: ["View sell-or-rent guide", "Estimate net proceeds", "Talk with Kasandra"],
+    es: ["Ver guía vender o rentar", "Estimar ganancias netas", "Hablar con Kasandra"]
   }
 };
 
 // ============= INTENT-AWARE SUGGESTION FILTERING =============
-type IntentKey = 'sell' | 'cash' | 'buy' | 'explore';
+type IntentKey = 'sell' | 'cash' | 'buy' | 'explore' | 'invest';
 
 function getSuggestedReplies(
   intent: string | undefined, 
@@ -1033,6 +1118,11 @@ function getSuggestedReplies(
       en: ["Take readiness check", "View first-time buyer guide", "What should I prepare?"],
       es: ["Tomar evaluación de preparación", "Ver guía para compradores", "¿Qué debo preparar?"]
     },
+    // FIX-SIM-08: Investor reply suggestions
+    invest: {
+      en: ["Sell or keep as rental?", "View Tucson market data", "Talk with Kasandra"],
+      es: ["¿Vender o mantener como renta?", "Ver datos del mercado en Tucson", "Hablar con Kasandra"]
+    },
     explore: {
       en: ["I'm thinking about selling", "I'm looking to buy", "What are my options?"],
       es: ["Estoy pensando en vender", "Estoy buscando comprar", "¿Cuáles son mis opciones?"]
@@ -1043,6 +1133,7 @@ function getSuggestedReplies(
   const intentKey: IntentKey = intent === 'cash' ? 'cash'
                              : intent === 'sell' ? 'sell'
                              : intent === 'buy' ? 'buy'
+                             : intent === 'invest' ? 'invest'
                              : 'explore';
   
   let suggestions = [...staticReplies[intentKey][language]];
