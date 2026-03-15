@@ -242,6 +242,7 @@ export function SelenaChatDrawer() {
     isLoading,
     onActionClick: handleActionClick,
     onMessagesAreaClick: handleMessagesAreaClick,
+    onSendMessage: handleSubmitText,
     scrollRef,
     bottomRef,
   };
