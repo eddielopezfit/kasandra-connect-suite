@@ -1238,7 +1238,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     funnelStage: 'tofu',
     keywords: ['down payment assistance tucson', 'pima county dpa', 'pths program', 'lighthouse program tucson', 'home program tucson', 'ayuda pago inicial tucson'],
     tier: 1,
-    lifeEvent: undefined,
+    lifeEvent: 'first_time_buying',
     assetSlots: { disclaimer: 'financial' },
     destinations: {
       primaryAction: { type: 'open_chat', payload: { source: 'guide', guideId: 'down-payment-assistance-tucson' }, label: { en: 'Talk with Kasandra', es: 'Hablar con Kasandra' } },
