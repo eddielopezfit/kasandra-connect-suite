@@ -3932,8 +3932,12 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         : ["Estimate my net proceeds", "Talk with Kasandra"];
     } else {
       // Layer 5: Keyword-triggered chips (PROGRESSION_MAP) — highest specificity
+      // getSuggestedReplies checks PROGRESSION_MAP first, then falls back to intent-based statics.
+      // We detect a keyword hit by passing the user message — if PROGRESSION_MAP matches,
+      // it returns keyword-specific chips different from the intent-based fallback.
       const keywordChips = getSuggestedReplies(context.intent, language, message);
-      const hasKeywordHit = keywordChips.length > 0 && keywordChips !== getSuggestedReplies(context.intent, language);
+      const fallbackChips = getSuggestedReplies(context.intent, language);
+      const hasKeywordHit = keywordChips.length > 0 && JSON.stringify(keywordChips) !== JSON.stringify(fallbackChips);
       
       if (hasKeywordHit) {
         // Keyword override — use PROGRESSION_MAP match
@@ -3945,8 +3949,6 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         // Layer 7: Governed phase chips (fallback)
         suggestedReplies = chips;
       }
-      // Use governed phase chips (fallback)
-      suggestedReplies = chips;
     }
 
     // Guard 4: If journey_state !== 'decide', strip booking-only chips/actions
