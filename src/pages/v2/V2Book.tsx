@@ -136,6 +136,13 @@ const V2BookContent = () => {
       <section className="py-8 md:py-12 bg-cc-ivory w-full">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
+            {contextNote && (
+              <div className="bg-cc-sand rounded-xl p-4 mb-6 text-center border border-cc-sand-dark/30">
+                <p className="text-sm text-cc-charcoal">
+                  {t(contextNote.en, contextNote.es)}
+                </p>
+              </div>
+            )}
             <GHLBookingCalendar />
           </div>
         </div>
