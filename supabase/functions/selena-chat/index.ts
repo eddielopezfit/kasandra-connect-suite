@@ -2610,6 +2610,8 @@ POSICIONAMIENTO DE AUTORIDAD DE KASANDRA:
 
 ${MODE_INSTRUCTIONS_ES}
 
+${TOPIC_HINTS_ES}
+
 Cuando el cliente proporcione su correo o muestre gran interés, asegúrele que la misma Kasandra revisará sus detalles.`;
 
 // ============= MODE DETECTION HELPER =============
