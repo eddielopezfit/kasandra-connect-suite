@@ -50,6 +50,8 @@ import {
   detectMode, 
   MODE_INSTRUCTIONS_EN, 
   MODE_INSTRUCTIONS_ES,
+  TOPIC_HINTS_EN,
+  TOPIC_HINTS_ES,
   type ConversationMode,
   type ConversationState,
 } from "./modeContext.ts";
@@ -1887,6 +1889,8 @@ KASANDRA AUTHORITY POSITIONING:
 
 ${MODE_INSTRUCTIONS_EN}
 
+${TOPIC_HINTS_EN}
+
 When a user provides their email or exhibits high intent, reassure them that Kasandra herself will review their details.`;
 
 const SYSTEM_PROMPT_ES = `KB-0 — CONSTITUCION GOBERNANTE DE SELENA AI (Autoridad Primaria · Prioridad Maxima · No Anulable)
@@ -2605,6 +2609,8 @@ POSICIONAMIENTO DE AUTORIDAD DE KASANDRA:
 - Una oración máximo para posicionamiento de Kasandra por respuesta.
 
 ${MODE_INSTRUCTIONS_ES}
+
+${TOPIC_HINTS_ES}
 
 Cuando el cliente proporcione su correo o muestre gran interés, asegúrele que la misma Kasandra revisará sus detalles.`;
 
