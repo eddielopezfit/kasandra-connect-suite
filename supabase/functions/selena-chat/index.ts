@@ -471,7 +471,7 @@ function getGovernedChips(
   intent: string | undefined,
   timeline: string | null,
   engagement: SessionEngagementState,
-  language: 'en' | 'es',
+  _language: 'en' | 'es',
 ): { chips: string[]; phase: 1 | 2 | 3; escalated: boolean } {
   const hasIntent = !!intent && intent !== 'explore';
   const isAsap = timeline === 'asap';
