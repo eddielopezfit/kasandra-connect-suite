@@ -35,10 +35,10 @@ const V2HomeContent = () => {
   const { t } = useLanguage();
   const { openChat, clearHistory } = useSelenaChat();
   useDocumentHead({
-    titleEn: "Kasandra Prieto | Tucson Realtor & Bilingual Real Estate Agent",
-    titleEs: "Kasandra Prieto | Agente de Bienes Raíces Bilingüe en Tucson",
-    descriptionEn: "Bilingual real estate guidance in Tucson. 24/7 AI concierge, cash offer options, and personalized home buying & selling support.",
-    descriptionEs: "Orientación bilingüe de bienes raíces en Tucson. Asistente IA 24/7, opciones de oferta en efectivo y apoyo personalizado.",
+    titleEn: "Tucson Real Estate | Kasandra Prieto — Bilingual REALTOR® & Concierge",
+    titleEs: "Bienes Raíces en Tucson | Kasandra Prieto — REALTOR® Bilingüe y Concierge",
+    descriptionEn: "Tucson real estate agent serving Pima County. Cash offers, market listings, buyer guidance, and 24/7 AI concierge — bilingual service in English & Spanish.",
+    descriptionEs: "Agente de bienes raíces en Tucson sirviendo Pima County. Ofertas en efectivo, listados, orientación de compra y asistente IA 24/7 — servicio bilingüe.",
   });
 
 

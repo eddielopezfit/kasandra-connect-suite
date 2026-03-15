@@ -63,7 +63,7 @@ const V2BuyContent = () => {
       {/* Hero */}
       <GlassmorphismHero
         badge={t("For Buyers", "Para Compradores")}
-        headline={t("Find Your Tucson Home with Confidence.", "Encuentra tu hogar en Tucson con confianza.")}
+        headline={t("Buy a Home in Tucson with Confidence.", "Compre una Casa en Tucson con Confianza.")}
         subtext={t(
           "Kasandra guides buyers through every step — from first search to closed door — with honesty, expertise, and an AI concierge built for you.",
           "Kasandra guía a compradores en cada paso — desde la primera búsqueda hasta el cierre — con honestidad, experiencia y un asistente de IA diseñado para ti."

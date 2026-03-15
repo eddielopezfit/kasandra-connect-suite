@@ -73,10 +73,10 @@ const V2MarketIntelligenceContent = () => {
   const { stats: pulseStats, isLive, loading } = useMarketPulse(language);
 
   useDocumentHead({
-    titleEn: "Tucson Real Estate Market Intelligence | Current Market Data",
-    titleEs: "Inteligencia del Mercado Inmobiliario de Tucson | Datos del Mercado Actual",
-    descriptionEn: "Live Tucson housing market data — days on market, sale-to-list ratio, holding costs, and what it means for buyers and sellers right now.",
-    descriptionEs: "Datos en vivo del mercado de Tucson — días en mercado, precio vs. lista, costos de espera, y qué significa para compradores y vendedores.",
+    titleEn: "Tucson Real Estate Market Data 2026 | Live Housing Stats — Kasandra Prieto",
+    titleEs: "Datos del Mercado Inmobiliario de Tucson 2026 | Estadísticas en Vivo — Kasandra Prieto",
+    descriptionEn: "Live Tucson real estate market intelligence — days on market, sale-to-list ratios, inventory trends, and what it means for buyers and sellers right now.",
+    descriptionEs: "Inteligencia del mercado de Tucson en vivo — días en mercado, ratios de venta, tendencias de inventario y qué significa para compradores y vendedores.",
   });
 
   useEffect(() => {

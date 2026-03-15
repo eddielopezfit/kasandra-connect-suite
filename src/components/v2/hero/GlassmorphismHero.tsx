@@ -163,8 +163,8 @@ export default function GlassmorphismHero({
       ? t(`Welcome back, ${returningContext.firstName}.`, `Bienvenido/a de nuevo, ${returningContext.firstName}.`)
       : t("Welcome back.", "Bienvenido/a de nuevo.")
     : t(
-        "Your Tucson Home. Your Decision. Your Clarity.",
-        "Tu hogar en Tucson. Tu decisión. Tu claridad."
+        "Tucson Real Estate. Your Decision. Your Clarity.",
+        "Bienes Raíces en Tucson. Tu Decisión. Tu Claridad."
       );
 
   const subtext = useOverrides
