@@ -689,7 +689,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: 'Contact your lender  -  request a hardship review',
         nameEs: 'Contacta a tu prestamista  -  solicita una revisión de dificultades',
-        text: 'Call your servicer's loss mitigation department. Request a forbearance, loan modification, or repayment plan. Document every call. This can pause foreclosure proceedings while options are evaluated.',
+        text: "Call your servicer's loss mitigation department. Request a forbearance, loan modification, or repayment plan. Document every call. This can pause foreclosure proceedings while options are evaluated.",
         textEs: 'Llama al departamento de mitigación de pérdidas de tu prestamista. Solicita una moratoria, modificación de préstamo o plan de pago. Documenta cada llamada.',
       },
       {
