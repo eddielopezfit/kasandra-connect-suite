@@ -25,7 +25,7 @@ const data: GuideContentData = {
       heading: 'The Pricing Strategy Decision',
       headingEs: 'La Decisión de Estrategia de Precios',
       variant: 'path-selector',
-      content: "There are three meaningful pricing strategies. Each has different risk/reward profiles in Tucson's current balanced market (4.92 months supply, 97.64% sale-to-list ratio, Jan 2026).",
+      content: "There are three meaningful pricing strategies. Each has different risk/reward profiles in Tucson's current balanced market (4.92 months supply, 97.64% sale-to-list ratio, March 2026).",
       contentEs: "Hay tres estrategias de precios significativas. Cada una tiene diferentes perfiles de riesgo/recompensa en el mercado equilibrado actual de Tucson.",
       pathData: [
         {
