@@ -530,14 +530,17 @@ function GuideDetailContent() {
         <GuideCTAGuardrail guideId={guideId} />
       </article>
 
-      {/* Selena Synthesis CTA — appears after 70%+ scroll */}
+      {/* Selena Synthesis CTA — appears after 60%+ scroll */}
       {synthesisVisible && (
         <section className="bg-cc-navy py-10">
           <div className="container mx-auto px-4 max-w-3xl text-center">
-            <p className="text-white/80 text-lg mb-5">
+            <p className="text-white text-xl font-serif font-semibold mb-2">
+              {t("You've done the research.", "Ya hiciste la investigación.")}
+            </p>
+            <p className="text-white/70 text-base mb-6">
               {t(
-                "You've done the research. Want Selena to help you apply this to your situation?",
-                "Ya hiciste la investigación. ¿Quieres que Selena te ayude a aplicar esto a tu situación?"
+                "Want Selena to help you apply this to your situation?",
+                "¿Quieres que Selena te ayude a aplicar esto a tu situación?"
               )}
             </p>
             <button
@@ -546,15 +549,15 @@ function GuideDetailContent() {
                 openChat({
                   source: 'guide_synthesis',
                   prefillMessage: t(
-                    `I just read the "${guideTitle}" guide — can you help me apply this to my situation?`,
-                    `Acabo de leer la guía "${guideTitle}" — ¿puedes ayudarme a aplicar esto a mi situación?`
+                    `I just read "${guide.title}" — can you help me apply this to my situation?`,
+                    `Acabo de leer "${guide.titleEs || guide.title}" — ¿puedes ayudarme a aplicar esto a mi situación?`
                   ),
                 });
               }}
               className="inline-flex items-center gap-2 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold px-8 py-3 rounded-full transition-colors"
             >
               <MessageCircle className="w-5 h-5" />
-              {t("Ask Selena About This", "Pregúntale a Selena Sobre Esto")}
+              {t("Ask Selena About This", "Pregúntale a Selena")}
             </button>
           </div>
         </section>
