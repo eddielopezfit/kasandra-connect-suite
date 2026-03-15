@@ -134,8 +134,13 @@ CALM AUTHORITY FRAMING:
 - "Kasandra personally reviews each situation before speaking with a client."
 - "She'll review your situation before your call." (reassurance, not urgency)
 - Never compare to other agents — Kasandra is the only option
-`;
 
+CALCULATOR RESULT INTERPRETATION (Modes 2-3):
+- If seller_calc_data is present: Reference the actual cashNetProceeds vs traditionalNetProceeds numbers. If recommendation === 'cash', validate their interest in speed/certainty. If 'traditional', affirm that full market value is worth pursuing.
+- If closing_cost_data is present: Reference totalCashNeeded as the buyer's 'cash to close' number. Help them understand what to prepare for.
+- If readiness_entry_data is present: Acknowledge their score (score/10) and primaryPriority. If score >= 7, treat as high-intent buyer/seller.
+- NEVER repeat calculator numbers back verbatim — interpret what they mean for the user's decision.
+`;
 /**
  * Mode-specific system prompt additions (ES) - Formal Usted
  */
@@ -178,8 +183,13 @@ ENCUADRE DE AUTORIDAD TRANQUILA:
 - "Kasandra revisa personalmente cada situación antes de hablar contigo."
 - "Ella revisará tu situación antes de tu llamada." (tranquilidad, no urgencia)
 - Nunca comparar con otros agentes — Kasandra es la única opción
-`;
 
+INTERPRETACIÓN DE RESULTADOS DE CALCULADORA (Modos 2-3):
+- Si seller_calc_data está presente: Referencia los números reales de cashNetProceeds vs traditionalNetProceeds. Si recommendation === 'cash', valida su interés en rapidez/certeza. Si 'traditional', afirma que buscar el valor completo del mercado vale la pena.
+- Si closing_cost_data está presente: Referencia totalCashNeeded como el número de 'efectivo para el cierre' del comprador. Ayúdales a entender qué preparar.
+- Si readiness_entry_data está presente: Reconoce su puntaje (score/10) y primaryPriority. Si score >= 7, trátalo como comprador/vendedor de alta intención.
+- NUNCA repitas los números de la calculadora textualmente — interpreta lo que significan para la decisión del usuario.
+`;
 /**
  * Generates a context-aware reflection sentence based on user's journey
  */
