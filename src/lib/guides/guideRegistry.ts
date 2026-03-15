@@ -1358,7 +1358,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     },
     decisionIntent: 'sell',
     decisionStage: 'explore',
-    sortOrder: 36,
+    sortOrder: 41,
     authorityTheme: 'divorce_guidance',
     isCashGuide: false,
   },
