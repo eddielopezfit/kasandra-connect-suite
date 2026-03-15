@@ -1,75 +1,83 @@
 
 
-## Plan: Integrate Canvas Visual Patterns into Hub Guide Renderer
+# Guide Registry Audit Report
 
-### What We're Doing
+## Summary
 
-Extracting two high-value visual patterns from the Gemini Canvas output — **Comparison Cards** and **Path Selector** — and wiring them into the existing data-driven guide renderer. This keeps bilingual support, governance, and the Guide-First policy intact while making guides visually richer.
+**38 guides registered** — all status `'live'`, all have data loaders, all have routes via `/guides/:guideId`, all have at least one CTA (`primaryAction`), all are linked from the `/guides` hub page.
 
-### What We Do NOT Import
-
-- No slate/amber/emerald colors (stay in cc-navy/cc-gold/cc-sand palette)
-- No market stats with hard-coded numbers (stale data risk)
-- No Decision Ladder links (AuthorityCTABlock already handles terminal routing)
-- No standalone footer (GuideComplianceFooter already exists)
-- No mid-guide CTAs or interactive state that writes to session
+No orphan guides. No missing CTAs. No duplicate IDs.
 
 ---
 
-### Changes
+## Issues Found
 
-**1. Extend `GuideSection` type** (`src/data/guides/types.ts`)
+### 1. ERRORS — ActionSpec Validation Failures
 
-Add optional `variant` field and structured data:
+| Guide ID | Issue |
+|---|---|
+| `va-home-loan-tucson` | `secondaryAction` uses `{ type: 'navigate', path: '/buyer-readiness' }` but `/buyer-readiness` is **not in `NAVIGATE_WHITELIST`** in `actionSpec.ts`. This action will fail `isActionValid()`. Should use `{ type: 'open_tool', toolId: 'buyer-readiness' }` instead. |
 
-```typescript
-export interface GuideSection {
-  heading: string;
-  headingEs: string;
-  content: string;       // plain-text fallback always required
-  contentEs: string;
-  variant?: 'default' | 'comparison' | 'path-selector';
-  comparisonData?: {
-    left: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-    right: { label: string; labelEs: string; items: Array<{ bold: string; boldEs: string; text: string; textEs: string }> };
-  };
-  pathData?: Array<{
-    id: string;
-    title: string; titleEs: string;
-    desc: string; descEs: string;
-  }>;
-}
-```
+### 2. WARNINGS — Duplicate `sortOrder` Values
 
-**2. Create `GuideComparisonCards`** (`src/components/v2/guides/GuideComparisonCards.tsx`)
+Two pairs of guides share the same `sortOrder`, which makes grid ordering nondeterministic:
 
-Two-column card layout adapted from Canvas. Uses `Zap` + `CircleDollarSign` icons with cc-gold/cc-navy tones. Responsive: stacks on mobile, side-by-side on md+. Bilingual via `useLanguage()`.
+| sortOrder | Guides |
+|---|---|
+| **35** | `cash-vs-traditional-sale`, `va-home-loan-tucson` |
+| **36** | `move-up-buyer`, `divorce-home-sale-arizona` |
 
-**3. Create `GuidePathSelector`** (`src/components/v2/guides/GuidePathSelector.tsx`)
+**Fix:** Assign unique sortOrder values to the newer ghost guides (e.g., `va-home-loan-tucson: 46`, `divorce-home-sale-arizona: 41`).
 
-Interactive "Which path sounds like you?" cards with local `useState` for visual highlight only (no session writes). Three path cards with cc-navy/cc-gold/cc-sand styling. Bilingual.
+### 3. WARNINGS — Near-Duplicate Content Topics
 
-**4. Update section renderer** (`src/pages/v2/V2GuideDetail.tsx`, lines 202-224)
+| Guide A | Guide B | Overlap |
+|---|---|---|
+| `divorce-selling` | `divorce-home-sale-arizona` | Both cover selling a home during divorce in Arizona with community property law. Different registry entries, different data files, but very similar SEO targets. |
+| `first-time-buyer-programs-pima-county` | `arizona-first-time-buyer-programs` | Both cover first-time buyer assistance programs in the same geography. |
 
-In the `.map()` loop, switch on `section.variant`:
-- `'comparison'` → render `<GuideComparisonCards data={section.comparisonData} />` below the heading
-- `'path-selector'` → render `<GuidePathSelector data={section.pathData} />` below the heading
-- default → current `whitespace-pre-line` text
+These aren't broken — they may be intentional (one broader, one local) — but they risk keyword cannibalization.
 
-**5. Update guide data** (`src/data/guides/cash-vs-traditional-sale.ts`)
+### 4. WARNINGS — Missing `lifeEvent` Values
 
-- Section index 1 (Speed vs. Top Dollar): add `variant: 'comparison'` with structured `comparisonData` for Cash vs. Listing
-- Section index 2 (Simple Paths): add `variant: 'path-selector'` with `pathData` for the three paths
-- Plain text `content`/`contentEs` stays as fallback
+Five guides have `lifeEvent: undefined`:
 
-**6. Export new components** (`src/components/v2/guides/index.ts`)
+- `itin-loan-guide`
+- `tucson-market-update-2026`
+- `bad-credit-home-buying-tucson`
+- `down-payment-assistance-tucson`
+- `fha-loan-pima-county-2026`
 
-Add exports for `GuideComparisonCards` and `GuidePathSelector`.
+This means Selena chat context won't carry the life event when users enter from these guides. Not a build error, but reduces personalization quality.
 
-### Governance Compliance
+### 5. INFO — Hero Image Dependency on Storage
 
-- No mid-guide CTAs — these are educational visual enhancements only
-- Terminal routing stays in AuthorityCTABlock (unchanged)
-- Path selector is read-only visual engagement, does not write to session or navigate
-- All new components are bilingual via `useLanguage()`
+All Tier 1/2 guides (except the 4 original Tier 1 guides that use `.webp`) reference hero images at `${STORAGE_BASE}/guides/{id}/hero.jpg`. These are external URLs — if any image hasn't been uploaded to the storage bucket, it will 404 silently (the `GuideImage` component returns `null` when `src` is missing, but does NOT handle failed loads).
+
+**Guides with media slots defined:** 38/38 (all have at least one slot defined in `guideMediaSlots.ts`).
+
+Tier 3 stories have slots defined but `src` is correctly stripped by `getGovernedMediaSlots()` — working as designed.
+
+---
+
+## Implementation Plan (3 fixes)
+
+### Fix 1: `va-home-loan-tucson` secondaryAction
+**File:** `src/lib/guides/guideRegistry.ts` line 1323
+Change `{ type: 'navigate', path: '/buyer-readiness', ... }` to `{ type: 'open_tool', toolId: 'buyer-readiness', ... }`.
+
+### Fix 2: Deduplicate sortOrder values
+**File:** `src/lib/guides/guideRegistry.ts`
+- `va-home-loan-tucson` sortOrder: `35` → `46`
+- `divorce-home-sale-arizona` sortOrder: `36` → `41`
+
+### Fix 3: Add missing lifeEvent values
+**File:** `src/lib/guides/guideRegistry.ts`
+- `itin-loan-guide`: `'first_time_buying'`
+- `tucson-market-update-2026`: `'general_selling'`
+- `bad-credit-home-buying-tucson`: `'first_time_buying'`
+- `down-payment-assistance-tucson`: `'first_time_buying'`
+- `fha-loan-pima-county-2026`: `'first_time_buying'`
+
+All three fixes are in one file, no other files affected.
 
