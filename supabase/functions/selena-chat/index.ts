@@ -3001,10 +3001,16 @@ serve(async (req) => {
 
     const language = (() => {
       const clientLang = context.language || 'en';
-      if (clientLang === 'es') return 'es';
-      // Auto-detect Spanish from user message — ensures chips + system prompt use correct language
+      // Priority 1: Detect CURRENT message language (overrides stale session lang)
       const spanishSignals = /\b(quiero|necesito|busco|estoy|comprar|vender|casa|ayuda|hola|tengo|puedo|dónde|cómo|cuánto|gracias|por favor|quería|quisiera|podría|favor)\b/i;
-      if (spanishSignals.test(message)) return 'es';
+      const englishSignals = /\b(want|need|looking|help|sell|buy|home|house|how much|can I|should I|what is|tell me|show me|get|find|market|offer|value|worth|move|moving|divorce|inherited)\b/i;
+      const hasSpanish = spanishSignals.test(message);
+      const hasEnglish = englishSignals.test(message);
+      // If message has English signals but no Spanish, it's English — even if session was Spanish
+      if (hasEnglish && !hasSpanish) return 'en';
+      // If message has Spanish signals, it's Spanish
+      if (hasSpanish) return 'es';
+      // Fallback to client toggle
       return clientLang;
     })();
     let leadId = context.lead_id;

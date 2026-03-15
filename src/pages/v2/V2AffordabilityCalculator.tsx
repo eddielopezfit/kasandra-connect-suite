@@ -205,6 +205,11 @@ const V2AffordabilityCalculatorContent = () => {
               <Home className="w-5 h-5 mr-2" />
               {t("Calculate My Buying Power", "Calcular Mi Poder de Compra")}
             </Button>
+            {incomeNum < 20000 && (
+              <p className="text-xs text-cc-slate text-center mt-2">
+                {t("Enter an annual income of at least $20,000 to calculate.", "Ingresa un ingreso anual de al menos $20,000 para calcular.")}
+              </p>
+            )}
           </div>
         </div>
       </section>

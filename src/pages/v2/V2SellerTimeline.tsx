@@ -765,7 +765,7 @@ const V2SellerTimeline = () => {
           <StepPhasePlan wizardData={wizardData} onRestart={handleRestart} />
         )}
       </div>
-    </QuizFunnelLayout>
+    </V2Layout>
   );
 };
 

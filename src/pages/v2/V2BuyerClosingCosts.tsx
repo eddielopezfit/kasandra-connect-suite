@@ -378,6 +378,11 @@ const V2BuyerClosingCostsContent = () => {
               <DollarSign className="w-5 h-5 mr-2" />
               {t("Estimate My Closing Costs", "Estimar Mis Costos de Cierre")}
             </Button>
+            {price < 50000 && (
+              <p className="text-xs text-cc-slate text-center mt-2">
+                {t("Enter a purchase price of at least $50,000 to estimate.", "Ingresa un precio de compra de al menos $50,000 para estimar.")}
+              </p>
+            )}
           </div>
         </div>
       </section>
