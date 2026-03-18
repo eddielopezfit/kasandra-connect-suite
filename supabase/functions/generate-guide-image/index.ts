@@ -16,6 +16,19 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // JWT auth guard — prevents unauthorized calls to cost-bearing external APIs
+  const authHeader = req.headers.get('Authorization') ?? '';
+  const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+  if (!token || (token !== anonKey && token !== serviceKey)) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+
   // Admin-only: require x-admin-secret header
   const authHeader = req.headers.get('x-admin-secret');
   if (authHeader !== Deno.env.get('ADMIN_SECRET')) {
