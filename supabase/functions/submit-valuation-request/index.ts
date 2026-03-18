@@ -189,31 +189,51 @@ Deno.serve(async (req) => {
       console.error("[submit-valuation-request] Handoff error:", handoffErr);
     }
 
-    // Fire-and-forget: notify Kasandra via GHL webhook
-    const ghlUrl = Deno.env.get("GHL_WEBHOOK_URL");
-    if (ghlUrl) {
-      fetch(ghlUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contact: {
-            email: normalizedEmail,
-            name: leadPayload.name,
-            phone: leadPayload.phone,
-          },
-          context: {
-            source: "website",
-            tool_origin: "home_valuation",
-            property_address: propertyDetails.address,
-            property_details: propertyDetails,
-            lead_grade: scoreResult.lead_grade,
-            lead_score: scoreResult.lead_score,
-            timeline: normalizedTimeline.raw,
-            language: payload.language || "en",
-          },
-        }),
-      }).catch((e) => console.warn("[submit-valuation-request] GHL notify failed:", e));
-    }
+    // Notify Kasandra via notify-handoff (canonical enriched GHL payload)
+    // Routes through notify-handoff for consistent field mapping, tag derivation,
+    // and GHL failure observability — same path as create-handoff.
+    const nameParts = leadPayload.name.trim().split(" ");
+    fetch(`${supabaseUrl}/functions/v1/notify-handoff`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${supabaseServiceKey}`,
+      },
+      body: JSON.stringify({
+        contact: {
+          email: normalizedEmail,
+          firstName: nameParts[0] ?? leadPayload.name,
+          lastName: nameParts.slice(1).join(" ") ?? "",
+          phone: leadPayload.phone,
+        },
+        context: {
+          intent: "sell",
+          language: payload.language || "en",
+          selena_lead_id: canonicalLeadId,
+          session_id: payload.sessionId || null,
+          // Use lead_score (not readiness_score) for priority derivation
+          readiness_score: scoreResult.lead_score,
+          lead_score: scoreResult.lead_score,
+          lead_grade: scoreResult.lead_grade,
+          // Score bucket tags — drives GHL workflow branching
+          journey_state: scoreResult.lead_score_bucket === "hot" ? "decide" : "qualify",
+          tool_used: "home_valuation",
+          entry_source: "website",
+          source: "website",
+          tool_origin: "home_valuation",
+          // Property details
+          property_address: propertyDetails.address,
+          estimated_value: payload.estimatedValue || null,
+          timeline: normalizedTimeline.raw || null,
+          timeline_raw: normalizedTimeline.raw || null,
+          // Consent
+          sms_consent: payload.consent === true,
+          ai_disclosure_accepted: payload.consent === true,
+          // Score context
+          urgency_level: scoreResult.lead_score_bucket,
+        },
+      }),
+    }).catch((e) => console.warn("[submit-valuation-request] notify-handoff failed:", e));
 
     // Log event
     if (payload.sessionId) {
