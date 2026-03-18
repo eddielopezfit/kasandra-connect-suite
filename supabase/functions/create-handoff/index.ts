@@ -116,9 +116,29 @@ serve(async (req) => {
       // Use the pre-selected slot
       bookingUrl = selected_slot.booking_url;
     } else {
-      // TODO: Replace with real GHL calendar API integration
-      slots = [];
-      bookingUrl = '';
+      // Fetch real slots from check-availability (GHL Calendar API)
+      try {
+        const availRes = await fetch(`${supabaseUrl}/functions/v1/check-availability`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseServiceKey}`,
+          },
+          body: JSON.stringify({
+            lead_id,
+            channel,
+            preferred_window: priority === 'hot' ? 'today' : 'next_3_days',
+            timezone: 'America/Phoenix',
+          }),
+        });
+        if (availRes.ok) {
+          const availData = await availRes.json();
+          slots = availData.slots ?? [];
+          if (slots.length > 0) bookingUrl = slots[0].booking_url;
+        }
+      } catch (availErr) {
+        console.warn('[create-handoff] check-availability call failed:', availErr);
+      }
     }
 
     // If no slots available and no pre-selected slot, use generic booking URL
@@ -204,6 +224,8 @@ serve(async (req) => {
         language: leadProfile?.language ?? 'en',
         selena_lead_id: lead_id,
         session_id: leadProfile?.session_id ?? '',
+        // Separate concerns: lead_score = composite behavioral score, readiness_score = seller readiness
+        lead_score: leadProfile?.lead_score ?? 0,
         readiness_score: (snapshot?.readiness_score as number) ?? leadProfile?.lead_score ?? 0,
         journey_state: priority === 'hot' ? 'decide' : 'qualify',
         handoff_id: handoff.id,
