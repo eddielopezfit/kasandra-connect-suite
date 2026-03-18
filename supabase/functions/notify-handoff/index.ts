@@ -40,7 +40,17 @@ function deriveTags(context: Record<string, unknown>): string[] {
   }
 
   const score = Number(context.readiness_score ?? 0);
-  if (score >= 75 || context.journey_state === "decide") tags.push("selena - priority hot");
+  const leadScore = Number(context.lead_score ?? context.readiness_score ?? 0);
+
+  // Score bucket tags — REQUIRED for GHL workflow branching (WF-05/09/10)
+  if (leadScore >= 75 || score >= 75 || context.journey_state === "decide") {
+    tags.push("score_hot");
+    tags.push("selena - priority hot");
+  } else if (leadScore >= 45 || score >= 45) {
+    tags.push("score_warm");
+  } else {
+    tags.push("score_cold");
+  }
   if (context.inherited_home === true) tags.push("selena - inherited home");
   if (context.trust_signal_detected === true) tags.push("selena - trust signal");
   if (context.sms_consent === true) tags.push("selena - consent communications");
@@ -117,8 +127,13 @@ serve(async (req) => {
       selena_intent_canonical: context.intent ?? "",
       selena_language_clean: context.language ?? "en",
 
-      // Scores
+      // Scores — lead_score is the composite behavioral score (separate from readiness_score)
+      selena_score: context.lead_score ?? context.readiness_score ?? 0,
       selena_readiness_score: context.readiness_score ?? 0,
+      lead_temperature: (() => {
+        const s = Number(context.lead_score ?? context.readiness_score ?? 0);
+        return s >= 75 ? "hot" : s >= 45 ? "warm" : "cold";
+      })(),
       selena_urgency_score: context.urgency_score ?? 0,
       selena_motivation_score: context.motivation_score ?? 0,
       selena_financing_strength_score: context.financing_strength_score ?? 0,
