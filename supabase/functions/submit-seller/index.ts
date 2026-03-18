@@ -273,7 +273,7 @@ Deno.serve(async (req) => {
           'no-rush': 'timeline_no_rush',
         };
 
-        const baseTags = ["Seller Funnel", "seller_funnel"];
+        const baseTags = ["Seller Funnel", "seller_funnel", "selena - intake completed", "selena - website lead", "selena_os_lead", "cc | entry |webhook"];
         const situationTags = sanitizedPayload.situation 
           ? (situationTagMap[sanitizedPayload.situation] || [`situation_${sanitizedPayload.situation}`]) 
           : [];
@@ -310,7 +310,10 @@ Deno.serve(async (req) => {
           selena_target_neighborhoods: null,
           selena_property_address: sanitizedPayload.property_address || null,
           selena_is_pre_approved: 'No',
-          selena_lead_score: scoreResult.lead_score,
+          selena_score: scoreResult.lead_score,
+          selena_lead_score: scoreResult.lead_score,  // legacy compat
+          selena_lead_grade: scoreResult.lead_grade,
+          lead_temperature: scoreResult.lead_score_bucket,
           
           customField: {
             lead_id: canonicalLeadId,
