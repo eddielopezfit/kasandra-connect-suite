@@ -200,7 +200,7 @@ const V2NeighborhoodCompareContent = () => {
       return;
     }
     if (!toolStarted) {
-      logEvent('tool_started', { tool: 'neighborhood_compare' });
+      logEvent('tool_started', { tool_id: 'neighborhood_compare', source: 'website', page_path: '/neighborhood-compare' });
       setToolStarted(true);
     }
     setLoadingZip(zip);
