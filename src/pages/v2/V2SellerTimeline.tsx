@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
+import { useMarketPulse } from "@/hooks/useMarketPulse";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
