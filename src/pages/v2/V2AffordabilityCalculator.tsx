@@ -5,8 +5,9 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import { useMarketPulse } from "@/hooks/useMarketPulse";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import {
   calculateAffordability,
   TUCSON_MEDIAN_PRICE,
