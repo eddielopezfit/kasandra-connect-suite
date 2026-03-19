@@ -86,7 +86,8 @@ function fmtMonth(d: Date, lang: "en" | "es"): string {
 function buildPhases(
   closeWindow: CloseWindow,
   readiness: ReadinessState,
-  lang: "en" | "es"
+  lang: "en" | "es",
+  medianDOM: number = 42
 ): PhaseData[] {
   const today = new Date();
   const totalWeeks = CLOSE_WINDOW_WEEKS[closeWindow];
