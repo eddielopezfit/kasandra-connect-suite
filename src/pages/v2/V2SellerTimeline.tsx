@@ -541,13 +541,13 @@ const StepPhasePlan = ({ wizardData, onRestart }: Step4Props) => {
         {phases.map((phase, i) => (
           <div
             key={phase.id}
-            className={`rounded-2xl border-2 p-5 transition-all ${phase.colorClass} ${
-              phase.isActive ? "shadow-soft ring-1 ring-cc-gold/30" : ""
-            } ${phase.isPast ? "opacity-60" : ""}`}
+            className={`rounded-2xl border p-5 transition-all bg-white shadow-sm ${
+              phase.isActive ? "ring-2 ring-cc-gold shadow-md" : "border-cc-sand-dark/30"
+            } ${phase.isPast ? "border-l-4 border-l-green-400" : ""}`}
           >
             <div className="flex items-start justify-between gap-3 mb-3">
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${phase.isActive ? "bg-cc-gold/20" : "bg-white/60"}`}>
+                <div className={`p-2 rounded-lg ${phase.isActive ? "bg-cc-gold/20" : "bg-cc-sand"}`}>
                   {phase.icon}
                 </div>
                 <div>
@@ -579,7 +579,7 @@ const StepPhasePlan = ({ wizardData, onRestart }: Step4Props) => {
               </div>
             </div>
 
-            <div className="text-xs font-medium text-cc-navy/70 bg-white/50 rounded-lg px-3 py-1.5 mb-3 flex items-center gap-1.5">
+            <div className="text-xs font-medium text-cc-navy/70 bg-cc-sand rounded-lg px-3 py-1.5 mb-3 flex items-center gap-1.5">
               <Calendar className="w-3 h-3" />
               {phase.dateRange}
             </div>
