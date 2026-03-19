@@ -55,14 +55,11 @@ async function scrapeSource(
     },
     body: JSON.stringify({
       url: source.url,
-      formats: [
-        "markdown",
-        {
-          type: "json",
-          schema: EXTRACTION_SCHEMA,
-          prompt: "Extract the current Tucson AZ housing market statistics from this page. For sale_to_list_ratio, return as a decimal like 0.976 (not a percentage). For median_days_on_market, return the integer number of days.",
-        },
-      ],
+      formats: ["markdown", "extract"],
+      extract: {
+        schema: EXTRACTION_SCHEMA,
+        prompt: "Extract the current Tucson AZ housing market statistics from this page. For sale_to_list_ratio, return as a decimal like 0.976 (not a percentage). For median_days_on_market, return the integer number of days.",
+      },
       onlyMainContent: true,
       waitFor: 5000,
     }),
