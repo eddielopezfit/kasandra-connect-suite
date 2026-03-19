@@ -1,33 +1,32 @@
 
 
-# Seed Live Market Data — Trigger Pipeline Now
+## Plan: 5 High-Impact Tools — Revised Blueprint
 
-## Problem
-The market pulse card shows legacy fallback data from `market_pulse_settings` (manually entered). The `market_pulse` table is empty — no automated scrape has ever run. The pg_cron job won't fire until April 1st.
+### Approved Revisions (4)
 
-## Solution
-Trigger the `refresh-market-pulse` edge function manually to seed the `market_pulse` table with real March 2026 data from Firecrawl + Perplexity.
+1. **No semantic drift on buyer_criteria**: Property details for valuation requests are stored in the handoff payload (`summary_json` + `summary_md`), NOT in `lead_profiles.buyer_criteria`. The `buyer_criteria` field remains buyer-only.
 
-### What the pipeline does (already built)
-1. **Firecrawl** scrapes 3 sources in parallel: Redfin, Realtor.com, Zillow
-2. **Parses** sale-to-list ratio, median DOM, median sale price from each
-3. **Perplexity** cross-verifies the scraped data, flags deviations >10%
-4. **Inserts** verified row into `market_pulse` table with month, source links, verified timestamp
-5. `get-market-pulse` edge function then returns this row instead of the legacy fallback
+2. **Home valuation requires name, email, phone**: All three fields are required — this is a high-intent seller lead, not a low-friction opt-in.
 
-### What I need from you
-Your `ADMIN_SECRET` value so I can call:
-```
-POST /functions/v1/refresh-market-pulse
-Header: x-admin-secret: <your value>
-```
+3. **Explicit source attribution on all 3 tools**:
+   - `source=website` on all lead_profiles upserts
+   - `tool_origin=affordability_calculator` / `bah_calculator` / `home_valuation` in event payloads and handoff metadata
 
-### After triggering
-- The `market_pulse` table gets its first row with real March 2026 data
-- `get-market-pulse` returns `source: "market_pulse"` instead of `"market_pulse_settings"`
-- The hero card shows verified numbers with source attribution
-- The LIVE badge and month label update automatically
+4. **No hardcoded market delta in Selena low-offer routing**: The modeContext hint references "current market negotiation context" dynamically via Market Pulse data rather than a fixed 2.5% number.
 
-### No code changes needed
-Everything is already wired. We just need to pull the trigger.
+---
 
+### Implementation Phases
+
+| Phase | Task | Files |
+|-------|------|-------|
+| 1 | Expand affordabilityAlgorithm (PMI, credit tiers, breakdown) | `src/lib/calculator/affordabilityAlgorithm.ts` |
+| 2 | Create bahMortgageAlgorithm | `src/lib/calculator/bahMortgageAlgorithm.ts` |
+| 3 | Build V2AffordabilityCalculator page | `src/pages/v2/V2AffordabilityCalculator.tsx` |
+| 4 | Build V2BAHCalculator page | `src/pages/v2/V2BAHCalculator.tsx` |
+| 5 | Create submit-valuation-request edge function | `supabase/functions/submit-valuation-request/index.ts` |
+| 6 | Build V2HomeValuation page (3-step, all fields required) | `src/pages/v2/V2HomeValuation.tsx` |
+| 7 | Register routes in App.tsx | `src/App.tsx` |
+| 8 | Add analytics event types | `src/lib/analytics/logEvent.ts` |
+| 9 | Add Selena keyword hints (4 blocks) | `supabase/functions/selena-chat/modeContext.ts` |
+| 10 | Add SEO route meta | `src/lib/seo/seoRouteMeta.ts` |
