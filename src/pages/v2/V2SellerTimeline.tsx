@@ -734,6 +734,7 @@ const V2SellerTimeline = () => {
   return (
     <V2Layout>
       <div className="container mx-auto max-w-2xl px-4 py-8">
+        <div className="bg-white/95 backdrop-blur rounded-2xl p-6 md:p-8 shadow-lg">
         {/* Progress bar */}
         {!isComplete && (
           <div className="mb-8">
