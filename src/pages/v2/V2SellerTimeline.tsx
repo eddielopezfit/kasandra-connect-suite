@@ -663,7 +663,7 @@ const V2SellerTimeline = () => {
     (closeWindow: CloseWindow) => {
       setWizardData(prev => ({ ...prev, closeWindow }));
       setFieldIfEmpty("intent", "sell");
-      logEvent('tool_started', { tool: 'seller_timeline' });
+      logEvent('tool_started', { tool_id: 'seller_timeline', source: 'website', page_path: '/seller-timeline' });
       updateSessionContext({
         last_quiz_id: "seller_timeline",
         timeline:

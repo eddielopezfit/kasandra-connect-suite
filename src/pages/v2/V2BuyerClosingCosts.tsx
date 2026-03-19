@@ -214,13 +214,18 @@ const V2BuyerClosingCostsContent = () => {
   const handleCalculate = () => {
     if (price < 50000) return;
     if (!toolStarted) {
-      logEvent('tool_started', { tool: 'buyer_closing_costs' });
+      logEvent('tool_started', { tool_id: 'buyer_closing_costs', source: 'website', page_path: '/buyer-closing-costs' });
       setToolStarted(true);
     }
     setCalculated(true);
     setFieldIfEmpty('intent', 'buy');
-    logEvent('tool_completed', { tool: 'buyer_closing_costs', price, loan_type: inputs.loanType });
-    logEvent('calculator_complete', { tool: 'buyer_closing_costs', price, loan_type: inputs.loanType });
+    const ctx = getSessionContext();
+    updateSessionContext({
+      last_tool_completed: 'buyer_closing_costs',
+      tools_completed: [...new Set([...(ctx?.tools_completed ?? []), 'buyer_closing_costs'])],
+    });
+    logEvent('tool_completed', { tool_id: 'buyer_closing_costs', source: 'website', page_path: '/buyer-closing-costs', price, loan_type: inputs.loanType });
+    import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
     setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);

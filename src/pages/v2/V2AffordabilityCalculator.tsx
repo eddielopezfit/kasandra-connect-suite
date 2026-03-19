@@ -241,8 +241,8 @@ const V2AffordabilityCalculatorContent = () => {
               {medianComparison !== 0 && (
                 <p className="text-cc-gold/80 text-xs mt-1">
                   {medianComparison > 0
-                    ? t(`${medianComparison}% above Tucson median (~${fmt(TUCSON_MEDIAN_PRICE)})`, `${medianComparison}% sobre la mediana de Tucson (~${fmt(TUCSON_MEDIAN_PRICE)})`)
-                    : t(`${Math.abs(medianComparison)}% below Tucson median (~${fmt(TUCSON_MEDIAN_PRICE)})`, `${Math.abs(medianComparison)}% bajo la mediana de Tucson (~${fmt(TUCSON_MEDIAN_PRICE)})`)
+                    ? t(`${medianComparison}% above Tucson median (~${fmt(liveMedian)})`, `${medianComparison}% sobre la mediana de Tucson (~${fmt(liveMedian)})`)
+                    : t(`${Math.abs(medianComparison)}% below Tucson median (~${fmt(liveMedian)})`, `${Math.abs(medianComparison)}% bajo la mediana de Tucson (~${fmt(liveMedian)})`)
                   }
                 </p>
               )}
