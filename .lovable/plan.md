@@ -1,68 +1,32 @@
 
 
-# Fix Market Pulse Pipeline — Get Real Scraped Data
+## Plan: 5 High-Impact Tools — Revised Blueprint
 
-## Problem
-The Firecrawl scrapers in `refresh-market-pulse` are broken:
-- Redfin: parsed 115 DOM / 100% STL (wrong elements)
-- Zillow: parsed 15.7% STL (nonsensical)  
-- Realtor.com: parsed nothing
+### Approved Revisions (4)
 
-Perplexity provided a best-guess (96.6% / 36 DOM) but flagged `consensus: false`. The UI falls back to hardcoded config values (97.6% / 38 days). Users see stale estimates, not live verified data.
+1. **No semantic drift on buyer_criteria**: Property details for valuation requests are stored in the handoff payload (`summary_json` + `summary_md`), NOT in `lead_profiles.buyer_criteria`. The `buyer_criteria` field remains buyer-only.
 
-## Root Cause
-The `refresh-market-pulse` edge function uses Firecrawl to scrape housing market pages, but the parsing logic doesn't handle the current page structures of Redfin, Zillow, and Realtor.com. These sites change their layouts frequently.
+2. **Home valuation requires name, email, phone**: All three fields are required — this is a high-intent seller lead, not a low-friction opt-in.
 
-## Fix Plan
+3. **Explicit source attribution on all 3 tools**:
+   - `source=website` on all lead_profiles upserts
+   - `tool_origin=affordability_calculator` / `bah_calculator` / `home_valuation` in event payloads and handoff metadata
 
-### 1. Rewrite the scraping + parsing logic in `refresh-market-pulse`
-
-**Current approach**: Scrapes HTML/markdown and tries to regex-parse stats → fragile.
-
-**New approach**: Use Firecrawl's **JSON extraction mode** (`formats: [{ type: 'json', schema: {...} }]`) which uses LLM-powered structured extraction. This is resilient to layout changes.
-
-For each source, request:
-```json
-{
-  "url": "https://www.redfin.com/city/18510/AZ/Tucson/housing-market",
-  "formats": [{ 
-    "type": "json", 
-    "schema": {
-      "type": "object",
-      "properties": {
-        "median_sale_price": { "type": "number" },
-        "median_days_on_market": { "type": "number" },
-        "sale_to_list_ratio": { "type": "number" },
-        "month_year": { "type": "string" }
-      }
-    }
-  }]
-}
-```
-
-This lets Firecrawl's AI extract the right numbers regardless of HTML structure.
-
-### 2. Improve the reconciliation logic
-
-- Require at least 2 of 3 sources to agree within 15% deviation
-- If JSON extraction fails for a source, skip it gracefully
-- Only use Perplexity as tiebreaker when exactly 2 sources disagree
-
-### 3. Re-trigger the pipeline after fix
-
-- Call `refresh-market-pulse` to seed real March 2026 data
-- Verify the `market_pulse` row has `consensus: true` and real numbers
-- Confirm the UI displays the LIVE badge with verified data
-
-### 4. Update the fallback config
-
-Update `src/config/marketPulse.ts` with whatever the verified March 2026 numbers turn out to be, so even cold-start users see accurate data.
+4. **No hardcoded market delta in Selena low-offer routing**: The modeContext hint references "current market negotiation context" dynamically via Market Pulse data rather than a fixed 2.5% number.
 
 ---
 
-**Files changed**: 
-- `supabase/functions/refresh-market-pulse/index.ts` (rewrite scraping to use JSON extraction)
-- `src/config/marketPulse.ts` (update fallback after verification)
+### Implementation Phases
 
-**No new tables or migrations needed.**
-
+| Phase | Task | Files |
+|-------|------|-------|
+| 1 | Expand affordabilityAlgorithm (PMI, credit tiers, breakdown) | `src/lib/calculator/affordabilityAlgorithm.ts` |
+| 2 | Create bahMortgageAlgorithm | `src/lib/calculator/bahMortgageAlgorithm.ts` |
+| 3 | Build V2AffordabilityCalculator page | `src/pages/v2/V2AffordabilityCalculator.tsx` |
+| 4 | Build V2BAHCalculator page | `src/pages/v2/V2BAHCalculator.tsx` |
+| 5 | Create submit-valuation-request edge function | `supabase/functions/submit-valuation-request/index.ts` |
+| 6 | Build V2HomeValuation page (3-step, all fields required) | `src/pages/v2/V2HomeValuation.tsx` |
+| 7 | Register routes in App.tsx | `src/App.tsx` |
+| 8 | Add analytics event types | `src/lib/analytics/logEvent.ts` |
+| 9 | Add Selena keyword hints (4 blocks) | `supabase/functions/selena-chat/modeContext.ts` |
+| 10 | Add SEO route meta | `src/lib/seo/seoRouteMeta.ts` |
