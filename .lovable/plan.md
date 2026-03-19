@@ -1,40 +1,32 @@
 
 
-# Fix Seller Timeline — Readability & Real Data
+## Plan: 5 High-Impact Tools — Revised Blueprint
 
-## Problems Identified
+### Approved Revisions (4)
 
-From the screenshots:
+1. **No semantic drift on buyer_criteria**: Property details for valuation requests are stored in the handoff payload (`summary_json` + `summary_md`), NOT in `lead_profiles.buyer_criteria`. The `buyer_criteria` field remains buyer-only.
 
-1. **Phase cards 1 & 2 are nearly unreadable** — text appears washed out / invisible on the dark navy background. The `opacity-60` on past phases plus low-contrast border colors make content disappear.
+2. **Home valuation requires name, email, phone**: All three fields are required — this is a high-intent seller lead, not a low-friction opt-in.
 
-2. **Hardcoded "38 days"** — Phase 3 shows "Tucson median: 38 days" but the real market data is now 42 days. This value is hardcoded in `buildPhases()` instead of pulling from market pulse.
+3. **Explicit source attribution on all 3 tools**:
+   - `source=website` on all lead_profiles upserts
+   - `tool_origin=affordability_calculator` / `bah_calculator` / `home_valuation` in event payloads and handoff metadata
 
-3. **Card contrast issues** — Cards use `bg-cc-navy/5` and `bg-white/60` which become nearly transparent on the dark V2Layout background, making all inner text hard to distinguish.
+4. **No hardcoded market delta in Selena low-offer routing**: The modeContext hint references "current market negotiation context" dynamically via Market Pulse data rather than a fixed 2.5% number.
 
-4. **Selection step cards** (close window, readiness) — white cards look decent but the overall wizard lacks a hero header or context framing. It jumps straight into options with minimal visual hierarchy.
+---
 
-## Fix Plan
+### Implementation Phases
 
-### 1. Wire real market DOM into the timeline (`V2SellerTimeline.tsx`)
-- Import `useMarketPulse` hook
-- Pass `medianDaysOnMarket` into `buildPhases()` instead of hardcoded `38`
-- Use it for the Phase 3 week calculation and label
-
-### 2. Fix phase card readability (`V2SellerTimeline.tsx`)
-- Give all phase cards solid white backgrounds (`bg-white`) instead of transparent tints
-- Remove `opacity-60` from past phases — use a subtle left-border or muted icon instead
-- Ensure text colors are always `text-cc-navy` / `text-cc-charcoal` on white
-- Add subtle `shadow-sm` to each card for depth separation from the dark background
-
-### 3. Improve wizard container framing
-- Wrap the wizard content in a `bg-white/95 backdrop-blur rounded-2xl p-6` card so the entire wizard has a light surface against the dark layout background
-- This instantly fixes all contrast issues for both input steps and result steps
-
-### 4. Minor polish
-- Phase date range badges: ensure solid `bg-white` not `bg-white/50`
-- Active phase ring: use `ring-2 ring-cc-gold` for stronger "You Are Here" signal
-- Compressed timeline warning: ensure amber background is opaque
-
-**Files changed**: `src/pages/v2/V2SellerTimeline.tsx` only
-
+| Phase | Task | Files |
+|-------|------|-------|
+| 1 | Expand affordabilityAlgorithm (PMI, credit tiers, breakdown) | `src/lib/calculator/affordabilityAlgorithm.ts` |
+| 2 | Create bahMortgageAlgorithm | `src/lib/calculator/bahMortgageAlgorithm.ts` |
+| 3 | Build V2AffordabilityCalculator page | `src/pages/v2/V2AffordabilityCalculator.tsx` |
+| 4 | Build V2BAHCalculator page | `src/pages/v2/V2BAHCalculator.tsx` |
+| 5 | Create submit-valuation-request edge function | `supabase/functions/submit-valuation-request/index.ts` |
+| 6 | Build V2HomeValuation page (3-step, all fields required) | `src/pages/v2/V2HomeValuation.tsx` |
+| 7 | Register routes in App.tsx | `src/App.tsx` |
+| 8 | Add analytics event types | `src/lib/analytics/logEvent.ts` |
+| 9 | Add Selena keyword hints (4 blocks) | `supabase/functions/selena-chat/modeContext.ts` |
+| 10 | Add SEO route meta | `src/lib/seo/seoRouteMeta.ts` |
