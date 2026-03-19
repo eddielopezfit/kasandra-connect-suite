@@ -79,14 +79,14 @@ function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' 
     // New pipeline provides month directly (e.g. "March 2026")
     if (language === 'es') {
       // Translate month to Spanish
-      const d = new Date(pulse.month + " 1");
+      const d = new Date(pulse.month + " 1, 12:00:00");
       month = d.toLocaleDateString('es-US', { month: 'long', year: 'numeric' });
     } else {
       month = pulse.month;
     }
     verifiedDate = pulse.verified_at ? new Date(pulse.verified_at).toLocaleDateString(locale, { month: 'long', year: 'numeric' }) : month;
   } else if (isLive && pulse.last_verified_date) {
-    const d = new Date(pulse.last_verified_date);
+    const d = new Date(pulse.last_verified_date + "T12:00:00");
     month = d.toLocaleDateString(locale, { month: "long", year: "numeric" });
     verifiedDate = month;
   } else {

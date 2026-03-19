@@ -1,50 +1,32 @@
 
 
-# Fix: Market Pulse Showing "January" Instead of "March 2026"
+## Plan: 5 High-Impact Tools — Revised Blueprint
 
-## Root Cause
+### Approved Revisions (4)
 
-Two issues combined:
+1. **No semantic drift on buyer_criteria**: Property details for valuation requests are stored in the handoff payload (`summary_json` + `summary_md`), NOT in `lead_profiles.buyer_criteria`. The `buyer_criteria` field remains buyer-only.
 
-1. **Empty `market_pulse` table** — the automated pipeline (pg_cron) hasn't fired yet, so `get-market-pulse` falls back to the legacy `market_pulse_settings` table, which has `last_verified_date: 2026-02-01`.
+2. **Home valuation requires name, email, phone**: All three fields are required — this is a high-intent seller lead, not a low-friction opt-in.
 
-2. **Timezone parsing bug** — Line 89 of `useMarketPulse.ts` does `new Date("2026-02-01")`, which JavaScript parses as UTC midnight. In Arizona (UTC-7), that renders as **January 31, 2026**, so `toLocaleDateString()` outputs "January 2026".
+3. **Explicit source attribution on all 3 tools**:
+   - `source=website` on all lead_profiles upserts
+   - `tool_origin=affordability_calculator` / `bah_calculator` / `home_valuation` in event payloads and handoff metadata
 
-## Fix Plan
-
-### 1. Fix the timezone bug in `useMarketPulse.ts` (line 89)
-
-Append `T12:00:00` to date-only strings so timezone offset can't roll the date backward:
-
-```typescript
-} else if (isLive && pulse.last_verified_date) {
-    const d = new Date(pulse.last_verified_date + "T12:00:00");
-    month = d.toLocaleDateString(locale, { month: "long", year: "numeric" });
-    verifiedDate = month;
-}
-```
-
-### 2. Update `market_pulse_settings.last_verified_date` to March 2026
-
-Use the insert tool (data update, not schema) to set the current date:
-
-```sql
-UPDATE market_pulse_settings
-SET last_verified_date = '2026-03-19',
-    updated_at = now()
-WHERE market_name = 'Tucson_Overall';
-```
-
-This immediately fixes the display. When the pg_cron pipeline runs on April 1st (or is triggered manually), it will seed the `market_pulse` table and the new pipeline path will take over, bypassing this legacy code entirely.
-
-### 3. Also fix the same timezone bug for the Spanish month translation (line 82)
-
-```typescript
-const d = new Date(pulse.month + " 1, 12:00:00");
-```
+4. **No hardcoded market delta in Selena low-offer routing**: The modeContext hint references "current market negotiation context" dynamically via Market Pulse data rather than a fixed 2.5% number.
 
 ---
 
-**Files changed**: 1 (`src/hooks/useMarketPulse.ts`)
-**Data update**: 1 SQL UPDATE on `market_pulse_settings`
+### Implementation Phases
 
+| Phase | Task | Files |
+|-------|------|-------|
+| 1 | Expand affordabilityAlgorithm (PMI, credit tiers, breakdown) | `src/lib/calculator/affordabilityAlgorithm.ts` |
+| 2 | Create bahMortgageAlgorithm | `src/lib/calculator/bahMortgageAlgorithm.ts` |
+| 3 | Build V2AffordabilityCalculator page | `src/pages/v2/V2AffordabilityCalculator.tsx` |
+| 4 | Build V2BAHCalculator page | `src/pages/v2/V2BAHCalculator.tsx` |
+| 5 | Create submit-valuation-request edge function | `supabase/functions/submit-valuation-request/index.ts` |
+| 6 | Build V2HomeValuation page (3-step, all fields required) | `src/pages/v2/V2HomeValuation.tsx` |
+| 7 | Register routes in App.tsx | `src/App.tsx` |
+| 8 | Add analytics event types | `src/lib/analytics/logEvent.ts` |
+| 9 | Add Selena keyword hints (4 blocks) | `supabase/functions/selena-chat/modeContext.ts` |
+| 10 | Add SEO route meta | `src/lib/seo/seoRouteMeta.ts` |
