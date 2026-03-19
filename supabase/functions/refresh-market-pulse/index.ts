@@ -111,10 +111,22 @@ interface Reconciled {
   agreement_count: number;
 }
 
+function isRecent(monthYear: string | null): boolean {
+  if (!monthYear) return false;
+  const now = new Date();
+  const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+  const parsed = new Date(monthYear + " 1");
+  return !isNaN(parsed.getTime()) && parsed >= threeMonthsAgo;
+}
+
 function reconcile(data: ExtractedMetrics[]): Reconciled {
-  const stlValues = data.map(d => d.sale_to_list_ratio).filter((v): v is number => v !== null && v > 0.8 && v < 1.15);
-  const domValues = data.map(d => d.median_days_on_market).filter((v): v is number => v !== null && v > 0 && v < 200);
-  const priceValues = data.map(d => d.median_sale_price).filter((v): v is number => v !== null && v > 50000);
+  // Only use data from the last 3 months
+  const recent = data.filter(d => isRecent(d.month_year));
+  console.log(`[refresh-market-pulse] ${recent.length}/${data.length} sources have recent data`);
+
+  const stlValues = recent.map(d => d.sale_to_list_ratio).filter((v): v is number => v !== null && v > 0.8 && v < 1.15);
+  const domValues = recent.map(d => d.median_days_on_market).filter((v): v is number => v !== null && v > 0 && v < 200);
+  const priceValues = recent.map(d => d.median_sale_price).filter((v): v is number => v !== null && v > 50000);
 
   return {
     sale_to_list_ratio: median(stlValues),
