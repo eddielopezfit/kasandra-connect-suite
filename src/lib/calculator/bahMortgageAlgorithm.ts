@@ -37,7 +37,7 @@ const VA_FUNDING_FEE_SUBSEQUENT_ZERO_DOWN = 0.033; // 3.3% subsequent use, 0% do
 const VA_FUNDING_FEE_SUBSEQUENT_5_DOWN = 0.015;    // 1.5% subsequent, 5%+ down
 const VA_FUNDING_FEE_SUBSEQUENT_10_DOWN = 0.0125;  // 1.25% subsequent, 10%+ down
 
-const VA_INTEREST_RATE = 0.06;      // Typically slightly lower than conventional
+const VA_INTEREST_RATE = 0.0575;    // Updated March 2026: Veterans United 5.625%, Fortune avg 5.75%
 const LOAN_TERM_YEARS = 30;
 const PROPERTY_TAX_RATE = 0.011;    // Tucson/Pima County
 const ANNUAL_INSURANCE = 1200;

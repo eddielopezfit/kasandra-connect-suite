@@ -27,7 +27,7 @@ export interface AffordabilityResult {
 // Tucson-specific defaults
 const PROPERTY_TAX_RATE = 0.011;
 const ANNUAL_INSURANCE = 1200;
-const BASE_INTEREST_RATE = 0.065;
+const BASE_INTEREST_RATE = 0.0625; // Updated March 2026: Freddie Mac avg 6.11%, Bankrate 6.35% — using 6.25% midpoint
 const LOAN_TERM_YEARS = 30;
 const PMI_ANNUAL_RATE = 0.005; // 0.5% of loan amount per year when <20% down
 const TUCSON_MEDIAN = 370000;
