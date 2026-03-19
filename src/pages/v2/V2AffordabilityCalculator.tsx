@@ -70,8 +70,10 @@ const V2AffordabilityCalculatorContent = () => {
         : "bg-white text-cc-charcoal border-cc-sand-dark/40 hover:border-cc-navy/40"
     }`;
 
+  // Use live median from market_pulse, fallback to hardcoded constant
+  const liveMedian = (marketData as any)?.median_sale_price ?? TUCSON_MEDIAN_PRICE;
   const medianComparison = result.maxPrice > 0
-    ? Math.round(((result.maxPrice - TUCSON_MEDIAN_PRICE) / TUCSON_MEDIAN_PRICE) * 100)
+    ? Math.round(((result.maxPrice - liveMedian) / liveMedian) * 100)
     : 0;
 
   return (
