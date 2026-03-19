@@ -720,7 +720,8 @@ const V2SellerTimeline = () => {
         close_window: wizardData.closeWindow,
         readiness: wizardData.readiness,
       });
-      logEvent('tool_completed', { tool: 'seller_timeline', close_window: wizardData.closeWindow, readiness: wizardData.readiness });
+      logEvent('tool_completed', { tool_id: 'seller_timeline', source: 'website', page_path: '/seller-timeline', close_window: wizardData.closeWindow, readiness: wizardData.readiness });
+      import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
       goTo(4);
     },
     [goTo, wizardData]
