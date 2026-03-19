@@ -79,8 +79,8 @@ async function scrapeSource(
     };
   }
 
-  // Firecrawl nests under data.data or data directly
-  const json = data.data?.json ?? data.json ?? {};
+  // Firecrawl nests under data.data or data directly; extract mode uses "extract" key
+  const json = data.data?.extract ?? data.extract ?? data.data?.json ?? data.json ?? {};
   const markdown = (data.data?.markdown ?? data.markdown ?? "").substring(0, 500);
 
   console.log(`[refresh-market-pulse] ${source.name} extracted:`, JSON.stringify(json));
