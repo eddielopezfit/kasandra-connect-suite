@@ -22,6 +22,7 @@ interface ValuationPayload {
   sqft?: number;
   condition?: string;
   yearBuilt?: string;
+  estimatedValue?: number;
   timeline?: string;
   sessionId?: string;
   language?: string;

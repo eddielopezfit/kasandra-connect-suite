@@ -3777,7 +3777,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
           guideTitle: context.entry_guide_title ?? undefined,
           guidesReadCount: context.guides_read ?? 0,
           intent: primaryIntent,
-          closingCostData: context.closing_cost_data,
+          closingCostData: context.closing_cost_data ?? undefined,
           sellerCalcData: context.seller_calc_data as EntryContext['sellerCalcData'],
           readinessData: context.readiness_entry_data as EntryContext['readinessData'],
         };

@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
 
     // Rate limiting: 5 req/min per IP — prevents phone enumeration attacks
     const rlKey = extractRateLimitKey(req, {});
-    const rl = await checkRateLimit(supabase, rlKey, 'verify-lead-phone', 5);
+    const rl = await checkRateLimit(supabase, rlKey, 'verify-lead-phone');
     if (!rl.allowed) return rateLimitResponse(corsHeaders);
 
     const body = await req.json();
