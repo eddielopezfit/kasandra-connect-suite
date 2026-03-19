@@ -6,7 +6,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import { calculateBAHMortgage, type BAHInput, type BAHResult } from "@/lib/calculator/bahMortgageAlgorithm";
 import {
   DollarSign, Home, MessageCircle, ArrowRight, Calendar, Shield, CreditCard,
