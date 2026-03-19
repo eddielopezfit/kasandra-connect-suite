@@ -174,8 +174,8 @@ function buildPhases(
       labelEs: "Activo en el Mercado",
       icon: <TrendingUp className="w-5 h-5" />,
       colorClass: "border-cc-gold/60 bg-white",
-      weekRangeEn: `~${domWeeks} weeks (Tucson median: 38 days)`,
-      weekRangeEs: `~${domWeeks} semanas (mediana Tucson: 38 días)`,
+      weekRangeEn: `~${domWeeks} weeks (Tucson median: ${medianDOM} days)`,
+      weekRangeEs: `~${domWeeks} semanas (mediana Tucson: ${medianDOM} días)`,
       dateRange:
         lang === "es"
           ? `${fmtDate(listStart, "es")} – ${fmtDate(listEnd, "es")}`
