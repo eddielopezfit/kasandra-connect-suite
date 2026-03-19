@@ -252,9 +252,14 @@ Deno.serve(async (req: Request) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Admin-only gate: single x-admin-secret auth path (manual + pg_cron via vault)
+  // Admin-only gate: x-admin-secret OR service-role Authorization header
   const adminSecret = req.headers.get("x-admin-secret");
-  if (adminSecret !== Deno.env.get("ADMIN_SECRET")) {
+  const authHeader = req.headers.get("authorization") ?? "";
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  const isAdminSecretValid = adminSecret === Deno.env.get("ADMIN_SECRET");
+  const isServiceRole = serviceRoleKey && authHeader === `Bearer ${serviceRoleKey}`;
+
+  if (!isAdminSecretValid && !isServiceRole) {
     return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
