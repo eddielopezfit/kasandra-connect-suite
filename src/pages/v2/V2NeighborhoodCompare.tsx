@@ -200,7 +200,7 @@ const V2NeighborhoodCompareContent = () => {
       return;
     }
     if (!toolStarted) {
-      logEvent('tool_started', { tool: 'neighborhood_compare' });
+      logEvent('tool_started', { tool_id: 'neighborhood_compare', source: 'website', page_path: '/neighborhood-compare' });
       setToolStarted(true);
     }
     setLoadingZip(zip);
@@ -212,7 +212,7 @@ const V2NeighborhoodCompareContent = () => {
       const newResults = [...results, { zip, profileEn: data.profile_en, profileEs: data.profile_es }];
       setResults(newResults);
       if (newResults.length >= 2) {
-        logEvent('tool_completed', { tool: 'neighborhood_compare', zips_compared: newResults.map(r => r.zip) });
+        logEvent('tool_completed', { tool_id: 'neighborhood_compare', source: 'website', page_path: '/neighborhood-compare', zips_compared: newResults.map(r => r.zip) });
       }
       setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
       logEvent("neighborhood_profile_generated", { zip_code: zip, source: "comparison_tool", cached: data.cached });

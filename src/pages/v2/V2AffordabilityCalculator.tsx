@@ -5,8 +5,9 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import { useMarketPulse } from "@/hooks/useMarketPulse";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import {
   calculateAffordability,
   TUCSON_MEDIAN_PRICE,
@@ -22,6 +23,7 @@ const fmt = (n: number) => "$" + n.toLocaleString("en-US", { maximumFractionDigi
 const V2AffordabilityCalculatorContent = () => {
   const { language, t } = useLanguage();
   const { openChat } = useSelenaChat();
+  const { pulse: marketData } = useMarketPulse();
   const resultsRef = useRef<HTMLDivElement>(null);
   const [toolStarted, setToolStarted] = useState(false);
   const [calculated, setCalculated] = useState(false);
@@ -40,18 +42,24 @@ const V2AffordabilityCalculatorContent = () => {
   const handleCalculate = () => {
     if (incomeNum < 20000) return;
     if (!toolStarted) {
-      logEvent("tool_started", { tool: "affordability_calculator", source: "website", tool_origin: "affordability_calculator" });
+      logEvent("tool_started", { tool_id: "affordability_calculator", source: "website", page_path: "/affordability-calculator" });
       setToolStarted(true);
     }
     setCalculated(true);
     setFieldIfEmpty("intent", "buy");
+    const ctx = getSessionContext();
+    updateSessionContext({
+      last_tool_completed: "affordability_calculator",
+      tools_completed: [...new Set([...(ctx?.tools_completed ?? []), "affordability_calculator"])],
+    });
     logEvent("tool_completed", {
-      tool: "affordability_calculator",
+      tool_id: "affordability_calculator",
       source: "website",
-      tool_origin: "affordability_calculator",
+      page_path: "/affordability-calculator",
       max_price: result.maxPrice,
       credit_tier: creditTier,
     });
+    import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
   };
 
@@ -62,8 +70,10 @@ const V2AffordabilityCalculatorContent = () => {
         : "bg-white text-cc-charcoal border-cc-sand-dark/40 hover:border-cc-navy/40"
     }`;
 
+  // Use live median from market_pulse when available, fallback to hardcoded constant
+  const liveMedian = (marketData as any)?.median_sale_price ?? TUCSON_MEDIAN_PRICE;
   const medianComparison = result.maxPrice > 0
-    ? Math.round(((result.maxPrice - TUCSON_MEDIAN_PRICE) / TUCSON_MEDIAN_PRICE) * 100)
+    ? Math.round(((result.maxPrice - liveMedian) / liveMedian) * 100)
     : 0;
 
   return (
@@ -231,8 +241,8 @@ const V2AffordabilityCalculatorContent = () => {
               {medianComparison !== 0 && (
                 <p className="text-cc-gold/80 text-xs mt-1">
                   {medianComparison > 0
-                    ? t(`${medianComparison}% above Tucson median (~${fmt(TUCSON_MEDIAN_PRICE)})`, `${medianComparison}% sobre la mediana de Tucson (~${fmt(TUCSON_MEDIAN_PRICE)})`)
-                    : t(`${Math.abs(medianComparison)}% below Tucson median (~${fmt(TUCSON_MEDIAN_PRICE)})`, `${Math.abs(medianComparison)}% bajo la mediana de Tucson (~${fmt(TUCSON_MEDIAN_PRICE)})`)
+                    ? t(`${medianComparison}% above Tucson median (~${fmt(liveMedian)})`, `${medianComparison}% sobre la mediana de Tucson (~${fmt(liveMedian)})`)
+                    : t(`${Math.abs(medianComparison)}% below Tucson median (~${fmt(liveMedian)})`, `${Math.abs(medianComparison)}% bajo la mediana de Tucson (~${fmt(liveMedian)})`)
                   }
                 </p>
               )}

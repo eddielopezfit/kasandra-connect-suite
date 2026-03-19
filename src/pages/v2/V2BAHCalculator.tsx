@@ -6,7 +6,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import { calculateBAHMortgage, type BAHInput, type BAHResult } from "@/lib/calculator/bahMortgageAlgorithm";
 import {
   DollarSign, Home, MessageCircle, ArrowRight, Calendar, Shield, CreditCard,
@@ -47,18 +47,24 @@ const V2BAHCalculatorContent = () => {
   const handleCalculate = () => {
     if (bahNum < 500) return;
     if (!toolStarted) {
-      logEvent("tool_started", { tool: "bah_calculator", source: "website", tool_origin: "bah_calculator" });
+      logEvent("tool_started", { tool_id: "bah_calculator", source: "website", page_path: "/bah-calculator" });
       setToolStarted(true);
     }
     setCalculated(true);
     setFieldIfEmpty("intent", "buy");
+    const ctx = getSessionContext();
+    updateSessionContext({
+      last_tool_completed: "bah_calculator",
+      tools_completed: [...new Set([...(ctx?.tools_completed ?? []), "bah_calculator"])],
+    });
     logEvent("tool_completed", {
-      tool: "bah_calculator",
+      tool_id: "bah_calculator",
       source: "website",
-      tool_origin: "bah_calculator",
+      page_path: "/bah-calculator",
       max_price: result.maxPrice,
       bah_amount: bahNum,
     });
+    import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
   };
 

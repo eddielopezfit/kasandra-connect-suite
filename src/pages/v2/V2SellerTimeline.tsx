@@ -663,7 +663,7 @@ const V2SellerTimeline = () => {
     (closeWindow: CloseWindow) => {
       setWizardData(prev => ({ ...prev, closeWindow }));
       setFieldIfEmpty("intent", "sell");
-      logEvent('tool_started', { tool: 'seller_timeline' });
+      logEvent('tool_started', { tool_id: 'seller_timeline', source: 'website', page_path: '/seller-timeline' });
       updateSessionContext({
         last_quiz_id: "seller_timeline",
         timeline:
@@ -720,7 +720,8 @@ const V2SellerTimeline = () => {
         close_window: wizardData.closeWindow,
         readiness: wizardData.readiness,
       });
-      logEvent('tool_completed', { tool: 'seller_timeline', close_window: wizardData.closeWindow, readiness: wizardData.readiness });
+      logEvent('tool_completed', { tool_id: 'seller_timeline', source: 'website', page_path: '/seller-timeline', close_window: wizardData.closeWindow, readiness: wizardData.readiness });
+      import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
       goTo(4);
     },
     [goTo, wizardData]
