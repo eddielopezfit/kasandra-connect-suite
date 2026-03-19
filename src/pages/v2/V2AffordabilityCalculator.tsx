@@ -42,18 +42,24 @@ const V2AffordabilityCalculatorContent = () => {
   const handleCalculate = () => {
     if (incomeNum < 20000) return;
     if (!toolStarted) {
-      logEvent("tool_started", { tool: "affordability_calculator", source: "website", tool_origin: "affordability_calculator" });
+      logEvent("tool_started", { tool_id: "affordability_calculator", source: "website", page_path: "/affordability-calculator" });
       setToolStarted(true);
     }
     setCalculated(true);
     setFieldIfEmpty("intent", "buy");
+    const ctx = getSessionContext();
+    updateSessionContext({
+      last_tool_completed: "affordability_calculator",
+      tools_completed: [...new Set([...(ctx?.tools_completed ?? []), "affordability_calculator"])],
+    });
     logEvent("tool_completed", {
-      tool: "affordability_calculator",
+      tool_id: "affordability_calculator",
       source: "website",
-      tool_origin: "affordability_calculator",
+      page_path: "/affordability-calculator",
       max_price: result.maxPrice,
       credit_tier: creditTier,
     });
+    import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
   };
 
