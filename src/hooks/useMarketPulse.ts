@@ -79,7 +79,7 @@ function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' 
     // New pipeline provides month directly (e.g. "March 2026")
     if (language === 'es') {
       // Translate month to Spanish
-      const d = new Date(pulse.month + " 1");
+      const d = new Date(pulse.month + " 1, 12:00:00");
       month = d.toLocaleDateString('es-US', { month: 'long', year: 'numeric' });
     } else {
       month = pulse.month;
