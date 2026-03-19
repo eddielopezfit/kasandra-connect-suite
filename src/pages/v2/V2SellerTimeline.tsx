@@ -768,6 +768,7 @@ const V2SellerTimeline = () => {
         {step === 4 && wizardData.closeWindow && wizardData.readiness && (
           <StepPhasePlan wizardData={wizardData} onRestart={handleRestart} />
         )}
+        </div>
       </div>
     </V2Layout>
   );
