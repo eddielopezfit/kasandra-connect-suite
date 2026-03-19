@@ -45,7 +45,7 @@ serve(async (req) => {
     if (supabaseUrl && supabaseKey) {
       const supabase = createClient(supabaseUrl, supabaseKey);
       const rlKey = extractRateLimitKey(req, {});
-      const rl = await checkRateLimit(supabase, rlKey, 'fetch-google-reviews', 5);
+      const rl = await checkRateLimit(supabase, rlKey, 'fetch-google-reviews');
       if (!rl.allowed) return rateLimitResponse(corsHeaders);
     }
 
