@@ -108,9 +108,8 @@ function buildPhases(
   const stagingStart = prepEnd;
   const stagingEnd = addWeeks(prepEnd, stagingDuration);
 
-  // Phase 3: Active on Market
-  // Tucson median DOM: 38 days (~5-6 weeks)
-  const domWeeks = isCompressed ? 3 : 5;
+  // Phase 3: Active on Market — uses real market pulse DOM
+  const domWeeks = isCompressed ? 3 : Math.max(3, Math.round(medianDOM / 7));
   const listStart = stagingEnd;
   const listEnd = addWeeks(listStart, domWeeks);
 
