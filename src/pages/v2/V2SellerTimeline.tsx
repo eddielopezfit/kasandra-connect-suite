@@ -488,11 +488,13 @@ interface Step4Props {
 const StepPhasePlan = ({ wizardData, onRestart }: Step4Props) => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
+  const { stats } = useMarketPulse(language);
 
   const phases = buildPhases(
     wizardData.closeWindow!,
     wizardData.readiness!,
-    language
+    language,
+    stats.daysOnMarket
   );
 
   const closeLabel = CLOSE_LABEL[wizardData.closeWindow!];
