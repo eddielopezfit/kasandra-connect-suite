@@ -86,7 +86,7 @@ function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' 
     }
     verifiedDate = pulse.verified_at ? new Date(pulse.verified_at).toLocaleDateString(locale, { month: 'long', year: 'numeric' }) : month;
   } else if (isLive && pulse.last_verified_date) {
-    const d = new Date(pulse.last_verified_date);
+    const d = new Date(pulse.last_verified_date + "T12:00:00");
     month = d.toLocaleDateString(locale, { month: "long", year: "numeric" });
     verifiedDate = month;
   } else {
