@@ -253,7 +253,7 @@ serve(async (req) => {
 
     console.log('[create-handoff] 🔔 NOTIFICATION TO KASANDRA:', JSON.stringify(notifyPayload, null, 2));
 
-    // Fire notify-handoff in background (don't await)
+    // Fire notify-handoff in background — delivery tracking handled by notify-handoff
     fetch(`${supabaseUrl}/functions/v1/notify-handoff`, {
       method: 'POST',
       headers: {
