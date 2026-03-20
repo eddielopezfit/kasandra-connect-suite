@@ -187,8 +187,8 @@ export function getGovernedChips(
   return { chips, phase: 1, escalated: false };
 }
 
-// ============= BOOKING GATE PATTERNS =============
-// Keywords: explicit booking actions
+/**
+ * Semantic chip keys — server-side mirror of src/lib/registry/chipKeys.ts
  * Used for deterministic chip→destination resolution.
  */
 export const CHIP_KEYS = {
