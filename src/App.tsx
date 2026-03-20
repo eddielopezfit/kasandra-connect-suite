@@ -50,6 +50,7 @@ const V2SelenaAI = lazy(() => import("./pages/v2/V2SelenaAI"));
 const V2AffordabilityCalculator = lazy(() => import("./pages/v2/V2AffordabilityCalculator"));
 const V2BAHCalculator = lazy(() => import("./pages/v2/V2BAHCalculator"));
 const V2HomeValuation = lazy(() => import("./pages/v2/V2HomeValuation"));
+const V2NetToSeller = lazy(() => import("./pages/v2/V2NetToSeller"));
 const SellerLanding = lazy(() => import("./pages/ad/SellerLanding"));
 const SellerQuiz = lazy(() => import("./pages/ad/SellerQuiz"));
 const SellerResult = lazy(() => import("./pages/ad/SellerResult"));
