@@ -4,8 +4,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 /**
  * notify-handoff
- * UX-05: GHL webhook failures now logged to event_log for observability.
- * Previously fire-and-forget — missed leads were invisible. [audit UX-05]
+ * Sends lead handoff payload to GHL webhook with retry logic.
+ * - 3 attempts with exponential backoff (1s → 3s → 9s)
+ * - Updates lead_handoffs.delivery_status on success/failure
+ * - Structured logging with lead_id, session_id, correlation_id
  */
 const GHL_WEBHOOK_URL = Deno.env.get("GHL_WEBHOOK_URL") ?? "";
 
@@ -42,7 +44,6 @@ function deriveTags(context: Record<string, unknown>): string[] {
   const score = Number(context.readiness_score ?? 0);
   const leadScore = Number(context.lead_score ?? context.readiness_score ?? 0);
 
-  // Score bucket tags — REQUIRED for GHL workflow branching (WF-05/09/10)
   if (leadScore >= 75 || score >= 75 || context.journey_state === "decide") {
     tags.push("score_hot");
     tags.push("selena - priority hot");
@@ -64,6 +65,60 @@ function deriveTags(context: Record<string, unknown>): string[] {
   return tags;
 }
 
+/** Sleep helper for backoff */
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** Retry GHL webhook with exponential backoff: 1s → 3s → 9s */
+async function sendWithRetry(
+  payload: Record<string, unknown>,
+  maxAttempts = 3,
+  correlationId: string,
+): Promise<{ ok: boolean; attempt: number; status?: number; error?: string }> {
+  const backoffMs = [1000, 3000, 9000];
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      console.log(`[notify-handoff] [${correlationId}] Attempt ${attempt}/${maxAttempts}`);
+
+      const ghlRes = await fetch(GHL_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (ghlRes.ok) {
+        console.log(`[notify-handoff] [${correlationId}] ✅ Delivered on attempt ${attempt}`);
+        return { ok: true, attempt, status: ghlRes.status };
+      }
+
+      const errText = await ghlRes.text();
+      console.warn(`[notify-handoff] [${correlationId}] Attempt ${attempt} failed: ${ghlRes.status} — ${errText?.slice(0, 300)}`);
+
+      if (attempt < maxAttempts) {
+        const waitMs = backoffMs[attempt - 1] ?? 9000;
+        console.log(`[notify-handoff] [${correlationId}] Backing off ${waitMs}ms`);
+        await sleep(waitMs);
+      } else {
+        return { ok: false, attempt, status: ghlRes.status, error: errText?.slice(0, 500) };
+      }
+    } catch (fetchErr) {
+      const errMsg = (fetchErr as Error)?.message ?? String(fetchErr);
+      console.error(`[notify-handoff] [${correlationId}] Attempt ${attempt} network error: ${errMsg}`);
+
+      if (attempt < maxAttempts) {
+        const waitMs = backoffMs[attempt - 1] ?? 9000;
+        await sleep(waitMs);
+      } else {
+        return { ok: false, attempt, error: errMsg };
+      }
+    }
+  }
+
+  return { ok: false, attempt: maxAttempts, error: "Exhausted all retry attempts" };
+}
+
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
 
@@ -81,9 +136,17 @@ serve(async (req) => {
     );
   }
 
+  // Init Supabase client for DB updates
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+  const supabase = createClient(supabaseUrl, serviceKey);
+
   try {
     const body = await req.json();
     const { contact, context } = body;
+    const handoffId = context?.handoff_id ?? null;
+    const correlationId = handoffId ?? `anon_${Date.now()}`;
+
+    console.log(`[notify-handoff] [${correlationId}] Starting for lead=${context?.selena_lead_id}, session=${context?.session_id}`);
 
     if (!contact?.phone && !contact?.email) {
       return new Response(
@@ -93,7 +156,13 @@ serve(async (req) => {
     }
 
     if (!GHL_WEBHOOK_URL) {
-      console.error("[notify-handoff] GHL_WEBHOOK_URL secret not set");
+      console.error(`[notify-handoff] [${correlationId}] GHL_WEBHOOK_URL secret not set`);
+      if (handoffId) {
+        await supabase.from("lead_handoffs").update({
+          delivery_status: "failed",
+          last_error: "GHL_WEBHOOK_URL not configured",
+        }).eq("id", handoffId);
+      }
       return new Response(
         JSON.stringify({ error: "Webhook not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -111,23 +180,17 @@ serve(async (req) => {
     const pipelineStage = derivePipelineStage(context);
     const tags = deriveTags({ ...context, phone: contact.phone });
 
-    const payload = {
-      // Contact identity
+    // Build GHL payload — UNCHANGED from original
+    const payload: Record<string, unknown> = {
       first_name: contact.firstName ?? contact.first_name ?? "",
       last_name: contact.lastName ?? contact.last_name ?? "",
       phone: contact.phone ?? "",
       email: contact.email ?? "",
-
-      // Selena identifiers
       selena_lead_id: context.selena_lead_id ?? "",
       selena_session_id: context.session_id ?? "",
-
-      // Intent + language
       selena_lead_intent_clean: context.intent ?? "",
       selena_intent_canonical: context.intent ?? "",
       selena_language_clean: context.language ?? "en",
-
-      // Scores — lead_score is the composite behavioral score (separate from readiness_score)
       selena_score: context.lead_score ?? context.readiness_score ?? 0,
       selena_readiness_score: context.readiness_score ?? 0,
       lead_temperature: (() => {
@@ -138,8 +201,6 @@ serve(async (req) => {
       selena_motivation_score: context.motivation_score ?? 0,
       selena_financing_strength_score: context.financing_strength_score ?? 0,
       selena_data_quality_score: context.data_quality_score ?? 0,
-
-      // Journey
       selena_journey_state: context.journey_state ?? "explore",
       selena_chip_phase_floor: context.chip_phase_floor ?? 0,
       selena_guide_count: guidesConsumed,
@@ -147,8 +208,6 @@ serve(async (req) => {
       selena_cognitive_journey_stage: context.cognitive_journey_stage ?? "",
       selena_pipeline_stage: pipelineStage,
       selena_last_declared_goal: context.last_declared_goal ?? "",
-
-      // Boolean flags
       selena_inherited_home: context.inherited_home ?? false,
       selena_trust_signal_detected: context.trust_signal_detected ?? false,
       selena_va_loan_flag: context.va_loan ?? false,
@@ -161,14 +220,10 @@ serve(async (req) => {
       selena_booked_flag: context.booked ?? false,
       selena_intake_completed_flag: true,
       selena_lender_connected_flag: context.lender_connected ?? false,
-
-      // Calculator outputs
       selena_cash_offer_calc: context.cash_offer_calc ?? null,
       selena_listing_net_calc: context.listing_net_calc ?? null,
       selena_estimated_value_raw: context.estimated_value ?? "",
       selena_property_condition_raw: context.property_condition ?? "",
-
-      // Property details
       selena_property_address: context.property_address ?? "",
       selena_inquiry_address: context.property_address ?? "",
       selena_neighborhood_clean: context.last_neighborhood ?? "",
@@ -182,13 +237,9 @@ serve(async (req) => {
       selena_timeline_raw: context.timeline_raw ?? "",
       selena_move_in_date_raw: context.move_in_date ?? null,
       selena_amenities_clean: context.amenities ?? "",
-
-      // Financing
       selena_financing_status: context.financing_status ?? "",
       selena_financing_details_clean: context.financing_details ?? "",
       selena_is_pre_approved: context.pre_approved ? "yes" : "no",
-
-      // Attribution
       selena_source: context.entry_source ?? "selena_chat",
       selena_page_path: context.page_path ?? "",
       selena_session_source: context.session_source ?? "",
@@ -199,87 +250,90 @@ serve(async (req) => {
       selena_utm_content: context.utm_content ?? "",
       selena_utm_term: context.utm_term ?? "",
       selena_ad_funnel_source: context.ad_funnel_source ?? "",
-
-      // Guide/quiz
       selena_guide_id: context.guide_id ?? "",
       selena_guide_title: context.guide_title ?? "",
       selena_quiz_completed: context.quiz_completed ? "true" : "false",
       selena_quiz_result_path: context.quiz_result_path ?? "",
-
-      // Consent
       selena_consent_timestamp: new Date().toISOString(),
       selena_consent_ai_disclosure: context.ai_disclosure_accepted ? "true" : "false",
       selena_consent_communications: context.sms_consent ?? false,
       selena_last_data_parse_date: new Date().toISOString(),
-
-      // Tags array — GHL webhook accepts tags as array
       tags,
     };
 
-    const ghlRes = await fetch(GHL_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    // Send with retry (3 attempts, exponential backoff)
+    const result = await sendWithRetry(payload, 3, correlationId);
 
-    if (!ghlRes.ok) {
-      const errText = await ghlRes.text();
-      console.error("[notify-handoff] GHL webhook failed:", ghlRes.status, errText);
+    // Update handoff record with delivery status
+    if (handoffId) {
+      if (result.ok) {
+        await supabase.from("lead_handoffs").update({
+          delivery_status: "delivered",
+          notified_at: new Date().toISOString(),
+          notification_provider: "leadconnector",
+        }).eq("id", handoffId);
+      } else {
+        // Increment retry_count and mark failed
+        const { data: current } = await supabase
+          .from("lead_handoffs")
+          .select("retry_count")
+          .eq("id", handoffId)
+          .maybeSingle();
 
-      // Log failure to event_log for observability — no more silent missed leads [audit UX-05]
+        await supabase.from("lead_handoffs").update({
+          delivery_status: "failed",
+          retry_count: (current?.retry_count ?? 0) + result.attempt,
+          last_error: result.error?.slice(0, 1000) ?? "Unknown error",
+        }).eq("id", handoffId);
+      }
+    }
+
+    if (!result.ok) {
+      // Log failure to event_log for observability
       try {
-        const supabaseUrl = Deno.env.get("SUPABASE_URL");
-        const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-        if (supabaseUrl && supabaseKey) {
-          const supabase = createClient(supabaseUrl, supabaseKey);
-          await supabase.from("event_log").insert({
-            event_type: "handoff_notify_failed",
-            session_id: body.context?.session_id || body.contact?.email || "unknown",
-            event_payload: {
-              contact_phone: body.contact?.phone || null,
-              contact_email: body.contact?.email || null,
-              ghl_status: ghlRes.status,
-              ghl_error: errText?.slice(0, 500) || "unknown",
-              pipeline_stage: pipelineStage,
-              timestamp: new Date().toISOString(),
-            },
-          });
-          console.warn("[notify-handoff] Failure logged to event_log for:", body.contact?.email || body.contact?.phone);
-        }
+        await supabase.from("event_log").insert({
+          event_type: "handoff_notify_failed",
+          session_id: context?.session_id || contact?.email || "unknown",
+          event_payload: {
+            correlation_id: correlationId,
+            lead_id: context?.selena_lead_id,
+            contact_phone: contact?.phone || null,
+            contact_email: contact?.email || null,
+            ghl_status: result.status,
+            ghl_error: result.error?.slice(0, 500) || "unknown",
+            pipeline_stage: pipelineStage,
+            attempts: result.attempt,
+            timestamp: new Date().toISOString(),
+          },
+        });
       } catch (logErr) {
-        console.error("[notify-handoff] Failed to log failure to event_log:", logErr);
+        console.error(`[notify-handoff] [${correlationId}] Failed to log failure:`, logErr);
       }
 
       return new Response(
-        JSON.stringify({ error: "GHL webhook failed", status: ghlRes.status }),
+        JSON.stringify({ error: "GHL webhook failed after retries", status: result.status, attempts: result.attempt }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log("[notify-handoff] Handoff successful for:", contact.phone ?? contact.email);
+    console.log(`[notify-handoff] [${correlationId}] ✅ Handoff delivered for: ${contact.phone ?? contact.email}`);
     return new Response(
-      JSON.stringify({ success: true, pipeline_stage: pipelineStage, tags }),
+      JSON.stringify({ success: true, pipeline_stage: pipelineStage, tags, attempts: result.attempt }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
   } catch (err) {
     console.error("[notify-handoff] Unexpected error:", err);
-    // Log unexpected failures too
     try {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL");
-      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-      if (supabaseUrl && supabaseKey) {
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        await supabase.from("event_log").insert({
-          event_type: "handoff_notify_failed",
-          session_id: "unknown",
-          event_payload: {
-            error: String((err as Error)?.message ?? err),
-            type: "unexpected_error",
-            timestamp: new Date().toISOString(),
-          },
-        });
-      }
+      await supabase.from("event_log").insert({
+        event_type: "handoff_notify_failed",
+        session_id: "unknown",
+        event_payload: {
+          error: String((err as Error)?.message ?? err),
+          type: "unexpected_error",
+          timestamp: new Date().toISOString(),
+        },
+      });
     } catch (_) { /* best effort */ }
     return new Response(
       JSON.stringify({ error: "Internal error" }),
