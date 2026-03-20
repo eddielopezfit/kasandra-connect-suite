@@ -41,13 +41,83 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const requestId = crypto.randomUUID().slice(0, 8);
+
   try {
+    const body = await req.json();
+
+    // ============= HEALTH CHECK MODE =============
+    if (body.action === "health") {
+      console.log(`[check-availability][${requestId}] Health check requested`);
+      const ghlApiKey = Deno.env.get("GHL_PRIVATE_KEY");
+      const hasApiKey = !!ghlApiKey;
+
+      let apiStatus: "success" | "failed" = "failed";
+      let slotsFound = 0;
+
+      if (hasApiKey) {
+        try {
+          const now = new Date();
+          const endDate = new Date(now);
+          endDate.setDate(endDate.getDate() + 1);
+
+          const params = new URLSearchParams({
+            locationId: GHL_LOCATION_ID,
+            startDate: now.toISOString(),
+            endDate: endDate.toISOString(),
+            timezone: "America/Phoenix",
+          });
+
+          const ghlRes = await fetch(
+            `https://services.leadconnectorhq.com/calendars/${GHL_CALENDAR_ID}/free-slots?${params}`,
+            {
+              headers: {
+                Authorization: `Bearer ${ghlApiKey}`,
+                Version: "2021-07-28",
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (ghlRes.ok) {
+            apiStatus = "success";
+            const ghlData = await ghlRes.json();
+            const dateMap: Record<string, { slots: string[] }> = ghlData._dates_ ?? ghlData.data ?? {};
+            for (const dateKey of Object.keys(dateMap)) {
+              slotsFound += dateMap[dateKey]?.slots?.length ?? 0;
+            }
+          } else {
+            console.error(`[check-availability][${requestId}] Health: GHL API returned ${ghlRes.status}`);
+          }
+        } catch (e) {
+          console.error(`[check-availability][${requestId}] Health: GHL API error:`, e);
+        }
+      } else {
+        console.error(`[check-availability][${requestId}] Health: GHL_PRIVATE_KEY is NOT set`);
+      }
+
+      console.log(`[check-availability][${requestId}] Health result: key=${hasApiKey}, api=${apiStatus}, slots=${slotsFound}`);
+
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          has_api_key: hasApiKey,
+          api_connection_status: apiStatus,
+          slots_found: slotsFound,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ============= STANDARD AVAILABILITY CHECK =============
     const {
       lead_id,
       channel,
       preferred_window = "next_3_days",
       timezone = "America/Phoenix",
-    }: AvailabilityRequest = await req.json();
+    }: AvailabilityRequest = body;
+
+    console.log(`[check-availability][${requestId}] Request: lead=${lead_id}, channel=${channel}, window=${preferred_window}`);
 
     // Input validation
     if (!lead_id || !channel) {
@@ -95,12 +165,16 @@ serve(async (req) => {
         break;
     }
 
-    // Fetch real slots from GHL Calendar API
+    // Validate GHL_PRIVATE_KEY
     const ghlApiKey = Deno.env.get("GHL_PRIVATE_KEY");
     let slots: TimeSlot[] = [];
     let usedRealApi = false;
+    let apiFailureReason: string | null = null;
 
-    if (ghlApiKey) {
+    if (!ghlApiKey) {
+      console.error(`[check-availability][${requestId}] CRITICAL: GHL_PRIVATE_KEY is NOT set — calendar integration disabled`);
+      apiFailureReason = "api_key_missing";
+    } else {
       try {
         const params = new URLSearchParams({
           locationId: GHL_LOCATION_ID,
@@ -119,6 +193,8 @@ serve(async (req) => {
             },
           }
         );
+
+        console.log(`[check-availability][${requestId}] GHL API status: ${ghlRes.status}`);
 
         if (ghlRes.ok) {
           const ghlData = await ghlRes.json();
@@ -162,22 +238,24 @@ serve(async (req) => {
 
           usedRealApi = true;
           console.log(
-            `[check-availability] GHL API returned ${allSlots.length} slots, serving ${slots.length}`
+            `[check-availability][${requestId}] GHL API returned ${allSlots.length} total slots, serving ${slots.length}`
           );
         } else {
-          console.warn(
-            `[check-availability] GHL API returned ${ghlRes.status} — falling back to booking page`
+          const errBody = await ghlRes.text().catch(() => "");
+          console.error(
+            `[check-availability][${requestId}] GHL API returned ${ghlRes.status}: ${errBody.slice(0, 200)}`
           );
+          apiFailureReason = `api_error_${ghlRes.status}`;
         }
       } catch (apiErr) {
-        console.error("[check-availability] GHL API error:", apiErr);
+        console.error(`[check-availability][${requestId}] GHL API network error:`, apiErr);
+        apiFailureReason = "network_error";
       }
-    } else {
-      console.warn("[check-availability] GHL_PRIVATE_KEY not set — returning booking page fallback");
     }
 
     // Fallback: if no real slots, return a single CTA pointing to the booking page
     if (slots.length === 0) {
+      console.log(`[check-availability][${requestId}] Using fallback. Reason: ${apiFailureReason ?? "no_slots_available"}`);
       slots = [
         {
           start: startDate.toISOString(),
@@ -194,13 +272,18 @@ serve(async (req) => {
         slots,
         source: usedRealApi ? "ghl_calendar" : "booking_page_fallback",
         calendar_id: GHL_CALENDAR_ID,
+        ...(apiFailureReason ? { fallback_reason: apiFailureReason } : {}),
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("[check-availability] Error:", error);
+    console.error(`[check-availability][${requestId}] Unhandled error:`, error);
     return new Response(
-      JSON.stringify({ ok: false, error: "Internal server error" }),
+      JSON.stringify({
+        ok: false,
+        error: "Internal server error",
+        fallback_url: BOOKING_PAGE_URL,
+      }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
