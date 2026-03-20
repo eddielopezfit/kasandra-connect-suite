@@ -37,11 +37,6 @@ const VALUE_PATTERNS = /home worth|what.*worth|value|valuation|cuánto vale|valo
 const CALCULATOR_PATTERNS = /calculator|net proceeds|estimate.*net|cash offer|calculadora|calcular/i;
 
 // Inherited home / estate detection
-const INHERITED_HOME_PATTERNS = /inherited|inheritance|estate|passed away|lost.*(?:grand|parent|mom|dad|father|mother)|(?:grand|parent|mom|dad).*passed|family home|deceased|left me|left us|died|falleci[oó]|herencia|heredé|propiedad.*familia/i;
-
-// Trust signal detection
-const TRUST_SIGNAL_PATTERNS = /she seems|he seems|looks trustworthy|saw.*social|social media|heard about|referred|recommended|friend said|family said|seems pleasant|seems nice|seems legit|parece confiable|me recomendaron|vi.*redes sociales/i;
-
 /**
  * Infers session engagement state from conversation history
  */
@@ -194,75 +189,6 @@ function getGovernedChips(
 
 // ============= BOOKING GATE PATTERNS =============
 // Keywords: explicit booking actions
-const BOOKING_KEYWORDS = /book|schedule|call|talk|meet|appointment|consulta|cita|llamar|hablar|agendar/i;
-
-// Phrases: implicit booking suggestions (stricter filter for earned access)
-// NOTE: "kasandra" removed to avoid over-filtering educational mentions of the agent
-const BOOKING_PHRASES = /(talk to kasandra|priority call|strategy call|consultation|consult|review strategy|revisar estrategia|verify.*kasandra|verificar.*kasandra)/i;
-
-/**
- * Checks if user explicitly asked to book/call
- */
-function userAskedToBook(message: string): boolean {
-  return BOOKING_KEYWORDS.test(message);
-}
-
-/**
- * Count user turns only (not total messages)
- */
-function userTurnCount(history: Array<{ role: string }>): number {
-  return history.filter(m => m.role === 'user').length;
-}
-
-/**
- * Determines if the user has earned access to booking CTA
- * Based on: explicit ask, tool completion, email provided, or 2+ engaged user turns
- * 
- * NOTE: "2 user turns" only unlocks if intent is NOT explore (keeps explorers in education mode)
- */
-function hasEarnedBookingAccess(
-  context: ChatRequest["context"], 
-  history: Array<{ role: string }>,
-  message: string,
-  extractedEmail?: string | null
-): boolean {
-  // 1. User explicitly asked to book/call → immediate unlock
-  if (userAskedToBook(message)) return true;
-  
-  // 2. Tool completion flags (stable fields from SessionContext) — FIX 6: renamed
-  if (context.last_tool_completed) return true;
-  if (context.last_tool_result) return true;
-  if (context.quiz_completed) return true;
-  
-  // 3. Email provided = commitment signal (soft gate)
-  if (extractedEmail) return true;
-  
-  // 4. REMOVED: Turn-count gate removed per governance review.
-  // Simple turn count is insufficient per earned access rules.
-  // Only explicit booking keywords, tool completion, or email unlock booking.
-  
-  return false;
-}
-
-/**
- * Filters suggestions to remove booking-related language if not earned
- * Uses both explicit keywords AND implicit booking phrases for stricter gating
- */
-function filterSuggestionsForEarnedAccess(suggestions: string[], hasEarned: boolean): string[] {
-  if (hasEarned) return suggestions;
-  
-  // Strip any suggestion containing booking keywords OR booking phrases
-  return suggestions.filter(s => 
-    !BOOKING_KEYWORDS.test(s) && !BOOKING_PHRASES.test(s)
-  );
-}
-
-// ============= JOURNEY AWARENESS: DESTINATION-BASED CHIP FILTER =============
-// Deterministic filtering by semantic chip key → destination path.
-// All Phase 2+ chips use semantic keys from CHIP_KEYS (server-side mirror).
-
-/**
- * Semantic chip keys — server-side mirror of src/lib/registry/chipKeys.ts
  * Used for deterministic chip→destination resolution.
  */
 const CHIP_KEYS = {
