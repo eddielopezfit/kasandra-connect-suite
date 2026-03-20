@@ -187,7 +187,17 @@ const V2ContactContent = () => {
                       (520) 349-3248
                     </a>
                   </div>
+                  </div>
                 </div>
+
+                <div className="flex items-start gap-4">
+                  <Mail className="w-5 h-5 text-cc-gold mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-cc-blue text-sm">{t("Email", "Correo Electrónico")}</p>
+                    <a href="mailto:kasandra@kasandraoasis.com" className="text-cc-charcoal hover:text-cc-gold transition-colors">
+                      kasandra@kasandraoasis.com
+                    </a>
+                  </div>
 
                 <div className="flex items-start gap-4">
                   <MapPin className="w-5 h-5 text-cc-gold mt-1 flex-shrink-0" />
