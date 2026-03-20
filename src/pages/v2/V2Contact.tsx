@@ -6,7 +6,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Phone, MapPin, Building2, MessageCircle, Instagram, Facebook, Linkedin, Clock, Calendar, Send } from "lucide-react";
+import { Phone, Mail, MapPin, Building2, MessageCircle, Instagram, Facebook, Linkedin, Clock, Calendar, Send } from "lucide-react";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { logEvent } from "@/lib/analytics/logEvent";
