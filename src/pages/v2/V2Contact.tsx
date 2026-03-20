@@ -6,7 +6,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Phone, MapPin, Building2, MessageCircle, Instagram, Facebook, Linkedin, Clock, Calendar, Send } from "lucide-react";
+import { Phone, Mail, MapPin, Building2, MessageCircle, Instagram, Facebook, Linkedin, Clock, Calendar, Send } from "lucide-react";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { logEvent } from "@/lib/analytics/logEvent";
@@ -187,7 +187,17 @@ const V2ContactContent = () => {
                       (520) 349-3248
                     </a>
                   </div>
+                  </div>
                 </div>
+
+                <div className="flex items-start gap-4">
+                  <Mail className="w-5 h-5 text-cc-gold mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-cc-blue text-sm">{t("Email", "Correo Electrónico")}</p>
+                    <a href="mailto:kasandra@kasandraoasis.com" className="text-cc-charcoal hover:text-cc-gold transition-colors">
+                      kasandra@kasandraoasis.com
+                    </a>
+                  </div>
 
                 <div className="flex items-start gap-4">
                   <MapPin className="w-5 h-5 text-cc-gold mt-1 flex-shrink-0" />

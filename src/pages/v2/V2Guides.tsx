@@ -480,6 +480,11 @@ function GuidesContent() {
                       {gridBadge === 'read' && (
                         <span className="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0" title={t("Read", "Leído")} />
                       )}
+                      {guide.isFeatured && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-cc-gold/15 text-cc-gold border border-cc-gold/30">
+                          {t("Featured", "Destacada")}
+                        </span>
+                      )}
                     </div>
                     
                     {decisionLabel && (

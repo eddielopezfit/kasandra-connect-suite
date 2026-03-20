@@ -139,6 +139,36 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     }
   }, [location.pathname, hasInitialized]);
 
+  // Issue #1 fix: Detect language change and refresh greeting if stored history
+  // contains a greeting in the wrong language (prevents stale EN greeting in ES mode)
+  useEffect(() => {
+    if (!hasInitialized || isOpen || messages.length === 0) return;
+    const firstMsg = messages[0];
+    if (firstMsg?.role !== 'assistant') return;
+    const greetingLang = firstMsg.metadata?.greeting_language;
+    if (!greetingLang || greetingLang === language) return;
+    
+    // Language mismatch detected — only user has the initial greeting (no user messages yet)
+    const hasUserMessages = messages.some(m => m.role === 'user');
+    if (hasUserMessages) return; // Don't wipe mid-conversation
+    
+    // Re-compute greeting in new language
+    const sessionContext = getSessionContext();
+    const result = computeGreeting(undefined, sessionContext, [], false, t, language, serializeTrailForSelena());
+    if (result && result.greetingContent) {
+      const freshGreeting: ChatMessage = {
+        id: generateMessageId(),
+        role: 'assistant',
+        content: result.greetingContent,
+        timestamp: new Date().toISOString(),
+        suggestedReplies: result.suggestedReplies,
+        metadata: { greeting_language: language as 'en' | 'es' },
+      };
+      setMessages([freshGreeting]);
+      saveHistory([freshGreeting]);
+    }
+  }, [language, hasInitialized, isOpen]);
+
   useEffect(() => {
     const handleProactiveMessage = (event: Event) => {
       const customEvent = event as CustomEvent<{ message: string }>;
@@ -297,6 +327,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         content: result.greetingContent,
         timestamp: new Date().toISOString(),
         suggestedReplies: result.suggestedReplies,
+        metadata: { greeting_language: language as 'en' | 'es' },
       };
 
       if (!result.greetingContent) {
@@ -619,6 +650,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         { label: t("I'm looking to buy", "Estoy buscando comprar") },
         { label: t("Just exploring for now", "Solo estoy explorando") },
       ],
+      metadata: { greeting_language: language as 'en' | 'es' },
     };
     setMessages([greeting]);
     saveHistory([greeting]);

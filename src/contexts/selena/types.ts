@@ -142,6 +142,7 @@ export interface ChatMessage {
   metadata?: {
     report_id?: string;
     report_type?: string;
+    greeting_language?: 'en' | 'es';
   };
 }
 
