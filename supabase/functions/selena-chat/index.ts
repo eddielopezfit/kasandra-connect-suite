@@ -3104,6 +3104,36 @@ serve(async (req) => {
     const systemPrompt = buildSystemPrompt(language, effectiveIntent, (context.tools_completed ?? []).length > 0);
     console.log(`[Selena] System prompt assembled: ${systemPrompt.length} chars, intent: ${effectiveIntent}`);
 
+    // ============= PERSISTENT MEMORY RECALL =============
+    // Fetch stored memories from conversation_memory table via selena-memory function
+    let persistentMemoryHint = "";
+    try {
+      const memoryRecallUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/selena-memory`;
+      const memoryRes = await fetch(memoryRecallUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+        },
+        body: JSON.stringify({
+          action: "recall",
+          session_id: context.session_id,
+          lead_id: leadId || undefined,
+        }),
+      });
+      if (memoryRes.ok) {
+        const memData = await memoryRes.json();
+        if (memData.ok && memData.memory_summary) {
+          persistentMemoryHint = language === "es"
+            ? `\n\n[MEMORIA PERSISTENTE]\n${memData.memory_summary}\nUsa estos datos cuando sea relevante.`
+            : `\n\n[PERSISTENT MEMORY]\n${memData.memory_summary}\nUse these facts when relevant.`;
+          console.log(`[Selena] Persistent memory recalled: ${memData.memory_count} items`);
+        }
+      }
+    } catch (e) {
+      console.error("[Selena] Persistent memory recall failed (non-blocking):", e);
+    }
+
     // ============= CONCIERGE MEMORY SUMMARY (max 3 lines, ~30 tokens) =============
     // Only injected when context audit ran and surfaced useful data.
     let memorySummary = "";
@@ -3117,6 +3147,11 @@ serve(async (req) => {
           ? `\n\nMEMORIA DE CONCIERGE:\n${parts.join(' | ')}\nHaz referencia a estos datos específicos cuando sea relevante. NUNCA digas 'No sé a qué te refieres.'`
           : `\n\nCONCIERGE MEMORY:\n${parts.join(' | ')}\nReference these specifics when relevant. NEVER say "I don't know what you're referring to."`;
       }
+    }
+
+    // Merge persistent memory into memorySummary
+    if (persistentMemoryHint) {
+      memorySummary = persistentMemoryHint + memorySummary;
     }
 
     // Add reflection context for Modes 2 & 3
