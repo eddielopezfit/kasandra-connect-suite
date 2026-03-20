@@ -356,7 +356,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
 
     try {
       const context = getSessionContext();
-      const history = messages.slice(-6).map(m => ({
+      const history = messages.slice(-10).map(m => ({
         role: m.role,
         content: m.content,
       }));

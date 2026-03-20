@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      conversation_memory: {
+        Row: {
+          category: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          lead_id: string | null
+          memory_key: string
+          memory_value: Json
+          session_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          lead_id?: string | null
+          memory_key: string
+          memory_value?: Json
+          session_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          lead_id?: string | null
+          memory_key?: string
+          memory_value?: Json
+          session_id?: string
+        }
+        Relationships: []
+      }
       decision_receipts: {
         Row: {
           created_at: string
