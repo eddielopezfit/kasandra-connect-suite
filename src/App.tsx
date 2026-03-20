@@ -117,6 +117,7 @@ const App = () => {
                 <Route path="/affordability-calculator" element={<V2AffordabilityCalculator />} />
                 <Route path="/bah-calculator" element={<V2BAHCalculator />} />
                 <Route path="/home-valuation" element={<V2HomeValuation />} />
+                <Route path="/net-to-seller" element={<V2NetToSeller />} />
                 <Route path="/privacy" element={<V2Privacy />} />
                 <Route path="/terms" element={<V2Terms />} />
 

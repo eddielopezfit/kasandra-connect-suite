@@ -19,7 +19,7 @@ const NAVIGATE_WHITELIST = [
   '/seller-decision', '/cash-offer-options',
   '/market', '/neighborhood-compare', '/buyer-closing-costs',
   '/seller-timeline',
-  '/affordability-calculator', '/bah-calculator', '/home-valuation',
+  '/affordability-calculator', '/bah-calculator', '/home-valuation', '/net-to-seller',
 ] as const;
 
 // Valid entry sources for open_chat
