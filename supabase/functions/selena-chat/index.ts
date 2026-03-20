@@ -1221,8 +1221,8 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       // getSuggestedReplies checks PROGRESSION_MAP first, then falls back to intent-based statics.
       // We detect a keyword hit by passing the user message — if PROGRESSION_MAP matches,
       // it returns keyword-specific chips different from the intent-based fallback.
-      const keywordChips = getSuggestedReplies(context.intent, language, message);
-      const fallbackChips = getSuggestedReplies(context.intent, language);
+      const keywordChips = getSuggestedReplies(effectiveIntent, language, message);
+      const fallbackChips = getSuggestedReplies(effectiveIntent, language);
       const hasKeywordHit = keywordChips.length > 0 && JSON.stringify(keywordChips) !== JSON.stringify(fallbackChips);
       
       if (hasKeywordHit) {
