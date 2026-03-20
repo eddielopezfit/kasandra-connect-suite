@@ -171,7 +171,7 @@ function extractMemories(
 
   // --- Name detection ---
   const nameMatch = message.match(
-    /(?:(?:my name is|i'm|i am|me llamo|soy)\s+)([A-Z][a-záéíóúñ]+(?:\s+[A-Z][a-záéíóúñ]+)?)/i
+    /(?:(?:my name is|i'm|i am|me llamo|soy)\s+)([A-Z][a-záéíóúñ]+(?:\s+[A-Z][a-záéíóúñ]+)?)(?:\s|[.,!?]|$)/i
   );
   if (nameMatch) {
     memories.push({
