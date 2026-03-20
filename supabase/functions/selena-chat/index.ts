@@ -4109,6 +4109,33 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       });
     }
 
+    // ============= PERSISTENT MEMORY STORE (fire-and-forget) =============
+    try {
+      const memoryStoreUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/selena-memory`;
+      fetch(memoryStoreUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+        },
+        body: JSON.stringify({
+          action: "store",
+          session_id: context.session_id,
+          lead_id: leadId || undefined,
+          message,
+          assistant_reply: reply,
+          context: {
+            intent: effectiveIntent,
+            timeline: context.timeline,
+            estimated_value: context.estimated_value,
+            estimated_budget: context.estimated_budget,
+          },
+        }),
+      }).catch((e) => console.error("[Selena] Memory store fire-and-forget failed:", e));
+    } catch (e) {
+      console.error("[Selena] Memory store setup failed:", e);
+    }
+
     return new Response(
       JSON.stringify({
         ok: true,
