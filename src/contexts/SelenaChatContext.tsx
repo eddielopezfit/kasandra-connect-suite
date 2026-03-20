@@ -650,6 +650,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         { label: t("I'm looking to buy", "Estoy buscando comprar") },
         { label: t("Just exploring for now", "Solo estoy explorando") },
       ],
+      metadata: { greeting_language: language as 'en' | 'es' },
     };
     setMessages([greeting]);
     saveHistory([greeting]);
