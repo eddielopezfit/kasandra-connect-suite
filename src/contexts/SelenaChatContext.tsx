@@ -297,6 +297,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
         content: result.greetingContent,
         timestamp: new Date().toISOString(),
         suggestedReplies: result.suggestedReplies,
+        metadata: { greeting_language: language as 'en' | 'es' },
       };
 
       if (!result.greetingContent) {
