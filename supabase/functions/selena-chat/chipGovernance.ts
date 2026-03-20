@@ -22,7 +22,7 @@ export interface SessionEngagementState {
 }
 
 // Proceeds-intent signals: any of these trigger the net proceeds override
-const PROCEEDS_PATTERNS = /walk away|net|after fees|what would i get|what do i keep|what.*pocket|proceeds|ganancias|lo que me queda|despues de.*costos|cuánto.*recibir/i;
+export const PROCEEDS_PATTERNS = /walk away|net|after fees|what would i get|what do i keep|what.*pocket|proceeds|ganancias|lo que me queda|despues de.*costos|cuánto.*recibir/i;
 
 // Seller guide indicators
 const SELLER_GUIDE_PATTERNS = /view seller guide|read.*guide|seller guide|guía del vendedor|ver.*guía/i;
