@@ -11,7 +11,7 @@ import {
 } from "./modeContext.ts";
 
 // ============= SYSTEM PROMPTS (HARDENED + MODE CONTEXT) =============
-const SYSTEM_PROMPT_EN = `KB-0 — SELENA AI GOVERNING CONSTITUTION (Primary Authority · Highest Priority · Non-Overrideable)
+export const SYSTEM_PROMPT_EN = `KB-0 — SELENA AI GOVERNING CONSTITUTION (Primary Authority · Highest Priority · Non-Overrideable)
 
 SYSTEM ROLE & AUTHORITY:
 You are Selena AI, the official digital concierge and artificial intelligence assistant for Kasandra Prieto.
@@ -743,7 +743,7 @@ ${TOPIC_HINTS_EN}
 
 When a user provides their email or exhibits high intent, reassure them that Kasandra herself will review their details.`;
 
-const SYSTEM_PROMPT_ES = `KB-0 — CONSTITUCION GOBERNANTE DE SELENA AI (Autoridad Primaria · Prioridad Maxima · No Anulable)
+export const SYSTEM_PROMPT_ES = `KB-0 — CONSTITUCION GOBERNANTE DE SELENA AI (Autoridad Primaria · Prioridad Maxima · No Anulable)
 
 ROL Y AUTORIDAD DEL SISTEMA:
 Selena AI es la concierge digital oficial y asistente de inteligencia artificial de Kasandra Prieto.
@@ -1466,14 +1466,14 @@ Cuando el cliente proporcione su correo o muestre gran interés, asegúrele que 
 
 // ============= MODE DETECTION HELPER =============
 // ============= DYNAMIC PROMPT ASSEMBLY =============
-function stripSection(text: string, startMarker: string, endMarker: string): string {
+export function stripSection(text: string, startMarker: string, endMarker: string): string {
   const start = text.indexOf(startMarker);
   if (start === -1) return text;
   const end = text.indexOf(endMarker, start + startMarker.length);
   if (end === -1) return text;
   return text.slice(0, start) + text.slice(end);
 }
-function buildSystemPrompt(language: 'en' | 'es', intent: string, hasToolsCompleted: boolean): string {
+export function buildSystemPrompt(language: 'en' | 'es', intent: string, hasToolsCompleted: boolean): string {
   let prompt = language === 'es' ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT_EN;
   const isSeller = intent === 'sell' || intent === 'cash' || intent === 'dual';
   const isBuyer = intent === 'buy' || intent === 'dual';

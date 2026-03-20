@@ -12,7 +12,7 @@ import { isSimilar } from "./bookingLogic.ts";
  * Inferred session state from conversation history.
  * Tracks engagement flags without requiring explicit frontend context.
  */
-interface SessionEngagementState {
+export interface SessionEngagementState {
   hasAskedProceeds: boolean;     // User asked about net/walk-away/proceeds
   hasAskedValue: boolean;        // User asked about home value
   hasComparedOptions: number;    // How many times user asked to compare options
@@ -40,7 +40,7 @@ const CALCULATOR_PATTERNS = /calculator|net proceeds|estimate.*net|cash offer|ca
 /**
  * Infers session engagement state from conversation history
  */
-function inferSessionState(
+export function inferSessionState(
   history: ChatMessage[],
   context: ChatRequest["context"],
   currentMessage: string
@@ -70,7 +70,7 @@ function inferSessionState(
 /**
  * Detects if the user is looping (clicked effectively the same chip 2+ times)
  */
-function detectLoop(chipHistory: string[]): boolean {
+export function detectLoop(chipHistory: string[]): boolean {
   if (chipHistory.length < 3) return false;
   const recent = chipHistory.slice(-4);
   // Check if any single concept appears 2+ times in last 4 turns
@@ -94,7 +94,7 @@ function detectLoop(chipHistory: string[]): boolean {
  * PHASE 3: Proceeds OR compare×2 OR ASAP → NET PROCEEDS path (MAX 2)
  * LOOP:    Repeated same chip → escalate to Phase 3 chips
  */
-function getGovernedChips(
+export function getGovernedChips(
   intent: string | undefined,
   timeline: string | null,
   engagement: SessionEngagementState,
@@ -191,7 +191,7 @@ function getGovernedChips(
 // Keywords: explicit booking actions
  * Used for deterministic chip→destination resolution.
  */
-const CHIP_KEYS = {
+export const CHIP_KEYS = {
   TALK_WITH_KASANDRA: 'talk_with_kasandra',
   FIND_A_TIME: 'find_a_time',
   ESTIMATE_PROCEEDS: 'estimate_proceeds',
@@ -246,7 +246,7 @@ const CHIP_KEYS = {
 } as const;
 
 /** Semantic chip key → destination path */
-const CHIP_KEY_DESTINATION: Record<string, string> = {
+export const CHIP_KEY_DESTINATION: Record<string, string> = {
   [CHIP_KEYS.TALK_WITH_KASANDRA]: '/book',
   [CHIP_KEYS.FIND_A_TIME]: '/book',
   [CHIP_KEYS.ESTIMATE_PROCEEDS]: '/cash-offer-options',
@@ -305,7 +305,7 @@ const CHIP_KEY_DESTINATION: Record<string, string> = {
  * Kept for backward compatibility: when the LLM emits a display string instead of a semantic key,
  * this map resolves it. The client-side dual lookup handles the same via normalized text.
  */
-const CHIP_DESTINATION: Record<string, string> = {
+export const CHIP_DESTINATION: Record<string, string> = {
   // EN chips — core actions
   'Take the readiness check': '/buyer-readiness',
   'Take the buyer readiness check': '/buyer-readiness',
@@ -425,7 +425,7 @@ const CHIP_DESTINATION: Record<string, string> = {
 };
 
 // Tool ID → destination paths it blocks (the routes the tool lives on)
-const TOOL_BLOCKED_DESTINATIONS: Record<string, string[]> = {
+export const TOOL_BLOCKED_DESTINATIONS: Record<string, string[]> = {
   'buyer_readiness': ['/buyer-readiness'],
   'seller_readiness': ['/seller-readiness'],
   'cash_readiness': ['/cash-readiness'],
@@ -450,7 +450,7 @@ const TOOL_REPLACEMENT_DESTINATION: Record<string, string> = {
 };
 
 // Reverse lookup: destination → semantic chip key
-const DESTINATION_TO_CHIP_KEY: Record<string, string> = {
+export const DESTINATION_TO_CHIP_KEY: Record<string, string> = {
   '/guides': CHIP_KEYS.BROWSE_GUIDES,
   '/buyer-readiness': CHIP_KEYS.BUYER_READINESS,
   '/seller-readiness': CHIP_KEYS.SELLER_READINESS,
@@ -466,7 +466,7 @@ const DESTINATION_TO_CHIP_KEY: Record<string, string> = {
 };
 
 // Legacy reverse lookup (kept for display-string resolution in filterChipsForCompletedTools)
-const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
+export const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
   '/guides': { en: 'Browse guides', es: 'Explorar guías' },
   '/buyer-readiness': { en: 'Take the readiness check', es: 'Tomar la evaluación de preparación' },
   '/seller-readiness': { en: 'Quick seller readiness check', es: 'Check rápido de preparación para vender' },
@@ -481,8 +481,8 @@ const DESTINATION_TO_CHIP: Record<string, { en: string; es: string }> = {
   '/home-valuation': { en: 'Get my market analysis', es: 'Obtener mi análisis' },
 };
 
-const GUIDE_DELIVERY_AFFIRMATIVE = /^(yes|sure|yeah|yep|ok|okay|please|show me|tell me more|sí|si|claro|por favor|muéstrame|muestrame)$/i;
-const GUIDE_MENTION_PATTERN = /\b(guide|guides|guía|guia|guías|guias)\b/i;
+export const GUIDE_DELIVERY_AFFIRMATIVE = /^(yes|sure|yeah|yep|ok|okay|please|show me|tell me more|sí|si|claro|por favor|muéstrame|muestrame)$/i;
+export const GUIDE_MENTION_PATTERN = /\b(guide|guides|guía|guia|guías|guias)\b/i;
 
 const GUIDE_ID_TO_CHIP_KEY: Record<string, string> = {
   'first-time-buyer-guide': CHIP_KEYS.GUIDE_FTB,
@@ -504,7 +504,7 @@ const GUIDE_ID_TO_CHIP_KEY: Record<string, string> = {
   'arizona-real-estate-glossary': CHIP_KEYS.GUIDE_GLOSSARY,
 };
 
-function detectGuideChipForDelivery(lastAssistantMessage: string, context: ChatRequest["context"]): string {
+export function detectGuideChipForDelivery(lastAssistantMessage: string, context: ChatRequest["context"]): string {
   const lastGuideId = context.last_guide_id;
   if (lastGuideId && GUIDE_ID_TO_CHIP_KEY[lastGuideId]) {
     return GUIDE_ID_TO_CHIP_KEY[lastGuideId];
@@ -523,14 +523,14 @@ function detectGuideChipForDelivery(lastAssistantMessage: string, context: ChatR
   return CHIP_KEYS.BROWSE_GUIDES;
 }
 
-interface ChipSuppressionEvent {
+export interface ChipSuppressionEvent {
   tool_id: string;
   chip_label: string;
   destination: string;
   reason: 'completed';
 }
 
-function filterChipsForCompletedTools(
+export function filterChipsForCompletedTools(
   chips: string[],
   toolsCompleted: string[],
   language: 'en' | 'es',
@@ -597,7 +597,7 @@ function filterChipsForCompletedTools(
 // ============= PROGRESSION MAP =============
 // Maps user selection to next-best-step suggestions
 // Now cleaned of premature booking language for early stages
-const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
+export const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
     // Buyer path progressions
     'take readiness check': {
       en: ["How long does it take?", "Start now", "What does this check?"],
@@ -724,7 +724,7 @@ const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
 // ============= INTENT-AWARE SUGGESTION FILTERING =============
 type IntentKey = 'sell' | 'cash' | 'buy' | 'explore' | 'invest';
 
-function getSuggestedReplies(
+export function getSuggestedReplies(
   intent: string | undefined, 
   language: 'en' | 'es',
   lastUserMessage?: string
