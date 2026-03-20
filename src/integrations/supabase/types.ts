@@ -124,7 +124,9 @@ export type Database = {
           contact_pref: string | null
           convo_summary_json: Json | null
           created_at: string
+          delivery_status: string
           id: string
+          last_error: string | null
           lead_id: string
           notification_id: string | null
           notification_provider: string | null
@@ -134,6 +136,7 @@ export type Database = {
           recommended_next_step: string | null
           requested_slot_label: string | null
           requested_slot_start: string | null
+          retry_count: number
           status: string
           summary_md: string
         }
@@ -144,7 +147,9 @@ export type Database = {
           contact_pref?: string | null
           convo_summary_json?: Json | null
           created_at?: string
+          delivery_status?: string
           id?: string
+          last_error?: string | null
           lead_id: string
           notification_id?: string | null
           notification_provider?: string | null
@@ -154,6 +159,7 @@ export type Database = {
           recommended_next_step?: string | null
           requested_slot_label?: string | null
           requested_slot_start?: string | null
+          retry_count?: number
           status?: string
           summary_md: string
         }
@@ -164,7 +170,9 @@ export type Database = {
           contact_pref?: string | null
           convo_summary_json?: Json | null
           created_at?: string
+          delivery_status?: string
           id?: string
+          last_error?: string | null
           lead_id?: string
           notification_id?: string | null
           notification_provider?: string | null
@@ -174,6 +182,7 @@ export type Database = {
           recommended_next_step?: string | null
           requested_slot_label?: string | null
           requested_slot_start?: string | null
+          retry_count?: number
           status?: string
           summary_md?: string
         }

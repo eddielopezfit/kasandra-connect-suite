@@ -30,6 +30,7 @@ const ENDPOINT_LIMITS: Record<string, RateLimitConfig> = {
   'fetch-google-reviews': { maxRequests: 5, windowSeconds: 60 },
   'update-lead-score': { maxRequests: 10, windowSeconds: 60 },
   'verify-lead-phone': { maxRequests: 5, windowSeconds: 60 },
+  'save-buyer-criteria': { maxRequests: 10, windowSeconds: 3600 },
 };
 
 // ─── In-memory fallback store ─────────────────────────────────────────────────

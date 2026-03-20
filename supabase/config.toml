@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.get-market-pulse]
 verify_jwt = false
+
+[functions.retry-failed-handoffs]
+verify_jwt = false
