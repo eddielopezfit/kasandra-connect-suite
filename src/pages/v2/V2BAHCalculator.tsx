@@ -11,6 +11,7 @@ import { calculateBAHMortgage, type BAHInput, type BAHResult } from "@/lib/calcu
 import {
   DollarSign, Home, MessageCircle, ArrowRight, Calendar, Shield, CreditCard,
 } from "lucide-react";
+import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
 
 const fmt = (n: number) => "$" + n.toLocaleString("en-US", { maximumFractionDigits: 0 });
 
@@ -302,6 +303,18 @@ const V2BAHCalculatorContent = () => {
                 </Button>
               </Link>
             </div>
+          </div>
+        </section>
+      )}
+      {/* V2: BAH Tool Result Lead Capture */}
+      {calculated && result.maxPrice > 0 && (
+        <section className="pb-8 bg-white">
+          <div className="container mx-auto px-4 max-w-2xl">
+            <ToolResultLeadCapture
+              toolType="bah"
+              resultData={{ max_price: result.maxPrice, va_funding_fee: result.vaFundingFee }}
+              delayMs={2500}
+            />
           </div>
         </section>
       )}

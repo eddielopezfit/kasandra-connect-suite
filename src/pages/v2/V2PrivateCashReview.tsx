@@ -299,10 +299,14 @@ const V2PrivateCashReview = () => {
   const [gateState, setGateState] = useState<GateState>('checking');
 
   useEffect(() => {
+    // V2 fix: gate on lead_id (email-based identity), not phone verification
+    // PhoneVerificationGate caused 60%+ abandonment — email-gated or direct access preferred
     const leadId = getLeadId();
-    if (leadId) {
+    const storedEmail = localStorage.getItem('selena_lead_email');
+    if (leadId || storedEmail) {
       setGateState('unlocked');
     } else {
+      // V2: Show soft gate with email capture instead of hard phone gate
       setGateState('locked');
     }
   }, []);
@@ -314,7 +318,42 @@ const V2PrivateCashReview = () => {
   return (
     <V2Layout>
       {gateState === 'checking' && <GateLoadingSkeleton />}
-      {gateState === 'locked' && <PhoneVerificationGate onVerified={handleVerified} />}
+      {gateState === 'locked' && (
+        <div className="min-h-[60vh] flex items-center justify-center py-16 px-4">
+          <div className="max-w-md w-full text-center">
+            <div className="w-16 h-16 rounded-full bg-cc-gold/20 flex items-center justify-center mx-auto mb-6">
+              <span className="text-2xl">🔒</span>
+            </div>
+            <h2 className="font-serif text-2xl font-bold text-cc-navy mb-3">
+              {t("Your Private Cash Review", "Tu Revisión Privada en Efectivo")}
+            </h2>
+            <p className="text-cc-charcoal/70 mb-6">
+              {t("This is a private review based on your calculator results. Enter your email to continue.", "Esta es una revisión privada basada en tus resultados. Ingresa tu correo para continuar.")}
+            </p>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const email = (e.target as HTMLFormElement).querySelector('input')?.value;
+              if (email) {
+                localStorage.setItem('selena_lead_email', email);
+                handleVerified(email);
+              }
+            }} className="flex flex-col gap-3">
+              <input
+                type="email"
+                required
+                placeholder={t("Your email address", "Tu correo electrónico")}
+                className="w-full border border-cc-sand-dark/40 rounded-full px-5 py-3 text-cc-charcoal focus:outline-none focus:border-cc-gold"
+              />
+              <button type="submit" className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full py-3 transition-colors">
+                {t("Access My Review", "Acceder a Mi Revisión")}
+              </button>
+            </form>
+            <p className="text-xs text-cc-charcoal/50 mt-3">
+              {t("No spam. No obligation.", "Sin spam. Sin compromiso.")}
+            </p>
+          </div>
+        </div>
+      )}
       {gateState === 'unlocked' && <PrivateCashReviewContent />}
     </V2Layout>
   );

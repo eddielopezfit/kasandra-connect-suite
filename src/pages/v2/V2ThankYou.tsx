@@ -472,6 +472,31 @@ const V2ThankYouContent = () => {
           </a>
         </div>
       </section>
+
+      {/* V2: Referral seed — priority 7 */}
+      <section className="py-8 bg-cc-sand/50 border-t border-cc-sand-dark/20">
+        <div className="container mx-auto px-4 text-center max-w-lg">
+          <p className="text-cc-charcoal/70 text-sm mb-3">
+            {t("Know someone navigating a real estate decision?", "¿Conoces a alguien en una decisión de bienes raíces?")}
+          </p>
+          <p className="text-cc-charcoal/50 text-xs mb-4">
+            {t("Kasandra treats every referral like family.", "Kasandra trata cada referido como familia.")}
+          </p>
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({ title: "Kasandra Prieto — Real Estate", url: "https://kasandraprietorealtor.com" });
+              } else {
+                navigator.clipboard?.writeText("https://kasandraprietorealtor.com");
+              }
+              logEvent("referral_share_click", { intent, source: "thank_you" });
+            }}
+            className="text-cc-gold text-sm font-medium underline underline-offset-2 hover:text-cc-gold/80 transition-colors"
+          >
+            {t("Share Kasandra's site →", "Compartir el sitio de Kasandra →")}
+          </button>
+        </div>
+      </section>
     </>
   );
 };

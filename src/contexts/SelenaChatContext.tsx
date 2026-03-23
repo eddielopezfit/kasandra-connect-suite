@@ -1,3 +1,4 @@
+import { supabase } from '@/integrations/supabase/client';
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -339,6 +340,18 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     saveHistory(newMessages);
+      // V2: Server-side conversation persistence for cross-device memory
+      if (leadId) {
+        supabase.functions.invoke('upsert-conversation', {
+          body: {
+            session_id: getSessionContext()?.session_id || '',
+            lead_id: leadId,
+            messages: newMessages,
+            turn_count: newMessages.filter((m: { role: string }) => m.role === 'user').length,
+            language: languageRef.current,
+          },
+        }).catch(() => {}); // Non-blocking, fail silently
+      }
     logSelenaMessageUser(content, location.pathname);
 
     setIsLoading(true);

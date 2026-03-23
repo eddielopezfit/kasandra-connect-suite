@@ -305,13 +305,21 @@ export default function GlassmorphismHero({
               )}
             </div>
 
-            {/* Selena text link — always present as tertiary */}
-            <div className="hero-fade-in hero-delay-500 mt-3">
+            {/* V2: Elevated Selena soft-entry — Priority 5 */}
+            <div className="hero-fade-in hero-delay-500 mt-4">
               <button
                 onClick={handleTalkToSelena}
-                className="text-cc-ivory/60 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
+                className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-all group"
+                aria-label="Open Selena AI chat"
               >
-                {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
+                <span className="w-5 h-5 rounded-full bg-cc-gold/20 group-hover:bg-cc-gold/30 flex items-center justify-center flex-shrink-0 transition-colors">
+                  <svg viewBox="0 0 24 24" className="w-3 h-3 fill-cc-gold" aria-hidden="true">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                  </svg>
+                </span>
+                <span className="underline underline-offset-2">
+                  {t("Not ready to book? Start with Selena — free, no pressure.", "¿No estás listo para reservar? Empieza con Selena — gratis, sin presión.")}
+                </span>
               </button>
             </div>
           </div>

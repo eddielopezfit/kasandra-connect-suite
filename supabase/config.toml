@@ -29,3 +29,15 @@ verify_jwt = false
 
 [functions.get-market-pulse]
 verify_jwt = false
+
+[functions.enrich-booking-context]
+verify_jwt = false
+
+[functions.upsert-conversation]
+verify_jwt = false
+
+[functions.get-conversation]
+verify_jwt = false
+
+[functions.receive-elevenlabs-webhook]
+verify_jwt = false

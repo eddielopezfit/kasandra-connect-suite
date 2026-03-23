@@ -12,6 +12,7 @@ import {
   getSessionContext,
 } from "@/lib/analytics/selenaSession";
 import {
+import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
   Calendar, ArrowRight, ArrowLeft, CheckCircle2, Clock,
   Home, MapPin, MessageCircle, ListChecks, Key, ClipboardList,
   TrendingUp, AlertCircle,
@@ -762,7 +763,16 @@ const V2SellerTimeline = () => {
           />
         )}
         {step === 4 && wizardData.closeWindow && wizardData.readiness && (
-          <StepPhasePlan wizardData={wizardData} onRestart={handleRestart} />
+          <>
+            <StepPhasePlan wizardData={wizardData} onRestart={handleRestart} />
+            <div className="container mx-auto px-4 max-w-2xl pb-12">
+              <ToolResultLeadCapture
+                toolType="seller_timeline"
+                resultData={{ close_window: wizardData.closeWindow, readiness: wizardData.readiness }}
+                delayMs={3000}
+              />
+            </div>
+          </>
         )}
       </div>
     </V2Layout>

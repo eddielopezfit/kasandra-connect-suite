@@ -221,6 +221,13 @@ const V2BookConfirmedContent = () => {
                 "¿Preguntas antes de su conversación? Selena está aquí en cualquier momento — sin presión, solo claridad."
               )}
             </p>
+            {/* V2: Profile review confirmation */}
+            <p className="text-sm text-cc-charcoal/60 mb-4 max-w-sm mx-auto">
+              {t(
+                "Kasandra will personally review your profile before your call — so you start from a real place.",
+                "Kasandra revisará su perfil personalmente antes de su llamada — para que comiencen desde un lugar real."
+              )}
+            </p>
             <Button
               onClick={handleContinueWithSelena}
               className="bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold gap-2"
