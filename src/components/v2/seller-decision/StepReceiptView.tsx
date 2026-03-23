@@ -345,14 +345,14 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
           </button>
 
           <a
-            href="/book"
+            href={`/book?intent=sell&source=seller_decision_receipt`}
             onClick={() => logEvent("cta_click", { cta: "receipt_book", source: "decision_receipt" })}
             className="flex items-center gap-3 bg-cc-gold text-cc-navy rounded-xl px-5 py-4 text-left hover:bg-cc-gold-dark transition-colors"
           >
             <Calendar className="w-5 h-5 flex-shrink-0" />
             <div>
-              <p className="font-semibold text-sm">{t("Book a Consultation", "Agendar una Consulta")}</p>
-              <p className="text-xs opacity-80">{t("With Kasandra, no pressure", "Con Kasandra, sin presión")}</p>
+              <p className="font-semibold text-sm">{t("Book Now — Kasandra Will Review Your Profile", "Reserva — Kasandra Revisará Tu Perfil")}</p>
+              <p className="text-xs opacity-80">{t("She'll review your Seller Profile before your call", "Revisará tu Perfil de Vendedor antes de la llamada")}</p>
             </div>
           </a>
 

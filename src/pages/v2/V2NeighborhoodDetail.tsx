@@ -154,6 +154,19 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
               {t("Or ask Selena first", "O habla primero con Selena")}
             </button>
           </div>
+          {/* P9: Off-market bridge CTA */}
+          <div className="mt-6 pt-6 border-t border-white/10">
+            <Link
+              to={`/off-market?area=${neighborhood.slug}`}
+              className="inline-flex items-center gap-2 text-white/70 hover:text-cc-gold text-sm font-medium transition-colors"
+            >
+              <Sparkles className="w-4 h-4" />
+              {t(
+                `Looking for off-market homes in ${neighborhood.name}? Join Kasandra's private buyer list.`,
+                `¿Buscas casas fuera de mercado en ${neighborhood.nameEs}? Únete a la lista privada de Kasandra.`
+              )}
+            </Link>
+          </div>
         </div>
       </section>
     </>
