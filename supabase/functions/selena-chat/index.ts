@@ -911,6 +911,12 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       effectiveChipPhase = Math.max(effectiveChipPhase, 2) as 1 | 2 | 3;
     }
 
+    // P5: Readiness score auto-escalate — ≥75 + non-explore intent → Phase 3
+    if (safeReadinessScore >= 75 && effectiveIntent !== 'explore') {
+      effectiveChipPhase = Math.max(effectiveChipPhase, 3) as 1 | 2 | 3;
+      console.log(`[Selena] P5: Auto-escalated to Phase 3 (readiness=${safeReadinessScore}, intent=${effectiveIntent})`);
+    }
+
     // FIX 2: High-intent financial question detection
     const HIGH_INTENT_FINANCIAL = /how much|what.*need|can i afford|what do i need|cuánto.*necesito|cuanto.*necesito|what.*cost|total.*need/i;
     const isHighIntentQuestion = HIGH_INTENT_FINANCIAL.test(message);
