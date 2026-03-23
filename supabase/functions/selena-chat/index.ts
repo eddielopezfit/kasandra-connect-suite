@@ -972,6 +972,21 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         : `\n\nINHERITED HOME DETECTED:\nThis seller inherited the property. High-sensitivity situation.\n- Acknowledge the emotional weight once, briefly\n- Key concerns: being taken advantage of, understanding true value, family obligation\n- Pivot: "Kasandra has helped families navigate inherited properties — she understands the complexity."\n- Always include "Talk with Kasandra". Do NOT recommend more guides.`;
     }
 
+    // ============= P4: INVESTOR PATH RESOLUTION =============
+    if (effectiveIntent === 'invest') {
+      governanceHint += language === 'es'
+        ? `\n\nRUTA DE INVERSIONISTA:\nKasandra se especializa en propietarios residenciales. Para inversionistas, redirige directamente:\n"Kasandra trabaja con inversionistas que buscan propiedades residenciales en Tucson — desde propiedades de alquiler hasta oportunidades de remodelación. Una llamada corta le ayudaría a entender exactamente qué está buscando."\nRespuesta sugerida: "Hablar con Kasandra".`
+        : `\n\nINVESTOR PATH:\nKasandra specializes in residential homeowners. For investors, redirect directly:\n"Kasandra works with investors looking at residential properties in Tucson — from rental properties to fix-and-flip opportunities. A short call would help her understand exactly what you're looking for."\nSuggested reply: "Talk with Kasandra".`;
+    }
+
+    // ============= P12: MILITARY/VA RECOGNITION =============
+    const isBAHTool = (context.tools_completed ?? []).includes('bah_calculator') || toolUsed === 'bah_calculator';
+    if (isBAHTool) {
+      governanceHint += language === 'es'
+        ? `\n\nCOMPRADOR MILITAR DETECTADO:\nEste usuario completó la calculadora BAH — probablemente militar activo o veterano (Davis-Monthan AFB).\n- Reconozca su servicio brevemente: "Gracias por su servicio."\n- Referencia VA: "Con elegibilidad VA, usted puede calificar para $0 de enganche y tasas de interés más bajas."\n- Sugiera la guía militar: "Tenemos una guía específica para familias militares mudándose en Tucson."\n- Contexto de reserva: "Kasandra ha ayudado a varias familias militares a establecerse en Tucson — entiende el proceso PCS."\nPrimera respuesta sugerida: guía militar-pcs. Segunda: "Hablar con Kasandra".`
+        : `\n\nMILITARY BUYER DETECTED:\nThis user completed the BAH calculator — likely active duty or veteran (Davis-Monthan AFB area).\n- Acknowledge service briefly: "Thank you for your service."\n- VA reference: "With VA eligibility, you may qualify for $0 down and better interest rates."\n- Surface military guide: "We have a guide specifically for military families PCSing to Tucson."\n- Booking context: "Kasandra has helped several military families settle in Tucson — she understands the PCS timeline."\nFirst suggested reply: military-pcs guide. Second: "Talk with Kasandra".`;
+    }
+
     // ============= TRUST SIGNAL HINT =============
     if (hasTrustSignal && (isInheritedHome || isHighIntentQuestion || guidesReadCount >= 5)) {
       governanceHint += language === 'es'
