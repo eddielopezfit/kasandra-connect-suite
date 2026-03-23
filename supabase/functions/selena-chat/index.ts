@@ -264,6 +264,50 @@ serve(async (req) => {
     const guardState = buildGuardState(history, context, message);
     const guardRules = applyGuardRules(guardState, language, message);
 
+    // ============= P10: DISTRESS → KASANDRA ALERT =============
+    // When containment activates with escalation level 'suggest', fire notify-handoff
+    if (guardState.containment_active && guardState.escalation_level === 'suggest' && leadId && supabase) {
+      try {
+        const { data: leadData } = await supabase
+          .from('lead_profiles')
+          .select('name, email, phone')
+          .eq('id', leadId)
+          .maybeSingle();
+
+        if (leadData?.email) {
+          const nameParts = (leadData.name || '').split(' ');
+          fetch(`${rlUrl}/functions/v1/notify-handoff`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${rlKey}`,
+            },
+            body: JSON.stringify({
+              contact: {
+                email: leadData.email,
+                firstName: nameParts[0] || '',
+                lastName: nameParts.slice(1).join(' ') || '',
+                phone: leadData.phone || '',
+              },
+              context: {
+                selena_lead_id: leadId,
+                session_id: context.session_id,
+                intent: effectiveIntent,
+                language,
+                readiness_score: context.readiness_score ?? 0,
+                journey_state: 'decide',
+                inherited_home: context.inherited_home ?? false,
+                trust_signal_detected: context.trust_signal_detected ?? false,
+              },
+            }),
+          }).catch(e => console.error('[Selena] P10 distress alert failed:', e));
+          console.log(`[Selena] P10: Distress alert fired for lead ${leadId}`);
+        }
+      } catch (e) {
+        console.error('[Selena] P10 distress alert error:', e);
+      }
+    }
+
     // RULE 9: Human takeover — block AI generation entirely
     if (guardRules.blockGeneration) {
       return new Response(
