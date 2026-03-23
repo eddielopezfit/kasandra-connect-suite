@@ -633,6 +633,17 @@ function GuideDetailContent() {
         <GuideCTAGuardrail guideId={guideId} />
       </article>
 
+      {/* P8: Guide Completion Email Capture — 90%+ scroll */}
+      {guideId && (
+        <div className="container mx-auto px-4 max-w-3xl">
+          <GuideCompletionCapture
+            guideId={guideId}
+            guideTitle={guideTitle}
+            visible={guideCompleteVisible}
+          />
+        </div>
+      )}
+
       {/* Selena Synthesis CTA  -  appears after 60%+ scroll */}
       {synthesisVisible && (
         <section className="bg-cc-navy py-10">
