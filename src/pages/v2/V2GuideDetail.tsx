@@ -20,6 +20,7 @@ import { RelatedGuides } from "@/components/v2/guides/RelatedGuides";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { CognitiveProgressBar } from "@/components/v2/guides/CognitiveProgressBar";
+import { GuideCompletionCapture } from "@/components/v2/guides/GuideCompletionCapture";
 import { useCognitiveStage } from "@/hooks/useCognitiveStage";
 import { GUIDE_DATA_LOADERS, type GuideContentData } from "@/data/guides";
 import type { ExternalLink } from "@/data/guides/types";
