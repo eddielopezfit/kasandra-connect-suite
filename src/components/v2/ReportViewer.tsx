@@ -52,6 +52,8 @@ export function ReportViewer({
   const [showBookingNudge, setShowBookingNudge] = useState(false);
   const nudgeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const isEmpty = reportType === 'empty' || (!markdown && !reportId);
+
   // P9: 30-second timer — show "Discuss this report with Kasandra" booking nudge
   useEffect(() => {
     if (open && !isEmpty && markdown) {
@@ -77,8 +79,6 @@ export function ReportViewer({
     onOpenChange(false);
     setTimeout(() => openChat({ source: 'hero', intent: 'sell' }), 300);
   }, [reportId, reportType, onOpenChange, openChat]);
-
-  const isEmpty = reportType === 'empty' || (!markdown && !reportId);
 
   // Log report view when opened (only for actual reports, not empty state)
   useEffect(() => {
