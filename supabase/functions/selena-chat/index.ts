@@ -1293,6 +1293,11 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       suggestedReplies = language === 'es'
         ? ["Estimar mis ganancias netas", "Hablar con Kasandra"]
         : ["Estimate my net proceeds", "Talk with Kasandra"];
+    } else if (effectiveIntent === 'invest') {
+      // P4: INVESTOR REDIRECT — hard-lock to booking pivot
+      suggestedReplies = language === 'es'
+        ? ["Hablar con Kasandra", "Solo estoy explorando"]
+        : ["Talk with Kasandra", "Just exploring for now"];
     } else {
       // Layer 5: Keyword-triggered chips (PROGRESSION_MAP) — highest specificity
       // getSuggestedReplies checks PROGRESSION_MAP first, then falls back to intent-based statics.
