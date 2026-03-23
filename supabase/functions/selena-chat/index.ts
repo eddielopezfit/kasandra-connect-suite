@@ -131,9 +131,10 @@ serve(async (req) => {
           leadId
             ? auditClient
                 .from('lead_profiles')
-                .select('name, situation, timeline, intent')
+                .select('name, situation, timeline, intent, lead_score, lead_grade')
                 .eq('id', leadId)
                 .maybeSingle()
+            : Promise.resolve({ status: 'fulfilled', value: { data: null } }),
             : Promise.resolve({ status: 'fulfilled', value: { data: null } }),
           auditClient
             .from('decision_receipts')
