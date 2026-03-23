@@ -278,8 +278,9 @@ const V2BuyContent = () => {
             </Button>
             <button
               onClick={handleSelenaRoute}
-              className="text-white/60 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
+              className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
             >
+              <MessageCircle className="w-4 h-4" />
               {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
             </button>
           </div>

@@ -53,8 +53,9 @@ const V2CashOfferOptionsContent = () => {
               </button>
               <button
                 onClick={() => openChat({ source: 'cash_offer_options_hero', intent: 'cash' })}
-                className="text-white/70 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
+                className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
               >
+                <MessageCircle className="w-4 h-4" />
                 {t("Or ask Selena a question", "O pregúntale a Selena")}
               </button>
             </div>

@@ -195,7 +195,7 @@ function getNextStep(intent: "buy" | "sell" | "cash", priority: string, band: Sc
   if (priority === "neighborhoods") {
     return {
       label: { en: "Explore Neighborhoods", es: "Explora Vecindarios" },
-      path: "/community",
+      path: "/neighborhoods",
       icon: Home,
     };
   }
