@@ -80,7 +80,7 @@ function NeighborhoodFeatureCard({ neighborhood }: { neighborhood: typeof NEIGHB
           ) : (
             <div className="absolute inset-0 bg-[url('/og-kasandra.jpg')] bg-cover bg-center opacity-20" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
           <div className="absolute bottom-3 left-4 flex items-center gap-1 text-white/80 text-sm">
             <MapPin className="w-3.5 h-3.5" />
             {neighborhood.primaryZip}

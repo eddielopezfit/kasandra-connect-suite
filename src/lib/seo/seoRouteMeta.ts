@@ -224,4 +224,10 @@ export const GUIDE_ROUTE_META: Record<string, RouteMeta> = {
     canonical: 'https://kasandraprietorealtor.com/home-valuation',
     schemaType: 'Service',
   },
+  '/net-to-seller': {
+    title: 'Net-to-Seller Calculator | What Will You Walk Away With? — Kasandra Prieto',
+    description: 'Calculate your real net proceeds after commissions, closing costs, and repairs. Compare cash offer vs. traditional listing side by side in Tucson.',
+    canonical: 'https://kasandraprietorealtor.com/net-to-seller',
+    schemaType: 'WebApplication',
+  },
 };

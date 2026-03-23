@@ -1,0 +1,1 @@
+DELETE FROM public.market_pulse WHERE id != (SELECT id FROM public.market_pulse WHERE verified_at IS NOT NULL ORDER BY created_at DESC LIMIT 1);

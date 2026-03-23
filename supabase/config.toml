@@ -40,4 +40,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.receive-elevenlabs-webhook]
+[functions.retry-failed-handoffs]
+>>>>>>> origin/main
 verify_jwt = false

@@ -6,7 +6,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import { MessageCircle, ArrowRight, Info, DollarSign, Home, Percent, FileText, Calendar } from "lucide-react";
 import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
 
@@ -215,13 +215,18 @@ const V2BuyerClosingCostsContent = () => {
   const handleCalculate = () => {
     if (price < 50000) return;
     if (!toolStarted) {
-      logEvent('tool_started', { tool: 'buyer_closing_costs' });
+      logEvent('tool_started', { tool_id: 'buyer_closing_costs', source: 'website', page_path: '/buyer-closing-costs' });
       setToolStarted(true);
     }
     setCalculated(true);
     setFieldIfEmpty('intent', 'buy');
-    logEvent('tool_completed', { tool: 'buyer_closing_costs', price, loan_type: inputs.loanType });
-    logEvent('calculator_complete', { tool: 'buyer_closing_costs', price, loan_type: inputs.loanType });
+    const ctx = getSessionContext();
+    updateSessionContext({
+      last_tool_completed: 'buyer_closing_costs',
+      tools_completed: [...new Set([...(ctx?.tools_completed ?? []), 'buyer_closing_costs'])],
+    });
+    logEvent('tool_completed', { tool_id: 'buyer_closing_costs', source: 'website', page_path: '/buyer-closing-costs', price, loan_type: inputs.loanType });
+    import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
     setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);

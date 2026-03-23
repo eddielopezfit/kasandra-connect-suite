@@ -50,6 +50,7 @@ const V2SelenaAI = lazy(() => import("./pages/v2/V2SelenaAI"));
 const V2AffordabilityCalculator = lazy(() => import("./pages/v2/V2AffordabilityCalculator"));
 const V2BAHCalculator = lazy(() => import("./pages/v2/V2BAHCalculator"));
 const V2HomeValuation = lazy(() => import("./pages/v2/V2HomeValuation"));
+const V2NetToSeller = lazy(() => import("./pages/v2/V2NetToSeller"));
 const SellerLanding = lazy(() => import("./pages/ad/SellerLanding"));
 const SellerQuiz = lazy(() => import("./pages/ad/SellerQuiz"));
 const SellerResult = lazy(() => import("./pages/ad/SellerResult"));
@@ -116,6 +117,7 @@ const App = () => {
                 <Route path="/affordability-calculator" element={<V2AffordabilityCalculator />} />
                 <Route path="/bah-calculator" element={<V2BAHCalculator />} />
                 <Route path="/home-valuation" element={<V2HomeValuation />} />
+                <Route path="/net-to-seller" element={<V2NetToSeller />} />
                 <Route path="/privacy" element={<V2Privacy />} />
                 <Route path="/terms" element={<V2Terms />} />
 

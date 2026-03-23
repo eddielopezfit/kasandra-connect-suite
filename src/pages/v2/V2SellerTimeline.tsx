@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
+import { useMarketPulse } from "@/hooks/useMarketPulse";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
@@ -86,7 +87,8 @@ function fmtMonth(d: Date, lang: "en" | "es"): string {
 function buildPhases(
   closeWindow: CloseWindow,
   readiness: ReadinessState,
-  lang: "en" | "es"
+  lang: "en" | "es",
+  medianDOM: number = 42
 ): PhaseData[] {
   const today = new Date();
   const totalWeeks = CLOSE_WINDOW_WEEKS[closeWindow];
@@ -107,9 +109,8 @@ function buildPhases(
   const stagingStart = prepEnd;
   const stagingEnd = addWeeks(prepEnd, stagingDuration);
 
-  // Phase 3: Active on Market
-  // Tucson median DOM: 38 days (~5-6 weeks)
-  const domWeeks = isCompressed ? 3 : 5;
+  // Phase 3: Active on Market — uses real market pulse DOM
+  const domWeeks = isCompressed ? 3 : Math.max(3, Math.round(medianDOM / 7));
   const listStart = stagingEnd;
   const listEnd = addWeeks(listStart, domWeeks);
 
@@ -174,8 +175,8 @@ function buildPhases(
       labelEs: "Activo en el Mercado",
       icon: <TrendingUp className="w-5 h-5" />,
       colorClass: "border-cc-gold/60 bg-white",
-      weekRangeEn: `~${domWeeks} weeks (Tucson median: 38 days)`,
-      weekRangeEs: `~${domWeeks} semanas (mediana Tucson: 38 días)`,
+      weekRangeEn: `~${domWeeks} weeks (Tucson median: ${medianDOM} days)`,
+      weekRangeEs: `~${domWeeks} semanas (mediana Tucson: ${medianDOM} días)`,
       dateRange:
         lang === "es"
           ? `${fmtDate(listStart, "es")} – ${fmtDate(listEnd, "es")}`
@@ -488,11 +489,13 @@ interface Step4Props {
 const StepPhasePlan = ({ wizardData, onRestart }: Step4Props) => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
+  const { stats } = useMarketPulse(language);
 
   const phases = buildPhases(
     wizardData.closeWindow!,
     wizardData.readiness!,
-    language
+    language,
+    stats.daysOnMarket
   );
 
   const closeLabel = CLOSE_LABEL[wizardData.closeWindow!];
@@ -539,13 +542,13 @@ const StepPhasePlan = ({ wizardData, onRestart }: Step4Props) => {
         {phases.map((phase, i) => (
           <div
             key={phase.id}
-            className={`rounded-2xl border-2 p-5 transition-all ${phase.colorClass} ${
-              phase.isActive ? "shadow-soft ring-1 ring-cc-gold/30" : ""
-            } ${phase.isPast ? "opacity-60" : ""}`}
+            className={`rounded-2xl border p-5 transition-all bg-white shadow-sm ${
+              phase.isActive ? "ring-2 ring-cc-gold shadow-md" : "border-cc-sand-dark/30"
+            } ${phase.isPast ? "border-l-4 border-l-green-400" : ""}`}
           >
             <div className="flex items-start justify-between gap-3 mb-3">
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${phase.isActive ? "bg-cc-gold/20" : "bg-white/60"}`}>
+                <div className={`p-2 rounded-lg ${phase.isActive ? "bg-cc-gold/20" : "bg-cc-sand"}`}>
                   {phase.icon}
                 </div>
                 <div>
@@ -577,7 +580,7 @@ const StepPhasePlan = ({ wizardData, onRestart }: Step4Props) => {
               </div>
             </div>
 
-            <div className="text-xs font-medium text-cc-navy/70 bg-white/50 rounded-lg px-3 py-1.5 mb-3 flex items-center gap-1.5">
+            <div className="text-xs font-medium text-cc-navy/70 bg-cc-sand rounded-lg px-3 py-1.5 mb-3 flex items-center gap-1.5">
               <Calendar className="w-3 h-3" />
               {phase.dateRange}
             </div>
@@ -661,7 +664,7 @@ const V2SellerTimeline = () => {
     (closeWindow: CloseWindow) => {
       setWizardData(prev => ({ ...prev, closeWindow }));
       setFieldIfEmpty("intent", "sell");
-      logEvent('tool_started', { tool: 'seller_timeline' });
+      logEvent('tool_started', { tool_id: 'seller_timeline', source: 'website', page_path: '/seller-timeline' });
       updateSessionContext({
         last_quiz_id: "seller_timeline",
         timeline:
@@ -718,7 +721,8 @@ const V2SellerTimeline = () => {
         close_window: wizardData.closeWindow,
         readiness: wizardData.readiness,
       });
-      logEvent('tool_completed', { tool: 'seller_timeline', close_window: wizardData.closeWindow, readiness: wizardData.readiness });
+      logEvent('tool_completed', { tool_id: 'seller_timeline', source: 'website', page_path: '/seller-timeline', close_window: wizardData.closeWindow, readiness: wizardData.readiness });
+      import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
       goTo(4);
     },
     [goTo, wizardData]
@@ -732,6 +736,7 @@ const V2SellerTimeline = () => {
   return (
     <V2Layout>
       <div className="container mx-auto max-w-2xl px-4 py-8">
+        <div className="bg-white/95 backdrop-blur rounded-2xl p-6 md:p-8 shadow-lg">
         {/* Progress bar */}
         {!isComplete && (
           <div className="mb-8">
@@ -774,6 +779,7 @@ const V2SellerTimeline = () => {
             </div>
           </>
         )}
+        </div>
       </div>
     </V2Layout>
   );

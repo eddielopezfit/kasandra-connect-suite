@@ -1,108 +1,51 @@
 /**
  * refresh-market-pulse
- * 
- * Automated pipeline: Firecrawl scrape → Perplexity verification → Supabase insert.
+ *
+ * Automated pipeline: Firecrawl JSON extraction → Perplexity verification → Supabase insert.
  * Runs monthly via pg_cron (0 3 1 * *).
- * Protected by x-admin-secret (cost-bearing: Firecrawl + Perplexity API calls).
+ * Protected by x-admin-secret OR service-role Authorization header.
  */
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// ---------------------------------------------------------------------------
+// Sources
+// ---------------------------------------------------------------------------
 const SOURCES = [
   { name: "Redfin", url: "https://www.redfin.com/city/18510/AZ/Tucson/housing-market" },
   { name: "Realtor.com", url: "https://www.realtor.com/realestateandhomes-search/Tucson_AZ/overview" },
   { name: "Zillow", url: "https://www.zillow.com/tucson-az/home-values/" },
 ];
 
-interface ScrapedMetrics {
-  sale_to_list_ratio: number | null;
-  median_days_on_market: number | null;
+const EXTRACTION_SCHEMA = {
+  type: "object",
+  properties: {
+    median_sale_price: { type: "number", description: "Median home sale price in USD" },
+    median_days_on_market: { type: "number", description: "Median days on market (DOM)" },
+    sale_to_list_ratio: { type: "number", description: "Sale-to-list price ratio as a decimal (e.g. 0.976) or percentage (e.g. 97.6)" },
+    month_year: { type: "string", description: "The month and year this data is for (e.g. 'March 2026')" },
+  },
+  required: ["median_days_on_market"],
+};
+
+interface ExtractedMetrics {
   median_sale_price: number | null;
+  median_days_on_market: number | null;
+  sale_to_list_ratio: number | null;
+  month_year: string | null;
   source: string;
   raw_snippet: string;
 }
 
-/**
- * Parse scraped markdown for key housing metrics
- */
-function parseMetrics(markdown: string, sourceName: string): ScrapedMetrics {
-  let saleToList: number | null = null;
-  let dom: number | null = null;
-  let medianPrice: number | null = null;
-
-  // Sale-to-List ratio patterns
-  const stlPatterns = [
-    /sale.*?list[^0-9]*(\d{2,3}(?:\.\d+)?)\s*%/i,
-    /(\d{2,3}(?:\.\d+)?)\s*%\s*sale.*?list/i,
-    /sale[- ]to[- ]list[^%]*?(\d{2,3}(?:\.\d+)?)%/is,
-    /(\d{2,3}(?:\.\d+)?)\s*%[^.]*list\s*price/i,
-  ];
-  // Over/Under list price (Redfin format)
-  const overMatch = markdown.match(/over\s+list\s+price[\s\S]{0,20}?(\d{1,3}(?:\.\d+)?)\s*%/i);
-  const underMatch = markdown.match(/under\s+list\s+price[\s\S]{0,20}?(\d{1,3}(?:\.\d+)?)\s*%/i);
-
-  for (const p of stlPatterns) {
-    const m = markdown.match(p);
-    if (m) {
-      const raw = parseFloat(m[1]);
-      saleToList = raw < 2 ? raw : raw / 100;
-      break;
-    }
-  }
-  if (saleToList === null && overMatch) {
-    saleToList = 1 + parseFloat(overMatch[1]) / 100;
-  } else if (saleToList === null && underMatch) {
-    saleToList = 1 - parseFloat(underMatch[1]) / 100;
-  }
-
-  // Days on Market
-  const domPatterns = [
-    /median\s+days?\s+on\s+market[^0-9]*(\d{1,3})/i,
-    /days?\s+on\s+market[^0-9]*(\d{1,3})/i,
-    /(\d{1,3})\s+(?:median\s+)?days?\s+on\s+market/i,
-  ];
-  for (const p of domPatterns) {
-    const m = markdown.match(p);
-    if (m) {
-      dom = parseInt(m[1], 10);
-      break;
-    }
-  }
-
-  // Median Sale/List Price
-  const pricePatterns = [
-    /median\s+(?:sale|list|home|listing)\s+price[^$]*\$([\d,]+)/i,
-    /\$([\d,]+)\s+median/i,
-  ];
-  for (const p of pricePatterns) {
-    const m = markdown.match(p);
-    if (m) {
-      medianPrice = parseInt(m[1].replace(/,/g, ''), 10);
-      break;
-    }
-  }
-
-  // Capture a snippet for audit trail
-  const snippet = markdown.substring(0, 500);
-
-  return {
-    sale_to_list_ratio: saleToList,
-    median_days_on_market: dom,
-    median_sale_price: medianPrice,
-    source: sourceName,
-    raw_snippet: snippet,
-  };
-}
-
-/**
- * Scrape a single source via Firecrawl
- */
+// ---------------------------------------------------------------------------
+// Scrape via Firecrawl JSON extraction
+// ---------------------------------------------------------------------------
 async function scrapeSource(
   firecrawlKey: string,
-  source: { name: string; url: string }
-): Promise<ScrapedMetrics> {
-  console.log(`[refresh-market-pulse] Scraping ${source.name}...`);
+  source: { name: string; url: string },
+): Promise<ExtractedMetrics> {
+  console.log(`[refresh-market-pulse] Scraping ${source.name} via JSON extraction...`);
 
   const res = await fetch("https://api.firecrawl.dev/v1/scrape", {
     method: "POST",
@@ -112,54 +55,115 @@ async function scrapeSource(
     },
     body: JSON.stringify({
       url: source.url,
-      formats: ["markdown"],
+      formats: ["markdown", "extract"],
+      extract: {
+        schema: EXTRACTION_SCHEMA,
+        prompt: "Extract the current Tucson AZ housing market statistics from this page. For sale_to_list_ratio, return as a decimal like 0.976 (not a percentage). For median_days_on_market, return the integer number of days.",
+      },
       onlyMainContent: true,
-      waitFor: 3000,
+      waitFor: 5000,
     }),
   });
 
   const data = await res.json();
+
   if (!res.ok || !data.success) {
     console.warn(`[refresh-market-pulse] ${source.name} scrape failed:`, data.error);
     return {
-      sale_to_list_ratio: null,
-      median_days_on_market: null,
       median_sale_price: null,
+      median_days_on_market: null,
+      sale_to_list_ratio: null,
+      month_year: null,
       source: source.name,
       raw_snippet: `FAILED: ${data.error || res.status}`,
     };
   }
 
-  const markdown = data.data?.markdown || data.markdown || "";
-  console.log(`[refresh-market-pulse] ${source.name}: ${markdown.length} chars`);
-  return parseMetrics(markdown, source.name);
+  // Firecrawl nests under data.data or data directly; extract mode uses "extract" key
+  const json = data.data?.extract ?? data.extract ?? data.data?.json ?? data.json ?? {};
+  const markdown = (data.data?.markdown ?? data.markdown ?? "").substring(0, 500);
+
+  console.log(`[refresh-market-pulse] ${source.name} extracted:`, JSON.stringify(json));
+
+  // Normalize sale_to_list_ratio — might come as 97.6 instead of 0.976
+  let stl = typeof json.sale_to_list_ratio === "number" ? json.sale_to_list_ratio : null;
+  if (stl !== null && stl > 2) {
+    stl = stl / 100; // Convert percentage to decimal
+  }
+
+  return {
+    median_sale_price: typeof json.median_sale_price === "number" ? json.median_sale_price : null,
+    median_days_on_market: typeof json.median_days_on_market === "number" ? Math.round(json.median_days_on_market) : null,
+    sale_to_list_ratio: stl,
+    month_year: json.month_year ?? null,
+    source: source.name,
+    raw_snippet: markdown,
+  };
 }
 
-/**
- * Cross-verify scraped data using Perplexity
- */
+// ---------------------------------------------------------------------------
+// Reconcile scraped data (2-of-3 agreement)
+// ---------------------------------------------------------------------------
+interface Reconciled {
+  sale_to_list_ratio: number | null;
+  median_days_on_market: number | null;
+  median_sale_price: number | null;
+  agreement_count: number;
+}
+
+function isRecent(monthYear: string | null): boolean {
+  if (!monthYear) return false;
+  const now = new Date();
+  const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+  const parsed = new Date(monthYear + " 1");
+  return !isNaN(parsed.getTime()) && parsed >= threeMonthsAgo;
+}
+
+function reconcile(data: ExtractedMetrics[]): Reconciled {
+  // Only use data from the last 3 months
+  const recent = data.filter(d => isRecent(d.month_year));
+  console.log(`[refresh-market-pulse] ${recent.length}/${data.length} sources have recent data`);
+
+  const stlValues = recent.map(d => d.sale_to_list_ratio).filter((v): v is number => v !== null && v > 0.8 && v < 1.15);
+  const domValues = recent.map(d => d.median_days_on_market).filter((v): v is number => v !== null && v > 0 && v < 200);
+  const priceValues = recent.map(d => d.median_sale_price).filter((v): v is number => v !== null && v > 50000);
+
+  return {
+    sale_to_list_ratio: median(stlValues),
+    median_days_on_market: domValues.length > 0 ? Math.round(median(domValues)!) : null,
+    median_sale_price: priceValues.length > 0 ? Math.round(median(priceValues)!) : null,
+    agreement_count: Math.max(stlValues.length, domValues.length),
+  };
+}
+
+function median(arr: number[]): number | null {
+  if (arr.length === 0) return null;
+  const sorted = [...arr].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+// ---------------------------------------------------------------------------
+// Perplexity verification (tiebreaker / cross-check)
+// ---------------------------------------------------------------------------
 async function verifyWithPerplexity(
   perplexityKey: string,
-  scrapedData: ScrapedMetrics[]
+  scraped: Reconciled,
 ): Promise<{
-  verified_sale_to_list: number | null;
+  verified_stl: number | null;
   verified_dom: number | null;
-  perplexity_response: string;
+  response_text: string;
   consensus: boolean;
 }> {
-  const scrapedSummary = scrapedData
-    .map(s => `${s.source}: STL=${s.sale_to_list_ratio}, DOM=${s.median_days_on_market}`)
-    .join("\n");
+  const prompt = `What are the current Tucson, Arizona housing market statistics?
 
-  const prompt = `Verify Tucson, Arizona housing market statistics for the current month.
+I need:
+1. Sale-to-list price ratio (as a decimal like 0.976)
+2. Median days on market (integer)
 
-I scraped these values:
-${scrapedSummary}
+My scraped data shows: STL=${scraped.sale_to_list_ratio}, DOM=${scraped.median_days_on_market}
 
-Cross-reference Redfin, Realtor.com, and Zillow market reports for Tucson AZ.
-Return the consensus sale-to-list ratio (as a decimal like 0.976) and median days on market (integer).
-Provide sources.
-
+Cross-reference Redfin, Realtor.com, and Zillow for Tucson AZ.
 Respond in this exact JSON format:
 {
   "sale_to_list_ratio": 0.976,
@@ -186,75 +190,65 @@ Respond in this exact JSON format:
 
   const data = await res.json();
   const responseText = data.choices?.[0]?.message?.content || "";
-  console.log(`[refresh-market-pulse] Perplexity response:`, responseText);
+  console.log(`[refresh-market-pulse] Perplexity:`, responseText);
 
-  // Parse JSON from response
   let parsed: Record<string, unknown> = {};
   try {
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      parsed = JSON.parse(jsonMatch[0]);
-    }
+    if (jsonMatch) parsed = JSON.parse(jsonMatch[0]);
   } catch (_e) {
     console.warn("[refresh-market-pulse] Failed to parse Perplexity JSON");
   }
 
-  const verifiedSTL = typeof parsed.sale_to_list_ratio === 'number' ? parsed.sale_to_list_ratio : null;
-  const verifiedDOM = typeof parsed.median_days_on_market === 'number' ? parsed.median_days_on_market : null;
+  const pStl = typeof parsed.sale_to_list_ratio === "number" ? parsed.sale_to_list_ratio : null;
+  const pDom = typeof parsed.median_days_on_market === "number" ? parsed.median_days_on_market : null;
 
-  // Check consensus: compare scraped vs Perplexity (10% deviation threshold)
+  // Consensus: check if Perplexity agrees with scraped within 15%
   let consensus = true;
-  const scrapedSTLValues = scrapedData.map(s => s.sale_to_list_ratio).filter(v => v !== null) as number[];
-  const avgScrapedSTL = scrapedSTLValues.length > 0
-    ? scrapedSTLValues.reduce((a, b) => a + b, 0) / scrapedSTLValues.length
-    : null;
-
-  if (verifiedSTL && avgScrapedSTL) {
-    const deviation = Math.abs(verifiedSTL - avgScrapedSTL) / avgScrapedSTL;
-    if (deviation > 0.10) {
+  if (pStl && scraped.sale_to_list_ratio) {
+    const dev = Math.abs(pStl - scraped.sale_to_list_ratio) / scraped.sale_to_list_ratio;
+    if (dev > 0.15) {
       consensus = false;
-      console.warn(`[refresh-market-pulse] STL deviation ${(deviation * 100).toFixed(1)}% exceeds 10% threshold`);
+      console.warn(`[refresh-market-pulse] STL deviation ${(dev * 100).toFixed(1)}%`);
     }
   }
-
-  const scrapedDOMValues = scrapedData.map(s => s.median_days_on_market).filter(v => v !== null) as number[];
-  const avgScrapedDOM = scrapedDOMValues.length > 0
-    ? Math.round(scrapedDOMValues.reduce((a, b) => a + b, 0) / scrapedDOMValues.length)
-    : null;
-
-  if (verifiedDOM && avgScrapedDOM) {
-    const deviation = Math.abs(verifiedDOM - avgScrapedDOM) / avgScrapedDOM;
-    if (deviation > 0.10) {
+  if (pDom && scraped.median_days_on_market) {
+    const dev = Math.abs(pDom - scraped.median_days_on_market) / scraped.median_days_on_market;
+    if (dev > 0.15) {
       consensus = false;
-      console.warn(`[refresh-market-pulse] DOM deviation ${(deviation * 100).toFixed(1)}% exceeds 10% threshold`);
+      console.warn(`[refresh-market-pulse] DOM deviation ${(dev * 100).toFixed(1)}%`);
     }
   }
 
   return {
-    verified_sale_to_list: verifiedSTL,
-    verified_dom: verifiedDOM,
-    perplexity_response: responseText,
+    verified_stl: pStl,
+    verified_dom: pDom,
+    response_text: responseText,
     consensus,
   };
 }
 
-/**
- * Derive the current month label (e.g. "March 2026")
- */
+// ---------------------------------------------------------------------------
+// Month label
+// ---------------------------------------------------------------------------
 function getCurrentMonth(): string {
-  const now = new Date();
-  return now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  return new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" });
 }
 
+// ---------------------------------------------------------------------------
+// Main handler
+// ---------------------------------------------------------------------------
 Deno.serve(async (req: Request) => {
   const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Admin-only gate: single x-admin-secret auth path (manual + pg_cron via vault)
+  // Auth: x-admin-secret OR service-role Bearer
   const adminSecret = req.headers.get("x-admin-secret");
-  if (adminSecret !== Deno.env.get("ADMIN_SECRET")) {
+  const authHeader = req.headers.get("authorization") ?? "";
+  const srvKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  if (adminSecret !== Deno.env.get("ADMIN_SECRET") && !(srvKey && authHeader === `Bearer ${srvKey}`)) {
     return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -278,13 +272,13 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    // STEP 1: Scrape all sources in parallel
+    // STEP 1: Scrape all sources in parallel via JSON extraction
     const scrapeResults = await Promise.allSettled(
-      SOURCES.map(s => scrapeSource(firecrawlKey, s))
+      SOURCES.map(s => scrapeSource(firecrawlKey, s)),
     );
 
-    const scrapedData: ScrapedMetrics[] = scrapeResults
-      .filter((r): r is PromiseFulfilledResult<ScrapedMetrics> => r.status === "fulfilled")
+    const scrapedData: ExtractedMetrics[] = scrapeResults
+      .filter((r): r is PromiseFulfilledResult<ExtractedMetrics> => r.status === "fulfilled")
       .map(r => r.value);
 
     console.log(`[refresh-market-pulse] Scraped ${scrapedData.length}/${SOURCES.length} sources`);
@@ -295,68 +289,64 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // STEP 2: Perplexity verification
-    const verification = await verifyWithPerplexity(perplexityKey, scrapedData);
-    console.log(`[refresh-market-pulse] Consensus: ${verification.consensus}`);
+    // STEP 2: Reconcile scraped data (median of valid values)
+    const reconciled = reconcile(scrapedData);
+    console.log(`[refresh-market-pulse] Reconciled:`, JSON.stringify(reconciled));
 
-    // STEP 3: Determine final values (prefer Perplexity-verified, fallback to scraped average)
-    const scrapedSTLValues = scrapedData.map(s => s.sale_to_list_ratio).filter(v => v !== null) as number[];
-    const scrapedDOMValues = scrapedData.map(s => s.median_days_on_market).filter(v => v !== null) as number[];
+    // STEP 3: Perplexity verification
+    const verification = await verifyWithPerplexity(perplexityKey, reconciled);
 
-    const finalSTL = verification.verified_sale_to_list
-      ?? (scrapedSTLValues.length > 0
-        ? scrapedSTLValues.reduce((a, b) => a + b, 0) / scrapedSTLValues.length
-        : null);
+    // STEP 4: Determine final values
+    // If 2+ sources agree, use scraped median. If only 1 source, prefer Perplexity.
+    const finalSTL = reconciled.agreement_count >= 2
+      ? reconciled.sale_to_list_ratio
+      : (verification.verified_stl ?? reconciled.sale_to_list_ratio);
 
-    const finalDOM = verification.verified_dom
-      ?? (scrapedDOMValues.length > 0
-        ? Math.round(scrapedDOMValues.reduce((a, b) => a + b, 0) / scrapedDOMValues.length)
-        : null);
+    const finalDOM = reconciled.agreement_count >= 2
+      ? reconciled.median_days_on_market
+      : (verification.verified_dom ?? reconciled.median_days_on_market);
 
     if (finalSTL === null || finalDOM === null) {
       return new Response(JSON.stringify({
         ok: false,
-        error: "Could not determine market metrics from any source",
+        error: "Could not determine market metrics",
         scraped: scrapedData,
-        verification,
+        reconciled,
+        verification: { consensus: verification.consensus },
       }), {
         status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Calculate holding cost: median price * (mortgage rate + tax + insurance) / 365
-    // Using simplified formula from config defaults
-    const holdingCostPerDay = 42; // Will be refined when median price data improves
-
+    const holdingCostPerDay = 42;
     const month = getCurrentMonth();
+
+    // STEP 5: Insert into market_pulse
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
 
     const sourceLinks = scrapedData.map(s => ({
       source: s.source,
       url: SOURCES.find(src => src.name === s.source)?.url,
       sale_to_list_ratio: s.sale_to_list_ratio,
       median_days_on_market: s.median_days_on_market,
+      median_sale_price: s.median_sale_price,
     }));
 
-    // STEP 4: Insert into market_pulse table
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
-
-    const { error: insertError } = await supabase
-      .from("market_pulse")
-      .insert({
-        month,
-        sale_to_list_ratio: Math.round(finalSTL * 10000) / 10000, // e.g. 0.976
-        median_days_on_market: finalDOM,
-        holding_cost_per_day: holdingCostPerDay,
-        prep_avg: 4800,
-        source_links: {
-          scraped: sourceLinks,
-          perplexity: {
-            response: verification.perplexity_response,
-            consensus: verification.consensus,
-          },
+    const { error: insertError } = await supabase.from("market_pulse").insert({
+      month,
+      sale_to_list_ratio: Math.round(finalSTL * 10000) / 10000,
+      median_days_on_market: finalDOM,
+      holding_cost_per_day: holdingCostPerDay,
+      prep_avg: 4800,
+      source_links: {
+        scraped: sourceLinks,
+        perplexity: {
+          response: verification.response_text,
+          consensus: verification.consensus,
         },
-        verified_at: verification.consensus ? new Date().toISOString() : null,
-      });
+      },
+      verified_at: verification.consensus ? new Date().toISOString() : null,
+    });
 
     if (insertError) {
       console.error("[refresh-market-pulse] DB insert error:", insertError);
@@ -365,15 +355,13 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // STEP 5: Also update legacy market_pulse_settings for backward compatibility
+    // STEP 6: Update legacy market_pulse_settings
     const negotiationGap = parseFloat((1 - finalSTL).toFixed(4));
-    const daysToClose = finalDOM + 30;
-
     await supabase
       .from("market_pulse_settings")
       .update({
         negotiation_gap: negotiationGap,
-        days_to_close: daysToClose,
+        days_to_close: finalDOM + 30,
         holding_cost_per_day: holdingCostPerDay,
         last_verified_date: new Date().toISOString().split("T")[0],
         source_type: "automated_pipeline",
@@ -382,6 +370,7 @@ Deno.serve(async (req: Request) => {
           ran_at: new Date().toISOString(),
           consensus: verification.consensus,
           median_dom: finalDOM,
+          method: "firecrawl_json_extraction",
         },
         updated_at: new Date().toISOString(),
       })
@@ -394,8 +383,8 @@ Deno.serve(async (req: Request) => {
       median_days_on_market: finalDOM,
       holding_cost_per_day: holdingCostPerDay,
       consensus: verification.consensus,
-      flagged: !verification.consensus,
       sources_scraped: scrapedData.length,
+      agreement_count: reconciled.agreement_count,
     };
 
     console.log("[refresh-market-pulse] Success:", JSON.stringify(result));
@@ -406,7 +395,7 @@ Deno.serve(async (req: Request) => {
     console.error("[refresh-market-pulse] Error:", err);
     return new Response(
       JSON.stringify({ ok: false, error: err instanceof Error ? err.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
 });

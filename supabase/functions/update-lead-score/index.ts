@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
 
     // Rate limiting: 10 req/min per session/IP — prevents bulk lead score corruption
     const rlKey = extractRateLimitKey(req, input);
-    const rl = await checkRateLimit(supabase, rlKey, 'update-lead-score', 10);
+    const rl = await checkRateLimit(supabase, rlKey, 'update-lead-score');
     if (!rl.allowed) return rateLimitResponse(corsHeaders);
 
     // Fetch existing lead to merge signals
