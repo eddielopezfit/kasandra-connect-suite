@@ -7,6 +7,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
  * Sends lead handoff payload to GHL webhook with retry logic.
  * - 3 attempts with exponential backoff (1s → 3s → 9s)
  * - Updates lead_handoffs.delivery_status on success/failure
+ * - P11: Generates bilingual (EN+ES) summary for Spanish-language leads
  * - Structured logging with lead_id, session_id, correlation_id
  */
 const GHL_WEBHOOK_URL = Deno.env.get("GHL_WEBHOOK_URL") ?? "";
