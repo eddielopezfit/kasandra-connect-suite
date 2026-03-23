@@ -6,7 +6,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CalendarCheck, Calendar, MessageCircle } from "lucide-react";
+import { CalendarCheck, Calendar, MessageCircle, BookOpen, ArrowRight } from "lucide-react";
 import { logEvent } from "@/lib/analytics/logEvent";
 
 // ============= SAFE DATETIME PARSING =============
