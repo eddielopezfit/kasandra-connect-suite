@@ -13,6 +13,9 @@ export interface ChatRequest {
     session_id: string;
     route: string;
     language: "en" | "es";
+    // P1: Lead score context
+    lead_score?: number;
+    lead_grade?: string;
     utm_source?: string;
     utm_campaign?: string;
     utm_medium?: string;
