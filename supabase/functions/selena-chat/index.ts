@@ -405,6 +405,8 @@ serve(async (req) => {
       if (serverName) parts.push(`Name: ${serverName}`);
       if (context.estimated_value) parts.push(`Property: $${Number(context.estimated_value).toLocaleString()}`);
       if (context.situation) parts.push(`Situation: ${context.situation}`);
+      // P1: Lead score in memory summary
+      if (context.lead_score) parts.push(`Lead Score: ${context.lead_score}/100 (${context.lead_grade || 'unknown'})`);
       if (parts.length) {
         memorySummary = language === "es"
           ? `\n\nMEMORIA DE CONCIERGE:\n${parts.join(' | ')}\nHaz referencia a estos datos específicos cuando sea relevante. NUNCA digas 'No sé a qué te refieres.'`
