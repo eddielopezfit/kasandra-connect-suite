@@ -50,6 +50,34 @@ export function ReportViewer({
   const { openChat, handleActionClick } = useSelenaChat();
   const { t } = useLanguage();
   const [_retryAction, _setRetryAction] = useState<(() => void) | null>(null);
+  const [showBookingNudge, setShowBookingNudge] = useState(false);
+  const nudgeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // P9: 30-second timer — show "Discuss this report with Kasandra" booking nudge
+  useEffect(() => {
+    if (open && !isEmpty && markdown) {
+      setShowBookingNudge(false);
+      nudgeTimerRef.current = setTimeout(() => {
+        setShowBookingNudge(true);
+        logEvent('report_booking_nudge_shown', {
+          report_id: reportId,
+          report_type: reportType,
+        });
+      }, 30_000);
+    }
+    return () => {
+      if (nudgeTimerRef.current) clearTimeout(nudgeTimerRef.current);
+    };
+  }, [open, isEmpty, markdown, reportId, reportType]);
+
+  const handleBookingNudge = useCallback(() => {
+    logEvent('report_booking_nudge_click', {
+      report_id: reportId,
+      report_type: reportType,
+    });
+    onOpenChange(false);
+    setTimeout(() => openChat({ source: 'hero', intent: 'sell' }), 300);
+  }, [reportId, reportType, onOpenChange, openChat]);
 
   const isEmpty = reportType === 'empty' || (!markdown && !reportId);
 
