@@ -189,16 +189,43 @@ export function computeGreeting(
         return null;
     }
   } else if (sessionContext?.restored_from_snapshot && !storedHistoryExists) {
+    // P8: Time-based return greeter tiers
+    const lastActiveStr = localStorage.getItem('selena_last_active_at');
+    const lastActive = lastActiveStr ? new Date(lastActiveStr).getTime() : 0;
+    const hoursSinceActive = lastActive ? (Date.now() - lastActive) / (1000 * 60 * 60) : 999;
+
     const intentLabel = sessionContext.intent && sessionContext.intent !== 'explore'
       ? sessionContext.intent
       : '';
     const intentFragment = intentLabel
       ? t(` Last time we were looking at ${intentLabel} options.`, ` La última vez estábamos viendo opciones de ${intentLabel}.`)
       : '';
-    greetingContent = t(
-      `Welcome back — I saved your place.${intentFragment} Want to continue where you left off?`,
-      `Bienvenido/a de nuevo — guardé tu progreso.${intentFragment} ¿Quieres continuar donde lo dejamos?`
-    );
+
+    if (hoursSinceActive < 4) {
+      // <4 hours: "we were right in the middle of..."
+      greetingContent = t(
+        `Welcome back — we were right in the middle of things.${intentFragment} Want to pick up where you left off?`,
+        `Bienvenido/a — estábamos justo en medio de las cosas.${intentFragment} ¿Quieres continuar donde lo dejamos?`
+      );
+    } else if (hoursSinceActive < 24) {
+      // 4-24 hours: "you were looking at X"
+      greetingContent = t(
+        `Hey, you were looking at some things earlier today.${intentFragment} Ready to continue?`,
+        `Hola, estabas revisando algunas cosas hoy.${intentFragment} ¿Listo/a para continuar?`
+      );
+    } else if (hoursSinceActive < 168) { // 7 days
+      // >24 hours, <7 days: "good to see you again"
+      greetingContent = t(
+        `Good to see you again — I saved your progress.${intentFragment} Want to continue where you left off?`,
+        `Qué gusto verte de nuevo — guardé tu progreso.${intentFragment} ¿Quieres continuar donde lo dejamos?`
+      );
+    } else {
+      // >7 days: fresh start
+      greetingContent = t(
+        `Welcome back! It's been a while.${intentFragment} A lot may have changed — want to start fresh or pick up where you left off?`,
+        `¡Bienvenido/a de vuelta! Ha pasado un tiempo.${intentFragment} Mucho puede haber cambiado — ¿quieres empezar de nuevo o continuar donde lo dejamos?`
+      );
+    }
 
     const resumeChips: string[] = [];
     const lastPage = sessionContext.last_page;
