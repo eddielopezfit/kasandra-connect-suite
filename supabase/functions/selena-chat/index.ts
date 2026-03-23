@@ -1336,7 +1336,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3 || isInvestorRedirect);
 
     // Apply journey awareness filter: remove chips for already-completed tools (destination-based)
-    const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3);
+    const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3 || isInvestorRedirect);
     suggestedReplies = journeyFilter.filtered;
 
     // Telemetry: log suppressions for audit trail
