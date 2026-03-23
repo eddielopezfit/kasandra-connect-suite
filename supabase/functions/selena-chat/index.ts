@@ -1083,7 +1083,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // On first turn with a recognized entry_source, inject personalized greeting context
     // so the AI adapts its Mode 1 response to how the user arrived.
     let entryGreetingHint = "";
-    const ENTRY_SOURCES_WITH_GREETINGS = ['guide_handoff', 'calculator', 'neighborhood_detail', 'floating', 'synthesis', 'quiz_result', 'post_booking'];
+    const ENTRY_SOURCES_WITH_GREETINGS = ['guide_handoff', 'calculator', 'bah_calculator', 'neighborhood_detail', 'floating', 'synthesis', 'quiz_result', 'post_booking'];
     if (
       conversationState.userTurns <= 1 &&
       context.entry_source &&
