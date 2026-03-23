@@ -3,7 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
-import { MapPin, Sparkles } from "lucide-react";
+import { MapPin, Sparkles, Calendar, MessageCircle } from "lucide-react";
 import { getNeighborhoodBySlug } from "@/data/neighborhoods/neighborhoodRegistry";
 import JsonLd from "@/components/seo/JsonLd";
 import NeighborhoodIntelligencePanel from "@/components/v2/neighborhood/NeighborhoodIntelligencePanel";
