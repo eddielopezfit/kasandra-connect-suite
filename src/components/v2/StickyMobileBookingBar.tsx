@@ -38,7 +38,7 @@ const StickyMobileBookingBar = ({ intent, source }: StickyMobileBookingBarProps)
           {t("Book a Strategy Call", "Agenda Llamada")}
         </Link>
         <button
-          onClick={() => openChat({ source: `sticky_mobile_${source}`, intent })}
+          onClick={() => openChat({ source: intent === 'buy' ? 'sticky_mobile_buy' : 'sticky_mobile_sell', intent })}
           className="flex items-center justify-center gap-1.5 border border-cc-gold/40 text-cc-gold rounded-full py-3 px-4 text-sm font-medium hover:bg-cc-gold/10 transition-colors active:scale-[0.98] touch-action-manipulation"
         >
           <MessageCircle className="w-4 h-4" />
