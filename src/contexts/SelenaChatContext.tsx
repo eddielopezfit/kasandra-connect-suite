@@ -529,6 +529,8 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       saveHistory(updatedMessages);
       
       import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
+      // P8: Track last active timestamp for time-based return greeter
+      localStorage.setItem('selena_last_active_at', new Date().toISOString());
       logSelenaMessageAI(data.reply || '', location.pathname, (data.actions?.length || 0) > 0);
 
       if (import.meta.env.DEV) {
