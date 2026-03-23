@@ -502,7 +502,7 @@ const V2BuyerClosingCostsContent = () => {
           <div className="container mx-auto px-4 max-w-2xl">
             <ToolResultLeadCapture
               toolType="buyer_closing_costs"
-              resultData={{ purchase_price: purchasePrice, loan_type: loanType }}
+              resultData={{ purchase_price: inputs.purchasePrice, loan_type: inputs.loanType }}
               delayMs={2000}
             />
           </div>

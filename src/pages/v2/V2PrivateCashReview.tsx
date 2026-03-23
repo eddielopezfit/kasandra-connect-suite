@@ -296,6 +296,7 @@ const GateLoadingSkeleton = () => (
 );
 
 const V2PrivateCashReview = () => {
+  const { t } = useLanguage();
   const [gateState, setGateState] = useState<GateState>('checking');
 
   useEffect(() => {
