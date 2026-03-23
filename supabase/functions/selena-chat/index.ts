@@ -192,6 +192,9 @@ serve(async (req) => {
             context.timeline = lead.timeline as string;
           if (!filled(context.intent) && filled(lead.intent))
             context.intent = lead.intent as string;
+          // P1: Lead score into Selena context
+          if (filled(lead.lead_score)) context.lead_score = lead.lead_score as number;
+          if (filled(lead.lead_grade)) context.lead_grade = lead.lead_grade as string;
         }
 
         // Merge decision receipt
