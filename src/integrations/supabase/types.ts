@@ -47,6 +47,42 @@ export type Database = {
         }
         Relationships: []
       }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          language: string
+          last_message_at: string | null
+          lead_id: string | null
+          messages: Json
+          session_id: string
+          turn_count: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          language?: string
+          last_message_at?: string | null
+          lead_id?: string | null
+          messages?: Json
+          session_id: string
+          turn_count?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          language?: string
+          last_message_at?: string | null
+          lead_id?: string | null
+          messages?: Json
+          session_id?: string
+          turn_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       decision_receipts: {
         Row: {
           created_at: string
