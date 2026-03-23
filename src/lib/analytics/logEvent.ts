@@ -161,7 +161,10 @@ export type EventType =
   | 'guide_synthesis_cta_click'
   // Valuation request (Phase: 5 High-Impact Tools)
   | 'valuation_request_started'
-  | 'valuation_request_completed';
+  | 'valuation_request_completed'
+  | 'tool_capture_dismissed'
+  | 'tool_capture_submitted'
+  | 'referral_share_click';
 
 export interface EventPayload {
   [key: string]: unknown;

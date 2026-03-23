@@ -283,7 +283,7 @@ Deno.serve(async (req: Request) => {
       if (body.readiness_score != null) enrichmentUpdate.readiness_score = body.readiness_score;
       if (body.tools_completed?.length) enrichmentUpdate.tools_completed = body.tools_completed;
       if (body.guides_read_count != null) enrichmentUpdate.guides_read_count = body.guides_read_count;
-      if (body.booking_intent_shown_at == null) enrichmentUpdate.booking_intent_shown_at = new Date().toISOString();
+      enrichmentUpdate.booking_intent_shown_at = new Date().toISOString();
       if (body.military_flag) enrichmentUpdate.is_military = body.military_flag;
       if (body.estimated_budget && body.estimated_budget > 0) enrichmentUpdate.estimated_budget = body.estimated_budget;
       if (body.estimated_value && body.estimated_value > 0) enrichmentUpdate.estimated_value = body.estimated_value;
