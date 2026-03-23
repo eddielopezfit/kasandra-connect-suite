@@ -135,7 +135,6 @@ serve(async (req) => {
                 .eq('id', leadId)
                 .maybeSingle()
             : Promise.resolve({ status: 'fulfilled', value: { data: null } }),
-            : Promise.resolve({ status: 'fulfilled', value: { data: null } }),
           auditClient
             .from('decision_receipts')
             .select('receipt_data')
@@ -1293,6 +1292,11 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       suggestedReplies = language === 'es'
         ? ["Estimar mis ganancias netas", "Hablar con Kasandra"]
         : ["Estimate my net proceeds", "Talk with Kasandra"];
+    } else if (effectiveIntent === 'invest') {
+      // P4: INVESTOR REDIRECT — hard-lock to booking pivot
+      suggestedReplies = language === 'es'
+        ? ["Hablar con Kasandra", "Solo estoy explorando"]
+        : ["Talk with Kasandra", "Just exploring for now"];
     } else {
       // Layer 5: Keyword-triggered chips (PROGRESSION_MAP) — highest specificity
       // getSuggestedReplies checks PROGRESSION_MAP first, then falls back to intent-based statics.
@@ -1325,11 +1329,13 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
 
     // Apply earned-access filter (strips booking language if not earned)
     // EXCEPTION: Phase 3 chips always include "Talk with Kasandra" — the escalation IS the earned signal.
+    // EXCEPTION: Investor intent always surfaces booking pivot (P4 governance).
     const isPhase3 = phase === 3 || proceedsOverride || asapTimeline;
-    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3);
+    const isInvestorRedirect = effectiveIntent === 'invest';
+    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3 || isInvestorRedirect);
 
     // Apply journey awareness filter: remove chips for already-completed tools (destination-based)
-    const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3);
+    const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3 || isInvestorRedirect);
     suggestedReplies = journeyFilter.filtered;
 
     // Telemetry: log suppressions for audit trail
