@@ -11,7 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { getOrCreateSessionId } from "@/lib/analytics/selenaSession";
-import { X, Mail, ArrowRight } from "lucide-react";
+import { Mail } from "lucide-react";
 import {
   Dialog,
   DialogContent,

@@ -17,7 +17,7 @@ interface GuideCompletionCaptureProps {
   visible: boolean;
 }
 
-export function GuideCompletionCapture({ guideId, guideTitle, visible }: GuideCompletionCaptureProps) {
+export function GuideCompletionCapture({ guideId, visible }: GuideCompletionCaptureProps) {
   const { t, language } = useLanguage();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
