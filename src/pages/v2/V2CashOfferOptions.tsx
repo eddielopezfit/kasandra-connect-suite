@@ -6,7 +6,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, Sparkles, Calendar } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, Sparkles, Calendar, MessageCircle } from "lucide-react";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-cash-calm.png";
 
@@ -53,8 +53,9 @@ const V2CashOfferOptionsContent = () => {
               </button>
               <button
                 onClick={() => openChat({ source: 'cash_offer_options_hero', intent: 'cash' })}
-                className="text-white/70 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
+                className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
               >
+                <MessageCircle className="w-4 h-4" />
                 {t("Or ask Selena a question", "O pregúntale a Selena")}
               </button>
             </div>

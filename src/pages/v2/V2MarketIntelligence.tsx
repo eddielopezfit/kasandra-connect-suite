@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from "react";
+import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
@@ -349,7 +350,7 @@ const V2MarketIntelligenceContent = () => {
             {t("What This Means For You", "Qué Significa Para Ti")}
           </p>
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
-            {t("Wondering how these numbers affect your home?", "¿Cómo afectan estos números a tu casa?")}
+            {t("Discuss these numbers with Kasandra", "Discute estos números con Kasandra")}
           </h2>
           <p className="text-cc-ivory/70 text-lg mb-8 max-w-xl mx-auto">
             {t(
@@ -357,12 +358,22 @@ const V2MarketIntelligenceContent = () => {
               "Kasandra revisa estas estadísticas cada semana. Puede decirte exactamente qué significan para comprar o vender en tu vecindario específico."
             )}
           </p>
-          <button
-            onClick={() => openChat({ source: 'market_intelligence_result' })}
-            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-4 text-base shadow-gold transition-all active:scale-95"
-          >
-            {t("Talk to Kasandra About This →", "Hablar con Kasandra Sobre Esto →")}
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/book?intent=explore&source=market"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-cc-gold text-cc-navy font-semibold text-base shadow-gold hover:bg-cc-gold-dark hover:scale-[1.02] transition-all"
+            >
+              <Calendar className="w-5 h-5" />
+              {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
+            </Link>
+            <button
+              onClick={() => openChat({ source: 'market_intelligence_result' })}
+              className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
+            >
+              <MessageCircle className="w-4 h-4" />
+              {t("Or ask Selena first", "O habla primero con Selena")}
+            </button>
+          </div>
         </div>
       </section>
 

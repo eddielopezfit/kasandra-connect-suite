@@ -9,7 +9,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
-import { Shield, TrendingUp, FileText, Handshake, AlertCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar, BarChart3 } from "lucide-react";
+import { Shield, TrendingUp, FileText, Handshake, AlertCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar, BarChart3, MessageCircle } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
@@ -326,16 +326,18 @@ const V2SellContent = () => {
                 </div>
               </div>
 
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => {
                   handleCTAClick('sell_comparison_traditional', 'selena_chat');
                   openChat({ source: 'sell_comparison_traditional', intent: 'sell' });
                 }}
-                className="text-cc-gold hover:text-cc-gold-dark text-sm font-semibold underline underline-offset-2 transition-colors inline-flex items-center gap-1 mt-2"
+                className="text-cc-gold hover:text-cc-gold/80 hover:bg-cc-gold/10 font-semibold mt-2 px-4 py-2"
               >
+                <MessageCircle className="w-4 h-4 mr-2" />
                 {t("Ask Selena about listing", "Pregúntale a Selena sobre listar")}
-                <ArrowRight className="w-3 h-3" />
-              </button>
+                <ArrowRight className="w-3 h-3 ml-1" />
+              </Button>
             </div>
 
             {/* RIGHT — Cash Offer via Corner Connect */}
@@ -441,8 +443,9 @@ const V2SellContent = () => {
             </Button>
             <button
               onClick={handleSelenaRoute}
-              className="text-white/60 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
+              className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
             >
+              <MessageCircle className="w-4 h-4" />
               {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
             </button>
           </div>

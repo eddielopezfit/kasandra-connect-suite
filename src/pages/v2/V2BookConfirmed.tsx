@@ -6,7 +6,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CalendarCheck, Calendar, MessageCircle } from "lucide-react";
+import { CalendarCheck, Calendar, MessageCircle, BookOpen, ArrowRight } from "lucide-react";
 import { logEvent } from "@/lib/analytics/logEvent";
 
 // ============= SAFE DATETIME PARSING =============
@@ -211,7 +211,46 @@ const V2BookConfirmedContent = () => {
         </section>
       )}
 
-      {/* Section 4 — Concierge Continuity Block */}
+      {/* Section 4 — Prepare for Your Call (intent-aware guides) */}
+      <section className="py-10 bg-white border-b border-cc-sand-dark/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-lg mx-auto">
+            <h3 className="font-serif text-xl font-bold text-cc-navy mb-4 text-center">
+              {t("Prepare for Your Conversation", "Prepárese para Su Conversación")}
+            </h3>
+            <div className="space-y-3">
+              {(intent === "sell" || intent === "cash" ? [
+                { href: "/guides/selling-for-top-dollar", en: "Selling for Top Dollar", es: "Vender al Mejor Precio" },
+                { href: "/guides/cost-to-sell-tucson", en: "Cost to Sell in Tucson", es: "Costo de Vender en Tucson" },
+                { href: "/guides/cash-offer-guide", en: "Understanding Cash Offers", es: "Entendiendo Ofertas en Efectivo" },
+              ] : intent === "buy" ? [
+                { href: "/guides/first-time-buyer-guide", en: "First-Time Buyer Guide", es: "Guía para Compradores Primerizos" },
+                { href: "/guides/down-payment-assistance-tucson", en: "Down Payment Assistance", es: "Asistencia de Pago Inicial" },
+                { href: "/guides/tucson-neighborhoods", en: "Tucson Neighborhoods", es: "Vecindarios de Tucson" },
+              ] : [
+                { href: "/guides/first-time-buyer-guide", en: "First-Time Buyer Guide", es: "Guía para Compradores Primerizos" },
+                { href: "/guides/selling-for-top-dollar", en: "Selling for Top Dollar", es: "Vender al Mejor Precio" },
+              ]).map((guide) => (
+                <Link
+                  key={guide.href}
+                  to={guide.href}
+                  className="flex items-center justify-between p-4 bg-cc-sand rounded-xl border border-cc-sand-dark/20 hover:border-cc-navy/20 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <BookOpen className="w-4 h-4 text-cc-gold flex-shrink-0" />
+                    <span className="text-sm font-medium text-cc-navy group-hover:text-cc-navy/80">
+                      {t(guide.en, guide.es)}
+                    </span>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-cc-slate group-hover:text-cc-navy transition-colors" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 5 — Concierge Continuity Block */}
       <section className="py-10 bg-cc-navy w-full">
         <div className="container mx-auto px-4">
           <div className="max-w-lg mx-auto text-center space-y-4">
@@ -221,8 +260,7 @@ const V2BookConfirmedContent = () => {
                 "¿Preguntas antes de su conversación? Selena está aquí en cualquier momento — sin presión, solo claridad."
               )}
             </p>
-            {/* V2: Profile review confirmation */}
-            <p className="text-sm text-cc-charcoal/60 mb-4 max-w-sm mx-auto">
+            <p className="text-sm text-white/50 mb-4 max-w-sm mx-auto">
               {t(
                 "Kasandra will personally review your profile before your call — so you start from a real place.",
                 "Kasandra revisará su perfil personalmente antes de su llamada — para que comiencen desde un lugar real."
@@ -239,7 +277,7 @@ const V2BookConfirmedContent = () => {
         </div>
       </section>
 
-      {/* Section 5 — Secondary Action */}
+      {/* Section 6 — Secondary Action */}
       <section className="py-6 bg-cc-ivory w-full">
         <div className="container mx-auto px-4 text-center">
           <Link
