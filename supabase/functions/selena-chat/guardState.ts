@@ -399,9 +399,21 @@ function detectContainment(
 ): { containment_active: boolean; vulnerability_signal_count: number } {
   const normalizedCurrent = normalizeForVulnerability(currentMessage);
 
+  // Count total vulnerability signals across last 6 user messages (including current)
+  const userOnlyHistory = userHistory.filter(m => m.role === 'user');
+  const recentUserMessages = userOnlyHistory.slice(-5);
+  const allRecent = [...recentUserMessages.map(m => normalizeForVulnerability(m.content)), normalizedCurrent];
+
+  let totalSignals = 0;
+  for (const normalized of allRecent) {
+    if (hasVulnerabilitySignal(normalized)) {
+      totalSignals++;
+    }
+  }
+
   // Instant trigger: high-severity signal in current message
   if (hasHighSeveritySignal(normalizedCurrent)) {
-    return { containment_active: true, vulnerability_signal_count: 1 };
+    return { containment_active: true, vulnerability_signal_count: Math.max(totalSignals, 1) };
   }
 
   // Scan last 6 USER messages (including current) for vulnerability signals
