@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from "react";
+import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
