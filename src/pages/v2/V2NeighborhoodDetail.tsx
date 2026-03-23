@@ -122,6 +122,40 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
 
       {/* Related Neighborhoods + Guides */}
       <RelatedNeighborhoodsRail neighborhood={neighborhood} />
+
+      {/* Booking Pivot CTA */}
+      <section className="py-16 lg:py-20 bg-cc-navy">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
+            {t(
+              `Ready to explore ${neighborhood.name}?`,
+              `¿Listo para explorar ${neighborhood.nameEs}?`
+            )}
+          </h2>
+          <p className="text-white/80 max-w-xl mx-auto mb-8">
+            {t(
+              "Kasandra knows this area inside and out. Book a call to discuss your options.",
+              "Kasandra conoce esta área de adentro hacia afuera. Agenda una llamada para discutir tus opciones."
+            )}
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to={`/book?intent=buy&source=neighborhood_detail&neighborhood=${neighborhood.slug}`}
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-cc-gold text-cc-navy font-semibold text-base shadow-gold hover:bg-cc-gold-dark hover:scale-[1.02] transition-all"
+            >
+              <Calendar className="w-5 h-5" />
+              {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
+            </Link>
+            <button
+              onClick={handleSelenaOpen}
+              className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
+            >
+              <MessageCircle className="w-4 h-4" />
+              {t("Or ask Selena first", "O habla primero con Selena")}
+            </button>
+          </div>
+        </div>
+      </section>
     </>
   );
 };
