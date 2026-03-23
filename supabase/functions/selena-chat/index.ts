@@ -264,8 +264,10 @@ serve(async (req) => {
     const guardRules = applyGuardRules(guardState, language, message);
 
     // ============= P10: DISTRESS → KASANDRA ALERT =============
-    // When containment activates with escalation level 'suggest', fire notify-handoff
-    if (guardState.containment_active && guardState.escalation_level === 'suggest' && leadId && supabase) {
+    // When containment activates with escalation 'suggest' OR vulnerability signals >= 2, fire notify-handoff
+    const isDistressAlert = guardState.containment_active && 
+      (guardState.escalation_level === 'suggest' || guardState.vulnerability_signal_count >= 2);
+    if (isDistressAlert && leadId && supabase) {
       try {
         const { data: leadData } = await supabase
           .from('lead_profiles')
