@@ -1299,6 +1299,11 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       suggestedReplies = language === 'es'
         ? ["Hablar con Kasandra", "Solo estoy explorando"]
         : ["Talk with Kasandra", "Just exploring for now"];
+    } else if (isBAHTool) {
+      // P12: MILITARY RECOGNITION — hard-lock to military guide + booking
+      suggestedReplies = language === 'es'
+        ? ["Guía militar y VA", "Hablar con Kasandra"]
+        : ["Military & VA guide", "Talk with Kasandra"];
     } else {
       // Layer 5: Keyword-triggered chips (PROGRESSION_MAP) — highest specificity
       // getSuggestedReplies checks PROGRESSION_MAP first, then falls back to intent-based statics.
