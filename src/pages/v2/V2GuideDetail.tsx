@@ -20,6 +20,7 @@ import { RelatedGuides } from "@/components/v2/guides/RelatedGuides";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { CognitiveProgressBar } from "@/components/v2/guides/CognitiveProgressBar";
+import { GuideCompletionCapture } from "@/components/v2/guides/GuideCompletionCapture";
 import { useCognitiveStage } from "@/hooks/useCognitiveStage";
 import { GUIDE_DATA_LOADERS, type GuideContentData } from "@/data/guides";
 import type { ExternalLink } from "@/data/guides/types";
@@ -72,7 +73,9 @@ function GuideDetailContent() {
   const [guide, setGuide] = useState<GuideContentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [synthesisVisible, setSynthesisVisible] = useState(false);
+  const [guideCompleteVisible, setGuideCompleteVisible] = useState(false);
   const synthesisTracked = useRef(false);
+  const completionTracked = useRef(false);
   const { openChat } = useSelenaChat();
 
   // Registry entry for metadata (readTime, tier, destinations, etc.)
@@ -147,14 +150,19 @@ function GuideDetailContent() {
   // Scroll listener for synthesis CTA (60% threshold)
   useEffect(() => {
     const handleScroll = () => {
-      if (synthesisTracked.current) return;
       const ratio = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-      if (ratio > 0.6) {
+      if (!synthesisTracked.current && ratio > 0.6) {
         setSynthesisVisible(true);
         synthesisTracked.current = true;
         if (guideId) {
           logEvent('guide_synthesis_cta_shown', { guideId });
         }
+      }
+      if (!completionTracked.current && ratio > 0.9) {
+        setGuideCompleteVisible(true);
+        completionTracked.current = true;
+      }
+      if (synthesisTracked.current && completionTracked.current) {
         window.removeEventListener('scroll', handleScroll);
       }
     };
@@ -624,6 +632,17 @@ function GuideDetailContent() {
         {/* QA Guardrail: warn in dev if >1 CTA component rendered */}
         <GuideCTAGuardrail guideId={guideId} />
       </article>
+
+      {/* P8: Guide Completion Email Capture — 90%+ scroll */}
+      {guideId && (
+        <div className="container mx-auto px-4 max-w-3xl">
+          <GuideCompletionCapture
+            guideId={guideId}
+            guideTitle={guideTitle}
+            visible={guideCompleteVisible}
+          />
+        </div>
+      )}
 
       {/* Selena Synthesis CTA  -  appears after 60%+ scroll */}
       {synthesisVisible && (

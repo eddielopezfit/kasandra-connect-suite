@@ -56,7 +56,9 @@ export type EntrySource =
     | 'affordability_calculator'
     | 'bah_calculator'
     | 'home_valuation'
-    | 'cash_offer_bottom';
+    | 'cash_offer_bottom'
+    | 'sticky_mobile_buy'
+    | 'sticky_mobile_sell';
 
 export interface EntryContext {
   estimatedBudget?: number;

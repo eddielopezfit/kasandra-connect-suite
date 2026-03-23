@@ -164,7 +164,11 @@ export type EventType =
   | 'valuation_request_completed'
   | 'tool_capture_dismissed'
   | 'tool_capture_submitted'
-  | 'referral_share_click';
+  | 'referral_share_click'
+  // Exit-intent & guide completion capture (CTA Audit P5/P8)
+  | 'exit_intent_shown'
+  | 'exit_intent_captured'
+  | 'guide_pdf_requested';
 
 export interface EventPayload {
   [key: string]: unknown;

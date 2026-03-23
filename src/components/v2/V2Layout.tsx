@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
 import { ChatErrorBoundary } from "@/components/selena/ChatErrorBoundary";
+import ExitIntentModal from "@/components/v2/ExitIntentModal";
 import { logPageView, logEvent } from "@/lib/analytics/logEvent";
 import { initSessionContext, getSessionContext, updateSessionContext } from "@/lib/analytics/selenaSession";
 import { bridgeAuthToLead } from "@/lib/analytics/bridgeAuthToLead";
@@ -155,6 +156,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
           </div>
         )}
       </div>
+      <ExitIntentModal />
     </SelenaChatProvider>
   );
 };
