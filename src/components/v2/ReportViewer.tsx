@@ -341,6 +341,19 @@ export function ReportViewer({
         </div>
       </ScrollArea>
 
+      {/* P9: Timed booking nudge — appears after 30s of report viewing */}
+      {showBookingNudge && (
+        <div className="border-t border-cc-gold/30 bg-cc-gold/10 px-4 sm:px-6 py-3 shrink-0 animate-in slide-in-from-bottom-2 duration-300">
+          <button
+            onClick={handleBookingNudge}
+            className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-cc-navy hover:text-cc-navy-dark transition-colors"
+          >
+            <Calendar className="w-4 h-4 text-cc-gold" />
+            {t('Discuss this report with Kasandra', 'Discute este reporte con Kasandra')}
+          </button>
+        </div>
+      )}
+
       {/* CTA Buttons - Calm, consistent tone */}
       <div className="border-t border-border bg-cc-sand/50 p-4 sm:p-6 shrink-0">
         <div className="flex flex-col gap-3">
