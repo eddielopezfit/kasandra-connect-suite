@@ -1328,7 +1328,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // Guard 4: If journey_state !== 'decide', strip booking-only chips/actions
     // This is a HARD GATE — applies even when proceeds/ASAP override is active
     // Only exception: Mode 4 HANDOFF (human-directed) and guard chip overrides
-    if (journey.journey_state !== 'decide' && !isMode4Handoff) {
+    if (journey.journey_state !== 'decide' && !isMode4Handoff && !isBAHTool) {
       suggestedReplies = suggestedReplies.filter(s =>
         !BOOKING_KEYWORDS.test(s) && !BOOKING_PHRASES.test(s)
       );
@@ -1337,12 +1337,14 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // Apply earned-access filter (strips booking language if not earned)
     // EXCEPTION: Phase 3 chips always include "Talk with Kasandra" — the escalation IS the earned signal.
     // EXCEPTION: Investor intent always surfaces booking pivot (P4 governance).
+    // EXCEPTION: Military BAH users get booking access (P12 governance).
     const isPhase3 = phase === 3 || proceedsOverride || asapTimeline;
     const isInvestorRedirect = effectiveIntent === 'invest';
-    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3 || isInvestorRedirect);
+    const isMilitaryBypass = isBAHTool;
+    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3 || isInvestorRedirect || isMilitaryBypass);
 
     // Apply journey awareness filter: remove chips for already-completed tools (destination-based)
-    const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3 || isInvestorRedirect);
+    const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3 || isInvestorRedirect || isMilitaryBypass);
     suggestedReplies = journeyFilter.filtered;
 
     // Telemetry: log suppressions for audit trail
