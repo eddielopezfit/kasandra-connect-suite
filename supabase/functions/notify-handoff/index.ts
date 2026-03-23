@@ -312,6 +312,19 @@ serve(async (req) => {
       tags,
     };
 
+    // ============= P11: BILINGUAL SUMMARY FOR ES LEADS =============
+    const language = (context.language as string ?? "en").toLowerCase();
+    const summaryMd = (context.summary_md as string) ?? "";
+    if (language === "es" && summaryMd) {
+      const spanishSummary = await translateSummaryToSpanish(summaryMd, correlationId);
+      if (spanishSummary) {
+        // Add Spanish summary as separate field for GHL
+        payload.selena_summary_es = spanishSummary;
+        // Also create a bilingual combined summary
+        payload.selena_summary_bilingual = `--- ENGLISH ---\n${summaryMd}\n\n--- ESPAÑOL ---\n${spanishSummary}`;
+      }
+    }
+
     // Send with retry (3 attempts, exponential backoff)
     const result = await sendWithRetry(payload, 3, correlationId);
 
