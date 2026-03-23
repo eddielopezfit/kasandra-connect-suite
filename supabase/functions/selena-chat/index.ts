@@ -135,7 +135,6 @@ serve(async (req) => {
                 .eq('id', leadId)
                 .maybeSingle()
             : Promise.resolve({ status: 'fulfilled', value: { data: null } }),
-            : Promise.resolve({ status: 'fulfilled', value: { data: null } }),
           auditClient
             .from('decision_receipts')
             .select('receipt_data')
