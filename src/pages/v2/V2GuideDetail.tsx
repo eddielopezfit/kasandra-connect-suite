@@ -72,7 +72,9 @@ function GuideDetailContent() {
   const [guide, setGuide] = useState<GuideContentData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [synthesisVisible, setSynthesisVisible] = useState(false);
+  const [guideCompleteVisible, setGuideCompleteVisible] = useState(false);
   const synthesisTracked = useRef(false);
+  const completionTracked = useRef(false);
   const { openChat } = useSelenaChat();
 
   // Registry entry for metadata (readTime, tier, destinations, etc.)
