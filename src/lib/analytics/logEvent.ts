@@ -168,7 +168,10 @@ export type EventType =
   // Exit-intent & guide completion capture (CTA Audit P5/P8)
   | 'exit_intent_shown'
   | 'exit_intent_captured'
-  | 'guide_pdf_requested';
+  | 'guide_pdf_requested'
+  // P9: Report booking nudge
+  | 'report_booking_nudge_shown'
+  | 'report_booking_nudge_click';
 
 export interface EventPayload {
   [key: string]: unknown;

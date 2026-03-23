@@ -4,9 +4,9 @@
  * Includes empty state and error handling
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Calculator, MessageCircle, X, Sparkles, Download } from 'lucide-react';
+import { FileText, Calculator, MessageCircle, X, Sparkles, Download, Calendar } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -49,8 +49,36 @@ export function ReportViewer({
   const { openChat, handleActionClick } = useSelenaChat();
   const { t } = useLanguage();
   const [_retryAction, _setRetryAction] = useState<(() => void) | null>(null);
+  const [showBookingNudge, setShowBookingNudge] = useState(false);
+  const nudgeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isEmpty = reportType === 'empty' || (!markdown && !reportId);
+
+  // P9: 30-second timer — show "Discuss this report with Kasandra" booking nudge
+  useEffect(() => {
+    if (open && !isEmpty && markdown) {
+      setShowBookingNudge(false);
+      nudgeTimerRef.current = setTimeout(() => {
+        setShowBookingNudge(true);
+        logEvent('report_booking_nudge_shown', {
+          report_id: reportId,
+          report_type: reportType,
+        });
+      }, 30_000);
+    }
+    return () => {
+      if (nudgeTimerRef.current) clearTimeout(nudgeTimerRef.current);
+    };
+  }, [open, isEmpty, markdown, reportId, reportType]);
+
+  const handleBookingNudge = useCallback(() => {
+    logEvent('report_booking_nudge_click', {
+      report_id: reportId,
+      report_type: reportType,
+    });
+    onOpenChange(false);
+    setTimeout(() => openChat({ source: 'hero', intent: 'sell' }), 300);
+  }, [reportId, reportType, onOpenChange, openChat]);
 
   // Log report view when opened (only for actual reports, not empty state)
   useEffect(() => {
@@ -312,6 +340,19 @@ export function ReportViewer({
           <MarkdownRenderer markdown={markdown} />
         </div>
       </ScrollArea>
+
+      {/* P9: Timed booking nudge — appears after 30s of report viewing */}
+      {showBookingNudge && (
+        <div className="border-t border-cc-gold/30 bg-cc-gold/10 px-4 sm:px-6 py-3 shrink-0 animate-in slide-in-from-bottom-2 duration-300">
+          <button
+            onClick={handleBookingNudge}
+            className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-cc-navy hover:text-cc-navy-dark transition-colors"
+          >
+            <Calendar className="w-4 h-4 text-cc-gold" />
+            {t('Discuss this report with Kasandra', 'Discute este reporte con Kasandra')}
+          </button>
+        </div>
+      )}
 
       {/* CTA Buttons - Calm, consistent tone */}
       <div className="border-t border-border bg-cc-sand/50 p-4 sm:p-6 shrink-0">
