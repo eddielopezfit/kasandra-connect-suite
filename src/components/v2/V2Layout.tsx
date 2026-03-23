@@ -156,6 +156,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
           </div>
         )}
       </div>
+      <ExitIntentModal />
     </SelenaChatProvider>
   );
 };
