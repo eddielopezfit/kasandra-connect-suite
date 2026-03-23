@@ -8,7 +8,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { buyerTestimonials } from "@/data/testimonials";
-import { Search, DollarSign, CheckCircle, Calendar, Calculator, Shield } from "lucide-react";
+import { Search, DollarSign, CheckCircle, Calendar, Calculator, Shield, MessageCircle } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
