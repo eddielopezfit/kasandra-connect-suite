@@ -4,8 +4,9 @@
  * Includes empty state and error handling
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Calendar } from 'lucide-react';
 import { FileText, Calculator, MessageCircle, X, Sparkles, Download } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
