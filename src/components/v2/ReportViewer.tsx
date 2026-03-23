@@ -6,8 +6,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar } from 'lucide-react';
-import { FileText, Calculator, MessageCircle, X, Sparkles, Download } from 'lucide-react';
+import { FileText, Calculator, MessageCircle, X, Sparkles, Download, Calendar } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { useLanguage } from '@/contexts/LanguageContext';
