@@ -581,6 +581,7 @@ export type Database = {
           email: string
           estimated_value: string | null
           id: string
+          lead_id: string | null
           name: string
           property_address: string | null
           situation: string | null
@@ -595,6 +596,7 @@ export type Database = {
           email: string
           estimated_value?: string | null
           id?: string
+          lead_id?: string | null
           name: string
           property_address?: string | null
           situation?: string | null
@@ -609,13 +611,22 @@ export type Database = {
           email?: string
           estimated_value?: string | null
           id?: string
+          lead_id?: string | null
           name?: string
           property_address?: string | null
           situation?: string | null
           source?: string | null
           timeline?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "seller_leads_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "lead_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       session_snapshots: {
         Row: {
@@ -670,6 +681,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_old_events: { Args: never; Returns: undefined }
       cleanup_rate_limits: { Args: never; Returns: undefined }
       invoke_refresh_market_pulse: { Args: never; Returns: undefined }
     }
