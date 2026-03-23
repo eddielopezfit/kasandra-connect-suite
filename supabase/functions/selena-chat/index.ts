@@ -287,7 +287,13 @@ serve(async (req) => {
     // UNIVERSAL MONOTONIC MODE FLOOR: Mode must never decrease within a session.
     const clientMode = (context.current_mode ?? 0) as number;
     const detectedMode = detectedModeContext.mode;
-    const effectiveMode = Math.max(clientMode, detectedMode) as ConversationMode;
+    
+    // P1: Lead grade mode override — A-grade starts Mode 3, B-grade Mode 2
+    let leadGradeModeFloor = 0;
+    if (context.lead_grade === 'A') leadGradeModeFloor = 3;
+    else if (context.lead_grade === 'B') leadGradeModeFloor = 2;
+    
+    const effectiveMode = Math.max(clientMode, detectedMode, leadGradeModeFloor) as ConversationMode;
     
     // Select the correct modeContext for the effective mode
     const modeContext = effectiveMode !== detectedMode
