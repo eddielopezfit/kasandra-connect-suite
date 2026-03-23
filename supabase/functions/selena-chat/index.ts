@@ -1330,8 +1330,10 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
 
     // Apply earned-access filter (strips booking language if not earned)
     // EXCEPTION: Phase 3 chips always include "Talk with Kasandra" — the escalation IS the earned signal.
+    // EXCEPTION: Investor intent always surfaces booking pivot (P4 governance).
     const isPhase3 = phase === 3 || proceedsOverride || asapTimeline;
-    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3);
+    const isInvestorRedirect = effectiveIntent === 'invest';
+    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3 || isInvestorRedirect);
 
     // Apply journey awareness filter: remove chips for already-completed tools (destination-based)
     const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3);
