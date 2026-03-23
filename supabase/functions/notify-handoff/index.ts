@@ -7,6 +7,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
  * Sends lead handoff payload to GHL webhook with retry logic.
  * - 3 attempts with exponential backoff (1s → 3s → 9s)
  * - Updates lead_handoffs.delivery_status on success/failure
+ * - P11: Generates bilingual (EN+ES) summary for Spanish-language leads
  * - Structured logging with lead_id, session_id, correlation_id
  */
 const GHL_WEBHOOK_URL = Deno.env.get("GHL_WEBHOOK_URL") ?? "";
@@ -68,6 +69,56 @@ function deriveTags(context: Record<string, unknown>): string[] {
 /** Sleep helper for backoff */
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * P11: Generate Spanish translation of conversation summary for ES leads.
+ * Uses Lovable AI Gateway (Gemini Flash) for fast, cost-effective translation.
+ * Falls back to a header-only Spanish label if translation fails.
+ */
+async function translateSummaryToSpanish(
+  summaryMd: string,
+  correlationId: string,
+): Promise<string> {
+  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+  if (!LOVABLE_API_KEY || !summaryMd) return "";
+
+  try {
+    const res = await fetch("https://api.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-lite",
+        max_tokens: 500,
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a professional bilingual translator for a real estate CRM. Translate the following lead conversation summary from English to Spanish. Keep formatting (markdown), proper nouns, and dollar amounts unchanged. Output ONLY the Spanish translation, no preamble.",
+          },
+          { role: "user", content: summaryMd },
+        ],
+      }),
+    });
+
+    if (!res.ok) {
+      console.warn(`[notify-handoff] [${correlationId}] P11 translation failed: ${res.status}`);
+      return "";
+    }
+
+    const data = await res.json();
+    const translated = data?.choices?.[0]?.message?.content?.trim() ?? "";
+    if (translated) {
+      console.log(`[notify-handoff] [${correlationId}] P11 Spanish summary generated (${translated.length} chars)`);
+    }
+    return translated;
+  } catch (err) {
+    console.warn(`[notify-handoff] [${correlationId}] P11 translation error:`, (err as Error).message);
+    return "";
+  }
 }
 
 /** Retry GHL webhook with exponential backoff: 1s → 3s → 9s */
@@ -260,6 +311,19 @@ serve(async (req) => {
       selena_last_data_parse_date: new Date().toISOString(),
       tags,
     };
+
+    // ============= P11: BILINGUAL SUMMARY FOR ES LEADS =============
+    const language = (context.language as string ?? "en").toLowerCase();
+    const summaryMd = (context.summary_md as string) ?? "";
+    if (language === "es" && summaryMd) {
+      const spanishSummary = await translateSummaryToSpanish(summaryMd, correlationId);
+      if (spanishSummary) {
+        // Add Spanish summary as separate field for GHL
+        payload.selena_summary_es = spanishSummary;
+        // Also create a bilingual combined summary
+        payload.selena_summary_bilingual = `--- ENGLISH ---\n${summaryMd}\n\n--- ESPAÑOL ---\n${spanishSummary}`;
+      }
+    }
 
     // Send with retry (3 attempts, exponential backoff)
     const result = await sendWithRetry(payload, 3, correlationId);
