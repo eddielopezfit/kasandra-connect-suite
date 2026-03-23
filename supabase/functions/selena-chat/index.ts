@@ -131,9 +131,10 @@ serve(async (req) => {
           leadId
             ? auditClient
                 .from('lead_profiles')
-                .select('name, situation, timeline, intent')
+                .select('name, situation, timeline, intent, lead_score, lead_grade')
                 .eq('id', leadId)
                 .maybeSingle()
+            : Promise.resolve({ status: 'fulfilled', value: { data: null } }),
             : Promise.resolve({ status: 'fulfilled', value: { data: null } }),
           auditClient
             .from('decision_receipts')
@@ -191,6 +192,9 @@ serve(async (req) => {
             context.timeline = lead.timeline as string;
           if (!filled(context.intent) && filled(lead.intent))
             context.intent = lead.intent as string;
+          // P1: Lead score into Selena context
+          if (filled(lead.lead_score)) context.lead_score = lead.lead_score as number;
+          if (filled(lead.lead_grade)) context.lead_grade = lead.lead_grade as string;
         }
 
         // Merge decision receipt
@@ -260,6 +264,50 @@ serve(async (req) => {
     const guardState = buildGuardState(history, context, message);
     const guardRules = applyGuardRules(guardState, language, message);
 
+    // ============= P10: DISTRESS → KASANDRA ALERT =============
+    // When containment activates with escalation level 'suggest', fire notify-handoff
+    if (guardState.containment_active && guardState.escalation_level === 'suggest' && leadId && supabase) {
+      try {
+        const { data: leadData } = await supabase
+          .from('lead_profiles')
+          .select('name, email, phone')
+          .eq('id', leadId)
+          .maybeSingle();
+
+        if (leadData?.email) {
+          const nameParts = (leadData.name || '').split(' ');
+          fetch(`${rlUrl}/functions/v1/notify-handoff`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${rlKey}`,
+            },
+            body: JSON.stringify({
+              contact: {
+                email: leadData.email,
+                firstName: nameParts[0] || '',
+                lastName: nameParts.slice(1).join(' ') || '',
+                phone: leadData.phone || '',
+              },
+              context: {
+                selena_lead_id: leadId,
+                session_id: context.session_id,
+                intent: effectiveIntent,
+                language,
+                readiness_score: context.readiness_score ?? 0,
+                journey_state: 'decide',
+                inherited_home: context.inherited_home ?? false,
+                trust_signal_detected: context.trust_signal_detected ?? false,
+              },
+            }),
+          }).catch(e => console.error('[Selena] P10 distress alert failed:', e));
+          console.log(`[Selena] P10: Distress alert fired for lead ${leadId}`);
+        }
+      } catch (e) {
+        console.error('[Selena] P10 distress alert error:', e);
+      }
+    }
+
     // RULE 9: Human takeover — block AI generation entirely
     if (guardRules.blockGeneration) {
       return new Response(
@@ -283,7 +331,13 @@ serve(async (req) => {
     // UNIVERSAL MONOTONIC MODE FLOOR: Mode must never decrease within a session.
     const clientMode = (context.current_mode ?? 0) as number;
     const detectedMode = detectedModeContext.mode;
-    const effectiveMode = Math.max(clientMode, detectedMode) as ConversationMode;
+    
+    // P1: Lead grade mode override — A-grade starts Mode 3, B-grade Mode 2
+    let leadGradeModeFloor = 0;
+    if (context.lead_grade === 'A') leadGradeModeFloor = 3;
+    else if (context.lead_grade === 'B') leadGradeModeFloor = 2;
+    
+    const effectiveMode = Math.max(clientMode, detectedMode, leadGradeModeFloor) as ConversationMode;
     
     // Select the correct modeContext for the effective mode
     const modeContext = effectiveMode !== detectedMode
@@ -351,6 +405,8 @@ serve(async (req) => {
       if (serverName) parts.push(`Name: ${serverName}`);
       if (context.estimated_value) parts.push(`Property: $${Number(context.estimated_value).toLocaleString()}`);
       if (context.situation) parts.push(`Situation: ${context.situation}`);
+      // P1: Lead score in memory summary
+      if (context.lead_score) parts.push(`Lead Score: ${context.lead_score}/100 (${context.lead_grade || 'unknown'})`);
       if (parts.length) {
         memorySummary = language === "es"
           ? `\n\nMEMORIA DE CONCIERGE:\n${parts.join(' | ')}\nHaz referencia a estos datos específicos cuando sea relevante. NUNCA digas 'No sé a qué te refieres.'`
@@ -901,6 +957,12 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       effectiveChipPhase = Math.max(effectiveChipPhase, 2) as 1 | 2 | 3;
     }
 
+    // P5: Readiness score auto-escalate — ≥75 + non-explore intent → Phase 3
+    if (safeReadinessScore >= 75 && effectiveIntent !== 'explore') {
+      effectiveChipPhase = Math.max(effectiveChipPhase, 3) as 1 | 2 | 3;
+      console.log(`[Selena] P5: Auto-escalated to Phase 3 (readiness=${safeReadinessScore}, intent=${effectiveIntent})`);
+    }
+
     // FIX 2: High-intent financial question detection
     const HIGH_INTENT_FINANCIAL = /how much|what.*need|can i afford|what do i need|cuánto.*necesito|cuanto.*necesito|what.*cost|total.*need/i;
     const isHighIntentQuestion = HIGH_INTENT_FINANCIAL.test(message);
@@ -954,6 +1016,21 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       governanceHint += language === 'es'
         ? `\n\nHERENCIA DETECTADA:\nEste vendedor heredó la propiedad. Situación de alta sensibilidad.\n- Reconozca el peso emocional brevemente, sin exagerar\n- Preocupaciones clave: ser aprovechado, entender valor real, decisión correcta para la familia\n- Pivote: "Kasandra ha ayudado a familias a navegar propiedades heredadas — entiende la complejidad."\n- Siempre incluya "Hablar con Kasandra". NO recomiende más guías.`
         : `\n\nINHERITED HOME DETECTED:\nThis seller inherited the property. High-sensitivity situation.\n- Acknowledge the emotional weight once, briefly\n- Key concerns: being taken advantage of, understanding true value, family obligation\n- Pivot: "Kasandra has helped families navigate inherited properties — she understands the complexity."\n- Always include "Talk with Kasandra". Do NOT recommend more guides.`;
+    }
+
+    // ============= P4: INVESTOR PATH RESOLUTION =============
+    if (effectiveIntent === 'invest') {
+      governanceHint += language === 'es'
+        ? `\n\nRUTA DE INVERSIONISTA:\nKasandra se especializa en propietarios residenciales. Para inversionistas, redirige directamente:\n"Kasandra trabaja con inversionistas que buscan propiedades residenciales en Tucson — desde propiedades de alquiler hasta oportunidades de remodelación. Una llamada corta le ayudaría a entender exactamente qué está buscando."\nRespuesta sugerida: "Hablar con Kasandra".`
+        : `\n\nINVESTOR PATH:\nKasandra specializes in residential homeowners. For investors, redirect directly:\n"Kasandra works with investors looking at residential properties in Tucson — from rental properties to fix-and-flip opportunities. A short call would help her understand exactly what you're looking for."\nSuggested reply: "Talk with Kasandra".`;
+    }
+
+    // ============= P12: MILITARY/VA RECOGNITION =============
+    const isBAHTool = (context.tools_completed ?? []).includes('bah_calculator') || toolUsed === 'bah_calculator';
+    if (isBAHTool) {
+      governanceHint += language === 'es'
+        ? `\n\nCOMPRADOR MILITAR DETECTADO:\nEste usuario completó la calculadora BAH — probablemente militar activo o veterano (Davis-Monthan AFB).\n- Reconozca su servicio brevemente: "Gracias por su servicio."\n- Referencia VA: "Con elegibilidad VA, usted puede calificar para $0 de enganche y tasas de interés más bajas."\n- Sugiera la guía militar: "Tenemos una guía específica para familias militares mudándose en Tucson."\n- Contexto de reserva: "Kasandra ha ayudado a varias familias militares a establecerse en Tucson — entiende el proceso PCS."\nPrimera respuesta sugerida: guía militar-pcs. Segunda: "Hablar con Kasandra".`
+        : `\n\nMILITARY BUYER DETECTED:\nThis user completed the BAH calculator — likely active duty or veteran (Davis-Monthan AFB area).\n- Acknowledge service briefly: "Thank you for your service."\n- VA reference: "With VA eligibility, you may qualify for $0 down and better interest rates."\n- Surface military guide: "We have a guide specifically for military families PCSing to Tucson."\n- Booking context: "Kasandra has helped several military families settle in Tucson — she understands the PCS timeline."\nFirst suggested reply: military-pcs guide. Second: "Talk with Kasandra".`;
     }
 
     // ============= TRUST SIGNAL HINT =============

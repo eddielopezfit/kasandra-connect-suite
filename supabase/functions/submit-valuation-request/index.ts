@@ -248,6 +248,45 @@ Deno.serve(async (req) => {
           has_address: true,
         },
       });
+
+      // P3: Write property_address to session_snapshot for Selena context
+      try {
+        const { data: existingSnap } = await supabase
+          .from("session_snapshots")
+          .select("id, context_json")
+          .eq("session_id", payload.sessionId)
+          .maybeSingle();
+
+        const existingCtx = (existingSnap?.context_json as Record<string, unknown>) || {};
+        const updatedCtx = {
+          ...existingCtx,
+          property_address: propertyDetails.address,
+          estimated_value: payload.estimatedValue || existingCtx.estimated_value,
+        };
+
+        if (existingSnap) {
+          await supabase
+            .from("session_snapshots")
+            .update({
+              lead_id: canonicalLeadId,
+              intent: "sell",
+              context_json: updatedCtx,
+            })
+            .eq("id", existingSnap.id);
+        } else {
+          await supabase
+            .from("session_snapshots")
+            .insert({
+              session_id: payload.sessionId,
+              lead_id: canonicalLeadId,
+              intent: "sell",
+              context_json: updatedCtx,
+            });
+        }
+        console.log("[submit-valuation-request] P3: Property address written to session_snapshot");
+      } catch (snapErr) {
+        console.error("[submit-valuation-request] P3 snapshot update failed:", snapErr);
+      }
     }
 
     console.log("[submit-valuation-request] Success:", {
