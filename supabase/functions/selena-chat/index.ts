@@ -1083,7 +1083,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // On first turn with a recognized entry_source, inject personalized greeting context
     // so the AI adapts its Mode 1 response to how the user arrived.
     let entryGreetingHint = "";
-    const ENTRY_SOURCES_WITH_GREETINGS = ['guide_handoff', 'calculator', 'neighborhood_detail', 'floating', 'synthesis', 'quiz_result', 'post_booking'];
+    const ENTRY_SOURCES_WITH_GREETINGS = ['guide_handoff', 'calculator', 'bah_calculator', 'neighborhood_detail', 'floating', 'synthesis', 'quiz_result', 'post_booking'];
     if (
       conversationState.userTurns <= 1 &&
       context.entry_source &&
@@ -1299,6 +1299,11 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       suggestedReplies = language === 'es'
         ? ["Hablar con Kasandra", "Solo estoy explorando"]
         : ["Talk with Kasandra", "Just exploring for now"];
+    } else if (isBAHTool) {
+      // P12: MILITARY RECOGNITION — hard-lock to military guide + booking
+      suggestedReplies = language === 'es'
+        ? ["Guía militar y VA", "Hablar con Kasandra"]
+        : ["Military & VA guide", "Talk with Kasandra"];
     } else {
       // Layer 5: Keyword-triggered chips (PROGRESSION_MAP) — highest specificity
       // getSuggestedReplies checks PROGRESSION_MAP first, then falls back to intent-based statics.
@@ -1323,7 +1328,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // Guard 4: If journey_state !== 'decide', strip booking-only chips/actions
     // This is a HARD GATE — applies even when proceeds/ASAP override is active
     // Only exception: Mode 4 HANDOFF (human-directed) and guard chip overrides
-    if (journey.journey_state !== 'decide' && !isMode4Handoff) {
+    if (journey.journey_state !== 'decide' && !isMode4Handoff && !isBAHTool) {
       suggestedReplies = suggestedReplies.filter(s =>
         !BOOKING_KEYWORDS.test(s) && !BOOKING_PHRASES.test(s)
       );
@@ -1332,12 +1337,14 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // Apply earned-access filter (strips booking language if not earned)
     // EXCEPTION: Phase 3 chips always include "Talk with Kasandra" — the escalation IS the earned signal.
     // EXCEPTION: Investor intent always surfaces booking pivot (P4 governance).
+    // EXCEPTION: Military BAH users get booking access (P12 governance).
     const isPhase3 = phase === 3 || proceedsOverride || asapTimeline;
     const isInvestorRedirect = effectiveIntent === 'invest';
-    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3 || isInvestorRedirect);
+    const isMilitaryBypass = isBAHTool;
+    suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3 || isInvestorRedirect || isMilitaryBypass);
 
     // Apply journey awareness filter: remove chips for already-completed tools (destination-based)
-    const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3 || isInvestorRedirect);
+    const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3 || isInvestorRedirect || isMilitaryBypass);
     suggestedReplies = journeyFilter.filtered;
 
     // Telemetry: log suppressions for audit trail
