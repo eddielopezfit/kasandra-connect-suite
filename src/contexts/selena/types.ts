@@ -59,7 +59,8 @@ export type EntrySource =
     | 'cash_offer_bottom'
     | 'sticky_mobile_buy'
     | 'sticky_mobile_sell'
-    | 'journey_breadcrumb';
+    | 'journey_breadcrumb'
+    | 'tool_result_next_step';
 
 export interface EntryContext {
   estimatedBudget?: number;

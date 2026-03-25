@@ -30,11 +30,14 @@ import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import CTASection from "@/components/v2/CTASection";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { updateSessionContext } from '@/lib/analytics/selenaSession';
+import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
+import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { openChat } = useSelenaChat();
+  const progress = useJourneyProgress();
   const [ytLoaded, setYtLoaded] = useState(false);
   useDocumentHead({
     titleEn: "Tucson Real Estate | Kasandra Prieto — Bilingual REALTOR® & Concierge",
@@ -100,11 +103,22 @@ const V2HomeContent = () => {
       {/* Hero Section */}
       <GlassmorphismHero showMarketPulse={false} />
 
+      {/* Journey Progress — returning users see their accumulated state */}
+      {progress.isReturningUser && (
+        <section className="py-4 bg-cc-sand">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <JourneyBreadcrumb />
+          </div>
+        </section>
+      )}
+
       {/* Buyer / Seller Fork */}
       <section className="bg-cc-sand py-10">
         <div className="container mx-auto px-4 max-w-3xl">
           <p className="text-center text-sm font-semibold uppercase tracking-widest text-cc-navy/50 mb-6">
-            {t("Where are you in your journey?", "¿En qué etapa estás?")}
+            {progress.isReturningUser
+              ? t("Welcome back — continue where you left off", "Bienvenido de nuevo — continúa donde lo dejaste")
+              : t("Where are you in your journey?", "¿En qué etapa estás?")}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Card A — Buyer */}
