@@ -171,7 +171,10 @@ export type EventType =
   | 'guide_pdf_requested'
   // P9: Report booking nudge
   | 'report_booking_nudge_shown'
-  | 'report_booking_nudge_click';
+  | 'report_booking_nudge_click'
+  // Escalation triggers (Prompt 09)
+  | 'escalation_dismissed'
+  | 'escalation_clicked';
 
 export interface EventPayload {
   [key: string]: unknown;
