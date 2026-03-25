@@ -165,7 +165,9 @@ export default function ExitIntentModal() {
                   ) : (
                     <>
                       <Mail className="w-4 h-4 mr-2" />
-                      {t("Get the Free Market Report", "Recibe el Reporte Gratuito")}
+                      {progress.journeyDepth === 'engaged' || progress.journeyDepth === 'ready'
+                        ? t("Save My Progress", "Guardar Mi Progreso")
+                        : t("Get the Free Market Report", "Recibe el Reporte Gratuito")}
                     </>
                   )}
                 </Button>
