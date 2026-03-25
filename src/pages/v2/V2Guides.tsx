@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import JourneyBreadcrumb from '@/components/v2/JourneyBreadcrumb';
 import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, DollarSign, Calendar, MessageCircle, Search } from "lucide-react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
