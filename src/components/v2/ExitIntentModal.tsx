@@ -97,7 +97,12 @@ export default function ExitIntentModal() {
           name: name.trim() || null,
           session_id: sessionId,
           source: "exit_intent",
-          tags: ["monthly_market_report_subscriber", "exit_intent_captured"],
+          tags: [
+            "exit_intent_captured",
+            ...(progress.journeyDepth === 'engaged' || progress.journeyDepth === 'ready'
+              ? ["returning_user_save"]
+              : ["monthly_market_report_subscriber"]),
+          ],
           language,
         },
       });
