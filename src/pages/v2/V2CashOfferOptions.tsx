@@ -9,6 +9,7 @@ import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
 import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, Sparkles, Calendar, MessageCircle } from "lucide-react";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-cash-calm.png";
+import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 
 const V2CashOfferOptionsContent = () => {
   const { t } = useLanguage();
