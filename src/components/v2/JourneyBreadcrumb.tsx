@@ -25,6 +25,7 @@ interface CompletedItem {
 export default function JourneyBreadcrumb() {
   const progress = useJourneyProgress();
   const { language } = useLanguage();
+  const { openChat } = useSelenaChat();
   const isEs = language === 'es';
 
   if (!progress.isReturningUser) return null;
