@@ -37,6 +37,7 @@ const V2HomeContent = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { openChat } = useSelenaChat();
+  const progress = useJourneyProgress();
   const [ytLoaded, setYtLoaded] = useState(false);
   useDocumentHead({
     titleEn: "Tucson Real Estate | Kasandra Prieto — Bilingual REALTOR® & Concierge",
