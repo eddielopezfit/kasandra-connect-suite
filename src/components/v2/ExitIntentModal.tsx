@@ -8,6 +8,7 @@
  */
 import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { supabase } from "@/integrations/supabase/client";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { getOrCreateSessionId } from "@/lib/analytics/selenaSession";
