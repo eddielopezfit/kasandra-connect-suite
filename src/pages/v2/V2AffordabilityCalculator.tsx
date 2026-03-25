@@ -18,6 +18,7 @@ import {
   DollarSign, Home, MessageCircle, ArrowRight, Calendar, CreditCard, TrendingUp, Percent,
 } from "lucide-react";
 import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
 const fmt = (n: number) => "$" + n.toLocaleString("en-US", { maximumFractionDigits: 0 });
 
@@ -319,6 +320,16 @@ const V2AffordabilityCalculatorContent = () => {
               toolType="affordability"
               resultData={{ max_price: result.maxPrice, monthly_payment: result.monthlyPayment }}
               delayMs={2500}
+            />
+          </div>
+        </section>
+      )}
+      {calculated && result.maxPrice > 0 && (
+        <section className="pb-8 bg-white">
+          <div className="container mx-auto px-4 max-w-2xl">
+            <ToolResultNextStep
+              completedToolLabel="Affordability Calculator"
+              completedToolLabelEs="Calculadora de Presupuesto"
             />
           </div>
         </section>

@@ -14,6 +14,7 @@ import { bridgeLeadIdToV2 } from "@/lib/analytics/bridgeLeadIdToV2";
 import {
   Home, MapPin, ArrowRight, ArrowLeft, CheckCircle, Loader2, MessageCircle, Phone, Mail, User,
 } from "lucide-react";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -434,6 +435,12 @@ const V2HomeValuationContent = () => {
                         {t("Read: Cash Offer vs Traditional Sale →", "Leer: Oferta en Efectivo vs Venta Tradicional →")}
                       </Button>
                     </Link>
+                  </div>
+                  <div className="mt-6">
+                    <ToolResultNextStep
+                      completedToolLabel="Home Valuation Request"
+                      completedToolLabelEs="Solicitud de Valuación"
+                    />
                   </div>
                 </div>
               </div>

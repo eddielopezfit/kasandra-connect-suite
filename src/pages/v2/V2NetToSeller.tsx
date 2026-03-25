@@ -8,6 +8,7 @@ import { Calculator, MessageCircle, Calendar, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import JsonLd from "@/components/seo/JsonLd";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
 const V2NetToSellerContent = () => {
   const { t } = useLanguage();
@@ -95,6 +96,15 @@ const V2NetToSellerContent = () => {
               {t("Ask Selena", "Pregúntale a Selena")}
             </Button>
           </div>
+        </div>
+      </section>
+
+      <section className="pb-8 bg-cc-sand">
+        <div className="container mx-auto px-4 max-w-xl">
+          <ToolResultNextStep
+            completedToolLabel="Net-to-Seller Calculator"
+            completedToolLabelEs="Calculadora Neto al Vendedor"
+          />
         </div>
       </section>
     </>

@@ -13,6 +13,7 @@ import {
   getSessionContext,
 } from "@/lib/analytics/selenaSession";
 import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 import {
   Calendar, ArrowRight, ArrowLeft, CheckCircle2, Clock,
   Home, MapPin, MessageCircle, ListChecks, Key, ClipboardList,
@@ -775,6 +776,12 @@ const V2SellerTimeline = () => {
                 toolType="seller_timeline"
                 resultData={{ close_window: wizardData.closeWindow, readiness: wizardData.readiness }}
                 delayMs={3000}
+              />
+            </div>
+            <div className="container mx-auto px-4 max-w-2xl pb-8">
+              <ToolResultNextStep
+                completedToolLabel="Seller Timeline"
+                completedToolLabelEs="Cronograma del Vendedor"
               />
             </div>
           </>
