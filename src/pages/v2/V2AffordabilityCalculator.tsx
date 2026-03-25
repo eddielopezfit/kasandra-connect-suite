@@ -18,6 +18,7 @@ import {
   DollarSign, Home, MessageCircle, ArrowRight, Calendar, CreditCard, TrendingUp, Percent,
 } from "lucide-react";
 import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
 const fmt = (n: number) => "$" + n.toLocaleString("en-US", { maximumFractionDigits: 0 });
 
