@@ -1,4 +1,5 @@
 import { useState } from "react";
+import JourneyBreadcrumb from '@/components/v2/JourneyBreadcrumb';
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import V2Layout from "@/components/v2/V2Layout";
@@ -67,6 +68,15 @@ const NeighborhoodsContent = () => {
               <Sparkles className="w-5 h-5 mr-2" />
               {t("Help Me Find My Neighborhood", "Ayúdame a Encontrar Mi Vecindario")}
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Journey Progress — visible only to returning users */}
+      <section className="bg-cc-ivory py-6 border-b border-cc-sand-dark/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <JourneyBreadcrumb />
           </div>
         </div>
       </section>

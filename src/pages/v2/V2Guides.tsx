@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import JourneyBreadcrumb from '@/components/v2/JourneyBreadcrumb';
 import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, DollarSign, Calendar, MessageCircle, Search } from "lucide-react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
@@ -157,7 +158,13 @@ function GuidesContent() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { openChat, sendMessage } = useSelenaChat();
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState(() => {
+    const intent = getIntent();
+    if (intent === 'buy') return 'buying';
+    if (intent === 'sell') return 'selling';
+    if (intent === 'cash') return 'cash';
+    return 'all';
+  });
   const [activeIntent, setActiveIntent] = useState<DecisionLaneIntent | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -319,6 +326,15 @@ function GuidesContent() {
         onContinue={handleContinue}
         onBrowse={handleBrowse}
       />
+
+      {/* Journey Progress — visible only to returning users */}
+      <section className="bg-cc-ivory py-6 border-b border-cc-sand-dark/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <JourneyBreadcrumb />
+          </div>
+        </div>
+      </section>
 
       {/* BLUE OCEAN — Feature 1: Cognitive Progress Bar */}
       {/* Shows stage label + affirmation only after first guide read. No CTA — pure context. */}
