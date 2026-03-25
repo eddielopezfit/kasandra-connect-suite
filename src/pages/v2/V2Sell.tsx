@@ -17,6 +17,7 @@ import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import heroSellBg from "@/assets/hero-sell-tucson-aerial.png";
+import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 
 
 const PAGE_PATH = '/sell';
@@ -85,6 +86,13 @@ const V2SellContent = () => {
         pagePath="/sell"
         backgroundImage={heroSellBg}
       />
+
+      {/* Journey Progress — visible only to returning users */}
+      <section className="py-4">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <JourneyBreadcrumb />
+        </div>
+      </section>
 
       {/* How I Protect Sellers — 2-column layout */}
       <section className="py-16 lg:py-20 bg-cc-ivory">

@@ -9,6 +9,7 @@ import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
 import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, Sparkles, Calendar, MessageCircle } from "lucide-react";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-cash-calm.png";
+import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 
 const V2CashOfferOptionsContent = () => {
   const { t } = useLanguage();
@@ -60,6 +61,13 @@ const V2CashOfferOptionsContent = () => {
               </button>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Journey Progress — visible only to returning users */}
+      <section className="py-4">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <JourneyBreadcrumb />
         </div>
       </section>
 

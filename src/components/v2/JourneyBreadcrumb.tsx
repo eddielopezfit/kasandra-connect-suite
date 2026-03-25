@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { CheckCircle2, Sparkles, ArrowRight } from 'lucide-react';
 import { useJourneyProgress } from '@/hooks/useJourneyProgress';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { Button } from '@/components/ui/button';
 
 /** Convert tool ID to human-readable label */
@@ -24,6 +25,7 @@ interface CompletedItem {
 export default function JourneyBreadcrumb() {
   const progress = useJourneyProgress();
   const { language } = useLanguage();
+  const { openChat } = useSelenaChat();
   const isEs = language === 'es';
 
   if (!progress.isReturningUser) return null;
@@ -99,7 +101,19 @@ export default function JourneyBreadcrumb() {
           {isEs ? 'Tu Próximo Paso' : 'Your Next Step'}
         </span>
         {isChat ? (
-          <Button size="sm" variant="accent" className="gap-1.5">
+          <Button
+            size="sm"
+            variant="accent"
+            className="gap-1.5"
+            onClick={() => {
+              const intent = progress.intent || 'explore';
+              if (next.destination === 'selena:neighborhood') {
+                openChat({ source: 'journey_breadcrumb', intent });
+              } else {
+                openChat({ source: 'journey_breadcrumb' });
+              }
+            }}
+          >
             {isEs ? next.labelEs : next.labelEn}
             <ArrowRight className="h-3.5 w-3.5" />
           </Button>
