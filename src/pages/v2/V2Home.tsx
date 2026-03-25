@@ -30,6 +30,8 @@ import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import CTASection from "@/components/v2/CTASection";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { updateSessionContext } from '@/lib/analytics/selenaSession';
+import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
+import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
