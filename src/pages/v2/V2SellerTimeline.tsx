@@ -13,6 +13,7 @@ import {
   getSessionContext,
 } from "@/lib/analytics/selenaSession";
 import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 import {
   Calendar, ArrowRight, ArrowLeft, CheckCircle2, Clock,
   Home, MapPin, MessageCircle, ListChecks, Key, ClipboardList,
