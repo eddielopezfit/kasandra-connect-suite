@@ -121,13 +121,20 @@ export default function ExitIntentModal() {
             <>
               <div className="text-center mb-6">
                 <h2 className="font-serif text-2xl font-bold text-cc-navy mb-2">
-                  {t("Before you go —", "Antes de irte —")}
+                  {progress.journeyDepth === 'engaged' || progress.journeyDepth === 'ready'
+                    ? t("Don't lose your progress —", "No pierdas tu progreso —")
+                    : t("Before you go —", "Antes de irte —")}
                 </h2>
                 <p className="text-cc-charcoal/80 text-sm leading-relaxed">
-                  {t(
-                    "Kasandra sends a free monthly Tucson market update to her community. Want yours?",
-                    "Kasandra envía una actualización mensual gratuita del mercado de Tucson a su comunidad. ¿Quieres la tuya?"
-                  )}
+                  {progress.journeyDepth === 'engaged' || progress.journeyDepth === 'ready'
+                    ? t(
+                        "You've explored tools and guides. Save your email so Selena can pick up where you left off next time.",
+                        "Has explorado herramientas y guías. Guarda tu correo para que Selena retome donde lo dejaste la próxima vez."
+                      )
+                    : t(
+                        "Kasandra sends a free monthly Tucson market update to her community. Want yours?",
+                        "Kasandra envía una actualización mensual gratuita del mercado de Tucson a su comunidad. ¿Quieres la tuya?"
+                      )}
                 </p>
               </div>
 
