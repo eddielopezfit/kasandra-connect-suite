@@ -87,6 +87,13 @@ const V2SellContent = () => {
         backgroundImage={heroSellBg}
       />
 
+      {/* Journey Progress — visible only to returning users */}
+      <section className="py-4">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <JourneyBreadcrumb />
+        </div>
+      </section>
+
       {/* How I Protect Sellers — 2-column layout */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">

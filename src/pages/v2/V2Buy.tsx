@@ -99,6 +99,13 @@ const V2BuyContent = () => {
         backgroundImage={heroImage}
       />
 
+      {/* Journey Progress — visible only to returning users */}
+      <section className="py-4">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <JourneyBreadcrumb />
+        </div>
+      </section>
+
       {/* Sub-Hero Tools Strip — Closing Costs + Neighborhoods (demoted from hero) */}
       <section className="bg-white border-b border-cc-sand-dark/20 py-6">
         <div className="container mx-auto px-4 max-w-3xl">
