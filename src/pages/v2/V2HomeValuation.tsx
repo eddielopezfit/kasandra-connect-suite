@@ -436,8 +436,13 @@ const V2HomeValuationContent = () => {
                       </Button>
                     </Link>
                   </div>
+                  <div className="mt-6">
+                    <ToolResultNextStep
+                      completedToolLabel="Home Valuation Request"
+                      completedToolLabelEs="Solicitud de Valuación"
+                    />
+                  </div>
                 </div>
-              </div>
             )}
           </div>
         </div>

@@ -98,6 +98,15 @@ const V2NetToSellerContent = () => {
           </div>
         </div>
       </section>
+
+      <section className="pb-8 bg-cc-sand">
+        <div className="container mx-auto px-4 max-w-xl">
+          <ToolResultNextStep
+            completedToolLabel="Net-to-Seller Calculator"
+            completedToolLabelEs="Calculadora Neto al Vendedor"
+          />
+        </div>
+      </section>
     </>
   );
 };

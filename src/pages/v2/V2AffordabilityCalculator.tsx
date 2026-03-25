@@ -324,6 +324,16 @@ const V2AffordabilityCalculatorContent = () => {
           </div>
         </section>
       )}
+      {calculated && result.maxPrice > 0 && (
+        <section className="pb-8 bg-white">
+          <div className="container mx-auto px-4 max-w-2xl">
+            <ToolResultNextStep
+              completedToolLabel="Affordability Calculator"
+              completedToolLabelEs="Calculadora de Presupuesto"
+            />
+          </div>
+        </section>
+      )}
     </>
   );
 };
