@@ -1,4 +1,5 @@
 import { useState } from "react";
+import JourneyBreadcrumb from '@/components/v2/JourneyBreadcrumb';
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import V2Layout from "@/components/v2/V2Layout";
