@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { CheckCircle2, Sparkles, ArrowRight } from 'lucide-react';
 import { useJourneyProgress } from '@/hooks/useJourneyProgress';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { Button } from '@/components/ui/button';
 
 /** Convert tool ID to human-readable label */
