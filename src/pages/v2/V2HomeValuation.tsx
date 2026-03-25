@@ -443,6 +443,7 @@ const V2HomeValuationContent = () => {
                     />
                   </div>
                 </div>
+              </div>
             )}
           </div>
         </div>
