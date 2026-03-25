@@ -158,7 +158,13 @@ function GuidesContent() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { openChat, sendMessage } = useSelenaChat();
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState(() => {
+    const intent = getIntent();
+    if (intent === 'buy') return 'buying';
+    if (intent === 'sell') return 'selling';
+    if (intent === 'cash') return 'cash';
+    return 'all';
+  });
   const [activeIntent, setActiveIntent] = useState<DecisionLaneIntent | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   
