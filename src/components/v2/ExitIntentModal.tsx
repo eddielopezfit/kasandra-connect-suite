@@ -43,6 +43,7 @@ function shouldSuppress(): boolean {
 
 export default function ExitIntentModal() {
   const { t, language } = useLanguage();
+  const progress = useJourneyProgress();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
