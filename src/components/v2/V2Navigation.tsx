@@ -141,6 +141,23 @@ const V2Navigation = () => {
             {/* Right Side */}
             <div className="hidden lg:flex items-center gap-4">
               <LanguageToggle variant={isScrolled ? "light" : "dark"} />
+              {progress.intent && progress.intent !== 'explore' && (
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors ${
+                  isScrolled
+                    ? 'bg-cc-gold/10 text-cc-gold-dark'
+                    : 'bg-white/10 text-white/80'
+                }`}>
+                  {progress.intent === 'buy'
+                    ? t('Buying', 'Comprando')
+                    : progress.intent === 'sell'
+                    ? t('Selling', 'Vendiendo')
+                    : progress.intent === 'cash'
+                    ? t('Cash Offer', 'Oferta en Efectivo')
+                    : progress.intent === 'dual'
+                    ? t('Buy & Sell', 'Comprar y Vender')
+                    : null}
+                </span>
+              )}
               <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 shadow-gold">
                 <Link to="/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
               </Button>

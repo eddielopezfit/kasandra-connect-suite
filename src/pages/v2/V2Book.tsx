@@ -334,6 +334,13 @@ const V2BookContent = () => {
               </div>
             )}
 
+            {/* Journey context — shows accumulated progress before booking */}
+            {dossierState !== 'loading' && (
+              <div className="mb-6">
+                <JourneyBreadcrumb />
+              </div>
+            )}
+
             {/* GHL Calendar — only shown when dossier is ready or skipped */}
             {dossierState !== 'loading' && <GHLBookingCalendar />}
           </div>
