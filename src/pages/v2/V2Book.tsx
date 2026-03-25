@@ -13,6 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import V2Layout from "@/components/v2/V2Layout";
 import GHLBookingCalendar from "@/components/v2/GHLBookingCalendar";
+import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import { Calendar, CheckCircle, User, BookOpen, Target } from "lucide-react";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { getSessionContext, getOrCreateSessionId } from "@/lib/analytics/selenaSession";
@@ -330,6 +331,13 @@ const V2BookContent = () => {
                 <p className="text-sm text-cc-charcoal">
                   {t(contextNote.en, contextNote.es)}
                 </p>
+              </div>
+            )}
+
+            {/* Journey context — shows accumulated progress before booking */}
+            {dossierState !== 'loading' && (
+              <div className="mb-6">
+                <JourneyBreadcrumb />
               </div>
             )}
 
