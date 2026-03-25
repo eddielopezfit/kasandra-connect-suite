@@ -101,7 +101,19 @@ export default function JourneyBreadcrumb() {
           {isEs ? 'Tu Próximo Paso' : 'Your Next Step'}
         </span>
         {isChat ? (
-          <Button size="sm" variant="accent" className="gap-1.5">
+          <Button
+            size="sm"
+            variant="accent"
+            className="gap-1.5"
+            onClick={() => {
+              const intent = progress.intent || 'explore';
+              if (next.destination === 'selena:neighborhood') {
+                openChat({ source: 'journey_breadcrumb', intent });
+              } else {
+                openChat({ source: 'journey_breadcrumb' });
+              }
+            }}
+          >
             {isEs ? next.labelEs : next.labelEn}
             <ArrowRight className="h-3.5 w-3.5" />
           </Button>

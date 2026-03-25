@@ -64,6 +64,13 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
+      {/* Journey Progress — visible only to returning users */}
+      <section className="py-4">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <JourneyBreadcrumb />
+        </div>
+      </section>
+
       {/* Interactive Calculator Section */}
       <section id="cash-calculator" className="py-12 lg:py-16 bg-cc-sand">
         <div className="container mx-auto px-4">
