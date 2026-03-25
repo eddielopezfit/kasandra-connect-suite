@@ -13,6 +13,7 @@ const V2Navigation = () => {
   const exploreRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
   const location = useLocation();
+  const progress = useJourneyProgress();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
