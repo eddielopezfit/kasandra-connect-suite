@@ -25,6 +25,7 @@ const V2ThankYouContent = () => {
   });
   const [searchParams] = useSearchParams();
   const { openChat } = useSelenaChat();
+  const progress = useJourneyProgress();
   
   const intent = (searchParams.get("intent") || "explore") as IntentType;
   const slotTime = searchParams.get("slot_time") || null;
