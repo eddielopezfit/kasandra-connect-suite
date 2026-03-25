@@ -327,6 +327,15 @@ function GuidesContent() {
         onBrowse={handleBrowse}
       />
 
+      {/* Journey Progress — visible only to returning users */}
+      <section className="bg-cc-ivory py-6 border-b border-cc-sand-dark/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <JourneyBreadcrumb />
+          </div>
+        </div>
+      </section>
+
       {/* BLUE OCEAN — Feature 1: Cognitive Progress Bar */}
       {/* Shows stage label + affirmation only after first guide read. No CTA — pure context. */}
       <CognitiveProgressBar

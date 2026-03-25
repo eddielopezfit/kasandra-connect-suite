@@ -72,6 +72,15 @@ const NeighborhoodsContent = () => {
         </div>
       </section>
 
+      {/* Journey Progress — visible only to returning users */}
+      <section className="bg-cc-ivory py-6 border-b border-cc-sand-dark/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <JourneyBreadcrumb />
+          </div>
+        </div>
+      </section>
+
       {/* Filter Tabs */}
       <section className="bg-cc-ivory border-b border-cc-sand-dark/20 sticky top-[72px] z-[30]">
         <div className="container mx-auto px-4">

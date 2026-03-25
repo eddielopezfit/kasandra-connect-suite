@@ -171,6 +171,15 @@ const V2MarketIntelligenceContent = () => {
         </div>
       </section>
 
+      {/* Journey Progress — visible only to returning users */}
+      <section className="bg-cc-ivory py-6 border-b border-cc-sand-dark/20">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <JourneyBreadcrumb />
+          </div>
+        </div>
+      </section>
+
       {/* Stats Grid */}
       <section className="py-14 bg-cc-ivory">
         <div className="container mx-auto px-4 max-w-4xl">
