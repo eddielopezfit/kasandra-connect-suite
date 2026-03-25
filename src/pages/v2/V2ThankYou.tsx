@@ -2,8 +2,9 @@ import { useSearchParams, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import V2Layout from "@/components/v2/V2Layout";
-import { CheckCircle2, Clock, FileText, Home, Phone, ArrowRight, MessageCircle } from "lucide-react";
+import { CheckCircle2, Clock, FileText, Home, Phone, ArrowRight, MessageCircle, ClipboardCheck, Map, Calculator, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
@@ -24,6 +25,7 @@ const V2ThankYouContent = () => {
   });
   const [searchParams] = useSearchParams();
   const { openChat } = useSelenaChat();
+  const progress = useJourneyProgress();
   
   const intent = (searchParams.get("intent") || "explore") as IntentType;
   const slotTime = searchParams.get("slot_time") || null;
@@ -454,6 +456,107 @@ const V2ThankYouContent = () => {
         </div>
       </section>
       
+      {/* Remaining Journey Items — show what they haven't done yet */}
+      {progress.isReturningUser && (
+        <section className="py-10 bg-cc-sand/50 border-t border-cc-sand-dark/20">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto">
+              <h3 className="font-serif text-xl font-bold text-cc-navy mb-2 text-center">
+                {t("While You Wait — Keep Exploring", "Mientras Espera — Siga Explorando")}
+              </h3>
+              <p className="text-cc-charcoal/70 text-sm text-center mb-6">
+                {t(
+                  "You've made great progress. Here are a few things you haven't tried yet:",
+                  "Ha avanzado mucho. Aquí hay algunas cosas que aún no ha probado:"
+                )}
+              </p>
+              <div className="space-y-3">
+                {!progress.hasReadinessScore && progress.intent === 'buy' && (
+                  <Link
+                    to="/buyer-readiness"
+                    onClick={() => handleCTAClick('thank_you_remaining_buyer_readiness', '/buyer-readiness')}
+                    className="flex items-center gap-4 bg-white rounded-xl p-4 shadow-sm border border-cc-sand-dark/20 hover:border-cc-gold/50 transition-colors group"
+                  >
+                    <div className="w-10 h-10 bg-cc-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <ClipboardCheck className="w-5 h-5 text-cc-gold" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-cc-navy text-sm">{t("Buyer Readiness Quiz", "Quiz de Preparación del Comprador")}</p>
+                      <p className="text-cc-charcoal/60 text-xs">{t("3 minutes — get your personalized readiness score", "3 minutos — obtén tu puntaje personalizado")}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-cc-slate group-hover:text-cc-navy transition-colors flex-shrink-0" />
+                  </Link>
+                )}
+                {!progress.hasSellerDecision && (progress.intent === 'sell' || progress.intent === 'cash') && (
+                  <Link
+                    to="/seller-decision"
+                    onClick={() => handleCTAClick('thank_you_remaining_seller_decision', '/seller-decision')}
+                    className="flex items-center gap-4 bg-white rounded-xl p-4 shadow-sm border border-cc-sand-dark/20 hover:border-cc-gold/50 transition-colors group"
+                  >
+                    <div className="w-10 h-10 bg-cc-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <FileText className="w-5 h-5 text-cc-gold" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-cc-navy text-sm">{t("Seller Decision Wizard", "Asistente de Decisión del Vendedor")}</p>
+                      <p className="text-cc-charcoal/60 text-xs">{t("Compare your selling options side by side", "Compare sus opciones de venta lado a lado")}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-cc-slate group-hover:text-cc-navy transition-colors flex-shrink-0" />
+                  </Link>
+                )}
+                {!progress.hasExploredNeighborhood && progress.intent === 'buy' && (
+                  <Link
+                    to="/neighborhoods"
+                    onClick={() => handleCTAClick('thank_you_remaining_neighborhoods', '/neighborhoods')}
+                    className="flex items-center gap-4 bg-white rounded-xl p-4 shadow-sm border border-cc-sand-dark/20 hover:border-cc-gold/50 transition-colors group"
+                  >
+                    <div className="w-10 h-10 bg-cc-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Map className="w-5 h-5 text-cc-gold" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-cc-navy text-sm">{t("Explore Neighborhoods", "Explorar Vecindarios")}</p>
+                      <p className="text-cc-charcoal/60 text-xs">{t("15 Tucson communities with market data", "15 comunidades de Tucson con datos del mercado")}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-cc-slate group-hover:text-cc-navy transition-colors flex-shrink-0" />
+                  </Link>
+                )}
+                {!progress.hasCalculatorResults && (progress.intent === 'sell' || progress.intent === 'cash') && (
+                  <Link
+                    to="/cash-offer-options"
+                    onClick={() => handleCTAClick('thank_you_remaining_calculator', '/cash-offer-options')}
+                    className="flex items-center gap-4 bg-white rounded-xl p-4 shadow-sm border border-cc-sand-dark/20 hover:border-cc-gold/50 transition-colors group"
+                  >
+                    <div className="w-10 h-10 bg-cc-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Calculator className="w-5 h-5 text-cc-gold" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-cc-navy text-sm">{t("Cash vs. Traditional Calculator", "Calculadora: Efectivo vs. Tradicional")}</p>
+                      <p className="text-cc-charcoal/60 text-xs">{t("See your estimated net proceeds both ways", "Vea sus ganancias netas estimadas de ambas formas")}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-cc-slate group-hover:text-cc-navy transition-colors flex-shrink-0" />
+                  </Link>
+                )}
+                {progress.guideCount < 2 && (
+                  <Link
+                    to="/guides"
+                    onClick={() => handleCTAClick('thank_you_remaining_guides', '/guides')}
+                    className="flex items-center gap-4 bg-white rounded-xl p-4 shadow-sm border border-cc-sand-dark/20 hover:border-cc-gold/50 transition-colors group"
+                  >
+                    <div className="w-10 h-10 bg-cc-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="w-5 h-5 text-cc-gold" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-cc-navy text-sm">{t("Browse Guides", "Explorar Guías")}</p>
+                      <p className="text-cc-charcoal/60 text-xs">{t("40+ guides for buyers, sellers, and special situations", "40+ guías para compradores, vendedores y situaciones especiales")}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-cc-slate group-hover:text-cc-navy transition-colors flex-shrink-0" />
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Contact Backup */}
       <section className="py-10 bg-cc-ivory">
         <div className="container mx-auto px-4 text-center">

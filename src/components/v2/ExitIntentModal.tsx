@@ -8,6 +8,7 @@
  */
 import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { supabase } from "@/integrations/supabase/client";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { getOrCreateSessionId } from "@/lib/analytics/selenaSession";
@@ -42,6 +43,7 @@ function shouldSuppress(): boolean {
 
 export default function ExitIntentModal() {
   const { t, language } = useLanguage();
+  const progress = useJourneyProgress();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -95,7 +97,12 @@ export default function ExitIntentModal() {
           name: name.trim() || null,
           session_id: sessionId,
           source: "exit_intent",
-          tags: ["monthly_market_report_subscriber", "exit_intent_captured"],
+          tags: [
+            "exit_intent_captured",
+            ...(progress.journeyDepth === 'engaged' || progress.journeyDepth === 'ready'
+              ? ["returning_user_save"]
+              : ["monthly_market_report_subscriber"]),
+          ],
           language,
         },
       });
@@ -119,13 +126,20 @@ export default function ExitIntentModal() {
             <>
               <div className="text-center mb-6">
                 <h2 className="font-serif text-2xl font-bold text-cc-navy mb-2">
-                  {t("Before you go —", "Antes de irte —")}
+                  {progress.journeyDepth === 'engaged' || progress.journeyDepth === 'ready'
+                    ? t("Don't lose your progress —", "No pierdas tu progreso —")
+                    : t("Before you go —", "Antes de irte —")}
                 </h2>
                 <p className="text-cc-charcoal/80 text-sm leading-relaxed">
-                  {t(
-                    "Kasandra sends a free monthly Tucson market update to her community. Want yours?",
-                    "Kasandra envía una actualización mensual gratuita del mercado de Tucson a su comunidad. ¿Quieres la tuya?"
-                  )}
+                  {progress.journeyDepth === 'engaged' || progress.journeyDepth === 'ready'
+                    ? t(
+                        "You've explored tools and guides. Save your email so Selena can pick up where you left off next time.",
+                        "Has explorado herramientas y guías. Guarda tu correo para que Selena retome donde lo dejaste la próxima vez."
+                      )
+                    : t(
+                        "Kasandra sends a free monthly Tucson market update to her community. Want yours?",
+                        "Kasandra envía una actualización mensual gratuita del mercado de Tucson a su comunidad. ¿Quieres la tuya?"
+                      )}
                 </p>
               </div>
 
@@ -156,7 +170,9 @@ export default function ExitIntentModal() {
                   ) : (
                     <>
                       <Mail className="w-4 h-4 mr-2" />
-                      {t("Get the Free Market Report", "Recibe el Reporte Gratuito")}
+                      {progress.journeyDepth === 'engaged' || progress.journeyDepth === 'ready'
+                        ? t("Save My Progress", "Guardar Mi Progreso")
+                        : t("Get the Free Market Report", "Recibe el Reporte Gratuito")}
                     </>
                   )}
                 </Button>
