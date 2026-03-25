@@ -22,6 +22,7 @@ import heroImage from "@/assets/hero-neighborhood-road.png";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import BuyingTimeline from "@/components/v2/BuyingTimeline";
+import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 
 
 const PAGE_PATH = '/buy';
