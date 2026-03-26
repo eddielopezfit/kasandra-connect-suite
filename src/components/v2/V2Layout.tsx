@@ -18,9 +18,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface V2LayoutProps {
   children: ReactNode;
+  /** When true, the global bottom CTASection is suppressed (page provides its own) */
+  suppressCTA?: boolean;
 }
 
-const V2Layout = ({ children }: V2LayoutProps) => {
+const V2Layout = ({ children, suppressCTA = false }: V2LayoutProps) => {
   // Use language from global context to force re-render on language change
   const { language, t } = useLanguage();
   const location = useLocation();
