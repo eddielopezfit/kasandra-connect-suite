@@ -558,7 +558,9 @@ function GuideDetailContent() {
                   <GuidePathSelector data={section.pathData} />
                 )}
                 {section.variant === 'stats-grid' && section.statsData && (
-                  <GuideStatsGrid data={section.statsData} />
+                  section.statsData.some((s: any) => s.dynamicKey)
+                    ? <DynamicStatsGrid data={section.statsData} />
+                    : <GuideStatsGrid data={section.statsData} />
                 )}
                 {section.variant === 'market-stats' && (
                   <div className="container mx-auto px-4">

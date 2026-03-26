@@ -34,6 +34,8 @@ export interface StatItem {
   valueEs: string;
   label: string;
   labelEs: string;
+  /** If set, overrides value/valueEs with live data from useProgramData */
+  dynamicKey?: string;
 }
 
 export interface FaqItem {
