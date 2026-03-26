@@ -622,6 +622,31 @@ function GuideDetailContent() {
         {/* 4. Compliance Footer */}
         <GuideComplianceFooter />
 
+        {/* Selena Help Prompt */}
+        <div className="flex items-center gap-4 mt-8 p-5 bg-cc-sand rounded-xl border border-cc-sand-dark/10">
+          <div className="w-10 h-10 rounded-full bg-cc-gold/20 flex items-center justify-center flex-shrink-0">
+            <Bot className="w-5 h-5 text-cc-gold" />
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold text-cc-navy text-sm">
+              {t("Have questions about this guide?", "¿Tienes preguntas sobre esta guía?")}
+            </p>
+            <p className="text-cc-charcoal/60 text-xs mt-0.5">
+              {t(
+                "Selena, Kasandra's AI assistant, can walk you through the details — in English or Spanish, anytime.",
+                "Selena, la asistente de IA de Kasandra, puede guiarte por los detalles — en inglés o español, en cualquier momento."
+              )}
+            </p>
+          </div>
+          <button
+            onClick={() => openChat({ source: 'guide_bottom', guideId })}
+            className="inline-flex items-center gap-1.5 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold text-sm rounded-full px-4 py-2 transition-colors flex-shrink-0"
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            {t("Ask Selena", "Pregúntale a Selena")}
+          </button>
+        </div>
+
         {/* QA Guardrail: warn in dev if >1 CTA component rendered */}
         <GuideCTAGuardrail guideId={guideId} />
       </article>

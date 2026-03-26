@@ -89,7 +89,8 @@ export function SelenaFloatingButton() {
           {buttonEl}
         </TooltipTrigger>
         <TooltipContent side="left" className="bg-cc-navy text-white border-cc-navy">
-          {language === 'es' ? 'Hablar con Selena' : 'Chat with Selena'}
+          <span className="block text-sm">{language === 'es' ? 'Hablar con Selena' : 'Chat with Selena'}</span>
+          <span className="block text-[10px] text-white/50">{language === 'es' ? 'Disponible 24/7' : 'Available 24/7'}</span>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

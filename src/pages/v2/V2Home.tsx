@@ -34,6 +34,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { updateSessionContext, getSessionContext } from '@/lib/analytics/selenaSession';
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
+import SelenaShowcase from "@/components/v2/SelenaShowcase";
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
