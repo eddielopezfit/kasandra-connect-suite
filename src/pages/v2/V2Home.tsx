@@ -23,7 +23,10 @@ import {
   ArrowRight,
   DollarSign,
   Banknote,
+  Eye,
+  ShieldCheck,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
