@@ -202,7 +202,7 @@ const V2AboutContent = () => {
 };
 
 const V2About = () => (
-  <V2Layout>
+  <V2Layout suppressCTA>
     <V2AboutContent />
   </V2Layout>
 );
