@@ -41,7 +41,7 @@ const V2Footer = () => {
       <footer className="bg-cc-blue text-white py-12">
       <div className="container mx-auto px-4">
         {/* Main Footer Content */}
-        <div className="grid md:grid-cols-3 gap-8 mb-8">
+        <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Brand & Compliance */}
           <div>
             <span className="font-serif text-xl font-semibold tracking-wide">
