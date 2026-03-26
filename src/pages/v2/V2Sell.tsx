@@ -9,7 +9,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
-import { Shield, TrendingUp, FileText, Handshake, AlertCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar, BarChart3, MessageCircle } from "lucide-react";
+import { Shield, TrendingUp, FileText, Handshake, AlertCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar, BarChart3, MessageCircle, Check } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
