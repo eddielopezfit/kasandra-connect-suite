@@ -27,6 +27,7 @@ export { default as GuidePullQuote } from './GuidePullQuote';
 export { default as GuideComparisonCards } from './GuideComparisonCards';
 export { default as GuidePathSelector } from './GuidePathSelector';
 export { default as GuideStatsGrid } from './GuideStatsGrid';
+export { DynamicStatsGrid } from './DynamicStatsGrid';
 
 export { default as GuideFaqAccordion } from './GuideFaqAccordion';
 export { GuideReadNext } from './GuideReadNext';
