@@ -736,8 +736,6 @@ const V2HomeContent = () => {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <CTASection />
     </>
   );
 };

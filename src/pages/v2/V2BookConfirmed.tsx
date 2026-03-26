@@ -300,7 +300,7 @@ const V2BookConfirmedContent = () => {
  * /v2/thank-you remains intake-form confirmation.
  */
 const V2BookConfirmed = () => (
-  <V2Layout>
+  <V2Layout suppressCTA>
     <V2BookConfirmedContent />
   </V2Layout>
 );

@@ -250,7 +250,7 @@ const V2CommunityContent = () => {
 };
 
 const V2Community = () => (
-  <V2Layout>
+  <V2Layout suppressCTA>
     <V2CommunityContent />
   </V2Layout>
 );
