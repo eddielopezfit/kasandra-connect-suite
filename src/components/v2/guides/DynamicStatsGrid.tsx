@@ -8,14 +8,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { useProgramData, type DynamicGuideData } from '@/hooks/useProgramData';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-interface StatItem {
-  value: string;
-  valueEs: string;
-  label: string;
-  labelEs: string;
-  /** If set, overrides value/valueEs with live data from useProgramData */
-  dynamicKey?: keyof DynamicGuideData;
-}
+import type { StatItem } from '@/data/guides/types';
 
 interface DynamicStatsGridProps {
   data: StatItem[];
