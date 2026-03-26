@@ -165,7 +165,7 @@ const V2Neighborhoods = () => {
   });
 
   return (
-    <V2Layout>
+    <V2Layout suppressCTA>
       <NeighborhoodsContent />
     </V2Layout>
   );

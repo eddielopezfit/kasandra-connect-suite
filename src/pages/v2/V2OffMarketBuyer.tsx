@@ -12,6 +12,7 @@ import {
   MapPin, Home, DollarSign, Clock, CheckCircle2,
   ChevronRight, Star, Lock, Eye, ArrowRight, Sparkles
 } from "lucide-react";
+import ToolResultNextStep from '@/components/v2/ToolResultNextStep';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -289,6 +290,14 @@ const V2OffMarketBuyerContent = () => {
                 >
                   {t("Browse buyer guides", "Ver guías para compradores")}
                 </button>
+              </div>
+
+              {/* Tool chaining — recommended next step */}
+              <div className="mt-6">
+                <ToolResultNextStep
+                  completedToolLabel="Off-Market Registration"
+                  completedToolLabelEs="Registro Fuera del Mercado"
+                />
               </div>
             </div>
           </div>

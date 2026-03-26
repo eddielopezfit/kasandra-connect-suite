@@ -3,6 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import { Calendar } from "lucide-react";
 import V2Navigation from "./V2Navigation";
 import V2Footer from "./V2Footer";
+import CTASection from "./CTASection";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
@@ -17,9 +18,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface V2LayoutProps {
   children: ReactNode;
+  /** When true, the global bottom CTASection is suppressed (page provides its own) */
+  suppressCTA?: boolean;
 }
 
-const V2Layout = ({ children }: V2LayoutProps) => {
+const V2Layout = ({ children, suppressCTA = false }: V2LayoutProps) => {
   // Use language from global context to force re-render on language change
   const { language, t } = useLanguage();
   const location = useLocation();
@@ -130,6 +133,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         <V2Navigation />
         <EscalationBanner />
         <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden bg-cc-navy">{children}</main>
+        {!suppressCTA && <CTASection />}
         <V2Footer />
         
         {/* Selena Chat - Site Wide */}
