@@ -68,7 +68,7 @@ export const HOWTO_SCHEMAS: Record<string, HowToSchemaData> = {
       {
         name: "Run your seller net sheet",
         nameEs: "Calcula tu hoja de neto del vendedor",
-        text: "Add commission + closing costs + prep + holding costs, then subtract from sale price. Also subtract your mortgage payoff balance. The result is your estimated net proceeds. Use Kasandra's Seller Net Calculator at kasandraoasis.com to run your specific numbers.",
+        text: "Add commission + closing costs + prep + holding costs, then subtract from sale price. Also subtract your mortgage payoff balance. The result is your estimated net proceeds. Use Kasandra's Seller Net Calculator at kasandraprietorealtor.com to run your specific numbers.",
         textEs: "Suma comisión + costos de cierre + preparación + costos de tenencia, luego réstalos del precio de venta. También resta el saldo de tu hipoteca. El resultado son tus ganancias netas estimadas.",
       },
     ],

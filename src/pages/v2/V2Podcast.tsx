@@ -160,6 +160,59 @@ const V2PodcastContent = () => {
         </div>
       </section>
 
+      {/* Todo Empieza en Casa */}
+      <section className="py-16 lg:py-20 bg-cc-sand">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="bg-white rounded-2xl p-8 shadow-elevated border border-cc-sand-dark/30">
+              <span className="inline-block bg-cc-gold/15 text-cc-gold text-xs font-semibold tracking-wider uppercase rounded-full px-3 py-1 mb-4">
+                {t("New Series", "Nueva Serie")}
+              </span>
+              <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">
+                {t("Todo Empieza en Casa", "Todo Empieza en Casa")}
+              </h2>
+              <p className="text-cc-charcoal mb-6">
+                {t(
+                  "\"Everything Starts at Home\" — a Spanish-language series about the fundamentals of buying a home. I bring together experts in psychology and lending to talk about the emotional and financial realities of homeownership. Because stability, personal growth, and family legacy all begin at home.",
+                  "\"Todo Empieza en Casa\" — una serie en español sobre los fundamentos de comprar una casa. Reúno a expertos en psicología y préstamos para hablar sobre las realidades emocionales y financieras de ser propietario. Porque la estabilidad, el crecimiento personal y el legado familiar comienzan en casa."
+                )}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="bg-cc-navy/10 text-cc-navy text-xs font-medium rounded-full px-3 py-1">
+                  {t("Spanish-language", "En español")}
+                </span>
+                <span className="bg-cc-navy/10 text-cc-navy text-xs font-medium rounded-full px-3 py-1">
+                  {t("Psychology + Lending", "Psicología + Préstamos")}
+                </span>
+                <span className="bg-cc-navy/10 text-cc-navy text-xs font-medium rounded-full px-3 py-1">
+                  {t("Family & Stability", "Familia y Estabilidad")}
+                </span>
+              </div>
+            </div>
+            <div className="bg-white rounded-2xl p-8 shadow-soft border border-cc-sand-dark/30 text-center">
+              <p className="font-serif text-2xl text-cc-navy italic mb-4">
+                {t("\"Because everything starts at home.\"", "\"Porque todo empieza en casa.\"")}
+              </p>
+              <p className="text-cc-charcoal text-sm mb-6">
+                {t(
+                  "First conversation: Money. Emotional health. Stability. With a lender and a psychologist.",
+                  "Primera conversación: Dinero. Salud emocional. Estabilidad. Con un lender y una psicóloga."
+                )}
+              </p>
+              <a
+                href="https://www.youtube.com/@KasandraPrietoTucson"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 py-2.5 transition-colors"
+              >
+                <Youtube className="w-4 h-4" />
+                {t("Watch on YouTube", "Ver en YouTube")}
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Selena Trust Bridge */}
       <section className="py-14 bg-cc-sand">
         <div className="container mx-auto px-4">

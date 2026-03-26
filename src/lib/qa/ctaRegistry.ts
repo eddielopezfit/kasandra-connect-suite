@@ -98,7 +98,7 @@ export const ctaRegistry: CTATestEntry[] = [
     labelEs: 'Enlace de correo',
     component: 'src/components/v2/V2Footer.tsx',
     expectedBehavior: 'mailto',
-    expectedTarget: 'mailto:kasandra@kasandraoasis.com',
+    expectedTarget: 'mailto:kasandra@prietorealestategroup.com',
     automatable: false,
     manualSteps: 'Click footer email. Verify mailto: intent fires.',
     priority: 7,

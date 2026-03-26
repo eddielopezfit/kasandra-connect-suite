@@ -96,8 +96,8 @@ const V2CommunityContent = () => {
                 </h2>
                 <p className="text-cc-charcoal mb-6">
                   {t(
-                    "As Vice Chair of the Governing Board and Chair of the Ambassador Program since 2021, I work to ensure families across Arizona have access to essential supplies for their children.",
-                    "Como Vicepresidenta de la Junta Directiva y Presidenta del Programa de Embajadores desde 2021, trabajo para asegurar que las familias en todo Arizona tengan acceso a suministros esenciales para sus hijos."
+                    "I served as Vice Chair of the Governing Board and Chair of the Ambassador Program for five years, working to ensure families across Arizona had access to essential supplies for their children.",
+                    "Serví como Vicepresidenta de la Junta Directiva y Presidenta del Programa de Embajadores durante cinco años, trabajando para asegurar que las familias en todo Arizona tuvieran acceso a suministros esenciales para sus hijos."
                   )}
                 </p>
                 <div className="space-y-3">
@@ -111,7 +111,7 @@ const V2CommunityContent = () => {
                   </div>
                   <div className="flex items-start gap-3">
                     <HandHeart className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("Supporting families since 2021", "Apoyando familias desde 2021")}</span>
+                    <span className="text-cc-charcoal">{t("Supported families for 5 years", "Apoyó a familias durante 5 años")}</span>
                   </div>
                 </div>
               </div>
