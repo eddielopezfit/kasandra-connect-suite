@@ -201,6 +201,24 @@ export function getDevEventBuffer(): readonly DevEventEntry[] {
   return Object.freeze([...DEV_EVENT_BUFFER]);
 }
 
+// ============= Client-side deduplication =============
+const _recentEvents = new Map<string, number>();
+const DEDUP_WINDOW_MS = 3000;
+
+function isDuplicate(eventType: string, payloadKey: string): boolean {
+  const key = `${eventType}:${payloadKey}`;
+  const now = Date.now();
+  const last = _recentEvents.get(key);
+  if (last && now - last < DEDUP_WINDOW_MS) return true;
+  _recentEvents.set(key, now);
+  if (_recentEvents.size > 100) {
+    for (const [k, t] of _recentEvents) {
+      if (now - t > DEDUP_WINDOW_MS * 2) _recentEvents.delete(k);
+    }
+  }
+  return false;
+}
+
 /**
  * Core event logging function - calls edge function
  * NEVER throws - always fails silently
@@ -223,10 +241,13 @@ export async function logEvent(
     const sessionId = getOrCreateSessionId();
     if (!sessionId) return;
 
+    // Client-side dedup: skip if same event+key fired within 3s
+    const dedupKey = (payload.guide_id as string) || (payload.route as string) || (payload.cta_id as string) || '';
+    if (isDuplicate(eventType, dedupKey)) return;
+
     const context = getSessionContext();
     const currentRoute = typeof window !== 'undefined' ? window.location.pathname : '';
     
-    // Enrich payload with context (payload values win over session defaults)
     const enrichedPayload = {
       route: currentRoute,
       language: context?.language,
@@ -237,7 +258,6 @@ export async function logEvent(
       ...payload,
     };
 
-    // Fire and forget - don't await in production for performance
     fetch(LOG_ENDPOINT, {
       method: 'POST',
       headers: {
@@ -254,7 +274,6 @@ export async function logEvent(
     });
     
   } catch (e) {
-    // Silent fail - never crash the UI for analytics
     console.warn('[Selena] Event logging error:', e);
   }
 }

@@ -29,7 +29,7 @@ const ENDPOINT_LIMITS: Record<string, RateLimitConfig> = {
   'receive-elevenlabs-webhook': { maxRequests: 20, windowSeconds: 60 },
   'get-session-snapshot': { maxRequests: 60, windowSeconds: 3600 },
   'create-handoff': { maxRequests: 5, windowSeconds: 3600 },
-  'selena-log-event': { maxRequests: 120, windowSeconds: 3600 },
+  'selena-log-event': { maxRequests: 600, windowSeconds: 3600 },
   'get-report': { maxRequests: 30, windowSeconds: 3600 },
   'get-last-report-id': { maxRequests: 30, windowSeconds: 3600 },
   'fetch-google-reviews': { maxRequests: 5, windowSeconds: 60 },
