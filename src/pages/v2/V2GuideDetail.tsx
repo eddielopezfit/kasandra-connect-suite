@@ -593,32 +593,7 @@ function GuideDetailContent() {
           );
         })}
 
-        {/* External Sources  -  authoritative links for SEO trust signals */}
-        {guide?.externalLinks?.length ? (
-          <ExternalSourcesFooter links={guide.externalLinks} language={language as 'en' | 'es'} />
-        ) : null}
-
-        {/* Compliance Footer */}
-        <GuideComplianceFooter />
-
-        {/* Read Next  -  guide-to-guide pathway. Keeps users in the hub. */}
-        {guideId && (
-          <GuideReadNext
-            currentGuideId={guideId}
-            currentCategory={safeCategory}
-          />
-        )}
-
-        {/* Related Guides  -  UX-06: same-category guide pathway */}
-        {guideId && (
-          <RelatedGuides
-            currentGuideId={guideId}
-            currentCategory={safeCategory}
-            maxGuides={3}
-          />
-        )}
-
-        {/* Authority CTA Block  -  Tier 1 + Tier 2 only. Tier 3 stories end in silence. */}
+        {/* 1. Authority CTA — single primary action (Tier 1 + Tier 2 only) */}
         {registryEntry?.tier !== 3 && (
           <AuthorityCTABlock 
             guideId={guideId || 'unknown'}
@@ -631,11 +606,28 @@ function GuideDetailContent() {
           />
         )}
 
+        {/* 2. Related Guides — one section, max 4 guides */}
+        {guideId && (
+          <RelatedGuides
+            currentGuideId={guideId}
+            currentCategory={safeCategory}
+            maxGuides={4}
+          />
+        )}
+
+        {/* 3. External Sources — compliance trust signals */}
+        {guide?.externalLinks?.length ? (
+          <ExternalSourcesFooter links={guide.externalLinks} language={language as 'en' | 'es'} />
+        ) : null}
+
+        {/* 4. Compliance Footer */}
+        <GuideComplianceFooter />
+
         {/* QA Guardrail: warn in dev if >1 CTA component rendered */}
         <GuideCTAGuardrail guideId={guideId} />
       </article>
 
-      {/* P8: Guide Completion Email Capture — 90%+ scroll */}
+      {/* Email Capture — non-intrusive, scroll-gated */}
       {guideId && (
         <div className="container mx-auto px-4 max-w-3xl">
           <GuideCompletionCapture
@@ -644,39 +636,6 @@ function GuideDetailContent() {
             visible={guideCompleteVisible}
           />
         </div>
-      )}
-
-      {/* Selena Synthesis CTA  -  appears after 60%+ scroll */}
-      {synthesisVisible && (
-        <section className="bg-cc-navy py-10">
-          <div className="container mx-auto px-4 max-w-3xl text-center">
-            <p className="text-white text-xl font-serif font-semibold mb-2">
-              {t("You've done the research.", "Ya hiciste la investigación.")}
-            </p>
-            <p className="text-white/70 text-base mb-6">
-              {t(
-                "Want Selena to help you apply this to your situation?",
-                "¿Quieres que Selena te ayude a aplicar esto a tu situación?"
-              )}
-            </p>
-            <button
-              onClick={() => {
-                logEvent('guide_synthesis_cta_click', { guideId: guideId || 'unknown' });
-                openChat({
-                  source: 'guide_synthesis',
-                  prefillMessage: t(
-                    `I just read "${guide.title}"  -  can you help me apply this to my situation?`,
-                    `Acabo de leer "${guide.titleEs || guide.title}"  -  ¿puedes ayudarme a aplicar esto a mi situación?`
-                  ),
-                });
-              }}
-              className="inline-flex items-center gap-2 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold px-8 py-3 rounded-full transition-colors"
-            >
-              <MessageCircle className="w-5 h-5" />
-              {t("Ask Selena About This", "Pregúntale a Selena")}
-            </button>
-          </div>
-        </section>
       )}
     </>
   );
