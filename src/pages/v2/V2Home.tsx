@@ -700,6 +700,9 @@ const V2HomeContent = () => {
         </div>
       </section>
 
+      {/* Meet Selena — Brand Asset */}
+      <SelenaShowcase />
+
       {/* Social Proof — Staggered Masonry */}
       <Suspense fallback={<div className="h-64 bg-cc-ivory animate-pulse" />}>
         <TestimonialColumns />
