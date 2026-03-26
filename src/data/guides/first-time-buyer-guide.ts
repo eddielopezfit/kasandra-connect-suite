@@ -22,7 +22,7 @@ const data: GuideContentData = {
       contentEs: "",
       variant: 'stats-grid' as const,
       statsData: [
-        { value: '$365K', valueEs: '$365K', label: 'Median sale price in Pima County (early 2026)', labelEs: 'Precio mediano de venta en Pima County (principios de 2026)' },
+        { value: '$365K', valueEs: '$365K', label: 'Median sale price in Pima County (early 2026)', labelEs: 'Precio mediano de venta en Pima County (principios de 2026)', dynamicKey: 'medianPrice' },
         { value: '30–45 days', valueEs: '30–45 días', label: 'Typical time from offer accepted to close', labelEs: 'Tiempo típico desde oferta aceptada hasta cierre' },
         { value: '3.5%', valueEs: '3.5%', label: 'Minimum down payment — FHA loan', labelEs: 'Pago inicial mínimo — préstamo FHA' },
         { value: '2–5%', valueEs: '2–5%', label: 'Typical closing costs as % of purchase price', labelEs: 'Costos de cierre típicos como % del precio de compra' },

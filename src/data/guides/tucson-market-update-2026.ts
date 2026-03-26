@@ -16,9 +16,9 @@ const data: GuideContentData = {
       contentEs: "El mercado inmobiliario de Tucson a principios de 2026 refleja un patrón nacional más amplio: los precios se han estabilizado después de la rápida apreciación de 2021–2023, las tasas de interés se han asentado en un nuevo rango normal, y tanto compradores como vendedores están encontrando más predictibilidad que hace dos años.\n\nNúmeros clave para el Condado de Pima a principios de 2026:\n• Precio medio de casa unifamiliar: $365,000\n• Días promedio en el mercado: 38 días\n• Relación precio de venta/lista: 97.6% (casas vendiéndose cerca del precio de lista)\n• Listados activos: aproximadamente 4,600\n• Tasa hipotecaria fija a 30 años: aproximadamente 6.5–6.8%",
       variant: 'stats-grid' as const,
       statsData: [
-        { value: '$365K', valueEs: '$365K', label: 'Median sale price — Pima County (early 2026)', labelEs: 'Precio medio de venta — Condado de Pima (principios 2026)' },
-        { value: '38 days', valueEs: '38 días', label: 'Average days on market', labelEs: 'Días promedio en el mercado' },
-        { value: '97.6%', valueEs: '97.6%', label: 'Sale-to-list ratio (homes selling near asking price)', labelEs: 'Relación precio de venta/lista' },
+        { value: '$365K', valueEs: '$365K', label: 'Median sale price — Pima County (early 2026)', labelEs: 'Precio medio de venta — Condado de Pima (principios 2026)', dynamicKey: 'medianPrice' },
+        { value: '38 days', valueEs: '38 días', label: 'Average days on market', labelEs: 'Días promedio en el mercado', dynamicKey: 'daysOnMarket' },
+        { value: '97.6%', valueEs: '97.6%', label: 'Sale-to-list ratio (homes selling near asking price)', labelEs: 'Relación precio de venta/lista', dynamicKey: 'saleToListRatio' },
         { value: '~4,600', valueEs: '~4,600', label: 'Active listings in Pima County MLS', labelEs: 'Listados activos en el MLS del Condado de Pima' },
       ],
     },
