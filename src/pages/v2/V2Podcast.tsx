@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-podcast-homes.png";
+import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 
 const V2PodcastContent = () => {
   const { t } = useLanguage();
@@ -71,6 +72,13 @@ const V2PodcastContent = () => {
           </div>
         </div>
       </section>
+
+      {/* Journey Progress — visible only to returning users */}
+      <div className="bg-cc-ivory">
+        <div className="container mx-auto px-4 pt-8">
+          <JourneyBreadcrumb />
+        </div>
+      </div>
 
       {/* About the Show */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
@@ -225,7 +233,7 @@ const V2PodcastContent = () => {
 };
 
 const V2Podcast = () => (
-  <V2Layout>
+  <V2Layout suppressCTA>
     <V2PodcastContent />
   </V2Layout>
 );

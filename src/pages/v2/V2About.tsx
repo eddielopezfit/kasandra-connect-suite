@@ -10,6 +10,7 @@ import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-community-neighborhood.png";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
+import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 
 const V2AboutContent = () => {
   const { t } = useLanguage();
@@ -49,6 +50,13 @@ const V2AboutContent = () => {
           </div>
         </div>
       </section>
+
+      {/* Journey Progress — visible only to returning users */}
+      <div className="bg-cc-ivory">
+        <div className="container mx-auto px-4 pt-8">
+          <JourneyBreadcrumb />
+        </div>
+      </div>
 
       {/* Bio Section */}
       <section className="bg-cc-ivory py-16 md:py-20">
@@ -202,7 +210,7 @@ const V2AboutContent = () => {
 };
 
 const V2About = () => (
-  <V2Layout>
+  <V2Layout suppressCTA>
     <V2AboutContent />
   </V2Layout>
 );
