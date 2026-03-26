@@ -634,7 +634,7 @@ const V2HomeContent = () => {
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="text-center mb-10">
             <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
-              {t("Powered by Corner Connect", "Impulsado por Corner Connect")}
+              {t("The Corner Connect Advantage", "La Ventaja de Corner Connect")}
             </span>
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mt-2 mb-4">
               {t("Access Properties Others Can't Show You", "Accede a Propiedades que Otros No Pueden Mostrarte")}
