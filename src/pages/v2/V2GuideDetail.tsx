@@ -75,7 +75,6 @@ function GuideDetailContent() {
   const [guideCompleteVisible, setGuideCompleteVisible] = useState(false);
   const completionTracked = useRef(false);
   const { openChat } = useSelenaChat();
-  const { openChat } = useSelenaChat();
 
   // Registry entry for metadata (readTime, tier, destinations, etc.)
   const registryEntry = guideId ? getGuideById(guideId) : undefined;
