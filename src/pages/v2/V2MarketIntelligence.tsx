@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useCallback, useState } from "react";
 import JourneyBreadcrumb from '@/components/v2/JourneyBreadcrumb';
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
