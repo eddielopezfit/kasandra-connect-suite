@@ -101,6 +101,20 @@ const V2Footer = () => {
             </div>
           </div>
 
+          {/* Why Corner Connect */}
+          <div>
+            <h4 className="font-semibold text-sm mb-4">
+              {t("Why Corner Connect", "Por Qué Corner Connect")}
+            </h4>
+            <ul className="space-y-2 text-sm text-white/60">
+              <li>{t("Off-market inventory access", "Acceso a inventario fuera del mercado")}</li>
+              <li>{t("Cash offer program", "Programa de oferta en efectivo")}</li>
+              <li>{t("Distressed property solutions", "Soluciones para propiedades en dificultad")}</li>
+              <li>{t("Bilingual service", "Servicio bilingüe")}</li>
+              <li>{t("126+ five-star reviews", "126+ reseñas de cinco estrellas")}</li>
+            </ul>
+          </div>
+
           {/* Contact & Social */}
           <div className="text-center md:text-right min-w-0">
             <h4 className="font-semibold mb-4">{t("Contact", "Contacto")}</h4>

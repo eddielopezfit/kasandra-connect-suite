@@ -425,6 +425,26 @@ const V2MarketIntelligenceContent = () => {
           </div>
         </div>
       </section>
+      {/* Corner Connect Market Advantage */}
+      <section className="bg-cc-navy py-12">
+        <div className="container mx-auto px-4 max-w-3xl text-center">
+          <h3 className="font-serif text-2xl font-bold text-white mb-3">
+            {t("See What's NOT on the Market", "Ve Lo Que NO Está en el Mercado")}
+          </h3>
+          <p className="text-white/70 mb-6">
+            {t(
+              "Market data only tells part of the story. Through Corner Connect, Kasandra has access to off-market properties and investment opportunities you won't find on Zillow or Realtor.com.",
+              "Los datos del mercado solo cuentan parte de la historia. A través de Corner Connect, Kasandra tiene acceso a propiedades fuera del mercado y oportunidades de inversión que no encontrarás en Zillow o Realtor.com."
+            )}
+          </p>
+          <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8">
+            <Link to="/contact">
+              {t("Ask About Off-Market Opportunities", "Pregunta Sobre Oportunidades Fuera del Mercado")}
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          </Button>
+        </div>
+      </section>
     </>
   );
 };

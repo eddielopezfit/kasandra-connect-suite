@@ -96,6 +96,9 @@ const V2Navigation = () => {
               <span className="hidden lg:block text-[13px] text-cc-gold font-medium tracking-wide">
                 {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
               </span>
+              <span className={`hidden lg:block text-[10px] tracking-wider uppercase mt-0.5 ${isScrolled ? "text-cc-gold/80" : "text-cc-gold/80"}`}>
+                {t("Off-Market Access · Cash Offers · Tucson", "Acceso Fuera del Mercado · Ofertas en Efectivo · Tucson")}
+              </span>
             </div>
 
             {/* Desktop Nav */}
