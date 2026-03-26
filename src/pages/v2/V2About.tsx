@@ -3,7 +3,7 @@ import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, MessageCircle } from "lucide-react";
+import { CheckCircle, MessageCircle, Home, Star, Mic, Heart, Sparkles, Users } from "lucide-react";
 import CredentialsBentoGrid from "@/components/v2/CredentialsBentoGrid";
 import { Link } from "react-router-dom";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
