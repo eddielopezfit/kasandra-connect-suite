@@ -145,22 +145,13 @@ function GuideDetailContent() {
     }
   }, [guideId, guide, guideTitle]);
 
-  // Scroll listener for synthesis CTA (60% threshold)
+  // Scroll listener for guide completion (90% threshold)
   useEffect(() => {
     const handleScroll = () => {
       const ratio = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-      if (!synthesisTracked.current && ratio > 0.6) {
-        setSynthesisVisible(true);
-        synthesisTracked.current = true;
-        if (guideId) {
-          logEvent('guide_synthesis_cta_shown', { guideId });
-        }
-      }
       if (!completionTracked.current && ratio > 0.9) {
         setGuideCompleteVisible(true);
         completionTracked.current = true;
-      }
-      if (synthesisTracked.current && completionTracked.current) {
         window.removeEventListener('scroll', handleScroll);
       }
     };
