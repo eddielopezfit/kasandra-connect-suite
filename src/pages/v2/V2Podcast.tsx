@@ -225,7 +225,7 @@ const V2PodcastContent = () => {
 };
 
 const V2Podcast = () => (
-  <V2Layout>
+  <V2Layout suppressCTA>
     <V2PodcastContent />
   </V2Layout>
 );
