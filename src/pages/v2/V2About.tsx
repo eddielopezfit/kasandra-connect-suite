@@ -5,6 +5,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, MessageCircle, Home, Star, Mic, Heart, Sparkles, Users } from "lucide-react";
 import CredentialsBentoGrid from "@/components/v2/CredentialsBentoGrid";
+import SelenaShowcase from "@/components/v2/SelenaShowcase";
 import { Link } from "react-router-dom";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-community-neighborhood.png";
@@ -291,6 +292,20 @@ const V2AboutContent = () => {
           </p>
         </div>
       </section>
+
+      {/* Selena on About Page */}
+      <div className="text-center py-10 bg-cc-sand">
+        <h3 className="font-serif text-2xl font-bold text-cc-navy mb-2">
+          {t("My Team Includes AI", "Mi Equipo Incluye IA")}
+        </h3>
+        <p className="text-cc-charcoal/70 max-w-xl mx-auto text-sm mb-0 px-4">
+          {t(
+            "I built Selena so you can get answers even when I'm with another client. She knows my programs, my market, and my approach.",
+            "Creé a Selena para que puedas obtener respuestas incluso cuando estoy con otro cliente. Ella conoce mis programas, mi mercado y mi enfoque."
+          )}
+        </p>
+      </div>
+      <SelenaShowcase variant="compact" />
 
       {/* Bottom CTA */}
       <section className="bg-cc-navy py-16">
