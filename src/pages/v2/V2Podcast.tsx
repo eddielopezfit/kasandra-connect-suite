@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-podcast-homes.png";
+import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 
 const V2PodcastContent = () => {
   const { t } = useLanguage();
