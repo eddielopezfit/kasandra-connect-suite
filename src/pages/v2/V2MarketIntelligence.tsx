@@ -7,12 +7,14 @@ import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useMarketPulse } from "@/hooks/useMarketPulse";
+import { useJourneyProgress } from "@/hooks/useJourneyProgress";
+import { getSessionContext } from "@/lib/analytics/selenaSession";
+import { getNeighborhoodByZip } from "@/data/neighborhoods/neighborhoodRegistry";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
-import { getLeadId } from "@/lib/analytics/bridgeLeadIdToV2";
 import {
   TrendingUp, Clock, DollarSign, BarChart2, Calendar,
-  Signal, SignalZero, MessageCircle, ArrowRight, RefreshCw
+  Signal, SignalZero, MessageCircle, ArrowRight, RefreshCw, MapPin
 } from "lucide-react";
 
 // Animated number component — digits roll up on viewport entry
@@ -73,6 +75,12 @@ const V2MarketIntelligenceContent = () => {
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
   const { stats: pulseStats, isLive, loading } = useMarketPulse(language);
+  const progress = useJourneyProgress();
+  const ctx = getSessionContext();
+  const neighborhoodZip = ctx?.last_neighborhood_zip || ctx?.neighborhood_quiz_top_zip;
+  const neighborhood = neighborhoodZip ? getNeighborhoodByZip(neighborhoodZip) : null;
+  const userBudget = ctx?.estimated_budget;
+  const userHomeValue = ctx?.estimated_value;
 
   useDocumentHead({
     titleEn: "Tucson Real Estate Market Data 2026 | Live Housing Stats — Kasandra Prieto",
@@ -159,8 +167,10 @@ const V2MarketIntelligenceContent = () => {
             )}
           </div>
           <h1 className="font-serif text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
-            {t("Tucson Market", "Mercado de Tucson")}
-            <span className="block text-cc-gold">{t("Intelligence", "Inteligencia")}</span>
+            {neighborhood
+              ? <>{t(`${neighborhood.name} Market`, `Mercado de ${neighborhood.nameEs}`)}<span className="block text-cc-gold">{t("Intelligence", "Inteligencia")}</span></>
+              : <>{t("Tucson Market", "Mercado de Tucson")}<span className="block text-cc-gold">{t("Intelligence", "Inteligencia")}</span></>
+            }
           </h1>
           <p className="text-white/75 text-lg md:text-xl max-w-2xl leading-relaxed">
             {t(
@@ -217,6 +227,37 @@ const V2MarketIntelligenceContent = () => {
         </div>
       </section>
 
+      {/* Neighborhood Context — only shown when user has explored a specific area */}
+      {neighborhood && (
+        <section className="py-10 bg-white border-b border-cc-sand-dark/20">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="bg-cc-sand rounded-2xl p-6 md:p-8 border border-cc-gold/30">
+              <div className="flex items-center gap-2 mb-3">
+                <MapPin className="w-4 h-4 text-cc-gold" />
+                <span className="text-cc-gold text-sm font-semibold uppercase tracking-wider">
+                  {t("Your Area", "Tu Zona")}
+                </span>
+              </div>
+              <h3 className="font-serif text-xl font-bold text-cc-navy mb-3">
+                {t(`${neighborhood.name} Context`, `Contexto de ${neighborhood.nameEs}`)}
+              </h3>
+              <p className="text-cc-charcoal leading-relaxed mb-3">
+                {progress.intent === 'sell' || progress.intent === 'cash'
+                  ? (language === 'es' ? neighborhood.sellerProfile.es : neighborhood.sellerProfile.en)
+                  : (language === 'es' ? neighborhood.buyerProfile.es : neighborhood.buyerProfile.en)
+                }
+              </p>
+              <p className="text-cc-slate text-sm italic">
+                {t(
+                  "County-wide stats above — this neighborhood may perform differently. Kasandra can run area-specific numbers.",
+                  "Las estadísticas del condado arriba — este vecindario puede comportarse diferente. Kasandra puede calcular números específicos del área."
+                )}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* What It Means */}
       <section className="py-14 bg-white">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -224,72 +265,104 @@ const V2MarketIntelligenceContent = () => {
             {t("What This Means For You", "Qué Significa Para Ti")}
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
-            {/* Sellers */}
-            <div className="bg-cc-sand rounded-2xl p-6 border border-cc-sand-dark/30">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 rounded-full bg-cc-navy flex items-center justify-center">
-                  <TrendingUp className="w-4 h-4 text-white" />
+            {/* Show the relevant card FIRST and EXPANDED based on intent */}
+            {(progress.intent === 'sell' || progress.intent === 'cash') ? (
+              <>
+                {/* Seller card first */}
+                <div className="bg-cc-sand rounded-2xl p-6 border-2 border-cc-gold/40">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-9 h-9 rounded-full bg-cc-navy flex items-center justify-center">
+                      <TrendingUp className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-cc-navy">{t("For You — Selling", "Para Ti — Vendiendo")}</h3>
+                  </div>
+                  {userHomeValue && (
+                    <p className="text-cc-gold text-sm font-medium mb-3">
+                      {t(`Based on your ~$${userHomeValue.toLocaleString()} property`, `Basado en tu propiedad de ~$${userHomeValue.toLocaleString()}`)}
+                    </p>
+                  )}
+                  <p className="text-cc-charcoal leading-relaxed mb-4">{sellerImplication}</p>
+                  <ul className="space-y-2 text-sm text-cc-charcoal">
+                    <li className="flex items-start gap-2">
+                      <span className="text-cc-gold font-bold mt-0.5">·</span>
+                      {t(
+                        `At ${dom} days on market, every day without an offer costs ~$${holdingCost}`,
+                        `Con ${dom} días en mercado, cada día sin oferta cuesta ~$${holdingCost}`
+                      )}
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-cc-gold font-bold mt-0.5">·</span>
+                      {t(
+                        `Cash offers skip the ${dom}-day clock entirely`,
+                        `Las ofertas en efectivo evitan los ${dom} días por completo`
+                      )}
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-cc-gold font-bold mt-0.5">·</span>
+                      {t(
+                        `Traditional listing prep averages $${prepCost.toLocaleString()} upfront`,
+                        `Preparación para venta tradicional promedia $${prepCost.toLocaleString()} por adelantado`
+                      )}
+                    </li>
+                  </ul>
                 </div>
-                <h3 className="font-serif text-lg font-bold text-cc-navy">{t("For Sellers", "Para Vendedores")}</h3>
-              </div>
-              <p className="text-cc-charcoal leading-relaxed mb-4">{sellerImplication}</p>
-              <ul className="space-y-2 text-sm text-cc-charcoal">
-                <li className="flex items-start gap-2">
-                  <span className="text-cc-gold font-bold mt-0.5">·</span>
-                  {t(
-                    `At ${dom} days on market, every day without an offer costs ~$${holdingCost}`,
-                    `Con ${dom} días en mercado, cada día sin oferta cuesta ~$${holdingCost}`
-                  )}
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-cc-gold font-bold mt-0.5">·</span>
-                  {t(
-                    `Cash offers skip the ${dom}-day clock entirely`,
-                    `Las ofertas en efectivo evitan los ${dom} días por completo`
-                  )}
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-cc-gold font-bold mt-0.5">·</span>
-                  {t(
-                    `Traditional listing prep averages $${prepCost.toLocaleString()} upfront`,
-                    `Preparación para venta tradicional promedia $${prepCost.toLocaleString()} por adelantado`
-                  )}
-                </li>
-              </ul>
-            </div>
-            {/* Buyers */}
-            <div className="bg-cc-sand rounded-2xl p-6 border border-cc-sand-dark/30">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 rounded-full bg-cc-navy flex items-center justify-center">
-                  <DollarSign className="w-4 h-4 text-white" />
+                {/* Buyer card second, standard border */}
+                <div className="bg-cc-sand rounded-2xl p-6 border border-cc-sand-dark/30">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-9 h-9 rounded-full bg-cc-navy flex items-center justify-center">
+                      <DollarSign className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-cc-navy">{t("For Buyers", "Para Compradores")}</h3>
+                  </div>
+                  <p className="text-cc-charcoal leading-relaxed mb-4">{buyerImplication}</p>
+                  <ul className="space-y-2 text-sm text-cc-charcoal">
+                    <li className="flex items-start gap-2"><span className="text-cc-gold font-bold mt-0.5">·</span>{t(`Homes are closing at ~${saleToListPct} of list price on average`, `Las casas cierran a ~${saleToListPct} del precio de lista en promedio`)}</li>
+                    <li className="flex items-start gap-2"><span className="text-cc-gold font-bold mt-0.5">·</span>{t("Pre-approval strengthens your position in any market condition", "La pre-aprobación fortalece tu posición en cualquier condición de mercado")}</li>
+                    <li className="flex items-start gap-2"><span className="text-cc-gold font-bold mt-0.5">·</span>{t("Off-market properties bypass this timeline entirely", "Las propiedades fuera del mercado evitan este cronograma por completo")}</li>
+                  </ul>
                 </div>
-                <h3 className="font-serif text-lg font-bold text-cc-navy">{t("For Buyers", "Para Compradores")}</h3>
-              </div>
-              <p className="text-cc-charcoal leading-relaxed mb-4">{buyerImplication}</p>
-              <ul className="space-y-2 text-sm text-cc-charcoal">
-                <li className="flex items-start gap-2">
-                  <span className="text-cc-gold font-bold mt-0.5">·</span>
-                  {t(
-                    `Homes are closing at ~${saleToListPct} of list price on average`,
-                    `Las casas cierran a ~${saleToListPct} del precio de lista en promedio`
+              </>
+            ) : (
+              <>
+                {/* Buyer card first (default and for buy intent) */}
+                <div className={`bg-cc-sand rounded-2xl p-6 ${progress.intent === 'buy' ? 'border-2 border-cc-gold/40' : 'border border-cc-sand-dark/30'}`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-9 h-9 rounded-full bg-cc-navy flex items-center justify-center">
+                      <DollarSign className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-cc-navy">
+                      {progress.intent === 'buy' ? t("For You — Buying", "Para Ti — Comprando") : t("For Buyers", "Para Compradores")}
+                    </h3>
+                  </div>
+                  {userBudget && progress.intent === 'buy' && (
+                    <p className="text-cc-gold text-sm font-medium mb-3">
+                      {t(`Based on your ~$${userBudget.toLocaleString()} budget`, `Basado en tu presupuesto de ~$${userBudget.toLocaleString()}`)}
+                    </p>
                   )}
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-cc-gold font-bold mt-0.5">·</span>
-                  {t(
-                    "Pre-approval strengthens your position in any market condition",
-                    "La pre-aprobación fortalece tu posición en cualquier condición de mercado"
-                  )}
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-cc-gold font-bold mt-0.5">·</span>
-                  {t(
-                    "Off-market properties bypass this timeline entirely",
-                    "Las propiedades fuera del mercado evitan este cronograma por completo"
-                  )}
-                </li>
-              </ul>
-            </div>
+                  <p className="text-cc-charcoal leading-relaxed mb-4">{buyerImplication}</p>
+                  <ul className="space-y-2 text-sm text-cc-charcoal">
+                    <li className="flex items-start gap-2"><span className="text-cc-gold font-bold mt-0.5">·</span>{t(`Homes are closing at ~${saleToListPct} of list price on average`, `Las casas cierran a ~${saleToListPct} del precio de lista en promedio`)}</li>
+                    <li className="flex items-start gap-2"><span className="text-cc-gold font-bold mt-0.5">·</span>{t("Pre-approval strengthens your position in any market condition", "La pre-aprobación fortalece tu posición en cualquier condición de mercado")}</li>
+                    <li className="flex items-start gap-2"><span className="text-cc-gold font-bold mt-0.5">·</span>{t("Off-market properties bypass this timeline entirely", "Las propiedades fuera del mercado evitan este cronograma por completo")}</li>
+                  </ul>
+                </div>
+                {/* Seller card second */}
+                <div className="bg-cc-sand rounded-2xl p-6 border border-cc-sand-dark/30">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-9 h-9 rounded-full bg-cc-navy flex items-center justify-center">
+                      <TrendingUp className="w-4 h-4 text-white" />
+                    </div>
+                    <h3 className="font-serif text-lg font-bold text-cc-navy">{t("For Sellers", "Para Vendedores")}</h3>
+                  </div>
+                  <p className="text-cc-charcoal leading-relaxed mb-4">{sellerImplication}</p>
+                  <ul className="space-y-2 text-sm text-cc-charcoal">
+                    <li className="flex items-start gap-2"><span className="text-cc-gold font-bold mt-0.5">·</span>{t(`At ${dom} days on market, every day without an offer costs ~$${holdingCost}`, `Con ${dom} días en mercado, cada día sin oferta cuesta ~$${holdingCost}`)}</li>
+                    <li className="flex items-start gap-2"><span className="text-cc-gold font-bold mt-0.5">·</span>{t(`Cash offers skip the ${dom}-day clock entirely`, `Las ofertas en efectivo evitan los ${dom} días por completo`)}</li>
+                    <li className="flex items-start gap-2"><span className="text-cc-gold font-bold mt-0.5">·</span>{t(`Traditional listing prep averages $${prepCost.toLocaleString()} upfront`, `Preparación para venta tradicional promedia $${prepCost.toLocaleString()} por adelantado`)}</li>
+                  </ul>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -352,41 +425,6 @@ const V2MarketIntelligenceContent = () => {
           </div>
         </div>
       </section>
-
-      {/* Bottom CTA — capture high-intent market data visitors */}
-      <section className="py-16 bg-cc-navy">
-        <div className="container mx-auto px-4 max-w-3xl text-center">
-          <p className="text-cc-gold font-semibold text-sm tracking-wider uppercase mb-3">
-            {t("What This Means For You", "Qué Significa Para Ti")}
-          </p>
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
-            {t("Discuss these numbers with Kasandra", "Discute estos números con Kasandra")}
-          </h2>
-          <p className="text-cc-ivory/70 text-lg mb-8 max-w-xl mx-auto">
-            {t(
-              "Kasandra reviews these stats every week. She can tell you exactly what they mean for buying or selling in your specific neighborhood.",
-              "Kasandra revisa estas estadísticas cada semana. Puede decirte exactamente qué significan para comprar o vender en tu vecindario específico."
-            )}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/book?intent=explore&source=market"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-cc-gold text-cc-navy font-semibold text-base shadow-gold hover:bg-cc-gold-dark hover:scale-[1.02] transition-all"
-            >
-              <Calendar className="w-5 h-5" />
-              {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
-            </Link>
-            <button
-              onClick={() => openChat({ source: 'market_intelligence_result' })}
-              className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
-            >
-              <MessageCircle className="w-4 h-4" />
-              {t("Or ask Selena first", "O habla primero con Selena")}
-            </button>
-          </div>
-        </div>
-      </section>
-
     </>
   );
 };
