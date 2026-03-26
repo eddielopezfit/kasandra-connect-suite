@@ -436,7 +436,7 @@ const V2HomeContent = () => {
             <ul className="space-y-3 mb-6">
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted text-sm">{t("Vice Chair, Arizona Diaper Bank", "Vicepresidenta, Arizona Diaper Bank")}</span>
+                <span className="text-cc-text-muted text-sm">{t("Former Vice Chair, Arizona Diaper Bank", "Ex-Vicepresidenta, Arizona Diaper Bank")}</span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
