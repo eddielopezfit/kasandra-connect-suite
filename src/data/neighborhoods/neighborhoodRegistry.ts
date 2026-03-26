@@ -414,3 +414,7 @@ export function getNeighborhoodsByRegion(region: RegionGroup): NeighborhoodEntry
 export function getAllNeighborhoodSlugs(): string[] {
   return NEIGHBORHOOD_REGISTRY.map(n => n.slug);
 }
+
+export function getNeighborhoodByZip(zip: string): NeighborhoodEntry | undefined {
+  return NEIGHBORHOOD_REGISTRY.find(n => n.primaryZip === zip);
+}
