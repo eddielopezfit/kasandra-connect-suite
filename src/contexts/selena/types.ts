@@ -60,7 +60,10 @@ export type EntrySource =
     | 'sticky_mobile_buy'
     | 'sticky_mobile_sell'
     | 'journey_breadcrumb'
-    | 'tool_result_next_step';
+     | 'tool_result_next_step'
+     | 'showcase_full'
+     | 'showcase_compact'
+     | 'guide_bottom';
 
 export interface EntryContext {
   estimatedBudget?: number;
