@@ -26,8 +26,9 @@ export function DynamicStatsGrid({ data }: DynamicStatsGridProps) {
           {data.map((stat, i) => {
             // If dynamicKey is set and has a value, use it
             let displayValue = isEs ? stat.valueEs : stat.value;
-            if (stat.dynamicKey && programData[stat.dynamicKey] != null) {
-              displayValue = String(programData[stat.dynamicKey]);
+            const key = stat.dynamicKey as keyof DynamicGuideData | undefined;
+            if (key && programData[key] != null) {
+              displayValue = String(programData[key]);
             }
 
             return (
