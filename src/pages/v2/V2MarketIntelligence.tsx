@@ -15,6 +15,7 @@ import {
   TrendingUp, Clock, DollarSign, BarChart2, Calendar,
   Signal, SignalZero, MessageCircle, ArrowRight, RefreshCw, MapPin
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Animated number component — digits roll up on viewport entry
 function AnimatedStatValue({ value }: { value: string }) {
