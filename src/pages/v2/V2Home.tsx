@@ -117,7 +117,9 @@ const V2HomeContent = () => {
       <section className="bg-cc-sand py-10">
         <div className="container mx-auto px-4 max-w-3xl">
           <p className="text-center text-sm font-semibold uppercase tracking-widest text-cc-navy/50 mb-6">
-            {progress.isReturningUser
+            {isAdFunnelUser && !progress.isReturningUser
+              ? t("Welcome — your results are ready to explore", "Bienvenido — tus resultados están listos para explorar")
+              : progress.isReturningUser
               ? t("Welcome back — continue where you left off", "Bienvenido de nuevo — continúa donde lo dejaste")
               : t("Where are you in your journey?", "¿En qué etapa estás?")}
           </p>
