@@ -12,6 +12,7 @@ import {
   MapPin, Home, DollarSign, Clock, CheckCircle2,
   ChevronRight, Star, Lock, Eye, ArrowRight, Sparkles
 } from "lucide-react";
+import ToolResultNextStep from '@/components/v2/ToolResultNextStep';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
