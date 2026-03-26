@@ -27,9 +27,8 @@ import {
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
-import CTASection from "@/components/v2/CTASection";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
-import { updateSessionContext } from '@/lib/analytics/selenaSession';
+import { updateSessionContext, getSessionContext } from '@/lib/analytics/selenaSession';
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 
