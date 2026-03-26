@@ -5,6 +5,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, MessageCircle, Home, Star, Mic, Heart, Sparkles, Users } from "lucide-react";
 import CredentialsBentoGrid from "@/components/v2/CredentialsBentoGrid";
+import SelenaShowcase from "@/components/v2/SelenaShowcase";
 import { Link } from "react-router-dom";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-community-neighborhood.png";
