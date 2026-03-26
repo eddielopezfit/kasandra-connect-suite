@@ -3,6 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import { Calendar } from "lucide-react";
 import V2Navigation from "./V2Navigation";
 import V2Footer from "./V2Footer";
+import CTASection from "./CTASection";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
