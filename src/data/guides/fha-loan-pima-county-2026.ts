@@ -16,7 +16,7 @@ const data: GuideContentData = {
       contentEs: "La Administración Federal de Vivienda establece límites de préstamos anualmente basándose en los precios locales de viviendas. Para 2026, los límites FHA del Condado de Pima son:\n\n• **Una unidad (casa unifamiliar):** $524,225\n• **Dos unidades (dúplex):** $638,100\n• **Tres unidades (tríplex):** $771,125\n• **Cuatro unidades (cuadruplex):** $958,350\n\nPara contexto, el precio medio de vivienda del área metropolitana de Tucson es aproximadamente $365,000 — lo que significa que el límite FHA cubre la gran mayoría de las casas en el mercado.",
       variant: 'stats-grid' as const,
       statsData: [
-        { value: '$524,225', valueEs: '$524,225', label: 'Pima County FHA limit — single family (2026)', labelEs: 'Límite FHA Condado de Pima — unifamiliar (2026)' },
+        { value: '$524,225', valueEs: '$524,225', label: 'Pima County FHA limit — single family (2026)', labelEs: 'Límite FHA Condado de Pima — unifamiliar (2026)', dynamicKey: 'fhaLimit' },
         { value: '3.5%', valueEs: '3.5%', label: 'Minimum down payment with 580+ credit score', labelEs: 'Pago inicial mínimo con puntaje 580+' },
         { value: '580', valueEs: '580', label: 'Minimum credit score for 3.5% down FHA', labelEs: 'Puntaje mínimo para FHA con 3.5% inicial' },
         { value: '43%', valueEs: '43%', label: 'Maximum debt-to-income ratio (typically)', labelEs: 'Relación deuda-ingreso máxima (típicamente)' },

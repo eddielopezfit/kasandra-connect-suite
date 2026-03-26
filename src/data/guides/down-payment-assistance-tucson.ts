@@ -17,7 +17,7 @@ const data: GuideContentData = {
       variant: 'stats-grid' as const,
       statsData: [
         { value: 'Up to 20%', valueEs: 'Hasta 20%', label: 'Max DPA — City of Tucson HOME Program (CIC)', labelEs: 'DPA máximo — Programa HOME Ciudad de Tucson' },
-        { value: '$146K', valueEs: '$146K', label: 'Income limit for PTHS program', labelEs: 'Límite de ingresos para el programa PTHS' },
+        { value: '$146K', valueEs: '$146K', label: 'Income limit for PTHS program', labelEs: 'Límite de ingresos para el programa PTHS', dynamicKey: 'pthsIncomeLimit' },
         { value: '5.84%', valueEs: '5.84%', label: 'Lighthouse below-market rate (2026)', labelEs: 'Tasa Lighthouse por debajo del mercado (2026)' },
         { value: '$0', valueEs: '$0', label: 'What many buyers pay out of pocket after stacking programs', labelEs: 'Lo que muchos compradores pagan de su bolsillo combinando programas' },
       ],
