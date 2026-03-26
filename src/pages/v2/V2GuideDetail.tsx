@@ -495,6 +495,16 @@ function GuideDetailContent() {
         </div>
       </section>
 
+      {/* Educational Disclaimer — top of guide per Kasandra's request */}
+      <div className="bg-cc-sand border-b border-cc-sand-dark/30 px-4 py-3">
+        <p className="text-xs text-cc-charcoal/60 text-center max-w-3xl mx-auto leading-relaxed">
+          {t(
+            "This guide is for general educational purposes only. It is not legal, tax, or financial advice. For specific guidance, please consult with a licensed professional or talk to Kasandra.",
+            "Esta guía es solo con fines educativos generales. No es asesoría legal, fiscal o financiera. Para orientación específica, consulte con un profesional licenciado o hable con Kasandra."
+          )}
+        </p>
+      </div>
+
       {/* Article Content */}
       <article className="bg-cc-sand">
         {/* Intro  -  clean, no exit ramp */}

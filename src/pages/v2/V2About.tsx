@@ -246,12 +246,44 @@ const V2AboutContent = () => {
       </div>
 
       {/* Personal Touch */}
-      <section className="bg-cc-sand py-10">
+      <section className="bg-cc-sand py-14">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-cc-text-muted italic text-lg">
-            {t("Dog mom. Singer. Karaoke enthusiast. Community-driven.", "Mamá perruna. Cantante. Entusiasta del karaoke. Comprometida con la comunidad.")}
-          </p>
-          <p className="text-cc-gold font-semibold text-sm mt-4 italic">
+          <h3 className="font-serif text-2xl font-bold text-cc-navy mb-8">
+            {t("Beyond Real Estate", "Más Allá de Bienes Raíces")}
+          </h3>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto mb-8">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center">
+                <Heart className="w-5 h-5 text-cc-gold" />
+              </div>
+              <p className="font-semibold text-cc-navy text-sm">{t("Dog Mom", "Mamá Perruna")}</p>
+              <p className="text-xs text-cc-charcoal/60">{t("Lilly is always on the team", "Lilly siempre está en el equipo")}</p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center">
+                <Mic className="w-5 h-5 text-cc-gold" />
+              </div>
+              <p className="font-semibold text-cc-navy text-sm">{t("Singer", "Cantante")}</p>
+              <p className="text-xs text-cc-charcoal/60">{t("Fiestas Patrias, karaoke, anywhere", "Fiestas Patrias, karaoke, donde sea")}</p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center">
+                <Users className="w-5 h-5 text-cc-gold" />
+              </div>
+              <p className="font-semibold text-cc-navy text-sm">{t("Community First", "Comunidad Primero")}</p>
+              <p className="text-xs text-cc-charcoal/60">{t("5 years nonprofit leadership", "5 años liderazgo sin fines de lucro")}</p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-cc-gold" />
+              </div>
+              <p className="font-semibold text-cc-navy text-sm">{t("Always Growing", "Siempre Creciendo")}</p>
+              <p className="text-xs text-cc-charcoal/60">{t("\"Growth IS the formula\"", "\"El crecimiento ES la fórmula\"")}</p>
+            </div>
+          </div>
+
+          <p className="text-cc-gold font-semibold text-sm italic">
             {t(
               '"Growth and giving back IS the formula to continuous, true happiness."',
               '"El crecimiento y retribuir ES la fórmula para la felicidad continua y verdadera."'

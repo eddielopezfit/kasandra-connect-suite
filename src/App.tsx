@@ -121,6 +121,7 @@ const App = () => {
                 <Route path="/net-to-seller" element={<V2NetToSeller />} />
                 <Route path="/privacy" element={<V2Privacy />} />
                 <Route path="/terms" element={<V2Terms />} />
+                <Route path="/network" element={<V2TrustedNetwork />} />
 
                 {/* Ad Funnel Routes (Isolated) */}
                 <Route path="/ad/seller" element={<SellerLanding />} />

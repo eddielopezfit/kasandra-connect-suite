@@ -46,6 +46,7 @@ const V2Navigation = () => {
     { href: "/market", label: t("Market Intel", "Intel del Mercado") },
     { href: "/podcast", label: t("Podcast", "Podcast") },
     { href: "/community", label: t("Community", "Comunidad") },
+    { href: "/network", label: t("Trusted Network", "Red de Confianza") },
     { href: "/about", label: t("About", "Sobre Mí") },
     { href: "/contact", label: t("Contact", "Contacto") },
   ];
