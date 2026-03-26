@@ -51,6 +51,13 @@ const V2AboutContent = () => {
         </div>
       </section>
 
+      {/* Journey Progress — visible only to returning users */}
+      <div className="bg-cc-ivory">
+        <div className="container mx-auto px-4 pt-8">
+          <JourneyBreadcrumb />
+        </div>
+      </div>
+
       {/* Bio Section */}
       <section className="bg-cc-ivory py-16 md:py-20">
         <div className="container mx-auto px-4">

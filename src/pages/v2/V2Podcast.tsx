@@ -73,6 +73,13 @@ const V2PodcastContent = () => {
         </div>
       </section>
 
+      {/* Journey Progress — visible only to returning users */}
+      <div className="bg-cc-ivory">
+        <div className="container mx-auto px-4 pt-8">
+          <JourneyBreadcrumb />
+        </div>
+      </div>
+
       {/* About the Show */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
