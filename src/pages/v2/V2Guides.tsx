@@ -551,44 +551,7 @@ function GuidesContent() {
         onStoryClick={handleGuideClick}
       />
 
-      {/* Booking CTA Section */}
-      <section className="bg-cc-navy py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-3xl md:text-4xl text-white mb-4">
-            {t("Ready to Take the Next Step?", "¿Lista para el Siguiente Paso?")}
-          </h2>
-          <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
-            {t(
-              "Kasandra is here to guide you through the rest.",
-              "Kasandra está aquí para guiarte en el resto."
-            )}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/book">
-              <Button 
-                onClick={() => logEvent('consultation_cta_clicked', { source: 'guides_footer', stage: stageId, intent: activeIntent })}
-                size="lg" 
-                className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold"
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                {t("Book a Strategy Session", "Agendar una Sesión Estratégica")}
-              </Button>
-            </Link>
-            <Button
-              onClick={() => {
-                logEvent('cta_click', { source: 'guides_footer', stage: stageId, intent: activeIntent, type: 'selena' });
-                openChat({ source: 'synthesis' });
-              }}
-              variant="outline"
-              size="lg"
-              className="border-white/30 text-white hover:bg-white/10 rounded-full px-8"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              {t("Talk to Selena First", "Hablar con Selena Primero")}
-            </Button>
-          </div>
-        </div>
-      </section>
+
     </>
   );
 }
