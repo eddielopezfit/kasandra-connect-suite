@@ -699,7 +699,7 @@ const V2HomeContent = () => {
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
                   <Heart className="w-10 h-10 text-cc-gold mx-auto mb-3" />
-                  <p className="text-sm text-cc-text-muted">{t("Vice Chair, Arizona Diaper Bank", "Vicepresidenta, Arizona Diaper Bank")}</p>
+                  <p className="text-sm text-cc-text-muted">{t("Former Vice Chair, Arizona Diaper Bank", "Ex-Vicepresidenta, Arizona Diaper Bank")}</p>
                 </div>
                 <div className="text-center">
                   <Users className="w-10 h-10 text-cc-gold mx-auto mb-3" />

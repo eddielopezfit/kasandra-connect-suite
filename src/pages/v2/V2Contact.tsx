@@ -194,8 +194,8 @@ const V2ContactContent = () => {
                   <Mail className="w-5 h-5 text-cc-gold mt-1 flex-shrink-0" />
                   <div>
                     <p className="font-semibold text-cc-blue text-sm">{t("Email", "Correo Electrónico")}</p>
-                    <a href="mailto:kasandra@kasandraoasis.com" className="text-cc-charcoal hover:text-cc-gold transition-colors">
-                      kasandra@kasandraoasis.com
+                    <a href="mailto:kasandra@prietorealestategroup.com" className="text-cc-charcoal hover:text-cc-gold transition-colors">
+                      kasandra@prietorealestategroup.com
                     </a>
                   </div>
 

@@ -111,7 +111,7 @@ const V2CommunityContent = () => {
                   </div>
                   <div className="flex items-start gap-3">
                     <HandHeart className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("Supporting families since 2021", "Apoyando familias desde 2021")}</span>
+                    <span className="text-cc-charcoal">{t("Supported families for 5 years", "Apoyó a familias durante 5 años")}</span>
                   </div>
                 </div>
               </div>
