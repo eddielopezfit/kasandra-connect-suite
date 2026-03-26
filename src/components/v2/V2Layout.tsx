@@ -8,6 +8,7 @@ import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
 import { ChatErrorBoundary } from "@/components/selena/ChatErrorBoundary";
 import ExitIntentModal from "@/components/v2/ExitIntentModal";
+import EscalationBanner from "@/components/v2/EscalationBanner";
 import { logPageView, logEvent } from "@/lib/analytics/logEvent";
 import { initSessionContext, getSessionContext, updateSessionContext } from "@/lib/analytics/selenaSession";
 import { bridgeAuthToLead } from "@/lib/analytics/bridgeAuthToLead";
@@ -127,6 +128,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
       {/* which resets input state and breaks chat. Language changes are handled by React state */}
       <div className="min-h-[100dvh] flex flex-col w-full max-w-[100vw] overflow-x-hidden">
         <V2Navigation />
+        <EscalationBanner />
         <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden bg-cc-navy">{children}</main>
         <V2Footer />
         
