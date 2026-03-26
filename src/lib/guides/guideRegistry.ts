@@ -123,6 +123,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 10,
     authorityTheme: 'buyer_strategy',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
   {
     id: 'selling-for-top-dollar',
@@ -154,6 +155,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 20,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
   {
     id: 'cash-offer-guide',
@@ -193,6 +195,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "In Tucson, cash buyer activity varies significantly by neighborhood and season. An offer that looks competitive in July may be low in October. Local knowledge isn't optional—it's the difference between accepting an offer that works for you and settling for one that works for the buyer.",
       es: "En Tucson, la actividad de compradores en efectivo varía significativamente por vecindario y temporada. Una oferta que parece competitiva en julio puede ser baja en octubre. El conocimiento local no es opcional—es la diferencia entre aceptar una oferta que funciona para usted y conformarse con una que funciona para el comprador.",
     },
+    lastVerifiedDate: '2026-03-25',
   },
   {
     id: 'inherited-probate-property',
@@ -229,6 +232,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Inherited property decisions are rarely just about real estate—they involve family, grief, and legal complexity. Kasandra has guided families through exactly this, with patience and clarity at every step.",
       es: "Las decisiones sobre propiedades heredadas rara vez se tratan solo de bienes raíces—involucran familia, duelo y complejidad legal. Kasandra ha guiado a familias a través de exactamente esto, con paciencia y claridad en cada paso.",
     },
+    lastVerifiedDate: '2026-03-25',
   },
 
   // === TIER 2 — SUPPORTING GUIDES ===
@@ -262,6 +266,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 50,
     authorityTheme: 'valuation_insight',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
 
   // === TIER 3 — MICRO GUIDES (Client Stories) ===
@@ -293,6 +298,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 70,
     authorityTheme: 'story_empathy',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
   {
     id: 'budget-buyer-story',
@@ -322,6 +328,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 80,
     authorityTheme: 'story_empathy',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
   {
     id: 'seller-stressful-market-story',
@@ -351,6 +358,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 90,
     authorityTheme: 'story_empathy',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
   {
     id: 'spanish-speaking-client-story',
@@ -380,6 +388,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 100,
     authorityTheme: 'story_empathy',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
   
   // === PHASE 2 — DECISION COMPRESSION GUIDES ===
@@ -422,6 +431,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "In Tucson's current market, the gap between cash offers and traditional sale proceeds can range from $15,000 to $60,000+ depending on condition, location, and timing. Knowing your specific number changes the conversation entirely.",
       es: "En el mercado actual de Tucson, la diferencia entre ofertas en efectivo y las ganancias de una venta tradicional puede variar de $15,000 a $60,000+ dependiendo de la condición, ubicación y tiempo. Conocer tu número específico cambia la conversación por completo.",
     },
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- sell-now-or-wait ---
@@ -456,7 +466,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 32,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
-    lastVerifiedDate: '2026-03-15',
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- life-change-selling ---
@@ -490,6 +500,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 34,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
 
   // === PHASE 3 — LOCAL DOMINATION GUIDES ===
@@ -530,6 +541,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Military timelines don't wait for the perfect market — and neither should your strategy. Kasandra has helped DMAFB buyers and sellers navigate the unique pressures of PCS moves, VA loan requirements, and remote purchasing.",
       es: "Los tiempos militares no esperan el mercado perfecto — y tu estrategia tampoco debería. Kasandra ha ayudado a compradores y vendedores de DMAFB a navegar las presiones únicas de los traslados PCS, requisitos de préstamo VA y compras a distancia.",
     },
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- divorce-selling ---
@@ -568,6 +580,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Selling a home during a divorce involves two parties, one transaction, and a lot of pressure. Kasandra has helped divorcing sellers in Tucson navigate this with patience, neutrality, and clear guidance at every step.",
       es: "Vender una casa durante un divorcio involucra a dos partes, una transacción y mucha presión. Kasandra ha ayudado a vendedores en proceso de divorcio en Tucson a navegar esto con paciencia, neutralidad y orientación clara en cada paso.",
     },
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- senior-downsizing ---
@@ -606,6 +619,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Downsizing is one of the most personal real estate decisions there is — and Tucson has more right-sized options than most markets. Kasandra helps senior homeowners make this transition without pressure, on their timeline.",
       es: "Reducir el tamaño es una de las decisiones inmobiliarias más personales que existen — y Tucson tiene más opciones del tamaño correcto que la mayoría de los mercados.",
     },
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- distressed-preforeclosure ---
@@ -644,6 +658,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "When time is short and options feel limited, the most important thing is to start the conversation early. Kasandra handles distressed situations with confidentiality and no pressure — your best outcome is the only goal.",
       es: "Cuando el tiempo es corto y las opciones parecen limitadas, lo más importante es comenzar la conversación temprano. Kasandra maneja situaciones de dificultad con confidencialidad y sin presión.",
     },
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- move-up-buyer ---
@@ -677,6 +692,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 36,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- relocating-to-tucson ---
@@ -715,6 +731,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Relocating buyers face a specific challenge: making a major financial decision about a city they may not know well. Kasandra has helped dozens of incoming buyers navigate Tucson's neighborhoods, climate quirks, and remote purchase process.",
       es: "Los compradores de reubicación enfrentan un desafío específico: tomar una decisión financiera importante sobre una ciudad que quizás no conocen bien.",
     },
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- home-prep-staging ---
@@ -748,6 +765,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 22,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- pricing-strategy ---
@@ -786,7 +804,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "In March 2026, Tucson homes sold at 97.64% of list price with a median of 38 days on market. Homes that required price reductions averaged 2–3x longer on market — and netted less after carrying costs.",
       es: "En marzo de 2026, las casas en Tucson se vendieron al 97.64% del precio de lista con una mediana de 38 días en mercado. Las casas que requirieron reducciones de precio promediaron 2–3 veces más tiempo en mercado.",
     },
-    lastVerifiedDate: '2026-03-15',
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- tucson-neighborhoods ---
@@ -825,6 +843,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Tucson has 8+ distinct residential markets within the metro area. The right one depends on your commute, your budget, your family situation, and what kind of community matters to you. Kasandra knows all of them from direct transaction experience.",
       es: "Tucson tiene 8+ mercados residenciales distintos dentro del área metropolitana. El correcto depende de tu viaje al trabajo, tu presupuesto, tu situación familiar y qué tipo de comunidad te importa.",
     },
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- pima-county-property-taxes ---
@@ -858,6 +877,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 55,
     authorityTheme: 'valuation_insight',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
   // ─── Phase 4: AEO Content Gap Guides ────────────────────────────────────
 
@@ -892,6 +912,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 31,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
 
   {
@@ -923,6 +944,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 56,
     authorityTheme: 'buyer_strategy',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
 
   {
@@ -954,6 +976,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 13,
     authorityTheme: 'buyer_strategy',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
 
   {
@@ -985,6 +1008,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 14,
     authorityTheme: 'buyer_strategy',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
 
   {
@@ -1016,6 +1040,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 57,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
 
   {
@@ -1047,6 +1072,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 58,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
 
   {
@@ -1078,7 +1104,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 59,
     authorityTheme: 'seller_clarity',
     isCashGuide: false,
-    lastVerifiedDate: '2026-03-15',
+    lastVerifiedDate: '2026-03-25',
   },
 
   {
@@ -1110,6 +1136,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 15,
     authorityTheme: 'buyer_strategy',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
   // --- itin-loan-guide ---
   {
@@ -1147,6 +1174,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "ITIN loans are one of the least-understood paths to homeownership — and one of the most powerful for immigrant families in Tucson. Kasandra has helped non-SSN buyers navigate the process and find lenders who know how to make it work.",
       es: "Los préstamos ITIN son uno de los caminos menos comprendidos hacia la propiedad de vivienda — y uno de los más poderosos para las familias inmigrantes en Tucson. Kasandra ha ayudado a compradores sin SSN a navegar el proceso.",
     },
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- tucson-market-update-2026 ---
@@ -1185,7 +1213,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Market conditions change, and the numbers you read online are often weeks or months behind. Kasandra is in the Tucson market every week — she can tell you what the data actually means for your specific situation.",
       es: "Las condiciones del mercado cambian, y los números que lees en línea a menudo tienen semanas o meses de retraso. Kasandra está en el mercado de Tucson cada semana — puede decirte lo que los datos realmente significan para tu situación específica.",
     },
-    lastVerifiedDate: '2026-03-15',
+    lastVerifiedDate: '2026-03-25',
   },
   {
     id: 'bad-credit-home-buying-tucson',
@@ -1222,6 +1250,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Credit challenges don't close the door — they shape the path. Kasandra has helped buyers in Tucson work through credit barriers and find the right timeline and approach for their situation.",
       es: "Los desafíos de crédito no cierran la puerta — dan forma al camino. Kasandra ha ayudado a compradores en Tucson a superar barreras crediticias.",
     },
+    lastVerifiedDate: '2026-03-25',
   },
 
   // --- down-payment-assistance-tucson ---
@@ -1260,7 +1289,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "Down payment assistance in Tucson is more accessible than most buyers realize. Kasandra has walked dozens of buyers through PTHS, HOME, and Lighthouse programs — she can tell you which ones you're likely to qualify for and make the right lender introduction.",
       es: "La asistencia para pago inicial en Tucson es más accesible de lo que la mayoría de los compradores se dan cuenta. Kasandra ha guiado a decenas de compradores a través de los programas PTHS, HOME y Lighthouse.",
     },
-    lastVerifiedDate: '2026-03-15',
+    lastVerifiedDate: '2026-03-25',
   },
   {
     id: 'fha-loan-pima-county-2026',
@@ -1297,7 +1326,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
       en: "FHA loans are the most common first home purchase tool in Tucson — and they pair powerfully with local DPA programs. Kasandra can help you understand if FHA is the right fit and connect you with lenders who specialize in first-time buyers.",
       es: "Los préstamos FHA son la herramienta de compra de primera vivienda más común en Tucson — y se combinan poderosamente con los programas DPA locales. Kasandra puede ayudarte a entender si FHA es la opción correcta.",
     },
-    lastVerifiedDate: '2026-03-15',
+    lastVerifiedDate: '2026-03-25',
   },
 
 
@@ -1333,6 +1362,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 46,
     authorityTheme: 'military_transition',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
   {
     id: 'divorce-home-sale-arizona',
@@ -1365,6 +1395,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 41,
     authorityTheme: 'divorce_guidance',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
   {
     id: 'first-time-buyer-programs-pima-county',
@@ -1397,6 +1428,7 @@ export const GUIDE_REGISTRY: GuideRegistryEntry[] = [
     sortOrder: 37,
     authorityTheme: 'buyer_strategy',
     isCashGuide: false,
+    lastVerifiedDate: '2026-03-25',
   },
 
 ];
