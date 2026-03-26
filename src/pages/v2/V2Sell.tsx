@@ -9,7 +9,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
-import { Shield, TrendingUp, FileText, Handshake, AlertCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar, BarChart3, MessageCircle } from "lucide-react";
+import { Shield, TrendingUp, FileText, Handshake, AlertCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar, BarChart3, MessageCircle, Check } from "lucide-react";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
@@ -92,6 +92,50 @@ const V2SellContent = () => {
       <section className="py-4">
         <div className="container mx-auto px-4 max-w-3xl">
           <JourneyBreadcrumb />
+        </div>
+      </section>
+
+      {/* Cash Offer Highlight — Corner Connect */}
+      <section className="bg-gradient-to-br from-cc-navy via-cc-navy to-cc-navy/95 py-14">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="bg-white/5 border border-cc-gold/30 rounded-2xl p-8 md:p-10 text-center">
+            <span className="inline-block bg-cc-gold/20 text-cc-gold font-semibold text-xs tracking-wider uppercase px-4 py-1.5 rounded-full mb-4">
+              {t("Corner Connect Exclusive", "Exclusivo de Corner Connect")}
+            </span>
+            <h2 className="font-serif text-2xl md:text-3xl font-bold text-white mb-4">
+              {t("Need to Sell Fast? Get a Cash Offer.", "¿Necesitas Vender Rápido? Obtén una Oferta en Efectivo.")}
+            </h2>
+            <div className="flex flex-wrap justify-center gap-4 mb-6">
+              <span className="flex items-center gap-2 text-white/80 text-sm">
+                <Check className="w-4 h-4 text-cc-gold" />
+                {t("No fees", "Sin comisiones")}
+              </span>
+              <span className="flex items-center gap-2 text-white/80 text-sm">
+                <Check className="w-4 h-4 text-cc-gold" />
+                {t("We cover closing costs", "Cubrimos costos de cierre")}
+              </span>
+              <span className="flex items-center gap-2 text-white/80 text-sm">
+                <Check className="w-4 h-4 text-cc-gold" />
+                {t("No inspections", "Sin inspecciones")}
+              </span>
+              <span className="flex items-center gap-2 text-white/80 text-sm">
+                <Check className="w-4 h-4 text-cc-gold" />
+                {t("Close on your timeline", "Cierra en tu tiempo")}
+              </span>
+            </div>
+            <p className="text-white/60 text-sm max-w-xl mx-auto mb-8">
+              {t(
+                "Whether you're relocating, going through a life change, or just need certainty — Corner Connect's cash-offer program gives you a clean, stress-free path to close.",
+                "Ya sea que te estés reubicando, pasando por un cambio de vida, o simplemente necesites certeza — el programa de oferta en efectivo de Corner Connect te da un camino limpio y sin estrés para cerrar."
+              )}
+            </p>
+            <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3">
+              <Link to="/contact">
+                {t("Request a Cash Offer", "Solicitar una Oferta en Efectivo")}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 

@@ -41,7 +41,7 @@ const V2Footer = () => {
       <footer className="bg-cc-blue text-white py-12">
       <div className="container mx-auto px-4">
         {/* Main Footer Content */}
-        <div className="grid md:grid-cols-3 gap-8 mb-8">
+        <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Brand & Compliance */}
           <div>
             <span className="font-serif text-xl font-semibold tracking-wide">
@@ -99,6 +99,20 @@ const V2Footer = () => {
                 {t("Meet Selena AI", "Conoce a Selena AI")}
               </Link>
             </div>
+          </div>
+
+          {/* Why Corner Connect */}
+          <div>
+            <h4 className="font-semibold text-sm mb-4">
+              {t("Why Corner Connect", "Por Qué Corner Connect")}
+            </h4>
+            <ul className="space-y-2 text-sm text-white/60">
+              <li>{t("Off-market inventory access", "Acceso a inventario fuera del mercado")}</li>
+              <li>{t("Cash offer program", "Programa de oferta en efectivo")}</li>
+              <li>{t("Distressed property solutions", "Soluciones para propiedades en dificultad")}</li>
+              <li>{t("Bilingual service", "Servicio bilingüe")}</li>
+              <li>{t("126+ five-star reviews", "126+ reseñas de cinco estrellas")}</li>
+            </ul>
           </div>
 
           {/* Contact & Social */}

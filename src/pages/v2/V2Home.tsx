@@ -23,7 +23,10 @@ import {
   ArrowRight,
   DollarSign,
   Banknote,
+  Eye,
+  ShieldCheck,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
@@ -621,6 +624,78 @@ const V2HomeContent = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Corner Connect Advantage — Strategic Positioning */}
+      <section className="bg-cc-navy py-16">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="text-center mb-10">
+            <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
+              {t("Powered by Corner Connect", "Impulsado por Corner Connect")}
+            </span>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mt-2 mb-4">
+              {t("Access Properties Others Can't Show You", "Accede a Propiedades que Otros No Pueden Mostrarte")}
+            </h2>
+            <p className="text-white/70 max-w-2xl mx-auto">
+              {t(
+                "Most agents only show you what's on the MLS. Through Corner Connect, Kasandra has access to off-market inventory, cash-offer solutions, and investment opportunities that never hit public listings.",
+                "La mayoría de los agentes solo te muestran lo que está en el MLS. A través de Corner Connect, Kasandra tiene acceso a inventario fuera del mercado, soluciones de oferta en efectivo y oportunidades de inversión que nunca llegan a listados públicos."
+              )}
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+              <div className="w-12 h-12 rounded-full bg-cc-gold/20 flex items-center justify-center mb-4">
+                <Eye className="w-6 h-6 text-cc-gold" />
+              </div>
+              <h3 className="text-white font-semibold text-lg mb-2">
+                {t("Off-Market Properties", "Propiedades Fuera del Mercado")}
+              </h3>
+              <p className="text-white/60 text-sm leading-relaxed">
+                {t(
+                  "Properties that sell before they're ever listed. Corner Connect's network gives you first access to inventory most buyers never see.",
+                  "Propiedades que se venden antes de ser listadas. La red de Corner Connect te da primer acceso a inventario que la mayoría de compradores nunca ve."
+                )}
+              </p>
+            </div>
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+              <div className="w-12 h-12 rounded-full bg-cc-gold/20 flex items-center justify-center mb-4">
+                <Banknote className="w-6 h-6 text-cc-gold" />
+              </div>
+              <h3 className="text-white font-semibold text-lg mb-2">
+                {t("Cash Offer Solutions", "Soluciones de Oferta en Efectivo")}
+              </h3>
+              <p className="text-white/60 text-sm leading-relaxed">
+                {t(
+                  "Need to sell fast? No stress, no fees, we cover closing costs, no inspections required. A real solution for sellers who need speed and certainty.",
+                  "¿Necesitas vender rápido? Sin estrés, sin comisiones, cubrimos costos de cierre, sin inspecciones requeridas. Una solución real para vendedores que necesitan rapidez y certeza."
+                )}
+              </p>
+            </div>
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+              <div className="w-12 h-12 rounded-full bg-cc-gold/20 flex items-center justify-center mb-4">
+                <ShieldCheck className="w-6 h-6 text-cc-gold" />
+              </div>
+              <h3 className="text-white font-semibold text-lg mb-2">
+                {t("Distressed Property Solutions", "Soluciones para Propiedades en Dificultad")}
+              </h3>
+              <p className="text-white/60 text-sm leading-relaxed">
+                {t(
+                  "Behind on payments? Facing a difficult situation with your property? Kasandra specializes in finding solutions that protect your equity and your future — with discretion and care.",
+                  "¿Atrasado en pagos? ¿Enfrentando una situación difícil con tu propiedad? Kasandra se especializa en encontrar soluciones que protejan tu patrimonio y tu futuro — con discreción y cuidado."
+                )}
+              </p>
+            </div>
+          </div>
+          <div className="text-center mt-10">
+            <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3">
+              <Link to="/contact">
+                {t("Ask About Off-Market Properties", "Pregunta Sobre Propiedades Fuera del Mercado")}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
