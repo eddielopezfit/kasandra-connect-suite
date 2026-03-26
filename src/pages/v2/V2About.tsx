@@ -3,7 +3,7 @@ import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, MessageCircle } from "lucide-react";
+import { CheckCircle, MessageCircle, Home, Star, Mic, Heart, Sparkles, Users } from "lucide-react";
 import CredentialsBentoGrid from "@/components/v2/CredentialsBentoGrid";
 import { Link } from "react-router-dom";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
@@ -145,6 +145,96 @@ const V2AboutContent = () => {
         </div>
       </section>
 
+      {/* My Journey — Personal Story */}
+      <section className="bg-white py-16 md:py-20">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
+            {t("My Journey", "Mi Historia")}
+          </span>
+          <h2 className="font-serif text-4xl xl:text-5xl font-bold text-cc-navy mt-2 mb-8">
+            {t("A Little About Me", "Un Poco Sobre Mí")}
+          </h2>
+
+          <div className="space-y-6 text-cc-charcoal/80 leading-relaxed text-[17px]">
+            <p>
+              {t(
+                "I grew up between Douglas, Arizona and Agua Prieta, Sonora — a border town kid who learned early that two cultures, two languages, and two ways of seeing the world aren't a complication. They're a superpower.",
+                "Crecí entre Douglas, Arizona y Agua Prieta, Sonora — una niña de pueblo fronterizo que aprendió temprano que dos culturas, dos idiomas y dos formas de ver el mundo no son una complicación. Son un superpoder."
+              )}
+            </p>
+            <p>
+              {t(
+                "Before real estate, I spent years in financial services — life insurance, specifically. That's where I learned how to sit with families during their most vulnerable moments and help them make decisions that protect their future. When I transitioned to real estate in 2018, I brought that same approach: listen first, educate always, pressure never.",
+                "Antes de bienes raíces, pasé años en servicios financieros — seguros de vida, específicamente. Ahí aprendí a sentarme con familias en sus momentos más vulnerables y ayudarles a tomar decisiones que protejan su futuro. Cuando hice la transición a bienes raíces en 2018, traje el mismo enfoque: escuchar primero, educar siempre, presionar nunca."
+              )}
+            </p>
+            <p>
+              {t(
+                "I started this career at 35. Some people thought I was late. I think I was right on time. By 42, I've guided over 100 families through one of the biggest decisions of their lives — and I've earned the International Diamond Society recognition, the Certified Global Luxury Property Specialist designation, and a 5-star average across 126+ reviews. But the credential I'm most proud of? The families who call me back for their second, third, or fourth transaction.",
+                "Comencé esta carrera a los 35. Algunas personas pensaron que era tarde. Yo creo que fue justo a tiempo. A los 42, he guiado a más de 100 familias a través de una de las decisiones más grandes de sus vidas — y he ganado el reconocimiento International Diamond Society, la designación de Especialista Certificada en Propiedades de Lujo Global, y un promedio de 5 estrellas en más de 126 reseñas. Pero la credencial de la que más me enorgullezco? Las familias que me llaman de nuevo para su segunda, tercera o cuarta transacción."
+              )}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Investments in Myself */}
+      <section className="bg-cc-ivory py-16 md:py-20">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
+            {t("Investments in Myself", "Inversiones en Mí Misma")}
+          </span>
+          <h2 className="font-serif text-4xl xl:text-5xl font-bold text-cc-navy mt-2 mb-10">
+            {t("I Believe in Walking the Talk", "Creo en Predicar con el Ejemplo")}
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white rounded-xl p-6 shadow-soft border border-cc-sand-dark/20">
+              <div className="w-10 h-10 bg-cc-gold/10 rounded-full flex items-center justify-center mb-4">
+                <Home className="w-5 h-5 text-cc-gold" />
+              </div>
+              <h3 className="font-serif text-lg font-bold text-cc-navy mb-2">
+                {t("Construction Course", "Curso de Construcción")}
+              </h3>
+              <p className="text-sm text-cc-charcoal/70 leading-relaxed">
+                {t(
+                  "I completed a 6-month construction course where I built 15 tiny homes. I invested in understanding how homes are actually constructed — not just how they're sold. When I walk through a property with you, I see what most agents don't.",
+                  "Completé un curso de construcción de 6 meses donde construí 15 casas pequeñas. Invertí en entender cómo se construyen las casas — no solo cómo se venden. Cuando camino por una propiedad contigo, veo lo que la mayoría de los agentes no ven."
+                )}
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-soft border border-cc-sand-dark/20">
+              <div className="w-10 h-10 bg-cc-gold/10 rounded-full flex items-center justify-center mb-4">
+                <Star className="w-5 h-5 text-cc-gold" />
+              </div>
+              <h3 className="font-serif text-lg font-bold text-cc-navy mb-2">
+                {t("Personal Development", "Desarrollo Personal")}
+              </h3>
+              <p className="text-sm text-cc-charcoal/70 leading-relaxed">
+                {t(
+                  "Multiple Tony Robbins seminars, Greater Tucson Leadership Class of 2026, and continuous education in real estate. I believe the best agents are the ones who never stop growing.",
+                  "Múltiples seminarios de Tony Robbins, Greater Tucson Leadership Promoción 2026, y educación continua en bienes raíces. Creo que los mejores agentes son los que nunca dejan de crecer."
+                )}
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-soft border border-cc-sand-dark/20">
+              <div className="w-10 h-10 bg-cc-gold/10 rounded-full flex items-center justify-center mb-4">
+                <Mic className="w-5 h-5 text-cc-gold" />
+              </div>
+              <h3 className="font-serif text-lg font-bold text-cc-navy mb-2">
+                {t("Media & Community Voice", "Voz en Medios y Comunidad")}
+              </h3>
+              <p className="text-sm text-cc-charcoal/70 leading-relaxed">
+                {t(
+                  "Host of \"Lifting You Up\" on Urbana 92.5 FM and \"Todo Empieza en Casa\" on YouTube. I created these platforms because I believe in lifting others up — and because homeownership education shouldn't only be available in English.",
+                  "Conductora de \"Lifting You Up\" en Urbana 92.5 FM y \"Todo Empieza en Casa\" en YouTube. Creé estas plataformas porque creo en levantar a otros — y porque la educación sobre vivienda no debería estar disponible solo en inglés."
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Credentials Bento Grid */}
       <CredentialsBentoGrid />
 
@@ -156,12 +246,44 @@ const V2AboutContent = () => {
       </div>
 
       {/* Personal Touch */}
-      <section className="bg-cc-sand py-10">
+      <section className="bg-cc-sand py-14">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-cc-text-muted italic text-lg">
-            {t("Dog mom. Singer. Karaoke enthusiast. Community-driven.", "Mamá perruna. Cantante. Entusiasta del karaoke. Comprometida con la comunidad.")}
-          </p>
-          <p className="text-cc-gold font-semibold text-sm mt-4 italic">
+          <h3 className="font-serif text-2xl font-bold text-cc-navy mb-8">
+            {t("Beyond Real Estate", "Más Allá de Bienes Raíces")}
+          </h3>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto mb-8">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center">
+                <Heart className="w-5 h-5 text-cc-gold" />
+              </div>
+              <p className="font-semibold text-cc-navy text-sm">{t("Dog Mom", "Mamá Perruna")}</p>
+              <p className="text-xs text-cc-charcoal/60">{t("Lilly is always on the team", "Lilly siempre está en el equipo")}</p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center">
+                <Mic className="w-5 h-5 text-cc-gold" />
+              </div>
+              <p className="font-semibold text-cc-navy text-sm">{t("Singer", "Cantante")}</p>
+              <p className="text-xs text-cc-charcoal/60">{t("Fiestas Patrias, karaoke, anywhere", "Fiestas Patrias, karaoke, donde sea")}</p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center">
+                <Users className="w-5 h-5 text-cc-gold" />
+              </div>
+              <p className="font-semibold text-cc-navy text-sm">{t("Community First", "Comunidad Primero")}</p>
+              <p className="text-xs text-cc-charcoal/60">{t("5 years nonprofit leadership", "5 años liderazgo sin fines de lucro")}</p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 bg-cc-gold/10 rounded-full flex items-center justify-center">
+                <Sparkles className="w-5 h-5 text-cc-gold" />
+              </div>
+              <p className="font-semibold text-cc-navy text-sm">{t("Always Growing", "Siempre Creciendo")}</p>
+              <p className="text-xs text-cc-charcoal/60">{t("\"Growth IS the formula\"", "\"El crecimiento ES la fórmula\"")}</p>
+            </div>
+          </div>
+
+          <p className="text-cc-gold font-semibold text-sm italic">
             {t(
               '"Growth and giving back IS the formula to continuous, true happiness."',
               '"El crecimiento y retribuir ES la fórmula para la felicidad continua y verdadera."'

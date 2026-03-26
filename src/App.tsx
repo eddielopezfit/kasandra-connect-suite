@@ -46,6 +46,7 @@ const V2About = lazy(() => import("./pages/v2/V2About"));
 const V2Contact = lazy(() => import("./pages/v2/V2Contact"));
 const V2Privacy = lazy(() => import("./pages/v2/V2Privacy"));
 const V2Terms = lazy(() => import("./pages/v2/V2Terms"));
+const V2TrustedNetwork = lazy(() => import("./pages/v2/V2TrustedNetwork"));
 const V2SelenaAI = lazy(() => import("./pages/v2/V2SelenaAI"));
 const V2AffordabilityCalculator = lazy(() => import("./pages/v2/V2AffordabilityCalculator"));
 const V2BAHCalculator = lazy(() => import("./pages/v2/V2BAHCalculator"));
@@ -120,6 +121,7 @@ const App = () => {
                 <Route path="/net-to-seller" element={<V2NetToSeller />} />
                 <Route path="/privacy" element={<V2Privacy />} />
                 <Route path="/terms" element={<V2Terms />} />
+                <Route path="/network" element={<V2TrustedNetwork />} />
 
                 {/* Ad Funnel Routes (Isolated) */}
                 <Route path="/ad/seller" element={<SellerLanding />} />
