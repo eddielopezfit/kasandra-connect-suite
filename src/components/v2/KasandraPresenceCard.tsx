@@ -74,7 +74,7 @@ const KasandraPresenceCard = ({
                 Kasandra Prieto
               </p>
               <p className="text-xs text-cc-charcoal/50">
-                {t("Associate Broker · Corner Connect", "Corredora Asociada · Corner Connect")}
+                {t("REALTOR® · Corner Connect", "REALTOR® · Corner Connect")}
               </p>
             </div>
           </div>
