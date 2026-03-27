@@ -21,7 +21,8 @@
 
 - **Primary model**: `google/gemini-3-flash-preview`
 - **Fallback**: `openai/gpt-4o-mini`
-- **`max_tokens`**: 150 default, overrideable by guard rules
+- **`max_tokens`**: 100 for Phase 2+ (brevity enforcement), 150 for Phase 1 orientation; overrideable by guard rules
+- **Post-processing**: Server-side sentence truncation at 3rd sentence boundary (KB-10 enforcement)
 
 ## Refactor Notes
 
