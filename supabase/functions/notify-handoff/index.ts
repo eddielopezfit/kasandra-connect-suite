@@ -303,7 +303,7 @@ serve(async (req) => {
       selena_amenities_clean: context.amenities ?? "",
       selena_financing_status: context.financing_status ?? "",
       selena_financing_details_clean: context.financing_details ?? "",
-      selena_is_pre_approved: context.pre_approved ? "yes" : "no",
+      selena_is_preapproved: context.pre_approved ? "yes" : "no",
       selena_source: context.entry_source ?? "selena_chat",
       selena_page_path: context.page_path ?? "",
       selena_session_source: context.session_source ?? "",
