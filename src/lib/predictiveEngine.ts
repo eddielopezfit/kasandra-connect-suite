@@ -80,12 +80,12 @@ export function predictNextBestAction(ctx: PredictiveContext): PredictionResult 
   if (ctx.confidenceLevel === 'high' && (ctx.journeyDepth === 'engaged' || ctx.journeyDepth === 'ready')) {
     return {
       action: 'book_call',
-      headlineEn: "You're close to a decision — let's map out your next move.",
-      headlineEs: 'Estás cerca de una decisión — planifiquemos tu próximo paso.',
-      subtextEn: 'A short strategy call can save you weeks of uncertainty.',
-      subtextEs: 'Una llamada estratégica breve puede ahorrarte semanas de incertidumbre.',
-      primaryCta: { labelEn: 'Book Strategy Call', labelEs: 'Agendar Llamada Estratégica', destination: '/book' },
-      secondaryCta: { labelEn: 'Ask Selena First', labelEs: 'Pregunta a Selena', destination: 'selena:predictive_guidance' },
+      headlineEn: "You've done the hard part. Let's turn this into a plan.",
+      headlineEs: 'Ya hiciste lo más difícil. Convirtamos esto en un plan.',
+      subtextEn: 'A short strategy session with Kasandra can save you weeks of second-guessing.',
+      subtextEs: 'Una sesión de estrategia con Kasandra puede ahorrarte semanas de indecisión.',
+      primaryCta: { labelEn: 'Plan your next step with Kasandra', labelEs: 'Planifica tu próximo paso con Kasandra', destination: '/book' },
+      secondaryCta: { labelEn: 'Let Selena guide you through this', labelEs: 'Deja que Selena te guíe', destination: 'selena:predictive_guidance' },
     };
   }
 
@@ -93,12 +93,12 @@ export function predictNextBestAction(ctx: PredictiveContext): PredictionResult 
   if (ctx.neighborhoodExplored && ctx.toolsUsed === 0) {
     return {
       action: 'compare_areas',
-      headlineEn: 'Most people at this stage compare 2–3 areas before deciding.',
-      headlineEs: 'La mayoría en esta etapa comparan 2–3 áreas antes de decidir.',
-      subtextEn: 'Side-by-side comparison reveals what matters most to you.',
-      subtextEs: 'La comparación lado a lado revela lo que más te importa.',
-      primaryCta: { labelEn: 'Compare Areas', labelEs: 'Comparar Áreas', destination: '/neighborhood-compare' },
-      secondaryCta: { labelEn: 'Ask Selena', labelEs: 'Pregunta a Selena', destination: 'selena:predictive_guidance' },
+      headlineEn: 'Based on what you\'ve explored so far, narrowing your options will bring the most clarity.',
+      headlineEs: 'Según lo que has explorado, reducir tus opciones te dará más claridad.',
+      subtextEn: 'Seeing areas side by side reveals what actually matters most to you.',
+      subtextEs: 'Ver áreas lado a lado revela lo que realmente más te importa.',
+      primaryCta: { labelEn: 'See how this compares to other areas', labelEs: 'Mira cómo se compara con otras áreas', destination: '/neighborhood-compare' },
+      secondaryCta: { labelEn: 'Get guided help from Selena', labelEs: 'Recibe orientación de Selena', destination: 'selena:predictive_guidance' },
     };
   }
 
@@ -106,12 +106,12 @@ export function predictNextBestAction(ctx: PredictiveContext): PredictionResult 
   if (ctx.toolsUsed >= 1 && ctx.confidenceLevel === 'medium') {
     return {
       action: 'refine_plan',
-      headlineEn: "You've started — now let's sharpen your plan.",
-      headlineEs: 'Has empezado — ahora afinemos tu plan.',
-      subtextEn: 'With the data you have, a quick refinement can clarify your path forward.',
-      subtextEs: 'Con los datos que tienes, un ajuste rápido puede aclarar tu camino.',
+      headlineEn: "You've started building clarity — let's sharpen the picture.",
+      headlineEs: 'Estás ganando claridad — afinemos el panorama.',
+      subtextEn: 'You\'re not expected to figure this out all at once. A small refinement here can make a big difference.',
+      subtextEs: 'No tienes que resolverlo todo de una vez. Un pequeño ajuste aquí puede hacer una gran diferencia.',
       primaryCta: getRefinePrimaryCta(ctx),
-      secondaryCta: { labelEn: 'Talk to Selena', labelEs: 'Habla con Selena', destination: 'selena:predictive_guidance' },
+      secondaryCta: { labelEn: 'Let Selena guide you through this', labelEs: 'Deja que Selena te guíe', destination: 'selena:predictive_guidance' },
     };
   }
 
@@ -119,12 +119,12 @@ export function predictNextBestAction(ctx: PredictiveContext): PredictionResult 
   if (ctx.guidesViewed >= 3 && ctx.toolsUsed === 0) {
     return {
       action: 'run_tool',
-      headlineEn: "Based on what you've read, your next step is to clarify your numbers.",
-      headlineEs: 'Según lo que has leído, tu próximo paso es aclarar tus números.',
-      subtextEn: 'Knowledge is great — but clarity comes from running the numbers.',
-      subtextEs: 'El conocimiento es genial — pero la claridad viene de analizar los números.',
+      headlineEn: "You've been doing great research. Now let's see what actually fits your numbers.",
+      headlineEs: 'Has investigado muy bien. Ahora veamos qué encaja realmente con tus números.',
+      subtextEn: 'This is where most people start to feel clarity — when the numbers become real.',
+      subtextEs: 'Aquí es donde la mayoría empieza a sentir claridad — cuando los números se vuelven reales.',
       primaryCta: getToolCta(ctx),
-      secondaryCta: { labelEn: 'Ask Selena', labelEs: 'Pregunta a Selena', destination: 'selena:predictive_guidance' },
+      secondaryCta: { labelEn: 'Get guided help from Selena', labelEs: 'Recibe orientación de Selena', destination: 'selena:predictive_guidance' },
     };
   }
 
@@ -132,12 +132,12 @@ export function predictNextBestAction(ctx: PredictiveContext): PredictionResult 
   if (ctx.scrollDepth >= 60 && ctx.toolsUsed === 0 && ctx.guidesViewed === 0) {
     return {
       action: 'ask_selena',
-      headlineEn: 'Looking for something specific? Selena can help you find it.',
-      headlineEs: '¿Buscas algo específico? Selena puede ayudarte a encontrarlo.',
-      subtextEn: "She'll guide you based on what you're exploring.",
-      subtextEs: 'Te guiará según lo que estés explorando.',
-      primaryCta: { labelEn: 'Ask Selena', labelEs: 'Pregunta a Selena', destination: 'selena:predictive_guidance' },
-      secondaryCta: { labelEn: 'Browse Guides', labelEs: 'Explorar Guías', destination: '/guides' },
+      headlineEn: 'Looking for something specific? Selena can point you in the right direction.',
+      headlineEs: '¿Buscas algo específico? Selena puede orientarte.',
+      subtextEn: "There's no pressure — she'll guide you based on what you're exploring.",
+      subtextEs: 'Sin presión — te guiará según lo que estés explorando.',
+      primaryCta: { labelEn: 'Let Selena guide you', labelEs: 'Deja que Selena te guíe', destination: 'selena:predictive_guidance' },
+      secondaryCta: { labelEn: 'Explore our guides', labelEs: 'Explora nuestras guías', destination: '/guides' },
     };
   }
 
@@ -145,24 +145,24 @@ export function predictNextBestAction(ctx: PredictiveContext): PredictionResult 
   if (ctx.guidesViewed >= 1 && ctx.guidesViewed < 3) {
     return {
       action: 'explore_guides',
-      headlineEn: "You're building your knowledge — here's what to read next.",
-      headlineEs: 'Estás construyendo tu conocimiento — esto es lo que leer a continuación.',
-      subtextEn: 'People who read 3+ guides make more confident decisions.',
-      subtextEs: 'Las personas que leen 3+ guías toman decisiones más seguras.',
-      primaryCta: { labelEn: 'Continue Reading', labelEs: 'Continuar Leyendo', destination: '/guides' },
-      secondaryCta: { labelEn: 'Ask Selena', labelEs: 'Pregunta a Selena', destination: 'selena:predictive_guidance' },
+      headlineEn: "You're building a strong foundation — here's what to explore next.",
+      headlineEs: 'Estás construyendo una base sólida — esto es lo que explorar a continuación.',
+      subtextEn: 'People who explore a few more perspectives tend to feel more confident in their decisions.',
+      subtextEs: 'Quienes exploran algunas perspectivas más suelen sentirse más seguros en sus decisiones.',
+      primaryCta: { labelEn: 'Continue building your knowledge', labelEs: 'Continúa construyendo tu conocimiento', destination: '/guides' },
+      secondaryCta: { labelEn: 'Get guided help from Selena', labelEs: 'Recibe orientación de Selena', destination: 'selena:predictive_guidance' },
     };
   }
 
   // Default: ask selena
   return {
     action: 'ask_selena',
-    headlineEn: 'Not sure where to start? Selena can guide you.',
-    headlineEs: '¿No sabes por dónde empezar? Selena puede guiarte.',
-    subtextEn: "Tell her what you're thinking — she'll point you in the right direction.",
-    subtextEs: 'Dile lo que estás pensando — ella te indicará el camino correcto.',
-    primaryCta: { labelEn: 'Talk to Selena', labelEs: 'Habla con Selena', destination: 'selena:predictive_guidance' },
-    secondaryCta: { labelEn: 'Explore Areas', labelEs: 'Explorar Áreas', destination: '/neighborhoods' },
+    headlineEn: 'Not sure where to start? Selena can walk you through it.',
+    headlineEs: '¿No sabes por dónde empezar? Selena puede acompañarte.',
+    subtextEn: "Tell her what you're thinking — she'll help you move forward with clarity.",
+    subtextEs: 'Dile lo que estás pensando — te ayudará a avanzar con claridad.',
+    primaryCta: { labelEn: 'Let Selena guide you', labelEs: 'Deja que Selena te guíe', destination: 'selena:predictive_guidance' },
+    secondaryCta: { labelEn: 'Explore areas on your own', labelEs: 'Explora áreas por tu cuenta', destination: '/neighborhoods' },
   };
 }
 
