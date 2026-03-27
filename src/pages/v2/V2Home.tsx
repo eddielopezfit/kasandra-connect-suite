@@ -516,7 +516,7 @@ const V2HomeContent = () => {
                   <li>• {t("Bilingual support throughout", "Apoyo bilingüe durante todo el proceso")}</li>
                 </ul>
                 <Link to="/buy" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                  {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
+                  {t("See how I help buyers", "Descubre cómo ayudo a compradores")} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
 
