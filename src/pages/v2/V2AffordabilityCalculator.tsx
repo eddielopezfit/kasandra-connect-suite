@@ -39,6 +39,9 @@ const V2AffordabilityCalculatorContent = () => {
   const debtsNum = parseInt(debts.replace(/[^0-9]/g, "")) || 0;
   const downNum = parseFloat(downPct) || 5;
 
+  // Pass live rate from market pulse when available (sale_to_list_ratio is not the mortgage rate,
+  // but the pipeline may return a conventional_rate field in the future — for now use the
+  // algorithm's built-in base rate which is updated monthly in the source code)
   const result: AffordabilityResult = calculateAffordability(incomeNum, debtsNum, downNum, creditTier);
 
   const handleCalculate = () => {
