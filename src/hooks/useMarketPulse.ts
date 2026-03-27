@@ -15,6 +15,7 @@ export interface MarketPulse {
   month?: string;
   sale_to_list_ratio?: number;
   median_days_on_market?: number;
+  median_sale_price?: number | null;
   source_links?: unknown;
   verified_at?: string;
 }
