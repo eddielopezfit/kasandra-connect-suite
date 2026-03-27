@@ -134,8 +134,8 @@ function getBannerContent(
         "Estás explorando vecindarios. ¿Quieres comparar áreas lado a lado?"
       ),
       actions: [
-        { type: 'link', label: t("Compare areas", "Comparar áreas"), destination: '/neighborhoods/compare' },
-        { type: 'chat', label: t("Ask Selena", "Pregúntale a Selena"), destination: 'selena' },
+        { type: 'link', label: t("See how areas compare", "Mira cómo se comparan las áreas"), destination: '/neighborhoods/compare' },
+        { type: 'chat', label: t("Get guided help from Selena", "Recibe orientación de Selena"), destination: 'selena' },
       ],
       isReturning: false,
     };
