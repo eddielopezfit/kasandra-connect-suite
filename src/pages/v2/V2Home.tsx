@@ -335,12 +335,12 @@ const V2HomeContent = () => {
                 {t("About Kasandra", "Sobre Kasandra")}
               </span>
               <h2 className="font-serif text-4xl font-bold text-cc-blue mt-2 mb-4">
-                {t("Your Trusted Tucson REALTOR®", "Su REALTOR® de Confianza en Tucson")}
+                {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
               </h2>
               <p className="text-cc-text-muted max-w-2xl mx-auto">
                 {t(
-                  "A proud Tucson resident for over two decades, I serve my community not just as a licensed REALTOR®, but as a leader, advocate, and trusted voice.",
-                  "Orgullosa residente de Tucson por más de dos décadas, sirvo a mi comunidad no solo como REALTOR® licenciada, sino como líder y defensora."
+                  "I didn't get into real estate to sell houses — I got in to help families make one of the biggest decisions of their lives with someone they actually trust.",
+                  "No entré a bienes raíces para vender casas — entré para ayudar a las familias a tomar una de las decisiones más grandes de su vida con alguien en quien realmente confían."
                 )}
               </p>
             </div>
