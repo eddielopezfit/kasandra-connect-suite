@@ -46,7 +46,8 @@ export function calculateAffordability(
   income: number,
   debts: number,
   downPercent: number,
-  creditTier: CreditTier = 'good'
+  creditTier: CreditTier = 'good',
+  rateOverride?: number
 ): AffordabilityResult {
   const empty: AffordabilityResult = {
     maxPrice: 0,
