@@ -478,6 +478,21 @@ const V2HomeContent = () => {
       {/* Trust Bar */}
       <TrustBar />
 
+      {/* Google Reviews Star Badge — visual trust signal */}
+      <div className="bg-cc-ivory py-4 border-b border-cc-sand-dark/20">
+        <GoogleReviewsStarBadge />
+      </div>
+
+      {/* Social Proof — Staggered Masonry (moved up for trust) */}
+      <Suspense fallback={<div className="h-64 bg-cc-ivory animate-pulse" />}>
+        <TestimonialColumns />
+      </Suspense>
+
+      {/* Google Reviews — Full Section */}
+      <Suspense fallback={null}>
+        <LazyGoogleReviews />
+      </Suspense>
+
       {/* Services Section - Header Band */}
       <section className="py-16 lg:py-20 bg-cc-blue-bg">
         <div className="container mx-auto px-4">
