@@ -135,7 +135,7 @@ export function getGovernedChips(
         return { chips: [CHIP_KEYS.GUIDE_SELL_OR_RENT, CHIP_KEYS.TUCSON_MARKET_DATA], phase: 2, escalated: false };
       }
       if (phase2TurnCount === 2) {
-        return { chips: [CHIP_KEYS.COMPARE_CASH_LISTING, CHIP_KEYS.BROWSE_GUIDES], phase: 2, escalated: false };
+        return { chips: [CHIP_KEYS.COMPARE_CASH_LISTING, suppressBrowseGuides ? CHIP_KEYS.TALK_WITH_KASANDRA : CHIP_KEYS.BROWSE_GUIDES], phase: 2, escalated: false };
       }
       // After 3+ turns escalate to booking
       return { chips: [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 3, escalated: true };
