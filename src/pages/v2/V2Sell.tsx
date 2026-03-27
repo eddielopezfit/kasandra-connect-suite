@@ -143,7 +143,7 @@ const V2SellContent = () => {
               {t("Corner Connect Exclusive", "Exclusivo de Corner Connect")}
             </span>
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-white mb-4">
-              {t("Need to Sell Fast? Get a Cash Offer.", "¿Necesitas Vender Rápido? Obtén una Oferta en Efectivo.")}
+              {t("Need to sell fast? Let me show you what a real cash offer looks like.", "¿Necesitas vender rápido? Déjame mostrarte cómo luce una oferta en efectivo real.")}
             </h2>
             <div className="flex flex-wrap justify-center gap-4 mb-6">
               <span className="flex items-center gap-2 text-white/80 text-sm">
