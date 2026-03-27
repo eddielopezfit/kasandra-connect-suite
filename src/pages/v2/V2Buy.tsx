@@ -109,56 +109,127 @@ const V2BuyContent = () => {
         </div>
       </section>
 
-      {/* Sub-Hero Tools Strip — Closing Costs + Neighborhoods (demoted from hero) */}
-      <section className="bg-white border-b border-cc-sand-dark/20 py-6">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <p className="text-xs font-semibold text-cc-navy/50 uppercase tracking-wider text-center mb-4">
-            {t("Buyer Planning Tools", "Herramientas de Planificación")}
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Link
-              to="/buyer-closing-costs"
-              onClick={() => handleCTAClick('sub_hero_closing_costs', '/buyer-closing-costs')}
-              className="flex items-center gap-3 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all group"
-            >
-              <DollarSign className="w-5 h-5 text-cc-gold flex-shrink-0" />
-              <span className="text-sm font-semibold text-cc-navy leading-tight">
-                {t("Estimate Closing Costs", "Estimar Costos de Cierre")}
-              </span>
-            </Link>
-            <Link
-              to="/neighborhood-compare"
-              onClick={() => handleCTAClick('sub_hero_neighborhood_compare', '/neighborhood-compare')}
-              className="flex items-center gap-3 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all group"
-            >
-              <Search className="w-5 h-5 text-cc-gold flex-shrink-0" />
-              <span className="text-sm font-semibold text-cc-navy leading-tight">
-                {t("Compare Neighborhoods", "Comparar Vecindarios")}
-              </span>
-            </Link>
-            <Link
-              to="/affordability-calculator"
-              onClick={() => handleCTAClick('sub_hero_affordability', '/affordability-calculator')}
-              className="flex items-center gap-3 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all group"
-            >
-              <Calculator className="w-5 h-5 text-cc-gold flex-shrink-0" />
-              <span className="text-sm font-semibold text-cc-navy leading-tight">
-                {t("Check Buying Power", "Verificar Poder de Compra")}
-              </span>
-            </Link>
-            <Link
-              to="/bah-calculator"
-              onClick={() => handleCTAClick('sub_hero_bah', '/bah-calculator')}
-              className="flex items-center gap-3 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all group"
-            >
-              <Shield className="w-5 h-5 text-cc-gold flex-shrink-0" />
-              <span className="text-sm font-semibold text-cc-navy leading-tight">
-                {t("BAH Calculator (Military)", "Calculadora BAH (Militar)")}
-              </span>
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Dynamic Buyer Tools Strip */}
+      {journey.journeyDepth !== 'ready' && (() => {
+        const allTools = [
+          {
+            id: 'buyer_readiness',
+            icon: CheckCircle,
+            labelEn: 'Buyer Readiness Check',
+            labelEs: 'Check de Preparación',
+            completedEn: '✓ Readiness Checked',
+            completedEs: '✓ Preparación Evaluada',
+            to: '/buyer-readiness',
+            ctaName: 'sub_hero_buyer_readiness',
+            military: false,
+          },
+          {
+            id: 'bah_calculator',
+            icon: Shield,
+            labelEn: 'BAH Calculator (Military)',
+            labelEs: 'Calculadora BAH (Militar)',
+            completedEn: '✓ BAH Calculated',
+            completedEs: '✓ BAH Calculado',
+            to: '/bah-calculator',
+            ctaName: 'sub_hero_bah',
+            military: true,
+          },
+          {
+            id: 'affordability',
+            icon: Calculator,
+            labelEn: 'Check Buying Power',
+            labelEs: 'Verificar Poder de Compra',
+            completedEn: '✓ Buying Power Checked',
+            completedEs: '✓ Poder de Compra Verificado',
+            to: '/affordability-calculator',
+            ctaName: 'sub_hero_affordability',
+            military: false,
+          },
+          {
+            id: 'buyer_closing_costs',
+            icon: DollarSign,
+            labelEn: 'Estimate Closing Costs',
+            labelEs: 'Estimar Costos de Cierre',
+            completedEn: '✓ Costs Estimated',
+            completedEs: '✓ Costos Estimados',
+            to: '/buyer-closing-costs',
+            ctaName: 'sub_hero_closing_costs',
+            military: false,
+          },
+          {
+            id: 'neighborhood_compare',
+            icon: Search,
+            labelEn: 'Compare Neighborhoods',
+            labelEs: 'Comparar Vecindarios',
+            completedEn: '✓ Neighborhoods Compared',
+            completedEs: '✓ Vecindarios Comparados',
+            to: '/neighborhood-compare',
+            ctaName: 'sub_hero_neighborhood_compare',
+            military: false,
+          },
+        ];
+
+        // Filter: hide military tools for non-military users
+        const filtered = allTools.filter(tool => !tool.military || journey.isMilitary);
+
+        // Sort: incomplete first, completed last
+        const sorted = [...filtered].sort((a, b) => {
+          const aCompleted = journey.toolsCompleted.includes(a.id);
+          const bCompleted = journey.toolsCompleted.includes(b.id);
+          if (aCompleted && !bCompleted) return 1;
+          if (!aCompleted && bCompleted) return -1;
+          return 0;
+        });
+
+        // Show max 4
+        const visible = sorted.slice(0, 4);
+
+        const headerEn = journey.journeyDepth === 'new'
+          ? "Start here — your buyer toolkit"
+          : journey.journeyDepth === 'exploring'
+          ? "Pick up where you left off"
+          : "You're making progress";
+        const headerEs = journey.journeyDepth === 'new'
+          ? "Empieza aquí — tu kit de comprador"
+          : journey.journeyDepth === 'exploring'
+          ? "Continúa donde te quedaste"
+          : "Vas avanzando";
+
+        return (
+          <section className="bg-white border-b border-cc-sand-dark/20 py-6">
+            <div className="container mx-auto px-4 max-w-3xl">
+              <p className="text-xs font-semibold text-cc-navy/50 uppercase tracking-wider text-center mb-4">
+                {t(headerEn, headerEs)}
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {visible.map(tool => {
+                  const isCompleted = journey.toolsCompleted.includes(tool.id);
+                  const Icon = isCompleted ? CheckCircle2 : tool.icon;
+                  return (
+                    <Link
+                      key={tool.id}
+                      to={tool.to}
+                      onClick={() => handleCTAClick(tool.ctaName, tool.to)}
+                      className={`flex items-center gap-3 rounded-xl border px-4 py-3.5 transition-all group ${
+                        isCompleted
+                          ? 'bg-cc-sand/50 border-cc-sand-dark/20 opacity-60'
+                          : 'bg-cc-ivory hover:bg-cc-sand border-cc-sand-dark/30 hover:border-cc-navy/20'
+                      }`}
+                    >
+                      <Icon className={`w-5 h-5 flex-shrink-0 ${isCompleted ? 'text-green-600' : 'text-cc-gold'}`} />
+                      <span className="text-sm font-semibold text-cc-navy leading-tight">
+                        {isCompleted
+                          ? t(tool.completedEn, tool.completedEs)
+                          : t(tool.labelEn, tool.labelEs)}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* Buying Process Timeline */}
       <BuyingTimeline />
