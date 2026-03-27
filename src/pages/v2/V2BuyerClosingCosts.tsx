@@ -9,6 +9,7 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import { MessageCircle, ArrowRight, Info, DollarSign, Home, Percent, FileText, Calendar } from "lucide-react";
 import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
 interface CalcInputs {
   purchasePrice: string;
