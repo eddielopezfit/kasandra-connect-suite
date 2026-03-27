@@ -297,23 +297,19 @@ const V2CashOfferOptionsContent = () => {
                 {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
               </Link>
             </Button>
+            <Link
+              to="/cash-readiness"
+              className="block mx-auto mt-4 text-white/70 hover:text-cc-gold text-sm font-medium transition-colors"
+            >
+              {t("Or take the Cash Readiness Check first →", "O toma el Check de Preparación primero →")}
+            </Link>
             <button
               onClick={() => openChat({ source: 'cash_offer_bottom', intent: 'cash' })}
-              className="block mx-auto mt-3 text-white/60 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
+              className="block mx-auto mt-2 text-white/50 hover:text-cc-gold text-xs underline underline-offset-2 transition-colors"
             >
               {t("Or talk to Selena first", "O habla primero con Selena")}
             </button>
           </div>
-        </div>
-      </section>
-
-      {/* Tool Chaining — Next Step */}
-      <section className="pb-8 bg-cc-ivory">
-        <div className="container mx-auto px-4 max-w-xl">
-          <ToolResultNextStep
-            completedToolLabel="Cash vs. Traditional Comparison"
-            completedToolLabelEs="Comparación Efectivo vs. Tradicional"
-          />
         </div>
       </section>
 
