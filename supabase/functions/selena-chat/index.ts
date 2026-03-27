@@ -1378,6 +1378,11 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       } else if (chips.length > 0) {
         // Layer 7: Governed phase chips (fallback)
         suggestedReplies = chips;
+      } else {
+        // FIX 6: Empty chips guard — never return empty array
+        suggestedReplies = effectiveIntent === 'buy'
+          ? (language === 'es' ? [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.BROWSE_GUIDES] : [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.BROWSE_GUIDES])
+          : (language === 'es' ? [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA] : [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA]);
       }
     }
 
