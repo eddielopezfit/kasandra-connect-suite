@@ -643,7 +643,7 @@ const V2HomeContent = () => {
           <div className="text-center mt-10">
             <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3">
               <Link to="/off-market?source=homepage_corner_connect">
-                {t("Ask About Off-Market Properties", "Pregunta Sobre Propiedades Fuera del Mercado")}
+                {t("See what's available off-market", "Descubre lo que hay fuera del mercado")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
