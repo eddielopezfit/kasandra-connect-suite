@@ -10,7 +10,8 @@ import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 const FEATURED_SLUGS = ["catalina-foothills", "marana", "sahuarita"];
 
 const HomepageNeighborhoodCards = () => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
+  const { intent } = useJourneyProgress();
   
   const featured = FEATURED_SLUGS.map(slug =>
     NEIGHBORHOOD_REGISTRY.find(n => n.slug === slug)!
