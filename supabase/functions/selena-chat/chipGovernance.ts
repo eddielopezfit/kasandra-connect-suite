@@ -123,7 +123,10 @@ export function getGovernedChips(
   const suppressBrowseGuides = guidesRead >= 10;
 
   if (enterPhase3) {
-    const chips = [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA];
+    // FIX 1: Intent-aware Phase 3 — buyers get buying power chips, not seller chips
+    const chips = intent === 'buy'
+      ? [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.TALK_WITH_KASANDRA]
+      : [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA];
     return { chips, phase: 3, escalated: isLooping || engagement.hasComparedOptions >= 2 };
   }
 
