@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
+import NextBestActionCard from "@/components/v2/NextBestActionCard";
 import { ArrowLeft, User, MessageCircle, Bot } from "lucide-react";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -649,6 +650,14 @@ function GuideDetailContent() {
 
         {/* QA Guardrail: warn in dev if >1 CTA component rendered */}
         <GuideCTAGuardrail guideId={guideId} />
+
+        {/* Predictive Guidance — after guide content */}
+        <div className="mt-8">
+          <NextBestActionCard
+            contextLine="After reading this guide"
+            contextLineEs="Después de leer esta guía"
+          />
+        </div>
       </article>
 
       {/* Email Capture — non-intrusive, scroll-gated */}
