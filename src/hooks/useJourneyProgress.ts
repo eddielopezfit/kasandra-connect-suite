@@ -136,6 +136,36 @@ function deriveNextAction(
     }
   }
 
+  if (intent === 'dual' as Intent) {
+    if (!hasSellerDecision) {
+      return {
+        type: 'tool',
+        labelEn: 'Start Your Seller Decision',
+        labelEs: 'Inicia Tu Decisión de Venta',
+        destination: '/seller-decision',
+      };
+    }
+    if (!hasReadinessScore) {
+      return {
+        type: 'tool',
+        labelEn: 'Check Your Buyer Readiness',
+        labelEs: 'Verifica Tu Preparación de Compra',
+        destination: '/buyer-readiness',
+      };
+    }
+  }
+
+  if (intent === 'explore' as Intent || !intent) {
+    if (!hasExploredNeighborhood) {
+      return {
+        type: 'guide',
+        labelEn: 'Explore Tucson Neighborhoods',
+        labelEs: 'Explora Vecindarios de Tucson',
+        destination: '/neighborhoods',
+      };
+    }
+  }
+
   return {
     type: 'chat',
     labelEn: 'Ask Selena',
