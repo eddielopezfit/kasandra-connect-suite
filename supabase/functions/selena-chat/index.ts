@@ -636,7 +636,14 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         phase = 2;
         escalated = false;
       } else if (effectiveChipPhase >= 3) {
-        chips = language === 'es' ? ["Estimar mis ganancias netas", "Hablar con Kasandra"] : ["Estimate my net proceeds", "Talk with Kasandra"];
+        // FIX 1: Intent-aware Phase 3 chips — buyers get buyer chips, not seller chips
+        if (effectiveIntent === 'buy') {
+          chips = language === 'es' 
+            ? [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.TALK_WITH_KASANDRA] 
+            : [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.TALK_WITH_KASANDRA];
+        } else {
+          chips = language === 'es' ? ["Estimar mis ganancias netas", "Hablar con Kasandra"] : ["Estimate my net proceeds", "Talk with Kasandra"];
+        }
         phase = 3;
         escalated = rawGoverned.escalated;
       } else {
