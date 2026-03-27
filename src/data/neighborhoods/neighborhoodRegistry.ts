@@ -21,6 +21,28 @@ export interface NeighborhoodEntry {
   relatedNeighborhoods: [string, string, string];
   relatedGuides: string[];
   metaDescription: { en: string; es: string };
+
+  /* ── Area Decision Engine fields (optional — graceful degradation) ── */
+  positioningLine?: { en: string; es: string };
+  storyBreak?: { headline: { en: string; es: string }; body: { en: string; es: string } };
+  lifestyleFit?: {
+    strongMatch: { en: string[]; es: string[] };
+    considerCarefully: { en: string[]; es: string[] };
+  };
+  areaIntelligence?: {
+    priceRange: { en: string; es: string };
+    demandLevel: 'low' | 'moderate' | 'high';
+    marketSpeed: 'slow' | 'average' | 'fast';
+    propertyTypes: { en: string[]; es: string[] };
+  };
+  lifestyleHighlights?: {
+    dining: { en: string; es: string };
+    outdoor: { en: string; es: string };
+    dailyRhythm: { en: string; es: string };
+  };
+  schoolSummary?: { en: string; es: string };
+  heroImageUrl?: string;
+  lifestyleImageUrl?: string;
 }
 
 export const NEIGHBORHOOD_REGISTRY: NeighborhoodEntry[] = [
@@ -33,6 +55,35 @@ export const NEIGHBORHOOD_REGISTRY: NeighborhoodEntry[] = [
     heroTagline: {
       en: "The heart of Southern Arizona — urban grit, desert beauty, and a culture that's distinctly its own.",
       es: "El corazón del sur de Arizona — carácter urbano, belleza del desierto y una cultura única."
+    },
+    positioningLine: {
+      en: 'Walkable culture, desert soul, and homes with character.',
+      es: 'Cultura caminable, alma del desierto y casas con carácter.',
+    },
+    storyBreak: {
+      headline: { en: 'Where the City Meets the Desert', es: 'Donde la Ciudad Se Encuentra con el Desierto' },
+      body: { en: 'Central Tucson isn\'t trying to be anywhere else. Arts, food, and neighborhoods with stories — this is real Arizona living.', es: 'El centro de Tucson no intenta ser otro lugar. Arte, comida y vecindarios con historias — esto es vivir en Arizona de verdad.' },
+    },
+    lifestyleFit: {
+      strongMatch: {
+        en: ['Walkable neighborhoods with local shops', 'Homes with character and history', 'Arts & culture scene', 'University proximity', 'Diverse dining options'],
+        es: ['Vecindarios caminables con tiendas locales', 'Casas con carácter e historia', 'Escena artística y cultural', 'Proximidad a la universidad', 'Opciones gastronómicas diversas'],
+      },
+      considerCarefully: {
+        en: ['Newer construction and HOA communities', 'Large lot sizes and open space', 'Top-rated school districts', 'Resort-style amenities'],
+        es: ['Construcción nueva y comunidades con HOA', 'Lotes grandes y espacios abiertos', 'Distritos escolares de primera', 'Amenidades estilo resort'],
+      },
+    },
+    areaIntelligence: {
+      priceRange: { en: '$180K – $450K', es: '$180K – $450K' },
+      demandLevel: 'moderate' as const,
+      marketSpeed: 'average' as const,
+      propertyTypes: { en: ['Historic bungalows', 'Mid-century homes', 'Condos', 'Duplexes'], es: ['Bungalows históricos', 'Casas de mediados de siglo', 'Condominios', 'Dúplex'] },
+    },
+    lifestyleHighlights: {
+      dining: { en: 'UNESCO City of Gastronomy — from Sonoran hot dogs to James Beard-nominated kitchens. Fourth Avenue and downtown offer walkable restaurant rows.', es: 'Ciudad UNESCO de Gastronomía — desde hot dogs sonorenses hasta cocinas nominadas al James Beard. Fourth Avenue y downtown ofrecen restaurantes caminables.' },
+      outdoor: { en: 'Tucson Mountain Park, Sentinel Peak ("A" Mountain), and the Loop trail system for biking and running. Desert sunsets year-round.', es: 'Tucson Mountain Park, Sentinel Peak (Montaña "A"), y el sistema de senderos Loop para ciclismo y carrera. Atardeceres del desierto todo el año.' },
+      dailyRhythm: { en: 'A city that starts early and slows down in the afternoon heat. Weekends revolve around farmers markets, gallery walks, and patio dining.', es: 'Una ciudad que comienza temprano y se relaja con el calor de la tarde. Los fines de semana giran alrededor de mercados, galerías y cenas al aire libre.' },
     },
     sellerProfile: {
       en: "Central Tucson sellers range from young professionals upgrading to historic homeowners downsizing. Properties here move faster than the metro average when priced correctly — buyers are drawn to walkability, arts districts, and University proximity. If your home has character (original tile, exposed brick, mature landscaping), lean into it. Cookie-cutter staging backfires in this market.",
@@ -59,6 +110,35 @@ export const NEIGHBORHOOD_REGISTRY: NeighborhoodEntry[] = [
       en: "Where master-planned meets mountain views — Tucson's most polished suburb.",
       es: "Donde la planificación maestra se encuentra con vistas a las montañas — el suburbio más pulido de Tucson."
     },
+    positioningLine: {
+      en: 'Polished suburban living with Catalina Mountain views.',
+      es: 'Vida suburbana pulida con vistas a las montañas Catalina.',
+    },
+    storyBreak: {
+      headline: { en: 'Where Ambition Meets Tranquility', es: 'Donde la Ambición Se Encuentra con la Tranquilidad' },
+      body: { en: 'Oro Valley rewards those who value both performance and peace. Executive neighborhoods, top schools, and sunsets over the Catalinas — earned, not inherited.', es: 'Oro Valley recompensa a quienes valoran tanto el rendimiento como la paz. Vecindarios ejecutivos, las mejores escuelas y atardeceres sobre las Catalinas.' },
+    },
+    lifestyleFit: {
+      strongMatch: {
+        en: ['Top-rated schools and family amenities', 'Mountain views and resort-style living', 'Move-in-ready, newer construction', 'Low crime and well-maintained streets', 'Golf and outdoor recreation access'],
+        es: ['Escuelas de primera y amenidades familiares', 'Vistas a las montañas y vida estilo resort', 'Construcción nueva, lista para mudarse', 'Baja criminalidad y calles bien mantenidas', 'Acceso a golf y recreación al aire libre'],
+      },
+      considerCarefully: {
+        en: ['Urban walkability and nightlife', 'Affordable entry-level pricing', 'Eclectic or historic character', 'Minimal HOA restrictions'],
+        es: ['Accesibilidad peatonal y vida nocturna', 'Precios accesibles de entrada', 'Carácter ecléctico o histórico', 'Mínimas restricciones de HOA'],
+      },
+    },
+    areaIntelligence: {
+      priceRange: { en: '$380K – $850K+', es: '$380K – $850K+' },
+      demandLevel: 'high' as const,
+      marketSpeed: 'average' as const,
+      propertyTypes: { en: ['Single-family homes', 'Luxury estates', 'Townhomes', 'Active-adult communities'], es: ['Casas unifamiliares', 'Propiedades de lujo', 'Townhomes', 'Comunidades de adultos activos'] },
+    },
+    lifestyleHighlights: {
+      dining: { en: 'Upscale dining along Oracle Road and La Cañada, farm-to-table restaurants, and a growing craft brewery scene. Sunday brunch culture is real here.', es: 'Restaurantes de alta cocina en Oracle Road y La Cañada, restaurantes de granja a mesa, y una creciente escena de cervecerías artesanales.' },
+      outdoor: { en: 'Catalina State Park for hiking, Pusch Ridge for scrambling, and miles of connected bike paths. Steam Pump Ranch hosts community events year-round.', es: 'Catalina State Park para senderismo, Pusch Ridge para escalada, y kilómetros de ciclovías conectadas. Steam Pump Ranch organiza eventos comunitarios todo el año.' },
+      dailyRhythm: { en: 'Morning trail runs, school drop-offs, and a pace that feels suburban but never boring. Evenings bring patio dining and mountain sunsets.', es: 'Carreras matutinas en senderos, llevar a los niños a la escuela, y un ritmo que se siente suburbano pero nunca aburrido.' },
+    },
     sellerProfile: {
       en: "Oro Valley commands premium pricing and attracts relocating executives, medical professionals, and families prioritizing schools. Homes here compete on condition — buyers expect move-in ready. If you're selling, invest in curb appeal and staging. The median sits 40% above Tucson proper, but days on market stretch longer because buyers are selective. Price it right or watch it sit.",
       es: "Oro Valley tiene precios premium y atrae ejecutivos reubicados, profesionales médicos y familias que priorizan las escuelas. Las casas aquí compiten por condición — los compradores esperan listas para mudarse. Si vendes, invierte en apariencia exterior y staging."
@@ -83,6 +163,35 @@ export const NEIGHBORHOOD_REGISTRY: NeighborhoodEntry[] = [
     heroTagline: {
       en: "New construction, young families, and the fastest-growing corner of the metro.",
       es: "Construcción nueva, familias jóvenes y el rincón de más rápido crecimiento del área metropolitana."
+    },
+    positioningLine: {
+      en: 'New homes, young energy, and the space to grow.',
+      es: 'Casas nuevas, energía joven y espacio para crecer.',
+    },
+    storyBreak: {
+      headline: { en: 'Built for What\'s Next', es: 'Construido para lo Que Viene' },
+      body: { en: 'Marana isn\'t looking back. New communities, growing infrastructure, and families writing their first chapters — this is where momentum lives.', es: 'Marana no mira atrás. Nuevas comunidades, infraestructura en crecimiento y familias escribiendo sus primeros capítulos — aquí vive el impulso.' },
+    },
+    lifestyleFit: {
+      strongMatch: {
+        en: ['Brand-new construction and builder incentives', 'Larger lots and open desert views', 'Family-oriented communities with parks', 'Remote work lifestyle with space', 'Value for the square footage'],
+        es: ['Construcción nueva e incentivos de constructores', 'Lotes más grandes y vistas al desierto', 'Comunidades orientadas a la familia con parques', 'Estilo de vida de trabajo remoto con espacio', 'Valor por pie cuadrado'],
+      },
+      considerCarefully: {
+        en: ['Walkable urban lifestyle', 'Historic charm or unique architecture', 'Short commute to central Tucson', 'Established restaurant and nightlife scene'],
+        es: ['Estilo de vida urbano caminable', 'Encanto histórico o arquitectura única', 'Viaje corto al centro de Tucson', 'Escena establecida de restaurantes y vida nocturna'],
+      },
+    },
+    areaIntelligence: {
+      priceRange: { en: '$280K – $520K', es: '$280K – $520K' },
+      demandLevel: 'high' as const,
+      marketSpeed: 'fast' as const,
+      propertyTypes: { en: ['New-build single-family', 'Master-planned communities', 'Spec homes', 'Custom lots'], es: ['Casas nuevas unifamiliares', 'Comunidades planificadas', 'Casas especulativas', 'Lotes personalizados'] },
+    },
+    lifestyleHighlights: {
+      dining: { en: 'Growing retail along Cortaro and Twin Peaks. Local favorites mix with national chains. The craft beer scene is emerging, and food trucks gather on weekends.', es: 'Retail en crecimiento en Cortaro y Twin Peaks. Favoritos locales mezclados con cadenas nacionales. La escena de cerveza artesanal está emergiendo.' },
+      outdoor: { en: 'Tortolita Mountain trails, Rillito River Park connection, and wide open desert spaces. Community pools and splash pads keep families cool in summer.', es: 'Senderos de Tortolita Mountain, conexión con Rillito River Park, y amplios espacios desérticos. Piscinas comunitarias mantienen a las familias frescas en verano.' },
+      dailyRhythm: { en: 'Family-paced mornings, community park afternoons, and quiet evenings. Weekends mean sports leagues, farmers markets, and backyard barbecues.', es: 'Mañanas con ritmo familiar, tardes en parques comunitarios, y noches tranquilas. Los fines de semana significan ligas deportivas y barbacoas.' },
     },
     sellerProfile: {
       en: "Marana sellers benefit from sustained demand — young families and remote workers are flooding in for new builds and larger lots. Your competition is the builder down the street offering incentives. If you're selling resale, emphasize what new construction can't offer: mature landscaping, finished backyards, and no construction traffic. Price competitively against new inventory.",

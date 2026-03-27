@@ -2,19 +2,26 @@ import { useParams, Navigate, Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import V2Layout from "@/components/v2/V2Layout";
-import { Button } from "@/components/ui/button";
-import { MapPin, Sparkles, Calendar, MessageCircle } from "lucide-react";
+import { Sparkles, MapPin } from "lucide-react";
 import { getNeighborhoodBySlug } from "@/data/neighborhoods/neighborhoodRegistry";
 import JsonLd from "@/components/seo/JsonLd";
 import NeighborhoodIntelligencePanel from "@/components/v2/neighborhood/NeighborhoodIntelligencePanel";
-import NeighborhoodSplitCTA from "@/components/v2/neighborhood/NeighborhoodSplitCTA";
 import RelatedNeighborhoodsRail from "@/components/v2/neighborhood/RelatedNeighborhoodsRail";
+import AreaStoryBreak from "@/components/v2/neighborhood/AreaStoryBreak";
+import AreaLifestyleFit from "@/components/v2/neighborhood/AreaLifestyleFit";
+import AreaIntelligenceCard from "@/components/v2/neighborhood/AreaIntelligenceCard";
+import AreaVisualSection from "@/components/v2/neighborhood/AreaVisualSection";
+import AreaDecisionTools from "@/components/v2/neighborhood/AreaDecisionTools";
+import AreaCinematicCTA from "@/components/v2/neighborhood/AreaCinematicCTA";
+import AreaReadinessIndicator from "@/components/v2/neighborhood/AreaReadinessIndicator";
+import NeighborhoodSplitCTA from "@/components/v2/neighborhood/NeighborhoodSplitCTA";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
 import { useEffect, useState } from "react";
 import { type NeighborhoodEntry } from "@/data/neighborhoods/neighborhoodRegistry";
 import { getNeighborhoodHeroUrl } from "@/lib/neighborhood/heroUrl";
+import { motion } from "framer-motion";
 
 /** Inner content — must render inside V2Layout to access SelenaChatProvider */
 const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: NeighborhoodEntry }) => {
@@ -22,6 +29,9 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
   const { openChat } = useSelenaChat();
   const [heroError, setHeroError] = useState(false);
   const heroUrl = getNeighborhoodHeroUrl(neighborhood.slug);
+
+  const hasCinematicData = !!(neighborhood.lifestyleFit || neighborhood.areaIntelligence || neighborhood.storyBreak);
+
   useEffect(() => {
     logEvent('neighborhood_page_view', { slug: neighborhood.slug, region: neighborhood.regionGroup });
     updateSessionContext({
@@ -38,8 +48,8 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
       neighborhoodSlug: neighborhood.slug,
       neighborhoodName: neighborhood.name,
       prefillMessage: t(
-        `I'm interested in ${neighborhood.name} — can you tell me more about this area?`,
-        `Me interesa ${neighborhood.nameEs} — ¿puedes contarme más sobre esta área?`
+        `What are you prioritizing in an area — price, lifestyle, or location?`,
+        `¿Qué estás priorizando en un área — precio, estilo de vida o ubicación?`
       ),
     });
   };
@@ -62,6 +72,10 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
     }
   };
 
+  const positioningText = neighborhood.positioningLine
+    ? (language === 'es' ? neighborhood.positioningLine.es : neighborhood.positioningLine.en)
+    : (language === 'es' ? neighborhood.heroTagline.es : neighborhood.heroTagline.en);
+
   return (
     <>
       <JsonLd data={jsonLdData} />
@@ -75,100 +89,136 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
         ]
       }} />
 
-      {/* Hero */}
-      <section className="relative bg-gradient-to-br from-cc-navy via-cc-navy to-cc-slate py-20 lg:py-28 overflow-hidden">
+      {/* ── CINEMATIC HERO ── */}
+      <section className="relative bg-gradient-to-br from-cc-navy via-cc-navy to-cc-charcoal py-24 lg:py-36 overflow-hidden">
         {!heroError ? (
           <img
             src={heroUrl}
             alt={`${neighborhood.name} Arizona neighborhood`}
-            className="absolute inset-0 w-full h-full object-cover opacity-30"
+            className="absolute inset-0 w-full h-full object-cover opacity-25"
             onError={() => setHeroError(true)}
           />
         ) : (
           <div className="absolute inset-0 bg-[url('/og-kasandra.jpg')] bg-cover bg-center opacity-10" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-cc-navy/90 via-cc-navy/50 to-cc-navy/70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-cc-navy/95 via-cc-navy/60 to-cc-navy/80" />
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-cc-gold/20 text-cc-gold px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-              <MapPin className="w-4 h-4" />
-              {neighborhood.primaryZip}
-            </div>
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-              {language === 'es' ? neighborhood.nameEs : neighborhood.name}
-            </h1>
-            <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto italic">
-              {language === 'es' ? neighborhood.heroTagline.es : neighborhood.heroTagline.en}
-            </p>
-            <Button
-              onClick={handleSelenaOpen}
-              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold px-8 py-6 text-lg rounded-full shadow-gold"
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <Sparkles className="w-5 h-5 mr-2" />
-              {t(`Talk to Kasandra About ${neighborhood.name}`, `Habla con Kasandra Sobre ${neighborhood.nameEs}`)}
-            </Button>
+              <div className="inline-flex items-center gap-2 bg-cc-gold/15 text-cc-gold px-4 py-1.5 rounded-full text-sm font-medium mb-6 backdrop-blur-sm">
+                <MapPin className="w-4 h-4" />
+                {neighborhood.primaryZip}
+              </div>
+            </motion.div>
+
+            <motion.h1
+              className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+              initial={{ opacity: 0, y: 20, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+            >
+              {language === 'es' ? neighborhood.nameEs : neighborhood.name}
+            </motion.h1>
+
+            <motion.p
+              className="text-lg md:text-xl text-white/75 mb-4 max-w-2xl mx-auto italic font-serif"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              {positioningText}
+            </motion.p>
+
+            <motion.p
+              className="text-sm text-white/50 mb-8 max-w-xl mx-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              {t(
+                'A breakdown of what living here actually feels like — so you can decide with clarity.',
+                'Un desglose de cómo se siente realmente vivir aquí — para que puedas decidir con claridad.'
+              )}
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+              className="space-y-4"
+            >
+              {/* Readiness Indicator */}
+              <AreaReadinessIndicator />
+
+              <button
+                onClick={handleSelenaOpen}
+                className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold px-8 py-4 text-lg rounded-full shadow-lg hover:scale-[1.02] transition-all inline-flex items-center gap-2"
+              >
+                <Sparkles className="w-5 h-5" />
+                {t('Start Your Area Decision', 'Comienza Tu Decisión de Área')}
+              </button>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Intelligence Panel */}
-      <NeighborhoodIntelligencePanel 
-        zipCode={neighborhood.primaryZip} 
+      {/* ── STORY BREAK ── */}
+      {hasCinematicData && (
+        <AreaStoryBreak
+          headline={neighborhood.storyBreak?.headline}
+          body={neighborhood.storyBreak?.body}
+          fallbackTagline={neighborhood.heroTagline}
+        />
+      )}
+
+      {/* ── LIFESTYLE FIT ── */}
+      {neighborhood.lifestyleFit && (
+        <AreaLifestyleFit lifestyleFit={neighborhood.lifestyleFit} />
+      )}
+
+      {/* ── AREA INTELLIGENCE CARDS ── */}
+      {neighborhood.areaIntelligence && (
+        <AreaIntelligenceCard areaIntelligence={neighborhood.areaIntelligence} />
+      )}
+
+      {/* ── AI-POWERED INTELLIGENCE PANEL ── */}
+      <NeighborhoodIntelligencePanel
+        zipCode={neighborhood.primaryZip}
         neighborhoodName={neighborhood.neighborhoodQueryName || neighborhood.name}
       />
 
-      {/* Seller / Buyer Split */}
-      <NeighborhoodSplitCTA neighborhood={neighborhood} />
+      {/* ── LIFESTYLE VISUAL SECTION ── */}
+      {neighborhood.lifestyleHighlights && (
+        <AreaVisualSection
+          lifestyleHighlights={neighborhood.lifestyleHighlights}
+          imageUrl={neighborhood.lifestyleImageUrl}
+          areaName={language === 'es' ? neighborhood.nameEs : neighborhood.name}
+        />
+      )}
 
-      {/* Related Neighborhoods + Guides */}
+      {/* ── DECISION TOOLS ── */}
+      <AreaDecisionTools slug={neighborhood.slug} />
+
+      {/* ── SELLER / BUYER PROFILES (fallback for areas without cinematic data) ── */}
+      {!hasCinematicData && (
+        <NeighborhoodSplitCTA neighborhood={neighborhood} />
+      )}
+
+      {/* ── RELATED NEIGHBORHOODS + GUIDES ── */}
       <RelatedNeighborhoodsRail neighborhood={neighborhood} />
 
-      {/* Booking Pivot CTA */}
-      <section className="py-16 lg:py-20 bg-cc-navy">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
-            {t(
-              `Ready to explore ${neighborhood.name}?`,
-              `¿Listo para explorar ${neighborhood.nameEs}?`
-            )}
-          </h2>
-          <p className="text-white/80 max-w-xl mx-auto mb-8">
-            {t(
-              "Kasandra knows this area inside and out. Book a call to discuss your options.",
-              "Kasandra conoce esta área de adentro hacia afuera. Agenda una llamada para discutir tus opciones."
-            )}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to={`/book?intent=buy&source=neighborhood_detail&neighborhood=${neighborhood.slug}`}
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-cc-gold text-cc-navy font-semibold text-base shadow-gold hover:bg-cc-gold-dark hover:scale-[1.02] transition-all"
-            >
-              <Calendar className="w-5 h-5" />
-              {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
-            </Link>
-            <button
-              onClick={handleSelenaOpen}
-              className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
-            >
-              <MessageCircle className="w-4 h-4" />
-              {t("Or ask Selena first", "O habla primero con Selena")}
-            </button>
-          </div>
-          {/* P9: Off-market bridge CTA */}
-          <div className="mt-6 pt-6 border-t border-white/10">
-            <Link
-              to={`/off-market?area=${neighborhood.slug}`}
-              className="inline-flex items-center gap-2 text-white/70 hover:text-cc-gold text-sm font-medium transition-colors"
-            >
-              <Sparkles className="w-4 h-4" />
-              {t(
-                `Looking for off-market homes in ${neighborhood.name}? Join Kasandra's private buyer list.`,
-                `¿Buscas casas fuera de mercado en ${neighborhood.nameEs}? Únete a la lista privada de Kasandra.`
-              )}
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* ── CINEMATIC CTA ── */}
+      <AreaCinematicCTA
+        slug={neighborhood.slug}
+        areaName={neighborhood.name}
+        areaNameEs={neighborhood.nameEs}
+        onOpenSelena={handleSelenaOpen}
+      />
     </>
   );
 };
@@ -178,8 +228,8 @@ const V2NeighborhoodDetail = () => {
   const neighborhood = slug ? getNeighborhoodBySlug(slug) : undefined;
 
   useDocumentHead({
-    titleEn: neighborhood ? `${neighborhood.name} AZ Real Estate | Kasandra Prieto — Corner Connect` : "Neighborhood Not Found",
-    titleEs: neighborhood ? `Bienes Raíces en ${neighborhood.nameEs} AZ | Kasandra Prieto — Corner Connect` : "Vecindario No Encontrado",
+    titleEn: neighborhood ? `${neighborhood.name} AZ — Area Decision Guide | Kasandra Prieto` : "Neighborhood Not Found",
+    titleEs: neighborhood ? `${neighborhood.nameEs} AZ — Guía de Decisión de Área | Kasandra Prieto` : "Vecindario No Encontrado",
     descriptionEn: neighborhood?.metaDescription.en || "",
     descriptionEs: neighborhood?.metaDescription.es || "",
   });
@@ -189,7 +239,7 @@ const V2NeighborhoodDetail = () => {
   }
 
   return (
-    <V2Layout>
+    <V2Layout suppressCTA>
       <NeighborhoodDetailContent neighborhood={neighborhood} />
     </V2Layout>
   );
