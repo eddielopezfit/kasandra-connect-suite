@@ -20,7 +20,7 @@ const fmt = (n: number) => "$" + n.toLocaleString("en-US", { maximumFractionDigi
 const V2BAHCalculatorContent = () => {
   const { language, t } = useLanguage();
   const { openChat } = useSelenaChat();
-  const { isLive } = useMarketPulse();
+  useMarketPulse(); // Ensure market data is warm-cached for this session
   const resultsRef = useRef<HTMLDivElement>(null);
   const [toolStarted, setToolStarted] = useState(false);
   const [calculated, setCalculated] = useState(false);
