@@ -225,6 +225,19 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
       {/* ── DECISION TOOLS ── */}
       <AreaDecisionTools slug={neighborhood.slug} />
 
+      {/* ── PREDICTIVE GUIDANCE — after tools, before related ── */}
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <NextBestActionCard
+          contextLine="After exploring this area"
+          contextLineEs="Después de explorar esta área"
+        />
+      </div>
+
+      {/* ── JOURNEY MOMENTUM — compact sidebar feel ── */}
+      <div className="max-w-4xl mx-auto px-4 pb-8">
+        <JourneyMomentum />
+      </div>
+
       {/* ── SELLER / BUYER PROFILES (fallback for areas without cinematic data) ── */}
       {!hasCinematicData && (
         <NeighborhoodSplitCTA neighborhood={neighborhood} />

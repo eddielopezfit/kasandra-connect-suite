@@ -174,7 +174,11 @@ export type EventType =
   | 'report_booking_nudge_click'
   // Escalation triggers (Prompt 09)
   | 'escalation_dismissed'
-  | 'escalation_clicked';
+  | 'escalation_clicked'
+  // Predictive Guidance V3
+  | 'predicted_action_shown'
+  | 'predicted_action_clicked'
+  | 'selena_predictive_trigger';
 
 export interface EventPayload {
   [key: string]: unknown;
