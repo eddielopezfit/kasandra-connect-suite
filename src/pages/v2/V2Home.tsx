@@ -405,7 +405,7 @@ const V2HomeContent = () => {
                 {t("About Kasandra", "Sobre Kasandra")}
               </span>
               <h2 className="font-serif text-3xl font-bold text-cc-blue mt-2 mb-4">
-                {t("Your Trusted Tucson REALTOR®", "Su REALTOR® de Confianza en Tucson")}
+                {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
               </h2>
             </div>
 
