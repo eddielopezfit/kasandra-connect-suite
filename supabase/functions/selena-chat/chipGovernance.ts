@@ -176,7 +176,7 @@ export function getGovernedChips(
     if (intent === 'buy') {
       // FIX-SIM-06: Rotate buy chips — cycle through 3 chip sets to prevent repetition
       if (phase2TurnCount <= 1) {
-        return { chips: [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET], phase: 2, escalated: false };
+        return { chips: [CHIP_KEYS.BUYER_READINESS, suppressBrowseGuides ? CHIP_KEYS.TALK_WITH_KASANDRA : CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET], phase: 2, escalated: false };
       }
       if (phase2TurnCount === 2) {
         // Turn 2: surface affordability calculator alongside neighborhood tools
