@@ -63,6 +63,19 @@ function deriveTags(context: Record<string, unknown>): string[] {
   if (!context.phone) tags.push("selena_missing_phone");
   if (context.ai_disclosure_accepted === true) tags.push("selena - consent ai disclosure");
 
+  // Agent Studio behavioral tags
+  const toolsStr = Array.isArray(context.tools_completed)
+    ? context.tools_completed.join(",")
+    : (context.tools_completed as string ?? "");
+  if (toolsStr) tags.push("selena_tools_used");
+  const gcCount = Array.isArray(context.guides_consumed)
+    ? context.guides_consumed.length
+    : Number(context.guide_count ?? 0);
+  if (gcCount >= 3) tags.push("selena_guide_reader");
+  if (context.booking_intent_detected === true) tags.push("selena_booking_intent");
+  if (context.va_loan === true) tags.push("selena_military");
+  if (context.returning_visitor === true) tags.push("selena_returning_visitor");
+
   return tags;
 }
 
