@@ -221,8 +221,8 @@ const V2BuyContent = () => {
                     <h4 className="font-semibold text-cc-navy">{t("Local Expertise", "Experiencia Local")}</h4>
                     <p className="text-sm text-cc-charcoal">
                       {t(
-                        "Over two decades in Tucson means I know this community inside and out.",
-                        "Más de dos décadas en Tucson significa que conozco esta comunidad de adentro hacia afuera."
+                        "20+ years in Tucson. I don't just know the neighborhoods — I know which streets flood, which schools are rising, and where the best tamales are.",
+                        "20+ años en Tucson. No solo conozco los vecindarios — sé qué calles se inundan, qué escuelas van en ascenso y dónde están los mejores tamales."
                       )}
                     </p>
                   </div>
