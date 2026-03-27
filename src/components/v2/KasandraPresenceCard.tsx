@@ -41,7 +41,7 @@ const KasandraPresenceCard = ({
               {t(messageEn, messageEs)}
             </p>
             <p className="mt-2 text-xs font-medium text-cc-navy/60">
-              — Kasandra Prieto, Associate Broker
+              — Kasandra Prieto, REALTOR®
             </p>
           </div>
         </div>
