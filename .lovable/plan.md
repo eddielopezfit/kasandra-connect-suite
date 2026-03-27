@@ -1,88 +1,79 @@
 
 
-# Selena AI Deep Audit — System Prompt, KB, Memory, Chips, and Drawer UI
+# End-User Journey Audit — "Does This Feel Like a Wow?"
 
-## Verdict: 95% Optimized — 5% Drift
+## Verdict: 96% Blue Ocean — 4% Friction
 
-The architecture is production-grade. No RAG or MCP needed. The issues are behavioral drift and minor UI friction.
-
----
-
-## What's Working (No Changes Needed)
-
-**Knowledge Base**: KB-0 through KB-12 hierarchy is intact, correctly layered, and enforced by `guardState.ts` (549 lines). No gaps.
-
-**Memory**: Three-tier memory system is fully operational:
-1. Persistent memory via `selena-memory` edge function (store + recall)
-2. Context audit on session start (parallel fetch from `session_snapshots`, `lead_profiles`, `decision_receipts`)
-3. Session trail (chronological breadcrumb of pages/tools visited)
-
-**Tool awareness**: Selena has full awareness of completed tools via `tools_completed` array and `toolOutputHint` blocks. She receives exact calculator results (property value, net difference, advantage path), readiness scores, quiz paths, closing cost breakdowns, off-market criteria, neighborhood comparisons, and market intelligence data. She references these with "your numbers show..." not "the calculator says..."
-
-**Journey awareness**: `filterChipsForCompletedTools()` suppresses chips for already-completed tools. `journeyHint` explicitly tells the AI "User has completed: [list]. Do NOT suggest these tools again."
-
-**Chip governance**: 7-layer priority hierarchy is enforced (Guard > Mode 4 > Stall > Proceeds/ASAP > Keywords > Journey > Phase). Sub-chips for booking (15-min clarity call, Virtual walkthrough, No-pressure review) are present. Expansion chips for "Get my selling options" provide sub-intent narrowing.
-
-**No RAG needed**: The system prompt + 13 dynamic context blocks already inject all necessary knowledge at runtime. The prompts are intent-pruned (seller KB stripped for buyers, buyer KB stripped for sellers), keeping token usage efficient. Adding RAG would increase latency without benefit — the knowledge is finite and fully covered.
-
-**No MCP needed**: All external integrations (GHL, Google Places, YouTube, Firecrawl, Perplexity) are already handled by edge functions. MCP adds no value here.
+The architecture is genuinely exceptional. A user IS guided throughout the entire journey via 7 interconnected intelligence layers. The personalization is real, not cosmetic. Here's the honest assessment:
 
 ---
 
-## Issues Found
+## What Makes This Blue Ocean (The Wow)
 
-### CRITICAL — Response Length Violation (Visible in Screenshots)
+**Layer 1 — Intent Fork (Homepage)**: Three clear cards (Buy / Sell / Cash Offer) immediately set session intent. No cognitive overload. Returning users see "Welcome back — continue where you left off" with their JourneyBreadcrumb showing completed milestones.
 
-The screenshots show Selena generating 4-6 sentence responses (100-150 words) despite **three separate** system prompt rules mandating 1-3 sentences:
-- KB-10: "Maximum 1-3 sentences before showing chips"
-- Core Behavior: "Keep responses to 2-3 sentences"
-- Hard Rule (Phase 3): "Your text MUST be 1-2 sentences max"
+**Layer 2 — Session Intelligence Banner**: Reflects the user's actual behavior back to them ("You've completed 2 tools. Your picture is getting clearer.") with contextual CTAs. This is the "I feel understood" moment.
 
-**Root cause**: `max_tokens: 150` is too generous for 1-3 sentence compliance. At ~1.3 tokens/word, 150 tokens allows ~115 words — enough for 6+ sentences. The model fills the budget.
+**Layer 3 — Predictive Engine**: 6-rule priority system surfaces the right next action at the right time. Not generic "Learn More" buttons — intent-aware, journey-depth-aware recommendations like "You've done great research. Now let's see what actually fits your numbers."
 
-**Fix**: Reduce `max_tokens` to **100** for Phase 2+ responses (keep 150 for Phase 1 orientation). Add a post-processing sentence counter that truncates at the 3rd period/question-mark and appends the chip array.
+**Layer 4 — Tool Chaining**: Every tool result page shows `ToolResultNextStep` with the contextually correct next action. No dead ends.
 
-### HIGH — System Prompt Redundancy (~400 wasted tokens)
+**Layer 5 — Proactive Selena**: 5 behavioral triggers fire after 8 seconds with calm, observant prompts. Dismissible, session-aware, with cooldown.
 
-The system prompt contains **duplicate governance blocks**:
-- Lines 100-169: "Conversational Operating Doctrine" (tone, flow, booking rules)
-- Lines 172-220: Nearly identical content repeated ("CORE BEHAVIOR RULES", "ROLE POSITIONING", "LANGUAGE RULE", "CONCIERGE PHILOSOPHY")
+**Layer 6 — Readiness Snapshot**: Score-banded (Exploring / Getting Ready / Ready to Move) with priority-specific insights and intent-aware next steps. This is where users feel "educated and confident."
 
-This wastes ~400 tokens per request and creates ambiguity about which block governs. The model may weight the later block more, undermining the earlier, more detailed one.
+**Layer 7 — Escalation Banner**: High-intent signals trigger booking nudges without being aggressive. Dismissible, once-per-session.
 
-**Fix**: Merge the duplicate blocks into a single authoritative section. Remove lines 172-220 and consolidate any unique rules into the existing Doctrine block.
-
-### MEDIUM — "How to connect:" Label on Sub-chips
-
-Screenshots show sub-chips (15-min clarity call, Virtual walkthrough, No-pressure review) preceded by a "How to connect:" label. This is a good pattern but the label appears even when the primary chip above is not a booking chip. It should only render when the expanded chip is booking-related.
-
-**Fix**: Gate the "How to connect:" label on the chip being a booking-type action.
-
-### MEDIUM — Desktop "Back to" Link Placement
-
-In the desktop Sheet, the "Back to [page]" link renders inside the header `div` alongside the title controls, creating a cramped layout. On mobile it's correctly placed as a separate sub-bar.
-
-**Fix**: Move the desktop `sourcePage` render outside the header `div` to match mobile placement.
-
-### LOW — Onboarding Overlay Uses Emojis
-
-The first-open onboarding overlay uses emoji bullets (sparkles, chart, calendar) which conflicts with the "no emojis" governance rule in KB-0. Minor brand consistency issue.
-
-**Fix**: Replace emoji bullets with Lucide icons matching the rest of the UI (Compass, Calculator, Calendar).
+**Tools are simple**: Each tool is a multi-step wizard (3-4 steps) with progress bars, back buttons, and clear outcomes. The ReadinessSnapshot translates scores into human bands, not raw numbers.
 
 ---
 
-## Implementation Summary
+## Issues Found (The 4%)
 
-| # | Issue | Impact | Effort |
-|---|-------|--------|--------|
-| 1 | Response length drift — add dynamic max_tokens + post-processing truncation | Critical | 15 min |
-| 2 | System prompt deduplication (~400 tokens saved) | High | 10 min |
-| 3 | Sub-chip "How to connect" label gating | Medium | 5 min |
-| 4 | Desktop "Back to" link placement | Medium | 5 min |
-| 5 | Onboarding emoji replacement | Low | 5 min |
+### 1. CRITICAL — `ContextualChatPrompt` is Broken (Orphan + Dead Click Handler)
 
-**Total**: 2 implementation messages.
+The component exists but has two problems:
+- Its `onClick` tries to find `document.querySelector('[data-widget-id]')` — a GHL chat widget that no longer exists. It does NOT use `openChat` from `SelenaChatContext`.
+- It's not imported or used anywhere in the app.
 
-**No RAG, no MCP, no new infrastructure needed.** The system is architecturally complete. These are calibration fixes to enforce existing governance rules the model is drifting from.
+**Impact**: Zero — it's unused. But if anyone imports it, the button does nothing.
+
+**Fix**: Either delete it (it's an orphan) or rewire it to use `openChat` for potential future use.
+
+### 2. MEDIUM — No "Explore" Intent Path After Homepage Fork
+
+The homepage fork offers Buy / Sell / Cash. A user who doesn't identify with any of these (first-time explorer, relocating, just curious) has no clear entry point. They must scroll past the fork to find content.
+
+**Fix**: Add a subtle fourth option below the three cards: "Not sure yet? Let Selena help you figure it out" — opens chat with `source: 'homepage_explore'`.
+
+### 3. LOW — `deriveNextAction` Falls Through to Generic "Ask Selena" for Dual/Investor/Explore Intent
+
+Users with `dual`, `investor`, or `explore` intent get the generic fallback "Ask Selena" as their next recommended action. There's no tool-specific path for these intents.
+
+**Fix**: Add a `dual` path that recommends `/seller-decision` first (sell clarity before buy), and an `explore` path that recommends `/neighborhoods` or `/guides`.
+
+### 4. LOW — Guides Hub ContextualSelenaPrompt Uses Correct `openChat` but Homepage's ContextualChatPrompt Does Not
+
+The Guides Hub uses `ContextualSelenaPrompt` (from `src/components/v2/guides/`) which correctly integrates with Selena. The orphan `ContextualChatPrompt` does not. No user impact since the orphan is unused, but confirms it should be deleted.
+
+---
+
+## Implementation Plan
+
+### Step 1: Delete orphan `ContextualChatPrompt.tsx`
+Dead code with broken handler. Clean removal.
+
+### Step 2: Add "Not sure yet?" explore path on homepage
+Below the Buy/Sell/Cash fork cards, add a text link: "Not sure yet? Let Selena help you figure it out" that opens Selena with `source: 'homepage_explore'` and `intent: 'explore'`.
+
+### Step 3: Enrich `deriveNextAction` for dual/explore intents
+- `explore` → recommend `/neighborhoods` (area exploration is the natural entry for curious users)
+- `dual` → recommend `/seller-decision` (sell-side clarity first, then buy)
+
+### Files Modified
+- `src/components/v2/ContextualChatPrompt.tsx` — delete (orphan)
+- `src/pages/v2/V2Home.tsx` — add explore CTA below fork cards
+- `src/hooks/useJourneyProgress.ts` — add `dual` and `explore` paths to `deriveNextAction`
+
+**Estimated scope**: 1 implementation message. All three changes are small and independent.
 
