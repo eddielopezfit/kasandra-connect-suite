@@ -56,6 +56,35 @@ export const NEIGHBORHOOD_REGISTRY: NeighborhoodEntry[] = [
       en: "The heart of Southern Arizona — urban grit, desert beauty, and a culture that's distinctly its own.",
       es: "El corazón del sur de Arizona — carácter urbano, belleza del desierto y una cultura única."
     },
+    positioningLine: {
+      en: 'Walkable culture, desert soul, and homes with character.',
+      es: 'Cultura caminable, alma del desierto y casas con carácter.',
+    },
+    storyBreak: {
+      headline: { en: 'Where the City Meets the Desert', es: 'Donde la Ciudad Se Encuentra con el Desierto' },
+      body: { en: 'Central Tucson isn\'t trying to be anywhere else. Arts, food, and neighborhoods with stories — this is real Arizona living.', es: 'El centro de Tucson no intenta ser otro lugar. Arte, comida y vecindarios con historias — esto es vivir en Arizona de verdad.' },
+    },
+    lifestyleFit: {
+      strongMatch: {
+        en: ['Walkable neighborhoods with local shops', 'Homes with character and history', 'Arts & culture scene', 'University proximity', 'Diverse dining options'],
+        es: ['Vecindarios caminables con tiendas locales', 'Casas con carácter e historia', 'Escena artística y cultural', 'Proximidad a la universidad', 'Opciones gastronómicas diversas'],
+      },
+      considerCarefully: {
+        en: ['Newer construction and HOA communities', 'Large lot sizes and open space', 'Top-rated school districts', 'Resort-style amenities'],
+        es: ['Construcción nueva y comunidades con HOA', 'Lotes grandes y espacios abiertos', 'Distritos escolares de primera', 'Amenidades estilo resort'],
+      },
+    },
+    areaIntelligence: {
+      priceRange: { en: '$180K – $450K', es: '$180K – $450K' },
+      demandLevel: 'moderate' as const,
+      marketSpeed: 'average' as const,
+      propertyTypes: { en: ['Historic bungalows', 'Mid-century homes', 'Condos', 'Duplexes'], es: ['Bungalows históricos', 'Casas de mediados de siglo', 'Condominios', 'Dúplex'] },
+    },
+    lifestyleHighlights: {
+      dining: { en: 'UNESCO City of Gastronomy — from Sonoran hot dogs to James Beard-nominated kitchens. Fourth Avenue and downtown offer walkable restaurant rows.', es: 'Ciudad UNESCO de Gastronomía — desde hot dogs sonorenses hasta cocinas nominadas al James Beard. Fourth Avenue y downtown ofrecen restaurantes caminables.' },
+      outdoor: { en: 'Tucson Mountain Park, Sentinel Peak ("A" Mountain), and the Loop trail system for biking and running. Desert sunsets year-round.', es: 'Tucson Mountain Park, Sentinel Peak (Montaña "A"), y el sistema de senderos Loop para ciclismo y carrera. Atardeceres del desierto todo el año.' },
+      dailyRhythm: { en: 'A city that starts early and slows down in the afternoon heat. Weekends revolve around farmers markets, gallery walks, and patio dining.', es: 'Una ciudad que comienza temprano y se relaja con el calor de la tarde. Los fines de semana giran alrededor de mercados, galerías y cenas al aire libre.' },
+    },
     sellerProfile: {
       en: "Central Tucson sellers range from young professionals upgrading to historic homeowners downsizing. Properties here move faster than the metro average when priced correctly — buyers are drawn to walkability, arts districts, and University proximity. If your home has character (original tile, exposed brick, mature landscaping), lean into it. Cookie-cutter staging backfires in this market.",
       es: "Los vendedores del centro de Tucson van desde jóvenes profesionales que buscan mejorar hasta propietarios de casas históricas que reducen espacio. Las propiedades aquí se venden más rápido que el promedio del área cuando están bien valoradas — los compradores buscan accesibilidad peatonal, distritos artísticos y proximidad a la Universidad."
