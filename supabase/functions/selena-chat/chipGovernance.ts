@@ -99,6 +99,7 @@ export function getGovernedChips(
   timeline: string | null,
   engagement: SessionEngagementState,
   _language: 'en' | 'es',
+  opts?: { guidesReadCount?: number },
 ): { chips: string[]; phase: 1 | 2 | 3; escalated: boolean } {
   const hasIntent = !!intent && intent !== 'explore';
   const isAsap = timeline === 'asap';
