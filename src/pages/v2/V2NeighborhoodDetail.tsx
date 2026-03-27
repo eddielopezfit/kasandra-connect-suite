@@ -183,6 +183,15 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
         <AreaLifestyleFit lifestyleFit={neighborhood.lifestyleFit} />
       )}
 
+      {/* ── KASANDRA PRESENCE — after lifestyle, before intelligence ── */}
+      {hasCinematicData && (
+        <KasandraPresenceCard
+          variant="editorial"
+          messageEn="Hi, I'm Kasandra — if you're exploring this area, here's what I'd want you to know: the right neighborhood isn't about price alone. It's about how your daily life feels."
+          messageEs="Hola, soy Kasandra — si estás explorando esta área, esto es lo que me gustaría que supieras: el vecindario correcto no se trata solo del precio. Se trata de cómo se siente tu vida diaria."
+        />
+      )}
+
       {/* ── AREA INTELLIGENCE CARDS ── */}
       {neighborhood.areaIntelligence && (
         <AreaIntelligenceCard areaIntelligence={neighborhood.areaIntelligence} />
