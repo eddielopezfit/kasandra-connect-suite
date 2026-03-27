@@ -165,10 +165,10 @@ function getBannerContent(
       ),
       actions: [
         intent === 'buy'
-          ? { type: 'link', label: t("Check readiness", "Verifica preparación"), destination: '/buyer-readiness' }
+          ? { type: 'link', label: t("See where you stand as a buyer", "Mira dónde estás como comprador"), destination: '/buyer-readiness' }
           : intent === 'sell'
-          ? { type: 'link', label: t("Find your path", "Encuentra tu camino"), destination: '/seller-decision' }
-          : { type: 'chat', label: t("Ask Selena", "Pregúntale a Selena"), destination: 'selena' },
+          ? { type: 'link', label: t("Understand your options", "Comprende tus opciones"), destination: '/seller-decision' }
+          : { type: 'chat', label: t("Get guided help from Selena", "Recibe orientación de Selena"), destination: 'selena' },
       ],
       isReturning: false,
     };
