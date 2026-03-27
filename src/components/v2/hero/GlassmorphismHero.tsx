@@ -121,6 +121,7 @@ export default function GlassmorphismHero({
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
   const { stats } = useMarketPulse(language as "en" | "es");
+  const journey = useJourneyProgress();
 
   const [returningContext, setReturningContext] = useState<{
     isReturning: boolean;
