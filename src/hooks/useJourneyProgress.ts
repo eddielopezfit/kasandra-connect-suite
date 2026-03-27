@@ -181,6 +181,14 @@ export function useJourneyProgress(): JourneyProgress {
       hasSellerDecision, hasCalculatorResults, journeyDepth,
     );
 
+    // Derive confidence level from session signals
+    const confidenceLevel: ConfidenceLevel =
+      (guideCount >= 5 && toolCount >= 1) || hasReadinessScore || hasSellerDecision || hasBooked
+        ? 'high'
+        : guideCount >= 3 || toolCount >= 1 || hasCalculatorResults
+        ? 'medium'
+        : 'low';
+
     return {
       intent,
       isReturningUser,
@@ -205,6 +213,7 @@ export function useJourneyProgress(): JourneyProgress {
       hasBooked,
       quizCompleted,
       journeyDepth,
+      confidenceLevel,
       nextRecommendedAction,
     };
   }, [stageId, level]);
