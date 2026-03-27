@@ -233,8 +233,8 @@ const V2BuyContent = () => {
                     <h4 className="font-semibold text-cc-navy">{t("24/7 AI Concierge", "Asistente IA 24/7")}</h4>
                     <p className="text-sm text-cc-charcoal">
                       {t(
-                        "Selena AI is available around the clock to answer questions and schedule appointments.",
-                        "Selena AI está disponible las 24 horas para responder preguntas y programar citas."
+                        "Can't sleep because you're thinking about your offer? Selena's up too. She'll answer your questions at 2 AM so you wake up clear-headed.",
+                        "¿No puedes dormir porque estás pensando en tu oferta? Selena también está despierta. Te responderá a las 2 AM para que amanezcas con claridad."
                       )}
                     </p>
                   </div>
