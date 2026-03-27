@@ -279,7 +279,7 @@ const TucsonAlphaCalculator = () => {
                 </span>
               </div>
 
-              <CalculatorResults results={results} mortgageBalance={mortgageBalance} marketSource={marketSource} lastVerifiedDate={lastVerifiedDate} />
+              <CalculatorResults results={results} mortgageBalance={mortgageBalance} marketSource={marketSource} lastVerifiedDate={lastVerifiedDate} motivation={motivation} timeline={timeline} />
 
               {/* Equity Pulse — Saved Utility hook */}
               <EquityPulseSection

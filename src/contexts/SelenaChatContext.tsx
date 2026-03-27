@@ -399,7 +399,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const context = getSessionContext();
+      // FIX: Refresh tools_completed at every message send to prevent stale chip loops
+      const freshContext = getSessionContext();
+      const context = freshContext;
       const history = messages.slice(-10).map(m => ({
         role: m.role,
         content: m.content,

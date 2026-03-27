@@ -4,17 +4,32 @@
  */
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import { CheckCircle, Clock, Calendar, DollarSign, Info, Signal, SignalZero } from "lucide-react";
-import type { CalculatorResults as ResultsType } from "@/lib/calculator/netToSellerAlgorithm";
+import { CheckCircle, Clock, Calendar, DollarSign, Info, Signal, SignalZero, User } from "lucide-react";
+import type { CalculatorResults as ResultsType, Motivation, Timeline } from "@/lib/calculator/netToSellerAlgorithm";
 
 interface CalculatorResultsProps {
   results: ResultsType;
   mortgageBalance?: number;
   marketSource?: 'live' | 'fallback';
   lastVerifiedDate?: string | null;
+  motivation?: Motivation;
+  timeline?: Timeline;
 }
 
-const CalculatorResults = ({ results, mortgageBalance = 0, marketSource = 'fallback', lastVerifiedDate }: CalculatorResultsProps) => {
+const MOTIVATION_LABELS: Record<Motivation, { en: string; es: string }> = {
+  speed: { en: "needing to move quickly", es: "necesitar moverse rápido" },
+  maximize: { en: "maximizing your return", es: "maximizar tu retorno" },
+  uncertain: { en: "exploring your options", es: "explorar tus opciones" },
+};
+
+const TIMELINE_LABELS: Record<Timeline, { en: string; es: string }> = {
+  asap: { en: "as soon as possible", es: "lo antes posible" },
+  '30days': { en: "within 30 days", es: "en 30 días" },
+  '60days': { en: "within 60 days", es: "en 60 días" },
+  flexible: { en: "on a flexible timeline", es: "con un cronograma flexible" },
+};
+
+const CalculatorResults = ({ results, mortgageBalance = 0, marketSource = 'fallback', lastVerifiedDate, motivation, timeline }: CalculatorResultsProps) => {
   const { t, language } = useLanguage();
   const { traditional, cash, costOfTime, recommendationReason } = results;
   const hasMortgage = mortgageBalance > 0;
@@ -27,8 +42,24 @@ const CalculatorResults = ({ results, mortgageBalance = 0, marketSource = 'fallb
     }).format(amount);
   };
 
+  const motivationLabel = motivation ? (language === 'es' ? MOTIVATION_LABELS[motivation].es : MOTIVATION_LABELS[motivation].en) : null;
+  const timelineLabel = timeline ? (language === 'es' ? TIMELINE_LABELS[timeline].es : TIMELINE_LABELS[timeline].en) : null;
+
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Personalized insight line */}
+      {motivationLabel && timelineLabel && (
+        <div className="flex items-start gap-3 bg-cc-gold/10 border border-cc-gold/30 rounded-xl p-4">
+          <User className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-cc-charcoal">
+            {t(
+              `Your numbers below reflect ${motivationLabel} with a goal to move ${timelineLabel}. These are your estimated options.`,
+              `Tus números abajo reflejan ${motivationLabel} con el objetivo de moverte ${timelineLabel}. Estas son tus opciones estimadas.`
+            )}
+          </p>
+        </div>
+      )}
+
       {/* Side-by-side comparison cards */}
       <div className="grid md:grid-cols-2 gap-4">
         {/* Cash Offer Card */}

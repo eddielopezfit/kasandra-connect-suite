@@ -7,7 +7,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, Calendar, MessageCircle } from "lucide-react";
+import { AlertTriangle, ArrowRight, Calendar, MessageCircle } from "lucide-react";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import heroImage from "@/assets/hero-cash-calm.png";
@@ -98,101 +98,6 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
-      {/* Static Comparison Section - Educational Reference */}
-      <section className="py-16 lg:py-20 bg-cc-ivory">
-        <div className="container mx-auto px-4">
-          {/* Section Header */}
-          <div className="bg-cc-navy rounded-xl p-6 md:p-8 mb-10 text-center">
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-white">
-              {t("Quick Reference: Cash vs. Traditional", "Referencia Rápida: Efectivo vs. Tradicional")}
-            </h2>
-            <p className="text-white/80 mt-3 max-w-2xl mx-auto">
-              {t(
-                "A general overview of the trade-offs to consider.",
-                "Una visión general de las ventajas y desventajas a considerar."
-              )}
-            </p>
-          </div>
-
-          {/* Cards Container */}
-          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-elevated">
-            <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-              {/* Cash Offer */}
-              <div className="rounded-xl shadow-soft overflow-hidden border border-cc-sand-dark/30">
-                <div className="bg-cc-gold text-cc-navy p-6">
-                  <h3 className="font-serif text-xl font-bold">{t("Cash Offer", "Oferta en Efectivo")}</h3>
-                </div>
-                <div className="p-6 space-y-4 bg-cc-sand">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Faster closing (often 7-14 days)", "Cierre más rápido (a menudo 7-14 días)")}</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("No repairs or showings required", "Sin reparaciones ni visitas requeridas")}</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Certainty of sale", "Certeza de venta")}</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Flexible move-out timeline", "Cronograma flexible de mudanza")}</span>
-                  </div>
-                  <div className="border-t border-cc-sand-dark/50 pt-4 mt-4">
-                    <div className="flex items-start gap-3">
-                      <XCircle className="w-5 h-5 text-cc-slate flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-cc-slate">{t("Typically lower sale price", "Típicamente precio de venta más bajo")}</span>
-                    </div>
-                    <div className="flex items-start gap-3 mt-2">
-                      <XCircle className="w-5 h-5 text-cc-slate flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-cc-slate">{t("Less market competition", "Menos competencia de mercado")}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Traditional Listing */}
-              <div className="rounded-xl shadow-soft overflow-hidden border border-cc-sand-dark/30">
-                <div className="bg-cc-navy text-white p-6">
-                  <h3 className="font-serif text-xl font-bold">{t("Traditional Listing", "Venta Tradicional")}</h3>
-                </div>
-                <div className="p-6 space-y-4 bg-cc-sand">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Maximum market exposure", "Máxima exposición al mercado")}</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Potential for higher sale price", "Potencial de precio de venta más alto")}</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Multiple offers possible", "Múltiples ofertas posibles")}</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm text-cc-charcoal">{t("Professional marketing", "Marketing profesional")}</span>
-                  </div>
-                  <div className="border-t border-cc-sand-dark/50 pt-4 mt-4">
-                    <div className="flex items-start gap-3">
-                      <XCircle className="w-5 h-5 text-cc-slate flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-cc-slate">{t("Longer timeline (30-60+ days)", "Cronograma más largo (30-60+ días)")}</span>
-                    </div>
-                    <div className="flex items-start gap-3 mt-2">
-                      <XCircle className="w-5 h-5 text-cc-slate flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-cc-slate">{t("May require repairs/staging", "Puede requerir reparaciones/staging")}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Removed duplicate Selena mid-page section — Selena is accessible via floating bubble + hero text link */}
-
       {/* Warning Section */}
       <section className="py-12 bg-cc-gold/10">
         <div className="container mx-auto px-4">
@@ -221,66 +126,15 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
-      {/* When Cash Makes Sense */}
-      <section className="py-16 lg:py-20 bg-cc-sand">
-        <div className="container mx-auto px-4">
-          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-elevated">
-            <div className="grid md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
-              <div>
-                <h3 className="font-serif text-2xl font-bold text-cc-navy mb-6 flex items-center gap-3">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
-                  {t("A Cash Offer May Make Sense If...", "Una Oferta en Efectivo Puede Tener Sentido Si...")}
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <Clock className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("You need to sell quickly due to life circumstances", "Necesita vender rápidamente debido a circunstancias de vida")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <Shield className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("The home needs significant repairs you can't afford", "La casa necesita reparaciones significativas que no puede costear")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <FileText className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("You inherited a property and prefer simplicity", "Heredó una propiedad y prefiere simplicidad")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <ArrowRight className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("Certainty is more important than maximizing price", "La certeza es más importante que maximizar el precio")}</span>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="font-serif text-2xl font-bold text-cc-navy mb-6 flex items-center gap-3">
-                  <XCircle className="w-8 h-8 text-cc-slate" />
-                  {t("A Traditional Listing May Be Better If...", "Una Venta Tradicional Puede Ser Mejor Si...")}
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <span className="text-cc-charcoal">{t("You're not in a rush to sell", "No tiene prisa por vender")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <span className="text-cc-charcoal">{t("Your home is in good, market-ready condition", "Su casa está en buenas condiciones, lista para el mercado")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <span className="text-cc-charcoal">{t("You want to maximize your sale price", "Quiere maximizar su precio de venta")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <span className="text-cc-charcoal">{t("You're comfortable with showings and the listing process", "Se siente cómodo con visitas y el proceso de venta")}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Single Terminal CTA — Book + secondary Cash Readiness */}
       <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-xl mx-auto">
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
-              {t("Getting clearer on your home's value?", "¿Más claro sobre el valor de tu casa?")}
+              {t(
+                "You've seen the numbers — let's talk about what fits your situation",
+                "Ya viste los números — hablemos de lo que se adapta a tu situación"
+              )}
             </h2>
             <p className="text-white/80 text-sm mb-6">
               {t(
