@@ -66,6 +66,7 @@ const BookingIntakeForm = ({ onSubmit, isSubmitting, defaultIntent }: BookingInt
       email: getStoredEmail() || "",
       phone: getStoredPhone() || "",
       intent: initialIntent,
+      referralSource: "",
       message: "",
     },
   });
