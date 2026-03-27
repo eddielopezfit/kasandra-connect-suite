@@ -175,7 +175,7 @@ const CalculatorNextSteps = ({
       {/* Contextual Guide Suggestion */}
       <div className="pt-4 border-t border-cc-sand-dark/30">
         <p className="text-xs text-cc-slate mb-3 text-center">
-          {t("Want to learn more?", "¿Quiere saber más?")}
+          {t("Ready to understand this deeper?", "¿Listo para profundizar?")}
         </p>
         <GuideSuggestionCard
           guideId={guideContent.guideId}

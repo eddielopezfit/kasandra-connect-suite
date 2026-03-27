@@ -79,7 +79,7 @@ export default function JourneyMomentum({ className = '' }: { className?: string
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="w-4 h-4 text-cc-gold" />
         <span className="text-xs uppercase tracking-widest text-cc-gold/80 font-semibold">
-          {isEs ? 'Tu Progreso' : 'Your Progress'}
+          {isEs ? 'Tu Camino Hasta Ahora' : 'Your Journey So Far'}
         </span>
       </div>
 
@@ -108,7 +108,7 @@ export default function JourneyMomentum({ className = '' }: { className?: string
       {/* Next step divider */}
       <div className="border-t border-white/10 pt-3">
         <p className="text-xs text-white/40 mb-2">
-          {isEs ? '→ Próximo paso recomendado:' : '→ Recommended next:'}
+          {isEs ? '→ Lo que suele ayudar más en esta etapa:' : '→ What tends to help most at this stage:'}
         </p>
         {isChat ? (
           <button

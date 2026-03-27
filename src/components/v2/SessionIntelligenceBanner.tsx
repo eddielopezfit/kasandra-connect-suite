@@ -103,9 +103,9 @@ function getBannerContent(
         `Bienvenido/a de vuelta${contextStr}. ¿Listo/a para continuar donde te quedaste?`
       ),
       actions: [
-        { type: 'link', label: t("Refine My Plan", "Refinar Mi Plan"), destination: intent === 'sell' ? '/seller-decision' : intent === 'buy' ? '/buyer-readiness' : '/neighborhoods' },
-        { type: 'link', label: t("Compare Areas", "Comparar Áreas"), destination: '/neighborhoods/compare' },
-        { type: 'link', label: t("Talk to Kasandra", "Hablar con Kasandra"), destination: '/book' },
+        { type: 'link', label: t("Continue where you left off", "Continúa donde te quedaste"), destination: intent === 'sell' ? '/seller-decision' : intent === 'buy' ? '/buyer-readiness' : '/neighborhoods' },
+        { type: 'link', label: t("See how areas compare", "Mira cómo se comparan las áreas"), destination: '/neighborhoods/compare' },
+        { type: 'link', label: t("Plan your next step with Kasandra", "Planifica tu siguiente paso con Kasandra"), destination: '/book' },
       ],
       isReturning: true,
     };
@@ -119,8 +119,8 @@ function getBannerContent(
         "Has investigado a fondo. ¿Lista/o para hablar de estrategia?"
       ),
       actions: [
-        { type: 'link', label: t("Book a call", "Agenda una llamada"), destination: '/book' },
-        { type: 'chat', label: t("Ask Selena", "Pregúntale a Selena"), destination: 'selena' },
+        { type: 'link', label: t("Plan your next step with Kasandra", "Planifica tu siguiente paso con Kasandra"), destination: '/book' },
+        { type: 'chat', label: t("Let Selena guide you", "Deja que Selena te guíe"), destination: 'selena' },
       ],
       isReturning: false,
     };
@@ -134,8 +134,8 @@ function getBannerContent(
         "Estás explorando vecindarios. ¿Quieres comparar áreas lado a lado?"
       ),
       actions: [
-        { type: 'link', label: t("Compare areas", "Comparar áreas"), destination: '/neighborhoods/compare' },
-        { type: 'chat', label: t("Ask Selena", "Pregúntale a Selena"), destination: 'selena' },
+        { type: 'link', label: t("See how areas compare", "Mira cómo se comparan las áreas"), destination: '/neighborhoods/compare' },
+        { type: 'chat', label: t("Get guided help from Selena", "Recibe orientación de Selena"), destination: 'selena' },
       ],
       isReturning: false,
     };
@@ -149,8 +149,8 @@ function getBannerContent(
         `Has completado ${toolCount} herramientas. Tu panorama se aclara.`
       ),
       actions: [
-        { type: 'chat', label: t("Ask Selena what's next", "Pregúntale a Selena qué sigue"), destination: 'selena' },
-        { type: 'link', label: t("Talk to Kasandra", "Hablar con Kasandra"), destination: '/book' },
+        { type: 'chat', label: t("Let Selena walk you through it", "Deja que Selena te acompañe"), destination: 'selena' },
+        { type: 'link', label: t("Plan your next step with Kasandra", "Planifica tu siguiente paso con Kasandra"), destination: '/book' },
       ],
       isReturning: false,
     };
@@ -165,10 +165,10 @@ function getBannerContent(
       ),
       actions: [
         intent === 'buy'
-          ? { type: 'link', label: t("Check readiness", "Verifica preparación"), destination: '/buyer-readiness' }
+          ? { type: 'link', label: t("See where you stand as a buyer", "Mira dónde estás como comprador"), destination: '/buyer-readiness' }
           : intent === 'sell'
-          ? { type: 'link', label: t("Find your path", "Encuentra tu camino"), destination: '/seller-decision' }
-          : { type: 'chat', label: t("Ask Selena", "Pregúntale a Selena"), destination: 'selena' },
+          ? { type: 'link', label: t("Understand your options", "Comprende tus opciones"), destination: '/seller-decision' }
+          : { type: 'chat', label: t("Get guided help from Selena", "Recibe orientación de Selena"), destination: 'selena' },
       ],
       isReturning: false,
     };
@@ -185,7 +185,7 @@ function getBannerContent(
     };
     return {
       message: intentMessages[intent] || null,
-      actions: [{ type: 'chat', label: t("Need help? Ask Selena", "¿Necesitas ayuda? Pregúntale a Selena"), destination: 'selena' }],
+      actions: [{ type: 'chat', label: t("Get guided help from Selena", "Recibe orientación de Selena"), destination: 'selena' }],
       isReturning: false,
     };
   }
