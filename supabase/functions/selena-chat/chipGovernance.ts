@@ -374,6 +374,9 @@ export const CHIP_DESTINATION: Record<string, string> = {
   'Schedule with Kasandra': '/book',
   'Book a call': '/book',
   'Book a consultation': '/book',
+  // FIX 3: Register "What should I prepare?" with a deterministic destination
+  'What should I prepare?': '/guides/first-time-buyer-guide',
+  '¿Qué debo preparar?': '/guides/first-time-buyer-guide',
 
   // ES chips — core actions (parity with EN)
   'Tomar la evaluación de preparación': '/buyer-readiness',
