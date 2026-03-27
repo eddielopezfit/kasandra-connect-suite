@@ -1,119 +1,118 @@
 
 
-# Brand Voice Copy Optimization — All Pages
+# Selena KB & System Prompt Optimization — Title Correction, Legal Compliance, Platform Awareness
 
-## Kasandra's Voice Rules
-- First person ("I walk through..." not "Kasandra reviews...")
-- Warm, direct, personal — like a best friend who happens to be an expert
-- No generic CTA language ("Learn More", "Get Started", "Ready to...")
-- Insight-driven labels, not button-speak
-- Emotional reassurance at decision points
-- Spanish uses informal "tu" (best friend register)
+## Critical Corrections Found
 
----
+### 1. TITLE ERROR — "Associate Broker" → "REALTOR®" / "Real Estate Agent"
+Kasandra is a **real estate agent (REALTOR®)**, NOT an Associate Broker. This incorrect title appears in:
 
-## Pages & Copy Changes
+**System Prompt (3 locations):**
+- `systemPromptBuilder.ts` line 549: EN — "Kasandra Prieto is an Associate Broker operating within..."
+- `systemPromptBuilder.ts` line 1248: ES — "Kasandra Prieto es Associate Broker operando dentro de..."
+- Both need → "Kasandra Prieto is a licensed REALTOR® and real estate agent operating within..."
 
-### 1. Homepage (`V2Home.tsx`)
+**Frontend (4 locations):**
+- `KasandraPresenceCard.tsx` lines 44, 77, 110 — all three variants show "Associate Broker"
+- `V2PrivateCashReview.tsx` lines 182-183 — "Associate Broker | Tucson"
 
-**Services Section — 3x "Learn More" links (lines 518, 537, 556)**
-- "Learn More" / "Mas Informacion" is prohibited per Advisory Copy Standards
-- Change to: "See how I help buyers" / "See how I protect sellers" / "Understand your options"
+### 2. FAIR HOUSING & ARIZONA LAW COMPLIANCE
+The footer already has an Equal Housing Opportunity badge (line 56-61 of V2Footer.tsx). However, the system prompt has **zero explicit Fair Housing Act compliance rules**. Arizona ADRE and federal HUD require:
 
-**About Section heading (line 280)**
-- "Your Trusted Tucson REALTOR®" → "Your Best Friend in Real Estate"
-- (Matches the About page H1 and brand identity)
+**Missing from KB — must add:**
+- Fair Housing Act compliance block (no discrimination based on race, color, religion, sex, handicap, familial status, national origin)
+- Arizona-specific: ARS §41-1491 (state-level fair housing)
+- ADRE R4-28-301 through R4-28-1101 compliance awareness
+- Selena must never steer, redline, or make statements about neighborhood demographics, crime, school quality rankings, or property value predictions based on protected classes
 
-**About Section bio (line 284)**
-- "I serve my community not just as a licensed REALTOR®, but as a leader, advocate, and trusted voice" → "I didn't get into real estate to sell houses — I got in to help families make one of the biggest decisions of their lives with someone they actually trust."
+**Where to add:** New KB-13 block in both EN and ES prompts, subordinate to KB-0.
 
-**Community section (line 749)**
-- "Real estate is about more than transactions—it's about building stronger communities" → "This work has never been just about houses for me. It's about the families inside them and the neighborhoods that hold them together."
-- "Learn More" → "See how I give back"
+### 3. SELENA'S PLATFORM KNOWLEDGE GAPS
+The system prompt references Corner Connect and basic tools, but does NOT explicitly teach Selena about the **full hub inventory**. Adding a concise platform awareness block:
 
-**Corner Connect CTA (line 646)**
-- "Ask About Off-Market Properties" → "See what's available off-market"
+**Hub Tools Selena should reference via chips (not describe in text):**
+- Affordability Calculator (`/affordability-calculator`)
+- BAH Calculator (`/bah-calculator`) — military buyers
+- Seller Net Calculator (`/net-to-seller`)
+- Buyer Closing Costs Estimator (`/buyer-closing-costs`)
+- Buyer Readiness Check (`/buyer-readiness`)
+- Seller Readiness Check (`/seller-readiness`)
+- Cash Readiness Check (`/cash-readiness`)
+- Seller Decision Guide (`/seller-decision`) — 6-step wizard
+- Home Valuation Request (`/home-valuation`)
+- Off-Market Buyer Registry (`/off-market`)
+- Neighborhood Explorer (`/neighborhoods`) — 15 areas
+- Neighborhood Quiz (`/neighborhoods` quiz tab)
+- Neighborhood Compare (`/neighborhood-compare`)
 
-### 2. Sell Page (`V2Sell.tsx`)
+**Guides Hub:** 30+ bilingual guides across 10 categories (buying, selling, valuation, cash, stories, probate, divorce, distressed, military, senior)
 
-**Hero headline (line 81)**
-- "Tucson Home Selling: Know Your Worth. Sell on Your Terms." → "Selling Your Home? I'll Make Sure You Know Exactly Where You Stand."
+**Neighborhoods:** 15 registered areas (Central Tucson, Catalina Foothills, Oro Valley, Marana, Sahuarita, Vail, Green Valley, Rita Ranch, Sam Hughes, Civano, Rincon/Pantano, Corona de Tucson, Picture Rocks, Tanque Verde, Flowing Wells)
 
-**Hero subtext (line 83)**
-- "Kasandra helps Tucson sellers..." (third person) → "I help Tucson sellers price right, time the market, and close with confidence — plus you get a 24/7 AI concierge that works while you sleep."
-
-**"How I Protect Your Interests" subtext (line 196)**
-- "My approach is centered on your protection and informed decision-making at every stage." → "I come from life insurance — protection is in my DNA. Every decision we make together starts with what's best for you."
-
-**Cash Offer section (line 146)**
-- "Need to Sell Fast? Get a Cash Offer." → "Need to sell fast? Let me show you what a real cash offer looks like."
-
-**Cash Offer CTA (line 177)**
-- "Request a Cash Offer" → "See your cash offer options" (semantic honesty — the page educates, doesn't deliver an offer)
-
-**Bottom CTA (line 519)**
-- "Ready to Sell?" → "Let's figure out your best move."
-- "Let's discuss your home and create a selling strategy..." → "I sit down with every seller and walk through both paths — cash and traditional. You decide with the full picture."
-
-**"Not ready?" link (line 545)**
-- "Not ready? Talk to Selena first" → "Still thinking it over? Selena can help you sort it out"
-
-**Back-link (line 324 in CashOffer)**
-- "Prefer a traditional sale? Learn more about how I work with sellers." → "Thinking a traditional sale might be the move? Let me show you how I help sellers get there."
-
-### 3. Buy Page (`V2Buy.tsx`)
-
-**Hero headline (line 89)**
-- "Buy a Home in Tucson with Confidence." → "Buying a Home in Tucson? I'll Walk You Through Every Step."
-
-**Hero subtext (line 91)**
-- "Kasandra guides buyers through every step..." (third person) → "I guide buyers through every step — from first search to closed door — with honesty, local expertise, and an AI concierge built just for you."
-
-**"Why Work With Me?" benefits (lines 197-239)**
-- "Communicate comfortably in English or Spanish throughout your entire journey." → "I speak your language — literally. English or Spanish, you'll always feel at home."
-- "I'll help you understand your options, including down payment assistance programs." → "Down payment programs, closing cost grants, VA benefits — I'll make sure you know every dollar available to you."
-- "Over two decades in Tucson means I know this community inside and out." → "20+ years in Tucson. I don't just know the neighborhoods — I know which streets flood, which schools are rising, and where the best tamales are."
-- "Selena AI is available around the clock to answer questions and schedule appointments." → "Can't sleep because you're thinking about your offer? Selena's up too. She'll answer your questions at 2 AM so you wake up clear-headed."
-
-**Bottom CTA (line 267)**
-- "Ready to Get Started?" → "Let's find your place in Tucson."
-- "Let's discuss your home buying goals and create a plan that works for you." → "I'll sit down with you, understand what you're really looking for, and build a game plan that fits your life — not just your budget."
-- "Not ready? Talk to Selena first" → "Still exploring? Let Selena help you get your bearings"
-
-### 4. Cash Offer Options (`V2CashOfferOptions.tsx`)
-
-**Terminal CTA (line 283)**
-- "Want Expert Guidance on Your Options?" → "Getting clearer on your home's value?"
-- "Kasandra reviews both cash and traditional paths with every seller — you decide with full information." → "I walk through both paths with every seller I work with — no pressure, just the full picture so you can decide what actually fits your life."
-
-**Back-link (line 324)**
-- "Prefer a traditional sale? Learn more about how I work with sellers." → "Thinking a traditional sale might be the move? Let me show you how I help sellers get there."
-- "View Seller Services" → "See how I help sellers"
-
-### 5. Contact Page (`V2Contact.tsx`)
-
-**Hero subtext (line 152)**
-- "Ready when you are — no pressure, no obligation." → "I'm here when you're ready. No pitch, no pressure — just a real conversation."
-
-### 6. Global CTA Section (`CTASection.tsx`)
-
-**"Or let Selena guide you through this" (line 172)**
-- Keep as-is — already good voice.
-
-**Early-stage sell copy (line 95)**
-- "Get a personalized market analysis from Kasandra — not an algorithm, a real strategy session." → "Not an algorithm — a real conversation about your home, your timeline, and your options."
+### 4. KASANDRA BIO ENRICHMENT
+Current bio is good but missing some verified facts. Adding to Community Context:
+- Construction course: 6-month course building 15 tiny homes (verified in project knowledge)
+- Greater Tucson Leadership: Class of 2026
+- International Diamond Society recognition (2024)
+- 126+ five-star reviews (verified in project knowledge)
+- Life insurance background → "listen first, educate always" protection-based approach
 
 ---
 
-## Files Modified
-- `src/pages/v2/V2Home.tsx` — ~12 copy strings
-- `src/pages/v2/V2Sell.tsx` — ~8 copy strings
-- `src/pages/v2/V2Buy.tsx` — ~10 copy strings
-- `src/pages/v2/V2CashOfferOptions.tsx` — ~4 copy strings
-- `src/pages/v2/V2Contact.tsx` — ~1 copy string
-- `src/components/v2/CTASection.tsx` — ~1 copy string
+## Implementation Plan
 
-All changes are copy-only (EN + ES pairs). No structural or logic changes.
+### Step 1: Fix title in systemPromptBuilder.ts (EN + ES)
+- Line 549: "Associate Broker" → "licensed REALTOR® and real estate agent"
+- Line 1248: Same fix in Spanish — "agente de bienes raíces licenciada y REALTOR®"
 
-**Estimated scope**: 2-3 implementation messages (grouped by page).
+### Step 2: Add KB-13 — Fair Housing & Arizona Law Compliance (EN + ES)
+Insert after KB-12 in both prompts. Content:
+
+```
+KB-13 — FAIR HOUSING & ARIZONA LAW COMPLIANCE (Non-Negotiable · Subordinate to KB-0)
+
+FEDERAL FAIR HOUSING ACT:
+Selena must never make statements that discriminate or steer based on: race, color, religion, sex, handicap/disability, familial status, or national origin.
+
+ARIZONA STATE LAW (ARS §41-1491):
+Arizona extends protections to all federally protected classes. Additionally, ADRE-licensed agents must comply with R4-28-502 (brokerage disclosure) and R4-28-801 (advertising standards).
+
+PROHIBITED BEHAVIORS:
+- Never describe neighborhoods in terms of racial, ethnic, or religious composition
+- Never rank neighborhoods by "safety" or "crime" (steering risk)
+- Never suggest a neighborhood is "better for families" vs singles (familial status steering)
+- Never imply property values are affected by the demographics of an area
+- Never use language that could be interpreted as blockbusting, steering, or redlining
+- Never recommend against or toward a neighborhood based on school district demographics
+
+REQUIRED BEHAVIOR:
+- When asked about neighborhood safety, schools, or demographics: defer to Kasandra and provide only general geographic/lifestyle context
+- Include Equal Housing Opportunity awareness in Selena's identity
+
+EQUAL HOUSING OPPORTUNITY STATEMENT:
+Kasandra Prieto and Corner Connect are committed to Equal Housing Opportunity. All real estate services are provided without regard to race, color, religion, sex, handicap, familial status, or national origin.
+```
+
+### Step 3: Add Platform Awareness block to system prompt
+Insert concise hub inventory list into KB-8 (both EN + ES) so Selena knows what tools/guides/neighborhoods exist and can route via chips.
+
+### Step 4: Enrich Kasandra's Community Context
+Add verified bio facts (construction course, GTL Class 2026, Diamond Society 2024, 126+ reviews, life insurance background) to lines 207-214 (EN) and 916-923 (ES).
+
+### Step 5: Fix frontend "Associate Broker" references
+- `KasandraPresenceCard.tsx` — change all 3 instances to "REALTOR®"
+- `V2PrivateCashReview.tsx` — change to "REALTOR® | Tucson"
+
+### Files Modified
+- `supabase/functions/selena-chat/systemPromptBuilder.ts` — title fix, KB-13, platform awareness, bio enrichment (EN + ES)
+- `src/components/v2/KasandraPresenceCard.tsx` — title fix (3 instances)
+- `src/pages/v2/V2PrivateCashReview.tsx` — title fix (1 instance)
+
+### NOT Changed (Already Correct)
+- V2Footer.tsx — already shows "REALTOR®" and Equal Housing badge
+- V2About.tsx — already shows "REALTOR®" in document head
+- GuideComplianceFooter.tsx — already shows "REALTOR®"
+- Guide data files — already use "REALTOR®"
+
+**Estimated scope**: 2 implementation messages. First message handles systemPromptBuilder.ts (largest file). Second handles the 2 frontend files.
 
