@@ -110,6 +110,7 @@ function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' 
     isLive,
     insights,
     sourceLinks: isNewPipeline ? pulse.source_links : undefined,
+    medianSalePrice: pulse.median_sale_price ?? null,
   };
 }
 
