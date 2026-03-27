@@ -41,7 +41,7 @@ const KasandraPresenceCard = ({
               {t(messageEn, messageEs)}
             </p>
             <p className="mt-2 text-xs font-medium text-cc-navy/60">
-              — Kasandra Prieto, Associate Broker
+              — Kasandra Prieto, REALTOR®
             </p>
           </div>
         </div>
@@ -74,7 +74,7 @@ const KasandraPresenceCard = ({
                 Kasandra Prieto
               </p>
               <p className="text-xs text-cc-charcoal/50">
-                {t("Associate Broker · Corner Connect", "Corredora Asociada · Corner Connect")}
+                {t("REALTOR® · Corner Connect", "REALTOR® · Corner Connect")}
               </p>
             </div>
           </div>
@@ -107,7 +107,7 @@ const KasandraPresenceCard = ({
             — Kasandra Prieto
           </p>
           <p className="text-xs text-cc-charcoal/50">
-            {t("Associate Broker · Corner Connect", "Corredora Asociada · Corner Connect")}
+            {t("REALTOR® · Corner Connect", "REALTOR® · Corner Connect")}
           </p>
         </div>
       </div>
