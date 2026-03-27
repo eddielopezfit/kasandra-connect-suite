@@ -28,7 +28,7 @@ const V2Community = lazy(() => import("./pages/v2/V2Community"));
 const V2Book = lazy(() => import("./pages/v2/V2Book"));
 const V2BookConfirmed = lazy(() => import("./pages/v2/V2BookConfirmed"));
 const V2BuyerReadiness = lazy(() => import("./pages/v2/V2BuyerReadiness"));
-const V2PrivateCashReview = lazy(() => import("./pages/v2/V2PrivateCashReview"));
+
 const V2ThankYou = lazy(() => import("./pages/v2/V2ThankYou"));
 const V2SellerDecision = lazy(() => import("./pages/v2/V2SellerDecision"));
 const V2SellerTimeline = lazy(() => import("./pages/v2/V2SellerTimeline"));
