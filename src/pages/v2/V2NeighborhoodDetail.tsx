@@ -212,6 +212,14 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
         />
       )}
 
+      {/* ── KASANDRA VIDEO — before decision tools ── */}
+      <KasandraVideoBlock
+        variant="compact"
+        labelEn="Watch: What buyers should know about this area"
+        labelEs="Mira: Lo que los compradores deben saber de esta área"
+        className="px-4"
+      />
+
       {/* ── DECISION TOOLS ── */}
       <AreaDecisionTools slug={neighborhood.slug} />
 
