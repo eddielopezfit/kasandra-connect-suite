@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Button } from "@/components/ui/button";
@@ -6,15 +7,20 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, Sparkles, Calendar, MessageCircle } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, Calendar, MessageCircle } from "lucide-react";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
+import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import heroImage from "@/assets/hero-cash-calm.png";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
-import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
 const V2CashOfferOptionsContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+
+  // Set intent to 'cash' so JourneyBreadcrumb shows cash-relevant next steps
+  useEffect(() => {
+    setFieldIfEmpty('intent', 'cash');
+  }, []);
   useDocumentHead({
     titleEn: "Cash Offer vs. Traditional Listing | Tucson Home Sale Calculator",
     titleEs: "Oferta en Efectivo vs. Venta Tradicional | Calculadora de Venta en Tucson",
