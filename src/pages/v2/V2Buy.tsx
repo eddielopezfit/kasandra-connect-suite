@@ -151,7 +151,7 @@ const V2BuyContent = () => {
             >
               <Shield className="w-5 h-5 text-cc-gold flex-shrink-0" />
               <span className="text-sm font-semibold text-cc-navy leading-tight">
-                {t("BAH Calculator", "Calculadora BAH")}
+                {t("BAH Calculator (Military)", "Calculadora BAH (Militar)")}
               </span>
             </Link>
           </div>

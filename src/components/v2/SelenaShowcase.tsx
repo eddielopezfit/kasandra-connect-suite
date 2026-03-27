@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Bot, Sparkles, MessageCircle, Video, ArrowRight } from "lucide-react";
+import { Bot, Sparkles, MessageCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
