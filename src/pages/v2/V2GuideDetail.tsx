@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
+import NextBestActionCard from "@/components/v2/NextBestActionCard";
 import { ArrowLeft, User, MessageCircle, Bot } from "lucide-react";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
