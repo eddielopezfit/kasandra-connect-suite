@@ -164,6 +164,35 @@ export const NEIGHBORHOOD_REGISTRY: NeighborhoodEntry[] = [
       en: "New construction, young families, and the fastest-growing corner of the metro.",
       es: "Construcción nueva, familias jóvenes y el rincón de más rápido crecimiento del área metropolitana."
     },
+    positioningLine: {
+      en: 'New homes, young energy, and the space to grow.',
+      es: 'Casas nuevas, energía joven y espacio para crecer.',
+    },
+    storyBreak: {
+      headline: { en: 'Built for What\'s Next', es: 'Construido para lo Que Viene' },
+      body: { en: 'Marana isn\'t looking back. New communities, growing infrastructure, and families writing their first chapters — this is where momentum lives.', es: 'Marana no mira atrás. Nuevas comunidades, infraestructura en crecimiento y familias escribiendo sus primeros capítulos — aquí vive el impulso.' },
+    },
+    lifestyleFit: {
+      strongMatch: {
+        en: ['Brand-new construction and builder incentives', 'Larger lots and open desert views', 'Family-oriented communities with parks', 'Remote work lifestyle with space', 'Value for the square footage'],
+        es: ['Construcción nueva e incentivos de constructores', 'Lotes más grandes y vistas al desierto', 'Comunidades orientadas a la familia con parques', 'Estilo de vida de trabajo remoto con espacio', 'Valor por pie cuadrado'],
+      },
+      considerCarefully: {
+        en: ['Walkable urban lifestyle', 'Historic charm or unique architecture', 'Short commute to central Tucson', 'Established restaurant and nightlife scene'],
+        es: ['Estilo de vida urbano caminable', 'Encanto histórico o arquitectura única', 'Viaje corto al centro de Tucson', 'Escena establecida de restaurantes y vida nocturna'],
+      },
+    },
+    areaIntelligence: {
+      priceRange: { en: '$280K – $520K', es: '$280K – $520K' },
+      demandLevel: 'high' as const,
+      marketSpeed: 'fast' as const,
+      propertyTypes: { en: ['New-build single-family', 'Master-planned communities', 'Spec homes', 'Custom lots'], es: ['Casas nuevas unifamiliares', 'Comunidades planificadas', 'Casas especulativas', 'Lotes personalizados'] },
+    },
+    lifestyleHighlights: {
+      dining: { en: 'Growing retail along Cortaro and Twin Peaks. Local favorites mix with national chains. The craft beer scene is emerging, and food trucks gather on weekends.', es: 'Retail en crecimiento en Cortaro y Twin Peaks. Favoritos locales mezclados con cadenas nacionales. La escena de cerveza artesanal está emergiendo.' },
+      outdoor: { en: 'Tortolita Mountain trails, Rillito River Park connection, and wide open desert spaces. Community pools and splash pads keep families cool in summer.', es: 'Senderos de Tortolita Mountain, conexión con Rillito River Park, y amplios espacios desérticos. Piscinas comunitarias mantienen a las familias frescas en verano.' },
+      dailyRhythm: { en: 'Family-paced mornings, community park afternoons, and quiet evenings. Weekends mean sports leagues, farmers markets, and backyard barbecues.', es: 'Mañanas con ritmo familiar, tardes en parques comunitarios, y noches tranquilas. Los fines de semana significan ligas deportivas y barbacoas.' },
+    },
     sellerProfile: {
       en: "Marana sellers benefit from sustained demand — young families and remote workers are flooding in for new builds and larger lots. Your competition is the builder down the street offering incentives. If you're selling resale, emphasize what new construction can't offer: mature landscaping, finished backyards, and no construction traffic. Price competitively against new inventory.",
       es: "Los vendedores de Marana se benefician de una demanda sostenida — familias jóvenes y trabajadores remotos llegan en masa por construcciones nuevas y lotes más grandes. Tu competencia es el constructor que ofrece incentivos."
