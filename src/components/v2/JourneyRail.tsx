@@ -9,10 +9,9 @@
  * Only renders for users with intent set (returning/exploring+).
  */
 
-import { CheckCircle2, ArrowRight, Circle } from 'lucide-react';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { cn } from '@/lib/utils';
 import { useJourneyProgress, type JourneyProgress } from '@/hooks/useJourneyProgress';
 import { logCTAClick } from '@/lib/analytics/ctaDefaults';
