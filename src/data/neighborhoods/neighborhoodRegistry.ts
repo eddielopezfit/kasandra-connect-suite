@@ -110,6 +110,35 @@ export const NEIGHBORHOOD_REGISTRY: NeighborhoodEntry[] = [
       en: "Where master-planned meets mountain views — Tucson's most polished suburb.",
       es: "Donde la planificación maestra se encuentra con vistas a las montañas — el suburbio más pulido de Tucson."
     },
+    positioningLine: {
+      en: 'Polished suburban living with Catalina Mountain views.',
+      es: 'Vida suburbana pulida con vistas a las montañas Catalina.',
+    },
+    storyBreak: {
+      headline: { en: 'Where Ambition Meets Tranquility', es: 'Donde la Ambición Se Encuentra con la Tranquilidad' },
+      body: { en: 'Oro Valley rewards those who value both performance and peace. Executive neighborhoods, top schools, and sunsets over the Catalinas — earned, not inherited.', es: 'Oro Valley recompensa a quienes valoran tanto el rendimiento como la paz. Vecindarios ejecutivos, las mejores escuelas y atardeceres sobre las Catalinas.' },
+    },
+    lifestyleFit: {
+      strongMatch: {
+        en: ['Top-rated schools and family amenities', 'Mountain views and resort-style living', 'Move-in-ready, newer construction', 'Low crime and well-maintained streets', 'Golf and outdoor recreation access'],
+        es: ['Escuelas de primera y amenidades familiares', 'Vistas a las montañas y vida estilo resort', 'Construcción nueva, lista para mudarse', 'Baja criminalidad y calles bien mantenidas', 'Acceso a golf y recreación al aire libre'],
+      },
+      considerCarefully: {
+        en: ['Urban walkability and nightlife', 'Affordable entry-level pricing', 'Eclectic or historic character', 'Minimal HOA restrictions'],
+        es: ['Accesibilidad peatonal y vida nocturna', 'Precios accesibles de entrada', 'Carácter ecléctico o histórico', 'Mínimas restricciones de HOA'],
+      },
+    },
+    areaIntelligence: {
+      priceRange: { en: '$380K – $850K+', es: '$380K – $850K+' },
+      demandLevel: 'high' as const,
+      marketSpeed: 'average' as const,
+      propertyTypes: { en: ['Single-family homes', 'Luxury estates', 'Townhomes', 'Active-adult communities'], es: ['Casas unifamiliares', 'Propiedades de lujo', 'Townhomes', 'Comunidades de adultos activos'] },
+    },
+    lifestyleHighlights: {
+      dining: { en: 'Upscale dining along Oracle Road and La Cañada, farm-to-table restaurants, and a growing craft brewery scene. Sunday brunch culture is real here.', es: 'Restaurantes de alta cocina en Oracle Road y La Cañada, restaurantes de granja a mesa, y una creciente escena de cervecerías artesanales.' },
+      outdoor: { en: 'Catalina State Park for hiking, Pusch Ridge for scrambling, and miles of connected bike paths. Steam Pump Ranch hosts community events year-round.', es: 'Catalina State Park para senderismo, Pusch Ridge para escalada, y kilómetros de ciclovías conectadas. Steam Pump Ranch organiza eventos comunitarios todo el año.' },
+      dailyRhythm: { en: 'Morning trail runs, school drop-offs, and a pace that feels suburban but never boring. Evenings bring patio dining and mountain sunsets.', es: 'Carreras matutinas en senderos, llevar a los niños a la escuela, y un ritmo que se siente suburbano pero nunca aburrido.' },
+    },
     sellerProfile: {
       en: "Oro Valley commands premium pricing and attracts relocating executives, medical professionals, and families prioritizing schools. Homes here compete on condition — buyers expect move-in ready. If you're selling, invest in curb appeal and staging. The median sits 40% above Tucson proper, but days on market stretch longer because buyers are selective. Price it right or watch it sit.",
       es: "Oro Valley tiene precios premium y atrae ejecutivos reubicados, profesionales médicos y familias que priorizan las escuelas. Las casas aquí compiten por condición — los compradores esperan listas para mudarse. Si vendes, invierte en apariencia exterior y staging."
