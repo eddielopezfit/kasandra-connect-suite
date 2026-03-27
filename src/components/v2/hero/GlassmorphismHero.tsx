@@ -6,6 +6,7 @@ import { useMarketPulse } from "@/hooks/useMarketPulse";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { isReturningVisitor, getIntent, getGuidesRead } from "@/lib/guides/personalization";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
+import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { useState, useEffect, useRef, useCallback } from "react";
 import heroImage from "@/assets/hero-bg.jpg";
 import type { EntrySource } from "@/contexts/selena/types";
