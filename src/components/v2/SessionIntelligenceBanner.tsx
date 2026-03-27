@@ -103,9 +103,9 @@ function getBannerContent(
         `Bienvenido/a de vuelta${contextStr}. ¿Listo/a para continuar donde te quedaste?`
       ),
       actions: [
-        { type: 'link', label: t("Refine My Plan", "Refinar Mi Plan"), destination: intent === 'sell' ? '/seller-decision' : intent === 'buy' ? '/buyer-readiness' : '/neighborhoods' },
-        { type: 'link', label: t("Compare Areas", "Comparar Áreas"), destination: '/neighborhoods/compare' },
-        { type: 'link', label: t("Talk to Kasandra", "Hablar con Kasandra"), destination: '/book' },
+        { type: 'link', label: t("Continue where you left off", "Continúa donde te quedaste"), destination: intent === 'sell' ? '/seller-decision' : intent === 'buy' ? '/buyer-readiness' : '/neighborhoods' },
+        { type: 'link', label: t("See how areas compare", "Mira cómo se comparan las áreas"), destination: '/neighborhoods/compare' },
+        { type: 'link', label: t("Plan your next step with Kasandra", "Planifica tu siguiente paso con Kasandra"), destination: '/book' },
       ],
       isReturning: true,
     };
