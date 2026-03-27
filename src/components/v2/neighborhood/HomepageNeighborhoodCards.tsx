@@ -58,10 +58,26 @@ const HomepageNeighborhoodCards = () => {
   );
 };
 
-function NeighborhoodFeatureCard({ neighborhood }: { neighborhood: typeof NEIGHBORHOOD_REGISTRY[number] }) {
-  const { language } = useLanguage();
+function getIntentTag(
+  neighborhood: typeof NEIGHBORHOOD_REGISTRY[number],
+  intent: string | undefined,
+  t: (en: string, es: string) => string,
+): string | null {
+  const intel = neighborhood.areaIntelligence;
+  if (!intel) return null;
+  
+  if (intent === 'buy' && intel.demandLevel === 'high') return t("High Demand", "Alta Demanda");
+  if (intent === 'sell' && intel.marketSpeed === 'fast') return t("Fast Market", "Mercado Rápido");
+  if (intent === 'cash') return t("Cash Offer Available", "Oferta en Efectivo Disponible");
+  if (intel.demandLevel === 'high') return t("High Demand", "Alta Demanda");
+  return null;
+}
+
+function NeighborhoodFeatureCard({ neighborhood, intent }: { neighborhood: typeof NEIGHBORHOOD_REGISTRY[number]; intent?: string }) {
+  const { language, t } = useLanguage();
   const [imgError, setImgError] = useState(false);
   const heroUrl = getNeighborhoodHeroUrl(neighborhood.slug);
+  const tag = getIntentTag(neighborhood, intent, t);
 
   return (
     <Link to={`/neighborhoods/${neighborhood.slug}`} className="group">
