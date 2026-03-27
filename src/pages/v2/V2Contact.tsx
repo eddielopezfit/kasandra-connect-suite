@@ -174,22 +174,22 @@ const V2ContactContent = () => {
               {/* Personal message — Kasandra's touch */}
               <div className="bg-white rounded-2xl shadow-soft border border-border/10 p-6">
                 <p className="font-serif text-lg text-cc-navy font-semibold mb-3">
-                  {t("A note from Kasandra", "Una nota de Kasandra")}
+                  {t("From me to you", "De mí para ti")}
                 </p>
                 <p className="text-foreground text-sm leading-relaxed mb-3">
                   {t(
-                    "I grew up on the border — Douglas on one side, Agua Prieta on the other. Being bilingual isn't just something I do, it's who I am. When you reach out, you're not getting a call center or a generic follow-up. You're getting me.",
-                    "Crecí en la frontera — Douglas de un lado, Agua Prieta del otro. Ser bilingüe no es solo algo que hago, es quien soy. Cuando te comunicas, no recibes un call center ni un seguimiento genérico. Me recibes a mí."
+                    "When you reach out, you're not getting a call center or a generic follow-up. You're getting me — the same person who hosts \"Lifting You Up\" every Saturday on Urbana 92.5 FM, the same person who's guided 100+ families through one of the biggest decisions of their lives.",
+                    "Cuando te comunicas, no recibes un call center ni un seguimiento genérico. Me recibes a mí — la misma persona que conduce \"Lifting You Up\" cada sábado en Urbana 92.5 FM, la misma que ha guiado a más de 100 familias en una de las decisiones más importantes de sus vidas."
                   )}
                 </p>
                 <p className="text-foreground text-sm leading-relaxed">
                   {t(
-                    "I came from life insurance — protection is in my DNA. Whatever your situation, I'll listen first and guide you from there.",
-                    "Vengo del seguro de vida — la protección está en mi ADN. Sin importar tu situación, primero escucho y después te guío."
+                    "I listen first, educate always, and pressure never. That's how I've earned 126+ five-star reviews — and why families come back for their second, third, and fourth transaction.",
+                    "Primero escucho, siempre educo, y nunca presiono. Así es como he ganado más de 126 reseñas de cinco estrellas — y por qué las familias regresan para su segunda, tercera y cuarta transacción."
                   )}
                 </p>
                 <p className="text-cc-gold font-semibold text-sm mt-4 italic">
-                  — Kasandra
+                  — Kasandra 🐾
                 </p>
               </div>
             </div>
