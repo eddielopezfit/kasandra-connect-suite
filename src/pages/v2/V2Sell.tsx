@@ -90,6 +90,42 @@ const V2SellContent = () => {
         backgroundImage={heroSellBg}
       />
 
+      {/* Address-First Entry — Quick Valuation CTA */}
+      <section className="bg-gradient-to-b from-cc-navy/5 to-transparent py-8">
+        <div className="container mx-auto px-4 max-w-xl">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!addressInput.trim()) return;
+              handleCTAClick('sell_address_entry', '/home-valuation');
+              logEvent('seller_address_entry_submitted', { address: addressInput.trim() });
+              navigate(`/home-valuation?address=${encodeURIComponent(addressInput.trim())}`);
+            }}
+            className="flex flex-col sm:flex-row gap-3 items-stretch"
+          >
+            <div className="flex-1 relative">
+              <Home className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cc-charcoal/40" />
+              <Input
+                value={addressInput}
+                onChange={(e) => setAddressInput(e.target.value)}
+                placeholder={t("Enter your address for a free estimate…", "Ingrese su dirección para un estimado gratis…")}
+                className="pl-10 h-12 border-cc-sand-dark/40 bg-white rounded-full text-sm"
+              />
+            </div>
+            <Button
+              type="submit"
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full h-12 px-6 whitespace-nowrap"
+            >
+              {t("Get My Estimate", "Obtener Estimado")}
+              <ArrowRight className="w-4 h-4 ml-1.5" />
+            </Button>
+          </form>
+          <p className="text-center text-xs text-cc-charcoal/50 mt-2">
+            {t("Free, no obligation. Takes 60 seconds.", "Gratis, sin compromiso. Toma 60 segundos.")}
+          </p>
+        </div>
+      </section>
+
       {/* Journey Progress — visible only to returning users */}
       <section className="py-4">
         <div className="container mx-auto px-4 max-w-3xl">
