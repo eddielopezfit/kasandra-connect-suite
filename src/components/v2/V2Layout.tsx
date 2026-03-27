@@ -147,6 +147,7 @@ const V2Layout = ({ children, suppressCTA = false }: V2LayoutProps) => {
         <ChatErrorBoundary>
           <SelenaFloatingButton />
           <SelenaChatDrawer />
+          <ProactiveSelenaPrompt />
         </ChatErrorBoundary>
 
         {/* Sticky mobile Book CTA — lg:hidden so desktop nav button handles it */}
