@@ -27,7 +27,9 @@ const PAGE_INTENT = 'sell' as const;
 const V2SellContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+  const navigate = useNavigate();
   const [leadName, setLeadName] = useState<string | null>(null);
+  const [addressInput, setAddressInput] = useState("");
   useDocumentHead({
     titleEn: "Tucson Home Selling | Cash Offer & Traditional Listing — Kasandra Prieto",
     titleEs: "Venta de Casas en Tucson | Oferta en Efectivo y Venta Tradicional — Kasandra Prieto",
