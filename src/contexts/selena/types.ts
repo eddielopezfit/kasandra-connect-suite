@@ -69,7 +69,8 @@ export type EntrySource =
      | 'proactive_tool_followup'
      | 'proactive_guide_reader'
      | 'proactive_seller_nudge'
-     | 'proactive_buyer_budget';
+      | 'proactive_buyer_budget'
+      | 'predictive_guidance';
 
 export interface EntryContext {
   estimatedBudget?: number;
