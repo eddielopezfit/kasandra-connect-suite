@@ -307,6 +307,7 @@ function GuidesContent() {
 
   return (
     <>
+      <JsonLd data={aggregateRatingSchema()} />
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "FAQPage",

@@ -139,6 +139,8 @@ const V2ContactContent = () => {
 
   return (
     <>
+      <JsonLd data={realEstateAgentSchema()} />
+      <JsonLd data={localBusinessSchema()} />
       {/* Hero */}
       <section className="bg-cc-navy pt-32 pb-16">
         <div className="container mx-auto px-4 text-center">

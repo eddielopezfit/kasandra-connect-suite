@@ -31,6 +31,7 @@ const V2AboutContent = () => {
 
   return (
     <>
+      <JsonLd data={realEstateAgentSchema()} />
       {/* Hero */}
       <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>
