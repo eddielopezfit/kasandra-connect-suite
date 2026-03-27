@@ -13,7 +13,7 @@ import { Shield, TrendingUp, FileText, Handshake, AlertCircle, ArrowRight, Zap, 
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
-
+import { useNavigate } from "react-router-dom";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import heroSellBg from "@/assets/hero-sell-tucson-aerial.png";
