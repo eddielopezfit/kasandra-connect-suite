@@ -78,10 +78,10 @@ const V2SellContent = () => {
       {/* Hero */}
       <GlassmorphismHero
         badge={t("For Sellers", "Para Vendedores")}
-        headline={t("Tucson Home Selling: Know Your Worth. Sell on Your Terms.", "Venta de Casas en Tucson: Conoce Tu Valor. Vende en Tus Términos.")}
+        headline={t("Selling Your Home? I'll Make Sure You Know Exactly Where You Stand.", "¿Vendiendo Tu Casa? Me Aseguraré de Que Sepas Exactamente Dónde Estás.")}
         subtext={t(
-          "Kasandra helps Tucson sellers price right, time the market, and close with confidence — with an AI concierge that answers every question before you even ask.",
-          "Kasandra ayuda a vendedores en Tucson a fijar el precio correcto, aprovechar el mercado y cerrar con confianza — con un asistente de IA que responde cada pregunta antes de que la hagas."
+          "I help Tucson sellers price right, time the market, and close with confidence — plus you get a 24/7 AI concierge that works while you sleep.",
+          "Ayudo a vendedores en Tucson a fijar el precio correcto, aprovechar el mercado y cerrar con confianza — además tienes un asistente de IA 24/7 que trabaja mientras duermes."
         )}
         primaryLabel={t("Talk to Selena", "Habla con Selena")}
         secondaryLabel={t("Seller Readiness Quiz", "Quiz de Preparación para Vender")}
@@ -143,7 +143,7 @@ const V2SellContent = () => {
               {t("Corner Connect Exclusive", "Exclusivo de Corner Connect")}
             </span>
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-white mb-4">
-              {t("Need to Sell Fast? Get a Cash Offer.", "¿Necesitas Vender Rápido? Obtén una Oferta en Efectivo.")}
+              {t("Need to sell fast? Let me show you what a real cash offer looks like.", "¿Necesitas vender rápido? Déjame mostrarte cómo luce una oferta en efectivo real.")}
             </h2>
             <div className="flex flex-wrap justify-center gap-4 mb-6">
               <span className="flex items-center gap-2 text-white/80 text-sm">
@@ -174,7 +174,7 @@ const V2SellContent = () => {
                 to="/cash-offer-options?source=sell_hub_cash"
                 onClick={() => handleCTAClick('sell_cash_offer_request', '/cash-offer-options')}
               >
-                {t("Request a Cash Offer", "Solicitar una Oferta en Efectivo")}
+                {t("See your cash offer options", "Conoce tus opciones de oferta en efectivo")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
@@ -193,8 +193,8 @@ const V2SellContent = () => {
               </h2>
               <p className="text-cc-charcoal mb-8 max-w-lg">
                 {t(
-                  "My approach is centered on your protection and informed decision-making at every stage.",
-                  "Mi enfoque está centrado en su protección y toma de decisiones informada en cada etapa."
+                  "I come from life insurance — protection is in my DNA. Every decision we make together starts with what's best for you.",
+                  "Vengo del seguro de vida — la protección está en mi ADN. Cada decisión que tomamos juntos empieza con lo que es mejor para ti."
                 )}
               </p>
 
@@ -493,8 +493,8 @@ const V2SellContent = () => {
             <div className="bg-cc-sand rounded-xl py-6 px-8 text-center">
               <p className="text-cc-charcoal text-sm max-w-2xl mx-auto mb-3">
                 {t(
-                  "Not sure which path is right for you? Kasandra reviews both options with every seller — you decide with full information.",
-                  "¿No estás segura de qué camino es el correcto? Kasandra revisa ambas opciones con cada vendedor — tú decides con información completa."
+                  "Not sure which path fits? I walk through both options with every seller — you decide with the full picture.",
+                  "¿No estás segura de qué camino va contigo? Yo reviso ambas opciones con cada vendedor — tú decides con toda la información."
                 )}
               </p>
               <button
@@ -516,12 +516,12 @@ const V2SellContent = () => {
       <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
-            {t("Ready to Sell?", "¿Listo para Vender?")}
+            {t("Let's figure out your best move.", "Descubramos tu mejor jugada.")}
           </h2>
           <p className="text-white/80 max-w-2xl mx-auto mb-8">
             {t(
-              "Let's discuss your home and create a selling strategy that works for your situation.",
-              "Hablemos sobre su casa y creemos una estrategia de venta que funcione para su situación."
+              "I sit down with every seller and walk through both paths — cash and traditional. You decide with the full picture.",
+              "Me siento con cada vendedor y revisamos ambos caminos — efectivo y tradicional. Tú decides con toda la información."
             )}
           </p>
           <div className="flex flex-col items-center gap-3">
@@ -542,7 +542,7 @@ const V2SellContent = () => {
               className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
             >
               <MessageCircle className="w-4 h-4" />
-              {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
+              {t("Still thinking it over? Selena can help you sort it out", "¿Todavía pensándolo? Selena puede ayudarte a aclararlo")}
             </button>
           </div>
         </div>

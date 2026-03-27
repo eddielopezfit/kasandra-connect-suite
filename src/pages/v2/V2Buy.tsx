@@ -86,10 +86,10 @@ const V2BuyContent = () => {
       {/* Hero */}
       <GlassmorphismHero
         badge={t("For Buyers", "Para Compradores")}
-        headline={t("Buy a Home in Tucson with Confidence.", "Compre una Casa en Tucson con Confianza.")}
+        headline={t("Buying a Home in Tucson? I'll Walk You Through Every Step.", "¿Comprando Casa en Tucson? Te Acompaño en Cada Paso.")}
         subtext={t(
-          "Kasandra guides buyers through every step — from first search to closed door — with honesty, expertise, and an AI concierge built for you.",
-          "Kasandra guía a compradores en cada paso — desde la primera búsqueda hasta el cierre — con honestidad, experiencia y un asistente de IA diseñado para ti."
+          "I guide buyers through every step — from first search to closed door — with honesty, local expertise, and an AI concierge built just for you.",
+          "Te guío en cada paso — desde la primera búsqueda hasta el cierre — con honestidad, experiencia local y un asistente de IA diseñado para ti."
         )}
         primaryLabel={t("Talk to Selena", "Habla con Selena")}
         secondaryLabel={t("Buyer Readiness Quiz", "Quiz de Preparación")}
@@ -197,8 +197,8 @@ const V2BuyContent = () => {
                     <h4 className="font-semibold text-cc-navy">{t("Bilingual Support", "Apoyo Bilingüe")}</h4>
                     <p className="text-sm text-cc-charcoal">
                       {t(
-                        "Communicate comfortably in English or Spanish throughout your entire journey.",
-                        "Comuníquese cómodamente en inglés o español durante todo su viaje."
+                        "I speak your language — literally. English or Spanish, you'll always feel at home.",
+                        "Hablo tu idioma — literalmente. Inglés o español, siempre te sentirás en casa."
                       )}
                     </p>
                   </div>
@@ -209,8 +209,8 @@ const V2BuyContent = () => {
                     <h4 className="font-semibold text-cc-navy">{t("Financing Guidance", "Orientación de Financiamiento")}</h4>
                     <p className="text-sm text-cc-charcoal">
                       {t(
-                        "I'll help you understand your options, including down payment assistance programs.",
-                        "Le ayudaré a entender sus opciones, incluyendo programas de asistencia para pago inicial."
+                        "Down payment programs, closing cost grants, VA benefits — I'll make sure you know every dollar available to you.",
+                        "Programas de pago inicial, subsidios de cierre, beneficios VA — me aseguraré de que conozcas cada dólar disponible para ti."
                       )}
                     </p>
                   </div>
@@ -221,8 +221,8 @@ const V2BuyContent = () => {
                     <h4 className="font-semibold text-cc-navy">{t("Local Expertise", "Experiencia Local")}</h4>
                     <p className="text-sm text-cc-charcoal">
                       {t(
-                        "Over two decades in Tucson means I know this community inside and out.",
-                        "Más de dos décadas en Tucson significa que conozco esta comunidad de adentro hacia afuera."
+                        "20+ years in Tucson. I don't just know the neighborhoods — I know which streets flood, which schools are rising, and where the best tamales are.",
+                        "20+ años en Tucson. No solo conozco los vecindarios — sé qué calles se inundan, qué escuelas van en ascenso y dónde están los mejores tamales."
                       )}
                     </p>
                   </div>
@@ -233,8 +233,8 @@ const V2BuyContent = () => {
                     <h4 className="font-semibold text-cc-navy">{t("24/7 AI Concierge", "Asistente IA 24/7")}</h4>
                     <p className="text-sm text-cc-charcoal">
                       {t(
-                        "Selena AI is available around the clock to answer questions and schedule appointments.",
-                        "Selena AI está disponible las 24 horas para responder preguntas y programar citas."
+                        "Can't sleep because you're thinking about your offer? Selena's up too. She'll answer your questions at 2 AM so you wake up clear-headed.",
+                        "¿No puedes dormir porque estás pensando en tu oferta? Selena también está despierta. Te responderá a las 2 AM para que amanezcas con claridad."
                       )}
                     </p>
                   </div>
@@ -264,12 +264,12 @@ const V2BuyContent = () => {
       <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
-            {t("Ready to Get Started?", "¿Listo para Comenzar?")}
+            {t("Let's find your place in Tucson.", "Encontremos tu lugar en Tucson.")}
           </h2>
           <p className="text-white/80 max-w-2xl mx-auto mb-8">
             {t(
-              "Let's discuss your home buying goals and create a plan that works for you.",
-              "Hablemos sobre sus metas de compra de casa y creemos un plan que funcione para usted."
+              "I'll sit down with you, understand what you're really looking for, and build a game plan that fits your life — not just your budget.",
+              "Me sentaré contigo, entenderé lo que realmente buscas, y armaremos un plan que se adapte a tu vida — no solo a tu presupuesto."
             )}
           </p>
           <div className="flex flex-col items-center gap-3">
@@ -290,7 +290,7 @@ const V2BuyContent = () => {
               className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
             >
               <MessageCircle className="w-4 h-4" />
-              {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
+              {t("Still exploring? Let Selena help you get your bearings", "¿Todavía explorando? Deja que Selena te oriente")}
             </button>
           </div>
         </div>

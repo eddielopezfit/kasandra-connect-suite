@@ -93,8 +93,8 @@ const CTASection = () => {
                 )
             : pageIntent === 'sell'
             ? t(
-                "Get a personalized market analysis from Kasandra — not an algorithm, a real strategy session.",
-                "Obtén un análisis de mercado personalizado de Kasandra — no un algoritmo, una sesión de estrategia real."
+                "Not an algorithm — a real conversation about your home, your timeline, and your options.",
+                "No un algoritmo — una conversación real sobre tu casa, tu tiempo y tus opciones."
               )
             : pageIntent === 'buy'
             ? t(

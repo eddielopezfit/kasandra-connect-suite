@@ -277,13 +277,13 @@ const V2HomeContent = () => {
                 {t("About Kasandra", "Sobre Kasandra")}
               </span>
               <h2 className="font-serif text-4xl xl:text-5xl font-bold text-cc-blue mt-2 mb-6">
-                {t("Your Trusted Tucson REALTOR®", "Su REALTOR® de Confianza en Tucson")}
+                {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
               </h2>
               <div className="space-y-4 text-cc-text-muted mb-6">
                 <p>
                   {t(
-                    "A proud Tucson resident for over two decades, I serve my community not just as a licensed REALTOR®, but as a leader, advocate, and trusted voice. Fluent in English and Spanish, I bring warmth, clarity, and expertise to every client.",
-                    "Orgullosa residente de Tucson por más de dos décadas, sirvo a mi comunidad no solo como REALTOR® licenciada, sino como líder, defensora y voz de confianza. Hablo inglés y español con fluidez, aportando calidez, claridad y experiencia a cada cliente."
+                    "I didn't get into real estate to sell houses — I got in to help families make one of the biggest decisions of their lives with someone they actually trust.",
+                    "No entré a bienes raíces para vender casas — entré para ayudar a las familias a tomar una de las decisiones más grandes de su vida con alguien en quien realmente confían."
                   )}
                 </p>
                 <ul className="space-y-2">
@@ -335,12 +335,12 @@ const V2HomeContent = () => {
                 {t("About Kasandra", "Sobre Kasandra")}
               </span>
               <h2 className="font-serif text-4xl font-bold text-cc-blue mt-2 mb-4">
-                {t("Your Trusted Tucson REALTOR®", "Su REALTOR® de Confianza en Tucson")}
+                {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
               </h2>
               <p className="text-cc-text-muted max-w-2xl mx-auto">
                 {t(
-                  "A proud Tucson resident for over two decades, I serve my community not just as a licensed REALTOR®, but as a leader, advocate, and trusted voice.",
-                  "Orgullosa residente de Tucson por más de dos décadas, sirvo a mi comunidad no solo como REALTOR® licenciada, sino como líder y defensora."
+                  "I didn't get into real estate to sell houses — I got in to help families make one of the biggest decisions of their lives with someone they actually trust.",
+                  "No entré a bienes raíces para vender casas — entré para ayudar a las familias a tomar una de las decisiones más grandes de su vida con alguien en quien realmente confían."
                 )}
               </p>
             </div>
@@ -405,7 +405,7 @@ const V2HomeContent = () => {
                 {t("About Kasandra", "Sobre Kasandra")}
               </span>
               <h2 className="font-serif text-3xl font-bold text-cc-blue mt-2 mb-4">
-                {t("Your Trusted Tucson REALTOR®", "Su REALTOR® de Confianza en Tucson")}
+                {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
               </h2>
             </div>
 
@@ -516,7 +516,7 @@ const V2HomeContent = () => {
                   <li>• {t("Bilingual support throughout", "Apoyo bilingüe durante todo el proceso")}</li>
                 </ul>
                 <Link to="/buy" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                  {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
+                  {t("See how I help buyers", "Descubre cómo ayudo a compradores")} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
 
@@ -535,7 +535,7 @@ const V2HomeContent = () => {
                   <li>• {t("Protection-first approach", "Enfoque en protección")}</li>
                 </ul>
                 <Link to="/sell" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                  {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
+                  {t("See how I protect sellers", "Descubre cómo protejo a vendedores")} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
 
@@ -554,7 +554,7 @@ const V2HomeContent = () => {
                   <li>• {t("No pressure, just clarity", "Sin presión, solo claridad")}</li>
                 </ul>
                 <Link to="/cash-offer-options" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                  {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
+                  {t("Understand your options", "Entiende tus opciones")} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
@@ -643,7 +643,7 @@ const V2HomeContent = () => {
           <div className="text-center mt-10">
             <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3">
               <Link to="/off-market?source=homepage_corner_connect">
-                {t("Ask About Off-Market Properties", "Pregunta Sobre Propiedades Fuera del Mercado")}
+                {t("See what's available off-market", "Descubre lo que hay fuera del mercado")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
@@ -746,12 +746,12 @@ const V2HomeContent = () => {
               </h2>
               <p className="text-cc-text-muted mb-6">
                 {t(
-                  "Real estate is about more than transactions—it's about building stronger communities. I'm committed to making a difference in the lives of families across Tucson.",
-                  "Los bienes raíces son más que transacciones—se trata de construir comunidades más fuertes. Estoy comprometida a hacer una diferencia en la vida de las familias en todo Tucson."
+                  "This work has never been just about houses for me. It's about the families inside them and the neighborhoods that hold them together.",
+                  "Este trabajo nunca ha sido solo sobre casas para mí. Se trata de las familias que viven en ellas y los vecindarios que las mantienen unidas."
                 )}
               </p>
               <Link to="/community" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
+                {t("See how I give back", "Conoce cómo retribuyo")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
