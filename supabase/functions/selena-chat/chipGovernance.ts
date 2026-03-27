@@ -118,6 +118,10 @@ export function getGovernedChips(
     isAsap ||
     (isLooping && hasIntent);
 
+  // FIX 4: High-guide-count suppression — user has read 10+ guides, past education phase
+  const guidesRead = opts?.guidesReadCount ?? 0;
+  const suppressBrowseGuides = guidesRead >= 10;
+
   if (enterPhase3) {
     const chips = [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA];
     return { chips, phase: 3, escalated: isLooping || engagement.hasComparedOptions >= 2 };

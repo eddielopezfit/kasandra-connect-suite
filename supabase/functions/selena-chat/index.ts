@@ -1183,6 +1183,14 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       );
     }
 
+    // FIX 3: Low-signal acknowledgment handler — prevent tool re-summarization on "ok"/"sure"
+    const LOW_SIGNAL_PATTERN = /^(ok|okay|sure|got it|alright|ya|yep|yea|yeah|sí|si|vale|entendido|claro|bueno|dale|ándale|orale|mhm|hmm|k)\.?$/i;
+    if (LOW_SIGNAL_PATTERN.test(message.trim())) {
+      governanceHint += language === 'es'
+        ? '\n\nSEÑAL BAJA DETECTADA: El usuario dio una confirmación breve. NO resuma herramientas ni guías anteriores. Haga UNA pregunta que avance: "¿Qué le ayudaría más ahora — ver sus números específicos o hablar con Kasandra sobre su situación?"'
+        : '\n\nLOW-SIGNAL DETECTED: User gave a brief acknowledgment. Do NOT re-summarize tools or guides. Ask ONE forward-moving question: "What would help most right now — seeing your specific numbers, or talking through your situation with Kasandra?"';
+    }
+
     const messagesPayload = [
       { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + entryGreetingHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
       ...history.slice(-10), // Extended to -10 to support persistent memory context
