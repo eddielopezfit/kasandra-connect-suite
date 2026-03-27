@@ -197,8 +197,8 @@ const V2BuyContent = () => {
                     <h4 className="font-semibold text-cc-navy">{t("Bilingual Support", "Apoyo Bilingüe")}</h4>
                     <p className="text-sm text-cc-charcoal">
                       {t(
-                        "Communicate comfortably in English or Spanish throughout your entire journey.",
-                        "Comuníquese cómodamente en inglés o español durante todo su viaje."
+                        "I speak your language — literally. English or Spanish, you'll always feel at home.",
+                        "Hablo tu idioma — literalmente. Inglés o español, siempre te sentirás en casa."
                       )}
                     </p>
                   </div>
