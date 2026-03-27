@@ -174,18 +174,18 @@ const V2ContactContent = () => {
               {/* Personal message — Kasandra's touch */}
               <div className="bg-white rounded-2xl shadow-soft border border-border/10 p-6">
                 <p className="font-serif text-lg text-cc-navy font-semibold mb-3">
-                  {t("From me to you", "De mí para ti")}
+                  {t("A quick note", "Una nota rápida")}
                 </p>
                 <p className="text-foreground text-sm leading-relaxed mb-3">
                   {t(
-                    "When you reach out, you're not getting a call center or a generic follow-up. You're getting me — the same person who hosts \"Lifting You Up\" every Saturday on Urbana 92.5 FM, the same person who's guided 100+ families through one of the biggest decisions of their lives.",
-                    "Cuando te comunicas, no recibes un call center ni un seguimiento genérico. Me recibes a mí — la misma persona que conduce \"Lifting You Up\" cada sábado en Urbana 92.5 FM, la misma que ha guiado a más de 100 familias en una de las decisiones más importantes de sus vidas."
+                    "Whatever brought you here — whether you're just starting to think about it or you've been losing sleep over a decision — I want you to know there's no wrong time to reach out.",
+                    "Lo que sea que te trajo aquí — ya sea que apenas estés pensándolo o que lleves noches sin dormir por una decisión — quiero que sepas que no hay mal momento para escribirme."
                   )}
                 </p>
                 <p className="text-foreground text-sm leading-relaxed">
                   {t(
-                    "I listen first, educate always, and pressure never. That's how I've earned 126+ five-star reviews — and why families come back for their second, third, and fourth transaction.",
-                    "Primero escucho, siempre educo, y nunca presiono. Así es como he ganado más de 126 reseñas de cinco estrellas — y por qué las familias regresan para su segunda, tercera y cuarta transacción."
+                    "I'll personally read your message and get back to you. No scripts, no hand-offs. Just me.",
+                    "Yo personalmente leo tu mensaje y te respondo. Sin guiones, sin intermediarios. Solo yo."
                   )}
                 </p>
                 <p className="text-cc-gold font-semibold text-sm mt-4 italic">
