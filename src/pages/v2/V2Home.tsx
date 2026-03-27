@@ -36,7 +36,7 @@ import { updateSessionContext, getSessionContext } from '@/lib/analytics/selenaS
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import SelenaShowcase from "@/components/v2/SelenaShowcase";
-import GoogleReviewsStarBadge from "@/components/v2/GoogleReviewsStarBadge";
+
 const V2HomeContent = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
