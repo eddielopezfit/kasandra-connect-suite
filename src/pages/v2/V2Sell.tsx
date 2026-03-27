@@ -174,7 +174,7 @@ const V2SellContent = () => {
                 to="/cash-offer-options?source=sell_hub_cash"
                 onClick={() => handleCTAClick('sell_cash_offer_request', '/cash-offer-options')}
               >
-                {t("Request a Cash Offer", "Solicitar una Oferta en Efectivo")}
+                {t("See your cash offer options", "Conoce tus opciones de oferta en efectivo")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
