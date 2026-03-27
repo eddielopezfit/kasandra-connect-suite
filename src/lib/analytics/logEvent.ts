@@ -181,7 +181,8 @@ export type EventType =
   | 'selena_predictive_trigger'
   // Native Booking Flow
   | 'booking_intake_completed'
-  | 'booking_slot_selected';
+  | 'booking_slot_selected'
+  | 'mls_link_click';
 
 export interface EventPayload {
   [key: string]: unknown;

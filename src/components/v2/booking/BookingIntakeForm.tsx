@@ -36,6 +36,7 @@ const bookingSchema = z.object({
   email: z.string().trim().email("Please enter a valid email").max(255),
   phone: z.string().trim().min(7, "Please enter a valid phone number").max(20),
   intent: z.enum(["buy", "sell", "cash", "explore"]),
+  referralSource: z.string().optional(),
   message: z.string().trim().max(500).optional(),
 });
 
@@ -65,6 +66,7 @@ const BookingIntakeForm = ({ onSubmit, isSubmitting, defaultIntent }: BookingInt
       email: getStoredEmail() || "",
       phone: getStoredPhone() || "",
       intent: initialIntent,
+      referralSource: "",
       message: "",
     },
   });
@@ -154,6 +156,34 @@ const BookingIntakeForm = ({ onSubmit, isSubmitting, defaultIntent }: BookingInt
                   <SelectItem value="sell">{t("I'm thinking about selling", "Estoy pensando en vender")}</SelectItem>
                   <SelectItem value="cash">{t("I want to explore cash offers", "Quiero explorar ofertas en efectivo")}</SelectItem>
                   <SelectItem value="explore">{t("Just exploring my options", "Solo explorando mis opciones")}</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="referralSource"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-cc-charcoal font-medium">
+                {t("How did you hear about us?", "¿Cómo te enteraste de nosotros?")}
+              </FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className="border-cc-sand-dark/40 bg-white h-12">
+                    <SelectValue placeholder={t("Select one (optional)", "Seleccionar (opcional)")} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="google">{t("Google Search", "Búsqueda en Google")}</SelectItem>
+                  <SelectItem value="social_media">{t("Social Media", "Redes Sociales")}</SelectItem>
+                  <SelectItem value="youtube_podcast">{t("YouTube / Podcast", "YouTube / Podcast")}</SelectItem>
+                  <SelectItem value="referral">{t("Referral", "Referencia")}</SelectItem>
+                  <SelectItem value="community_event">{t("Community Event", "Evento Comunitario")}</SelectItem>
+                  <SelectItem value="other">{t("Other", "Otro")}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

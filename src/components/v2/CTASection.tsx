@@ -1,18 +1,29 @@
-import { Link } from "react-router-dom";
-import { ArrowRight, MessageCircle, Calendar } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { MessageCircle, Calendar } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 
+const SELL_PATHS = ['/sell', '/seller-', '/cash-', '/net-to-seller', '/home-valuation', '/private-cash-review'];
+const BUY_PATHS = ['/buy', '/buyer-', '/affordability', '/bah-calculator', '/off-market', '/buyer-closing'];
+
+function getPageIntent(pathname: string): 'sell' | 'buy' | 'general' {
+  if (SELL_PATHS.some(p => pathname.startsWith(p))) return 'sell';
+  if (BUY_PATHS.some(p => pathname.startsWith(p))) return 'buy';
+  return 'general';
+}
+
 /**
  * Premium booking CTA with architectural crosshair corner marks.
- * Adapts heading, subtext, and primary CTA based on cognitive stage.
+ * Adapts heading, subtext, and primary CTA based on cognitive stage + page intent.
  */
 const CTASection = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
   const progress = useJourneyProgress();
+  const { pathname } = useLocation();
+  const pageIntent = getPageIntent(pathname);
 
   return (
     <section className="relative py-20 lg:py-28 bg-cc-navy overflow-hidden">
@@ -47,7 +58,15 @@ const CTASection = () => {
           {progress.journeyDepth === 'ready'
             ? t("You've done the research. Let's talk.", "Ya investigaste. Hablemos.")
             : progress.journeyDepth === 'engaged'
-            ? t("Getting clearer? Let's keep the momentum.", "¿Más claro? Mantengamos el impulso.")
+            ? pageIntent === 'sell'
+              ? t("Getting clearer on your home's value?", "¿Más claro sobre el valor de tu casa?")
+              : pageIntent === 'buy'
+              ? t("Getting closer to your next home?", "¿Más cerca de tu próximo hogar?")
+              : t("Getting clearer? Let's keep the momentum.", "¿Más claro? Mantengamos el impulso.")
+            : pageIntent === 'sell'
+            ? t("Know what your home is really worth.", "Conoce el verdadero valor de tu casa.")
+            : pageIntent === 'buy'
+            ? t("Ready to find your next home?", "¿Listo para encontrar tu próximo hogar?")
             : t("Ready to move with clarity?", "¿Listo para avanzar con claridad?")}
         </h2>
 
@@ -58,9 +77,29 @@ const CTASection = () => {
                 "Agenda una sesión de estrategia privada con Kasandra — ya revisó tu perfil."
               )
             : progress.journeyDepth === 'engaged'
+            ? pageIntent === 'sell'
+              ? t(
+                  "Compare your selling options or talk with Kasandra about your specific situation.",
+                  "Compara tus opciones de venta o habla con Kasandra sobre tu situación específica."
+                )
+              : pageIntent === 'buy'
+              ? t(
+                  "Selena can help you compare areas and financing, or connect you with Kasandra.",
+                  "Selena puede ayudarte a comparar áreas y financiamiento, o conectarte con Kasandra."
+                )
+              : t(
+                  "Selena can help you compare your options or connect you with Kasandra when you're ready.",
+                  "Selena puede ayudarte a comparar opciones o conectarte con Kasandra cuando estés listo."
+                )
+            : pageIntent === 'sell'
             ? t(
-                "Selena can help you compare your options or connect you with Kasandra when you're ready.",
-                "Selena puede ayudarte a comparar opciones o conectarte con Kasandra cuando estés listo."
+                "Get a personalized market analysis from Kasandra — not an algorithm, a real strategy session.",
+                "Obtén un análisis de mercado personalizado de Kasandra — no un algoritmo, una sesión de estrategia real."
+              )
+            : pageIntent === 'buy'
+            ? t(
+                "Book a private strategy session with Kasandra. She'll help you navigate the market with confidence.",
+                "Reserva una sesión de estrategia privada con Kasandra. Te ayudará a navegar el mercado con confianza."
               )
             : t(
                 "Book a private strategy session with Kasandra. No pressure, no scripts — just honest guidance.",
