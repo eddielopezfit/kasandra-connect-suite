@@ -450,7 +450,7 @@ const V2MarketIntelligenceContent = () => {
 };
 
 const V2MarketIntelligence = () => (
-  <V2Layout suppressCTA>
+  <V2Layout>
     <V2MarketIntelligenceContent />
   </V2Layout>
 );

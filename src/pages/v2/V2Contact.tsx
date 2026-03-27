@@ -280,7 +280,7 @@ const V2ContactContent = () => {
 };
 
 const V2Contact = () => (
-  <V2Layout suppressCTA>
+  <V2Layout>
     <V2ContactContent />
   </V2Layout>
 );

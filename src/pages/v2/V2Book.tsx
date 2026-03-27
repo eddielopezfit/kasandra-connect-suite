@@ -364,7 +364,7 @@ const V2BookContent = () => {
 };
 
 const V2Book = () => (
-  <V2Layout suppressCTA>
+  <V2Layout>
     <V2BookContent />
   </V2Layout>
 );

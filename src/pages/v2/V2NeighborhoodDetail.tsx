@@ -294,7 +294,7 @@ const V2NeighborhoodDetail = () => {
   }
 
   return (
-    <V2Layout suppressCTA>
+    <V2Layout>
       <NeighborhoodDetailContent neighborhood={neighborhood} />
     </V2Layout>
   );

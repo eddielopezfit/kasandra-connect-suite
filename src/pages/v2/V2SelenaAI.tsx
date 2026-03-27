@@ -215,7 +215,7 @@ const V2SelenaAIContent = () => {
 };
 
 const V2SelenaAI = () => (
-  <V2Layout suppressCTA>
+  <V2Layout>
     <V2SelenaAIContent />
   </V2Layout>
 );
