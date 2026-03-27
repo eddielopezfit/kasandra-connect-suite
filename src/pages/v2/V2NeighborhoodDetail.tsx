@@ -2,7 +2,7 @@ import { useParams, Navigate, Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import V2Layout from "@/components/v2/V2Layout";
-import { Sparkles, MapPin } from "lucide-react";
+import { Sparkles, MapPin, ExternalLink } from "lucide-react";
 import { getNeighborhoodBySlug } from "@/data/neighborhoods/neighborhoodRegistry";
 import JsonLd from "@/components/seo/JsonLd";
 import NeighborhoodIntelligencePanel from "@/components/v2/neighborhood/NeighborhoodIntelligencePanel";
