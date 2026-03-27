@@ -29,7 +29,7 @@ const ProactiveSelenaPrompt = () => {
   const { openChat } = useSelenaChat();
   const progress = useJourneyProgress();
   const [visible, setVisible] = useState(false);
-  const [activeMessage, setActiveMessage] = useState<{ message: string; prefill: string; source: string } | null>(null);
+  const [activeMessage, setActiveMessage] = useState<{ message: string; prefill: string; source: EntrySource } | null>(null);
 
   const dismiss = useCallback(() => {
     setVisible(false);
