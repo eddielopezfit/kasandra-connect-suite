@@ -178,7 +178,6 @@ export default function JourneyRail({ intent, className }: JourneyRailProps) {
           {stops.map((stop, idx) => {
             const completed = isStopComplete(stop, progress);
             const isActive = idx + 1 === activeStep && !completed;
-            const isFuture = idx + 1 > activeStep;
 
             return (
               <div key={stop.id} className="flex items-start flex-1">
