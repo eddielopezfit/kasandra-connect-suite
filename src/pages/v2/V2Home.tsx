@@ -647,10 +647,6 @@ const V2HomeContent = () => {
       {/* Meet Selena — Brand Asset */}
       <SelenaShowcase />
 
-      {/* Social Proof — Staggered Masonry */}
-      <Suspense fallback={<div className="h-64 bg-cc-ivory animate-pulse" />}>
-        <TestimonialColumns />
-      </Suspense>
 
       {/* Podcast Section */}
       <section className="py-16 lg:py-20 bg-cc-blue-bg">
