@@ -21,6 +21,28 @@ export interface NeighborhoodEntry {
   relatedNeighborhoods: [string, string, string];
   relatedGuides: string[];
   metaDescription: { en: string; es: string };
+
+  /* ── Area Decision Engine fields (optional — graceful degradation) ── */
+  positioningLine?: { en: string; es: string };
+  storyBreak?: { headline: { en: string; es: string }; body: { en: string; es: string } };
+  lifestyleFit?: {
+    strongMatch: { en: string[]; es: string[] };
+    considerCarefully: { en: string[]; es: string[] };
+  };
+  areaIntelligence?: {
+    priceRange: { en: string; es: string };
+    demandLevel: 'low' | 'moderate' | 'high';
+    marketSpeed: 'slow' | 'average' | 'fast';
+    propertyTypes: { en: string[]; es: string[] };
+  };
+  lifestyleHighlights?: {
+    dining: { en: string; es: string };
+    outdoor: { en: string; es: string };
+    dailyRhythm: { en: string; es: string };
+  };
+  schoolSummary?: { en: string; es: string };
+  heroImageUrl?: string;
+  lifestyleImageUrl?: string;
 }
 
 export const NEIGHBORHOOD_REGISTRY: NeighborhoodEntry[] = [
