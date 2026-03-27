@@ -1250,8 +1250,32 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     const sentences = reply.split(SENTENCE_BOUNDARY).filter(s => s.trim().length > 0);
     if (sentences.length > 3) {
       reply = sentences.slice(0, 3).join(' ');
-      // Ensure it ends with punctuation
-      if (!/[.?!]$/.test(reply)) reply += '.';
+    }
+    // FIX 1: Sentence completeness guard — drop incomplete trailing fragment
+    if (reply.length > 0 && !/[.?!。]$/.test(reply.trim())) {
+      const completeSentences = reply.match(/[^.?!。]*[.?!。]/g);
+      if (completeSentences && completeSentences.length > 0) {
+        reply = completeSentences.join(' ').trim();
+      } else {
+        // Entire reply is one incomplete fragment — append ellipsis
+        reply = reply.trim() + '...';
+      }
+    }
+
+    // FIX 2: Banned phrase post-filter — deterministic safety net
+    const BANNED_OPENER = /^(I apologize[—\-,.]?\s*|I'm sorry[—\-,.]?\s*|Me disculpo[—\-,.]?\s*|Lo siento[—\-,.]?\s*)/i;
+    if (BANNED_OPENER.test(reply)) {
+      reply = reply.replace(BANNED_OPENER, '').trim();
+      // If stripping left nothing meaningful, use neutral reframe
+      if (reply.length < 10) {
+        reply = language === 'es'
+          ? 'Continuemos desde donde estábamos.'
+          : "Let's pick up where we were.";
+      }
+      // Capitalize first letter after strip
+      if (reply.length > 0) {
+        reply = reply.charAt(0).toUpperCase() + reply.slice(1);
+      }
     }
 
     // ============= SERVER-SIDE ONBOARDING HARD BLOCK =============
