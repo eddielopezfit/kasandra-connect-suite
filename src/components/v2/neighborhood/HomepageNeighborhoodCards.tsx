@@ -103,6 +103,11 @@ function NeighborhoodFeatureCard({ neighborhood, intent }: { neighborhood: typeo
             <MapPin className="w-3.5 h-3.5" />
             {neighborhood.primaryZip}
           </div>
+          {tag && (
+            <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-cc-gold/90 text-cc-navy text-[11px] font-semibold uppercase tracking-wide">
+              {tag}
+            </span>
+          )}
         </div>
 
         {/* Content */}
