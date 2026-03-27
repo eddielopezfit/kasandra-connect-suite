@@ -108,7 +108,7 @@ export default function JourneyMomentum({ className = '' }: { className?: string
       {/* Next step divider */}
       <div className="border-t border-white/10 pt-3">
         <p className="text-xs text-white/40 mb-2">
-          {isEs ? '→ Próximo paso recomendado:' : '→ Recommended next:'}
+          {isEs ? '→ Lo que suele ayudar más en esta etapa:' : '→ What tends to help most at this stage:'}
         </p>
         {isChat ? (
           <button
