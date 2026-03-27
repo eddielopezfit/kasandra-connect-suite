@@ -1243,6 +1243,17 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     const rawReply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
     let reply = sanitizeBracketCTAs(rawReply);
 
+    // ============= POST-PROCESSING: BREVITY ENFORCEMENT =============
+    // KB-10 mandates 1-3 sentences max. Truncate at 3rd sentence boundary.
+    // Preserve the reply if it's already short enough.
+    const SENTENCE_BOUNDARY = /(?<=[.?!。])\s+/g;
+    const sentences = reply.split(SENTENCE_BOUNDARY).filter(s => s.trim().length > 0);
+    if (sentences.length > 3) {
+      reply = sentences.slice(0, 3).join(' ');
+      // Ensure it ends with punctuation
+      if (!/[.?!]$/.test(reply)) reply += '.';
+    }
+
     // ============= SERVER-SIDE ONBOARDING HARD BLOCK =============
     // Safety backstop: if intent exists or chip_phase_floor >= 2, the AI must never
     // output literal onboarding prompt variants. Replace with neutral "welcome back".
