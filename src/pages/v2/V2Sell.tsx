@@ -193,8 +193,8 @@ const V2SellContent = () => {
               </h2>
               <p className="text-cc-charcoal mb-8 max-w-lg">
                 {t(
-                  "My approach is centered on your protection and informed decision-making at every stage.",
-                  "Mi enfoque está centrado en su protección y toma de decisiones informada en cada etapa."
+                  "I come from life insurance — protection is in my DNA. Every decision we make together starts with what's best for you.",
+                  "Vengo del seguro de vida — la protección está en mi ADN. Cada decisión que tomamos juntos empieza con lo que es mejor para ti."
                 )}
               </p>
 
