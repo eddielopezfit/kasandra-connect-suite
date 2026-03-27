@@ -280,12 +280,12 @@ const V2CashOfferOptionsContent = () => {
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-xl mx-auto">
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
-              {t("Want Expert Guidance on Your Options?", "¿Quiere Orientación Experta Sobre Sus Opciones?")}
+              {t("Getting clearer on your home's value?", "¿Más claro sobre el valor de tu casa?")}
             </h2>
             <p className="text-white/80 text-sm mb-6">
               {t(
-                "Kasandra reviews both cash and traditional paths with every seller — you decide with full information.",
-                "Kasandra revisa tanto el camino de efectivo como el tradicional con cada vendedor — usted decide con información completa."
+                "I walk through both paths with every seller I work with — no pressure, just the full picture so you can decide what actually fits your life.",
+                "Reviso ambos caminos con cada vendedor con el que trabajo — sin presión, solo el panorama completo para que decidas lo que realmente se adapta a tu vida."
               )}
             </p>
             <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
