@@ -170,7 +170,10 @@ const V2SellContent = () => {
               )}
             </p>
             <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3">
-              <Link to="/contact">
+              <Link
+                to="/cash-offer-options?source=sell_hub_cash"
+                onClick={() => handleCTAClick('sell_cash_offer_request', '/cash-offer-options')}
+              >
                 {t("Request a Cash Offer", "Solicitar una Oferta en Efectivo")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
