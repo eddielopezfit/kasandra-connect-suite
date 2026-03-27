@@ -155,6 +155,14 @@ const V2CashReadinessContent = () => {
                 </button>
               </div>
             )}
+            {showSaveLink && (
+              <div className="mt-6">
+                <ToolResultNextStep
+                  completedToolLabel="Cash Readiness Check"
+                  completedToolLabelEs="Evaluación de Preparación en Efectivo"
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>

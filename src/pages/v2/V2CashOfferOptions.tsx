@@ -10,6 +10,7 @@ import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileTex
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-cash-calm.png";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
 const V2CashOfferOptionsContent = () => {
   const { t } = useLanguage();

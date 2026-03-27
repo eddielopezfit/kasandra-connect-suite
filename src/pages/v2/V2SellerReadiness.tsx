@@ -152,6 +152,14 @@ const V2SellerReadinessContent = () => {
                 </button>
               </div>
             )}
+            {showSaveLink && (
+              <div className="mt-6">
+                <ToolResultNextStep
+                  completedToolLabel="Seller Readiness Check"
+                  completedToolLabelEs="Evaluación de Preparación del Vendedor"
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>
