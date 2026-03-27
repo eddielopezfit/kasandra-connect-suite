@@ -1,18 +1,19 @@
 /**
- * V2Book — Booking Page with Selena OS V2 Dossier Bridge
+ * V2Book — Booking Page with Native Booking Flow
  * 
- * Priority 1: Before rendering GHL calendar, calls enrich-booking-context
- * to persist session intelligence and prepare Kasandra's pre-call briefing.
+ * Replaces GHL iframe with a 3-step native flow:
+ * 1. Lead capture (name, email, phone, intent)
+ * 2. Real-time slot selection via GHL Calendar API
+ * 3. Confirmation + handoff to Kasandra
  * 
- * User sees: "Kasandra is reviewing your profile..." trust-building state
- * Backend: session context → lead_profiles → GHL custom fields
+ * Still calls enrich-booking-context for dossier bridge.
  */
 import { useSearchParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import V2Layout from "@/components/v2/V2Layout";
-import GHLBookingCalendar from "@/components/v2/GHLBookingCalendar";
+import { NativeBookingFlow } from "@/components/v2/booking";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import { Calendar, CheckCircle, User, BookOpen, Target } from "lucide-react";
 import { logEvent } from "@/lib/analytics/logEvent";
@@ -111,7 +112,7 @@ const V2BookContent = () => {
     return null;
   };
 
-  // Priority 1: Enrich booking context before showing calendar
+  // Priority 1: Enrich booking context before showing form
   useEffect(() => {
     if (enrichedRef.current) return;
     enrichedRef.current = true;
@@ -184,12 +185,10 @@ const V2BookContent = () => {
       } catch (e) {
         console.warn('[V2Book] Enrichment error (non-blocking):', e);
       } finally {
-        // Always show calendar — enrichment failure must never block booking
         setDossierState('ready');
       }
     };
 
-    // Small delay for UX — shows loading state briefly
     const timer = setTimeout(enrichBooking, 600);
     return () => clearTimeout(timer);
   }, [intent, language, source]);
@@ -225,8 +224,8 @@ const V2BookContent = () => {
             <p className="text-white/80 text-lg max-w-xl mx-auto">
               {callType ? (
                 t(
-                  CALL_TYPE_SUBTITLES[callType]?.en || "Choose a time that works best for you. Kasandra personally reviews each situation before your conversation.",
-                  CALL_TYPE_SUBTITLES[callType]?.es || "Elija un horario que le funcione mejor. Kasandra revisa personalmente cada situación antes de la conversación."
+                  CALL_TYPE_SUBTITLES[callType]?.en || "Share a few details so Kasandra can prepare for your conversation.",
+                  CALL_TYPE_SUBTITLES[callType]?.es || "Comparta algunos detalles para que Kasandra pueda prepararse para su conversación."
                 )
               ) : (
                 t(
@@ -261,12 +260,12 @@ const V2BookContent = () => {
         </div>
       </section>
 
-      {/* Calendar Section */}
+      {/* Native Booking Section */}
       <section className="py-8 md:py-12 bg-cc-ivory w-full">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-xl mx-auto">
 
-            {/* Dossier Loading State — Priority 1 trust moment */}
+            {/* Dossier Loading State */}
             {dossierState === 'loading' && (
               <div className="bg-cc-navy/5 border border-cc-gold/20 rounded-xl p-5 mb-6 text-center animate-pulse">
                 <div className="flex items-center justify-center gap-3 text-cc-navy/70">
@@ -334,15 +333,17 @@ const V2BookContent = () => {
               </div>
             )}
 
-            {/* Journey context — shows accumulated progress before booking */}
+            {/* Journey breadcrumb */}
             {dossierState !== 'loading' && (
               <div className="mb-6">
                 <JourneyBreadcrumb />
               </div>
             )}
 
-            {/* GHL Calendar — only shown when dossier is ready or skipped */}
-            {dossierState !== 'loading' && <GHLBookingCalendar />}
+            {/* Native Booking Flow — replaces GHL iframe */}
+            {dossierState !== 'loading' && (
+              <NativeBookingFlow defaultIntent={intent} />
+            )}
           </div>
         </div>
       </section>

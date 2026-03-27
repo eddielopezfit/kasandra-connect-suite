@@ -178,7 +178,10 @@ export type EventType =
   // Predictive Guidance V3
   | 'predicted_action_shown'
   | 'predicted_action_clicked'
-  | 'selena_predictive_trigger';
+  | 'selena_predictive_trigger'
+  // Native Booking Flow
+  | 'booking_intake_completed'
+  | 'booking_slot_selected';
 
 export interface EventPayload {
   [key: string]: unknown;
