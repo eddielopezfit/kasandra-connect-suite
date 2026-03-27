@@ -323,6 +323,31 @@ serve(async (req) => {
       selena_consent_communications: context.sms_consent ?? false,
       selena_last_data_parse_date: new Date().toISOString(),
       tags,
+      // Agent Studio structured dossier — single parseable JSON field
+      selena_dossier_json: JSON.stringify({
+        intent: context.intent ?? "explore",
+        timeline: context.timeline ?? null,
+        budget: context.budget ?? null,
+        budget_max: context.budget_max ?? null,
+        readiness_score: context.readiness_score ?? 0,
+        lead_score: context.lead_score ?? 0,
+        tools_completed: toolsCompleted ? toolsCompleted.split(",") : [],
+        guides_read: Array.isArray(context.guides_consumed) ? context.guides_consumed : [],
+        guide_count: guidesConsumed,
+        neighborhood_interest: context.target_neighborhoods ?? context.last_neighborhood ?? null,
+        language: context.language ?? "en",
+        pain_points: context.pain_points ?? [],
+        recommended_next_step: context.recommended_next_step ?? null,
+        last_tool_result: context.last_tool_result ?? null,
+        source: context.entry_source ?? "selena_chat",
+        property_address: context.property_address ?? null,
+        property_condition: context.property_condition ?? null,
+        financing_status: context.financing_status ?? null,
+        va_loan: context.va_loan ?? false,
+        inherited: context.inherited_home ?? false,
+        journey_state: context.journey_state ?? "explore",
+        convo_summary: context.convo_summary ?? null,
+      }),
     };
 
     // ============= P11: BILINGUAL SUMMARY FOR ES LEADS =============
