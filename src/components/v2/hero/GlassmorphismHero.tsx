@@ -162,6 +162,14 @@ export default function GlassmorphismHero({
     ? returningContext.firstName
       ? t(`Welcome back, ${returningContext.firstName}.`, `Bienvenido/a de nuevo, ${returningContext.firstName}.`)
       : t("Welcome back.", "Bienvenido/a de nuevo.")
+    : returningContext.intent === 'buy'
+    ? t("Find the right home with clarity — not guesswork.", "Encuentra el hogar indicado con claridad — sin adivinar.")
+    : returningContext.intent === 'sell'
+    ? t("Know your home's true value before making a move.", "Conoce el valor real de tu casa antes de dar el paso.")
+    : returningContext.intent === 'cash'
+    ? t("A faster path to closing — on your terms.", "Un camino más rápido al cierre — en tus términos.")
+    : returningContext.intent === 'investor'
+    ? t("Identify high-opportunity areas before the market does.", "Identifica áreas de alta oportunidad antes que el mercado.")
     : t(
         "Tucson Real Estate. Your Decision. Your Clarity.",
         "Bienes Raíces en Tucson. Tu Decisión. Tu Claridad."

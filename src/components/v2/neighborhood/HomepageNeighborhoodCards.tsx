@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, MapPin, TrendingUp, Home, Banknote } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { NEIGHBORHOOD_REGISTRY } from "@/data/neighborhoods/neighborhoodRegistry";
+import { NEIGHBORHOOD_REGISTRY, type NeighborhoodEntry } from "@/data/neighborhoods/neighborhoodRegistry";
 import { getNeighborhoodHeroUrl } from "@/lib/neighborhood/heroUrl";
 import { useState } from "react";
+import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 
 /** 3 featured neighborhoods for homepage — diverse buyer profiles */
 const FEATURED_SLUGS = ["catalina-foothills", "marana", "sahuarita"];
