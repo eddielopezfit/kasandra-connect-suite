@@ -54,10 +54,10 @@ const cells: BentoCell[] = [
   },
   {
     icon: Star,
-    titleEn: "Diamond Society & 100+ Reviews",
-    titleEs: "Diamond Society y 100+ Reseñas",
-    descEn: "Coldwell Banker International Diamond Society (2024) · 100+ five-star reviews on Birdeye",
-    descEs: "Coldwell Banker International Diamond Society (2024) · 100+ reseñas de cinco estrellas en Birdeye",
+    titleEn: "Diamond Society & 126+ Reviews",
+    titleEs: "Diamond Society y 126+ Reseñas",
+    descEn: "Coldwell Banker International Diamond Society (2024) · 126+ five-star reviews on Birdeye",
+    descEs: "Coldwell Banker International Diamond Society (2024) · 126+ reseñas de cinco estrellas en Birdeye",
   },
 ];
 

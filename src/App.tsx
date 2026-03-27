@@ -84,6 +84,10 @@ const App = () => {
                 <Route path="/v2" element={<Navigate to="/" replace />} />
                 <Route path="/v2/*" element={<V2Redirect />} />
                 <Route path="/cash-offer" element={<Navigate to="/cash-offer-options" replace />} />
+                <Route path="/cash-options" element={<Navigate to="/cash-offer-options" replace />} />
+                <Route path="/corner-connect" element={<Navigate to="/sell" replace />} />
+                <Route path="/explore" element={<Navigate to="/guides" replace />} />
+                <Route path="/market-intelligence" element={<Navigate to="/market" replace />} />
                 <Route path="/podcast/episodes" element={<Navigate to="/podcast" replace />} />
 
                 {/* Canonical Routes */}

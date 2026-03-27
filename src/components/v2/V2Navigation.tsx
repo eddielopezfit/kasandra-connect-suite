@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
@@ -162,6 +162,14 @@ const V2Navigation = () => {
                     : null}
                 </span>
               )}
+              <a
+                href="tel:5203493248"
+                className="hidden lg:flex items-center gap-1.5 text-white/70 hover:text-white text-sm transition-colors"
+                aria-label="Call Kasandra"
+              >
+                <Phone className="w-3.5 h-3.5" />
+                <span className="text-xs">520.349.3248</span>
+              </a>
               <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 shadow-gold">
                 <Link to="/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
               </Button>
