@@ -375,8 +375,8 @@ const V2SellContent = () => {
               </h2>
               <p className="text-foreground mb-8 max-w-lg">
                 {t(
-                  "I come from life insurance — protection is in my DNA. Every decision we make together starts with what's best for you.",
-                  "Vengo del seguro de vida — la protección está en mi ADN. Cada decisión que tomamos juntos empieza con lo que es mejor para ti."
+                  "Your home is more than a transaction — it's your next chapter. Every recommendation I make starts with what protects your equity and your timeline.",
+                  "Tu hogar es más que una transacción — es tu próximo capítulo. Cada recomendación que hago empieza con lo que protege tu patrimonio y tu tiempo."
                 )}
               </p>
 
