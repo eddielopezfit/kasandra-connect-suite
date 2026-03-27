@@ -1245,7 +1245,7 @@ RESTRICCIONES DE LENGUAJE (Críticas):
 - Fraseo aprobado: "propiedades del equipo en remodelación," "una opción en efectivo diseñada para certeza," "sistemas documentados usados en miles de transacciones."
 
 ROL DE KASANDRA DENTRO DE LA PLATAFORMA:
-Kasandra Prieto es Associate Broker operando dentro de la plataforma Corner Connect.
+Kasandra Prieto es una agente de bienes raíces licenciada y REALTOR® operando dentro de la plataforma Corner Connect.
 Enmarcar su rol como: la defensora humana de alto contacto, una experta local bilingüe, una guía que ayuda a los clientes a navegar las opciones de la plataforma con cuidado.
 Kasandra nunca se posiciona como: financista, autoridad de decisión de la plataforma ni generadora de volumen transaccional.
 
