@@ -214,6 +214,27 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
         />
       )}
 
+      {/* ── EXPLORE LISTINGS CTA ── */}
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <a
+          href={`https://www.redfin.com/zipcode/${neighborhood.primaryZip}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => logEvent('mls_link_click', { slug: neighborhood.slug, zip: neighborhood.primaryZip })}
+          className="flex items-center justify-between gap-3 bg-white border border-cc-sand-dark/30 rounded-xl p-5 shadow-soft hover:border-cc-gold/50 hover:shadow-md transition-all group"
+        >
+          <div>
+            <p className="font-semibold text-cc-navy text-base">
+              {t(`Explore Listings in ${neighborhood.primaryZip}`, `Explora Propiedades en ${neighborhood.primaryZip}`)}
+            </p>
+            <p className="text-sm text-cc-slate mt-0.5">
+              {t('View active homes for sale on Redfin', 'Ver casas en venta activas en Redfin')}
+            </p>
+          </div>
+          <ExternalLink className="w-5 h-5 text-cc-gold group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+        </a>
+      </div>
+
       {/* ── KASANDRA VIDEO — before decision tools ── */}
       <KasandraVideoBlock
         variant="compact"
