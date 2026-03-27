@@ -145,7 +145,11 @@ const V2Navigation = () => {
             {/* Right Side */}
             <div className="hidden lg:flex items-center gap-4">
               <LanguageToggle variant={isScrolled ? "light" : "dark"} />
-              {progress.intent && progress.intent !== 'explore' && (
+              {progress.intent && progress.intent !== 'explore' && !(
+                (progress.intent === 'buy' && location.pathname === '/sell') ||
+                (progress.intent === 'sell' && location.pathname === '/buy') ||
+                (progress.intent === 'cash' && location.pathname === '/buy')
+              ) && (
                 <span className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors ${
                   isScrolled
                     ? 'bg-cc-gold/10 text-cc-gold-dark'

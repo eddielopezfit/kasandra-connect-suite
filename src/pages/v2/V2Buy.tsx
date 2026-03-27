@@ -93,7 +93,7 @@ const V2BuyContent = () => {
           "I guide buyers through every step — from first search to closed door — with honesty, local expertise, and an AI concierge built just for you.",
           "Te guío en cada paso — desde la primera búsqueda hasta el cierre — con honestidad, experiencia local y un asistente de IA diseñado para ti."
         )}
-        primaryLabel={t("Talk to Selena", "Habla con Selena")}
+        primaryLabel={t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
         secondaryLabel={t("Buyer Readiness Quiz", "Quiz de Preparación")}
         secondaryLink="/buyer-readiness"
         intent="buy"

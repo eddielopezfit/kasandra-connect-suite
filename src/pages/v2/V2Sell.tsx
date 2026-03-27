@@ -258,7 +258,7 @@ const V2SellContent = () => {
         primaryLabel={
           depth === 'ready'
             ? t("Book a Strategy Call", "Agenda una Llamada de Estrategia")
-            : t("Talk to Selena", "Habla con Selena")
+            : t("Book a Strategy Call", "Agenda una Llamada de Estrategia")
         }
         secondaryLabel={t("Seller Readiness Quiz", "Quiz de Preparación para Vender")}
         secondaryLink="/seller-readiness"
