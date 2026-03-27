@@ -46,7 +46,7 @@ const V2BAHCalculatorContent = () => {
     isDisabilityExempt,
   };
 
-  const result: BAHResult = calculateBAHMortgage(input);
+  const result: BAHResult = calculateBAHMortgage(input); // VA rate maintained in algorithm (currently 5.75%)
 
   const handleCalculate = () => {
     if (bahNum < 500) return;

@@ -76,7 +76,7 @@ const V2AffordabilityCalculatorContent = () => {
     }`;
 
   // Use live median from market_pulse when available, fallback to hardcoded constant
-  const liveMedian = (marketData as any)?.median_sale_price ?? TUCSON_MEDIAN_PRICE;
+  const liveMedian = stats.medianSalePrice ?? TUCSON_MEDIAN_PRICE;
   const medianComparison = result.maxPrice > 0
     ? Math.round(((result.maxPrice - liveMedian) / liveMedian) * 100)
     : 0;
