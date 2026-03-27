@@ -470,28 +470,8 @@ const V2HomeContent = () => {
         </div>
       </section>
 
-      {/* Neighborhood Cards */}
-      <Suspense fallback={<div className="h-64 bg-cc-sand/50 animate-pulse" />}>
-        <LazyHomepageNeighborhoodCards />
-      </Suspense>
-
       {/* Trust Bar */}
       <TrustBar />
-
-      {/* Google Reviews Star Badge — visual trust signal */}
-      <div className="bg-cc-ivory py-4 border-b border-cc-sand-dark/20">
-        <GoogleReviewsStarBadge />
-      </div>
-
-      {/* Social Proof — Staggered Masonry (moved up for trust) */}
-      <Suspense fallback={<div className="h-64 bg-cc-ivory animate-pulse" />}>
-        <TestimonialColumns />
-      </Suspense>
-
-      {/* Google Reviews — Full Section */}
-      <Suspense fallback={null}>
-        <LazyGoogleReviews />
-      </Suspense>
 
       {/* Services Section - Header Band */}
       <section className="py-16 lg:py-20 bg-cc-blue-bg">
@@ -570,7 +550,22 @@ const V2HomeContent = () => {
         </div>
       </section>
 
+      {/* Meet Selena — Brand Asset */}
+      <SelenaShowcase />
 
+      {/* Neighborhood Cards */}
+      <Suspense fallback={<div className="h-64 bg-cc-sand/50 animate-pulse" />}>
+        <LazyHomepageNeighborhoodCards />
+      </Suspense>
+
+      {/* Social Proof — Testimonials + Google Reviews */}
+      <Suspense fallback={<div className="h-64 bg-cc-ivory animate-pulse" />}>
+        <TestimonialColumns />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <LazyGoogleReviews />
+      </Suspense>
 
       {/* Corner Connect Advantage — Strategic Positioning */}
       <section className="bg-cc-navy py-16">
@@ -643,9 +638,6 @@ const V2HomeContent = () => {
           </div>
         </div>
       </section>
-
-      {/* Meet Selena — Brand Asset */}
-      <SelenaShowcase />
 
 
       {/* Podcast Section */}

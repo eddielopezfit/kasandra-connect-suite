@@ -302,7 +302,7 @@ const V2BuyContent = () => {
 };
 
 const V2Buy = () => (
-  <V2Layout>
+  <V2Layout suppressCTA>
     <V2BuyContent />
   </V2Layout>
 );

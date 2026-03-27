@@ -62,25 +62,30 @@ export default function ExitIntentModal() {
     const handleMouseOut = (e: MouseEvent) => {
       if (e.clientY < 0 && !open) trigger();
     };
-
-    // Mobile: back button (popstate)
-    const handlePopState = () => {
-      if (!open) {
-        // Push state back so user doesn't actually leave
-        window.history.pushState(null, "", window.location.href);
-        trigger();
-      }
-    };
-
     document.addEventListener("mouseout", handleMouseOut);
-    
-    // Push an extra history entry so we can catch back button
-    window.history.pushState(null, "", window.location.href);
-    window.addEventListener("popstate", handlePopState);
+
+    // Mobile: 45s idle timer (replaces aggressive popstate/back-button hijack)
+    let idleTimer: ReturnType<typeof setTimeout> | null = null;
+    const resetIdle = () => {
+      if (idleTimer) clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        if (!open && window.scrollY < 200) trigger();
+      }, 45_000);
+    };
+    const isMobile = window.matchMedia("(max-width: 1024px)").matches;
+    if (isMobile) {
+      resetIdle();
+      window.addEventListener("scroll", resetIdle, { passive: true });
+      window.addEventListener("touchstart", resetIdle, { passive: true });
+    }
 
     return () => {
       document.removeEventListener("mouseout", handleMouseOut);
-      window.removeEventListener("popstate", handlePopState);
+      if (idleTimer) clearTimeout(idleTimer);
+      if (isMobile) {
+        window.removeEventListener("scroll", resetIdle);
+        window.removeEventListener("touchstart", resetIdle);
+      }
     };
   }, [trigger, open]);
 

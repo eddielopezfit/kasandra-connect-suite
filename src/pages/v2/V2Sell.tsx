@@ -92,6 +92,13 @@ const V2SellContent = () => {
         backgroundImage={heroSellBg}
       />
 
+      {/* Journey Progress — visible only to returning users */}
+      <section className="py-4">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <JourneyBreadcrumb />
+        </div>
+      </section>
+
       {/* Address-First Entry — Quick Valuation CTA */}
       <section className="bg-gradient-to-b from-cc-navy/5 to-transparent py-8">
         <div className="container mx-auto px-4 max-w-xl">
@@ -125,13 +132,6 @@ const V2SellContent = () => {
           <p className="text-center text-xs text-cc-charcoal/50 mt-2">
             {t("Free, no obligation. Takes 60 seconds.", "Gratis, sin compromiso. Toma 60 segundos.")}
           </p>
-        </div>
-      </section>
-
-      {/* Journey Progress — visible only to returning users */}
-      <section className="py-4">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <JourneyBreadcrumb />
         </div>
       </section>
 
