@@ -264,12 +264,12 @@ const V2BuyContent = () => {
       <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
-            {t("Ready to Get Started?", "¿Listo para Comenzar?")}
+            {t("Let's find your place in Tucson.", "Encontremos tu lugar en Tucson.")}
           </h2>
           <p className="text-white/80 max-w-2xl mx-auto mb-8">
             {t(
-              "Let's discuss your home buying goals and create a plan that works for you.",
-              "Hablemos sobre sus metas de compra de casa y creemos un plan que funcione para usted."
+              "I'll sit down with you, understand what you're really looking for, and build a game plan that fits your life — not just your budget.",
+              "Me sentaré contigo, entenderé lo que realmente buscas, y armaremos un plan que se adapte a tu vida — no solo a tu presupuesto."
             )}
           </p>
           <div className="flex flex-col items-center gap-3">
