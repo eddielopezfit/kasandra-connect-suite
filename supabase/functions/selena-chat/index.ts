@@ -606,7 +606,13 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     
     // ============= CHIP PHASE FLOOR ENFORCEMENT (monotonic) =============
     const clientChipFloor = context.chip_phase_floor ?? 0;
-    let effectiveChipPhase = Math.max(clientChipFloor, rawGoverned.phase) as 1 | 2 | 3;
+    
+    // FIX 2: Reset chip phase floor on intent switch
+    // When user switches intent (e.g., sell→buy), don't carry seller Phase 3 forward
+    const intentSwitched = primaryIntent !== 'explore' && context.intent && primaryIntent !== context.intent;
+    const adjustedFloor = intentSwitched ? Math.min(clientChipFloor, 2) : clientChipFloor;
+    
+    let effectiveChipPhase = Math.max(adjustedFloor, rawGoverned.phase) as 1 | 2 | 3;
     
     // Re-derive chips if floor pushed us past what getGovernedChips returned
     let chips: string[];
