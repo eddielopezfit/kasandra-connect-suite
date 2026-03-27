@@ -13,6 +13,7 @@ import { Shield, TrendingUp, FileText, Handshake, AlertCircle, ArrowRight, Zap, 
 import { Input } from "@/components/ui/input";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
+import { logEvent } from "@/lib/analytics/logEvent";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
 import { useNavigate } from "react-router-dom";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
