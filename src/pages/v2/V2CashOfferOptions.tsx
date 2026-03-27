@@ -325,6 +325,16 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
+      {/* Tool Chaining — Next Step */}
+      <section className="pb-8 bg-cc-ivory">
+        <div className="container mx-auto px-4 max-w-xl">
+          <ToolResultNextStep
+            completedToolLabel="Cash vs. Traditional Comparison"
+            completedToolLabelEs="Comparación Efectivo vs. Tradicional"
+          />
+        </div>
+      </section>
+
       {/* Google Reviews — Social Proof */}
       <GoogleReviewsSection />
 
