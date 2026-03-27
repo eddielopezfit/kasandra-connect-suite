@@ -61,7 +61,7 @@ export default function NextBestActionCard({
   }, [prediction]);
 
   const handleSelenaOpen = useCallback(
-    (destination: string) => {
+    () => {
       logEvent('selena_predictive_trigger' as any, { action: prediction.action });
       openChat({
         source: 'tool_result_next_step',
@@ -70,6 +70,9 @@ export default function NextBestActionCard({
     },
     [prediction, openChat, isEs],
   );
+
+  // Don't show for users who have already booked
+  if (progress.hasBooked) return null;
 
   const renderCtaButton = (
     cta: PredictionResult['primaryCta'],
