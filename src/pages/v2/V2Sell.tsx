@@ -19,17 +19,171 @@ import { useNavigate } from "react-router-dom";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import heroSellBg from "@/assets/hero-sell-tucson-aerial.png";
-import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
+import JourneyRail from "@/components/v2/JourneyRail";
 import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
-
+import { useJourneyProgress } from "@/hooks/useJourneyProgress";
+import { cn } from "@/lib/utils";
 
 const PAGE_PATH = '/sell';
 const PAGE_INTENT = 'sell' as const;
+
+/** Kasandra booking CTA — rendered at different positions based on journey depth */
+function KasandraBookingCTA({ t, handleSelenaRoute, compact = false }: {
+  t: (en: string, es: string) => string;
+  handleSelenaRoute: () => void;
+  compact?: boolean;
+}) {
+  return (
+    <section className={cn("bg-cc-navy", compact ? "py-10" : "py-16 lg:py-20 pb-24 sm:pb-16")}>
+      <div className="container mx-auto px-4 text-center">
+        <h2 className={cn("font-serif font-bold mb-6 text-white", compact ? "text-2xl md:text-3xl" : "text-4xl md:text-5xl")}>
+          {t("Let's figure out your best move.", "Descubramos tu mejor jugada.")}
+        </h2>
+        {!compact && (
+          <p className="text-white/80 max-w-2xl mx-auto mb-8">
+            {t(
+              "I sit down with every seller and walk through both paths — cash and traditional. You decide with the full picture.",
+              "Me siento con cada vendedor y revisamos ambos caminos — efectivo y tradicional. Tú decides con toda la información."
+            )}
+          </p>
+        )}
+        <div className="flex flex-col items-center gap-3">
+          <Button
+            asChild
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 py-3 text-sm sm:px-10 sm:py-6 sm:text-lg shadow-gold"
+          >
+            <Link
+              to="/book?intent=sell&source=sell_hub_bottom"
+              onClick={() => logCTAClick({ cta_name: 'sell_hub_book_call', destination: '/book', page_path: '/sell', intent: 'sell' })}
+            >
+              <Calendar className="w-5 h-5 mr-2" />
+              {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
+            </Link>
+          </Button>
+          <button
+            onClick={handleSelenaRoute}
+            className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
+          >
+            <MessageCircle className="w-4 h-4" />
+            {t("Still thinking it over? Selena can help you sort it out", "¿Todavía pensándolo? Selena puede ayudarte a aclararlo")}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Completion-aware seller tool strip */
+function SellerToolStrip({ t, toolsCompleted, handleCTAClick }: {
+  t: (en: string, es: string) => string;
+  toolsCompleted: string[];
+  handleCTAClick: (cta_name: string, destination: string) => void;
+}) {
+  const tools = [
+    {
+      id: 'market',
+      icon: TrendingUp,
+      labelEn: 'Market Data',
+      labelEs: 'Datos del Mercado',
+      doneEn: '✓ Market Reviewed',
+      doneEs: '✓ Mercado Revisado',
+      to: '/market',
+      completionKeys: ['market_data'],
+    },
+    {
+      id: 'timeline',
+      icon: Clock,
+      labelEn: 'Selling Timeline',
+      labelEs: 'Cronograma de Venta',
+      doneEn: '✓ Timeline Set',
+      doneEs: '✓ Cronograma Listo',
+      to: '/seller-timeline',
+      completionKeys: ['seller_timeline'],
+    },
+    {
+      id: 'calculator',
+      icon: DollarSign,
+      labelEn: 'Cash vs. Listing',
+      labelEs: 'Efectivo vs. Listado',
+      doneEn: '✓ Numbers Compared',
+      doneEs: '✓ Números Comparados',
+      to: '/cash-offer-options',
+      completionKeys: ['cash_comparison', 'net_calculator'],
+    },
+    {
+      id: 'valuation',
+      icon: BarChart3,
+      labelEn: 'Home Valuation',
+      labelEs: 'Valoración de Casa',
+      doneEn: '✓ Value Estimated',
+      doneEs: '✓ Valor Estimado',
+      to: '/home-valuation',
+      completionKeys: ['home_valuation'],
+    },
+  ];
+
+  // Find first incomplete tool for "start here" indicator
+  const firstIncompleteIdx = tools.findIndex(
+    tool => !tool.completionKeys.some(k => toolsCompleted.includes(k))
+  );
+
+  return (
+    <section className="bg-white border-b border-border/20 py-6">
+      <div className="container mx-auto px-4 max-w-3xl">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center mb-4">
+          {t("Seller Planning Tools", "Herramientas de Planificación")}
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {tools.map((tool, idx) => {
+            const Icon = tool.icon;
+            const isComplete = tool.completionKeys.some(k => toolsCompleted.includes(k));
+            const isNext = idx === firstIncompleteIdx;
+
+            return (
+              <Link
+                key={tool.id}
+                to={tool.to}
+                onClick={() => handleCTAClick(`sell_tool_${tool.id}`, tool.to)}
+                className={cn(
+                  'flex flex-col items-center gap-2 rounded-xl border px-4 py-3.5 transition-all text-center relative',
+                  isComplete
+                    ? 'bg-emerald-50/30 border-emerald-200/60 opacity-70'
+                    : isNext
+                    ? 'bg-cc-gold/5 border-cc-gold/40 shadow-soft hover:shadow-md'
+                    : 'bg-cc-ivory hover:bg-cc-sand border-border/30 hover:border-foreground/20',
+                )}
+              >
+                {isNext && !isComplete && (
+                  <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-cc-gold text-cc-navy text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap">
+                    {t('Start here', 'Empieza aquí')}
+                  </span>
+                )}
+                <Icon className={cn(
+                  'w-5 h-5',
+                  isComplete ? 'text-emerald-500' : 'text-cc-gold',
+                )} />
+                <span className={cn(
+                  'text-xs font-semibold leading-tight',
+                  isComplete ? 'text-emerald-700' : 'text-cc-navy',
+                )}>
+                  {isComplete
+                    ? t(tool.doneEn, tool.doneEs)
+                    : t(tool.labelEn, tool.labelEs)}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 const V2SellContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
   const navigate = useNavigate();
+  const progress = useJourneyProgress();
   const [leadName, setLeadName] = useState<string | null>(null);
   const [addressInput, setAddressInput] = useState("");
   useDocumentHead({
@@ -54,6 +208,10 @@ const V2SellContent = () => {
     openChat({ source: 'hero', intent: 'sell' });
   };
 
+  // Kasandra Proximity: determines where the booking CTA renders
+  const depth = progress.journeyDepth;
+  const showEarlyBooking = depth === 'ready' || depth === 'engaged';
+
   return (
     <>
       <JsonLd data={{
@@ -75,15 +233,33 @@ const V2SellContent = () => {
         },
         "serviceType": "Real Estate Listing and Cash Offer Services"
       }} />
+
       {/* Hero */}
       <GlassmorphismHero
         badge={t("For Sellers", "Para Vendedores")}
-        headline={t("Selling Your Home? I'll Make Sure You Know Exactly Where You Stand.", "¿Vendiendo Tu Casa? Me Aseguraré de Que Sepas Exactamente Dónde Estás.")}
-        subtext={t(
-          "I help Tucson sellers price right, time the market, and close with confidence — plus you get a 24/7 AI concierge that works while you sleep.",
-          "Ayudo a vendedores en Tucson a fijar el precio correcto, aprovechar el mercado y cerrar con confianza — además tienes un asistente de IA 24/7 que trabaja mientras duermes."
-        )}
-        primaryLabel={t("Talk to Selena", "Habla con Selena")}
+        headline={
+          depth === 'ready'
+            ? t("You've done the work. Let's talk.", "Hiciste la tarea. Hablemos.")
+            : depth === 'engaged'
+            ? t("You're getting clearer on your options.", "Estás más claro sobre tus opciones.")
+            : t("Selling Your Home? I'll Make Sure You Know Exactly Where You Stand.", "¿Vendiendo Tu Casa? Me Aseguraré de Que Sepas Exactamente Dónde Estás.")
+        }
+        subtext={
+          depth === 'ready'
+            ? t(
+                "You've explored your options and done the research. Kasandra is ready to walk through the next step with you personally.",
+                "Exploraste tus opciones e hiciste la investigación. Kasandra está lista para dar el siguiente paso contigo personalmente."
+              )
+            : t(
+                "I help Tucson sellers price right, time the market, and close with confidence — plus you get a 24/7 AI concierge that works while you sleep.",
+                "Ayudo a vendedores en Tucson a fijar el precio correcto, aprovechar el mercado y cerrar con confianza — además tienes un asistente de IA 24/7 que trabaja mientras duermes."
+              )
+        }
+        primaryLabel={
+          depth === 'ready'
+            ? t("Book a Strategy Call", "Agenda una Llamada de Estrategia")
+            : t("Talk to Selena", "Habla con Selena")
+        }
         secondaryLabel={t("Seller Readiness Quiz", "Quiz de Preparación para Vender")}
         secondaryLink="/seller-readiness"
         intent="sell"
@@ -92,12 +268,13 @@ const V2SellContent = () => {
         backgroundImage={heroSellBg}
       />
 
-      {/* Journey Progress — visible only to returning users */}
-      <section className="py-4">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <JourneyBreadcrumb />
-        </div>
-      </section>
+      {/* Journey Rail — replaces the old JourneyBreadcrumb */}
+      <JourneyRail intent="sell" />
+
+      {/* Kasandra Proximity: READY users see booking CTA right after the rail */}
+      {depth === 'ready' && (
+        <KasandraBookingCTA t={t} handleSelenaRoute={handleSelenaRoute} compact />
+      )}
 
       {/* Address-First Entry — Quick Valuation CTA */}
       <section className="bg-gradient-to-b from-cc-navy/5 to-transparent py-8">
@@ -113,12 +290,12 @@ const V2SellContent = () => {
             className="flex flex-col sm:flex-row gap-3 items-stretch"
           >
             <div className="flex-1 relative">
-              <Home className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cc-charcoal/40" />
+              <Home className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
               <Input
                 value={addressInput}
                 onChange={(e) => setAddressInput(e.target.value)}
                 placeholder={t("Enter your address for a free estimate…", "Ingrese su dirección para un estimado gratis…")}
-                className="pl-10 h-12 border-cc-sand-dark/40 bg-white rounded-full text-sm"
+                className="pl-10 h-12 border-border/40 bg-white rounded-full text-sm"
               />
             </div>
             <Button
@@ -129,7 +306,7 @@ const V2SellContent = () => {
               <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>
           </form>
-          <p className="text-center text-xs text-cc-charcoal/50 mt-2">
+          <p className="text-center text-xs text-muted-foreground/50 mt-2">
             {t("Free, no obligation. Takes 60 seconds.", "Gratis, sin compromiso. Toma 60 segundos.")}
           </p>
         </div>
@@ -182,6 +359,11 @@ const V2SellContent = () => {
         </div>
       </section>
 
+      {/* Kasandra Proximity: ENGAGED users see booking CTA after cash section */}
+      {depth === 'engaged' && (
+        <KasandraBookingCTA t={t} handleSelenaRoute={handleSelenaRoute} compact />
+      )}
+
       {/* How I Protect Sellers — 2-column layout */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4">
@@ -191,7 +373,7 @@ const V2SellContent = () => {
               <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-4">
                 {t("How I Protect Your Interests", "Cómo Protejo Sus Intereses")}
               </h2>
-              <p className="text-cc-charcoal mb-8 max-w-lg">
+              <p className="text-foreground mb-8 max-w-lg">
                 {t(
                   "I come from life insurance — protection is in my DNA. Every decision we make together starts with what's best for you.",
                   "Vengo del seguro de vida — la protección está en mi ADN. Cada decisión que tomamos juntos empieza con lo que es mejor para ti."
@@ -205,7 +387,7 @@ const V2SellContent = () => {
                     <h3 className="font-serif text-lg font-bold text-cc-navy">
                       {t("Strategic Analysis", "Análisis Estratégico")}
                     </h3>
-                    <p className="text-sm text-cc-charcoal">
+                    <p className="text-sm text-foreground">
                       {t(
                         "Market-based pricing strategy using current data and comparable sales in your area.",
                         "Estrategia de precios basada en datos actuales del mercado y ventas comparables en su área."
@@ -219,7 +401,7 @@ const V2SellContent = () => {
                     <h3 className="font-serif text-lg font-bold text-cc-navy">
                       {t("Risk Mitigation", "Mitigación de Riesgos")}
                     </h3>
-                    <p className="text-sm text-cc-charcoal">
+                    <p className="text-sm text-foreground">
                       {t(
                         "Full disclosure support and offer reliability assessment to protect you throughout.",
                         "Apoyo completo de divulgación y evaluación de confiabilidad de ofertas para protegerle."
@@ -233,7 +415,7 @@ const V2SellContent = () => {
                     <h3 className="font-serif text-lg font-bold text-cc-navy">
                       {t("Expert Execution", "Ejecución Experta")}
                     </h3>
-                    <p className="text-sm text-cc-charcoal">
+                    <p className="text-sm text-foreground">
                       {t(
                         "Skilled negotiation and professional marketing to maximize your outcome.",
                         "Negociación hábil y marketing profesional para maximizar su resultado."
@@ -246,39 +428,39 @@ const V2SellContent = () => {
 
             {/* Right: 2x2 card grid */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white p-6 rounded-xl text-center border border-cc-sand-dark/30 shadow-soft">
+              <div className="bg-white p-6 rounded-xl text-center border border-border/30 shadow-soft">
                 <TrendingUp className="w-10 h-10 text-cc-navy mx-auto mb-4" />
                 <h3 className="font-serif text-base font-bold text-cc-navy mb-2">
                   {t("Market-Based Pricing", "Precios Basados en el Mercado")}
                 </h3>
-                <p className="text-xs text-cc-charcoal">
+                <p className="text-xs text-foreground">
                   {t("Data-driven pricing strategy", "Estrategia de precios basada en datos")}
                 </p>
               </div>
-              <div className="bg-white p-6 rounded-xl text-center border border-cc-sand-dark/30 shadow-soft">
+              <div className="bg-white p-6 rounded-xl text-center border border-border/30 shadow-soft">
                 <Shield className="w-10 h-10 text-cc-navy mx-auto mb-4" />
                 <h3 className="font-serif text-base font-bold text-cc-navy mb-2">
                   {t("Offer Reliability", "Confiabilidad de Ofertas")}
                 </h3>
-                <p className="text-xs text-cc-charcoal">
+                <p className="text-xs text-foreground">
                   {t("Assess each offer's strength", "Evaluar la fortaleza de cada oferta")}
                 </p>
               </div>
-              <div className="bg-white p-6 rounded-xl text-center border border-cc-sand-dark/30 shadow-soft">
+              <div className="bg-white p-6 rounded-xl text-center border border-border/30 shadow-soft">
                 <FileText className="w-10 h-10 text-cc-navy mx-auto mb-4" />
                 <h3 className="font-serif text-base font-bold text-cc-navy mb-2">
                   {t("Disclosure Guidance", "Orientación de Divulgación")}
                 </h3>
-                <p className="text-xs text-cc-charcoal">
+                <p className="text-xs text-foreground">
                   {t("Full transaction protection", "Protección completa de transacción")}
                 </p>
               </div>
-              <div className="bg-white p-6 rounded-xl text-center border border-cc-sand-dark/30 shadow-soft">
+              <div className="bg-white p-6 rounded-xl text-center border border-border/30 shadow-soft">
                 <Handshake className="w-10 h-10 text-cc-navy mx-auto mb-4" />
                 <h3 className="font-serif text-base font-bold text-cc-navy mb-2">
                   {t("Negotiation Support", "Apoyo en Negociación")}
                 </h3>
-                <p className="text-xs text-cc-charcoal">
+                <p className="text-xs text-foreground">
                   {t("Your interests always first", "Sus intereses siempre primero")}
                 </p>
               </div>
@@ -287,56 +469,12 @@ const V2SellContent = () => {
         </div>
       </section>
 
-      {/* Seller Planning Tools Strip */}
-      <section className="bg-white border-b border-cc-sand-dark/20 py-6">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <p className="text-xs font-semibold text-cc-navy/50 uppercase tracking-wider text-center mb-4">
-            {t("Seller Planning Tools", "Herramientas de Planificación")}
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Link
-              to="/market"
-              onClick={() => handleCTAClick('sell_tool_market', '/market')}
-              className="flex flex-col items-center gap-2 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all text-center"
-            >
-              <TrendingUp className="w-5 h-5 text-cc-gold" />
-              <span className="text-xs font-semibold text-cc-navy leading-tight">
-                {t("Market Data", "Datos del Mercado")}
-              </span>
-            </Link>
-            <Link
-              to="/seller-timeline"
-              onClick={() => handleCTAClick('sell_tool_timeline', '/seller-timeline')}
-              className="flex flex-col items-center gap-2 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all text-center"
-            >
-              <Clock className="w-5 h-5 text-cc-gold" />
-              <span className="text-xs font-semibold text-cc-navy leading-tight">
-                {t("Selling Timeline", "Cronograma de Venta")}
-              </span>
-            </Link>
-            <Link
-              to="/cash-offer-options"
-              onClick={() => handleCTAClick('sell_tool_calculator', '/cash-offer-options')}
-              className="flex flex-col items-center gap-2 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all text-center"
-            >
-              <DollarSign className="w-5 h-5 text-cc-gold" />
-              <span className="text-xs font-semibold text-cc-navy leading-tight">
-                {t("Cash vs. Listing", "Efectivo vs. Listado")}
-              </span>
-            </Link>
-            <Link
-              to="/home-valuation"
-              onClick={() => handleCTAClick('sell_tool_valuation', '/home-valuation')}
-              className="flex flex-col items-center gap-2 bg-cc-ivory hover:bg-cc-sand rounded-xl border border-cc-sand-dark/30 hover:border-cc-navy/20 px-4 py-3.5 transition-all text-center"
-            >
-              <BarChart3 className="w-5 h-5 text-cc-gold" />
-              <span className="text-xs font-semibold text-cc-navy leading-tight">
-                {t("Home Valuation", "Valoración de Casa")}
-              </span>
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Completion-Aware Seller Planning Tools */}
+      <SellerToolStrip
+        t={t}
+        toolsCompleted={progress.toolsCompleted}
+        handleCTAClick={handleCTAClick}
+      />
 
       {/* Featured Guide */}
       <section className="py-12 bg-white">
@@ -360,7 +498,7 @@ const V2SellContent = () => {
       <section className="py-12 bg-cc-sand">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto space-y-6">
-            <div className="bg-white rounded-2xl p-2 border border-cc-sand-dark/30">
+            <div className="bg-white rounded-2xl p-2 border border-border/30">
               <TestimonialCard testimonial={sellerTestimonials[0]} variant="primary" />
             </div>
             <TestimonialCard testimonial={sellerTestimonials[1]} variant="secondary" />
@@ -437,9 +575,9 @@ const V2SellContent = () => {
             </div>
 
             {/* RIGHT — Cash Offer via Corner Connect */}
-            <div className="bg-cc-ivory border-t-4 border-cc-charcoal rounded-2xl p-8 transition-all duration-200 hover:scale-[1.01] hover:shadow-luxury flex flex-col border border-cc-sand-dark/30">
+            <div className="bg-cc-ivory border-t-4 border-foreground rounded-2xl p-8 transition-all duration-200 hover:scale-[1.01] hover:shadow-luxury flex flex-col border border-border/30">
               <div className="flex items-center gap-3 mb-5">
-                <span className="bg-cc-charcoal/10 text-cc-navy text-xs font-semibold px-3 py-1 rounded-full">
+                <span className="bg-foreground/10 text-cc-navy text-xs font-semibold px-3 py-1 rounded-full">
                   {t("Fastest Close", "Cierre Más Rápido")}
                 </span>
               </div>
@@ -449,28 +587,28 @@ const V2SellContent = () => {
                   {t("Cash Offer", "Oferta en Efectivo")}
                 </h3>
               </div>
-              <p className="text-cc-charcoal/60 text-sm mb-6">Via Corner Connect Buyer Network</p>
+              <p className="text-foreground/60 text-sm mb-6">Via Corner Connect Buyer Network</p>
 
               <div className="space-y-4 mb-8 flex-1">
                 <div className="flex items-start gap-3">
                   <Clock className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-cc-charcoal">{t("Close in 7–14 days", "Cierra en 7–14 días")}</span>
+                  <span className="text-sm text-foreground">{t("Close in 7–14 days", "Cierra en 7–14 días")}</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <DollarSign className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-cc-charcoal">{t("Certain close, no financing contingencies", "Cierre seguro, sin contingencias de financiamiento")}</span>
+                  <span className="text-sm text-foreground">{t("Certain close, no financing contingencies", "Cierre seguro, sin contingencias de financiamiento")}</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <Home className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-cc-charcoal">{t("No showings, no open houses", "Sin visitas, sin casas abiertas")}</span>
+                  <span className="text-sm text-foreground">{t("No showings, no open houses", "Sin visitas, sin casas abiertas")}</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <Wrench className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-cc-charcoal">{t("As-is — no repairs required", "Como está — sin reparaciones requeridas")}</span>
+                  <span className="text-sm text-foreground">{t("As-is — no repairs required", "Como está — sin reparaciones requeridas")}</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <Network className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-cc-charcoal">{t("Kasandra's vetted buyer network", "Red de compradores verificados de Kasandra")}</span>
+                  <span className="text-sm text-foreground">{t("Kasandra's vetted buyer network", "Red de compradores verificados de Kasandra")}</span>
                 </div>
               </div>
 
@@ -491,7 +629,7 @@ const V2SellContent = () => {
           {/* Bottom Callout */}
           <div className="max-w-5xl mx-auto mt-8">
             <div className="bg-cc-sand rounded-xl py-6 px-8 text-center">
-              <p className="text-cc-charcoal text-sm max-w-2xl mx-auto mb-3">
+              <p className="text-foreground text-sm max-w-2xl mx-auto mb-3">
                 {t(
                   "Not sure which path fits? I walk through both options with every seller — you decide with the full picture.",
                   "¿No estás segura de qué camino va contigo? Yo reviso ambas opciones con cada vendedor — tú decides con toda la información."
@@ -512,53 +650,22 @@ const V2SellContent = () => {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
-            {t("Let's figure out your best move.", "Descubramos tu mejor jugada.")}
-          </h2>
-          <p className="text-white/80 max-w-2xl mx-auto mb-8">
-            {t(
-              "I sit down with every seller and walk through both paths — cash and traditional. You decide with the full picture.",
-              "Me siento con cada vendedor y revisamos ambos caminos — efectivo y tradicional. Tú decides con toda la información."
-            )}
-          </p>
-          <div className="flex flex-col items-center gap-3">
-            <Button 
-              asChild
-              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 py-3 text-sm sm:px-10 sm:py-6 sm:text-lg shadow-gold"
-            >
-              <Link
-                to="/book?intent=sell&source=sell_hub_bottom"
-                onClick={() => logCTAClick({ cta_name: 'sell_hub_book_call', destination: '/book', page_path: '/sell', intent: 'sell' })}
-              >
-                <Calendar className="w-5 h-5 mr-2" />
-                {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
-              </Link>
-            </Button>
-            <button
-              onClick={handleSelenaRoute}
-              className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
-            >
-              <MessageCircle className="w-4 h-4" />
-              {t("Still thinking it over? Selena can help you sort it out", "¿Todavía pensándolo? Selena puede ayudarte a aclararlo")}
-            </button>
-          </div>
-        </div>
-      </section>
+      {/* Bottom Booking CTA — only for new/exploring users (engaged/ready see it earlier) */}
+      {!showEarlyBooking && (
+        <KasandraBookingCTA t={t} handleSelenaRoute={handleSelenaRoute} />
+      )}
 
       {/* Important Note */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          <div className="bg-cc-ivory rounded-xl p-8 shadow-soft max-w-3xl mx-auto border border-cc-sand-dark/30">
+          <div className="bg-cc-ivory rounded-xl p-8 shadow-soft max-w-3xl mx-auto border border-border/30">
             <div className="flex items-start gap-4">
               <AlertCircle className="w-8 h-8 text-cc-gold flex-shrink-0" />
               <div>
                 <h3 className="font-serif text-xl font-bold text-cc-navy mb-3">
                   {t("Important Note", "Nota Importante")}
                 </h3>
-                <p className="text-cc-charcoal">
+                <p className="text-foreground">
                   {t(
                     "I provide real estate guidance and market expertise. For specific legal or tax questions, I recommend consulting with qualified professionals in those fields. My role is to guide you through the real estate process with clarity and care.",
                     "Proporciono orientación inmobiliaria y experiencia de mercado. Para preguntas legales o fiscales específicas, recomiendo consultar con profesionales calificados en esos campos. Mi rol es guiarle a través del proceso inmobiliario con claridad y cuidado."
@@ -570,7 +677,6 @@ const V2SellContent = () => {
         </div>
       </section>
       <StickyMobileBookingBar intent="sell" source="sell_hub_sticky" />
-      
     </>
   );
 };
