@@ -15,6 +15,8 @@ import AreaDecisionTools from "@/components/v2/neighborhood/AreaDecisionTools";
 import AreaCinematicCTA from "@/components/v2/neighborhood/AreaCinematicCTA";
 import AreaReadinessIndicator from "@/components/v2/neighborhood/AreaReadinessIndicator";
 import NeighborhoodSplitCTA from "@/components/v2/neighborhood/NeighborhoodSplitCTA";
+import KasandraPresenceCard from "@/components/v2/KasandraPresenceCard";
+import KasandraVideoBlock from "@/components/v2/KasandraVideoBlock";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
