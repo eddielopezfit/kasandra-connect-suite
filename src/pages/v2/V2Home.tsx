@@ -554,7 +554,7 @@ const V2HomeContent = () => {
                   <li>• {t("No pressure, just clarity", "Sin presión, solo claridad")}</li>
                 </ul>
                 <Link to="/cash-offer-options" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                  {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
+                  {t("Understand your options", "Entiende tus opciones")} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
