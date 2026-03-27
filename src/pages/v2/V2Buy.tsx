@@ -209,8 +209,8 @@ const V2BuyContent = () => {
                     <h4 className="font-semibold text-cc-navy">{t("Financing Guidance", "Orientación de Financiamiento")}</h4>
                     <p className="text-sm text-cc-charcoal">
                       {t(
-                        "I'll help you understand your options, including down payment assistance programs.",
-                        "Le ayudaré a entender sus opciones, incluyendo programas de asistencia para pago inicial."
+                        "Down payment programs, closing cost grants, VA benefits — I'll make sure you know every dollar available to you.",
+                        "Programas de pago inicial, subsidios de cierre, beneficios VA — me aseguraré de que conozcas cada dólar disponible para ti."
                       )}
                     </p>
                   </div>
