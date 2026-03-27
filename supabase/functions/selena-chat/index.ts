@@ -602,7 +602,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     }
 
     // Tell the AI what phase we're in so response text matches chip direction
-    const rawGoverned = getGovernedChips(effectiveIntent, timeline, engagement, language);
+    const rawGoverned = getGovernedChips(effectiveIntent, timeline, engagement, language, { guidesReadCount: context.guides_read ?? 0 });
     
     // ============= CHIP PHASE FLOOR ENFORCEMENT (monotonic) =============
     const clientChipFloor = context.chip_phase_floor ?? 0;
