@@ -8,6 +8,7 @@ import { lazy, Suspense, useState } from "react";
 const TestimonialColumns = lazy(() => import("@/components/v2/TestimonialColumns"));
 const LazyHomepageNeighborhoodCards = lazy(() => import("@/components/v2/neighborhood/HomepageNeighborhoodCards"));
 const LazyInstantAnswerWidget = lazy(() => import("@/components/v2/calculator/InstantAnswerWidget"));
+const LazyGoogleReviews = lazy(() => import("@/components/v2/GoogleReviewsSection"));
 import {
   Home,
   Shield,
@@ -35,7 +36,7 @@ import { updateSessionContext, getSessionContext } from '@/lib/analytics/selenaS
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import SelenaShowcase from "@/components/v2/SelenaShowcase";
-
+import GoogleReviewsStarBadge from "@/components/v2/GoogleReviewsStarBadge";
 const V2HomeContent = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -477,6 +478,21 @@ const V2HomeContent = () => {
       {/* Trust Bar */}
       <TrustBar />
 
+      {/* Google Reviews Star Badge — visual trust signal */}
+      <div className="bg-cc-ivory py-4 border-b border-cc-sand-dark/20">
+        <GoogleReviewsStarBadge />
+      </div>
+
+      {/* Social Proof — Staggered Masonry (moved up for trust) */}
+      <Suspense fallback={<div className="h-64 bg-cc-ivory animate-pulse" />}>
+        <TestimonialColumns />
+      </Suspense>
+
+      {/* Google Reviews — Full Section */}
+      <Suspense fallback={null}>
+        <LazyGoogleReviews />
+      </Suspense>
+
       {/* Services Section - Header Band */}
       <section className="py-16 lg:py-20 bg-cc-blue-bg">
         <div className="container mx-auto px-4">
@@ -631,10 +647,6 @@ const V2HomeContent = () => {
       {/* Meet Selena — Brand Asset */}
       <SelenaShowcase />
 
-      {/* Social Proof — Staggered Masonry */}
-      <Suspense fallback={<div className="h-64 bg-cc-ivory animate-pulse" />}>
-        <TestimonialColumns />
-      </Suspense>
 
       {/* Podcast Section */}
       <section className="py-16 lg:py-20 bg-cc-blue-bg">
