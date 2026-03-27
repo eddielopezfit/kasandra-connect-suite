@@ -102,7 +102,7 @@ const App = () => {
                 <Route path="/book" element={<V2Book />} />
                 <Route path="/book/confirmed" element={<V2BookConfirmed />} />
                 <Route path="/buyer-readiness" element={<V2BuyerReadiness />} />
-                <Route path="/private-cash-review" element={<V2PrivateCashReview />} />
+                <Route path="/private-cash-review" element={<Navigate to="/cash-offer-options" replace />} />
                 <Route path="/thank-you" element={<V2ThankYou />} />
                 <Route path="/seller-decision" element={<V2SellerDecision />} />
                 <Route path="/seller-timeline" element={<V2SellerTimeline />} />
