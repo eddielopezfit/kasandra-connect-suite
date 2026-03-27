@@ -177,13 +177,13 @@ export function getGovernedChips(
     }
 
     if (intent === 'buy') {
-      // FIX-SIM-06: Rotate buy chips — cycle through 3 chip sets to prevent repetition
+      // FIX 5: Buyer Phase 2 — surface affordability FIRST, then readiness
       if (phase2TurnCount <= 1) {
-        return { chips: [CHIP_KEYS.BUYER_READINESS, suppressBrowseGuides ? CHIP_KEYS.TALK_WITH_KASANDRA : CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET], phase: 2, escalated: false };
+        return { chips: [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.BUYER_READINESS, suppressBrowseGuides ? CHIP_KEYS.TALK_WITH_KASANDRA : CHIP_KEYS.BROWSE_GUIDES], phase: 2, escalated: false };
       }
       if (phase2TurnCount === 2) {
-        // Turn 2: surface affordability calculator alongside neighborhood tools
-        return { chips: [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.COMPARE_NEIGHBORHOODS, CHIP_KEYS.ESTIMATE_CLOSING_COSTS], phase: 2, escalated: false };
+        // Turn 2: neighborhood tools + off-market
+        return { chips: [CHIP_KEYS.COMPARE_NEIGHBORHOODS, CHIP_KEYS.FIND_OFF_MARKET, CHIP_KEYS.ESTIMATE_CLOSING_COSTS], phase: 2, escalated: false };
       }
       // Turn 3+: progress toward decision
       return { chips: [CHIP_KEYS.BUYER_READINESS_CHECK, CHIP_KEYS.FIND_OFF_MARKET, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 2, escalated: false };
