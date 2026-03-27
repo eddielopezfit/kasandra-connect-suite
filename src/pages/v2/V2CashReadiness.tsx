@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import V2Layout from "@/components/v2/V2Layout";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 import CashReadinessCheck from "@/components/v2/CashReadinessCheck";
 import LeadCaptureModal from "@/components/v2/LeadCaptureModal";
 import { useLanguage } from "@/contexts/LanguageContext";
