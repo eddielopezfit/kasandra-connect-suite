@@ -1,79 +1,104 @@
 
 
-# End-User Journey Audit — "Does This Feel Like a Wow?"
+# Cash Offer Options Page Audit — CTA Overload & Cross-Page Pattern Review
 
-## Verdict: 96% Blue Ocean — 4% Friction
+## The Problem (Visible in Screenshots)
 
-The architecture is genuinely exceptional. A user IS guided throughout the entire journey via 7 interconnected intelligence layers. The personalization is real, not cosmetic. Here's the honest assessment:
+The `/cash-offer-options` page has **11 distinct action points** competing for attention across 7 scrollable viewport heights:
+
+```text
+VIEWPORT 1 (Hero):
+  1. "Run My Numbers" button (scroll anchor)
+  2. "Or ask Selena a question" (opens chat)
+
+VIEWPORT 2 (Journey Breadcrumb):
+  3. "Check Your Buyer Readiness →" ← WRONG INTENT (shows buy on a cash/sell page)
+
+VIEWPORT 3 (Calculator):
+  4. Calculator's own CTA ("Calculate My Options")
+
+VIEWPORT 4 (Proactive Selena Prompt — persists):
+  5. "Let Selena guide you ✨" (floating toast, visible in ALL viewports)
+
+VIEWPORT 5-6 (Two back-to-back navy sections):
+  6. "Take the Cash Readiness Check →" (/cash-readiness)
+  7. "Book a Strategy Call" (/book)
+  8. "Or talk to Selena first" (opens chat)
+
+VIEWPORT 7 (Below booking CTA):
+  9. ToolResultNextStep: "Check Your Buyer Readiness →" ← WRONG INTENT AGAIN
+  10. "View Seller Services →" (/sell) — back link
+
+ALWAYS VISIBLE:
+  11. Floating Selena bubble (bottom-right)
+  12. Nav "Book a Consultation" button
+```
+
+**That's 12 clickable action points on a single page.** The user is being pulled in 6 different directions simultaneously.
+
+## Critical Issues
+
+### 1. WRONG INTENT ROUTING (Critical)
+Both the `JourneyBreadcrumb` (viewport 2) and `ToolResultNextStep` (viewport 7) show **"Check Your Buyer Readiness"** on a page where the user's intent is clearly **cash/sell**. This happens because the session has `intent: 'buy'` set from earlier navigation. The page itself should override the session intent for its own CTA logic — or at minimum, the `deriveNextAction` function should consider the current page context, not just stored intent.
+
+### 2. TWO BACK-TO-BACK NAVY CTA SECTIONS (High)
+Lines 272-326 render two consecutive full-width navy sections:
+- "Not Sure Which Path Fits?" → Cash Readiness Check
+- "Want Expert Guidance?" → Book a Strategy Call
+
+These visually merge into one giant navy block (screenshot 5 confirms this). The user sees a wall of CTAs with no visual separation.
+
+**Fix**: Merge into ONE section with a primary CTA (Book) and a secondary link (Cash Readiness Check).
+
+### 3. PROACTIVE SELENA PROMPT NEVER DISMISSES (Medium)
+The floating "You've done great research" toast appears in every single screenshot (viewports 2-7). It overlaps content, covers the "Traditional Listing" scenarios column, and competes with both the floating Selena bubble AND the page's own Selena CTAs.
+
+### 4. TOOL RESULT NEXT STEP APPEARS AFTER BOOKING CTA (Medium)
+The `ToolResultNextStep` card renders BELOW the terminal booking CTA. This is backwards — the user already saw the booking CTA and scrolled past it. Showing a lower-intent action (readiness check) after the highest-intent action (book) creates cognitive regression.
 
 ---
 
-## What Makes This Blue Ocean (The Wow)
+## The Fix — Reduce 12 Action Points to 5
 
-**Layer 1 — Intent Fork (Homepage)**: Three clear cards (Buy / Sell / Cash Offer) immediately set session intent. No cognitive overload. Returning users see "Welcome back — continue where you left off" with their JourneyBreadcrumb showing completed milestones.
+### Page Structure (Optimized)
+```text
+HERO:
+  1. "Run My Numbers" (scroll anchor — stays)
+  2. "Or ask Selena" (secondary — stays)
 
-**Layer 2 — Session Intelligence Banner**: Reflects the user's actual behavior back to them ("You've completed 2 tools. Your picture is getting clearer.") with contextual CTAs. This is the "I feel understood" moment.
+CALCULATOR (interactive tool — stays as-is)
 
-**Layer 3 — Predictive Engine**: 6-rule priority system surfaces the right next action at the right time. Not generic "Learn More" buttons — intent-aware, journey-depth-aware recommendations like "You've done great research. Now let's see what actually fits your numbers."
+EDUCATION (Static comparison + Wholesaler warning + When Cash Makes Sense)
+  — Pure education, NO CTAs in this zone
 
-**Layer 4 — Tool Chaining**: Every tool result page shows `ToolResultNextStep` with the contextually correct next action. No dead ends.
+SINGLE TERMINAL CTA SECTION:
+  3. Primary: "Book a Strategy Call" → /book
+  4. Secondary text: "Or take the Cash Readiness Check first" → /cash-readiness
+  5. Tertiary: "Or talk to Selena" → opens chat
 
-**Layer 5 — Proactive Selena**: 5 behavioral triggers fire after 8 seconds with calm, observant prompts. Dismissible, session-aware, with cooldown.
+SOCIAL PROOF (Google Reviews)
 
-**Layer 6 — Readiness Snapshot**: Score-banded (Exploring / Getting Ready / Ready to Move) with priority-specific insights and intent-aware next steps. This is where users feel "educated and confident."
+BACK LINK ("View Seller Services" → /sell)
+```
 
-**Layer 7 — Escalation Banner**: High-intent signals trigger booking nudges without being aggressive. Dismissible, once-per-session.
+### Implementation
 
-**Tools are simple**: Each tool is a multi-step wizard (3-4 steps) with progress bars, back buttons, and clear outcomes. The ReadinessSnapshot translates scores into human bands, not raw numbers.
+**File: `src/pages/v2/V2CashOfferOptions.tsx`**
+1. **Remove the standalone Cash Readiness CTA section** (lines 272-295). Fold it into the bottom CTA as a secondary link.
+2. **Move ToolResultNextStep ABOVE the terminal CTA**, not below it. Or remove it entirely since the page itself IS the tool — the terminal CTA handles the next step.
+3. **Set page-level intent override**: Call `setFieldIfEmpty('intent', 'cash')` in a `useEffect` so that `deriveNextAction` returns cash-intent actions, not buyer-intent actions.
 
----
+**File: `src/hooks/useJourneyProgress.ts`**
+4. No changes needed — the `cash` intent path already correctly returns "Check Your Cash Readiness". The bug is that the page doesn't set its own intent.
 
-## Issues Found (The 4%)
+**File: `src/components/v2/ProactiveSelenaPrompt.tsx`**
+5. Ensure it respects the `suppressOnPages` list or add `/cash-offer-options` to it — this page already has 2 explicit Selena entry points, the proactive prompt is redundant.
 
-### 1. CRITICAL — `ContextualChatPrompt` is Broken (Orphan + Dead Click Handler)
+### Cross-Page Pattern Check
+This same CTA overload pattern likely exists on other hub pages. After fixing `/cash-offer-options`, I'll audit `/buy` and `/sell` for the same issues:
+- Double navy CTA sections
+- ToolResultNextStep placement below terminal CTAs
+- Intent mismatch in JourneyBreadcrumb/ToolResultNextStep
 
-The component exists but has two problems:
-- Its `onClick` tries to find `document.querySelector('[data-widget-id]')` — a GHL chat widget that no longer exists. It does NOT use `openChat` from `SelenaChatContext`.
-- It's not imported or used anywhere in the app.
-
-**Impact**: Zero — it's unused. But if anyone imports it, the button does nothing.
-
-**Fix**: Either delete it (it's an orphan) or rewire it to use `openChat` for potential future use.
-
-### 2. MEDIUM — No "Explore" Intent Path After Homepage Fork
-
-The homepage fork offers Buy / Sell / Cash. A user who doesn't identify with any of these (first-time explorer, relocating, just curious) has no clear entry point. They must scroll past the fork to find content.
-
-**Fix**: Add a subtle fourth option below the three cards: "Not sure yet? Let Selena help you figure it out" — opens chat with `source: 'homepage_explore'`.
-
-### 3. LOW — `deriveNextAction` Falls Through to Generic "Ask Selena" for Dual/Investor/Explore Intent
-
-Users with `dual`, `investor`, or `explore` intent get the generic fallback "Ask Selena" as their next recommended action. There's no tool-specific path for these intents.
-
-**Fix**: Add a `dual` path that recommends `/seller-decision` first (sell clarity before buy), and an `explore` path that recommends `/neighborhoods` or `/guides`.
-
-### 4. LOW — Guides Hub ContextualSelenaPrompt Uses Correct `openChat` but Homepage's ContextualChatPrompt Does Not
-
-The Guides Hub uses `ContextualSelenaPrompt` (from `src/components/v2/guides/`) which correctly integrates with Selena. The orphan `ContextualChatPrompt` does not. No user impact since the orphan is unused, but confirms it should be deleted.
-
----
-
-## Implementation Plan
-
-### Step 1: Delete orphan `ContextualChatPrompt.tsx`
-Dead code with broken handler. Clean removal.
-
-### Step 2: Add "Not sure yet?" explore path on homepage
-Below the Buy/Sell/Cash fork cards, add a text link: "Not sure yet? Let Selena help you figure it out" that opens Selena with `source: 'homepage_explore'` and `intent: 'explore'`.
-
-### Step 3: Enrich `deriveNextAction` for dual/explore intents
-- `explore` → recommend `/neighborhoods` (area exploration is the natural entry for curious users)
-- `dual` → recommend `/seller-decision` (sell-side clarity first, then buy)
-
-### Files Modified
-- `src/components/v2/ContextualChatPrompt.tsx` — delete (orphan)
-- `src/pages/v2/V2Home.tsx` — add explore CTA below fork cards
-- `src/hooks/useJourneyProgress.ts` — add `dual` and `explore` paths to `deriveNextAction`
-
-**Estimated scope**: 1 implementation message. All three changes are small and independent.
+**Estimated scope**: 1 implementation message. Primarily editing `V2CashOfferOptions.tsx` (merge CTAs, set intent, reorder sections) plus a minor check on ProactiveSelenaPrompt suppression.
 
