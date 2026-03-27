@@ -258,12 +258,86 @@ Deno.serve(async (req: Request) => {
     const rl = await checkRateLimit(supabase, rlKey, "enrich-booking-context");
     if (!rl.allowed) return rateLimitResponse(corsHeaders);
 
-    // Build dossier
-    const dossierSummary = buildDossierSummary(body);
-    const ghlFields = buildGHLFields(body);
+    // ── Server-side enrichment: pull session_snapshots + guides + decision receipts ──
+    let serverEnriched = { ...body };
+
+    if (body.session_id) {
+      // 1. Pull latest session_snapshot for this session
+      const { data: snap } = await supabase
+        .from("session_snapshots")
+        .select("*")
+        .eq("session_id", body.session_id)
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (snap) {
+        // Merge server data where client didn't provide it
+        if (!serverEnriched.lead_id && snap.lead_id) serverEnriched.lead_id = snap.lead_id;
+        if (!serverEnriched.intent && snap.intent) serverEnriched.intent = snap.intent;
+        if (!serverEnriched.readiness_score && snap.readiness_score) serverEnriched.readiness_score = snap.readiness_score;
+        if (!serverEnriched.primary_priority && snap.primary_priority) serverEnriched.primary_priority = snap.primary_priority;
+        if (!serverEnriched.tools_completed?.length && snap.tools_used?.length) serverEnriched.tools_completed = snap.tools_used;
+        if (!serverEnriched.guides_read?.length && snap.guides_read?.length) serverEnriched.guides_read = snap.guides_read;
+        if (!serverEnriched.guides_read_count && snap.guides_read?.length) serverEnriched.guides_read_count = snap.guides_read.length;
+
+        // Extract calculator data from context_json
+        const ctx = snap.context_json as Record<string, unknown> | null;
+        if (ctx) {
+          if (!serverEnriched.situation && ctx.situation) serverEnriched.situation = ctx.situation as string;
+          if (!serverEnriched.timeline && ctx.timeline) serverEnriched.timeline = ctx.timeline as string;
+          if (!serverEnriched.journey_state && ctx.journey_state) serverEnriched.journey_state = ctx.journey_state as string;
+          if (!serverEnriched.seller_decision_path && ctx.seller_decision_recommended_path) serverEnriched.seller_decision_path = ctx.seller_decision_recommended_path as string;
+          if (!serverEnriched.seller_goal_priority && ctx.seller_goal_priority) serverEnriched.seller_goal_priority = ctx.seller_goal_priority as string;
+          if (!serverEnriched.property_condition_raw && ctx.property_condition_raw) serverEnriched.property_condition_raw = ctx.property_condition_raw as string;
+          if (!serverEnriched.neighborhood_zip && ctx.last_neighborhood_zip) serverEnriched.neighborhood_zip = ctx.last_neighborhood_zip as string;
+          if (ctx.inherited_home) serverEnriched.inherited_home = true;
+          if (ctx.military_flag) serverEnriched.military_flag = true;
+        }
+
+        // Extract calculator results
+        const calc = snap.calculator_data as Record<string, unknown> | null;
+        if (calc) {
+          if (!serverEnriched.estimated_value && calc.estimated_value) serverEnriched.estimated_value = calc.estimated_value as number;
+          if (!serverEnriched.estimated_budget && calc.estimated_budget) serverEnriched.estimated_budget = calc.estimated_budget as number;
+          if (!serverEnriched.calculator_advantage && calc.calculator_advantage) serverEnriched.calculator_advantage = calc.calculator_advantage as string;
+          if (!serverEnriched.calculator_difference && calc.calculator_difference) serverEnriched.calculator_difference = calc.calculator_difference as number;
+        }
+      }
+
+      // 2. Pull latest decision receipt for this session (if not already provided)
+      if (!serverEnriched.decision_receipt_id) {
+        const { data: receipt } = await supabase
+          .from("decision_receipts")
+          .select("id, receipt_type, receipt_data")
+          .eq("session_id", body.session_id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (receipt) {
+          serverEnriched.decision_receipt_id = receipt.id;
+          const rd = receipt.receipt_data as Record<string, unknown> | null;
+          if (rd && !serverEnriched.seller_decision_path && rd.recommended_path) {
+            serverEnriched.seller_decision_path = rd.recommended_path as string;
+          }
+        }
+      }
+
+      // 3. Pull last 3 guide titles from guides_read array
+      if (serverEnriched.guides_read?.length && !serverEnriched.last_guide_title) {
+        const lastGuideId = serverEnriched.guides_read[serverEnriched.guides_read.length - 1];
+        serverEnriched.last_guide_id = lastGuideId;
+        // Guide title will be included from client context if available
+      }
+    }
+
+    // Build dossier with server-enriched data
+    const dossierSummary = buildDossierSummary(serverEnriched);
+    const ghlFields = buildGHLFields(serverEnriched);
 
     // Find or use lead_id from session
-    let leadId = body.lead_id || null;
+    let leadId = serverEnriched.lead_id || null;
     let ghlContactId: string | null = null;
 
     if (!leadId && body.session_id) {
@@ -280,15 +354,15 @@ Deno.serve(async (req: Request) => {
       const enrichmentUpdate: Record<string, unknown> = {
         updated_at: new Date().toISOString(),
       };
-      if (body.readiness_score != null) enrichmentUpdate.readiness_score = body.readiness_score;
-      if (body.tools_completed?.length) enrichmentUpdate.tools_completed = body.tools_completed;
-      if (body.guides_read_count != null) enrichmentUpdate.guides_read_count = body.guides_read_count;
+      if (serverEnriched.readiness_score != null) enrichmentUpdate.readiness_score = serverEnriched.readiness_score;
+      if (serverEnriched.tools_completed?.length) enrichmentUpdate.tools_completed = serverEnriched.tools_completed;
+      if (serverEnriched.guides_read_count != null) enrichmentUpdate.guides_read_count = serverEnriched.guides_read_count;
       enrichmentUpdate.booking_intent_shown_at = new Date().toISOString();
-      if (body.military_flag) enrichmentUpdate.is_military = body.military_flag;
-      if (body.estimated_budget && body.estimated_budget > 0) enrichmentUpdate.estimated_budget = body.estimated_budget;
-      if (body.estimated_value && body.estimated_value > 0) enrichmentUpdate.estimated_value = body.estimated_value;
-      if (body.decision_receipt_id) enrichmentUpdate.decision_receipt_id = body.decision_receipt_id;
-      if (body.seller_decision_path) enrichmentUpdate.seller_decision_path = body.seller_decision_path;
+      if (serverEnriched.military_flag) enrichmentUpdate.is_military = serverEnriched.military_flag;
+      if (serverEnriched.estimated_budget && serverEnriched.estimated_budget > 0) enrichmentUpdate.estimated_budget = serverEnriched.estimated_budget;
+      if (serverEnriched.estimated_value && serverEnriched.estimated_value > 0) enrichmentUpdate.estimated_value = serverEnriched.estimated_value;
+      if (serverEnriched.decision_receipt_id) enrichmentUpdate.decision_receipt_id = serverEnriched.decision_receipt_id;
+      if (serverEnriched.seller_decision_path) enrichmentUpdate.seller_decision_path = serverEnriched.seller_decision_path;
       
       const { data: lead } = await supabase
         .from("lead_profiles")
@@ -305,13 +379,16 @@ Deno.serve(async (req: Request) => {
         event_type: "booking_dossier_created",
         event_payload: {
           lead_id: leadId,
-          intent: body.intent,
-          readiness_score: body.readiness_score,
-          tools_completed: body.tools_completed,
-          guides_read_count: body.guides_read_count,
-          journey_state: body.journey_state,
-          military_flag: body.military_flag,
-          inherited_home: body.inherited_home,
+          intent: serverEnriched.intent,
+          readiness_score: serverEnriched.readiness_score,
+          tools_completed: serverEnriched.tools_completed,
+          guides_read_count: serverEnriched.guides_read_count,
+          journey_state: serverEnriched.journey_state,
+          military_flag: serverEnriched.military_flag,
+          inherited_home: serverEnriched.inherited_home,
+          decision_receipt_id: serverEnriched.decision_receipt_id,
+          seller_decision_path: serverEnriched.seller_decision_path,
+          server_enriched: true,
           dossier_summary_length: dossierSummary.length,
         },
       });
