@@ -4,14 +4,16 @@
  */
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import { CheckCircle, Clock, Calendar, DollarSign, Info, Signal, SignalZero } from "lucide-react";
-import type { CalculatorResults as ResultsType } from "@/lib/calculator/netToSellerAlgorithm";
+import { CheckCircle, Clock, Calendar, DollarSign, Info, Signal, SignalZero, User } from "lucide-react";
+import type { CalculatorResults as ResultsType, Motivation, Timeline } from "@/lib/calculator/netToSellerAlgorithm";
 
 interface CalculatorResultsProps {
   results: ResultsType;
   mortgageBalance?: number;
   marketSource?: 'live' | 'fallback';
   lastVerifiedDate?: string | null;
+  motivation?: Motivation;
+  timeline?: Timeline;
 }
 
 const CalculatorResults = ({ results, mortgageBalance = 0, marketSource = 'fallback', lastVerifiedDate }: CalculatorResultsProps) => {
