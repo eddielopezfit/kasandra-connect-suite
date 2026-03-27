@@ -79,7 +79,7 @@ export default function JourneyMomentum({ className = '' }: { className?: string
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="w-4 h-4 text-cc-gold" />
         <span className="text-xs uppercase tracking-widest text-cc-gold/80 font-semibold">
-          {isEs ? 'Tu Progreso' : 'Your Progress'}
+          {isEs ? 'Tu Camino Hasta Ahora' : 'Your Journey So Far'}
         </span>
       </div>
 
