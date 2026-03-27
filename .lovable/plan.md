@@ -1,65 +1,64 @@
 
 
-# Perplexity Comet Audit — Fix All Flagged Issues
+# Phase 6: Hub-Side Code Changes for GHL Agent Studio Integration
 
-## Issues to Fix (5 items)
+## Context
+GHL custom fields are created (44 fields, API-verified). Phases 1-5 are browser-only GHL configuration. This plan covers the 4 Lovable code changes needed to complete the integration.
 
-### 1. "Talk to Selena" CTA on /buy and /sell Links to /book (Promise Mismatch)
+## Changes
 
-On `/buy` and `/sell`, the hero primary CTA says "Talk to Selena" / "Habla con Selena" but the `GlassmorphismHero` always renders `primaryLink = /book?intent=...` as a `<Link>`. The button below ("Not ready to book? Start with Selena") correctly opens chat.
+### 1. `supabase/functions/notify-handoff/index.ts` — Extend `deriveTags()` + Add `selena_dossier_json`
 
-**Fix**: When `primaryLabel` contains "Selena", the primary CTA should call `openChat()` instead of navigating to `/book`. Two options:
+**deriveTags() additions** (after line 64):
+- `selena_tools_used` — if any tools completed
+- `selena_guide_reader` — if 3+ guides consumed
+- `selena_booking_intent` — if `booking_intent_detected` is true
+- `selena_military` — if `va_loan` is true
+- `selena_returning_visitor` — if `returning_visitor` is true
 
-- **Option A (recommended)**: Change the label on `/buy` and `/sell` heroes from "Talk to Selena" to "Book a Strategy Call" — matching the semantic honesty standard. The existing "Not ready to book? Start with Selena" link below already handles chat entry.
-- **Option B**: Make the hero component detect when the label says "Selena" and render a `<button onClick={handleTalkToSelena}>` instead of a `<Link>`.
+**selena_dossier_json** (after payload construction, ~line 313):
+Add a structured JSON string containing intent, budget, tools, guides, neighborhoods, pain points, property context, financing, and recommended next step. This gives Agent Studio agents a single parseable field with full lead context.
 
-Going with **Option A** — it's simpler and respects the CTA hierarchy (gold button = booking, text link = Selena).
+**Field key fix**: Map `selena_is_pre_approved` → `selena_is_preapproved` (no second underscore) to match the GHL field key `contact.selena_is_preapproved`.
 
-**Files**: `src/pages/v2/V2Buy.tsx` (line 96), `src/pages/v2/V2Sell.tsx` (line 261)
+### 2. `supabase/functions/create-handoff/index.ts` — AI Conversation Summary
 
-### 2. /network Footer Link → Dead End ("Coming Soon")
+Before the `notify-handoff` fire-and-forget call (~line 257), add a summary generation step:
+- Call Lovable AI Gateway (`google/gemini-2.5-flash-lite`) with the `summary_md` content
+- Prompt: "Summarize this real estate lead conversation in exactly 3 sentences. Include what they want, their timeline, and their main concern."
+- Store result as `convo_summary` in the notify payload context
+- Graceful fallback: if AI call fails, continue without summary (no blocking)
 
-The footer links to `/network` on every page, but it only shows a placeholder card.
+### 3. New `supabase/functions/agent-studio-callback/index.ts`
 
-**Fix**: Remove the `/network` link from the footer until the page has real content. Keep the page and route — just hide the navigation to it.
+An endpoint GHL Agent Studio can call to get personalized deep links for SMS/email sequences.
 
-**File**: `src/components/v2/V2Footer.tsx` (line 89-91)
+- **Auth**: `x-admin-secret` header (cost-bearing pattern)
+- **Input**: `{ lead_id, action }` where action is `get_tool_link | get_guide_link | get_booking_link`
+- **Logic**:
+  - `get_tool_link`: Reads `intent` from `lead_profiles`. Buyers → `/affordability-calculator`. Sellers → `/net-to-seller`. Cash → `/cash-offer-options`.
+  - `get_guide_link`: Reads intent + `guides_read` from `session_snapshots`. Returns most relevant unread guide.
+  - `get_booking_link`: Returns `/book?intent=X&lead_id=Y&source=agent_studio`
+- **Output**: `{ url, label, context }`
 
-### 3. Missing Pages in sitemap.xml
+### 4. `src/components/seo/JsonLd.tsx` — Schema Markup Helpers
 
-`/affordability-calculator`, `/bah-calculator`, `/home-valuation`, `/network` are live routes not in the sitemap.
+Add pre-built schema generator functions (not changing the component itself):
+- Create `src/lib/seo/schemaGenerators.ts` with functions for:
+  - `realEstateAgentSchema()` — Kasandra's profile
+  - `localBusinessSchema()` — Corner Connect Real Estate
+  - `faqPageSchema(faqs)` — for guide FAQ sections
+  - `aggregateRatingSchema()` — 126+ reviews
+- These are already partially used via `JsonLd` component; this centralizes the schemas referenced in the GHL Schema Markup Generator output
 
-**Fix**: Add them (except `/network` since it's placeholder).
-
-**File**: `public/sitemap.xml`
-
-### 4. Intent Badge in Nav Shows on Wrong Pages
-
-The "Buying" / "Selling" badge in the nav reflects session intent, not current page. Audit says it's confusing to see "Buying" while on `/sell`.
-
-**Fix**: This is actually correct behavior — it shows *the user's* journey intent, not the page topic. However, to reduce confusion, suppress the badge when the current page's obvious intent contradicts it (e.g., hide "Buying" badge on `/sell`, hide "Selling" badge on `/buy`).
-
-**File**: `src/components/v2/V2Navigation.tsx` (lines 148-163) — add `useLocation()` check
-
-### 5. "Welcome Back" Hero for First-Time Visitors
-
-The hero's returning-user detection uses `isReturningVisitor()` from `personalization.ts`. The audit says it shows "Welcome back" on fresh visits.
-
-**Root cause**: `isReturningVisitor()` checks `localStorage` for *any* prior session data. If the user visited once and bounced (creating a session context), they're flagged as returning on their second pageview even within the same first session.
-
-**Fix**: This is working as designed — "returning" means they have prior session data. The audit likely saw this because their Perplexity browser had leftover localStorage from a previous crawl. No code change needed, but worth noting.
-
----
-
-## Summary of Changes
-
-| File | Change |
+### Files Modified/Created
+| File | Action |
 |------|--------|
-| `src/pages/v2/V2Buy.tsx` | Change primaryLabel from "Talk to Selena" to "Book a Strategy Call" |
-| `src/pages/v2/V2Sell.tsx` | Same — already conditional on `depth === 'ready'`, just update the else branch |
-| `src/components/v2/V2Footer.tsx` | Remove `/network` link |
-| `public/sitemap.xml` | Add 3 missing tool URLs |
-| `src/components/v2/V2Navigation.tsx` | Suppress intent badge when it contradicts current page intent |
+| `supabase/functions/notify-handoff/index.ts` | Modify — extend tags + add dossier JSON |
+| `supabase/functions/create-handoff/index.ts` | Modify — add AI summary before notify |
+| `supabase/functions/agent-studio-callback/index.ts` | Create — new endpoint |
+| `src/lib/seo/schemaGenerators.ts` | Create — centralized schema functions |
 
-**Estimated scope**: 1 implementation message, 5 files, all small edits.
+### Deploy
+All 3 edge functions will be deployed after changes. The schema generators file is frontend-only (no deploy needed).
 
