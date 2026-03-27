@@ -36,6 +36,7 @@ const bookingSchema = z.object({
   email: z.string().trim().email("Please enter a valid email").max(255),
   phone: z.string().trim().min(7, "Please enter a valid phone number").max(20),
   intent: z.enum(["buy", "sell", "cash", "explore"]),
+  referralSource: z.string().optional(),
   message: z.string().trim().max(500).optional(),
 });
 
