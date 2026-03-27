@@ -5,7 +5,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 
-const SELL_PATHS = ['/sell', '/seller-', '/cash-', '/net-to-seller', '/home-valuation', '/private-cash-review'];
+const SELL_PATHS = ['/sell', '/seller-', '/cash-', '/net-to-seller', '/home-valuation'];
 const BUY_PATHS = ['/buy', '/buyer-', '/affordability', '/bah-calculator', '/off-market', '/buyer-closing'];
 
 function getPageIntent(pathname: string): 'sell' | 'buy' | 'general' {

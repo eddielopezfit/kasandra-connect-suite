@@ -28,7 +28,7 @@ const V2Community = lazy(() => import("./pages/v2/V2Community"));
 const V2Book = lazy(() => import("./pages/v2/V2Book"));
 const V2BookConfirmed = lazy(() => import("./pages/v2/V2BookConfirmed"));
 const V2BuyerReadiness = lazy(() => import("./pages/v2/V2BuyerReadiness"));
-const V2PrivateCashReview = lazy(() => import("./pages/v2/V2PrivateCashReview"));
+
 const V2ThankYou = lazy(() => import("./pages/v2/V2ThankYou"));
 const V2SellerDecision = lazy(() => import("./pages/v2/V2SellerDecision"));
 const V2SellerTimeline = lazy(() => import("./pages/v2/V2SellerTimeline"));
@@ -102,7 +102,7 @@ const App = () => {
                 <Route path="/book" element={<V2Book />} />
                 <Route path="/book/confirmed" element={<V2BookConfirmed />} />
                 <Route path="/buyer-readiness" element={<V2BuyerReadiness />} />
-                <Route path="/private-cash-review" element={<V2PrivateCashReview />} />
+                <Route path="/private-cash-review" element={<Navigate to="/cash-offer-options" replace />} />
                 <Route path="/thank-you" element={<V2ThankYou />} />
                 <Route path="/seller-decision" element={<V2SellerDecision />} />
                 <Route path="/seller-timeline" element={<V2SellerTimeline />} />

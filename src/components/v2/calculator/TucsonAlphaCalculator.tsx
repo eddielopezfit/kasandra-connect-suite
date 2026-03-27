@@ -1,23 +1,23 @@
 /**
  * TucsonAlphaCalculator - Main orchestrator for the net-to-seller calculator
- * Multi-step form: Intro → Inputs → Results → Next Steps
+ * Multi-step form: Intro → Inputs → Results + CTAs
  */
 
 import { useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { supabase } from "@/integrations/supabase/client";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { trackJourneyAction } from "@/lib/guides/personalization";
 import { updateSessionContext, setFieldIfEmpty, getSessionContext } from "@/lib/analytics/selenaSession";
+import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, Calculator, Sparkles, TrendingUp } from "lucide-react";
+import { ArrowRight, ArrowLeft, Calculator, Sparkles, Calendar, MessageCircle } from "lucide-react";
 
 import CashOfferProgressBar, { type CalculatorStage } from "./CashOfferProgressBar";
 import CalculatorInputs from "./CalculatorInputs";
 import CalculatorResults from "./CalculatorResults";
-import CalculatorNextSteps from "./CalculatorNextSteps";
-import EquityPulseSection from "./EquityPulseSection";
 
 import {
   calculateNetToSellerComparison,
@@ -30,10 +30,11 @@ import {
 
 const TucsonAlphaCalculator = () => {
   const { t } = useLanguage();
-  const { openChat, leadId, setCalculatorResult } = useSelenaChat();
+  const navigate = useNavigate();
+  const { openChat, setCalculatorResult } = useSelenaChat();
 
-  // State machine: 0 = intro, 1 = inputs, 2 = results, 3 = next steps
-  const [currentStep, setCurrentStep] = useState<0 | 1 | 2 | 3>(0);
+  // State machine: 0 = intro, 1 = inputs, 2 = results
+  const [currentStep, setCurrentStep] = useState<0 | 1 | 2>(0);
   
   // Form inputs
   const [estimatedValue, setEstimatedValue] = useState(350000);
@@ -66,10 +67,9 @@ const TucsonAlphaCalculator = () => {
   // Map step to progress stage
   const getProgressStage = (): CalculatorStage => {
     switch (currentStep) {
-      case 0: return 0; // Exploring
-      case 1: return 1; // Calculating
-      case 2: return 2; // Comparing
-      case 3: return 3; // Deciding
+      case 0: return 0;
+      case 1: return 1;
+      case 2: return 2;
       default: return 0;
     }
   };
@@ -86,7 +86,6 @@ const TucsonAlphaCalculator = () => {
     setResults(calculationResults);
     setCurrentStep(2);
 
-    // Log analytics
     logEvent('calculator_complete', {
       estimated_value: estimatedValue,
       motivation,
@@ -94,20 +93,15 @@ const TucsonAlphaCalculator = () => {
       recommendation: calculationResults.recommendation,
     });
 
-    // Emit tool_completed event
     logEvent('tool_completed', {
       tool_id: 'tucson_alpha_calculator',
       page_path: '/cash-offer-options',
       recommendation: calculationResults.recommendation,
     });
 
-    // Track journey action
     trackJourneyAction('calculator');
-
-    // Set Selena awareness (Task 4)
     setCalculatorResult(calculationResults.recommendation);
 
-    // Enrich SessionContext with decision-grade fields for Selena
     setFieldIfEmpty('intent', 'cash');
     const ctx = getSessionContext();
     const runId = crypto.randomUUID();
@@ -126,25 +120,23 @@ const TucsonAlphaCalculator = () => {
       calculator_motivation: motivation,
       calculator_run_id: runId,
     });
-    // P1.1: Persist snapshot after calculator completion
     import('@/lib/analytics/sessionSnapshot').then(({ saveSnapshot }) => saveSnapshot()).catch(() => {});
 
   }, [estimatedValue, motivation, timeline, setCalculatorResult, marketOverrides]);
 
-  // Handle going to next steps
-  const handleViewNextSteps = useCallback(() => {
-    setCurrentStep(3);
-    logEvent('calculator_results_view', { step: 'next_steps' });
-  }, []);
-
   // Handle asking Selena with entry context
   const handleAskSelena = useCallback(() => {
+    logCTAClick({
+      cta_name: CTA_NAMES.TOOL_ASK_SELENA,
+      destination: 'selena_chat',
+      page_path: window.location.pathname,
+      intent: 'cash',
+    });
     logEvent('calculator_cta_click', { 
       cta: 'ask_selena',
       context: { estimatedValue, motivation, timeline },
     });
     
-    // Pass calculator context for context-aware greeting
     openChat({
       source: 'calculator',
       intent: 'sell',
@@ -163,14 +155,25 @@ const TucsonAlphaCalculator = () => {
     });
   }, [openChat, estimatedValue, mortgageBalance, motivation, timeline, results]);
 
+  const handleBookKasandra = useCallback(() => {
+    logCTAClick({
+      cta_name: CTA_NAMES.TOOL_BOOK_CONSULTATION,
+      destination: '/book',
+      page_path: window.location.pathname,
+      intent: 'cash',
+      recommendation: results?.recommendation,
+    });
+    navigate('/book?intent=cash&source=calculator');
+  }, [navigate, results]);
+
   // Handle back navigation
   const handleBack = useCallback(() => {
     if (currentStep > 0) {
-      setCurrentStep((prev) => (prev - 1) as 0 | 1 | 2 | 3);
+      setCurrentStep((prev) => (prev - 1) as 0 | 1 | 2);
     }
   }, [currentStep]);
 
-  // Handle start - emit tool_started
+  // Handle start
   const handleStart = useCallback(() => {
     setCurrentStep(1);
     logEvent('tool_started', { 
@@ -179,6 +182,33 @@ const TucsonAlphaCalculator = () => {
     });
     logEvent('calculator_open', { source: 'cash_offer_options' });
   }, []);
+
+  // Neutral recommendation copy
+  const getRecommendationCopy = () => {
+    if (!results) return { titleEn: '', titleEs: '', descEn: '', descEs: '' };
+    if (results.recommendation === 'cash') {
+      return {
+        titleEn: "Based on your inputs, the cash path showed a speed advantage",
+        titleEs: "Según tus datos, el camino en efectivo mostró una ventaja de rapidez",
+        descEn: "The numbers reflect a scenario where closing quickly could reduce your carrying costs significantly.",
+        descEs: "Los números reflejan un escenario donde cerrar rápido podría reducir significativamente tus costos de espera.",
+      };
+    }
+    if (results.recommendation === 'traditional') {
+      return {
+        titleEn: "Based on your inputs, the traditional path showed a higher net",
+        titleEs: "Según tus datos, la venta tradicional mostró un retorno neto mayor",
+        descEn: "The numbers reflect a scenario where market exposure could yield a higher return, even after time costs.",
+        descEs: "Los números reflejan un escenario donde la exposición al mercado podría generar un mayor retorno, aún después de costos de tiempo.",
+      };
+    }
+    return {
+      titleEn: "The numbers are close — a conversation can help you weigh what matters most",
+      titleEs: "Los números están parejos — una conversación puede ayudarte a evaluar lo que más importa",
+      descEn: "Your situation has factors that go beyond the calculator. Kasandra can walk through these with you.",
+      descEs: "Tu situación tiene factores que van más allá de la calculadora. Kasandra puede revisarlos contigo.",
+    };
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-elevated border border-cc-sand-dark/30 overflow-hidden">
@@ -263,7 +293,7 @@ const TucsonAlphaCalculator = () => {
             </div>
           )}
 
-          {/* Step 2: Results */}
+          {/* Step 2: Results + Terminal CTAs */}
           {currentStep === 2 && results && (
             <div>
               <div className="flex items-center justify-between mb-6">
@@ -281,96 +311,46 @@ const TucsonAlphaCalculator = () => {
 
               <CalculatorResults results={results} mortgageBalance={mortgageBalance} marketSource={marketSource} lastVerifiedDate={lastVerifiedDate} motivation={motivation} timeline={timeline} />
 
-              {/* Equity Pulse — Saved Utility hook */}
-              <EquityPulseSection
-                estimatedValue={estimatedValue}
-                mortgageBalance={mortgageBalance}
-                recommendation={results.recommendation}
-              />
+              {/* Neutral recommendation summary */}
+              {(() => {
+                const copy = getRecommendationCopy();
+                return (
+                  <div className="mt-8 bg-cc-sand rounded-2xl p-6 text-center">
+                    <h3 className="font-serif text-lg md:text-xl font-bold text-cc-navy mb-2">
+                      {t(copy.titleEn, copy.titleEs)}
+                    </h3>
+                    <p className="text-cc-charcoal text-sm max-w-md mx-auto">
+                      {t(copy.descEn, copy.descEs)}
+                    </p>
+                  </div>
+                );
+              })()}
 
-              <div className="mt-6">
+              {/* Terminal CTAs — 2 only */}
+              <div className="mt-8 space-y-3">
+                {/* Primary: Book with Kasandra */}
                 <Button
-                  onClick={handleViewNextSteps}
-                  className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full py-6 text-lg shadow-gold"
+                  onClick={handleBookKasandra}
+                  className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full py-6 text-base shadow-gold group"
                 >
-                  {t("See My Next Steps", "Ver Mis Próximos Pasos")}
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  <Calendar className="w-5 h-5 mr-2" />
+                  {t("Walk Through This with Kasandra", "Revisa Esto con Kasandra")}
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
-              </div>
-            </div>
-          )}
 
-          {/* Step 3: Your Decision — personalized final stage */}
-          {currentStep === 3 && (
-            <div>
-              <div className="flex items-center justify-between mb-6">
+                {/* Secondary: Ask Selena */}
                 <button
-                  onClick={handleBack}
-                  className="text-cc-slate hover:text-cc-navy transition-colors flex items-center gap-1 text-sm"
+                  onClick={handleAskSelena}
+                  className="w-full p-4 text-center rounded-xl border-2 border-cc-gold/40 bg-white hover:border-cc-gold hover:bg-cc-gold/5 transition-all group"
                 >
-                  <ArrowLeft className="w-4 h-4" />
-                  {t("Back to Results", "Volver a Resultados")}
+                  <div className="flex items-center justify-center gap-2">
+                    <MessageCircle className="w-5 h-5 text-cc-gold" />
+                    <span className="font-semibold text-cc-navy text-sm">
+                      {t("Have questions? Ask Selena", "¿Tienes preguntas? Pregúntale a Selena")}
+                    </span>
+                  </div>
                 </button>
-                <span className="text-sm text-cc-slate font-medium">
-                  {t("Your Decision", "Tu Decisión")}
-                </span>
               </div>
-
-              {/* Personalized recommendation summary */}
-              <div className="bg-cc-sand rounded-2xl p-6 mb-8 text-center">
-                {results?.recommendation === 'cash' ? (
-                  <>
-                    <div className="w-12 h-12 bg-cc-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Sparkles className="w-6 h-6 text-cc-gold" />
-                    </div>
-                    <h3 className="font-serif text-xl md:text-2xl font-bold text-cc-navy mb-2">
-                      {t("A Cash Offer Could Work in Your Favor", "Una Oferta en Efectivo Podría Funcionar a Tu Favor")}
-                    </h3>
-                    <p className="text-cc-charcoal text-sm max-w-md mx-auto">
-                      {t(
-                        "Based on your numbers, the speed and certainty of a cash offer could net you more after time costs. Here's how to move forward.",
-                        "Según tus números, la rapidez y certeza de una oferta en efectivo podría darte más después de los costos de tiempo. Así puedes avanzar."
-                      )}
-                    </p>
-                  </>
-                ) : results?.recommendation === 'traditional' ? (
-                  <>
-                    <div className="w-12 h-12 bg-cc-navy/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <TrendingUp className="w-6 h-6 text-cc-navy" />
-                    </div>
-                    <h3 className="font-serif text-xl md:text-2xl font-bold text-cc-navy mb-2">
-                      {t("A Traditional Listing Could Maximize Your Return", "Una Venta Tradicional Podría Maximizar Tu Retorno")}
-                    </h3>
-                    <p className="text-cc-charcoal text-sm max-w-md mx-auto">
-                      {t(
-                        "Based on your numbers, listing on the market with the right strategy could get you the best price. Here's how to get started.",
-                        "Según tus números, vender en el mercado con la estrategia correcta podría darte el mejor precio. Así puedes comenzar."
-                      )}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-12 h-12 bg-cc-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Calculator className="w-6 h-6 text-cc-gold" />
-                    </div>
-                    <h3 className="font-serif text-xl md:text-2xl font-bold text-cc-navy mb-2">
-                      {t("Your Situation Deserves a Closer Look", "Tu Situación Merece una Revisión Más Detallada")}
-                    </h3>
-                    <p className="text-cc-charcoal text-sm max-w-md mx-auto">
-                      {t(
-                        "The numbers are close—your best option depends on your timeline and priorities. A quick conversation can clarify the path forward.",
-                        "Los números están parejos—tu mejor opción depende de tu cronograma y prioridades. Una conversación rápida puede aclarar el camino."
-                      )}
-                    </p>
-                  </>
-                )}
-              </div>
-
-              <CalculatorNextSteps
-                onAskSelena={handleAskSelena}
-                showSaveResults={!!leadId}
-                recommendation={results?.recommendation === 'cash' ? 'cash_advantage' : results?.recommendation === 'traditional' ? 'listing_advantage' : 'consult'}
-              />
             </div>
           )}
         </div>

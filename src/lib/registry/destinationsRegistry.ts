@@ -58,7 +58,7 @@ const DESTINATIONS: readonly DestinationEntry[] = [
   { key: 'buyer_closing_costs', path: '/buyer-closing-costs', label_en: 'Buyer Closing Costs', label_es: 'Costos de Cierre del Comprador' },
   { key: 'off_market', path: '/off-market', label_en: 'Off-Market Buyer', label_es: 'Comprador Fuera del Mercado' },
   { key: 'market_intelligence', path: '/market', label_en: 'Market Intelligence', label_es: 'Inteligencia de Mercado' },
-  { key: 'private_cash_review', path: '/private-cash-review', label_en: 'Private Cash Review', label_es: 'Revisión Privada de Efectivo' },
+  { key: 'private_cash_review', path: '/cash-offer-options', label_en: 'Cash Offer Options', label_es: 'Opciones de Oferta en Efectivo' },
   { key: 'thank_you', path: '/thank-you', label_en: 'Thank You', label_es: 'Gracias' },
   { key: 'selena_open', path: null, label_en: 'Open Selena', label_es: 'Abrir Selena' },
   { key: 'external_youtube', path: null, label_en: 'YouTube', label_es: 'YouTube' },
