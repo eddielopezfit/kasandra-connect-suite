@@ -119,8 +119,8 @@ function getBannerContent(
         "Has investigado a fondo. ¿Lista/o para hablar de estrategia?"
       ),
       actions: [
-        { type: 'link', label: t("Book a call", "Agenda una llamada"), destination: '/book' },
-        { type: 'chat', label: t("Ask Selena", "Pregúntale a Selena"), destination: 'selena' },
+        { type: 'link', label: t("Plan your next step with Kasandra", "Planifica tu siguiente paso con Kasandra"), destination: '/book' },
+        { type: 'chat', label: t("Let Selena guide you", "Deja que Selena te guíe"), destination: 'selena' },
       ],
       isReturning: false,
     };
