@@ -159,7 +159,6 @@ interface JourneyRailProps {
 export default function JourneyRail({ intent, className }: JourneyRailProps) {
   const { t } = useLanguage();
   const progress = useJourneyProgress();
-  const { openChat } = useSelenaChat();
 
   // Don't render for brand-new users
   if (progress.journeyDepth === 'new') return null;
