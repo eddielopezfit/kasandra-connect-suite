@@ -1375,7 +1375,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       } else if (canApplyJourneyChips && journey.stageChips.length > 0) {
         // Layer 6: Journey State Engine chips
         suggestedReplies = journey.stageChips;
-      } else {
+      } else if (chips.length > 0) {
         // Layer 7: Governed phase chips (fallback)
         suggestedReplies = chips;
       }
