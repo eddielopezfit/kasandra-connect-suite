@@ -150,7 +150,7 @@ const InstantAnswerWidget = () => {
         {/* Journey-aware CTAs */}
         <div className="flex flex-col sm:flex-row gap-3">
           <Link
-            to="/affordability"
+            to="/affordability-calculator"
             onClick={handleCTAClick}
             className="flex-1 flex items-center justify-center gap-2 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold py-3 rounded-full transition-colors text-center"
           >
