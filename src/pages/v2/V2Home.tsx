@@ -227,7 +227,7 @@ const V2HomeContent = () => {
               {t("Run the Numbers", "Haz los Números")}
             </span>
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mt-2">
-              {t("Instant Answers, Zero Pressure", "Respuestas Inmediatas, Cero Presión")}
+              {t("Check Your Buying Power", "Descubre Tu Poder de Compra")}
             </h2>
           </div>
           <Suspense fallback={<div className="h-64 bg-cc-sand/50 rounded-2xl animate-pulse" />}>
