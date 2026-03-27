@@ -1,49 +1,121 @@
 
 
-## Plan: Generate Complete System DNA Export (13 Files)
+# Full Build Optimization Plan
+## Synthesized from 8 Strategic Intelligence Reports + UX Audit
 
-### What This Is
-A complete architectural blueprint exported as 13 structured markdown files to `/mnt/documents/`, enabling a senior engineer to rebuild this system from scratch.
+This plan addresses the highest-impact gaps identified across all reports and the Perplexity UX audit, organized into 4 implementation phases.
 
-### File Structure
+---
 
-| File | Content Scope | Estimated Size |
-|------|--------------|----------------|
-| `00-system-overview.md` | Tech stack, architecture philosophy, project structure, key abstractions (ActionSpec, GuardState, SessionContext) | ~3K |
-| `01-routes-pages.md` | Every route with URL, purpose, components, CTAs, AI interaction points | ~8K |
-| `02-ui-ux-components.md` | All reusable components with props, behavior, usage locations — split into subsections (layout, hero, cards, forms, calculators, chat, guides, neighborhood) | ~12K |
-| `03-user-journeys.md` | Seller, Buyer, Cash Offer, Explorer flows with entry points, steps, decision points, tools triggered, conversion points | ~6K |
-| `04-selena-ai-system.md` | **Largest file** — Full system prompts (EN KB-0 through KB-12), 4-mode architecture, GuardState rules, KB-9 containment, intent detection, chip governance, greeting engine variants, journey state classifier, chip registry | ~25K+ |
-| `05-tools-decision-engines.md` | Net proceeds calculator, readiness quizzes (buyer/seller/cash), seller decision wizard, affordability calculator, BAH calculator, home valuation, neighborhood quiz — inputs, outputs, algorithms, data flow | ~8K |
-| `06-data-architecture.md` | All DB tables with fields/types/RLS, localStorage keys (12+), sessionStorage keys, SessionContext interface (80+ fields), lead_profiles schema, conversation_memory | ~10K |
-| `07-edge-functions-backend.md` | All 33 edge functions — name, purpose, inputs, outputs, triggers, auth patterns, env vars | ~12K |
-| `08-integrations.md` | GHL webhook, Lovable AI Gateway, Google Places, YouTube, Firecrawl, Perplexity, ElevenLabs — payloads, auth, data flow | ~5K |
-| `09-conversion-system.md` | Lead capture flow, earned booking access gates, qualification system, lead scoring, handoff pipeline, GHL tag derivation | ~6K |
-| `10-analytics-events.md` | All 100+ event types, payload structure, storage (event_log table), dev buffer, session trail system | ~6K |
-| `11-guides-content-architecture.md` | Guide registry, 30+ guides with IDs/categories/tiers, guide media slots, category colors, Decision Lane system, GuideToolBridge | ~8K |
-| `12-limitations-gaps.md` | Known security gaps, stub functions, performance constraints, architectural debt, missing features | ~3K |
-| `13-rebuild-recommendations.md` | Recommendations for next-gen rebuild — what to keep, what to redesign, scalability improvements | ~3K |
+## Phase 1: Critical UX Fixes (Immediate)
+*Addresses UX Audit Issues #1, #2, #3, #5, #8*
 
-### Implementation Approach
+### 1A. Intent-Aware Footer CTA
+The global `CTASection.tsx` currently shows generic copy regardless of page context. On `/sell`, the bottom CTA still defaults to buyer-oriented language.
 
-1. Read all remaining files needed for exhaustive detail (system prompt lines 300-1510, remaining edge functions, component props, guide registry, etc.)
-2. Generate each file with real implementation detail — real route names, real component names, real localStorage keys, real edge function names, real prompt text, real logic
-3. For large sections (04-selena-ai-system, 07-edge-functions), include nested subsection headers rather than compressing
-4. Write all 13 files to `/mnt/documents/kasandra-system-dna/`
-5. QA each file for completeness
+**Change**: Read `window.location.pathname` in `CTASection` to conditionally render seller-specific CTA text on sell-intent pages (`/sell`, `/seller-*`, `/cash-*`, `/net-to-seller`) and buyer-specific text on buy-intent pages.
 
-### What Gets Included (NOT Summarized)
-- Full KB-0 constitution text (~100 lines)
-- Full Conversational Operating Doctrine
-- Complete mode detection logic with thresholds
-- All 100+ analytics event types
-- All 12+ localStorage keys with their data shapes
-- All 33 edge function signatures
-- Complete chip registry structure (82+ entries)
-- All greeting variants with trigger conditions
-- Full intent detection regex patterns
-- Complete net-to-seller algorithm constants
-- All GHL webhook payload fields and tag derivation logic
-- Complete RLS policy inventory
-- All env var names and their purposes
+### 1B. Attribution Field on Booking Form
+Add "How did you hear about us?" select field to `BookingIntakeForm.tsx` with options: Google Search, Social Media, YouTube/Podcast, Referral, Community Event, Other. Pass this to the lead handoff dossier.
+
+### 1C. Neighborhood Detail MLS Links
+Add an "Explore Listings" CTA on `V2NeighborhoodDetail.tsx` that links to a filtered Redfin search for the neighborhood's primary ZIP code. Pattern: `https://www.redfin.com/zipcode/{zip}`.
+
+### 1D. Valuation Page Interactive Tool
+The Home Valuation page (`V2HomeValuation.tsx`) promises an interactive tool but currently has none. Add an address-entry field at the top that opens Selena with a prefilled message like "I'd like to know what my home at [address] is worth" — converting a static page into a decision entry point.
+
+---
+
+## Phase 2: Context Surface Layer (High Priority)
+*Addresses Report 8's primary gap: session intelligence is captured but not surfaced*
+
+### 2A. Adaptive Homepage Hero for Returning Users
+When `useJourneyProgress()` returns `isReturningUser === true`, swap the default `GlassmorphismHero` headline from the generic welcome to a personalized one reflecting their progress:
+- **Exploring**: "Welcome back — pick up where you left off"
+- **Engaged**: "You're making progress — here's your next step"
+- **Ready**: "You've done the research. Let's talk."
+
+The hero already has journey-aware copy in the CTA section — extend it to the hero itself.
+
+### 2B. Hub Page Progress Reflection
+On `/buy` and `/sell`, render a compact "Your Progress" card below the hero (only for returning users) showing:
+- Completed tools with checkmarks
+- Readiness score if available
+- "Next Step" CTA from `useJourneyProgress().nextRecommendedAction`
+
+This uses existing `useJourneyProgress` data — no new backend work needed.
+
+### 2C. Tool Chaining Enhancement
+After tool completion pages (Affordability Calculator, BAH Calculator, Seller Timeline, Net-to-Seller), ensure `ToolResultNextStep` is present and correctly maps to the next logical action. Audit all tool result pages for consistent implementation.
+
+---
+
+## Phase 3: Visual & Trust Upgrades
+*Addresses Christie Realty competitive analysis + image/video placement strategy*
+
+### 3A. Contextual Video Placement System
+Create a reusable `ContextualVideoBlock` component that serves the right video based on page intent:
+- **Homepage**: Kasandra welcome video (already exists, refine placement)
+- **Sell pages**: "Todo Empieza en Casa" clip or seller success story
+- **Buy pages**: First-time buyer walkthrough
+- **Neighborhood pages**: Area lifestyle footage
+
+Uses the existing `KasandraVideoBlock` component pattern but with intent-aware content selection.
+
+### 3B. Agent Photo Upgrades
+Replace small, cropped images with larger, contextual photos:
+- Homepage About section: Full-width lifestyle photo with text overlay
+- Sell page: Add Kasandra photo in the "How I Protect Sellers" section
+- Buy page: Add photo in the guidance section
+- About page: Photo grid or carousel
+
+### 3C. Google Reviews Visual Upgrade
+Move Google Reviews section higher on the homepage (currently buried). Add star rating display in the hero area (already in JSON-LD, surface it visually).
+
+---
+
+## Phase 4: Conversion Funnel Optimization
+*Addresses Report 6/7 HiFello funnel gaps + progressive intake*
+
+### 4A. Address-First Hero Entry (Sellers)
+On the Sell page hero, add a prominent address input field: "Enter your address for a free estimate." On submit, it navigates to `/home-valuation?address={value}` and opens Selena with the address prefilled. This is the #1 conversion pattern identified in competitor analysis.
+
+### 4B. Progressive Seller Intake
+Enhance the `SellerDecision` wizard flow to capture property condition and timeline data earlier, feeding it into the booking dossier. Currently, `StepCondition` and `StepSituation` exist but their data doesn't consistently flow to the handoff.
+
+### 4C. Enriched Agent Briefing
+Update the `enrich-booking-context` edge function to pull the latest `session_snapshots` data and include:
+- All tools completed with results
+- Guides read (count + last 3 titles)
+- Seller decision path if available
+- Calculator results (estimated value, advantage)
+
+This gives Kasandra a complete pre-call intelligence briefing.
+
+---
+
+## Technical Details
+
+**Files Modified (Phase 1)**:
+- `src/components/v2/CTASection.tsx` — add pathname-based intent detection
+- `src/components/v2/booking/BookingIntakeForm.tsx` — add attribution field + schema update
+- `src/pages/v2/V2NeighborhoodDetail.tsx` — add MLS link CTA
+- `src/pages/v2/V2HomeValuation.tsx` — add address entry widget
+
+**Files Modified (Phase 2)**:
+- `src/components/v2/hero/GlassmorphismHero.tsx` — returning user headline variants
+- `src/pages/v2/V2Buy.tsx` — add progress reflection card
+- `src/pages/v2/V2Sell.tsx` — add progress reflection card
+
+**Files Modified (Phase 3)**:
+- `src/pages/v2/V2Home.tsx` — reorder sections, upgrade photo layout
+- `src/components/v2/KasandraVideoBlock.tsx` — intent-aware video selection
+
+**Files Modified (Phase 4)**:
+- `src/pages/v2/V2Sell.tsx` — address-first hero entry
+- `supabase/functions/enrich-booking-context/index.ts` — enriched dossier assembly
+
+**No new database tables required.** All changes leverage existing `session_snapshots`, `lead_profiles`, and `lead_handoffs` tables.
+
+**Estimated scope**: ~15-20 implementation messages across all 4 phases, executed sequentially.
 
