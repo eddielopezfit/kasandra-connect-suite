@@ -608,8 +608,8 @@ export function filterChipsForCompletedTools(
 export const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
     // Buyer path progressions
     'take readiness check': {
-      en: ["How long does it take?", "Start now", "What does this check?"],
-      es: ["¿Cuánto tiempo toma?", "Comenzar ahora", "¿Qué verifica este análisis?"]
+      en: ["Check my buying power", "Browse guides", "What does this check?"],
+      es: ["Verificar poder de compra", "Explorar guías", "¿Qué verifica este análisis?"]
     },
     'view first-time buyer guide': {
       en: ["What should I prepare?", "Ask about financing", "Check my readiness"],
