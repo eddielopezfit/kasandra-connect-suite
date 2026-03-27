@@ -322,6 +322,7 @@ serve(async (req) => {
       selena_consent_ai_disclosure: context.ai_disclosure_accepted ? "true" : "false",
       selena_consent_communications: context.sms_consent ?? false,
       selena_last_data_parse_date: new Date().toISOString(),
+      selena_convo_summary: context.convo_summary ?? "",
       tags,
       // Agent Studio structured dossier — single parseable JSON field
       selena_dossier_json: JSON.stringify({
