@@ -1,6 +1,7 @@
 /**
  * JourneyBreadcrumb — Surfaces accumulated journey state to returning users
- * Invisible to first-time visitors. Renders completed milestones + next action.
+ * Invisible to first-time visitors. Renders insight-driven milestones + next action.
+ * All labels are compliant reflections of user actions (KB-0/KB-4 safe).
  */
 
 import { Link } from 'react-router-dom';
@@ -10,16 +11,62 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { Button } from '@/components/ui/button';
 
-/** Convert tool ID to human-readable label */
-function formatToolName(toolId: string): string {
-  return toolId
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-interface CompletedItem {
+interface InsightItem {
   labelEn: string;
   labelEs: string;
+}
+
+/** Map readiness score to an insight label */
+function readinessInsight(score: number): InsightItem {
+  if (score >= 70) {
+    return {
+      labelEn: "You're closer to ready than you think",
+      labelEs: 'Estás más cerca de lo que crees',
+    };
+  }
+  if (score >= 50) {
+    return {
+      labelEn: "You're making progress — keep going",
+      labelEs: 'Vas avanzando — sigue así',
+    };
+  }
+  return {
+    labelEn: "A few things to sort out first — that's normal",
+    labelEs: 'Algunas cosas por resolver — es normal',
+  };
+}
+
+/** Map guide count to an insight label */
+function guideInsight(count: number): InsightItem | null {
+  if (count <= 0) return null;
+  if (count <= 2) {
+    return {
+      labelEn: "You're getting oriented",
+      labelEs: 'Te estás orientando',
+    };
+  }
+  if (count <= 5) {
+    return {
+      labelEn: "You're building a solid picture",
+      labelEs: 'Estás construyendo una imagen clara',
+    };
+  }
+  return {
+    labelEn: "You've done more research than most",
+    labelEs: 'Has investigado más que la mayoría',
+  };
+}
+
+/** Dynamic header based on journey depth */
+function headerCopy(depth: string, isEs: boolean): string {
+  switch (depth) {
+    case 'ready':
+      return isEs ? 'Hiciste la tarea — esto es lo que sigue' : "You've done the work — here's what's next";
+    case 'engaged':
+      return isEs ? 'Cada vez más claro lo que necesitas' : "You're getting clearer on what you need";
+    default:
+      return isEs ? 'Vas por buen camino' : "You're off to a great start";
+  }
 }
 
 export default function JourneyBreadcrumb() {
@@ -30,45 +77,53 @@ export default function JourneyBreadcrumb() {
 
   if (!progress.isReturningUser) return null;
 
-  // Build completed items list
-  const items: CompletedItem[] = [];
+  // Build insight items
+  const items: InsightItem[] = [];
 
-  for (const toolId of progress.toolsCompleted) {
-    const name = formatToolName(toolId);
-    const suffix =
-      (toolId.includes('readiness') || toolId === 'buyer_readiness' || toolId === 'seller_readiness' || toolId === 'cash_readiness')
-      && progress.hasReadinessScore
-        ? ` (Score: ${progress.readinessScore})`
-        : '';
-    items.push({ labelEn: `${name}${suffix}`, labelEs: `${name}${suffix}` });
+  // Readiness score insight
+  if (progress.hasReadinessScore && typeof progress.readinessScore === 'number') {
+    items.push(readinessInsight(progress.readinessScore));
   }
 
-  if (progress.guideCount > 0) {
-    items.push({
-      labelEn: `${progress.guideCount} Guide${progress.guideCount > 1 ? 's' : ''} Read`,
-      labelEs: `${progress.guideCount} Guía${progress.guideCount > 1 ? 's' : ''} Leída${progress.guideCount > 1 ? 's' : ''}`,
-    });
-  }
-
-  if (progress.hasExploredNeighborhood && progress.lastNeighborhoodZip) {
-    items.push({
-      labelEn: `Explored ${progress.lastNeighborhoodZip}`,
-      labelEs: `Exploró ${progress.lastNeighborhoodZip}`,
-    });
-  }
-
-  if (progress.hasCalculatorResults && progress.calculatorAdvantage) {
-    const advLabel = progress.calculatorAdvantage === 'cash' ? 'Cash Advantage' : progress.calculatorAdvantage === 'traditional' ? 'Traditional Advantage' : 'Consult Recommended';
-    items.push({ labelEn: advLabel, labelEs: advLabel });
-  }
-
+  // Seller decision — neutral reflection
   if (progress.hasSellerDecision && progress.sellerDecisionPath) {
-    const pathLabel = formatToolName(progress.sellerDecisionPath);
+    if (progress.sellerDecisionPath.includes('cash')) {
+      items.push({
+        labelEn: 'You explored the cash offer path',
+        labelEs: 'Exploraste la ruta de oferta en efectivo',
+      });
+    } else if (progress.sellerDecisionPath.includes('traditional') || progress.sellerDecisionPath.includes('listing')) {
+      items.push({
+        labelEn: 'You explored the traditional listing path',
+        labelEs: 'Exploraste la ruta de venta tradicional',
+      });
+    } else {
+      items.push({
+        labelEn: 'You reviewed your selling options',
+        labelEs: 'Revisaste tus opciones de venta',
+      });
+    }
+  }
+
+  // Calculator — neutral reflection
+  if (progress.hasCalculatorResults) {
     items.push({
-      labelEn: `Decision: ${pathLabel}`,
-      labelEs: `Decisión: ${pathLabel}`,
+      labelEn: 'You compared cash vs. traditional numbers',
+      labelEs: 'Comparaste números: efectivo vs. tradicional',
     });
   }
+
+  // Neighborhood — neutral reflection
+  if (progress.hasExploredNeighborhood) {
+    items.push({
+      labelEn: "You've started exploring areas",
+      labelEs: 'Ya empezaste a explorar áreas',
+    });
+  }
+
+  // Guide insight (not a raw count)
+  const gi = guideInsight(progress.guideCount);
+  if (gi) items.push(gi);
 
   if (items.length === 0) return null;
 
@@ -76,20 +131,20 @@ export default function JourneyBreadcrumb() {
   const isChat = next.destination.startsWith('selena:');
 
   return (
-    <div className="border border-accent/20 bg-card rounded-xl shadow-sm p-4 sm:p-5">
-      {/* Header */}
+    <div className="border border-cc-gold/20 bg-gradient-to-r from-cc-sand to-cc-ivory rounded-xl shadow-sm p-4 sm:p-5">
+      {/* Dynamic header */}
       <div className="flex items-center gap-2 mb-3">
-        <Sparkles className="h-4 w-4 text-accent" />
+        <Sparkles className="h-4 w-4 text-cc-gold" />
         <span className="text-sm font-semibold text-foreground">
-          {isEs ? 'Tu Camino Hasta Ahora' : 'Your Journey So Far'}
+          {headerCopy(progress.journeyDepth, isEs)}
         </span>
       </div>
 
-      {/* Completed items */}
+      {/* Insight items */}
       <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-4">
         {items.map((item, i) => (
           <div key={i} className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" />
+            <CheckCircle2 className="h-3.5 w-3.5 text-cc-gold shrink-0" />
             <span>{isEs ? item.labelEs : item.labelEn}</span>
           </div>
         ))}

@@ -81,8 +81,8 @@ function deriveNextAction(
   if (journeyDepth === 'ready') {
     return {
       type: 'book',
-      labelEn: 'Book Your Consultation',
-      labelEs: 'Agenda Tu Consulta',
+      labelEn: "Let's sit down and talk through this",
+      labelEs: 'Sentémonos a platicar sobre esto',
       destination: '/book',
     };
   }
@@ -91,16 +91,16 @@ function deriveNextAction(
     if (!hasReadinessScore) {
       return {
         type: 'tool',
-        labelEn: 'Check Your Buyer Readiness',
-        labelEs: 'Verifica Tu Preparación',
+        labelEn: 'See where you stand as a buyer',
+        labelEs: 'Mira dónde estás como comprador',
         destination: '/buyer-readiness',
       };
     }
     if (!hasExploredNeighborhood) {
       return {
         type: 'chat',
-        labelEn: 'Explore Neighborhoods',
-        labelEs: 'Explora Vecindarios',
+        labelEn: 'Find the right area for you',
+        labelEs: 'Encuentra el área ideal para ti',
         destination: 'selena:neighborhood',
       };
     }
@@ -110,16 +110,16 @@ function deriveNextAction(
     if (!hasSellerDecision) {
       return {
         type: 'tool',
-        labelEn: 'Start Your Seller Decision',
-        labelEs: 'Inicia Tu Decisión de Venta',
+        labelEn: 'Walk through your selling options',
+        labelEs: 'Revisa tus opciones de venta',
         destination: '/seller-decision',
       };
     }
     if (!hasCalculatorResults) {
       return {
         type: 'tool',
-        labelEn: 'Compare Cash vs. Traditional',
-        labelEs: 'Compara Efectivo vs. Tradicional',
+        labelEn: 'Compare your numbers side by side',
+        labelEs: 'Compara tus números lado a lado',
         destination: '/cash-offer-options',
       };
     }
@@ -129,8 +129,8 @@ function deriveNextAction(
     if (!hasReadinessScore) {
       return {
         type: 'tool',
-        labelEn: 'Check Your Cash Readiness',
-        labelEs: 'Verifica Tu Preparación en Efectivo',
+        labelEn: 'See where you stand for a cash purchase',
+        labelEs: 'Mira dónde estás para compra en efectivo',
         destination: '/cash-readiness',
       };
     }
@@ -140,16 +140,16 @@ function deriveNextAction(
     if (!hasSellerDecision) {
       return {
         type: 'tool',
-        labelEn: 'Start Your Seller Decision',
-        labelEs: 'Inicia Tu Decisión de Venta',
+        labelEn: 'Walk through your selling options',
+        labelEs: 'Revisa tus opciones de venta',
         destination: '/seller-decision',
       };
     }
     if (!hasReadinessScore) {
       return {
         type: 'tool',
-        labelEn: 'Check Your Buyer Readiness',
-        labelEs: 'Verifica Tu Preparación de Compra',
+        labelEn: 'See where you stand as a buyer',
+        labelEs: 'Mira dónde estás como comprador',
         destination: '/buyer-readiness',
       };
     }
@@ -159,8 +159,8 @@ function deriveNextAction(
     if (!hasExploredNeighborhood) {
       return {
         type: 'guide',
-        labelEn: 'Explore Tucson Neighborhoods',
-        labelEs: 'Explora Vecindarios de Tucson',
+        labelEn: 'Find the right area for you',
+        labelEs: 'Encuentra el área ideal para ti',
         destination: '/neighborhoods',
       };
     }
@@ -168,8 +168,8 @@ function deriveNextAction(
 
   return {
     type: 'chat',
-    labelEn: 'Ask Selena',
-    labelEs: 'Pregunta a Selena',
+    labelEn: 'Ask Selena anything',
+    labelEs: 'Pregúntale a Selena',
     destination: 'selena:open',
   };
 }
