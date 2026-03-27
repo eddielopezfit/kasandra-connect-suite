@@ -46,7 +46,8 @@ export function calculateAffordability(
   income: number,
   debts: number,
   downPercent: number,
-  creditTier: CreditTier = 'good'
+  creditTier: CreditTier = 'good',
+  rateOverride?: number
 ): AffordabilityResult {
   const empty: AffordabilityResult = {
     maxPrice: 0,
@@ -60,7 +61,8 @@ export function calculateAffordability(
 
   if (income <= 0) return empty;
 
-  const effectiveRate = Math.max(0.01, BASE_INTEREST_RATE + CREDIT_TIER_ADJUSTMENTS[creditTier]);
+  const baseRate = rateOverride ?? BASE_INTEREST_RATE;
+  const effectiveRate = Math.max(0.01, baseRate + CREDIT_TIER_ADJUSTMENTS[creditTier]);
   const monthlyIncome = income / 12;
 
   // DTI limits: lower of 28% front-end or 36% back-end minus debts

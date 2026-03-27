@@ -48,7 +48,7 @@ function getFundingFeeRate(downPercent: number, isFirstUse: boolean): number {
   return isFirstUse ? VA_FUNDING_FEE_FIRST_ZERO_DOWN : VA_FUNDING_FEE_SUBSEQUENT_ZERO_DOWN;
 }
 
-export function calculateBAHMortgage(input: BAHInput): BAHResult {
+export function calculateBAHMortgage(input: BAHInput, rateOverride?: number): BAHResult {
   const empty: BAHResult = {
     maxPrice: 0,
     monthlyPayment: 0,
@@ -65,8 +65,9 @@ export function calculateBAHMortgage(input: BAHInput): BAHResult {
   const maxMonthlyPITI = (totalMonthlyIncome * 0.41) - input.monthlyDebts;
   if (maxMonthlyPITI <= 0) return empty;
 
-  // Amortization
-  const r = VA_INTEREST_RATE / 12;
+  // Amortization — use live rate when available (VA typically ~0.5% below conventional)
+  const effectiveVARate = rateOverride ?? VA_INTEREST_RATE;
+  const r = effectiveVARate / 12;
   const n = LOAN_TERM_YEARS * 12;
   const annuityFactor = (1 - Math.pow(1 + r, -n)) / r;
   const monthlyInsurance = ANNUAL_INSURANCE / 12;

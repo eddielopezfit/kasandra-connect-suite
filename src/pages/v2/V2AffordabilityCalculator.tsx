@@ -25,7 +25,7 @@ const fmt = (n: number) => "$" + n.toLocaleString("en-US", { maximumFractionDigi
 const V2AffordabilityCalculatorContent = () => {
   const { language, t } = useLanguage();
   const { openChat } = useSelenaChat();
-  const { pulse: marketData } = useMarketPulse();
+  const { stats } = useMarketPulse();
   const resultsRef = useRef<HTMLDivElement>(null);
   const [toolStarted, setToolStarted] = useState(false);
   const [calculated, setCalculated] = useState(false);
@@ -39,6 +39,9 @@ const V2AffordabilityCalculatorContent = () => {
   const debtsNum = parseInt(debts.replace(/[^0-9]/g, "")) || 0;
   const downNum = parseFloat(downPct) || 5;
 
+  // Pass live rate from market pulse when available (sale_to_list_ratio is not the mortgage rate,
+  // but the pipeline may return a conventional_rate field in the future — for now use the
+  // algorithm's built-in base rate which is updated monthly in the source code)
   const result: AffordabilityResult = calculateAffordability(incomeNum, debtsNum, downNum, creditTier);
 
   const handleCalculate = () => {
@@ -73,7 +76,7 @@ const V2AffordabilityCalculatorContent = () => {
     }`;
 
   // Use live median from market_pulse when available, fallback to hardcoded constant
-  const liveMedian = (marketData as any)?.median_sale_price ?? TUCSON_MEDIAN_PRICE;
+  const liveMedian = stats.medianSalePrice ?? TUCSON_MEDIAN_PRICE;
   const medianComparison = result.maxPrice > 0
     ? Math.round(((result.maxPrice - liveMedian) / liveMedian) * 100)
     : 0;

@@ -6,6 +6,7 @@ import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
+import { useMarketPulse } from "@/hooks/useMarketPulse";
 import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import { calculateBAHMortgage, type BAHInput, type BAHResult } from "@/lib/calculator/bahMortgageAlgorithm";
 import {
@@ -19,6 +20,7 @@ const fmt = (n: number) => "$" + n.toLocaleString("en-US", { maximumFractionDigi
 const V2BAHCalculatorContent = () => {
   const { language, t } = useLanguage();
   const { openChat } = useSelenaChat();
+  useMarketPulse(); // Ensure market data is warm-cached for this session
   const resultsRef = useRef<HTMLDivElement>(null);
   const [toolStarted, setToolStarted] = useState(false);
   const [calculated, setCalculated] = useState(false);
@@ -44,7 +46,7 @@ const V2BAHCalculatorContent = () => {
     isDisabilityExempt,
   };
 
-  const result: BAHResult = calculateBAHMortgage(input);
+  const result: BAHResult = calculateBAHMortgage(input); // VA rate maintained in algorithm (currently 5.75%)
 
   const handleCalculate = () => {
     if (bahNum < 500) return;

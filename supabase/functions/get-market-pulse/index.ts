@@ -30,6 +30,19 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (pulseData && !pulseError) {
+      // Extract median_sale_price from scraped source_links (prefer Zillow)
+      let medianSalePrice: number | null = null;
+      try {
+        const links = pulseData.source_links as any;
+        const scraped = links?.scraped;
+        if (Array.isArray(scraped)) {
+          // Prefer Zillow, then any source with a valid median
+          const zillow = scraped.find((s: any) => s.source === "Zillow" && s.median_sale_price > 50000);
+          const anyValid = scraped.find((s: any) => s.median_sale_price > 50000);
+          medianSalePrice = zillow?.median_sale_price ?? anyValid?.median_sale_price ?? null;
+        }
+      } catch { /* ignore parse errors */ }
+
       // Return in a normalized format the UI hook expects
       const response = {
         source: "market_pulse",
@@ -41,6 +54,7 @@ Deno.serve(async (req) => {
         source_links: pulseData.source_links,
         verified_at: pulseData.verified_at,
         created_at: pulseData.created_at,
+        median_sale_price: medianSalePrice,
         // Legacy compat fields for existing hook
         market_name: "Tucson_Overall",
         negotiation_gap: parseFloat((1 - Number(pulseData.sale_to_list_ratio)).toFixed(4)),

@@ -15,6 +15,7 @@ export interface MarketPulse {
   month?: string;
   sale_to_list_ratio?: number;
   median_days_on_market?: number;
+  median_sale_price?: number | null;
   source_links?: unknown;
   verified_at?: string;
 }
@@ -47,6 +48,7 @@ export interface MarketStats {
   isLive: boolean;
   insights: MarketInsights;
   sourceLinks?: unknown;
+  medianSalePrice: number | null;
 }
 
 function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' = 'en'): MarketStats {
@@ -108,6 +110,7 @@ function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' 
     isLive,
     insights,
     sourceLinks: isNewPipeline ? pulse.source_links : undefined,
+    medianSalePrice: pulse.median_sale_price ?? null,
   };
 }
 
