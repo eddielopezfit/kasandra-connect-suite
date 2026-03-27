@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
+import { realEstateAgentSchema, localBusinessSchema } from "@/lib/seo/schemaGenerators";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TrustBar from "@/components/v2/TrustBar";
