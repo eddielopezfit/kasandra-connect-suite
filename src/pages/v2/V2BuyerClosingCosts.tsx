@@ -9,6 +9,7 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import { MessageCircle, ArrowRight, Info, DollarSign, Home, Percent, FileText, Calendar } from "lucide-react";
 import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
 interface CalcInputs {
   purchasePrice: string;
@@ -499,11 +500,15 @@ const V2BuyerClosingCostsContent = () => {
       {/* V2: Buyer Closing Costs Lead Capture */}
       {calculated && (
         <section className="pb-8 bg-white">
-          <div className="container mx-auto px-4 max-w-2xl">
+          <div className="container mx-auto px-4 max-w-2xl space-y-4">
             <ToolResultLeadCapture
               toolType="buyer_closing_costs"
               resultData={{ purchase_price: inputs.purchasePrice, loan_type: inputs.loanType }}
               delayMs={2000}
+            />
+            <ToolResultNextStep
+              completedToolLabel="Buyer Closing Costs"
+              completedToolLabelEs="Costos de Cierre del Comprador"
             />
           </div>
         </section>

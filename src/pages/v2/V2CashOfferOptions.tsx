@@ -10,6 +10,7 @@ import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileTex
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-cash-calm.png";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
 const V2CashOfferOptionsContent = () => {
   const { t } = useLanguage();
@@ -321,6 +322,16 @@ const V2CashOfferOptionsContent = () => {
               {t("Or talk to Selena first", "O habla primero con Selena")}
             </button>
           </div>
+        </div>
+      </section>
+
+      {/* Tool Chaining — Next Step */}
+      <section className="pb-8 bg-cc-ivory">
+        <div className="container mx-auto px-4 max-w-xl">
+          <ToolResultNextStep
+            completedToolLabel="Cash vs. Traditional Comparison"
+            completedToolLabelEs="Comparación Efectivo vs. Tradicional"
+          />
         </div>
       </section>
 

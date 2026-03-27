@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import V2Layout from "@/components/v2/V2Layout";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 import SellerReadinessCheck from "@/components/v2/SellerReadinessCheck";
 import LeadCaptureModal from "@/components/v2/LeadCaptureModal";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -149,6 +150,14 @@ const V2SellerReadinessContent = () => {
                   <Save className="w-4 h-4" />
                   {t("Save my results", "Guardar mis resultados")}
                 </button>
+              </div>
+            )}
+            {showSaveLink && (
+              <div className="mt-6">
+                <ToolResultNextStep
+                  completedToolLabel="Seller Readiness Check"
+                  completedToolLabelEs="Evaluación de Preparación del Vendedor"
+                />
               </div>
             )}
           </div>

@@ -6,6 +6,7 @@ import { useMarketPulse } from "@/hooks/useMarketPulse";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { isReturningVisitor, getIntent, getGuidesRead } from "@/lib/guides/personalization";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
+import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { useState, useEffect, useRef, useCallback } from "react";
 import heroImage from "@/assets/hero-bg.jpg";
 import type { EntrySource } from "@/contexts/selena/types";
@@ -120,6 +121,7 @@ export default function GlassmorphismHero({
   const { t, language } = useLanguage();
   const { openChat } = useSelenaChat();
   const { stats } = useMarketPulse(language as "en" | "es");
+  const journey = useJourneyProgress();
 
   const [returningContext, setReturningContext] = useState<{
     isReturning: boolean;
@@ -159,9 +161,17 @@ export default function GlassmorphismHero({
   const headline = useOverrides
     ? headlineOverride!
     : returningContext.isReturning
-    ? returningContext.firstName
+    ? journey.journeyDepth === 'ready'
+      ? returningContext.firstName
+        ? t(`${returningContext.firstName}, you've done the research. Let's talk.`, `${returningContext.firstName}, ya investigaste. Hablemos.`)
+        : t("You've done the research. Let's talk.", "Ya investigaste. Hablemos.")
+      : journey.journeyDepth === 'engaged'
+      ? returningContext.firstName
+        ? t(`Welcome back, ${returningContext.firstName}. Here's your next step.`, `Bienvenido/a, ${returningContext.firstName}. Aquí está tu próximo paso.`)
+        : t("You're making progress — here's your next step.", "Estás avanzando — aquí está tu próximo paso.")
+      : returningContext.firstName
       ? t(`Welcome back, ${returningContext.firstName}.`, `Bienvenido/a de nuevo, ${returningContext.firstName}.`)
-      : t("Welcome back.", "Bienvenido/a de nuevo.")
+      : t("Welcome back — pick up where you left off.", "Bienvenido/a — continúa donde lo dejaste.")
     : returningContext.intent === 'buy'
     ? t("Find the right home with clarity — not guesswork.", "Encuentra el hogar indicado con claridad — sin adivinar.")
     : returningContext.intent === 'sell'
