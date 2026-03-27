@@ -130,7 +130,7 @@ const CTASection = () => {
             className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
           >
             <MessageCircle className="w-4 h-4" />
-            {t("Or talk to Selena first", "O habla primero con Selena")}
+            {t("Or let Selena guide you through this", "O deja que Selena te guíe")}
           </button>
         </div>
       </div>

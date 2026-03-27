@@ -185,7 +185,7 @@ function getBannerContent(
     };
     return {
       message: intentMessages[intent] || null,
-      actions: [{ type: 'chat', label: t("Need help? Ask Selena", "¿Necesitas ayuda? Pregúntale a Selena"), destination: 'selena' }],
+      actions: [{ type: 'chat', label: t("Get guided help from Selena", "Recibe orientación de Selena"), destination: 'selena' }],
       isReturning: false,
     };
   }

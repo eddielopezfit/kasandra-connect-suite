@@ -147,7 +147,7 @@ const ProactiveSelenaPrompt = () => {
                   onClick={handleEngage}
                   className="mt-3 text-xs font-semibold text-cc-gold hover:text-cc-gold-dark transition-colors inline-flex items-center gap-1"
                 >
-                  {t("Chat with Selena", "Conversa con Selena")}
+                  {t("Let Selena guide you", "Deja que Selena te guíe")}
                   <Sparkles className="w-3 h-3" />
                 </button>
               </div>

@@ -168,23 +168,23 @@ export function predictNextBestAction(ctx: PredictiveContext): PredictionResult 
 
 function getRefinePrimaryCta(ctx: PredictiveContext) {
   if (ctx.intent === 'sell' && !ctx.hasSellerDecision) {
-    return { labelEn: 'Start Seller Decision', labelEs: 'Iniciar Decisión de Venta', destination: '/seller-decision' };
+    return { labelEn: 'Understand your selling options', labelEs: 'Comprende tus opciones de venta', destination: '/seller-decision' };
   }
   if (ctx.intent === 'buy' && !ctx.hasReadinessScore) {
-    return { labelEn: 'Check Buyer Readiness', labelEs: 'Verificar Preparación', destination: '/buyer-readiness' };
+    return { labelEn: 'See where you stand as a buyer', labelEs: 'Mira dónde estás como comprador', destination: '/buyer-readiness' };
   }
   if (!ctx.hasCalculatorResults) {
-    return { labelEn: 'Run the Numbers', labelEs: 'Analiza los Números', destination: '/cash-offer-options' };
+    return { labelEn: 'See what actually fits your numbers', labelEs: 'Mira qué encaja con tus números', destination: '/cash-offer-options' };
   }
-  return { labelEn: 'Compare Areas', labelEs: 'Comparar Áreas', destination: '/neighborhood-compare' };
+  return { labelEn: 'See how this compares to other areas', labelEs: 'Mira cómo se compara con otras áreas', destination: '/neighborhood-compare' };
 }
 
 function getToolCta(ctx: PredictiveContext) {
   if (ctx.intent === 'buy') {
-    return { labelEn: 'Check Affordability', labelEs: 'Verificar Accesibilidad', destination: '/affordability-calculator' };
+    return { labelEn: 'See what actually fits your numbers', labelEs: 'Mira qué encaja con tus números', destination: '/affordability-calculator' };
   }
   if (ctx.intent === 'sell') {
-    return { labelEn: 'Estimate Your Net', labelEs: 'Estima Tu Neto', destination: '/net-to-seller' };
+    return { labelEn: 'Understand what you\'d walk away with', labelEs: 'Comprende con cuánto te quedarías', destination: '/net-to-seller' };
   }
-  return { labelEn: 'Check Your Readiness', labelEs: 'Verifica Tu Preparación', destination: '/buyer-readiness' };
+  return { labelEn: 'See where you stand', labelEs: 'Mira dónde estás', destination: '/buyer-readiness' };
 }
