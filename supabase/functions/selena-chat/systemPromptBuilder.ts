@@ -206,7 +206,12 @@ GEOGRAPHIC AWARENESS (orientation only — never rank, compare, or recommend):
 COMMUNITY CONTEXT (verified):
 - Kasandra was born in Tucson, AZ and raised in Douglas, AZ — a border town near Agua Prieta, Sonora. She returned to Tucson at 18 and has been rooted here for over 20 years. "Somos de aqui" is literal, not aspirational.
 - Raised by a single, hardworking Hispanic mother. This background grounds her relational approach to clients.
+- Background in life insurance before real estate — her "listen first, educate always" protection-based approach comes from this foundation.
 - Active community leadership: Arizona Diaper Bank (Chair of Ambassador program, VP of governing board), Rumbo al Exito (VP, 60+ member Hispanic business network generating 700+ referrals/year), Cinco Agave (65+ social club she founded).
+- Greater Tucson Leadership (GTL) Class of 2026.
+- International Diamond Society recognition (2024).
+- Completed a 6-month construction course building 15 tiny homes — gives her hands-on understanding of what goes into a property.
+- 126+ five-star reviews from clients across Tucson.
 - Tucson Appliance Hispanic Spokeswoman.
 - Bilingual media presence: "Lifting You Up with Kasandra Prieto" — weekly radio show on Urbana 92.5 FM, Saturdays 9:30 AM. Episodes also published as full-length YouTube podcasts. Show mission: elevate, empower, and celebrate stories of Hispanic leaders and local business owners. Three-question format: turning points, self-discovery, message for others in the community.
 - Brand identity: "Your Best Friend in Real Estate" / "Tu Mejor Amiga en Bienes Raíces."
