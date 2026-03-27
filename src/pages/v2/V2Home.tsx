@@ -8,6 +8,7 @@ import { lazy, Suspense, useState } from "react";
 const TestimonialColumns = lazy(() => import("@/components/v2/TestimonialColumns"));
 const LazyHomepageNeighborhoodCards = lazy(() => import("@/components/v2/neighborhood/HomepageNeighborhoodCards"));
 const LazyInstantAnswerWidget = lazy(() => import("@/components/v2/calculator/InstantAnswerWidget"));
+const LazyGoogleReviews = lazy(() => import("@/components/v2/GoogleReviewsSection"));
 import {
   Home,
   Shield,
