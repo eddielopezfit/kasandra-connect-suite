@@ -1,18 +1,29 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, MessageCircle, Calendar } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 
+const SELL_PATHS = ['/sell', '/seller-', '/cash-', '/net-to-seller', '/home-valuation', '/private-cash-review'];
+const BUY_PATHS = ['/buy', '/buyer-', '/affordability', '/bah-calculator', '/off-market', '/buyer-closing'];
+
+function getPageIntent(pathname: string): 'sell' | 'buy' | 'general' {
+  if (SELL_PATHS.some(p => pathname.startsWith(p))) return 'sell';
+  if (BUY_PATHS.some(p => pathname.startsWith(p))) return 'buy';
+  return 'general';
+}
+
 /**
  * Premium booking CTA with architectural crosshair corner marks.
- * Adapts heading, subtext, and primary CTA based on cognitive stage.
+ * Adapts heading, subtext, and primary CTA based on cognitive stage + page intent.
  */
 const CTASection = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
   const progress = useJourneyProgress();
+  const { pathname } = useLocation();
+  const pageIntent = getPageIntent(pathname);
 
   return (
     <section className="relative py-20 lg:py-28 bg-cc-navy overflow-hidden">
