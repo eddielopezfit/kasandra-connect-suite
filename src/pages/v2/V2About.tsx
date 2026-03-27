@@ -1,4 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import JsonLd from "@/components/seo/JsonLd";
+import { realEstateAgentSchema } from "@/lib/seo/schemaGenerators";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
@@ -29,6 +31,7 @@ const V2AboutContent = () => {
 
   return (
     <>
+      <JsonLd data={realEstateAgentSchema()} />
       {/* Hero */}
       <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>

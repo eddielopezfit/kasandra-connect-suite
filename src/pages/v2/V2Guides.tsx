@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, DollarSign, Calendar, MessageCircle, Search } from "lucide-react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
+import { aggregateRatingSchema } from "@/lib/seo/schemaGenerators";
 import { Button } from "@/components/ui/button";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -306,6 +307,7 @@ function GuidesContent() {
 
   return (
     <>
+      <JsonLd data={aggregateRatingSchema()} />
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "FAQPage",
