@@ -56,57 +56,8 @@ const V2HomeContent = () => {
 
   return (
     <>
-      <JsonLd data={{
-        "@context": "https://schema.org",
-        "@type": ["RealEstateAgent", "LocalBusiness"],
-        "name": "Kasandra Prieto, REALTOR®",
-        "alternateName": "Your Best Friend in Real Estate",
-        "description": "Bilingual REALTOR® serving Tucson, AZ. AI-powered real estate concierge. Specializing in buying, selling, and cash offers for Tucson families.",
-        "url": "https://kasandraprietorealtor.com",
-        "telephone": "+15203493248",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "4007 E Paradise Falls Dr, Suite 125",
-          "addressLocality": "Tucson",
-          "addressRegion": "AZ",
-          "postalCode": "85712",
-          "addressCountry": "US"
-        },
-        "geo": {
-          "@type": "GeoCoordinates",
-          "latitude": 32.2226,
-          "longitude": -110.9747
-        },
-        "areaServed": [
-          "Tucson, AZ", "Oro Valley, AZ", "Marana, AZ",
-          "Sahuarita, AZ", "Green Valley, AZ", "Vail, AZ",
-          "Catalina Foothills, AZ", "South Tucson, AZ"
-        ],
-        "knowsLanguage": ["en", "es"],
-        "hasOfferCatalog": {
-          "@type": "OfferCatalog",
-          "name": "Real Estate Services",
-          "itemListElement": [
-            {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Home Buying Assistance"}},
-            {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Home Selling Services"}},
-            {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Cash Offer Options"}},
-            {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Bilingual Real Estate Services"}}
-          ]
-        },
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "5.0",
-          "reviewCount": "100",
-          "bestRating": "5",
-          "worstRating": "1"
-        },
-        "sameAs": [
-          "https://www.facebook.com/prietorealestategroup",
-          "https://www.instagram.com/prietorealestate",
-          "https://www.linkedin.com/in/kasandraprieto",
-          "https://www.realtor.com/realestateagents/kasandraprieto"
-        ]
-      }} />
+      <JsonLd data={realEstateAgentSchema()} />
+      <JsonLd data={localBusinessSchema()} />
       {/* Hero Section */}
       <GlassmorphismHero showMarketPulse={false} />
 

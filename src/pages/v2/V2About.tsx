@@ -1,4 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import JsonLd from "@/components/seo/JsonLd";
+import { realEstateAgentSchema } from "@/lib/seo/schemaGenerators";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
