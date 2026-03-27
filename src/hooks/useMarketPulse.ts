@@ -48,6 +48,7 @@ export interface MarketStats {
   isLive: boolean;
   insights: MarketInsights;
   sourceLinks?: unknown;
+  medianSalePrice: number | null;
 }
 
 function deriveStats(pulse: MarketPulse, isLive: boolean, language: 'en' | 'es' = 'en'): MarketStats {
