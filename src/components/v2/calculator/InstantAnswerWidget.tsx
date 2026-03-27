@@ -14,7 +14,7 @@ const fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD',
  */
 const InstantAnswerWidget = () => {
   const { t } = useLanguage();
-  const { stats, isLive } = useMarketPulse();
+  const { isLive } = useMarketPulse();
 
   const [income, setIncome] = useState('');
   const [debts, setDebts] = useState('');
