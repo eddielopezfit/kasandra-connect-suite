@@ -321,12 +321,12 @@ const V2CashOfferOptionsContent = () => {
         <div className="container mx-auto px-4 text-center">
           <p className="text-white/80 mb-4">
             {t(
-              "Prefer a traditional sale? Learn more about how I work with sellers.",
-              "¿Prefiere una venta tradicional? Conozca más sobre cómo trabajo con vendedores."
+              "Thinking a traditional sale might be the move? Let me show you how I help sellers get there.",
+              "¿Pensando que una venta tradicional podría ser el camino? Déjame mostrarte cómo ayudo a los vendedores a lograrlo."
             )}
           </p>
           <Link to="/sell" className="inline-flex items-center text-cc-gold font-semibold hover:text-cc-gold-dark gap-2">
-            {t("View Seller Services", "Ver Servicios para Vendedores")} <ArrowRight className="w-4 h-4" />
+            {t("See how I help sellers", "Descubre cómo ayudo a vendedores")} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>

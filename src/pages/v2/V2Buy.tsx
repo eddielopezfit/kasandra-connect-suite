@@ -290,7 +290,7 @@ const V2BuyContent = () => {
               className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
             >
               <MessageCircle className="w-4 h-4" />
-              {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
+              {t("Still exploring? Let Selena help you get your bearings", "¿Todavía explorando? Deja que Selena te oriente")}
             </button>
           </div>
         </div>

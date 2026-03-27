@@ -746,12 +746,12 @@ const V2HomeContent = () => {
               </h2>
               <p className="text-cc-text-muted mb-6">
                 {t(
-                  "Real estate is about more than transactions—it's about building stronger communities. I'm committed to making a difference in the lives of families across Tucson.",
-                  "Los bienes raíces son más que transacciones—se trata de construir comunidades más fuertes. Estoy comprometida a hacer una diferencia en la vida de las familias en todo Tucson."
+                  "This work has never been just about houses for me. It's about the families inside them and the neighborhoods that hold them together.",
+                  "Este trabajo nunca ha sido solo sobre casas para mí. Se trata de las familias que viven en ellas y los vecindarios que las mantienen unidas."
                 )}
               </p>
               <Link to="/community" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                {t("Learn More", "Más Información")} <ArrowRight className="w-4 h-4" />
+                {t("See how I give back", "Conoce cómo retribuyo")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>

@@ -542,7 +542,7 @@ const V2SellContent = () => {
               className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-colors"
             >
               <MessageCircle className="w-4 h-4" />
-              {t("Not ready? Talk to Selena first", "¿No estás listo? Habla con Selena primero")}
+              {t("Still thinking it over? Selena can help you sort it out", "¿Todavía pensándolo? Selena puede ayudarte a aclararlo")}
             </button>
           </div>
         </div>

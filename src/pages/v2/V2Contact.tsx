@@ -149,8 +149,8 @@ const V2ContactContent = () => {
           </h1>
           <p className="text-xl text-white/80 max-w-xl mx-auto mb-6">
             {t(
-              "Ready when you are — no pressure, no obligation.",
-              "Lista cuando tú lo estés — sin presión, sin obligación."
+              "I'm here when you're ready. No pitch, no pressure — just a real conversation.",
+              "Aquí estoy cuando estés lista. Sin pitch, sin presión — solo una conversación real."
             )}
           </p>
           <span className="inline-flex items-center gap-2 bg-cc-gold/15 text-cc-gold rounded-full px-4 py-1.5 text-sm font-medium">
