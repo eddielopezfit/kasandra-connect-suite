@@ -4,6 +4,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { Sparkles, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { EntrySource } from "@/contexts/selena/types";
 
 /**
  * ProactiveSelenaPrompt — Behavior-triggered contextual Selena nudge.
