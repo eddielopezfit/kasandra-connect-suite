@@ -63,6 +63,19 @@ function deriveTags(context: Record<string, unknown>): string[] {
   if (!context.phone) tags.push("selena_missing_phone");
   if (context.ai_disclosure_accepted === true) tags.push("selena - consent ai disclosure");
 
+  // Agent Studio behavioral tags
+  const toolsStr = Array.isArray(context.tools_completed)
+    ? context.tools_completed.join(",")
+    : (context.tools_completed as string ?? "");
+  if (toolsStr) tags.push("selena_tools_used");
+  const gcCount = Array.isArray(context.guides_consumed)
+    ? context.guides_consumed.length
+    : Number(context.guide_count ?? 0);
+  if (gcCount >= 3) tags.push("selena_guide_reader");
+  if (context.booking_intent_detected === true) tags.push("selena_booking_intent");
+  if (context.va_loan === true) tags.push("selena_military");
+  if (context.returning_visitor === true) tags.push("selena_returning_visitor");
+
   return tags;
 }
 
@@ -290,7 +303,7 @@ serve(async (req) => {
       selena_amenities_clean: context.amenities ?? "",
       selena_financing_status: context.financing_status ?? "",
       selena_financing_details_clean: context.financing_details ?? "",
-      selena_is_pre_approved: context.pre_approved ? "yes" : "no",
+      selena_is_preapproved: context.pre_approved ? "yes" : "no",
       selena_source: context.entry_source ?? "selena_chat",
       selena_page_path: context.page_path ?? "",
       selena_session_source: context.session_source ?? "",
@@ -310,6 +323,31 @@ serve(async (req) => {
       selena_consent_communications: context.sms_consent ?? false,
       selena_last_data_parse_date: new Date().toISOString(),
       tags,
+      // Agent Studio structured dossier — single parseable JSON field
+      selena_dossier_json: JSON.stringify({
+        intent: context.intent ?? "explore",
+        timeline: context.timeline ?? null,
+        budget: context.budget ?? null,
+        budget_max: context.budget_max ?? null,
+        readiness_score: context.readiness_score ?? 0,
+        lead_score: context.lead_score ?? 0,
+        tools_completed: toolsCompleted ? toolsCompleted.split(",") : [],
+        guides_read: Array.isArray(context.guides_consumed) ? context.guides_consumed : [],
+        guide_count: guidesConsumed,
+        neighborhood_interest: context.target_neighborhoods ?? context.last_neighborhood ?? null,
+        language: context.language ?? "en",
+        pain_points: context.pain_points ?? [],
+        recommended_next_step: context.recommended_next_step ?? null,
+        last_tool_result: context.last_tool_result ?? null,
+        source: context.entry_source ?? "selena_chat",
+        property_address: context.property_address ?? null,
+        property_condition: context.property_condition ?? null,
+        financing_status: context.financing_status ?? null,
+        va_loan: context.va_loan ?? false,
+        inherited: context.inherited_home ?? false,
+        journey_state: context.journey_state ?? "explore",
+        convo_summary: context.convo_summary ?? null,
+      }),
     };
 
     // ============= P11: BILINGUAL SUMMARY FOR ES LEADS =============

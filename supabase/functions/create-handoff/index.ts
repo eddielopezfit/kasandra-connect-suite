@@ -253,6 +253,41 @@ serve(async (req) => {
 
     console.log('[create-handoff] 🔔 NOTIFICATION TO KASANDRA:', JSON.stringify(notifyPayload, null, 2));
 
+    // Generate 3-sentence AI conversation summary for Agent Studio
+    try {
+      const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+      if (LOVABLE_API_KEY && summary_md) {
+        const summaryRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash-lite",
+            max_tokens: 150,
+            messages: [
+              {
+                role: "system",
+                content: "Summarize this real estate lead conversation in exactly 3 sentences. Include: what they want (buy/sell), their timeline, and their main concern. Output only the summary.",
+              },
+              { role: "user", content: summary_md },
+            ],
+          }),
+        });
+        if (summaryRes.ok) {
+          const summaryData = await summaryRes.json();
+          const convoSummary = summaryData?.choices?.[0]?.message?.content?.trim() ?? "";
+          if (convoSummary) {
+            notifyPayload.context.convo_summary = convoSummary;
+            console.log(`[create-handoff] AI summary generated (${convoSummary.length} chars)`);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("[create-handoff] AI summary generation failed:", err);
+    }
+
     // Fire notify-handoff in background — delivery tracking handled by notify-handoff
     fetch(`${supabaseUrl}/functions/v1/notify-handoff`, {
       method: 'POST',

@@ -44,3 +44,6 @@ verify_jwt = false
 
 [functions.retry-failed-handoffs]
 verify_jwt = false
+
+[functions.agent-studio-callback]
+verify_jwt = false
