@@ -516,12 +516,12 @@ const V2SellContent = () => {
       <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
-            {t("Ready to Sell?", "¿Listo para Vender?")}
+            {t("Let's figure out your best move.", "Descubramos tu mejor jugada.")}
           </h2>
           <p className="text-white/80 max-w-2xl mx-auto mb-8">
             {t(
-              "Let's discuss your home and create a selling strategy that works for your situation.",
-              "Hablemos sobre su casa y creemos una estrategia de venta que funcione para su situación."
+              "I sit down with every seller and walk through both paths — cash and traditional. You decide with the full picture.",
+              "Me siento con cada vendedor y revisamos ambos caminos — efectivo y tradicional. Tú decides con toda la información."
             )}
           </p>
           <div className="flex flex-col items-center gap-3">
