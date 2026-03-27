@@ -17,18 +17,15 @@ interface CalculatorResultsProps {
 }
 
 const MOTIVATION_LABELS: Record<Motivation, { en: string; es: string }> = {
-  life_change: { en: "a life change", es: "un cambio de vida" },
-  downsize: { en: "downsizing", es: "reducir espacio" },
-  upgrade: { en: "upgrading", es: "mejorar de casa" },
-  investment: { en: "an investment decision", es: "una decisión de inversión" },
-  relocation: { en: "a relocation", es: "una reubicación" },
-  uncertain: { en: "exploring options", es: "explorar opciones" },
+  speed: { en: "needing to move quickly", es: "necesitar moverse rápido" },
+  maximize: { en: "maximizing your return", es: "maximizar tu retorno" },
+  uncertain: { en: "exploring your options", es: "explorar tus opciones" },
 };
 
 const TIMELINE_LABELS: Record<Timeline, { en: string; es: string }> = {
   asap: { en: "as soon as possible", es: "lo antes posible" },
-  '1_3_months': { en: "within 1–3 months", es: "en 1–3 meses" },
-  '3_6_months': { en: "within 3–6 months", es: "en 3–6 meses" },
+  '30days': { en: "within 30 days", es: "en 30 días" },
+  '60days': { en: "within 60 days", es: "en 60 días" },
   flexible: { en: "on a flexible timeline", es: "con un cronograma flexible" },
 };
 
