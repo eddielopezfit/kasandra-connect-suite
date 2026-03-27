@@ -18,7 +18,7 @@ interface TriggerConfig {
   messageEs: string;
   prefillEn: string;
   prefillEs: string;
-  source: string;
+  source: EntrySource;
 }
 
 const DISMISS_KEY = 'selena_proactive_dismissed';
