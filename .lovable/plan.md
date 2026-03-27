@@ -1,121 +1,134 @@
 
 
-# Full Build Optimization Plan
-## Synthesized from 8 Strategic Intelligence Reports + UX Audit
+# Full UI/UX Audit — Kasandra Connect Suite
 
-This plan addresses the highest-impact gaps identified across all reports and the Perplexity UX audit, organized into 4 implementation phases.
+## Verdict: 92% Symphony — 8% Dissonance
 
----
-
-## Phase 1: Critical UX Fixes (Immediate)
-*Addresses UX Audit Issues #1, #2, #3, #5, #8*
-
-### 1A. Intent-Aware Footer CTA
-The global `CTASection.tsx` currently shows generic copy regardless of page context. On `/sell`, the bottom CTA still defaults to buyer-oriented language.
-
-**Change**: Read `window.location.pathname` in `CTASection` to conditionally render seller-specific CTA text on sell-intent pages (`/sell`, `/seller-*`, `/cash-*`, `/net-to-seller`) and buyer-specific text on buy-intent pages.
-
-### 1B. Attribution Field on Booking Form
-Add "How did you hear about us?" select field to `BookingIntakeForm.tsx` with options: Google Search, Social Media, YouTube/Podcast, Referral, Community Event, Other. Pass this to the lead handoff dossier.
-
-### 1C. Neighborhood Detail MLS Links
-Add an "Explore Listings" CTA on `V2NeighborhoodDetail.tsx` that links to a filtered Redfin search for the neighborhood's primary ZIP code. Pattern: `https://www.redfin.com/zipcode/{zip}`.
-
-### 1D. Valuation Page Interactive Tool
-The Home Valuation page (`V2HomeValuation.tsx`) promises an interactive tool but currently has none. Add an address-entry field at the top that opens Selena with a prefilled message like "I'd like to know what my home at [address] is worth" — converting a static page into a decision entry point.
+The platform is architecturally exceptional. The journey orchestration, session intelligence layer, bilingual parity, and Selena AI integration are enterprise-grade. What follows are the remaining friction points that prevent a flawless end-to-end experience.
 
 ---
 
-## Phase 2: Context Surface Layer (High Priority)
-*Addresses Report 8's primary gap: session intelligence is captured but not surfaced*
+## What's Working (The Symphony)
 
-### 2A. Adaptive Homepage Hero for Returning Users
-When `useJourneyProgress()` returns `isReturningUser === true`, swap the default `GlassmorphismHero` headline from the generic welcome to a personalized one reflecting their progress:
-- **Exploring**: "Welcome back — pick up where you left off"
-- **Engaged**: "You're making progress — here's your next step"
-- **Ready**: "You've done the research. Let's talk."
-
-The hero already has journey-aware copy in the CTA section — extend it to the hero itself.
-
-### 2B. Hub Page Progress Reflection
-On `/buy` and `/sell`, render a compact "Your Progress" card below the hero (only for returning users) showing:
-- Completed tools with checkmarks
-- Readiness score if available
-- "Next Step" CTA from `useJourneyProgress().nextRecommendedAction`
-
-This uses existing `useJourneyProgress` data — no new backend work needed.
-
-### 2C. Tool Chaining Enhancement
-After tool completion pages (Affordability Calculator, BAH Calculator, Seller Timeline, Net-to-Seller), ensure `ToolResultNextStep` is present and correctly maps to the next logical action. Audit all tool result pages for consistent implementation.
+- **Journey orchestration**: `useJourneyProgress` powers adaptive heroes, CTAs, exit-intent copy, and tool chaining across all surfaces — a single intelligence hook driving the entire UX
+- **CTA governance**: Intent-aware `CTASection` adapts headline/subtext for buy/sell/general based on pathname + journey depth. `suppressCTA` correctly applied on 13 pages
+- **Tool chaining**: `ToolResultNextStep` present on all 11 tool/quiz result pages — consistent, deterministic
+- **Guides Hub (Blue Ocean)**: CognitiveProgressBar, DecisionLane, IntentJourneyMap, ContextualSelenaPrompt, ContinueReadingCard, RecommendedGuidesCarousel — all layered and conditionally rendered
+- **Selena AI**: 4-mode architecture, guard state hierarchy, bilingual chip governance, earned booking access, modular edge function — production-grade
+- **Session persistence**: 3-tier fallback (Context → localStorage → Supabase snapshot restore on mount)
+- **Booking funnel**: Native 3-step flow, enriched agent dossier, intent/source attribution on every path
+- **Navigation**: Scroll-aware, journey-depth-aware CTA in nav, dropdown explore menu
 
 ---
 
-## Phase 3: Visual & Trust Upgrades
-*Addresses Christie Realty competitive analysis + image/video placement strategy*
+## Issues Found (The Dissonance)
 
-### 3A. Contextual Video Placement System
-Create a reusable `ContextualVideoBlock` component that serves the right video based on page intent:
-- **Homepage**: Kasandra welcome video (already exists, refine placement)
-- **Sell pages**: "Todo Empieza en Casa" clip or seller success story
-- **Buy pages**: First-time buyer walkthrough
-- **Neighborhood pages**: Area lifestyle footage
+### CRITICAL — Broken Routing
 
-Uses the existing `KasandraVideoBlock` component pattern but with intent-aware content selection.
+**1. Sell Page "Request a Cash Offer" → routes to `/contact` instead of `/cash-offer-options` or `/book?intent=cash`**
+File: `src/pages/v2/V2Sell.tsx` line 173
+The Corner Connect cash offer section CTA sends users to a generic contact form instead of the high-intent cash offer funnel. This breaks the decision compression principle and wastes qualified intent.
 
-### 3B. Agent Photo Upgrades
-Replace small, cropped images with larger, contextual photos:
-- Homepage About section: Full-width lifestyle photo with text overlay
-- Sell page: Add Kasandra photo in the "How I Protect Sellers" section
-- Buy page: Add photo in the guidance section
-- About page: Photo grid or carousel
-
-### 3C. Google Reviews Visual Upgrade
-Move Google Reviews section higher on the homepage (currently buried). Add star rating display in the hero area (already in JSON-LD, surface it visually).
+**Fix**: Change destination from `/contact` to `/cash-offer-options` with tracking params.
 
 ---
 
-## Phase 4: Conversion Funnel Optimization
-*Addresses Report 6/7 HiFello funnel gaps + progressive intake*
+### HIGH — Double Bottom CTA on Hub Pages
 
-### 4A. Address-First Hero Entry (Sellers)
-On the Sell page hero, add a prominent address input field: "Enter your address for a free estimate." On submit, it navigates to `/home-valuation?address={value}` and opens Selena with the address prefilled. This is the #1 conversion pattern identified in competitor analysis.
+**2. V2Sell and V2Buy both render their own bottom CTA section AND the global `CTASection` via V2Layout**
+Neither page passes `suppressCTA` to `V2Layout`, so users see two navy-background booking CTAs stacked:
+- Page-specific CTA (lines 513-546 in V2Sell, lines 264-297 in V2Buy)
+- Global CTASection from V2Layout
 
-### 4B. Progressive Seller Intake
-Enhance the `SellerDecision` wizard flow to capture property condition and timeline data earlier, feeding it into the booking dossier. Currently, `StepCondition` and `StepSituation` exist but their data doesn't consistently flow to the handoff.
-
-### 4C. Enriched Agent Briefing
-Update the `enrich-booking-context` edge function to pull the latest `session_snapshots` data and include:
-- All tools completed with results
-- Guides read (count + last 3 titles)
-- Seller decision path if available
-- Calculator results (estimated value, advantage)
-
-This gives Kasandra a complete pre-call intelligence briefing.
+**Fix**: Either add `suppressCTA` to both hub pages, OR remove the page-level bottom CTA sections and let the global CTASection handle it (which is already intent-aware).
 
 ---
 
-## Technical Details
+### HIGH — Homepage Section Order Suboptimal
 
-**Files Modified (Phase 1)**:
-- `src/components/v2/CTASection.tsx` — add pathname-based intent detection
-- `src/components/v2/booking/BookingIntakeForm.tsx` — add attribution field + schema update
-- `src/pages/v2/V2NeighborhoodDetail.tsx` — add MLS link CTA
-- `src/pages/v2/V2HomeValuation.tsx` — add address entry widget
+**3. Homepage vertical rhythm disruption**
+Current order after About section:
+1. Neighborhood Cards
+2. TrustBar
+3. GoogleReviewsStarBadge
+4. TestimonialColumns
+5. GoogleReviewsSection (full)
+6. Services Section
+7. Corner Connect
+8. Selena Showcase
+9. Podcast
 
-**Files Modified (Phase 2)**:
-- `src/components/v2/hero/GlassmorphismHero.tsx` — returning user headline variants
-- `src/pages/v2/V2Buy.tsx` — add progress reflection card
-- `src/pages/v2/V2Sell.tsx` — add progress reflection card
+Issues:
+- Google Reviews appears twice (star badge at line 482 AND full section at line 492) — redundant
+- Services cards (Buyers/Sellers/Cash) appear AFTER testimonials — should be higher in the funnel since they're navigational
+- Selena Showcase is buried below Corner Connect
 
-**Files Modified (Phase 3)**:
-- `src/pages/v2/V2Home.tsx` — reorder sections, upgrade photo layout
-- `src/components/v2/KasandraVideoBlock.tsx` — intent-aware video selection
+**Fix**: Reorder to: TrustBar → Services → Selena Showcase → Neighborhood Cards → Testimonials + Google Reviews (combined) → Corner Connect → Podcast. Remove duplicate star badge OR the full reviews section.
 
-**Files Modified (Phase 4)**:
-- `src/pages/v2/V2Sell.tsx` — address-first hero entry
-- `supabase/functions/enrich-booking-context/index.ts` — enriched dossier assembly
+---
 
-**No new database tables required.** All changes leverage existing `session_snapshots`, `lead_profiles`, and `lead_handoffs` tables.
+### MEDIUM — Sell Page Cash CTA Mismatch
 
-**Estimated scope**: ~15-20 implementation messages across all 4 phases, executed sequentially.
+**4. Homepage Corner Connect CTA also routes to `/contact`** (line 638)
+Same issue as #1. "Ask About Off-Market Properties" goes to generic contact instead of the decision funnel.
+
+**Fix**: Route to `/off-market` or `/cash-offer-options` based on the card's context.
+
+---
+
+### MEDIUM — Missing `ToolResultNextStep` on Seller Timeline
+
+**5. V2SellerTimeline (770 lines) — no tool chaining component**
+All other tool pages have `ToolResultNextStep` but the seller timeline page is missing it.
+
+**Fix**: Add `ToolResultNextStep` with label "Seller Timeline" after the timeline completion state.
+
+---
+
+### LOW — Sell Page Journey Breadcrumb Placement
+
+**6. JourneyBreadcrumb on V2Sell appears AFTER the address-first entry section**
+The address input (lines 96-129) separates the hero from the journey breadcrumb (lines 131-136). For returning users, their progress context should appear before the address input — they may not need it.
+
+**Fix**: Swap the order so JourneyBreadcrumb renders immediately after the hero, before the address entry.
+
+---
+
+### LOW — ExitIntentModal Mobile Strategy
+
+**7. Exit modal uses `popstate` (back button hijack) on mobile**
+Line 78 pushes a history entry, and popstate triggers the modal. This is an aggressive anti-pattern that can frustrate users and violates the "calm, trust-first" brand mandate.
+
+**Fix**: Replace popstate with a 45-second idle timer + scroll-to-top detection, or remove mobile exit-intent entirely and rely on the Selena floating button for re-engagement.
+
+---
+
+## Selena AI Audit — System Prompt & KB
+
+Based on the skill files and edge function architecture:
+
+- **KB-0 → KB-12 hierarchy**: Intact, properly layered
+- **Guard state**: 549-line governance file, containment overlay triggers on vulnerability signals — verified
+- **Chip governance**: 82+ registry entries, bilingual, ActionSpec-backed — no orphan chips
+- **max_tokens = 150**: Intentional constraint, enforced
+- **Model**: Gemini 3 Flash preview primary, GPT-4o-mini fallback — correct
+- **13 dynamic context blocks**: All wired (memory, reflection, seller decision, market pulse, neighborhood, tool output, governance, journey, trail, guide mode, mode, guard, containment)
+- **Booking gate**: `hasEarnedBookingAccess()` — verified as enforced
+- **No issues found with Selena's architecture**
+
+---
+
+## Implementation Priority
+
+| # | Issue | Impact | Effort |
+|---|-------|--------|--------|
+| 1 | Cash offer CTA → wrong route | Critical | 5 min |
+| 2 | Double CTA on Buy/Sell hubs | High | 5 min |
+| 3 | Homepage section reorder | High | 15 min |
+| 4 | Homepage Corner Connect CTA route | Medium | 5 min |
+| 5 | Missing ToolResultNextStep on Seller Timeline | Medium | 10 min |
+| 6 | Sell page breadcrumb placement | Low | 5 min |
+| 7 | Mobile exit-intent strategy | Low | 20 min |
+
+**Total estimated**: 3-4 implementation messages to resolve all 7 issues.
 
