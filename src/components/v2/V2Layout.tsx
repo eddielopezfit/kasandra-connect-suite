@@ -10,6 +10,7 @@ import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
 import { ChatErrorBoundary } from "@/components/selena/ChatErrorBoundary";
 import ExitIntentModal from "@/components/v2/ExitIntentModal";
+import ProactiveSelenaPrompt from "@/components/v2/ProactiveSelenaPrompt";
 import EscalationBanner from "@/components/v2/EscalationBanner";
 import { logPageView, logEvent } from "@/lib/analytics/logEvent";
 import { initSessionContext, getSessionContext, updateSessionContext } from "@/lib/analytics/selenaSession";
