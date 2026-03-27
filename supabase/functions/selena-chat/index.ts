@@ -606,7 +606,13 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     
     // ============= CHIP PHASE FLOOR ENFORCEMENT (monotonic) =============
     const clientChipFloor = context.chip_phase_floor ?? 0;
-    let effectiveChipPhase = Math.max(clientChipFloor, rawGoverned.phase) as 1 | 2 | 3;
+    
+    // FIX 2: Reset chip phase floor on intent switch
+    // When user switches intent (e.g., sell→buy), don't carry seller Phase 3 forward
+    const intentSwitched = primaryIntent !== 'explore' && context.intent && primaryIntent !== context.intent;
+    const adjustedFloor = intentSwitched ? Math.min(clientChipFloor, 2) : clientChipFloor;
+    
+    let effectiveChipPhase = Math.max(adjustedFloor, rawGoverned.phase) as 1 | 2 | 3;
     
     // Re-derive chips if floor pushed us past what getGovernedChips returned
     let chips: string[];
@@ -630,7 +636,14 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         phase = 2;
         escalated = false;
       } else if (effectiveChipPhase >= 3) {
-        chips = language === 'es' ? ["Estimar mis ganancias netas", "Hablar con Kasandra"] : ["Estimate my net proceeds", "Talk with Kasandra"];
+        // FIX 1: Intent-aware Phase 3 chips — buyers get buyer chips, not seller chips
+        if (effectiveIntent === 'buy') {
+          chips = language === 'es' 
+            ? [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.TALK_WITH_KASANDRA] 
+            : [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.TALK_WITH_KASANDRA];
+        } else {
+          chips = language === 'es' ? ["Estimar mis ganancias netas", "Hablar con Kasandra"] : ["Estimate my net proceeds", "Talk with Kasandra"];
+        }
         phase = 3;
         escalated = rawGoverned.escalated;
       } else {
@@ -1362,9 +1375,14 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       } else if (canApplyJourneyChips && journey.stageChips.length > 0) {
         // Layer 6: Journey State Engine chips
         suggestedReplies = journey.stageChips;
-      } else {
+      } else if (chips.length > 0) {
         // Layer 7: Governed phase chips (fallback)
         suggestedReplies = chips;
+      } else {
+        // FIX 6: Empty chips guard — never return empty array
+        suggestedReplies = effectiveIntent === 'buy'
+          ? (language === 'es' ? [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.BROWSE_GUIDES] : [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.BROWSE_GUIDES])
+          : (language === 'es' ? [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA] : [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA]);
       }
     }
 

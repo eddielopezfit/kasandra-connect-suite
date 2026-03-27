@@ -123,7 +123,10 @@ export function getGovernedChips(
   const suppressBrowseGuides = guidesRead >= 10;
 
   if (enterPhase3) {
-    const chips = [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA];
+    // FIX 1: Intent-aware Phase 3 — buyers get buying power chips, not seller chips
+    const chips = intent === 'buy'
+      ? [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.TALK_WITH_KASANDRA]
+      : [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA];
     return { chips, phase: 3, escalated: isLooping || engagement.hasComparedOptions >= 2 };
   }
 
@@ -174,13 +177,13 @@ export function getGovernedChips(
     }
 
     if (intent === 'buy') {
-      // FIX-SIM-06: Rotate buy chips — cycle through 3 chip sets to prevent repetition
+      // FIX 5: Buyer Phase 2 — surface affordability FIRST, then readiness
       if (phase2TurnCount <= 1) {
-        return { chips: [CHIP_KEYS.BUYER_READINESS, suppressBrowseGuides ? CHIP_KEYS.TALK_WITH_KASANDRA : CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET], phase: 2, escalated: false };
+        return { chips: [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.BUYER_READINESS, suppressBrowseGuides ? CHIP_KEYS.TALK_WITH_KASANDRA : CHIP_KEYS.BROWSE_GUIDES], phase: 2, escalated: false };
       }
       if (phase2TurnCount === 2) {
-        // Turn 2: surface affordability calculator alongside neighborhood tools
-        return { chips: [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.COMPARE_NEIGHBORHOODS, CHIP_KEYS.ESTIMATE_CLOSING_COSTS], phase: 2, escalated: false };
+        // Turn 2: neighborhood tools + off-market
+        return { chips: [CHIP_KEYS.COMPARE_NEIGHBORHOODS, CHIP_KEYS.FIND_OFF_MARKET, CHIP_KEYS.ESTIMATE_CLOSING_COSTS], phase: 2, escalated: false };
       }
       // Turn 3+: progress toward decision
       return { chips: [CHIP_KEYS.BUYER_READINESS_CHECK, CHIP_KEYS.FIND_OFF_MARKET, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 2, escalated: false };
@@ -371,6 +374,9 @@ export const CHIP_DESTINATION: Record<string, string> = {
   'Schedule with Kasandra': '/book',
   'Book a call': '/book',
   'Book a consultation': '/book',
+  // FIX 3: Register "What should I prepare?" with a deterministic destination
+  'What should I prepare?': '/guides/first-time-buyer-guide',
+  '¿Qué debo preparar?': '/guides/first-time-buyer-guide',
 
   // ES chips — core actions (parity with EN)
   'Tomar la evaluación de preparación': '/buyer-readiness',
@@ -605,8 +611,8 @@ export function filterChipsForCompletedTools(
 export const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
     // Buyer path progressions
     'take readiness check': {
-      en: ["How long does it take?", "Start now", "What does this check?"],
-      es: ["¿Cuánto tiempo toma?", "Comenzar ahora", "¿Qué verifica este análisis?"]
+      en: ["Check my buying power", "Browse guides", "What does this check?"],
+      es: ["Verificar poder de compra", "Explorar guías", "¿Qué verifica este análisis?"]
     },
     'view first-time buyer guide': {
       en: ["What should I prepare?", "Ask about financing", "Check my readiness"],
@@ -639,8 +645,8 @@ export const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
       es: ["Lo antes posible (0–30 días)", "1–3 meses", "3–6 meses", "Solo explorando"]
     },
   "i'm looking to buy": {
-    en: ["Take readiness check", "View first-time buyer guide", "What should I prepare?"],
-    es: ["Tomar evaluación de preparación", "Ver guía para compradores", "¿Qué debo preparar?"]
+    en: ["Check my buying power", "Take readiness check", "View first-time buyer guide"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Ver guía para compradores"]
   },
   'just exploring': {
     en: ["Tell me about selling", "Tell me about buying", "What are my options?"],
@@ -756,8 +762,8 @@ export function getSuggestedReplies(
       es: ["Comparar efectivo vs. listado", "Check rápido de preparación para vender", "Estimar mis ganancias netas"]
     },
     buy: {
-      en: ["Take readiness check", "View first-time buyer guide", "What should I prepare?"],
-      es: ["Tomar evaluación de preparación", "Ver guía para compradores", "¿Qué debo preparar?"]
+      en: ["Check my buying power", "Take readiness check", "View first-time buyer guide"],
+      es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Ver guía para compradores"]
     },
     // FIX-SIM-08: Investor reply suggestions
     invest: {
