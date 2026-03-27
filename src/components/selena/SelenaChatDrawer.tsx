@@ -478,19 +478,19 @@ export function SelenaChatDrawer() {
                 onMinimize={handleMinimize}
                 t={t}
               />
-              {sourcePage && (
-                <div className="px-4 py-1.5 border-b border-border/50 shrink-0">
-                  <button
-                    onClick={closeChat}
-                    className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
-                  >
-                    <ArrowLeft className="w-3 h-3" />
-                    {t(`Back to ${sourcePage.label.en}`, `Volver a ${sourcePage.label.es}`)}
-                  </button>
-                </div>
-              )}
             </div>
           </SheetHeader>
+          {sourcePage && (
+            <div className="px-4 py-1.5 border-b border-border/50 shrink-0">
+              <button
+                onClick={closeChat}
+                className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+              >
+                <ArrowLeft className="w-3 h-3" />
+                {t(`Back to ${sourcePage.label.en}`, `Volver a ${sourcePage.label.es}`)}
+              </button>
+            </div>
+          )}
 
           {/* First-open onboarding overlay (P3) */}
           {showOnboarding && (
