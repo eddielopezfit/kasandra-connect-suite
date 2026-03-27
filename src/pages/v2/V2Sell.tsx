@@ -92,6 +92,13 @@ const V2SellContent = () => {
         backgroundImage={heroSellBg}
       />
 
+      {/* Journey Progress — visible only to returning users */}
+      <section className="py-4">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <JourneyBreadcrumb />
+        </div>
+      </section>
+
       {/* Address-First Entry — Quick Valuation CTA */}
       <section className="bg-gradient-to-b from-cc-navy/5 to-transparent py-8">
         <div className="container mx-auto px-4 max-w-xl">
@@ -125,13 +132,6 @@ const V2SellContent = () => {
           <p className="text-center text-xs text-cc-charcoal/50 mt-2">
             {t("Free, no obligation. Takes 60 seconds.", "Gratis, sin compromiso. Toma 60 segundos.")}
           </p>
-        </div>
-      </section>
-
-      {/* Journey Progress — visible only to returning users */}
-      <section className="py-4">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <JourneyBreadcrumb />
         </div>
       </section>
 
@@ -170,7 +170,10 @@ const V2SellContent = () => {
               )}
             </p>
             <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3">
-              <Link to="/contact">
+              <Link
+                to="/cash-offer-options?source=sell_hub_cash"
+                onClick={() => handleCTAClick('sell_cash_offer_request', '/cash-offer-options')}
+              >
                 {t("Request a Cash Offer", "Solicitar una Oferta en Efectivo")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
@@ -573,7 +576,7 @@ const V2SellContent = () => {
 };
 
 const V2Sell = () => (
-  <V2Layout>
+  <V2Layout suppressCTA>
     <V2SellContent />
   </V2Layout>
 );
