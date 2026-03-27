@@ -48,7 +48,7 @@ function getFundingFeeRate(downPercent: number, isFirstUse: boolean): number {
   return isFirstUse ? VA_FUNDING_FEE_FIRST_ZERO_DOWN : VA_FUNDING_FEE_SUBSEQUENT_ZERO_DOWN;
 }
 
-export function calculateBAHMortgage(input: BAHInput): BAHResult {
+export function calculateBAHMortgage(input: BAHInput, rateOverride?: number): BAHResult {
   const empty: BAHResult = {
     maxPrice: 0,
     monthlyPayment: 0,
