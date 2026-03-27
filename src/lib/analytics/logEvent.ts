@@ -182,7 +182,8 @@ export type EventType =
   // Native Booking Flow
   | 'booking_intake_completed'
   | 'booking_slot_selected'
-  | 'mls_link_click';
+  | 'mls_link_click'
+  | 'seller_address_entry_submitted';
 
 export interface EventPayload {
   [key: string]: unknown;

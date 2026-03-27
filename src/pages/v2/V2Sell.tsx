@@ -10,10 +10,12 @@ import TestimonialCard from "@/components/v2/TestimonialCard";
 import { sellerTestimonials } from "@/data/testimonials";
 const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
 import { Shield, TrendingUp, FileText, Handshake, AlertCircle, ArrowRight, Zap, DollarSign, Users, Star, Home, Wrench, Network, Clock, Calendar, BarChart3, MessageCircle, Check } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
+import { logEvent } from "@/lib/analytics/logEvent";
 import FeaturedGuideCard from "@/components/v2/shared/FeaturedGuideCard";
-
+import { useNavigate } from "react-router-dom";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import heroSellBg from "@/assets/hero-sell-tucson-aerial.png";
@@ -27,7 +29,9 @@ const PAGE_INTENT = 'sell' as const;
 const V2SellContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+  const navigate = useNavigate();
   const [leadName, setLeadName] = useState<string | null>(null);
+  const [addressInput, setAddressInput] = useState("");
   useDocumentHead({
     titleEn: "Tucson Home Selling | Cash Offer & Traditional Listing — Kasandra Prieto",
     titleEs: "Venta de Casas en Tucson | Oferta en Efectivo y Venta Tradicional — Kasandra Prieto",
@@ -87,6 +91,42 @@ const V2SellContent = () => {
         pagePath="/sell"
         backgroundImage={heroSellBg}
       />
+
+      {/* Address-First Entry — Quick Valuation CTA */}
+      <section className="bg-gradient-to-b from-cc-navy/5 to-transparent py-8">
+        <div className="container mx-auto px-4 max-w-xl">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!addressInput.trim()) return;
+              handleCTAClick('sell_address_entry', '/home-valuation');
+              logEvent('seller_address_entry_submitted', { address: addressInput.trim() });
+              navigate(`/home-valuation?address=${encodeURIComponent(addressInput.trim())}`);
+            }}
+            className="flex flex-col sm:flex-row gap-3 items-stretch"
+          >
+            <div className="flex-1 relative">
+              <Home className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cc-charcoal/40" />
+              <Input
+                value={addressInput}
+                onChange={(e) => setAddressInput(e.target.value)}
+                placeholder={t("Enter your address for a free estimate…", "Ingrese su dirección para un estimado gratis…")}
+                className="pl-10 h-12 border-cc-sand-dark/40 bg-white rounded-full text-sm"
+              />
+            </div>
+            <Button
+              type="submit"
+              className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full h-12 px-6 whitespace-nowrap"
+            >
+              {t("Get My Estimate", "Obtener Estimado")}
+              <ArrowRight className="w-4 h-4 ml-1.5" />
+            </Button>
+          </form>
+          <p className="text-center text-xs text-cc-charcoal/50 mt-2">
+            {t("Free, no obligation. Takes 60 seconds.", "Gratis, sin compromiso. Toma 60 segundos.")}
+          </p>
+        </div>
+      </section>
 
       {/* Journey Progress — visible only to returning users */}
       <section className="py-4">
