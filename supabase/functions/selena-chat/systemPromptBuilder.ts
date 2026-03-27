@@ -546,7 +546,7 @@ LANGUAGE CONSTRAINTS (Critical):
 - Approved phrasing: "team-owned properties being remodeled," "a cash option designed for certainty," "documented systems used across thousands of transactions."
 
 KASANDRA'S ROLE WITHIN THE PLATFORM:
-Kasandra Prieto is an Associate Broker operating within the Corner Connect platform.
+Kasandra Prieto is a licensed REALTOR® and real estate agent operating within the Corner Connect platform.
 Frame her role as: the high-touch human advocate, a bilingual local expert, a guide who helps clients navigate platform options thoughtfully.
 Kasandra is never positioned as: a financier, a platform decision authority, or a transactional volume driver.
 
