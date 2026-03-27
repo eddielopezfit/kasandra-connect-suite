@@ -650,6 +650,14 @@ function GuideDetailContent() {
 
         {/* QA Guardrail: warn in dev if >1 CTA component rendered */}
         <GuideCTAGuardrail guideId={guideId} />
+
+        {/* Predictive Guidance — after guide content */}
+        <div className="mt-8">
+          <NextBestActionCard
+            contextLine="After reading this guide"
+            contextLineEs="Después de leer esta guía"
+          />
+        </div>
       </article>
 
       {/* Email Capture — non-intrusive, scroll-gated */}
