@@ -66,7 +66,7 @@ const InstantAnswerWidget = () => {
   const handleCTAClick = () => {
     if (result) {
       updateSessionContext({
-        tool_used: 'quick_affordability',
+        tool_used: 'instant_answer',
         estimated_budget: result.maxPrice,
       });
     }
