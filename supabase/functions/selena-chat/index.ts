@@ -357,8 +357,8 @@ serve(async (req) => {
       mode: currentMode, 
       mode_name: modeContext.modeName,
       user_turns: conversationState.userTurns,
-      chip_phase: getGovernedChips(effectiveIntent, timeline, engagement, language).phase,
-      chip_escalated: getGovernedChips(effectiveIntent, timeline, engagement, language).escalated ?? false,
+      chip_phase: getGovernedChips(effectiveIntent, timeline, engagement, language, { guidesReadCount: context.guides_read ?? 0 }).phase,
+      chip_escalated: getGovernedChips(effectiveIntent, timeline, engagement, language, { guidesReadCount: context.guides_read ?? 0 }).escalated ?? false,
     }).catch(() => {});
 
     // Check for stall condition (Mode 3.5 behavior)
@@ -602,7 +602,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     }
 
     // Tell the AI what phase we're in so response text matches chip direction
-    const rawGoverned = getGovernedChips(effectiveIntent, timeline, engagement, language);
+    const rawGoverned = getGovernedChips(effectiveIntent, timeline, engagement, language, { guidesReadCount: context.guides_read ?? 0 });
     
     // ============= CHIP PHASE FLOOR ENFORCEMENT (monotonic) =============
     const clientChipFloor = context.chip_phase_floor ?? 0;
@@ -1183,6 +1183,14 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       );
     }
 
+    // FIX 3: Low-signal acknowledgment handler — prevent tool re-summarization on "ok"/"sure"
+    const LOW_SIGNAL_PATTERN = /^(ok|okay|sure|got it|alright|ya|yep|yea|yeah|sí|si|vale|entendido|claro|bueno|dale|ándale|orale|mhm|hmm|k)\.?$/i;
+    if (LOW_SIGNAL_PATTERN.test(message.trim())) {
+      governanceHint += language === 'es'
+        ? '\n\nSEÑAL BAJA DETECTADA: El usuario dio una confirmación breve. NO resuma herramientas ni guías anteriores. Haga UNA pregunta que avance: "¿Qué le ayudaría más ahora — ver sus números específicos o hablar con Kasandra sobre su situación?"'
+        : '\n\nLOW-SIGNAL DETECTED: User gave a brief acknowledgment. Do NOT re-summarize tools or guides. Ask ONE forward-moving question: "What would help most right now — seeing your specific numbers, or talking through your situation with Kasandra?"';
+    }
+
     const messagesPayload = [
       { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + entryGreetingHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
       ...history.slice(-10), // Extended to -10 to support persistent memory context
@@ -1250,8 +1258,32 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     const sentences = reply.split(SENTENCE_BOUNDARY).filter(s => s.trim().length > 0);
     if (sentences.length > 3) {
       reply = sentences.slice(0, 3).join(' ');
-      // Ensure it ends with punctuation
-      if (!/[.?!]$/.test(reply)) reply += '.';
+    }
+    // FIX 1: Sentence completeness guard — drop incomplete trailing fragment
+    if (reply.length > 0 && !/[.?!。]$/.test(reply.trim())) {
+      const completeSentences = reply.match(/[^.?!。]*[.?!。]/g);
+      if (completeSentences && completeSentences.length > 0) {
+        reply = completeSentences.join(' ').trim();
+      } else {
+        // Entire reply is one incomplete fragment — append ellipsis
+        reply = reply.trim() + '...';
+      }
+    }
+
+    // FIX 2: Banned phrase post-filter — deterministic safety net
+    const BANNED_OPENER = /^(I apologize[—\-,.]?\s*|I'm sorry[—\-,.]?\s*|Me disculpo[—\-,.]?\s*|Lo siento[—\-,.]?\s*)/i;
+    if (BANNED_OPENER.test(reply)) {
+      reply = reply.replace(BANNED_OPENER, '').trim();
+      // If stripping left nothing meaningful, use neutral reframe
+      if (reply.length < 10) {
+        reply = language === 'es'
+          ? 'Continuemos desde donde estábamos.'
+          : "Let's pick up where we were.";
+      }
+      // Capitalize first letter after strip
+      if (reply.length > 0) {
+        reply = reply.charAt(0).toUpperCase() + reply.slice(1);
+      }
     }
 
     // ============= SERVER-SIDE ONBOARDING HARD BLOCK =============

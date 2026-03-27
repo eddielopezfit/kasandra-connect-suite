@@ -99,6 +99,7 @@ export function getGovernedChips(
   timeline: string | null,
   engagement: SessionEngagementState,
   _language: 'en' | 'es',
+  opts?: { guidesReadCount?: number },
 ): { chips: string[]; phase: 1 | 2 | 3; escalated: boolean } {
   const hasIntent = !!intent && intent !== 'explore';
   const isAsap = timeline === 'asap';
@@ -117,6 +118,10 @@ export function getGovernedChips(
     isAsap ||
     (isLooping && hasIntent);
 
+  // FIX 4: High-guide-count suppression — user has read 10+ guides, past education phase
+  const guidesRead = opts?.guidesReadCount ?? 0;
+  const suppressBrowseGuides = guidesRead >= 10;
+
   if (enterPhase3) {
     const chips = [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA];
     return { chips, phase: 3, escalated: isLooping || engagement.hasComparedOptions >= 2 };
@@ -130,7 +135,7 @@ export function getGovernedChips(
         return { chips: [CHIP_KEYS.GUIDE_SELL_OR_RENT, CHIP_KEYS.TUCSON_MARKET_DATA], phase: 2, escalated: false };
       }
       if (phase2TurnCount === 2) {
-        return { chips: [CHIP_KEYS.COMPARE_CASH_LISTING, CHIP_KEYS.BROWSE_GUIDES], phase: 2, escalated: false };
+        return { chips: [CHIP_KEYS.COMPARE_CASH_LISTING, suppressBrowseGuides ? CHIP_KEYS.TALK_WITH_KASANDRA : CHIP_KEYS.BROWSE_GUIDES], phase: 2, escalated: false };
       }
       // After 3+ turns escalate to booking
       return { chips: [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 3, escalated: true };
@@ -171,7 +176,7 @@ export function getGovernedChips(
     if (intent === 'buy') {
       // FIX-SIM-06: Rotate buy chips — cycle through 3 chip sets to prevent repetition
       if (phase2TurnCount <= 1) {
-        return { chips: [CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET], phase: 2, escalated: false };
+        return { chips: [CHIP_KEYS.BUYER_READINESS, suppressBrowseGuides ? CHIP_KEYS.TALK_WITH_KASANDRA : CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.FIND_OFF_MARKET], phase: 2, escalated: false };
       }
       if (phase2TurnCount === 2) {
         // Turn 2: surface affordability calculator alongside neighborhood tools
