@@ -642,8 +642,8 @@ export const PROGRESSION_MAP: Record<string, { en: string[]; es: string[] }> = {
       es: ["Lo antes posible (0–30 días)", "1–3 meses", "3–6 meses", "Solo explorando"]
     },
   "i'm looking to buy": {
-    en: ["Take readiness check", "View first-time buyer guide", "What should I prepare?"],
-    es: ["Tomar evaluación de preparación", "Ver guía para compradores", "¿Qué debo preparar?"]
+    en: ["Check my buying power", "Take readiness check", "View first-time buyer guide"],
+    es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Ver guía para compradores"]
   },
   'just exploring': {
     en: ["Tell me about selling", "Tell me about buying", "What are my options?"],
