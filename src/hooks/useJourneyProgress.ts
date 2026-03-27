@@ -18,6 +18,8 @@ export interface NextAction {
   destination: string;
 }
 
+export type ConfidenceLevel = 'low' | 'medium' | 'high';
+
 export interface JourneyProgress {
   intent: Intent | undefined;
   isReturningUser: boolean;
@@ -50,6 +52,7 @@ export interface JourneyProgress {
   quizCompleted: boolean;
 
   journeyDepth: 'new' | 'exploring' | 'engaged' | 'ready';
+  confidenceLevel: ConfidenceLevel;
   nextRecommendedAction: NextAction;
 }
 
