@@ -4,6 +4,7 @@ import { Calendar } from "lucide-react";
 import V2Navigation from "./V2Navigation";
 import V2Footer from "./V2Footer";
 import CTASection from "./CTASection";
+import SessionIntelligenceBanner from "./SessionIntelligenceBanner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
@@ -15,6 +16,7 @@ import { initSessionContext, getSessionContext, updateSessionContext } from "@/l
 import { bridgeAuthToLead } from "@/lib/analytics/bridgeAuthToLead";
 import { restoreSnapshot } from "@/lib/analytics/sessionSnapshot";
 import { supabase } from "@/integrations/supabase/client";
+import { useSessionEnrichment } from "@/hooks/useSessionEnrichment";
 
 interface V2LayoutProps {
   children: ReactNode;
