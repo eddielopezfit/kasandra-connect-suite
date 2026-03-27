@@ -275,31 +275,7 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
-      {/* Cash Readiness Diagnostic CTA */}
-      <section className="py-12 bg-cc-navy">
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-xl mx-auto">
-            <Sparkles className="w-8 h-8 text-cc-gold mx-auto mb-4" />
-            <h3 className="font-serif text-2xl md:text-3xl font-bold text-white mb-3">
-              {t("Not Sure Which Path Fits?", "¿No Estás Seguro/a Qué Camino Te Conviene?")}
-            </h3>
-            <p className="text-white/80 mb-6">
-              {t(
-                "Take a 1-minute readiness check to see how well a cash offer fits your situation.",
-                "Toma un check de preparación de 1 minuto para ver qué tan bien se ajusta una oferta en efectivo a tu situación."
-              )}
-            </p>
-            <Link
-              to="/cash-readiness"
-              className="inline-flex items-center bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3 shadow-gold transition-all active:scale-[0.98]"
-            >
-              {t("Take the Cash Readiness Check", "Toma el Check de Preparación")}
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </div>
-        </div>
-      </section>
-      {/* Single Bottom CTA — merged from previous two sections */}
+      {/* Single Terminal CTA — Book + secondary Cash Readiness */}
       <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-xl mx-auto">
