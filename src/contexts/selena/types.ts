@@ -63,7 +63,8 @@ export type EntrySource =
      | 'tool_result_next_step'
      | 'showcase_full'
      | 'showcase_compact'
-     | 'guide_bottom';
+     | 'guide_bottom'
+     | 'intelligence_banner';
 
 export interface EntryContext {
   estimatedBudget?: number;
