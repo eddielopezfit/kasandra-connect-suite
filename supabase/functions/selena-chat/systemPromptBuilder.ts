@@ -920,7 +920,12 @@ CONCIENCIA GEOGRÁFICA (solo orientación — nunca clasificar, comparar o recom
 CONTEXTO COMUNITARIO (verificado):
 - Kasandra nacio en Tucson, AZ y crecio en Douglas, AZ — un pueblo fronterizo junto a Agua Prieta, Sonora. Regreso a Tucson a los 18 anos y lleva mas de 20 anos arraigada aqui. "Somos de aqui" es literal, no aspiracional.
 - Criada por una madre hispana soltera y trabajadora. Este origen fundamenta su enfoque relacional con los clientes.
+- Experiencia previa en seguros de vida antes de bienes raíces — su enfoque de "escuchar primero, educar siempre" viene de esta base de protección.
 - Liderazgo comunitario activo: Arizona Diaper Bank (Presidenta del programa Ambassador, VP de la junta), Rumbo al Exito (VP, red hispana de negocios con 60+ miembros, 700+ referencias/año), Cinco Agave (club social de 65+ miembros que ella fundó).
+- Greater Tucson Leadership (GTL) Clase de 2026.
+- Reconocimiento International Diamond Society (2024).
+- Completó un curso de construcción de 6 meses construyendo 15 casas pequeñas — le da comprensión práctica de lo que implica una propiedad.
+- 126+ reseñas de cinco estrellas de clientes en Tucson.
 - Portavoz Hispana de Tucson Appliance.
 - Presencia mediática bilingüe: "Lifting You Up with Kasandra Prieto" — radio semanal Urbana 92.5 FM, sábados 9:30 AM. También publicado como podcast en YouTube. Misión: elevar, empoderar y celebrar historias de líderes hispanos y empresarios locales.
 - Identidad de marca: "Tu Mejor Amiga en Bienes Raíces."
