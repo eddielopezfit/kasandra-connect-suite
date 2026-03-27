@@ -16,7 +16,23 @@ interface CalculatorResultsProps {
   timeline?: Timeline;
 }
 
-const CalculatorResults = ({ results, mortgageBalance = 0, marketSource = 'fallback', lastVerifiedDate }: CalculatorResultsProps) => {
+const MOTIVATION_LABELS: Record<Motivation, { en: string; es: string }> = {
+  life_change: { en: "a life change", es: "un cambio de vida" },
+  downsize: { en: "downsizing", es: "reducir espacio" },
+  upgrade: { en: "upgrading", es: "mejorar de casa" },
+  investment: { en: "an investment decision", es: "una decisión de inversión" },
+  relocation: { en: "a relocation", es: "una reubicación" },
+  uncertain: { en: "exploring options", es: "explorar opciones" },
+};
+
+const TIMELINE_LABELS: Record<Timeline, { en: string; es: string }> = {
+  asap: { en: "as soon as possible", es: "lo antes posible" },
+  '1_3_months': { en: "within 1–3 months", es: "en 1–3 meses" },
+  '3_6_months': { en: "within 3–6 months", es: "en 3–6 meses" },
+  flexible: { en: "on a flexible timeline", es: "con un cronograma flexible" },
+};
+
+const CalculatorResults = ({ results, mortgageBalance = 0, marketSource = 'fallback', lastVerifiedDate, motivation, timeline }: CalculatorResultsProps) => {
   const { t, language } = useLanguage();
   const { traditional, cash, costOfTime, recommendationReason } = results;
   const hasMortgage = mortgageBalance > 0;
@@ -29,8 +45,24 @@ const CalculatorResults = ({ results, mortgageBalance = 0, marketSource = 'fallb
     }).format(amount);
   };
 
+  const motivationLabel = motivation ? (language === 'es' ? MOTIVATION_LABELS[motivation].es : MOTIVATION_LABELS[motivation].en) : null;
+  const timelineLabel = timeline ? (language === 'es' ? TIMELINE_LABELS[timeline].es : TIMELINE_LABELS[timeline].en) : null;
+
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Personalized insight line */}
+      {motivationLabel && timelineLabel && (
+        <div className="flex items-start gap-3 bg-cc-gold/10 border border-cc-gold/30 rounded-xl p-4">
+          <User className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-cc-charcoal">
+            {t(
+              `Your numbers below reflect ${motivationLabel} with a goal to move ${timelineLabel}. These are your estimated options.`,
+              `Tus números abajo reflejan ${motivationLabel} con el objetivo de moverte ${timelineLabel}. Estas son tus opciones estimadas.`
+            )}
+          </p>
+        </div>
+      )}
+
       {/* Side-by-side comparison cards */}
       <div className="grid md:grid-cols-2 gap-4">
         {/* Cash Offer Card */}

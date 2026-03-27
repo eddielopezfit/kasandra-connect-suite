@@ -126,66 +126,15 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
-      {/* When Cash Makes Sense */}
-      <section className="py-16 lg:py-20 bg-cc-sand">
-        <div className="container mx-auto px-4">
-          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-elevated">
-            <div className="grid md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
-              <div>
-                <h3 className="font-serif text-2xl font-bold text-cc-navy mb-6 flex items-center gap-3">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
-                  {t("A Cash Offer May Make Sense If...", "Una Oferta en Efectivo Puede Tener Sentido Si...")}
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <Clock className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("You need to sell quickly due to life circumstances", "Necesita vender rápidamente debido a circunstancias de vida")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <Shield className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("The home needs significant repairs you can't afford", "La casa necesita reparaciones significativas que no puede costear")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <FileText className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("You inherited a property and prefer simplicity", "Heredó una propiedad y prefiere simplicidad")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <ArrowRight className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("Certainty is more important than maximizing price", "La certeza es más importante que maximizar el precio")}</span>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="font-serif text-2xl font-bold text-cc-navy mb-6 flex items-center gap-3">
-                  <XCircle className="w-8 h-8 text-cc-slate" />
-                  {t("A Traditional Listing May Be Better If...", "Una Venta Tradicional Puede Ser Mejor Si...")}
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <span className="text-cc-charcoal">{t("You're not in a rush to sell", "No tiene prisa por vender")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <span className="text-cc-charcoal">{t("Your home is in good, market-ready condition", "Su casa está en buenas condiciones, lista para el mercado")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <span className="text-cc-charcoal">{t("You want to maximize your sale price", "Quiere maximizar su precio de venta")}</span>
-                  </li>
-                  <li className="flex items-start gap-3 bg-cc-ivory p-4 rounded-lg border border-cc-sand-dark/30">
-                    <span className="text-cc-charcoal">{t("You're comfortable with showings and the listing process", "Se siente cómodo con visitas y el proceso de venta")}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Single Terminal CTA — Book + secondary Cash Readiness */}
       <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-xl mx-auto">
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
-              {t("Getting clearer on your home's value?", "¿Más claro sobre el valor de tu casa?")}
+              {t(
+                "You've seen the numbers — let's talk about what fits your situation",
+                "Ya viste los números — hablemos de lo que se adapta a tu situación"
+              )}
             </h2>
             <p className="text-white/80 text-sm mb-6">
               {t(
