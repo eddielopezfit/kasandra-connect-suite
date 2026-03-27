@@ -759,8 +759,8 @@ export function getSuggestedReplies(
       es: ["Comparar efectivo vs. listado", "Check rápido de preparación para vender", "Estimar mis ganancias netas"]
     },
     buy: {
-      en: ["Take readiness check", "View first-time buyer guide", "What should I prepare?"],
-      es: ["Tomar evaluación de preparación", "Ver guía para compradores", "¿Qué debo preparar?"]
+      en: ["Check my buying power", "Take readiness check", "View first-time buyer guide"],
+      es: ["Verificar poder de compra", "Tomar evaluación de preparación", "Ver guía para compradores"]
     },
     // FIX-SIM-08: Investor reply suggestions
     invest: {
