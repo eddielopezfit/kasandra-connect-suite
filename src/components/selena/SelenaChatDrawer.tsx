@@ -500,10 +500,10 @@ export function SelenaChatDrawer() {
                 <h3 className="font-serif text-lg font-semibold text-foreground">
                   {t("Hi, I'm Selena!", "¡Hola, soy Selena!")}
                 </h3>
-                <ul className="text-sm text-muted-foreground text-left space-y-2">
-                  <li>✨ {t("Explore neighborhoods & market data", "Explora vecindarios y datos del mercado")}</li>
-                  <li>📊 {t("Run the numbers on your home", "Calcula los números de tu casa")}</li>
-                  <li>📅 {t("Connect you with Kasandra when you're ready", "Conectarte con Kasandra cuando estés lista/o")}</li>
+                <ul className="text-sm text-muted-foreground text-left space-y-3">
+                  <li className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-primary shrink-0" /> {t("Explore neighborhoods & market data", "Explora vecindarios y datos del mercado")}</li>
+                  <li className="flex items-center gap-2"><FileText className="w-4 h-4 text-primary shrink-0" /> {t("Run the numbers on your home", "Calcula los números de tu casa")}</li>
+                  <li className="flex items-center gap-2"><MessageCircle className="w-4 h-4 text-primary shrink-0" /> {t("Connect you with Kasandra when you're ready", "Conectarte con Kasandra cuando estés lista/o")}</li>
                 </ul>
                 <p className="text-xs text-muted-foreground/70">
                   {t("Click anywhere to start", "Haz clic en cualquier lugar para comenzar")}

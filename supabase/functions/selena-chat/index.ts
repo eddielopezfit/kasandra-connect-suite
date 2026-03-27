@@ -1199,7 +1199,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         body: JSON.stringify({
           model: modelUsed,
           messages: messagesPayload,
-          max_tokens: guardRules.maxTokensOverride ?? 150,
+          max_tokens: guardRules.maxTokensOverride ?? (effectiveChipPhase >= 2 ? 100 : 150),
           temperature: 0.7,
         }),
       });
@@ -1216,7 +1216,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         body: JSON.stringify({
           model: modelUsed,
           messages: messagesPayload,
-          max_tokens: guardRules.maxTokensOverride ?? 150,
+          max_tokens: guardRules.maxTokensOverride ?? (effectiveChipPhase >= 2 ? 100 : 150),
           temperature: 0.7,
         }),
       });

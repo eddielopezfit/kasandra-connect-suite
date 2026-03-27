@@ -254,8 +254,8 @@ export function SelenaDrawerSuggestedRepliesChips({
       {/* Sub-chips for warm leads — specific booking engagement options */}
       {showSubChips && (
         <div className={cn("flex gap-1.5 overflow-x-auto scrollbar-hide touch-scroll-x max-w-full", primaryReplies.length > 0 ? "pt-1.5" : "pt-0")}>
-          {/* Label only when primary row is empty so sub-chips aren't orphaned */}
-          {primaryReplies.length === 0 && (
+          {/* Label only when primary row has no booking chips (sub-chips ARE the booking options) */}
+          {primaryReplies.length === 0 && hasBookingChips && (
             <span className="shrink-0 self-center text-[11px] text-cc-navy/50 pr-1">
               {language === 'es' ? 'Cómo conectar:' : 'How to connect:'}
             </span>
