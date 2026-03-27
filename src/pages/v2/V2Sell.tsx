@@ -493,8 +493,8 @@ const V2SellContent = () => {
             <div className="bg-cc-sand rounded-xl py-6 px-8 text-center">
               <p className="text-cc-charcoal text-sm max-w-2xl mx-auto mb-3">
                 {t(
-                  "Not sure which path is right for you? Kasandra reviews both options with every seller — you decide with full information.",
-                  "¿No estás segura de qué camino es el correcto? Kasandra revisa ambas opciones con cada vendedor — tú decides con información completa."
+                  "Not sure which path fits? I walk through both options with every seller — you decide with the full picture.",
+                  "¿No estás segura de qué camino va contigo? Yo reviso ambas opciones con cada vendedor — tú decides con toda la información."
                 )}
               </p>
               <button
