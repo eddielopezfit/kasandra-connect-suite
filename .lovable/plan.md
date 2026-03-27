@@ -1,134 +1,88 @@
 
 
-# Full UI/UX Audit — Kasandra Connect Suite
+# Selena AI Deep Audit — System Prompt, KB, Memory, Chips, and Drawer UI
 
-## Verdict: 92% Symphony — 8% Dissonance
+## Verdict: 95% Optimized — 5% Drift
 
-The platform is architecturally exceptional. The journey orchestration, session intelligence layer, bilingual parity, and Selena AI integration are enterprise-grade. What follows are the remaining friction points that prevent a flawless end-to-end experience.
-
----
-
-## What's Working (The Symphony)
-
-- **Journey orchestration**: `useJourneyProgress` powers adaptive heroes, CTAs, exit-intent copy, and tool chaining across all surfaces — a single intelligence hook driving the entire UX
-- **CTA governance**: Intent-aware `CTASection` adapts headline/subtext for buy/sell/general based on pathname + journey depth. `suppressCTA` correctly applied on 13 pages
-- **Tool chaining**: `ToolResultNextStep` present on all 11 tool/quiz result pages — consistent, deterministic
-- **Guides Hub (Blue Ocean)**: CognitiveProgressBar, DecisionLane, IntentJourneyMap, ContextualSelenaPrompt, ContinueReadingCard, RecommendedGuidesCarousel — all layered and conditionally rendered
-- **Selena AI**: 4-mode architecture, guard state hierarchy, bilingual chip governance, earned booking access, modular edge function — production-grade
-- **Session persistence**: 3-tier fallback (Context → localStorage → Supabase snapshot restore on mount)
-- **Booking funnel**: Native 3-step flow, enriched agent dossier, intent/source attribution on every path
-- **Navigation**: Scroll-aware, journey-depth-aware CTA in nav, dropdown explore menu
+The architecture is production-grade. No RAG or MCP needed. The issues are behavioral drift and minor UI friction.
 
 ---
 
-## Issues Found (The Dissonance)
+## What's Working (No Changes Needed)
 
-### CRITICAL — Broken Routing
+**Knowledge Base**: KB-0 through KB-12 hierarchy is intact, correctly layered, and enforced by `guardState.ts` (549 lines). No gaps.
 
-**1. Sell Page "Request a Cash Offer" → routes to `/contact` instead of `/cash-offer-options` or `/book?intent=cash`**
-File: `src/pages/v2/V2Sell.tsx` line 173
-The Corner Connect cash offer section CTA sends users to a generic contact form instead of the high-intent cash offer funnel. This breaks the decision compression principle and wastes qualified intent.
+**Memory**: Three-tier memory system is fully operational:
+1. Persistent memory via `selena-memory` edge function (store + recall)
+2. Context audit on session start (parallel fetch from `session_snapshots`, `lead_profiles`, `decision_receipts`)
+3. Session trail (chronological breadcrumb of pages/tools visited)
 
-**Fix**: Change destination from `/contact` to `/cash-offer-options` with tracking params.
+**Tool awareness**: Selena has full awareness of completed tools via `tools_completed` array and `toolOutputHint` blocks. She receives exact calculator results (property value, net difference, advantage path), readiness scores, quiz paths, closing cost breakdowns, off-market criteria, neighborhood comparisons, and market intelligence data. She references these with "your numbers show..." not "the calculator says..."
 
----
+**Journey awareness**: `filterChipsForCompletedTools()` suppresses chips for already-completed tools. `journeyHint` explicitly tells the AI "User has completed: [list]. Do NOT suggest these tools again."
 
-### HIGH — Double Bottom CTA on Hub Pages
+**Chip governance**: 7-layer priority hierarchy is enforced (Guard > Mode 4 > Stall > Proceeds/ASAP > Keywords > Journey > Phase). Sub-chips for booking (15-min clarity call, Virtual walkthrough, No-pressure review) are present. Expansion chips for "Get my selling options" provide sub-intent narrowing.
 
-**2. V2Sell and V2Buy both render their own bottom CTA section AND the global `CTASection` via V2Layout**
-Neither page passes `suppressCTA` to `V2Layout`, so users see two navy-background booking CTAs stacked:
-- Page-specific CTA (lines 513-546 in V2Sell, lines 264-297 in V2Buy)
-- Global CTASection from V2Layout
+**No RAG needed**: The system prompt + 13 dynamic context blocks already inject all necessary knowledge at runtime. The prompts are intent-pruned (seller KB stripped for buyers, buyer KB stripped for sellers), keeping token usage efficient. Adding RAG would increase latency without benefit — the knowledge is finite and fully covered.
 
-**Fix**: Either add `suppressCTA` to both hub pages, OR remove the page-level bottom CTA sections and let the global CTASection handle it (which is already intent-aware).
+**No MCP needed**: All external integrations (GHL, Google Places, YouTube, Firecrawl, Perplexity) are already handled by edge functions. MCP adds no value here.
 
 ---
 
-### HIGH — Homepage Section Order Suboptimal
+## Issues Found
 
-**3. Homepage vertical rhythm disruption**
-Current order after About section:
-1. Neighborhood Cards
-2. TrustBar
-3. GoogleReviewsStarBadge
-4. TestimonialColumns
-5. GoogleReviewsSection (full)
-6. Services Section
-7. Corner Connect
-8. Selena Showcase
-9. Podcast
+### CRITICAL — Response Length Violation (Visible in Screenshots)
 
-Issues:
-- Google Reviews appears twice (star badge at line 482 AND full section at line 492) — redundant
-- Services cards (Buyers/Sellers/Cash) appear AFTER testimonials — should be higher in the funnel since they're navigational
-- Selena Showcase is buried below Corner Connect
+The screenshots show Selena generating 4-6 sentence responses (100-150 words) despite **three separate** system prompt rules mandating 1-3 sentences:
+- KB-10: "Maximum 1-3 sentences before showing chips"
+- Core Behavior: "Keep responses to 2-3 sentences"
+- Hard Rule (Phase 3): "Your text MUST be 1-2 sentences max"
 
-**Fix**: Reorder to: TrustBar → Services → Selena Showcase → Neighborhood Cards → Testimonials + Google Reviews (combined) → Corner Connect → Podcast. Remove duplicate star badge OR the full reviews section.
+**Root cause**: `max_tokens: 150` is too generous for 1-3 sentence compliance. At ~1.3 tokens/word, 150 tokens allows ~115 words — enough for 6+ sentences. The model fills the budget.
 
----
+**Fix**: Reduce `max_tokens` to **100** for Phase 2+ responses (keep 150 for Phase 1 orientation). Add a post-processing sentence counter that truncates at the 3rd period/question-mark and appends the chip array.
 
-### MEDIUM — Sell Page Cash CTA Mismatch
+### HIGH — System Prompt Redundancy (~400 wasted tokens)
 
-**4. Homepage Corner Connect CTA also routes to `/contact`** (line 638)
-Same issue as #1. "Ask About Off-Market Properties" goes to generic contact instead of the decision funnel.
+The system prompt contains **duplicate governance blocks**:
+- Lines 100-169: "Conversational Operating Doctrine" (tone, flow, booking rules)
+- Lines 172-220: Nearly identical content repeated ("CORE BEHAVIOR RULES", "ROLE POSITIONING", "LANGUAGE RULE", "CONCIERGE PHILOSOPHY")
 
-**Fix**: Route to `/off-market` or `/cash-offer-options` based on the card's context.
+This wastes ~400 tokens per request and creates ambiguity about which block governs. The model may weight the later block more, undermining the earlier, more detailed one.
 
----
+**Fix**: Merge the duplicate blocks into a single authoritative section. Remove lines 172-220 and consolidate any unique rules into the existing Doctrine block.
 
-### MEDIUM — Missing `ToolResultNextStep` on Seller Timeline
+### MEDIUM — "How to connect:" Label on Sub-chips
 
-**5. V2SellerTimeline (770 lines) — no tool chaining component**
-All other tool pages have `ToolResultNextStep` but the seller timeline page is missing it.
+Screenshots show sub-chips (15-min clarity call, Virtual walkthrough, No-pressure review) preceded by a "How to connect:" label. This is a good pattern but the label appears even when the primary chip above is not a booking chip. It should only render when the expanded chip is booking-related.
 
-**Fix**: Add `ToolResultNextStep` with label "Seller Timeline" after the timeline completion state.
+**Fix**: Gate the "How to connect:" label on the chip being a booking-type action.
 
----
+### MEDIUM — Desktop "Back to" Link Placement
 
-### LOW — Sell Page Journey Breadcrumb Placement
+In the desktop Sheet, the "Back to [page]" link renders inside the header `div` alongside the title controls, creating a cramped layout. On mobile it's correctly placed as a separate sub-bar.
 
-**6. JourneyBreadcrumb on V2Sell appears AFTER the address-first entry section**
-The address input (lines 96-129) separates the hero from the journey breadcrumb (lines 131-136). For returning users, their progress context should appear before the address input — they may not need it.
+**Fix**: Move the desktop `sourcePage` render outside the header `div` to match mobile placement.
 
-**Fix**: Swap the order so JourneyBreadcrumb renders immediately after the hero, before the address entry.
+### LOW — Onboarding Overlay Uses Emojis
+
+The first-open onboarding overlay uses emoji bullets (sparkles, chart, calendar) which conflicts with the "no emojis" governance rule in KB-0. Minor brand consistency issue.
+
+**Fix**: Replace emoji bullets with Lucide icons matching the rest of the UI (Compass, Calculator, Calendar).
 
 ---
 
-### LOW — ExitIntentModal Mobile Strategy
-
-**7. Exit modal uses `popstate` (back button hijack) on mobile**
-Line 78 pushes a history entry, and popstate triggers the modal. This is an aggressive anti-pattern that can frustrate users and violates the "calm, trust-first" brand mandate.
-
-**Fix**: Replace popstate with a 45-second idle timer + scroll-to-top detection, or remove mobile exit-intent entirely and rely on the Selena floating button for re-engagement.
-
----
-
-## Selena AI Audit — System Prompt & KB
-
-Based on the skill files and edge function architecture:
-
-- **KB-0 → KB-12 hierarchy**: Intact, properly layered
-- **Guard state**: 549-line governance file, containment overlay triggers on vulnerability signals — verified
-- **Chip governance**: 82+ registry entries, bilingual, ActionSpec-backed — no orphan chips
-- **max_tokens = 150**: Intentional constraint, enforced
-- **Model**: Gemini 3 Flash preview primary, GPT-4o-mini fallback — correct
-- **13 dynamic context blocks**: All wired (memory, reflection, seller decision, market pulse, neighborhood, tool output, governance, journey, trail, guide mode, mode, guard, containment)
-- **Booking gate**: `hasEarnedBookingAccess()` — verified as enforced
-- **No issues found with Selena's architecture**
-
----
-
-## Implementation Priority
+## Implementation Summary
 
 | # | Issue | Impact | Effort |
 |---|-------|--------|--------|
-| 1 | Cash offer CTA → wrong route | Critical | 5 min |
-| 2 | Double CTA on Buy/Sell hubs | High | 5 min |
-| 3 | Homepage section reorder | High | 15 min |
-| 4 | Homepage Corner Connect CTA route | Medium | 5 min |
-| 5 | Missing ToolResultNextStep on Seller Timeline | Medium | 10 min |
-| 6 | Sell page breadcrumb placement | Low | 5 min |
-| 7 | Mobile exit-intent strategy | Low | 20 min |
+| 1 | Response length drift — add dynamic max_tokens + post-processing truncation | Critical | 15 min |
+| 2 | System prompt deduplication (~400 tokens saved) | High | 10 min |
+| 3 | Sub-chip "How to connect" label gating | Medium | 5 min |
+| 4 | Desktop "Back to" link placement | Medium | 5 min |
+| 5 | Onboarding emoji replacement | Low | 5 min |
 
-**Total estimated**: 3-4 implementation messages to resolve all 7 issues.
+**Total**: 2 implementation messages.
+
+**No RAG, no MCP, no new infrastructure needed.** The system is architecturally complete. These are calibration fixes to enforce existing governance rules the model is drifting from.
 
