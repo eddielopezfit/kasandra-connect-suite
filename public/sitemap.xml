@@ -83,6 +83,10 @@
   <url><loc>https://kasandraprietorealtor.com/neighborhoods/nogales</loc><lastmod>2026-03-15</lastmod><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://kasandraprietorealtor.com/neighborhoods/red-rock</loc><lastmod>2026-03-15</lastmod><changefreq>monthly</changefreq><priority>0.55</priority></url>
   <url><loc>https://kasandraprietorealtor.com/neighborhoods/picture-rocks</loc><lastmod>2026-03-15</lastmod><changefreq>monthly</changefreq><priority>0.55</priority></url>
+  <!-- Calculators & Tools -->
+  <url><loc>https://kasandraprietorealtor.com/affordability-calculator</loc><lastmod>2026-03-27</lastmod><changefreq>monthly</changefreq><priority>0.80</priority></url>
+  <url><loc>https://kasandraprietorealtor.com/bah-calculator</loc><lastmod>2026-03-27</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://kasandraprietorealtor.com/home-valuation</loc><lastmod>2026-03-27</lastmod><changefreq>monthly</changefreq><priority>0.80</priority></url>
   <!-- Legal -->
   <url><loc>https://kasandraprietorealtor.com/privacy</loc><lastmod>2026-01-01</lastmod><changefreq>yearly</changefreq><priority>0.30</priority></url>
   <url><loc>https://kasandraprietorealtor.com/terms</loc><lastmod>2026-01-01</lastmod><changefreq>yearly</changefreq><priority>0.30</priority></url>
