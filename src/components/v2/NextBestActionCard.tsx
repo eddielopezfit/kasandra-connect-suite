@@ -87,7 +87,7 @@ export default function NextBestActionCard({
         <button
           onClick={() => {
             onClick();
-            handleSelenaOpen(cta.destination);
+            handleSelenaOpen();
           }}
           className={
             variant === 'primary'
