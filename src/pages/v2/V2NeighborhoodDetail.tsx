@@ -15,6 +15,8 @@ import AreaDecisionTools from "@/components/v2/neighborhood/AreaDecisionTools";
 import AreaCinematicCTA from "@/components/v2/neighborhood/AreaCinematicCTA";
 import AreaReadinessIndicator from "@/components/v2/neighborhood/AreaReadinessIndicator";
 import NeighborhoodSplitCTA from "@/components/v2/neighborhood/NeighborhoodSplitCTA";
+import KasandraPresenceCard from "@/components/v2/KasandraPresenceCard";
+import KasandraVideoBlock from "@/components/v2/KasandraVideoBlock";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { updateSessionContext } from "@/lib/analytics/selenaSession";
@@ -181,6 +183,15 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
         <AreaLifestyleFit lifestyleFit={neighborhood.lifestyleFit} />
       )}
 
+      {/* ── KASANDRA PRESENCE — after lifestyle, before intelligence ── */}
+      {hasCinematicData && (
+        <KasandraPresenceCard
+          variant="editorial"
+          messageEn="Hi, I'm Kasandra — if you're exploring this area, here's what I'd want you to know: the right neighborhood isn't about price alone. It's about how your daily life feels."
+          messageEs="Hola, soy Kasandra — si estás explorando esta área, esto es lo que me gustaría que supieras: el vecindario correcto no se trata solo del precio. Se trata de cómo se siente tu vida diaria."
+        />
+      )}
+
       {/* ── AREA INTELLIGENCE CARDS ── */}
       {neighborhood.areaIntelligence && (
         <AreaIntelligenceCard areaIntelligence={neighborhood.areaIntelligence} />
@@ -200,6 +211,14 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
           areaName={language === 'es' ? neighborhood.nameEs : neighborhood.name}
         />
       )}
+
+      {/* ── KASANDRA VIDEO — before decision tools ── */}
+      <KasandraVideoBlock
+        variant="compact"
+        labelEn="Watch: What buyers should know about this area"
+        labelEs="Mira: Lo que los compradores deben saber de esta área"
+        className="px-4"
+      />
 
       {/* ── DECISION TOOLS ── */}
       <AreaDecisionTools slug={neighborhood.slug} />

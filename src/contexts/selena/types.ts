@@ -64,7 +64,12 @@ export type EntrySource =
      | 'showcase_full'
      | 'showcase_compact'
      | 'guide_bottom'
-     | 'intelligence_banner';
+     | 'intelligence_banner'
+     | 'proactive_neighborhood'
+     | 'proactive_tool_followup'
+     | 'proactive_guide_reader'
+     | 'proactive_seller_nudge'
+     | 'proactive_buyer_budget';
 
 export interface EntryContext {
   estimatedBudget?: number;
