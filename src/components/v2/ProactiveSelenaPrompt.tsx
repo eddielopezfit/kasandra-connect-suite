@@ -48,6 +48,10 @@ const ProactiveSelenaPrompt = () => {
     // Don't show for brand new users
     if (progress.journeyDepth === 'new') return;
 
+    // Suppress on pages that already have multiple Selena entry points
+    const suppressOnPages = ['/cash-offer-options', '/book', '/contact'];
+    if (suppressOnPages.some(p => window.location.pathname.startsWith(p))) return;
+
     const triggers: TriggerConfig[] = [
       {
         condition: progress.hasExploredNeighborhood && progress.toolCount === 0 && progress.guideCount >= 1,

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Button } from "@/components/ui/button";
@@ -6,15 +7,20 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
 import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, Sparkles, Calendar, MessageCircle } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, ArrowRight, Clock, Shield, FileText, Calendar, MessageCircle } from "lucide-react";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
+import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import heroImage from "@/assets/hero-cash-calm.png";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
-import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
 const V2CashOfferOptionsContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
+
+  // Set intent to 'cash' so JourneyBreadcrumb shows cash-relevant next steps
+  useEffect(() => {
+    setFieldIfEmpty('intent', 'cash');
+  }, []);
   useDocumentHead({
     titleEn: "Cash Offer vs. Traditional Listing | Tucson Home Sale Calculator",
     titleEs: "Oferta en Efectivo vs. Venta Tradicional | Calculadora de Venta en Tucson",
@@ -269,31 +275,7 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
-      {/* Cash Readiness Diagnostic CTA */}
-      <section className="py-12 bg-cc-navy">
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-xl mx-auto">
-            <Sparkles className="w-8 h-8 text-cc-gold mx-auto mb-4" />
-            <h3 className="font-serif text-2xl md:text-3xl font-bold text-white mb-3">
-              {t("Not Sure Which Path Fits?", "¿No Estás Seguro/a Qué Camino Te Conviene?")}
-            </h3>
-            <p className="text-white/80 mb-6">
-              {t(
-                "Take a 1-minute readiness check to see how well a cash offer fits your situation.",
-                "Toma un check de preparación de 1 minuto para ver qué tan bien se ajusta una oferta en efectivo a tu situación."
-              )}
-            </p>
-            <Link
-              to="/cash-readiness"
-              className="inline-flex items-center bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3 shadow-gold transition-all active:scale-[0.98]"
-            >
-              {t("Take the Cash Readiness Check", "Toma el Check de Preparación")}
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </div>
-        </div>
-      </section>
-      {/* Single Bottom CTA — merged from previous two sections */}
+      {/* Single Terminal CTA — Book + secondary Cash Readiness */}
       <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-xl mx-auto">
@@ -315,23 +297,19 @@ const V2CashOfferOptionsContent = () => {
                 {t("Book a Strategy Call", "Agenda una Llamada de Estrategia")}
               </Link>
             </Button>
+            <Link
+              to="/cash-readiness"
+              className="block mx-auto mt-4 text-white/70 hover:text-cc-gold text-sm font-medium transition-colors"
+            >
+              {t("Or take the Cash Readiness Check first →", "O toma el Check de Preparación primero →")}
+            </Link>
             <button
               onClick={() => openChat({ source: 'cash_offer_bottom', intent: 'cash' })}
-              className="block mx-auto mt-3 text-white/60 hover:text-cc-gold text-sm underline underline-offset-2 transition-colors"
+              className="block mx-auto mt-2 text-white/50 hover:text-cc-gold text-xs underline underline-offset-2 transition-colors"
             >
               {t("Or talk to Selena first", "O habla primero con Selena")}
             </button>
           </div>
-        </div>
-      </section>
-
-      {/* Tool Chaining — Next Step */}
-      <section className="pb-8 bg-cc-ivory">
-        <div className="container mx-auto px-4 max-w-xl">
-          <ToolResultNextStep
-            completedToolLabel="Cash vs. Traditional Comparison"
-            completedToolLabelEs="Comparación Efectivo vs. Tradicional"
-          />
         </div>
       </section>
 
