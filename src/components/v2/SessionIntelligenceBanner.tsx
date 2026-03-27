@@ -149,8 +149,8 @@ function getBannerContent(
         `Has completado ${toolCount} herramientas. Tu panorama se aclara.`
       ),
       actions: [
-        { type: 'chat', label: t("Ask Selena what's next", "Pregúntale a Selena qué sigue"), destination: 'selena' },
-        { type: 'link', label: t("Talk to Kasandra", "Hablar con Kasandra"), destination: '/book' },
+        { type: 'chat', label: t("Let Selena walk you through it", "Deja que Selena te acompañe"), destination: 'selena' },
+        { type: 'link', label: t("Plan your next step with Kasandra", "Planifica tu siguiente paso con Kasandra"), destination: '/book' },
       ],
       isReturning: false,
     };
