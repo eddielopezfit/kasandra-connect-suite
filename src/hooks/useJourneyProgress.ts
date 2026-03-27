@@ -18,6 +18,8 @@ export interface NextAction {
   destination: string;
 }
 
+export type ConfidenceLevel = 'low' | 'medium' | 'high';
+
 export interface JourneyProgress {
   intent: Intent | undefined;
   isReturningUser: boolean;
@@ -50,6 +52,7 @@ export interface JourneyProgress {
   quizCompleted: boolean;
 
   journeyDepth: 'new' | 'exploring' | 'engaged' | 'ready';
+  confidenceLevel: ConfidenceLevel;
   nextRecommendedAction: NextAction;
 }
 
@@ -178,6 +181,14 @@ export function useJourneyProgress(): JourneyProgress {
       hasSellerDecision, hasCalculatorResults, journeyDepth,
     );
 
+    // Derive confidence level from session signals
+    const confidenceLevel: ConfidenceLevel =
+      (guideCount >= 5 && toolCount >= 1) || hasReadinessScore || hasSellerDecision || hasBooked
+        ? 'high'
+        : guideCount >= 3 || toolCount >= 1 || hasCalculatorResults
+        ? 'medium'
+        : 'low';
+
     return {
       intent,
       isReturningUser,
@@ -202,6 +213,7 @@ export function useJourneyProgress(): JourneyProgress {
       hasBooked,
       quizCompleted,
       journeyDepth,
+      confidenceLevel,
       nextRecommendedAction,
     };
   }, [stageId, level]);

@@ -4,12 +4,14 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { NEIGHBORHOOD_REGISTRY } from "@/data/neighborhoods/neighborhoodRegistry";
 import { getNeighborhoodHeroUrl } from "@/lib/neighborhood/heroUrl";
 import { useState } from "react";
+import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 
 /** 3 featured neighborhoods for homepage — diverse buyer profiles */
 const FEATURED_SLUGS = ["catalina-foothills", "marana", "sahuarita"];
 
 const HomepageNeighborhoodCards = () => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
+  const { intent } = useJourneyProgress();
   
   const featured = FEATURED_SLUGS.map(slug =>
     NEIGHBORHOOD_REGISTRY.find(n => n.slug === slug)!
@@ -37,7 +39,7 @@ const HomepageNeighborhoodCards = () => {
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {featured.map(neighborhood => (
-            <NeighborhoodFeatureCard key={neighborhood.slug} neighborhood={neighborhood} />
+            <NeighborhoodFeatureCard key={neighborhood.slug} neighborhood={neighborhood} intent={intent} />
           ))}
         </div>
 
@@ -56,10 +58,26 @@ const HomepageNeighborhoodCards = () => {
   );
 };
 
-function NeighborhoodFeatureCard({ neighborhood }: { neighborhood: typeof NEIGHBORHOOD_REGISTRY[number] }) {
-  const { language } = useLanguage();
+function getIntentTag(
+  neighborhood: typeof NEIGHBORHOOD_REGISTRY[number],
+  intent: string | undefined,
+  t: (en: string, es: string) => string,
+): string | null {
+  const intel = neighborhood.areaIntelligence;
+  if (!intel) return null;
+  
+  if (intent === 'buy' && intel.demandLevel === 'high') return t("High Demand", "Alta Demanda");
+  if (intent === 'sell' && intel.marketSpeed === 'fast') return t("Fast Market", "Mercado Rápido");
+  if (intent === 'cash') return t("Cash Offer Available", "Oferta en Efectivo Disponible");
+  if (intel.demandLevel === 'high') return t("High Demand", "Alta Demanda");
+  return null;
+}
+
+function NeighborhoodFeatureCard({ neighborhood, intent }: { neighborhood: typeof NEIGHBORHOOD_REGISTRY[number]; intent?: string }) {
+  const { language, t } = useLanguage();
   const [imgError, setImgError] = useState(false);
   const heroUrl = getNeighborhoodHeroUrl(neighborhood.slug);
+  const tag = getIntentTag(neighborhood, intent, t);
 
   return (
     <Link to={`/neighborhoods/${neighborhood.slug}`} className="group">
@@ -85,6 +103,11 @@ function NeighborhoodFeatureCard({ neighborhood }: { neighborhood: typeof NEIGHB
             <MapPin className="w-3.5 h-3.5" />
             {neighborhood.primaryZip}
           </div>
+          {tag && (
+            <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-cc-gold/90 text-cc-navy text-[11px] font-semibold uppercase tracking-wide">
+              {tag}
+            </span>
+          )}
         </div>
 
         {/* Content */}
