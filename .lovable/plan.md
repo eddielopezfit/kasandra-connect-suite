@@ -1,104 +1,119 @@
 
 
-# Cash Offer Options Page Audit — CTA Overload & Cross-Page Pattern Review
+# Brand Voice Copy Optimization — All Pages
 
-## The Problem (Visible in Screenshots)
-
-The `/cash-offer-options` page has **11 distinct action points** competing for attention across 7 scrollable viewport heights:
-
-```text
-VIEWPORT 1 (Hero):
-  1. "Run My Numbers" button (scroll anchor)
-  2. "Or ask Selena a question" (opens chat)
-
-VIEWPORT 2 (Journey Breadcrumb):
-  3. "Check Your Buyer Readiness →" ← WRONG INTENT (shows buy on a cash/sell page)
-
-VIEWPORT 3 (Calculator):
-  4. Calculator's own CTA ("Calculate My Options")
-
-VIEWPORT 4 (Proactive Selena Prompt — persists):
-  5. "Let Selena guide you ✨" (floating toast, visible in ALL viewports)
-
-VIEWPORT 5-6 (Two back-to-back navy sections):
-  6. "Take the Cash Readiness Check →" (/cash-readiness)
-  7. "Book a Strategy Call" (/book)
-  8. "Or talk to Selena first" (opens chat)
-
-VIEWPORT 7 (Below booking CTA):
-  9. ToolResultNextStep: "Check Your Buyer Readiness →" ← WRONG INTENT AGAIN
-  10. "View Seller Services →" (/sell) — back link
-
-ALWAYS VISIBLE:
-  11. Floating Selena bubble (bottom-right)
-  12. Nav "Book a Consultation" button
-```
-
-**That's 12 clickable action points on a single page.** The user is being pulled in 6 different directions simultaneously.
-
-## Critical Issues
-
-### 1. WRONG INTENT ROUTING (Critical)
-Both the `JourneyBreadcrumb` (viewport 2) and `ToolResultNextStep` (viewport 7) show **"Check Your Buyer Readiness"** on a page where the user's intent is clearly **cash/sell**. This happens because the session has `intent: 'buy'` set from earlier navigation. The page itself should override the session intent for its own CTA logic — or at minimum, the `deriveNextAction` function should consider the current page context, not just stored intent.
-
-### 2. TWO BACK-TO-BACK NAVY CTA SECTIONS (High)
-Lines 272-326 render two consecutive full-width navy sections:
-- "Not Sure Which Path Fits?" → Cash Readiness Check
-- "Want Expert Guidance?" → Book a Strategy Call
-
-These visually merge into one giant navy block (screenshot 5 confirms this). The user sees a wall of CTAs with no visual separation.
-
-**Fix**: Merge into ONE section with a primary CTA (Book) and a secondary link (Cash Readiness Check).
-
-### 3. PROACTIVE SELENA PROMPT NEVER DISMISSES (Medium)
-The floating "You've done great research" toast appears in every single screenshot (viewports 2-7). It overlaps content, covers the "Traditional Listing" scenarios column, and competes with both the floating Selena bubble AND the page's own Selena CTAs.
-
-### 4. TOOL RESULT NEXT STEP APPEARS AFTER BOOKING CTA (Medium)
-The `ToolResultNextStep` card renders BELOW the terminal booking CTA. This is backwards — the user already saw the booking CTA and scrolled past it. Showing a lower-intent action (readiness check) after the highest-intent action (book) creates cognitive regression.
+## Kasandra's Voice Rules
+- First person ("I walk through..." not "Kasandra reviews...")
+- Warm, direct, personal — like a best friend who happens to be an expert
+- No generic CTA language ("Learn More", "Get Started", "Ready to...")
+- Insight-driven labels, not button-speak
+- Emotional reassurance at decision points
+- Spanish uses informal "tu" (best friend register)
 
 ---
 
-## The Fix — Reduce 12 Action Points to 5
+## Pages & Copy Changes
 
-### Page Structure (Optimized)
-```text
-HERO:
-  1. "Run My Numbers" (scroll anchor — stays)
-  2. "Or ask Selena" (secondary — stays)
+### 1. Homepage (`V2Home.tsx`)
 
-CALCULATOR (interactive tool — stays as-is)
+**Services Section — 3x "Learn More" links (lines 518, 537, 556)**
+- "Learn More" / "Mas Informacion" is prohibited per Advisory Copy Standards
+- Change to: "See how I help buyers" / "See how I protect sellers" / "Understand your options"
 
-EDUCATION (Static comparison + Wholesaler warning + When Cash Makes Sense)
-  — Pure education, NO CTAs in this zone
+**About Section heading (line 280)**
+- "Your Trusted Tucson REALTOR®" → "Your Best Friend in Real Estate"
+- (Matches the About page H1 and brand identity)
 
-SINGLE TERMINAL CTA SECTION:
-  3. Primary: "Book a Strategy Call" → /book
-  4. Secondary text: "Or take the Cash Readiness Check first" → /cash-readiness
-  5. Tertiary: "Or talk to Selena" → opens chat
+**About Section bio (line 284)**
+- "I serve my community not just as a licensed REALTOR®, but as a leader, advocate, and trusted voice" → "I didn't get into real estate to sell houses — I got in to help families make one of the biggest decisions of their lives with someone they actually trust."
 
-SOCIAL PROOF (Google Reviews)
+**Community section (line 749)**
+- "Real estate is about more than transactions—it's about building stronger communities" → "This work has never been just about houses for me. It's about the families inside them and the neighborhoods that hold them together."
+- "Learn More" → "See how I give back"
 
-BACK LINK ("View Seller Services" → /sell)
-```
+**Corner Connect CTA (line 646)**
+- "Ask About Off-Market Properties" → "See what's available off-market"
 
-### Implementation
+### 2. Sell Page (`V2Sell.tsx`)
 
-**File: `src/pages/v2/V2CashOfferOptions.tsx`**
-1. **Remove the standalone Cash Readiness CTA section** (lines 272-295). Fold it into the bottom CTA as a secondary link.
-2. **Move ToolResultNextStep ABOVE the terminal CTA**, not below it. Or remove it entirely since the page itself IS the tool — the terminal CTA handles the next step.
-3. **Set page-level intent override**: Call `setFieldIfEmpty('intent', 'cash')` in a `useEffect` so that `deriveNextAction` returns cash-intent actions, not buyer-intent actions.
+**Hero headline (line 81)**
+- "Tucson Home Selling: Know Your Worth. Sell on Your Terms." → "Selling Your Home? I'll Make Sure You Know Exactly Where You Stand."
 
-**File: `src/hooks/useJourneyProgress.ts`**
-4. No changes needed — the `cash` intent path already correctly returns "Check Your Cash Readiness". The bug is that the page doesn't set its own intent.
+**Hero subtext (line 83)**
+- "Kasandra helps Tucson sellers..." (third person) → "I help Tucson sellers price right, time the market, and close with confidence — plus you get a 24/7 AI concierge that works while you sleep."
 
-**File: `src/components/v2/ProactiveSelenaPrompt.tsx`**
-5. Ensure it respects the `suppressOnPages` list or add `/cash-offer-options` to it — this page already has 2 explicit Selena entry points, the proactive prompt is redundant.
+**"How I Protect Your Interests" subtext (line 196)**
+- "My approach is centered on your protection and informed decision-making at every stage." → "I come from life insurance — protection is in my DNA. Every decision we make together starts with what's best for you."
 
-### Cross-Page Pattern Check
-This same CTA overload pattern likely exists on other hub pages. After fixing `/cash-offer-options`, I'll audit `/buy` and `/sell` for the same issues:
-- Double navy CTA sections
-- ToolResultNextStep placement below terminal CTAs
-- Intent mismatch in JourneyBreadcrumb/ToolResultNextStep
+**Cash Offer section (line 146)**
+- "Need to Sell Fast? Get a Cash Offer." → "Need to sell fast? Let me show you what a real cash offer looks like."
 
-**Estimated scope**: 1 implementation message. Primarily editing `V2CashOfferOptions.tsx` (merge CTAs, set intent, reorder sections) plus a minor check on ProactiveSelenaPrompt suppression.
+**Cash Offer CTA (line 177)**
+- "Request a Cash Offer" → "See your cash offer options" (semantic honesty — the page educates, doesn't deliver an offer)
+
+**Bottom CTA (line 519)**
+- "Ready to Sell?" → "Let's figure out your best move."
+- "Let's discuss your home and create a selling strategy..." → "I sit down with every seller and walk through both paths — cash and traditional. You decide with the full picture."
+
+**"Not ready?" link (line 545)**
+- "Not ready? Talk to Selena first" → "Still thinking it over? Selena can help you sort it out"
+
+**Back-link (line 324 in CashOffer)**
+- "Prefer a traditional sale? Learn more about how I work with sellers." → "Thinking a traditional sale might be the move? Let me show you how I help sellers get there."
+
+### 3. Buy Page (`V2Buy.tsx`)
+
+**Hero headline (line 89)**
+- "Buy a Home in Tucson with Confidence." → "Buying a Home in Tucson? I'll Walk You Through Every Step."
+
+**Hero subtext (line 91)**
+- "Kasandra guides buyers through every step..." (third person) → "I guide buyers through every step — from first search to closed door — with honesty, local expertise, and an AI concierge built just for you."
+
+**"Why Work With Me?" benefits (lines 197-239)**
+- "Communicate comfortably in English or Spanish throughout your entire journey." → "I speak your language — literally. English or Spanish, you'll always feel at home."
+- "I'll help you understand your options, including down payment assistance programs." → "Down payment programs, closing cost grants, VA benefits — I'll make sure you know every dollar available to you."
+- "Over two decades in Tucson means I know this community inside and out." → "20+ years in Tucson. I don't just know the neighborhoods — I know which streets flood, which schools are rising, and where the best tamales are."
+- "Selena AI is available around the clock to answer questions and schedule appointments." → "Can't sleep because you're thinking about your offer? Selena's up too. She'll answer your questions at 2 AM so you wake up clear-headed."
+
+**Bottom CTA (line 267)**
+- "Ready to Get Started?" → "Let's find your place in Tucson."
+- "Let's discuss your home buying goals and create a plan that works for you." → "I'll sit down with you, understand what you're really looking for, and build a game plan that fits your life — not just your budget."
+- "Not ready? Talk to Selena first" → "Still exploring? Let Selena help you get your bearings"
+
+### 4. Cash Offer Options (`V2CashOfferOptions.tsx`)
+
+**Terminal CTA (line 283)**
+- "Want Expert Guidance on Your Options?" → "Getting clearer on your home's value?"
+- "Kasandra reviews both cash and traditional paths with every seller — you decide with full information." → "I walk through both paths with every seller I work with — no pressure, just the full picture so you can decide what actually fits your life."
+
+**Back-link (line 324)**
+- "Prefer a traditional sale? Learn more about how I work with sellers." → "Thinking a traditional sale might be the move? Let me show you how I help sellers get there."
+- "View Seller Services" → "See how I help sellers"
+
+### 5. Contact Page (`V2Contact.tsx`)
+
+**Hero subtext (line 152)**
+- "Ready when you are — no pressure, no obligation." → "I'm here when you're ready. No pitch, no pressure — just a real conversation."
+
+### 6. Global CTA Section (`CTASection.tsx`)
+
+**"Or let Selena guide you through this" (line 172)**
+- Keep as-is — already good voice.
+
+**Early-stage sell copy (line 95)**
+- "Get a personalized market analysis from Kasandra — not an algorithm, a real strategy session." → "Not an algorithm — a real conversation about your home, your timeline, and your options."
+
+---
+
+## Files Modified
+- `src/pages/v2/V2Home.tsx` — ~12 copy strings
+- `src/pages/v2/V2Sell.tsx` — ~8 copy strings
+- `src/pages/v2/V2Buy.tsx` — ~10 copy strings
+- `src/pages/v2/V2CashOfferOptions.tsx` — ~4 copy strings
+- `src/pages/v2/V2Contact.tsx` — ~1 copy string
+- `src/components/v2/CTASection.tsx` — ~1 copy string
+
+All changes are copy-only (EN + ES pairs). No structural or logic changes.
+
+**Estimated scope**: 2-3 implementation messages (grouped by page).
 
