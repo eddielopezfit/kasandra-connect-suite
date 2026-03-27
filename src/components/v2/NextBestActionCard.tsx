@@ -44,9 +44,6 @@ export default function NextBestActionCard({
     return predictNextBestAction(ctx);
   }, [override, progress]);
 
-  // Don't show for users who have already booked
-  if (progress.hasBooked) return null;
-
   const handlePrimaryClick = useCallback(() => {
     logEvent('predicted_action_clicked' as any, {
       action: prediction.action,
