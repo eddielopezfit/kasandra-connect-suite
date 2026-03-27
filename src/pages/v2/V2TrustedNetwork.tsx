@@ -124,7 +124,7 @@ const V2TrustedNetworkContent = () => {
 };
 
 const V2TrustedNetwork = () => (
-  <V2Layout suppressCTA>
+  <V2Layout>
     <V2TrustedNetworkContent />
   </V2Layout>
 );

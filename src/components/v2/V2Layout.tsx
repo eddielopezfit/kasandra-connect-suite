@@ -138,7 +138,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         <EscalationBanner />
         <SessionIntelligenceBanner />
         <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden bg-cc-navy">{children}</main>
-        {!suppressCTA && <CTASection />}
+        
         <V2Footer />
         
         {/* Selena Chat - Site Wide */}

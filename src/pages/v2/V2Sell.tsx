@@ -576,7 +576,7 @@ const V2SellContent = () => {
 };
 
 const V2Sell = () => (
-  <V2Layout suppressCTA>
+  <V2Layout>
     <V2SellContent />
   </V2Layout>
 );

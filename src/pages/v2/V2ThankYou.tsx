@@ -605,7 +605,7 @@ const V2ThankYouContent = () => {
 };
 
 const V2ThankYou = () => (
-  <V2Layout suppressCTA>
+  <V2Layout>
     <V2ThankYouContent />
   </V2Layout>
 );
