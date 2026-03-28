@@ -1,5 +1,7 @@
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, extractRateLimitKey, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 /**
  * check-availability
@@ -11,8 +13,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
  * Falls back gracefully to booking page URL if API is unavailable.
  */
 
-const GHL_CALENDAR_ID = "N7himS3BLf5KxaVbQPz6";
-const GHL_LOCATION_ID = "kGfxAFqz1M7sxRFm52L1";
+const GHL_CALENDAR_ID = Deno.env.get("GHL_CALENDAR_ID") ?? "N7himS3BLf5KxaVbQPz6";
+const GHL_LOCATION_ID = Deno.env.get("GHL_LOCATION_ID") ?? "kGfxAFqz1M7sxRFm52L1";
 const BOOKING_PAGE_URL = "https://kasandraprietorealtor.com/book";
 
 interface AvailabilityRequest {
@@ -44,7 +46,19 @@ serve(async (req) => {
   const requestId = crypto.randomUUID().slice(0, 8);
 
   try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
     const body = await req.json();
+
+    // Rate limiting (skip for health checks)
+    if (body.action !== "health") {
+      const rlKey = extractRateLimitKey(req, body);
+      const rl = await checkRateLimit(supabase, rlKey, 'check-availability');
+      if (!rl.allowed) return rateLimitResponse(corsHeaders);
+    }
 
     // ============= HEALTH CHECK MODE =============
     if (body.action === "health") {

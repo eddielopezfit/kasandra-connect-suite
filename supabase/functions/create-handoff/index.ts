@@ -251,7 +251,7 @@ serve(async (req) => {
       },
     };
 
-    console.log('[create-handoff] 🔔 NOTIFICATION TO KASANDRA:', JSON.stringify(notifyPayload, null, 2));
+    console.log(`[create-handoff] 🔔 Handoff notification fired for lead=${lead_id}, priority=${priority}, channel=${channel}`);
 
     // Generate 3-sentence AI conversation summary for Agent Studio
     try {
