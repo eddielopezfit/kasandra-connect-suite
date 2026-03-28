@@ -1,6 +1,6 @@
 # Architecture: check-availability
 
-## Current State (RESOLVED)
+## Current State (RESOLVED + HARDENED)
 
 `supabase/functions/check-availability/index.ts` now calls the **real GHL Calendar API**.
 
