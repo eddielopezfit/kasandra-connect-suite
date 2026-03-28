@@ -173,7 +173,7 @@ REQUIREMENTS:
       },
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
-        max_tokens: 8000,
+        max_tokens: 5000,
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: systemPrompt },

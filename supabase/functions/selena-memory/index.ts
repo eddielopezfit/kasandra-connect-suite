@@ -41,6 +41,11 @@ serve(async (req: Request) => {
     );
 
     const body = await req.json();
+
+    const rlKey = extractRateLimitKey(req, body);
+    const rl = await checkRateLimit(supabase, rlKey, 'selena-memory');
+    if (!rl.allowed) return rateLimitResponse(corsHeaders);
+
     const { action } = body;
 
     // ==================== STORE ====================

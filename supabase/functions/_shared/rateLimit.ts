@@ -36,6 +36,8 @@ const ENDPOINT_LIMITS: Record<string, RateLimitConfig> = {
   'update-lead-score': { maxRequests: 10, windowSeconds: 60 },
   'verify-lead-phone': { maxRequests: 5, windowSeconds: 60 },
   'save-buyer-criteria': { maxRequests: 10, windowSeconds: 3600 },
+  'selena-memory': { maxRequests: 10, windowSeconds: 60 },
+  'check-availability': { maxRequests: 10, windowSeconds: 60 },
 };
 
 // ─── In-memory fallback store ─────────────────────────────────────────────────

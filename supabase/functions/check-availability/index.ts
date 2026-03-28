@@ -13,8 +13,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
  * Falls back gracefully to booking page URL if API is unavailable.
  */
 
-const GHL_CALENDAR_ID = "N7himS3BLf5KxaVbQPz6";
-const GHL_LOCATION_ID = "kGfxAFqz1M7sxRFm52L1";
+const GHL_CALENDAR_ID = Deno.env.get("GHL_CALENDAR_ID") ?? "N7himS3BLf5KxaVbQPz6";
+const GHL_LOCATION_ID = Deno.env.get("GHL_LOCATION_ID") ?? "kGfxAFqz1M7sxRFm52L1";
 const BOOKING_PAGE_URL = "https://kasandraprietorealtor.com/book";
 
 interface AvailabilityRequest {
