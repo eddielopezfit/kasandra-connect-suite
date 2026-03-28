@@ -46,7 +46,19 @@ serve(async (req) => {
   const requestId = crypto.randomUUID().slice(0, 8);
 
   try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
     const body = await req.json();
+
+    // Rate limiting (skip for health checks)
+    if (body.action !== "health") {
+      const rlKey = extractRateLimitKey(req, body);
+      const rl = await checkRateLimit(supabase, rlKey, 'check-availability');
+      if (!rl.allowed) return rateLimitResponse(corsHeaders);
+    }
 
     // ============= HEALTH CHECK MODE =============
     if (body.action === "health") {
