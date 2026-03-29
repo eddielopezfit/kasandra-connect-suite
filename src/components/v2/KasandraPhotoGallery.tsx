@@ -2,9 +2,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import singingKaraoke from "@/assets/kasandra/singing-karaoke.jpg";
 import dancingStars from "@/assets/kasandra/dancing-stars-2024.jpg";
 import desertSunset from "@/assets/kasandra/desert-sunset-cowboy.jpg";
-import brandPhotoshoot from "@/assets/kasandra/brand-photoshoot-red-door.jpg";
+import navyDressIronGate from "@/assets/kasandra/navy-dress-iron-gate.jpg";
 import constructionClass from "@/assets/kasandra/construction-class.jpg";
-import fiestasPatrias from "@/assets/kasandra/fiestas-patrias-performer.jpg";
+import missLilly from "@/assets/kasandra/miss-lilly-gold-balloons.jpg";
 
 interface GalleryItem {
   src: string;
@@ -37,9 +37,9 @@ const GALLERY_ITEMS: GalleryItem[] = [
     captionEs: "Mi Tucson",
   },
   {
-    src: brandPhotoshoot,
-    altEn: "Kasandra Prieto professional brand photo",
-    altEs: "Foto profesional de marca de Kasandra Prieto",
+    src: navyDressIronGate,
+    altEn: "Kasandra Prieto at a Tucson iron gate",
+    altEs: "Kasandra Prieto en una puerta de hierro en Tucson",
     captionEn: "The Real Me",
     captionEs: "La Verdadera Yo",
   },
@@ -51,11 +51,11 @@ const GALLERY_ITEMS: GalleryItem[] = [
     captionEs: "15 Casas Pequeñas Construidas",
   },
   {
-    src: fiestasPatrias,
-    altEn: "Kasandra performing at Fiestas Patrias",
-    altEs: "Kasandra cantando en Fiestas Patrias",
-    captionEn: "Fiestas Patrias — St. Philip's Plaza",
-    captionEs: "Fiestas Patrias — St. Philip's Plaza",
+    src: missLilly,
+    altEn: "Miss Lilly celebrating with gold balloons",
+    altEs: "Miss Lilly celebrando con globos dorados",
+    captionEn: "Miss Lilly 🐾",
+    captionEs: "Miss Lilly 🐾",
   },
 ];
 
