@@ -283,35 +283,6 @@ const V2BAHCalculatorContent = () => {
               )}
             </p>
 
-            <div className="bg-cc-sand rounded-2xl p-6 text-center border border-cc-sand-dark/20">
-              <p className="font-serif text-lg font-bold text-cc-navy mb-2">
-                {t("Ready to explore Tucson neighborhoods?", "¿Listo para explorar vecindarios en Tucson?")}
-              </p>
-              <p className="text-cc-charcoal text-sm mb-4">
-                {t(
-                  "Kasandra has helped many military families find homes near Davis-Monthan. She understands PCS timelines and VA requirements.",
-                  "Kasandra ha ayudado a muchas familias militares a encontrar hogares cerca de Davis-Monthan. Entiende los cronogramas PCS y requisitos VA."
-                )}
-              </p>
-              <Button
-                onClick={() => openChat({
-                  source: "bah_calculator" as const,
-                  intent: "buy",
-                  estimatedBudget: result.maxPrice,
-                })}
-                className="bg-cc-navy text-white rounded-full px-8 font-semibold"
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                {t("Ask Selena About VA Homes", "Preguntarle a Selena Sobre Casas VA")}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-              <Link to="/book?intent=buy&source=bah_calculator" className="inline-block mt-3">
-                <Button className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  {t("Talk to Kasandra", "Hablar Con Kasandra")}
-                </Button>
-              </Link>
-            </div>
           </div>
         </section>
       )}
