@@ -1,75 +1,69 @@
 
 
-# Full Tool & CTA Audit — Hub-Wide Optimization
+# Sticky Data Layer — Session-Aware Progressive Profiling
 
-## Audit Findings
+## Problem
 
-### Tool-by-Tool CTA Analysis
+The system has all the infrastructure for "zero re-entry" but critical wiring is missing:
 
-| Tool Page | Post-Result CTAs | Issue |
-|---|---|---|
-| **Affordability Calculator** | 1) Selena CTA card, 2) "Talk to Kasandra" booking button, 3) ToolResultLeadCapture (email), 4) ToolResultNextStep | **4 stacked CTAs** — cognitive overload. Same pattern as Net-to-Seller before fix. |
-| **BAH Calculator** | 1) Selena CTA card, 2) "Talk to Kasandra" booking button, 3) ToolResultLeadCapture (email), 4) ToolResultNextStep | **4 stacked CTAs** — identical redundancy pattern. |
-| **Buyer Closing Costs** | 1) Selena CTA card, 2) "Review This With Kasandra" booking button, 3) ToolResultLeadCapture (email), 4) ToolResultNextStep | **4 stacked CTAs** — same issue. |
-| **Net-to-Seller** (already fixed) | 1) "Walk Through This with Kasandra" (primary), 2) "Ask Selena" (secondary), 3) ToolResultNextStep | **Clean.** Only 2 terminal CTAs + journey nudge. Model pattern. |
-| **Home Valuation** (Step 4 success) | 1) "Ask Selena About Selling", 2) "Read: Cash Offer vs Traditional" link, 3) ToolResultNextStep | **Acceptable.** 1 action + 1 guide link + journey nudge. No stacking. |
-| **Buyer Readiness** | ReadinessSnapshot (1 contextual CTA) + "Browse all guides" link + LeadCaptureModal (auto-fires) + ToolResultNextStep | **Acceptable.** Modal is gated, snapshot is contextual. |
-| **Seller Readiness** | Same pattern as Buyer Readiness | **Acceptable.** |
-| **Cash Readiness** | Same pattern as Buyer/Seller Readiness | **Acceptable.** |
-| **Seller Decision Wizard** | QuizFunnelLayout — isolated, receipt-based | **Clean.** No stacking. |
+1. **Two major capture points don't persist contact data to localStorage:**
+   - `LeadCaptureModal` — captures email, name, phone → sends to edge function → never stores locally
+   - `ToolResultLeadCapture` — captures email → sends to edge function → never stores locally
 
-### Core Problem
+2. **`useSessionPrePopulation` hook exists but is consumed by zero components.** It was built as a universal pre-fill bridge but never wired into any form.
 
-Three calculator pages (Affordability, BAH, Buyer Closing Costs) have the **same redundancy pattern**: a sand-colored CTA card with both a Selena button AND a booking button, PLUS a ToolResultLeadCapture email capture, PLUS a ToolResultNextStep card. That's 4 conversion touchpoints stacked vertically after results.
+3. **ToolResultLeadCapture doesn't pre-fill existing email** — if a user already provided their email on a previous tool, the next tool's capture card shows an empty field instead of auto-filling.
 
-### Selena Memory & Journey Awareness
+## Fix (3 files, surgical)
 
-All three calculators already pass context to Selena via `openChat()` with `source`, `intent`, and tool-specific data (e.g., `estimatedBudget`, `closingCostData`). This data flows into the `selena-chat` edge function's session context, so Selena **does** have memory of the user's tool usage. The `tools_completed` array and `last_tool_completed` field are persisted via `session_snapshots`. This is working correctly.
+### 1. `src/components/v2/LeadCaptureModal.tsx`
+**After successful submit (line ~147, after `bridgeLeadIdToV2`):**
+- Add `setStoredEmail(email.trim())`, `setStoredUserName(name.trim())`, `setStoredPhone(phone.trim())`
+- Import the three setters from `bridgeLeadIdToV2`
 
----
+**On mount (when `isOpen` changes to true):**
+- Pre-fill email/name/phone from `getStoredEmail()`, `getStoredUserName()`, `getStoredPhone()`
+- If email is already known, skip to step "details" automatically
 
-## Fix: Standardize All Calculator Pages to Net-to-Seller Pattern
+### 2. `src/components/v2/ToolResultLeadCapture.tsx`
+**After successful submit (line ~142, after `logEvent`):**
+- Add `setStoredEmail(email.trim())`
+- Import `setStoredEmail` and `getStoredEmail` from `bridgeLeadIdToV2`
+- Also call `bridgeLeadIdToV2(data.lead_id, ...)` to persist lead_id
 
-Remove the redundant "sand CTA card" section from Affordability, BAH, and Buyer Closing Costs. Keep only:
-1. **ToolResultLeadCapture** (email capture — non-intrusive, dismissible)
-2. **ToolResultNextStep** (journey-aware next action)
+**On mount:**
+- Pre-fill email field from `getStoredEmail()` if available
+- If email is pre-filled, auto-focus the submit button instead
 
-The ToolResultLeadCapture already provides the "Kasandra can find homes matching your budget" prompt. The ToolResultNextStep already routes to booking for high-engagement users. The sand CTA card is pure redundancy.
+### 3. `src/components/v2/LeadCaptureModal.tsx` (pre-fill on open)
+Add a `useEffect` watching `isOpen` that reads stored values and pre-populates the form fields. If all three fields (email, name, phone) are already known, the modal can auto-submit or show a "Welcome back" confirmation instead.
 
-### File Changes
+## What This Enables
+
+After these changes, the data flow becomes fully circular:
+
+```text
+User enters email on Affordability Calculator
+  → stored in localStorage + lead_profiles
+  → BAH Calculator pre-fills email
+  → Booking Form pre-fills email + name + phone
+  → Selena greets by name
+  → GHL receives full dossier
+```
+
+Every form in the system becomes a read-then-write participant in the Sticky Data Layer.
+
+## Files Changed
 
 | # | File | Change |
 |---|------|--------|
-| 1 | `V2AffordabilityCalculator.tsx` | Delete lines 285-314 (sand CTA card with Selena + booking buttons) |
-| 2 | `V2BAHCalculator.tsx` | Delete lines 286-314 (sand CTA card with Selena + booking buttons) |
-| 3 | `V2BuyerClosingCosts.tsx` | Delete lines 458-496 (sand CTA card with Selena + booking buttons) |
+| 1 | `src/components/v2/LeadCaptureModal.tsx` | Add localStorage persistence on submit + pre-fill on open |
+| 2 | `src/components/v2/ToolResultLeadCapture.tsx` | Add `setStoredEmail` + `bridgeLeadIdToV2` on submit + pre-fill email on mount |
 
-### Post-Fix Flow (all 3 calculators)
+## What We're NOT Changing
 
-```text
-Calculator Results
-  ↓
-ToolResultLeadCapture (email — appears after 2s delay, dismissible)
-  ↓
-ToolResultNextStep (journey-aware: routes to guides, neighborhoods, or booking based on depth)
-  ↓
-Footer
-```
-
-Clean. Consistent with Net-to-Seller. No cognitive overload. Each element serves a distinct purpose.
-
-### What We're NOT Changing
-
-- **Readiness quizzes** — their pattern is already correct (modal-gated capture + snapshot CTA)
-- **Home Valuation** — success state has 1 action + 1 guide link, no stacking
-- **Seller Decision** — isolated funnel, receipt-based, clean
-- **Net-to-Seller** — already fixed in previous pass
-- **Selena memory** — already working. Session context, tools_completed, and openChat source params all flow correctly
-
-### Unused Import Cleanup
-
-After removing the CTA sections, clean up unused imports in each file:
-- `V2AffordabilityCalculator.tsx`: Remove `Calendar` from lucide imports, `Link` from react-router-dom
-- `V2BAHCalculator.tsx`: Remove `Calendar` from lucide imports, `Link` from react-router-dom
-- `V2BuyerClosingCosts.tsx`: Remove `Calendar` from lucide imports
+- `useSessionPrePopulation` — keeping it available but not force-wiring it into forms that already use direct `getStored*` calls (BookingIntakeForm, StepContact). Those patterns work correctly.
+- `NativeBookingFlow` — already persists correctly
+- SessionContext / selenaSession — already working as the intent/timeline/tool data layer
+- Edge functions — no changes needed, they already receive all data
 
