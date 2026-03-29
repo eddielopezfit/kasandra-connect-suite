@@ -47,3 +47,9 @@ verify_jwt = false
 
 [functions.agent-studio-callback]
 verify_jwt = false
+
+[functions.refresh-tucson-events]
+verify_jwt = false
+
+[functions.get-tucson-events]
+verify_jwt = false

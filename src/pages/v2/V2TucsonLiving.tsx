@@ -8,13 +8,13 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  TUCSON_EVENTS,
   LIFESTYLE_HIGHLIGHTS,
   KASANDRA_PICKS,
   SEASON_LABELS,
   EVENT_CATEGORY_LABELS,
   type Season,
 } from "@/data/tucsonEvents";
+import { useTucsonEvents } from "@/hooks/useTucsonEvents";
 
 const SEASONS: Season[] = ['winter', 'spring', 'summer', 'fall'];
 
