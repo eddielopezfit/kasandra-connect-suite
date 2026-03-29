@@ -139,18 +139,6 @@ const V2HomeContent = () => {
               </div>
             </button>
           </div>
-          {/* Explore path for undecided users */}
-          <div className="text-center mt-4">
-            <button
-              onClick={() => {
-                updateSessionContext({ intent: 'explore' as any });
-                openChat({ source: 'homepage_explore' });
-              }}
-              className="text-sm text-cc-charcoal/60 hover:text-cc-navy transition-colors underline underline-offset-4 decoration-cc-gold/40 hover:decoration-cc-gold"
-            >
-              {t("Not sure yet? Let Selena help you figure it out →", "¿No estás seguro? Deja que Selena te ayude →")}
-            </button>
-          </div>
         </div>
       </section>
 
