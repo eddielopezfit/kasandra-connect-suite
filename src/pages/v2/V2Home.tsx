@@ -29,8 +29,8 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
-import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
+import kasandraHeadshot from "@/assets/kasandra/desert-landscape-mountains.jpg";
+import kasandraLifestyle from "@/assets/kasandra/turquoise-staged-home.jpg";
 import brandPhotoshoot from "@/assets/kasandra/brand-photoshoot-red-door.jpg";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";

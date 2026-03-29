@@ -2,9 +2,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import singingKaraoke from "@/assets/kasandra/singing-karaoke.jpg";
 import dancingStars from "@/assets/kasandra/dancing-stars-2024.jpg";
 import desertSunset from "@/assets/kasandra/desert-sunset-cowboy.jpg";
-import brandPhotoshoot from "@/assets/kasandra/brand-photoshoot-red-door.jpg";
+import navyDressIronGate from "@/assets/kasandra/navy-dress-iron-gate.jpg";
 import constructionClass from "@/assets/kasandra/construction-class.jpg";
-import fiestasPatrias from "@/assets/kasandra/fiestas-patrias-performer.jpg";
+import missLilly from "@/assets/kasandra/miss-lilly-gold-balloons.jpg";
 
 interface GalleryItem {
   src: string;
