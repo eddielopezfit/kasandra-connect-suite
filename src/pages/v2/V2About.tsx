@@ -239,6 +239,39 @@ const V2AboutContent = () => {
         </div>
       </section>
 
+      {/* Backed by Realty Executives */}
+      <section className="bg-white py-14 md:py-16">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="rounded-2xl border border-cc-sand-dark/20 bg-cc-sand p-8 md:p-10 text-center">
+            <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
+              {t("Backed by a Global Brand", "Respaldada por una Marca Global")}
+            </span>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mt-2 mb-4">
+              {t("Realty Executives Arizona Territory", "Realty Executives Arizona Territory")}
+            </h2>
+            <p className="text-cc-charcoal/80 max-w-2xl mx-auto mb-6">
+              {t(
+                "Realty Executives is an international brokerage with 50+ years of proven excellence. Through Corner Connect, I bring you the strength of a global network with the personal attention of a local expert.",
+                "Realty Executives es una correduría internacional con más de 50 años de excelencia comprobada. A través de Corner Connect, te ofrezco la fortaleza de una red global con la atención personal de una experta local."
+              )}
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-cc-charcoal/70">
+              <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-cc-gold" />{t("50+ Years in Business", "Más de 50 Años en el Negocio")}</span>
+              <span className="flex items-center gap-2"><Users className="w-4 h-4 text-cc-gold" />{t("International Network", "Red Internacional")}</span>
+              <span className="flex items-center gap-2"><Award className="w-4 h-4 text-cc-gold" />{t("Arizona Territory Office", "Oficina Arizona Territory")}</span>
+            </div>
+            <a
+              href="https://www.realtyexecutives.com/agents"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-6 text-sm text-cc-gold hover:underline transition-colors"
+            >
+              {t("View Realty Executives →", "Ver Realty Executives →")}
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Credentials Bento Grid */}
       <CredentialsBentoGrid />
 
