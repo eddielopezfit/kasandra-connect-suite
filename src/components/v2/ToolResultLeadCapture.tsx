@@ -145,6 +145,10 @@ export function ToolResultLeadCapture({
       });
 
       if (!error && data?.lead_id) {
+        // Persist to Sticky Data Layer
+        setStoredEmail(email.trim().toLowerCase());
+        bridgeLeadIdToV2(data.lead_id, `tool_capture_${toolType}`);
+        
         logEvent('tool_capture_submitted', { tool: toolType, lead_id: data.lead_id });
         setDone(true);
         onCapture?.(data.lead_id);

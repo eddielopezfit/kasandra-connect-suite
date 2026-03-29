@@ -171,6 +171,11 @@ const LeadCaptureModal = ({
       // Bridge lead ID to V2 ecosystem (full dossier sync)
       bridgeLeadIdToV2(leadId, source);
 
+      // Persist contact data to localStorage for progressive profiling
+      setStoredEmail(email.trim().toLowerCase());
+      if (name.trim()) setStoredUserName(name.trim());
+      if (phone.trim()) setStoredPhone(phone.trim());
+
       // Log event
       logEvent("form_submit", {
         form_type: source,
