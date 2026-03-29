@@ -15,8 +15,8 @@ import kasandraHeadshot from "@/assets/kasandra/black-dress-professional.jpg";
 import KasandraPortrait from "@/components/v2/KasandraPortrait";
 import kasandraLifestyle from "@/assets/kasandra/desert-garden-closeup.jpg";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
-import KasandraVideoBlock from "@/components/v2/KasandraVideoBlock";
 import KasandraPhotoGallery from "@/components/v2/KasandraPhotoGallery";
+import constructionVideo from "@/assets/kasandra/construction-class-story.mp4";
 
 const V2AboutContent = () => {
   const { t } = useLanguage();
