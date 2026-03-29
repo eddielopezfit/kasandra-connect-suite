@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
@@ -5,6 +6,8 @@ import { TucsonAlphaCalculator } from "@/components/v2/calculator";
 import { Calculator } from "lucide-react";
 import JsonLd from "@/components/seo/JsonLd";
 import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
+const LazyVIPNextBestAction = lazy(() => import("@/components/v2/VIPNextBestAction"));
+const LazyFrictionEscalation = lazy(() => import("@/components/v2/FrictionEscalation"));
 
 const V2NetToSellerContent = () => {
   const { t } = useLanguage();
@@ -61,6 +64,10 @@ const V2NetToSellerContent = () => {
             completedToolLabel="Net-to-Seller Calculator"
             completedToolLabelEs="Calculadora Neto al Vendedor"
           />
+          <Suspense fallback={null}>
+            <LazyVIPNextBestAction className="mt-6" />
+            <LazyFrictionEscalation className="mt-4" />
+          </Suspense>
         </div>
       </section>
     </>

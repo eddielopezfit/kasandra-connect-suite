@@ -9,6 +9,7 @@
  * Still calls enrich-booking-context for dossier bridge.
  */
 import { useSearchParams } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import { useEffect, useState, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
@@ -20,6 +21,7 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import { getSessionContext, getOrCreateSessionId } from "@/lib/analytics/selenaSession";
 import { supabase } from "@/integrations/supabase/client";
 import { getLeadId } from "@/lib/analytics/bridgeLeadIdToV2";
+const LazyVIPNextBestAction = lazy(() => import("@/components/v2/VIPNextBestAction"));
 
 const CALL_TYPE_SUBTITLES: Record<string, { en: string; es: string }> = {
   'clarity-call': {
@@ -264,6 +266,15 @@ const V2BookContent = () => {
       <section className="py-8 md:py-12 bg-cc-ivory w-full">
         <div className="container mx-auto px-4">
           <div className="max-w-xl mx-auto">
+
+            {/* VIP-driven next best action — reinforces why booking matters */}
+            <Suspense fallback={null}>
+              <LazyVIPNextBestAction
+                className="mb-6"
+                contextLine="Based on your journey"
+                contextLineEs="Basado en tu recorrido"
+              />
+            </Suspense>
 
             {/* Dossier Loading State */}
             {dossierState === 'loading' && (

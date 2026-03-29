@@ -406,9 +406,27 @@ serve(async (req) => {
     if (context.primary_priority) vipSummaryParts.push(`priority: ${context.primary_priority}`);
     if (context.last_neighborhood_zip) vipSummaryParts.push(`area: ${context.last_neighborhood_zip}`);
 
+    const vipOrchestrationRulesEN = `\n\n[ORCHESTRATION RULES — MANDATORY]
+1. When VIP context is available, you MUST reference at least one known fact in your response (intent, tool completed, readiness, area explored). Never respond generically when you have context.
+2. Every response MUST include or imply a recommended next step. If the user has completed a tool, suggest the logical follow-up. If they've read guides, suggest a tool. If they have readiness, suggest booking.
+3. When booking readiness is "ready" or "overdue", your response MUST include a booking suggestion or acknowledge their preparedness.
+4. When friction signals are present, acknowledge the user's effort and gently redirect toward action.
+5. Never ask a question the system already has an answer to (e.g., don't ask intent if VIP shows intent).`;
+
+    const vipOrchestrationRulesES = `\n\n[REGLAS DE ORQUESTACIÓN — OBLIGATORIAS]
+1. Cuando hay contexto VIP disponible, DEBES referenciar al menos un dato conocido en tu respuesta (intención, herramienta completada, preparación, área explorada). Nunca respondas genéricamente cuando tienes contexto.
+2. Cada respuesta DEBE incluir o implicar un próximo paso recomendado. Si el usuario completó una herramienta, sugiere el seguimiento lógico. Si leyó guías, sugiere una herramienta. Si tiene preparación, sugiere reservar.
+3. Cuando la preparación para reserva es "ready" u "overdue", tu respuesta DEBE incluir una sugerencia de reserva o reconocer su preparación.
+4. Cuando hay señales de fricción, reconoce el esfuerzo del usuario y redirige suavemente hacia la acción.
+5. Nunca hagas una pregunta de la que el sistema ya tiene respuesta (ej: no preguntes la intención si el VIP muestra intención).`;
+
+    const orchestrationBlock = vipSummaryParts.length > 0
+      ? (language === 'es' ? vipOrchestrationRulesES : vipOrchestrationRulesEN)
+      : '';
+
     const vipHint = vipSummaryParts.length > 0 ? (language === 'es'
-      ? `\n\n[PERFIL DE INTELIGENCIA DEL VISITANTE]\nProfundidad: ${vipJourneyDepth} | Preparación para reserva: ${vipBookingReadiness}\nResumen: ${vipSummaryParts.join(' · ')}${frictionSignals.length > 0 ? `\nSeñales de fricción: ${frictionSignals.join(', ')}` : ''}\nUsa este contexto para personalizar tu respuesta. NO repitas datos que el usuario ya proporcionó.`
-      : `\n\n[VISITOR INTELLIGENCE PROFILE]\nDepth: ${vipJourneyDepth} | Booking readiness: ${vipBookingReadiness}\nSummary: ${vipSummaryParts.join(' · ')}${frictionSignals.length > 0 ? `\nFriction signals: ${frictionSignals.join(', ')}` : ''}\nUse this context to personalize your response. Do NOT repeat data the user already provided.`)
+      ? `\n\n[PERFIL DE INTELIGENCIA DEL VISITANTE]\nProfundidad: ${vipJourneyDepth} | Preparación para reserva: ${vipBookingReadiness}\nResumen: ${vipSummaryParts.join(' · ')}${frictionSignals.length > 0 ? `\nSeñales de fricción: ${frictionSignals.join(', ')}` : ''}\nUsa este contexto para personalizar tu respuesta. NO repitas datos que el usuario ya proporcionó.${orchestrationBlock}`
+      : `\n\n[VISITOR INTELLIGENCE PROFILE]\nDepth: ${vipJourneyDepth} | Booking readiness: ${vipBookingReadiness}\nSummary: ${vipSummaryParts.join(' · ')}${frictionSignals.length > 0 ? `\nFriction signals: ${frictionSignals.join(', ')}` : ''}\nUse this context to personalize your response. Do NOT repeat data the user already provided.${orchestrationBlock}`)
       : '';
 
     console.log(`[Selena] System prompt assembled: ${systemPrompt.length} chars, intent: ${effectiveIntent}, vip_depth: ${vipJourneyDepth}, booking_readiness: ${vipBookingReadiness}`);

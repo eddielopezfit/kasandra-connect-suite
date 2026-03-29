@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { VIPProvider } from "@/contexts/VIPContext";
 import ScrollManager from "@/components/ScrollManager";
 import RouteAnalytics from "@/components/RouteAnalytics";
 import NotFound from "./pages/NotFound";
@@ -90,6 +91,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
+        <VIPProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -157,6 +159,7 @@ const App = () => {
             </Suspense>
           </BrowserRouter>
         </TooltipProvider>
+        </VIPProvider>
       </LanguageProvider>
     </QueryClientProvider>
   );

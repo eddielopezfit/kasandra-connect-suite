@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, lazy, Suspense } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Calendar } from "lucide-react";
 import V2Navigation from "./V2Navigation";
@@ -10,6 +10,7 @@ import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
 import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
 import { ChatErrorBoundary } from "@/components/selena/ChatErrorBoundary";
 import ExitIntentModal from "@/components/v2/ExitIntentModal";
+const ReturningUserBanner = lazy(() => import("@/components/v2/ReturningUserBanner"));
 
 import EscalationBanner from "@/components/v2/EscalationBanner";
 import { logPageView, logEvent } from "@/lib/analytics/logEvent";
@@ -135,6 +136,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
       {/* which resets input state and breaks chat. Language changes are handled by React state */}
       <div className="min-h-[100dvh] flex flex-col w-full max-w-[100vw] overflow-x-hidden">
         <V2Navigation />
+        <Suspense fallback={null}><ReturningUserBanner /></Suspense>
         <EscalationBanner />
         <SessionIntelligenceBanner />
         <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden bg-cc-navy pt-[36px] md:pt-[40px] pb-20 lg:pb-0">{children}</main>
