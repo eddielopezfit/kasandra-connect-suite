@@ -27,7 +27,7 @@ const V2PodcastContent = () => {
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "PodcastSeries",
-        name: "Lifting You Up with Kasandra Prieto",
+        name: "Lifting You Up: Todo empieza en casita",
         description: "Inspiring conversations about community leadership, generational wealth, and Hispanic success stories in Tucson.",
         url: "https://www.youtube.com/@KasandraPrietoTucson",
         author: { "@type": "Person", name: "Kasandra Prieto" },
@@ -45,7 +45,7 @@ const V2PodcastContent = () => {
               {t("Podcast & Radio", "Podcast y Radio")}
             </span>
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mt-2 mb-6 text-white">
-              {t("Lifting You Up with Kasandra Prieto", "Lifting You Up con Kasandra Prieto")}
+              {t("Lifting You Up: Todo empieza en casita", "Lifting You Up: Todo empieza en casita")}
             </h1>
             <p className="text-xl text-white/90 mb-8">
               {t(
