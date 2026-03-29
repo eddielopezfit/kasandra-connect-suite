@@ -11,6 +11,7 @@ import { lazy, Suspense } from "react";
 const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-community-neighborhood.png";
+import KasandraVideoBlock from "@/components/v2/KasandraVideoBlock";
 
 const V2CommunityContent = () => {
   const { t } = useLanguage();
