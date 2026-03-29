@@ -121,9 +121,13 @@ export const CHIP_KEY_TO_DESTINATION: Record<ChipKey, string> = {
   // Conversational chips don't have destinations (text-only)
   [CHIP_KEYS.WHAT_ARE_MY_OPTIONS]: '',
   [CHIP_KEYS.I_HAVE_A_QUESTION]: '',
+  [CHIP_KEYS.SKIP_FOR_NOW]: '',
   [CHIP_KEYS.THINKING_ABOUT_SELLING]: '',
   [CHIP_KEYS.LOOKING_TO_BUY]: '',
   [CHIP_KEYS.JUST_EXPLORING]: '',
+  [CHIP_KEYS.SUMMARIZE_WHERE_I_AM]: '',
+  [CHIP_KEYS.KEEP_EXPLORING]: '',
+  [CHIP_KEYS.SPECIFIC_QUESTION]: '',
 
   // Guides
   [CHIP_KEYS.GUIDE_CASH_VS_LISTING]: '/guides/cash-vs-traditional-sale',
