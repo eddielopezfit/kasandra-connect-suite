@@ -179,246 +179,35 @@ const V2HomeContent = () => {
       </section>
 
 
-      {/* About Section */}
-      <section className="py-16 lg:py-24 bg-cc-sand">
-        <div className="container mx-auto px-4 max-w-6xl">
-          {/* Desktop Layout (2-column) */}
-          <div className="hidden lg:grid lg:grid-cols-2 gap-12 items-start">
-            {/* Left Column - Video Card */}
-            <div className="bg-white rounded-2xl p-6 shadow-soft border border-cc-sand-dark/30">
-              <p className="text-sm text-cc-gold font-semibold mb-4 uppercase tracking-wider text-center">
-                {t("Meet Kasandra (60 seconds)", "Conoce a Kasandra (60 segundos)")}
-              </p>
-              <div 
-                className="relative rounded-xl overflow-hidden bg-cc-navy/10 mx-auto"
-                style={{ width: '100%', maxWidth: '280px', aspectRatio: '9/16' }}
-              >
-                <video
-                  src="/videos/kasandra-welcome.mp4"
-                  controls
-                  playsInline
-                  preload="none"
-                  poster={kasandraHeadshot}
-                  className="w-full h-full object-contain bg-cc-navy"
-                  style={{ aspectRatio: '9/16' }}
-                >
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-              <p className="text-xs text-cc-text-muted mt-4 italic text-center max-w-[280px] mx-auto">
+      {/* About Kasandra — Compact Teaser */}
+      <section className="py-16 lg:py-20 bg-cc-sand">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <div className="flex flex-col sm:flex-row items-center gap-8">
+            <KasandraPortrait
+              src={kasandraHeadshot}
+              alt="Kasandra Prieto, REALTOR®"
+              size="lg"
+              className="flex-shrink-0"
+            />
+            <div className="text-center sm:text-left">
+              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
+                {t("About Kasandra", "Sobre Kasandra")}
+              </span>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-blue mt-2 mb-3">
+                {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
+              </h2>
+              <p className="text-cc-text-muted mb-4">
                 {t(
-                  "Kasandra shares why she got into real estate and her commitment to guiding clients.",
-                  "Kasandra comparte por qué entró en bienes raíces y su compromiso de guiar a sus clientes."
+                  "20+ year Tucson resident. Bilingual REALTOR®, radio host, community leader, and dog mom. I didn't get into real estate to sell houses — I got in to help families.",
+                  "Residente de Tucson por más de 20 años. REALTOR® bilingüe, conductora de radio, líder comunitaria y mamá perruna. No entré a bienes raíces para vender casas — entré para ayudar a familias."
                 )}
               </p>
-            </div>
-
-            {/* Right Column - Copy + Images */}
-            <div>
-              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
-                {t("About Kasandra", "Sobre Kasandra")}
-              </span>
-              <h2 className="font-serif text-4xl xl:text-5xl font-bold text-cc-blue mt-2 mb-6">
-                {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
-              </h2>
-              <div className="space-y-4 text-cc-text-muted mb-6">
-                <p>
-                  {t(
-                    "I didn't get into real estate to sell houses — I got in to help families make one of the biggest decisions of their lives with someone they actually trust.",
-                    "No entré a bienes raíces para vender casas — entré para ayudar a las familias a tomar una de las decisiones más grandes de su vida con alguien en quien realmente confían."
-                  )}
-                </p>
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t("VP, Governing Board — Arizona Diaper Bank", "VP, Junta Directiva — Arizona Diaper Bank")}</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t("Greater Tucson Leadership — Class of 2026", "Greater Tucson Leadership — Promoción 2026")}</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t('Host of "Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)', 'Conductora de "Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)')}</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t("Luxury Property Specialist", "Especialista en Propiedades de Lujo")}</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Image row */}
-              <div className="grid grid-cols-2 gap-4">
-                <img
-                  src={brandPhotoshoot}
-                  alt="Kasandra Prieto, REALTOR®"
-                  className="w-full h-40 object-cover object-top rounded-xl shadow-soft border border-cc-sand-dark/20"
-                  loading="lazy"
-                />
-                <img
-                  src={kasandraLifestyle}
-                  alt={t("Kasandra Prieto, bilingual REALTOR® and community leader in Tucson.", "Kasandra Prieto, REALTOR® bilingüe y líder comunitaria en Tucson.")}
-                  className="w-full h-40 object-cover object-center rounded-xl shadow-soft border border-cc-sand-dark/20"
-                  loading="lazy"
-                />
-              </div>
-              
-              <p className="text-xs text-cc-text-muted text-center mt-4">
-                {t("Dog mom · Karaoke lover · Community-driven", "Mamá perruna · Amante del karaoke · Comprometida con la comunidad")}
-              </p>
-            </div>
-          </div>
-
-          {/* Tablet Layout (768-1023px) */}
-          <div className="hidden md:block lg:hidden">
-            <div className="text-center mb-8">
-              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
-                {t("About Kasandra", "Sobre Kasandra")}
-              </span>
-              <h2 className="font-serif text-4xl font-bold text-cc-blue mt-2 mb-4">
-                {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
-              </h2>
-              <p className="text-cc-text-muted max-w-2xl mx-auto">
-                {t(
-                  "I didn't get into real estate to sell houses — I got in to help families make one of the biggest decisions of their lives with someone they actually trust.",
-                  "No entré a bienes raíces para vender casas — entré para ayudar a las familias a tomar una de las decisiones más grandes de su vida con alguien en quien realmente confían."
-                )}
-              </p>
-            </div>
-
-            {/* Video - Local MP4 */}
-            <div className="mb-8 flex flex-col items-center">
-              <p className="text-sm text-cc-gold font-semibold mb-3 uppercase tracking-wider text-center">
-                {t("Meet Kasandra (60 seconds)", "Conoce a Kasandra (60 segundos)")}
-              </p>
-              <div 
-                className="relative rounded-xl overflow-hidden shadow-elevated bg-cc-navy" 
-                style={{ width: '240px', aspectRatio: '9/16' }}
+              <Link
+                to="/about"
+                className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all"
               >
-                <video
-                  src="/videos/kasandra-welcome.mp4"
-                  controls
-                  playsInline
-                  preload="none"
-                  poster={kasandraHeadshot}
-                  className="w-full h-full object-contain"
-                >
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            </div>
-
-            {/* Bullets */}
-            <ul className="space-y-3 max-w-xl mx-auto mb-8">
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted">{t("VP, Governing Board — Arizona Diaper Bank", "VP, Junta Directiva — Arizona Diaper Bank")}</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted">{t("Greater Tucson Leadership — Class of 2026", "Greater Tucson Leadership — Promoción 2026")}</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted">{t('Host of "Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)', 'Conductora de "Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)')}</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted">{t("Luxury Property Specialist", "Especialista en Propiedades de Lujo")}</span>
-              </li>
-            </ul>
-
-            {/* Headshot */}
-            <div className="flex justify-center">
-              <img
-                src={kasandraHeadshot}
-                alt="Kasandra Prieto, REALTOR®"
-                className="w-64 rounded-xl shadow-elevated border border-cc-sand-dark/20"
-                loading="lazy"
-              />
-            </div>
-          </div>
-
-          {/* Mobile Layout (<=767px) */}
-          <div className="md:hidden">
-            <div className="text-center mb-6">
-              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
-                {t("About Kasandra", "Sobre Kasandra")}
-              </span>
-              <h2 className="font-serif text-3xl font-bold text-cc-blue mt-2 mb-4">
-                {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
-              </h2>
-            </div>
-
-            {/* Headshot first on mobile */}
-            <div className="flex justify-center mb-6">
-              <img
-                src={kasandraHeadshot}
-                alt="Kasandra Prieto, REALTOR®"
-                className="w-48 rounded-xl shadow-elevated border border-cc-sand-dark/20"
-                loading="lazy"
-              />
-            </div>
-
-            {/* Short paragraph */}
-            <p className="text-cc-text-muted text-center mb-6">
-              {t(
-                "A proud Tucson resident for over two decades. Fluent in English and Spanish, I bring warmth, clarity, and expertise to every client.",
-                "Orgullosa residente de Tucson por más de dos décadas. Hablo inglés y español con fluidez, aportando calidez y experiencia a cada cliente."
-              )}
-            </p>
-
-            {/* Video - Local MP4 */}
-            <div className="mb-6 flex flex-col items-center">
-              <p className="text-sm text-cc-gold font-semibold mb-2 uppercase tracking-wider text-center">
-                {t("Meet Kasandra (60 seconds)", "Conoce a Kasandra (60 segundos)")}
-              </p>
-              <div 
-                className="relative rounded-xl overflow-hidden shadow-elevated bg-cc-navy" 
-                style={{ width: '200px', aspectRatio: '9/16' }}
-              >
-                <video
-                  src="/videos/kasandra-welcome.mp4"
-                  controls
-                  playsInline
-                  preload="none"
-                  poster={kasandraHeadshot}
-                  className="w-full h-full object-contain"
-                >
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            </div>
-
-            {/* Bullets */}
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted text-sm">{t("VP, Governing Board — Arizona Diaper Bank", "VP, Junta Directiva — Arizona Diaper Bank")}</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted text-sm">{t("Greater Tucson Leadership — Class of 2026", "Greater Tucson Leadership — Promoción 2026")}</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted text-sm">{t('"Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)', '"Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)')}</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted text-sm">{t("Luxury Property Specialist", "Especialista en Propiedades de Lujo")}</span>
-              </li>
-            </ul>
-
-            {/* Lifestyle photo smaller on mobile */}
-            <div className="flex justify-center">
-              <img
-                src={kasandraLifestyle}
-                alt={t("Kasandra Prieto in Tucson", "Kasandra Prieto en Tucson")}
-                className="w-48 h-48 object-cover rounded-xl shadow-soft border border-cc-sand-dark/20"
-                loading="lazy"
-              />
+                {t("Learn more about Kasandra", "Conoce más sobre Kasandra")} <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>
