@@ -114,14 +114,14 @@ const V2AffordabilityCalculatorContent = () => {
                 <input
                   type="text"
                   inputMode="numeric"
-                  placeholder="85,000"
-                  value={income}
-                  onChange={e => {
-                    const raw = e.target.value.replace(/[^0-9]/g, "");
-                    setIncome(raw ? parseInt(raw).toLocaleString() : "");
-                    setCalculated(false);
-                  }}
-                  className="w-full pl-8 pr-4 py-3 rounded-full border border-cc-sand-dark/40 focus:border-cc-navy/40 focus:outline-none text-cc-charcoal"
+                   placeholder={t("e.g. 85,000", "ej. 85,000")}
+                   value={income}
+                   onChange={e => {
+                     const raw = e.target.value.replace(/[^0-9]/g, "");
+                     setIncome(raw ? parseInt(raw).toLocaleString() : "");
+                     setCalculated(false);
+                   }}
+                   className="w-full pl-8 pr-4 py-3 rounded-full border border-cc-sand-dark/40 focus:border-cc-navy/40 focus:outline-none text-cc-charcoal placeholder:italic placeholder:text-muted-foreground/50"
                 />
               </div>
             </div>

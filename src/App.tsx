@@ -60,8 +60,25 @@ const SellerResult = lazy(() => import("./pages/ad/SellerResult"));
 const queryClient = new QueryClient();
 
 const RouteFallback = () => (
-  <div className="min-h-screen bg-cc-navy flex items-center justify-center">
-    <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+  <div className="min-h-screen bg-background">
+    {/* Nav skeleton */}
+    <div className="h-16 border-b border-border/40 flex items-center px-4 gap-4">
+      <div className="w-32 h-6 rounded bg-muted animate-pulse" />
+      <div className="flex-1" />
+      <div className="w-20 h-8 rounded-full bg-muted animate-pulse" />
+    </div>
+    {/* Hero skeleton */}
+    <div className="px-4 pt-10 pb-6 space-y-4 max-w-2xl mx-auto">
+      <div className="w-3/4 h-8 rounded bg-muted animate-pulse" />
+      <div className="w-full h-5 rounded bg-muted animate-pulse" />
+      <div className="w-2/3 h-5 rounded bg-muted animate-pulse" />
+      <div className="w-40 h-12 rounded-full bg-muted animate-pulse mt-6" />
+    </div>
+    {/* Content skeleton */}
+    <div className="px-4 space-y-3 max-w-2xl mx-auto">
+      <div className="w-full h-28 rounded-xl bg-muted animate-pulse" />
+      <div className="w-full h-28 rounded-xl bg-muted animate-pulse" />
+    </div>
   </div>
 );
 
