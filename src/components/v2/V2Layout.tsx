@@ -136,6 +136,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
       {/* which resets input state and breaks chat. Language changes are handled by React state */}
       <div className="min-h-[100dvh] flex flex-col w-full max-w-[100vw] overflow-x-hidden">
         <V2Navigation />
+        <Suspense fallback={null}><ReturningUserBanner /></Suspense>
         <EscalationBanner />
         <SessionIntelligenceBanner />
         <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden bg-cc-navy pt-[36px] md:pt-[40px] pb-20 lg:pb-0">{children}</main>

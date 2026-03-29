@@ -64,6 +64,10 @@ const V2NetToSellerContent = () => {
             completedToolLabel="Net-to-Seller Calculator"
             completedToolLabelEs="Calculadora Neto al Vendedor"
           />
+          <Suspense fallback={null}>
+            <LazyVIPNextBestAction className="mt-6" />
+            <LazyFrictionEscalation className="mt-4" />
+          </Suspense>
         </div>
       </section>
     </>

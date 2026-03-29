@@ -267,6 +267,15 @@ const V2BookContent = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-xl mx-auto">
 
+            {/* VIP-driven next best action — reinforces why booking matters */}
+            <Suspense fallback={null}>
+              <LazyVIPNextBestAction
+                className="mb-6"
+                contextLine="Based on your journey"
+                contextLineEs="Basado en tu recorrido"
+              />
+            </Suspense>
+
             {/* Dossier Loading State */}
             {dossierState === 'loading' && (
               <div className="bg-cc-navy/5 border border-cc-gold/20 rounded-xl p-5 mb-6 text-center animate-pulse">
