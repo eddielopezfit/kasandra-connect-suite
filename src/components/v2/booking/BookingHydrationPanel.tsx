@@ -191,10 +191,10 @@ const BookingHydrationPanel = () => {
   // If no insights, don't render
   if (insights.length === 0) return null;
 
-  const greeting = userName
+  const greeting = identity.name
     ? t(
-        `${userName}, here's what Kasandra already knows about you:`,
-        `${userName}, esto es lo que Kasandra ya sabe sobre ti:`
+        `${identity.name}, here's what Kasandra already knows about you:`,
+        `${identity.name}, esto es lo que Kasandra ya sabe sobre ti:`
       )
     : t(
         "Here's what Kasandra already knows about you:",
