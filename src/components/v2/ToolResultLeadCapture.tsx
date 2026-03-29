@@ -101,6 +101,12 @@ export function ToolResultLeadCapture({
 
   const copy = TOOL_COPY[toolType][language as 'en' | 'es'];
 
+  // Pre-fill email from localStorage
+  useEffect(() => {
+    const stored = getStoredEmail();
+    if (stored) setEmail(stored);
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), delayMs);
     return () => clearTimeout(timer);
