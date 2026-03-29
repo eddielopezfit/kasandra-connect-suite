@@ -21,6 +21,7 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import { getSessionContext, getOrCreateSessionId } from "@/lib/analytics/selenaSession";
 import { supabase } from "@/integrations/supabase/client";
 import { getLeadId } from "@/lib/analytics/bridgeLeadIdToV2";
+const LazyVIPNextBestAction = lazy(() => import("@/components/v2/VIPNextBestAction"));
 
 const CALL_TYPE_SUBTITLES: Record<string, { en: string; es: string }> = {
   'clarity-call': {
