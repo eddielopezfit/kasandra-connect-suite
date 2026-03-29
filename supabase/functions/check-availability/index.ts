@@ -68,8 +68,8 @@ serve(async (req) => {
           endDate.setDate(endDate.getDate() + 1);
 
           const params = new URLSearchParams({
-            startDate: now.toISOString(),
-            endDate: endDate.toISOString(),
+            startDate: String(now.getTime()),
+            endDate: String(endDate.getTime()),
             timezone: "America/Phoenix",
           });
 
