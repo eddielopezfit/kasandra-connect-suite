@@ -47,8 +47,8 @@ const V2AboutContent = () => {
             </h1>
             <p className="text-xl text-white/90">
               {t(
-                "Born in Agua Prieta. Raised in Douglas, AZ. Tucson resident for over 20 years.",
-                "Nacida en Agua Prieta. Criada en Douglas, AZ. Residente de Tucson por más de 20 años."
+                "Born in Tucson. Raised in Douglas, AZ. Resident for over 20 years.",
+                "Nacida en Tucson. Criada en Douglas, AZ. Residente por más de 20 años."
               )}
             </p>
           </div>
