@@ -74,7 +74,24 @@ const LeadCaptureModal = ({
   const { setLeadIdentity } = useSelenaChat();
   const isMobile = useIsMobile();
 
-  const defaultTitle = {
+  // Pre-fill from localStorage when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      const storedEmail = getStoredEmail();
+      const storedName = getStoredUserName();
+      const storedPhone = getStoredPhone();
+      
+      if (storedEmail) setEmail(storedEmail);
+      if (storedName) setName(storedName);
+      if (storedPhone) setPhone(storedPhone);
+      
+      // If email already known, skip to details step
+      if (storedEmail) {
+        setStep("details");
+      }
+    }
+  }, [isOpen]);
+
     en: "Your Tucson game plan is ready",
     es: "Tu plan de Tucson está listo",
   };
