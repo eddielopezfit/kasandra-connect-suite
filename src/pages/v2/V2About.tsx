@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-community-neighborhood.png";
 import kasandraHeadshot from "@/assets/kasandra/black-dress-professional.jpg";
+import KasandraPortrait from "@/components/v2/KasandraPortrait";
 import kasandraLifestyle from "@/assets/kasandra/desert-garden-closeup.jpg";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import KasandraVideoBlock from "@/components/v2/KasandraVideoBlock";
