@@ -246,6 +246,33 @@ const V2AboutContent = () => {
         </div>
       </section>
 
+      {/* From the Field — Construction Class Video */}
+      <section className="bg-cc-sand py-14 md:py-16">
+        <div className="container mx-auto px-4 max-w-4xl text-center">
+          <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
+            {t("From the Field", "Desde el Campo")}
+          </span>
+          <h2 className="font-serif text-2xl md:text-3xl font-bold text-cc-navy mt-2 mb-6">
+            {t("Built Different", "Construida Diferente")}
+          </h2>
+          <div className="flex justify-center mb-6">
+            <video
+              controls
+              preload="none"
+              playsInline
+              className="w-full max-w-xs rounded-2xl shadow-soft border border-cc-sand-dark/20 aspect-[9/16] object-cover bg-cc-navy"
+              src={constructionVideo}
+            />
+          </div>
+          <p className="text-cc-charcoal/80 max-w-lg mx-auto text-sm md:text-base italic">
+            {t(
+              "\"Four years ago I committed to a 6-month construction class. Steel-toe boots. Long days. The knowledge I gained? I use it every single day in real estate.\"",
+              "\"Hace cuatro años me comprometí con un curso de construcción de 6 meses. Botas de seguridad. Días largos. ¿El conocimiento que obtuve? Lo uso todos los días en bienes raíces.\""
+            )}
+          </p>
+        </div>
+      </section>
+
       {/* Backed by Realty Executives */}
       <section className="bg-white py-14 md:py-16">
         <div className="container mx-auto px-4 max-w-4xl">
