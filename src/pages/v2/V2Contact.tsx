@@ -13,6 +13,7 @@ import { logEvent } from "@/lib/analytics/logEvent";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import kasandraHeadshot from "@/assets/kasandra/desert-garden-closeup.jpg";
+import KasandraPortrait from "@/components/v2/KasandraPortrait";
 
 const ContactForm = () => {
   const { t } = useLanguage();
@@ -167,11 +168,11 @@ const V2ContactContent = () => {
             {/* Left — Headshot + Personal Message */}
             <div className="space-y-6">
               <div className="rounded-2xl overflow-hidden ring-4 ring-cc-gold/20 shadow-elevated">
-                <img
+                <KasandraPortrait
                   src={kasandraHeadshot}
                   alt="Kasandra Prieto — Tucson REALTOR®"
-                  className="w-full h-full object-cover object-top aspect-[4/3]"
-                  loading="lazy"
+                  size="lg"
+                  className="w-full rounded-none"
                 />
               </div>
 

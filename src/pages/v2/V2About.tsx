@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import heroImage from "@/assets/hero-community-neighborhood.png";
 import kasandraHeadshot from "@/assets/kasandra/black-dress-professional.jpg";
+import KasandraPortrait from "@/components/v2/KasandraPortrait";
 import kasandraLifestyle from "@/assets/kasandra/desert-garden-closeup.jpg";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import KasandraVideoBlock from "@/components/v2/KasandraVideoBlock";
@@ -133,17 +134,17 @@ const V2AboutContent = () => {
 
               {/* Image row */}
               <div className="grid grid-cols-2 gap-4">
-                <img
+                <KasandraPortrait
                   src={kasandraHeadshot}
                   alt="Kasandra Prieto, REALTOR®"
-                  className="w-full h-48 object-cover object-top rounded-xl shadow-soft border border-cc-sand-dark/20"
-                  loading="lazy"
+                  size="lg"
+                  className="w-full"
                 />
-                <img
+                <KasandraPortrait
                   src={kasandraLifestyle}
                   alt={t("Kasandra Prieto, bilingual REALTOR® and community leader in Tucson.", "Kasandra Prieto, REALTOR® bilingüe y líder comunitaria en Tucson.")}
-                  className="w-full h-48 object-cover object-top rounded-xl shadow-soft border border-cc-sand-dark/20"
-                  loading="lazy"
+                  size="lg"
+                  className="w-full"
                 />
               </div>
             </div>
