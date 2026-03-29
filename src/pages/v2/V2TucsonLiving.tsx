@@ -33,8 +33,8 @@ const V2TucsonLivingContent = () => {
   });
 
   const filteredEvents = activeSeason === 'all'
-    ? TUCSON_EVENTS
-    : TUCSON_EVENTS.filter(e => e.season === activeSeason);
+    ? events
+    : events.filter(e => e.season === activeSeason);
 
   return (
     <>
