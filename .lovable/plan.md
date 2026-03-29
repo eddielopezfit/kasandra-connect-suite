@@ -1,72 +1,86 @@
 
 
-# Fact-Check Corrections from Perplexity Deep Research
+# Expand Trusted Network + Add Tucson Events Page
 
-The research uncovered **9 factual inaccuracies** across the hub and Selena's system prompt. Here's what needs fixing.
-
----
-
-## Corrections Required
-
-### 1. Birthplace — About page is WRONG
-- **V2About.tsx line 50**: Says "Born in Agua Prieta" 
-- **Research says**: Born in **Tucson**, raised in **Douglas, AZ** (near Agua Prieta)
-- **System prompt line 207**: Already correct ("born in Tucson, AZ and raised in Douglas, AZ")
-- **Fix**: Change About hero to "Born in Tucson. Raised in Douglas, AZ. Resident for over 20 years."
-
-### 2. Global Luxury title is WRONG everywhere
-- Hub uses: "Certified Global Luxury Property Specialist" (not the real title)
-- **Correct title**: **Coldwell Banker Luxury Property Specialist (LPS)**
-- Earned at Coldwell Banker, NOT Corner Connect/Realty Executives
-- Realty Executives has NO proprietary Global Luxury program
-- **Fix**: Change to "Luxury Property Specialist" (drop "Certified Global" and "CB" since she's no longer at CB — the underlying CLHMS component is brokerage-agnostic)
-- Affects: V2Home.tsx (2 places), V2About.tsx (2 places), CredentialsBentoGrid.tsx (1 place)
-
-### 3. System prompt line 186 — RE does NOT provide "Global Luxury certification"
-- Current: "Provides MLS access, transaction compliance, Global Luxury certification, and traditional listing infrastructure"
-- **Fix**: Remove "Global Luxury certification" — add separate line clarifying it's a personal credential earned at Coldwell Banker
-- Same fix needed in ES section (line 949)
-
-### 4. Podcast name — System prompt still outdated (ES section)
-- **EN line 216**: Still says "Lifting You Up with Kasandra Prieto"
-- **ES line 979**: Still says "Lifting You Up with Kasandra Prieto"
-- **Fix**: Both → "Lifting You Up: Todo empieza en casita"
-
-### 5. Diaper Bank role title — partially wrong
-- Hub says "Former Vice Chair" in some places
-- **Research says**: VP of Governing Board + Chair of Ambassador Program (never "Vice Chair")
-- **Fix**: Use "Former VP, Governing Board" consistently
-
-### 6. Tony Robbins — overstated
-- V2Community.tsx likely says she attended "seminars"
-- **Research says**: References are to books/teachings only — no confirmed event attendance
-- **Fix**: Change to "influenced by Tony Robbins, Jim Rohn, and Les Brown through their books and teachings"
-
-### 7. Corner Connect context — add founding details
-- Research confirms: Founded by Michael D. Rhodes (2009/2015), ~300+ homes/year team
-- Not in system prompt — useful for Selena to know
-- **Fix**: Add 1 line to KB-8
-
-### 8. Realty Executives institutional facts — still missing from KB
-- Founded 1965, first 100% commission concept, ~5,500+ agents globally
-- **Fix**: Add to KB-8 EN + ES sections (~4 lines each)
-
-### 9. Cinco Agave description — wrong in system prompt
-- Line 210: Says "65+ social club she founded" (reads as 65+ members)
-- **Research says**: It's a social club for people **age 65+**
-- **Fix**: Clarify "Cinco Agave (social club for adults age 65+ that she founded)"
+Kasandra asked for two things: (1) upgrade the existing `/network` page from a placeholder into a real partner showcase with categories, spotlights, and real stories, and (2) a new `/tucson-living` page highlighting local events and what makes Tucson special.
 
 ---
 
-## Files to Change
+## Part 1: Trusted Network Page Upgrade (`/network`)
 
-| File | Changes |
-|------|---------|
-| `src/pages/v2/V2About.tsx` | Fix birthplace (line 50), fix Global Luxury title (lines 124, 177), fix Diaper Bank title (line 112) |
-| `src/pages/v2/V2Home.tsx` | Fix Global Luxury title (lines 256, 338), fix Diaper Bank title (line 244) |
-| `src/components/v2/CredentialsBentoGrid.tsx` | Fix Global Luxury title (line 19), fix Diaper Bank title |
-| `src/pages/v2/V2Community.tsx` | Fix Tony Robbins framing, fix Diaper Bank title |
-| `supabase/functions/selena-chat/systemPromptBuilder.ts` | Fix line 186 (remove Global Luxury from RE), fix line 210 (Cinco Agave), fix lines 216/979 (podcast name), add RE institutional facts to KB-8 EN+ES, add personal credential clarification EN+ES, fix Diaper Bank title |
+The page already exists but only has a single "Coming Soon" placeholder card. We'll rebuild it into a full partner showcase.
 
-Total: ~30 line changes across 5 files. No structural changes.
+### New Sections
+
+1. **Partner Grid by Category** — Organized tabs or sections: Lenders, Inspectors, Contractors, Title/Escrow, Other. Each card shows: name, company, specialty, Kasandra's personal endorsement quote, years working together, optional photo placeholder, bilingual throughout.
+
+2. **Partner of the Week Spotlight** — A highlighted card at the top (larger, gold border) featuring one partner with a longer testimonial from Kasandra about why she trusts them. Rotates based on a simple array index or date-based selection.
+
+3. **Real Stories Section** — "From the Field" stories: short case-study cards where Kasandra describes a real situation (e.g., "My inspector caught a foundation issue that saved my client $40K"). These build trust while showing market experience. Each story has: title, situation summary, outcome, which partner category was involved, bilingual.
+
+4. **Sponsor Recognition** — Optional badge on partner cards: "Hub Sponsor" for partners who support the platform. Not paid placement — genuine working relationships with a sponsorship layer.
+
+5. **CTA** — "Know someone Kasandra should meet?" links to `/contact`.
+
+### Data Structure
+
+Partners and stories stored as static TypeScript arrays (same pattern as guides/neighborhoods). Kasandra can provide names later — we'll ship with 3-4 placeholder slots per category plus the story section with 2-3 example stories she can customize.
+
+### File Changes
+
+| File | Change |
+|------|--------|
+| `src/pages/v2/V2TrustedNetwork.tsx` | Full rebuild: category tabs, spotlight, stories section |
+| `src/data/trustedPartners.ts` | New file: partner data array with categories, EN/ES |
+| `src/data/fieldStories.ts` | New file: real market stories data, EN/ES |
+
+---
+
+## Part 2: New Tucson Living / Events Page (`/tucson-living`)
+
+A new page celebrating Tucson lifestyle — local events, seasonal highlights, and why Tucson is a great place to live. This supports the "relocating to Tucson" audience and gives Kasandra content to share on social media.
+
+### Sections
+
+1. **Hero** — "Discover Tucson Living" / "Descubre la Vida en Tucson" with a warm lifestyle-focused intro from Kasandra's perspective.
+
+2. **Seasonal Events Calendar** — Static curated list of Tucson's signature events organized by season (Gem Show, Tucson Meet Yourself, 4th Ave Street Fair, Día de los Muertos, Rodeo, etc.). Each event card: name, typical month, short description, category tag (Culture, Food, Outdoors, Family), bilingual.
+
+3. **Why Tucson** — Quick lifestyle highlights grid: 350+ days of sunshine, cost of living vs Phoenix/CA, food scene, outdoor access, cultural diversity, bilingual community.
+
+4. **Neighborhood Connection** — "Find your perfect Tucson neighborhood" CTA linking to `/neighborhoods` and the neighborhood quiz.
+
+5. **Kasandra's Picks** — A personal "What I love about Tucson" section with 3-4 short blurbs (her favorite spots, traditions, hidden gems).
+
+### Publish Gate Compliance
+
+- Route: `/tucson-living`
+- `useDocumentHead` with EN/ES titles
+- SEO meta in `seoRouteMeta.ts`
+- Linked from nav (add to `exploreLinks` in V2Navigation)
+- Chip registered in `chipsRegistry.ts` for Selena
+- Destination registered in `destinationsRegistry.ts`
+
+### File Changes
+
+| File | Change |
+|------|--------|
+| `src/pages/v2/V2TucsonLiving.tsx` | New page: hero, events calendar, lifestyle grid, Kasandra's picks |
+| `src/data/tucsonEvents.ts` | New file: curated events data by season, EN/ES |
+| `src/App.tsx` | Add lazy import + route for `/tucson-living` |
+| `src/components/v2/V2Navigation.tsx` | Add "Tucson Living" to exploreLinks |
+| `src/lib/seo/seoRouteMeta.ts` | Add meta for `/tucson-living` |
+| `src/lib/registry/destinationsRegistry.ts` | Add `tucson_living` destination |
+| `src/lib/registry/chipsRegistry.ts` | Add chip for "Tucson Events" / "Eventos de Tucson" |
+| `src/lib/registry/chipKeys.ts` | Add `tucson_living` key |
+
+---
+
+## Summary
+
+- **Part 1**: 3 files (1 rebuild, 2 new data files)
+- **Part 2**: 8 files (1 new page, 1 new data file, 6 registry/config updates)
+- Both pages are fully bilingual, mobile-responsive, and follow the existing V2Layout + brand token patterns
+- Partner data ships with editable placeholders so Kasandra can fill in real names when ready
+- Events data is static/curated — no API needed, Kasandra or her team updates seasonally
 
