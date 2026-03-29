@@ -282,36 +282,6 @@ const V2AffordabilityCalculatorContent = () => {
               )}
             </p>
 
-            {/* Selena CTA */}
-            <div className="bg-cc-sand rounded-2xl p-6 text-center border border-cc-sand-dark/20">
-              <p className="font-serif text-lg font-bold text-cc-navy mb-2">
-                {t("Want to see what this buys in Tucson?", "¿Quieres ver qué compra esto en Tucson?")}
-              </p>
-              <p className="text-cc-charcoal text-sm mb-4">
-                {t(
-                  "Selena can match your budget to neighborhoods, schools, and lifestyle. Or book a call with Kasandra to start your search.",
-                  "Selena puede conectar tu presupuesto con vecindarios, escuelas y estilo de vida. O agenda una llamada con Kasandra para iniciar tu búsqueda."
-                )}
-              </p>
-              <Button
-                onClick={() => openChat({
-                  source: "affordability_calculator" as const,
-                  intent: "buy",
-                  estimatedBudget: result.maxPrice,
-                })}
-                className="bg-cc-navy text-white rounded-full px-8 font-semibold"
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                {t("Ask Selena About My Budget", "Preguntarle a Selena Sobre Mi Presupuesto")}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-              <Link to="/book?intent=buy&source=affordability_calculator" className="inline-block mt-3">
-                <Button className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  {t("Talk to Kasandra", "Hablar Con Kasandra")}
-                </Button>
-              </Link>
-            </div>
           </div>
         </section>
       )}
