@@ -38,8 +38,10 @@ const V2TucsonLivingContent = () => {
   return (
     <>
       {/* Hero */}
-      <section className="relative bg-cc-navy pt-32 pb-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-cc-navy via-cc-navy-dark to-cc-navy opacity-95" />
+      <section className="relative pt-32 pb-20">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${desertSunsetHero})` }}>
+          <div className="absolute inset-0 bg-gradient-to-r from-cc-navy/90 to-cc-navy/70" />
+        </div>
         <div className="container mx-auto px-4 relative z-10 max-w-3xl">
           <Sun className="w-10 h-10 text-cc-gold mb-4" />
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">

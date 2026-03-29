@@ -184,6 +184,17 @@ const V2AboutContent = () => {
         </div>
       </section>
 
+      {/* Singing Video — Beyond Real Estate */}
+      <KasandraVideoBlock
+        videoUrl="https://www.youtube.com/watch?v=c1HbgVktpP4"
+        labelEn="Beyond Real Estate"
+        labelEs="Más Allá de los Bienes Raíces"
+        variant="compact"
+      />
+
+      {/* The Real Kasandra — Photo Gallery */}
+      <KasandraPhotoGallery />
+
       {/* Investments in Myself */}
       <section className="bg-cc-ivory py-16 md:py-20">
         <div className="container mx-auto px-4 max-w-4xl">
