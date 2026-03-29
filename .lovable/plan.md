@@ -1,107 +1,47 @@
 
 
-# Integrate Kasandra's Personal Photos & Videos into the Hub
+# Strategic Photo Placement for Kasandra's Hub
 
-Based on the social media audit, here's a concrete plan to embed her singing, performing, community leadership, and personal brand content across the hub using existing components and new placements.
+## Photo Selection (6 of 8 — 2 excluded)
 
----
+| Photo | Description | Decision | Reasoning |
+|-------|------------|----------|-----------|
+| #1 (488368231) | Black dress, indoor professional | USE | Elegant, corporate authority |
+| #2 (488930655) | Navy dress, iron gate outdoor | USE | Tucson architectural feel, approachable |
+| #3 (489807493) | Turquoise dress, staged dining room | USE | Real estate context — shows her IN a home |
+| #4 (489847004) | Black blazer at bookshelf | SKIP | Speaker visible in background, less polished |
+| #5 (490742377) | Black dress, desert fence, mountains | USE | Best photo — cinematic Tucson landscape, professional |
+| #6 (489995791) | Black tank, desert garden close-up | USE | Natural, warm, approachable |
+| #7 (491691245) | Miss Lilly, gold balloons | USE | Personal warmth, humanizing |
+| #8 (627165897) | Corner Connect SOLD composite | SKIP | AI-generated composite, not authentic |
 
-## Top-Tier Assets to Integrate (starred items from audit)
+## Placement Map
 
-| # | Content | Source | Placement |
-|---|---------|--------|-----------|
-| 1 | Karaoke at The Neighborhood Bar (Reel) | IG #1 | About page — singing video block |
-| 7 | Dancing with Stars 2024 — 401 likes, 74 comments | IG #7 | Community page — Diaper Bank section |
-| 26 | Cowboy hat desert sunset photo | FB | Tucson Living hero background |
-| 31 | Professional brand photoshoot (red door, 528 likes) | TikTok | Home page hero or About page gallery |
-| 21 | "About Kasandra Prieto" intro video | YouTube | About page — replace/supplement current welcome video |
-| 11 | Housing4Good podcast interview (17:48) | YouTube | Community page — inline video embed |
-| 4 | Fiestas Patrias 2025 performer promo | IG | Tucson Living — Kasandra's Picks section |
+### 1. Home Page — "Meet Kasandra" Section
+- **Desktop headshot** (line 346): Replace `kasandraHeadshot` with **#5** (desert landscape) — this is her strongest brand photo with Tucson mountains and saguaros
+- **Mobile headshot** (line 368): Same replacement
+- **Lifestyle photo** (line 428): Replace `kasandraLifestyle` with **#3** (turquoise dress in staged home) — shows her in a real estate setting
 
----
+### 2. About Page — Image Row (lines 135-148)
+- Left image: Replace `kasandraHeadshot` with **#1** (black dress indoor professional)
+- Right image: Replace `kasandraLifestyle` with **#6** (desert garden close-up)
 
-## Implementation
+### 3. About Page — KasandraPhotoGallery
+- Replace the AI-generated placeholder `brand-photoshoot-red-door.jpg` with **#2** (navy dress at iron gate)
+- Replace the AI-generated placeholder for Miss Lilly slot with **#7** (Miss Lilly with gold balloons) — add as a new gallery item or replace the `fiestas-patrias-performer` slot
 
-### 1. New Asset Directory + Downloaded Media
-Create `src/assets/kasandra/` and add downloaded photos/thumbnails. Videos will be YouTube embeds (no hosting needed).
+### 4. Contact Page (line 15)
+- Replace `kasandra-contact-headshot.jpg` with **#6** (desert garden) — warm, natural, fits the "From me to you" personal tone
 
-Files to download and add:
-- `singing-karaoke.jpg` — thumbnail from IG reel #1
-- `dancing-stars-2024.jpg` — thumbnail from IG reel #7
-- `desert-sunset-cowboy.jpg` — FB photo #26
-- `brand-photoshoot-red-door.jpg` — TikTok screenshot #31
-- `fiestas-patrias-performer.jpg` — IG reel #4 thumbnail
-- `construction-class.jpg` — from Arizona Daily Star / FB archives
-
-### 2. About Page (`src/pages/v2/V2About.tsx`)
-
-**A. Add singing video block** after the "My Journey" section (~line 183):
-- Use existing `KasandraVideoBlock` component (compact variant)
-- Label: "Beyond Real Estate" / "Más Allá de los Bienes Raíces"
-- Video URL: `https://www.instagram.com/reel/DH2hf1Tum9T/` (or YouTube repost if available)
-- Fallback thumbnail: `singing-karaoke.jpg`
-
-**B. Add "The Real Kasandra" photo gallery** after the singing block:
-- New component `KasandraPhotoGallery.tsx` — responsive 2x3 masonry grid
-- 6 photos: singing, Dancing with Stars, construction class, desert sunset, brand photoshoot, community event
-- Each has a bilingual hover/tap caption
-- Warm cc-ivory background, rounded corners, shadow-soft treatment
-
-**C. Update image row** (lines 133-146): Replace the two generic images with the brand photoshoot and desert sunset photos for immediate visual impact.
-
-### 3. Community Page (`src/pages/v2/V2Community.tsx`)
-
-**A. Dancing with Stars video** in the Diaper Bank section:
-- Add `KasandraVideoBlock` (compact) with YouTube URL: `https://www.instagram.com/reel/DAO0VydylEA/` embed
-- Label: "Dancing for Diapers — 2024" / "Bailando por los Pañales — 2024"
-
-**B. Housing4Good podcast interview** inline:
-- Add `KasandraVideoBlock` (compact) with YouTube URL: `https://www.youtube.com/watch?v=Eca31eeUxRQ`
-- Label: "Featured on Housing4Good Podcast" / "Destacada en Housing4Good Podcast"
-
-### 4. Tucson Living Page (`src/pages/v2/V2TucsonLiving.tsx`)
-
-**A. Hero background upgrade** (line 40-41):
-- Replace solid navy gradient with the cowboy hat desert sunset photo as background
-- Keep gradient overlay for text readability
-
-**B. Add Fiestas Patrias to "Kasandra's Picks"** section:
-- Photo of her performing at St. Philip's Plaza
-- Quote about what Fiestas Patrias means to her
-
-### 5. Home Page (`src/pages/v2/V2Home.tsx`)
-
-**A. Upgrade the "Meet Kasandra" section** with the brand photoshoot (red door) image as the primary headshot, replacing or supplementing `kasandraHeadshot.jpg`.
-
-### 6. New Component: `KasandraPhotoGallery.tsx`
-
-```text
-┌─────────────┬─────────────┬─────────────┐
-│  Singing    │  Dancing    │  Desert     │
-│  Karaoke    │  w/ Stars   │  Sunset     │
-├─────────────┼─────────────┼─────────────┤
-│  Brand      │  Construc-  │  Fiestas    │
-│  Photoshoot │  tion Class │  Patrias    │
-└─────────────┴─────────────┴─────────────┘
-       (2 cols on mobile, 3 on desktop)
-```
-
-- Each cell: `aspect-[4/3]`, rounded-xl, overflow-hidden
-- Hover overlay: bilingual caption + subtle scale(1.03) transition
-- Lazy-loaded images
-
----
-
-## Files to Create/Edit
+## Files to Edit
 
 | File | Change |
 |------|--------|
-| `src/assets/kasandra/` | NEW directory — 6 downloaded photos |
-| `src/components/v2/KasandraPhotoGallery.tsx` | NEW — responsive photo mosaic with hover captions |
-| `src/pages/v2/V2About.tsx` | Add singing video block + photo gallery section + upgrade image row |
-| `src/pages/v2/V2Community.tsx` | Add Dancing with Stars + Housing4Good video embeds |
-| `src/pages/v2/V2TucsonLiving.tsx` | Replace hero with desert sunset photo background |
-| `src/pages/v2/V2Home.tsx` | Upgrade Kasandra headshot with brand photoshoot image |
+| `src/assets/kasandra/` | Copy 6 photos into this directory with descriptive names |
+| `src/pages/v2/V2Home.tsx` | Replace headshot import with desert-landscape photo (#5), lifestyle with staged-home photo (#3) |
+| `src/pages/v2/V2About.tsx` | Replace image row photos with #1 and #6 |
+| `src/components/v2/KasandraPhotoGallery.tsx` | Update gallery items: swap placeholder for #2 (iron gate) and add #7 (Miss Lilly) |
+| `src/pages/v2/V2Contact.tsx` | Replace contact headshot with #6 (desert garden) |
 
-**Note:** Since we can't download from Instagram/TikTok/Facebook directly, we'll create the component structure and image import references. Kasandra will need to provide the actual photo files (screenshots or downloads from her accounts), which we'll place in `src/assets/kasandra/`. The YouTube video embeds will work immediately via URL.
+Total: 6 photos placed across 4 pages, replacing AI placeholders and older generic shots with real professional photography.
 
