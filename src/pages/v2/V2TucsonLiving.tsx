@@ -21,6 +21,7 @@ const SEASONS: Season[] = ['winter', 'spring', 'summer', 'fall'];
 const V2TucsonLivingContent = () => {
   const { t, language } = useLanguage();
   const [activeSeason, setActiveSeason] = useState<Season | 'all'>('all');
+  const { events, isLive, scrapedMonth } = useTucsonEvents();
 
   useDocumentHead({
     titleEn: "Discover Tucson Living | Events, Culture & Lifestyle — Kasandra Prieto",
