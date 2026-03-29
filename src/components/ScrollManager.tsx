@@ -5,21 +5,19 @@ const ScrollManager = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    const behavior = isMobile ? "smooth" : "auto";
-
     if (location.hash) {
       // Wait for DOM to render before scrolling to anchor
       requestAnimationFrame(() => {
         const elementId = location.hash.slice(1);
         const element = document.getElementById(elementId);
         if (element) {
-          element.scrollIntoView({ behavior, block: "start" });
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       });
     } else {
-      // Scroll to top on route change
-      window.scrollTo({ top: 0, left: 0, behavior });
+      // Instant scroll to top on route change — "auto" prevents race
+      // conditions with lazy-loaded content that shifts the viewport
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     }
   }, [location.pathname, location.hash]);
 
