@@ -331,7 +331,7 @@ const V2HomeContent = () => {
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted">{t('Host of "Lifting You Up with Kasandra Prieto" (Urbana 92.5 FM)', 'Conductora de "Lifting You Up with Kasandra Prieto" (Urbana 92.5 FM)')}</span>
+                <span className="text-cc-text-muted">{t('Host of "Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)', 'Conductora de "Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)')}</span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
