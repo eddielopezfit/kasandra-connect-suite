@@ -34,7 +34,7 @@ function KasandraBookingCTA({ t, handleSelenaRoute, compact = false }: {
   compact?: boolean;
 }) {
   return (
-    <section className={cn("bg-cc-navy", compact ? "py-10" : "py-16 lg:py-20 pb-24 sm:pb-16")}>
+    <section className={cn("bg-cc-navy", compact ? "py-10" : "py-16 lg:py-20 pb-16")}>
       <div className="container mx-auto px-4 text-center">
         <h2 className={cn("font-serif font-bold mb-6 text-white", compact ? "text-2xl md:text-3xl" : "text-4xl md:text-5xl")}>
           {t("Let's figure out your best move.", "Descubramos tu mejor jugada.")}

@@ -438,7 +438,7 @@ function GuidesContent() {
       </section>
 
       {/* Educational Guides Grid — stories excluded */}
-      <section className="bg-cc-ivory py-16 pb-24 md:pb-16">
+      <section className="bg-cc-ivory py-16 pb-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {filteredGuides.length === 0 && searchQuery.trim() && (
