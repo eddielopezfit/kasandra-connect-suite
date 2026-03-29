@@ -30,7 +30,9 @@ export type DestinationKey =
   | 'selena_open'
   | 'external_youtube'
   | 'neighborhoods'
-  | 'neighborhood_detail';
+  | 'neighborhood_detail'
+  | 'trusted_network'
+  | 'tucson_living';
 
 interface DestinationEntry {
   key: DestinationKey;
@@ -64,6 +66,8 @@ const DESTINATIONS: readonly DestinationEntry[] = [
   { key: 'external_youtube', path: null, label_en: 'YouTube', label_es: 'YouTube' },
   { key: 'neighborhoods', path: '/neighborhoods', label_en: 'Neighborhoods', label_es: 'Vecindarios' },
   { key: 'neighborhood_detail', path: '/neighborhoods/:slug', label_en: 'Neighborhood', label_es: 'Vecindario' },
+  { key: 'trusted_network', path: '/network', label_en: 'Trusted Network', label_es: 'Red de Confianza' },
+  { key: 'tucson_living', path: '/tucson-living', label_en: 'Tucson Living', label_es: 'Vida en Tucson' },
 ] as const;
 
 // Lookup map for O(1) access

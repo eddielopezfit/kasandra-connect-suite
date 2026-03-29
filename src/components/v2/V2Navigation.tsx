@@ -47,6 +47,7 @@ const V2Navigation = () => {
     { href: "/podcast", label: t("Podcast", "Podcast") },
     { href: "/community", label: t("Community", "Comunidad") },
     { href: "/network", label: t("Trusted Network", "Red de Confianza") },
+    { href: "/tucson-living", label: t("Tucson Living", "Vida en Tucson") },
     { href: "/about", label: t("About", "Sobre Mí") },
     { href: "/contact", label: t("Contact", "Contacto") },
   ];

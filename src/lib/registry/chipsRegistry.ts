@@ -814,6 +814,42 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     actionSpec: { type: 'navigate', path: '/home-valuation', label: { en: 'Get my market analysis', es: 'Obtener mi análisis de mercado' } },
     chipKey: CHIP_KEYS.HOME_VALUATION,
   },
+
+  // --- Navigate: Tucson Living ---
+  {
+    id: 'nav-tucson-living-en',
+    label_en: 'Explore Tucson events',
+    label_es: 'Explorar eventos de Tucson',
+    normalized_key: 'explore tucson events',
+    actionSpec: { type: 'navigate', path: '/tucson-living', label: { en: 'Explore Tucson events', es: 'Explorar eventos de Tucson' } },
+    chipKey: CHIP_KEYS.TUCSON_LIVING,
+  },
+  {
+    id: 'nav-tucson-living-es',
+    label_en: 'Explore Tucson events',
+    label_es: 'Explorar eventos de Tucson',
+    normalized_key: 'explorar eventos de tucson',
+    actionSpec: { type: 'navigate', path: '/tucson-living', label: { en: 'Explore Tucson events', es: 'Explorar eventos de Tucson' } },
+    chipKey: CHIP_KEYS.TUCSON_LIVING,
+  },
+
+  // --- Navigate: Trusted Network ---
+  {
+    id: 'nav-trusted-network-en',
+    label_en: "Kasandra's trusted network",
+    label_es: 'Red de confianza',
+    normalized_key: "kasandras trusted network",
+    actionSpec: { type: 'navigate', path: '/network', label: { en: "Kasandra's trusted network", es: 'Red de confianza' } },
+    chipKey: CHIP_KEYS.TRUSTED_NETWORK,
+  },
+  {
+    id: 'nav-trusted-network-es',
+    label_en: "Kasandra's trusted network",
+    label_es: 'Red de confianza',
+    normalized_key: 'red de confianza',
+    actionSpec: { type: 'navigate', path: '/network', label: { en: "Kasandra's trusted network", es: 'Red de confianza' } },
+    chipKey: CHIP_KEYS.TRUSTED_NETWORK,
+  },
 ] as const;
 
 // ============= LOOKUP =============
