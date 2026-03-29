@@ -699,6 +699,79 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     normalized_key: 'cuanto vale mi casa',
     actionSpec: { type: 'navigate', path: '/home-valuation', label: { en: 'Get my market analysis', es: 'Obtener mi análisis de mercado' } },
   },
+  // --- Conversational: "I have another question" ---
+  {
+    id: 'conv-another-question-en',
+    label_en: 'I have another question',
+    label_es: 'Tengo otra pregunta',
+    normalized_key: 'i have another question',
+    chipKey: CHIP_KEYS.I_HAVE_A_QUESTION,
+  },
+  {
+    id: 'conv-another-question-es',
+    label_en: 'I have another question',
+    label_es: 'Tengo otra pregunta',
+    normalized_key: 'tengo otra pregunta',
+    chipKey: CHIP_KEYS.I_HAVE_A_QUESTION,
+  },
+  // --- Conversational: "Skip for now" ---
+  {
+    id: 'conv-skip-en',
+    label_en: 'Skip for now',
+    label_es: 'Prefiero omitir esto por ahora',
+    normalized_key: 'skip for now',
+    chipKey: CHIP_KEYS.SKIP_FOR_NOW,
+  },
+  {
+    id: 'conv-skip-es',
+    label_en: 'Skip for now',
+    label_es: 'Prefiero omitir esto por ahora',
+    normalized_key: 'prefiero omitir esto por ahora',
+    chipKey: CHIP_KEYS.SKIP_FOR_NOW,
+  },
+  // --- Conversational: Stall recovery chips ---
+  {
+    id: 'conv-summarize-en',
+    label_en: 'Yes, summarize where I am',
+    label_es: 'Sí, resume dónde estoy',
+    normalized_key: 'yes summarize where i am',
+    chipKey: CHIP_KEYS.SUMMARIZE_WHERE_I_AM,
+  },
+  {
+    id: 'conv-summarize-es',
+    label_en: 'Yes, summarize where I am',
+    label_es: 'Sí, resume dónde estoy',
+    normalized_key: 'si resume donde estoy',
+    chipKey: CHIP_KEYS.SUMMARIZE_WHERE_I_AM,
+  },
+  {
+    id: 'conv-keep-exploring-en',
+    label_en: "I'd rather keep exploring",
+    label_es: 'Prefiero seguir explorando',
+    normalized_key: "id rather keep exploring",
+    chipKey: CHIP_KEYS.KEEP_EXPLORING,
+  },
+  {
+    id: 'conv-keep-exploring-es',
+    label_en: "I'd rather keep exploring",
+    label_es: 'Prefiero seguir explorando',
+    normalized_key: 'prefiero seguir explorando',
+    chipKey: CHIP_KEYS.KEEP_EXPLORING,
+  },
+  {
+    id: 'conv-specific-question-en',
+    label_en: 'I have a specific question',
+    label_es: 'Tengo una pregunta específica',
+    normalized_key: 'i have a specific question',
+    chipKey: CHIP_KEYS.SPECIFIC_QUESTION,
+  },
+  {
+    id: 'conv-specific-question-es',
+    label_en: 'I have a specific question',
+    label_es: 'Tengo una pregunta específica',
+    normalized_key: 'tengo una pregunta especifica',
+    chipKey: CHIP_KEYS.SPECIFIC_QUESTION,
+  },
   // --- Greeting safety net: "I'm ready to talk to Kasandra" ---
   {
     id: 'legacy-ready-talk-en',
