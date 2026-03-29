@@ -262,7 +262,7 @@ const V2HomeContent = () => {
               {/* Image row */}
               <div className="grid grid-cols-2 gap-4">
                 <img
-                  src={kasandraHeadshot}
+                  src={brandPhotoshoot}
                   alt="Kasandra Prieto, REALTOR®"
                   className="w-full h-40 object-cover object-top rounded-xl shadow-soft border border-cc-sand-dark/20"
                   loading="lazy"
