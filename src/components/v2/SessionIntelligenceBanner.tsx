@@ -2,19 +2,58 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { getSessionContext } from "@/lib/analytics/selenaSession";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
-import { Sparkles, ArrowRight, RefreshCw } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Sparkles, ArrowRight, RefreshCw, TrendingUp } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { logEvent } from "@/lib/analytics/logEvent";
+import { useCallback } from "react";
+
+// Page path → intent override (show relevant messaging on intent-specific pages)
+const PAGE_INTENT_OVERRIDE: Record<string, string> = {
+  '/sell': 'sell',
+  '/seller-decision': 'sell',
+  '/seller-readiness': 'sell',
+  '/seller-timeline': 'sell',
+  '/cash-offer-options': 'cash',
+  '/cash-readiness': 'cash',
+  '/buy': 'buy',
+  '/buyer-readiness': 'buy',
+  '/affordability-calculator': 'buy',
+  '/bah-calculator': 'buy',
+  '/buyer-closing-costs': 'buy',
+  '/off-market': 'buy',
+};
+
+interface BannerAction {
+  type: 'link' | 'chat';
+  label: string;
+  destination: string;
+}
 
 const SessionIntelligenceBanner = () => {
   const { t } = useLanguage();
   const progress = useJourneyProgress();
   const { openChat } = useSelenaChat();
   const ctx = getSessionContext();
+  const { pathname } = useLocation();
+
+  // Track CTA interactions for CRM feedback
+  const trackBannerAction = useCallback((action: string, destination: string) => {
+    logEvent('banner_cta_clicked', { action, destination, intent: progress.intent, depth: progress.journeyDepth });
+  }, [progress.intent, progress.journeyDepth]);
+
+  // Track banner impression + ignored CTA (fires on unmount or page change)
+  if (progress.journeyDepth !== 'new') {
+    logEvent('banner_impression', { intent: progress.intent, depth: progress.journeyDepth, page: pathname });
+  }
 
   if (progress.journeyDepth === 'new') return null;
 
-  const { message, actions, isReturning } = getBannerContent(progress, ctx, t);
+  // Override displayed intent based on current page
+  const pageOverrideIntent = PAGE_INTENT_OVERRIDE[pathname];
+  const displayIntent = pageOverrideIntent || progress.intent;
+
+  const { message, actions, isReturning, momentum } = getBannerContent(progress, ctx, t, displayIntent, pathname);
   if (!message) return null;
 
   return (
@@ -30,6 +69,8 @@ const SessionIntelligenceBanner = () => {
             <div className="flex items-center gap-2 text-sm text-cc-charcoal/80">
               {isReturning ? (
                 <RefreshCw className="w-3.5 h-3.5 text-cc-gold shrink-0" />
+              ) : momentum ? (
+                <TrendingUp className="w-3.5 h-3.5 text-cc-gold shrink-0" />
               ) : (
                 <Sparkles className="w-3.5 h-3.5 text-cc-gold shrink-0" />
               )}
@@ -42,6 +83,7 @@ const SessionIntelligenceBanner = () => {
                     <Link
                       key={i}
                       to={action.destination}
+                      onClick={() => trackBannerAction(action.label, action.destination)}
                       className="text-xs font-semibold text-cc-gold hover:text-cc-gold-dark flex items-center gap-1 whitespace-nowrap transition-colors"
                     >
                       {action.label}
@@ -50,7 +92,10 @@ const SessionIntelligenceBanner = () => {
                   ) : (
                     <button
                       key={i}
-                      onClick={() => openChat({ source: 'intelligence_banner' })}
+                      onClick={() => {
+                        trackBannerAction(action.label, 'selena');
+                        openChat({ source: 'intelligence_banner' });
+                      }}
                       className="text-xs font-semibold text-cc-gold hover:text-cc-gold-dark flex items-center gap-1 whitespace-nowrap transition-colors"
                     >
                       {action.label}
@@ -67,17 +112,13 @@ const SessionIntelligenceBanner = () => {
   );
 };
 
-interface BannerAction {
-  type: 'link' | 'chat';
-  label: string;
-  destination: string;
-}
-
 function getBannerContent(
   progress: ReturnType<typeof useJourneyProgress>,
   ctx: ReturnType<typeof getSessionContext>,
   t: (en: string, es: string) => string,
-): { message: string | null; actions: BannerAction[] | null; isReturning: boolean } {
+  displayIntent: string | undefined,
+  pathname: string,
+): { message: string | null; actions: BannerAction[] | null; isReturning: boolean; momentum: boolean } {
   const { intent, toolCount, guideCount, journeyDepth, hasExploredNeighborhood, confidenceLevel, isReturningUser, estimatedValue } = progress;
 
   // Returning user — welcome back with context
@@ -108,21 +149,23 @@ function getBannerContent(
         { type: 'link', label: t("Plan your next step with Kasandra", "Planifica tu siguiente paso con Kasandra"), destination: '/book' },
       ],
       isReturning: true,
+      momentum: false,
     };
   }
 
-  // High confidence — nudge toward commitment
+  // High confidence — momentum signal + nudge toward commitment
   if (confidenceLevel === 'high') {
     return {
       message: t(
-        "You've done thorough research. Ready to talk strategy?",
-        "Has investigado a fondo. ¿Lista/o para hablar de estrategia?"
+        "Most people at your stage book a strategy call next — you've earned it.",
+        "La mayoría en tu etapa agenda una llamada de estrategia — te lo has ganado."
       ),
       actions: [
         { type: 'link', label: t("Plan your next step with Kasandra", "Planifica tu siguiente paso con Kasandra"), destination: '/book' },
         { type: 'chat', label: t("Let Selena guide you", "Deja que Selena te guíe"), destination: 'selena' },
       ],
       isReturning: false,
+      momentum: true,
     };
   }
 
@@ -138,25 +181,27 @@ function getBannerContent(
         { type: 'chat', label: t("Get guided help from Selena", "Recibe orientación de Selena"), destination: 'selena' },
       ],
       isReturning: false,
+      momentum: false,
     };
   }
 
-  // Multiple tools completed
+  // Multiple tools completed — momentum signal
   if (toolCount >= 2) {
     return {
       message: t(
-        `You've completed ${toolCount} tools. Your picture is getting clearer.`,
-        `Has completado ${toolCount} herramientas. Tu panorama se aclara.`
+        `You've completed ${toolCount} tools — clients with this level of clarity usually connect with Kasandra next.`,
+        `Has completado ${toolCount} herramientas — clientes con esta claridad usualmente conectan con Kasandra.`
       ),
       actions: [
-        { type: 'chat', label: t("Let Selena walk you through it", "Deja que Selena te acompañe"), destination: 'selena' },
         { type: 'link', label: t("Plan your next step with Kasandra", "Planifica tu siguiente paso con Kasandra"), destination: '/book' },
+        { type: 'chat', label: t("Let Selena walk you through it", "Deja que Selena te acompañe"), destination: 'selena' },
       ],
       isReturning: false,
+      momentum: true,
     };
   }
 
-  // Guide reader
+  // Guide reader — momentum signal
   if (guideCount >= 3) {
     return {
       message: t(
@@ -164,18 +209,19 @@ function getBannerContent(
         `Has leído ${guideCount} guías — ¿lista/o para aplicar ese conocimiento?`
       ),
       actions: [
-        intent === 'buy'
+        displayIntent === 'buy'
           ? { type: 'link', label: t("See where you stand as a buyer", "Mira dónde estás como comprador"), destination: '/buyer-readiness' }
-          : intent === 'sell'
+          : displayIntent === 'sell'
           ? { type: 'link', label: t("Understand your options", "Comprende tus opciones"), destination: '/seller-decision' }
           : { type: 'chat', label: t("Get guided help from Selena", "Recibe orientación de Selena"), destination: 'selena' },
       ],
       isReturning: false,
+      momentum: true,
     };
   }
 
-  // Intent detected — affirm it
-  if (intent && intent !== 'explore') {
+  // Intent detected — page-aware affirmation
+  if (displayIntent && displayIntent !== 'explore') {
     const intentMessages: Record<string, string> = {
       buy: t("You're exploring the buying process.", "Estás explorando el proceso de compra."),
       sell: t("You're exploring your selling options.", "Estás explorando tus opciones de venta."),
@@ -184,9 +230,10 @@ function getBannerContent(
       dual: t("You're considering buying and selling.", "Estás considerando comprar y vender."),
     };
     return {
-      message: intentMessages[intent] || null,
+      message: intentMessages[displayIntent] || null,
       actions: [{ type: 'chat', label: t("Get guided help from Selena", "Recibe orientación de Selena"), destination: 'selena' }],
       isReturning: false,
+      momentum: false,
     };
   }
 
@@ -199,10 +246,11 @@ function getBannerContent(
       ),
       actions: null,
       isReturning: false,
+      momentum: false,
     };
   }
 
-  return { message: null, actions: null, isReturning: false };
+  return { message: null, actions: null, isReturning: false, momentum: false };
 }
 
 export default SessionIntelligenceBanner;
