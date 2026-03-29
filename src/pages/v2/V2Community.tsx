@@ -125,6 +125,12 @@ const V2CommunityContent = () => {
                   />
                 </div>
                 <KasandraVideoBlock
+                  videoUrl="https://www.instagram.com/reel/DAO0VydylEA/"
+                  labelEn="Dancing for Diapers — 2024"
+                  labelEs="Bailando por los Pañales — 2024"
+                  variant="compact"
+                />
+                <KasandraVideoBlock
                   videoUrl="https://www.youtube.com/watch?v=Eca31eeUxRQ"
                   labelEn="Featured on Housing4Good Podcast"
                   labelEs="Destacada en Housing4Good Podcast"
