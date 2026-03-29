@@ -1478,9 +1478,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // so users can't click stale Phase 3 chips instead of typing their address.
     const replyAsksForEmail = /email\s*(address)?.*\?|what.*email|your email|correo\s*(electr[oó]nico)?.*\?/i.test(reply);
     if (replyAsksForEmail && !extractedEmail && currentMode !== 4) {
-      suggestedReplies = language === "es"
-        ? ["Prefiero omitir esto por ahora"]
-        : ["Skip for now"];
+      suggestedReplies = ['skip_for_now'];
     }
 
     // ============= GUARD CHIP OVERRIDES =============
