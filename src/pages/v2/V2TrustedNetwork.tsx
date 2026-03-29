@@ -111,7 +111,7 @@ const V2TrustedNetworkContent = () => {
                       {' · '}
                       {language === "es" ? spotlight.specialty.es : spotlight.specialty.en}
                     </p>
-                    <p className="text-cc-charcoal/80 mt-4 leading-relaxed italic">
+                    <p className="text-cc-charcoal/80 mt-4 leading-relaxed italic text-sm md:text-base">
                       "{language === "es" ? spotlight.endorsement.es : spotlight.endorsement.en}"
                     </p>
                     {spotlight.yearsWorking && (
@@ -193,7 +193,7 @@ const V2TrustedNetworkContent = () => {
                         <p className="text-xs text-cc-charcoal/50 mt-1">
                           {language === "es" ? partner.specialty.es : partner.specialty.en}
                         </p>
-                        <p className="text-sm text-cc-charcoal/70 leading-relaxed mt-3 italic">
+                        <p className="text-sm md:text-base text-cc-charcoal/70 leading-relaxed mt-3 italic">
                           "{language === "es" ? partner.endorsement.es : partner.endorsement.en}"
                         </p>
                         {partner.yearsWorking && (

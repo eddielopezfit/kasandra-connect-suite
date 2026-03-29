@@ -16,7 +16,7 @@ const TestimonialCard = ({ testimonial, variant = "primary" }: TestimonialCardPr
   if (variant === "compact") {
     return (
       <div className="bg-white p-5 rounded-xl shadow-soft h-full">
-        <p className="text-cc-text-muted italic text-sm mb-4">
+        <p className="text-cc-text-muted italic text-sm md:text-base mb-4">
           "{content}"
         </p>
         <div className="flex items-center justify-between">
@@ -30,7 +30,7 @@ const TestimonialCard = ({ testimonial, variant = "primary" }: TestimonialCardPr
   if (variant === "secondary") {
     return (
       <div className="bg-white rounded-xl p-6 border border-cc-sand-dark/30 shadow-soft">
-        <p className="text-cc-charcoal italic text-sm mb-4">
+        <p className="text-cc-charcoal italic text-sm md:text-base mb-4">
           "{content}"
         </p>
         <div className="flex items-center justify-between">
@@ -46,7 +46,7 @@ const TestimonialCard = ({ testimonial, variant = "primary" }: TestimonialCardPr
     <div className="bg-cc-blue-bg p-6 rounded-xl relative">
       <Quote className="w-8 h-8 text-cc-gold/30 absolute top-4 left-4" />
       <div className="pt-8">
-        <p className="text-cc-text-muted italic mb-6 leading-relaxed">
+        <p className="text-cc-text-muted italic text-sm md:text-base mb-6 leading-relaxed">
           "{content}"
         </p>
         <div className="border-t border-cc-blue/10 pt-4">

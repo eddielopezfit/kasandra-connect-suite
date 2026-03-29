@@ -244,7 +244,7 @@ const V2CommunityContent = () => {
                 <div className="text-center">
                   <Home className="w-16 h-16 text-cc-gold mx-auto mb-4" />
                   <p className="font-serif text-lg font-bold text-cc-navy">{t("15 Tiny Homes Built", "15 Casas Pequeñas Construidas")}</p>
-                  <p className="text-sm text-cc-charcoal/60 mt-1">{t("6-Month Construction Program", "Programa de Construcción de 6 Meses")}</p>
+                  <p className="text-sm md:text-base text-cc-charcoal/60 mt-1">{t("6-Month Construction Program", "Programa de Construcción de 6 Meses")}</p>
                 </div>
               </div>
               <div className="order-1 md:order-2">
@@ -317,7 +317,7 @@ const V2CommunityContent = () => {
                 <div className="text-center">
                   <Sparkles className="w-16 h-16 text-cc-gold mx-auto mb-4" />
                   <p className="font-serif text-lg font-bold text-cc-navy">{t("Always Growing", "Siempre Creciendo")}</p>
-                  <p className="text-sm text-cc-charcoal/60 mt-1 italic">{t("\"Growth and giving back IS the formula.\"", "\"El crecimiento y retribuir ES la fórmula.\"")}</p>
+                  <p className="text-sm md:text-base text-cc-charcoal/60 mt-1 italic">{t("\"Growth and giving back IS the formula.\"", "\"El crecimiento y retribuir ES la fórmula.\"")}</p>
                 </div>
               </div>
             </div>

@@ -404,7 +404,7 @@ const V2ThankYouContent = () => {
                     <h4 className="font-semibold text-cc-navy mb-1">
                       {content.resource.title}
                     </h4>
-                    <p className="text-sm text-cc-charcoal">
+                    <p className="text-sm md:text-base text-cc-charcoal">
                       {content.resource.description}
                     </p>
                   </div>
@@ -442,7 +442,7 @@ const V2ThankYouContent = () => {
                   <h4 className="font-semibold text-cc-navy mb-1">
                     {t("While you wait, I can help", "Mientras espera, puedo ayudarle")}
                   </h4>
-                  <p className="text-sm text-cc-charcoal">
+                  <p className="text-sm md:text-base text-cc-charcoal">
                     {t(
                       "Have questions before your call? I'm Selena, and I'm here to help you feel prepared.",
                       "¿Tiene preguntas antes de su llamada? Soy Selena, y estoy aquí para ayudarle a sentirse preparado/a."

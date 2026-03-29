@@ -71,7 +71,7 @@ const V2TucsonLivingContent = () => {
                   <h3 className="font-serif text-lg font-bold text-cc-navy mb-2">
                     {language === 'es' ? h.stat.es : h.stat.en}
                   </h3>
-                  <p className="text-sm text-cc-charcoal/70 leading-relaxed">
+                  <p className="text-sm md:text-base text-cc-charcoal/70 leading-relaxed">
                     {language === 'es' ? h.detail.es : h.detail.en}
                   </p>
                 </CardContent>
@@ -141,7 +141,7 @@ const V2TucsonLivingContent = () => {
                   <h3 className="font-serif text-lg font-bold text-cc-navy mb-2">
                     {language === 'es' ? event.name.es : event.name.en}
                   </h3>
-                  <p className="text-sm text-cc-charcoal/70 leading-relaxed">
+                  <p className="text-sm md:text-base text-cc-charcoal/70 leading-relaxed">
                     {language === 'es' ? event.description.es : event.description.en}
                   </p>
                 </CardContent>

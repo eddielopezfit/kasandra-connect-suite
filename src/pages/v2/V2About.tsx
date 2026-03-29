@@ -107,22 +107,22 @@ const V2AboutContent = () => {
                 <ul className="space-y-2">
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t("VP, Governing Board — Arizona Diaper Bank", "VP, Junta Directiva — Arizona Diaper Bank")}</span>
+                    <span className="text-sm md:text-base">{t("VP, Governing Board — Arizona Diaper Bank", "VP, Junta Directiva — Arizona Diaper Bank")}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t("Greater Tucson Leadership — Class of 2026", "Greater Tucson Leadership — Promoción 2026")}</span>
+                    <span className="text-sm md:text-base">{t("Greater Tucson Leadership — Class of 2026", "Greater Tucson Leadership — Promoción 2026")}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t('Host of "Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)', 'Conductora de "Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)')}</span>
+                    <span className="text-sm md:text-base">{t('Host of "Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)', 'Conductora de "Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)')}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t("Luxury Property Specialist", "Especialista en Propiedades de Lujo")}</span>
+                    <span className="text-sm md:text-base">{t("Luxury Property Specialist", "Especialista en Propiedades de Lujo")}</span>
                   </li>
                 </ul>
-                <p className="text-sm text-cc-text-muted">
+                <p className="text-sm md:text-base text-cc-text-muted">
                   {t("Arizona License #SA682372000 · Corner Connect / Realty Executives Arizona Territory", "Licencia de Arizona #SA682372000 · Corner Connect / Realty Executives Arizona Territory")}
                 </p>
               </div>
@@ -202,7 +202,7 @@ const V2AboutContent = () => {
               <h3 className="font-serif text-lg font-bold text-cc-navy mb-2">
                 {t("Construction Course", "Curso de Construcción")}
               </h3>
-              <p className="text-sm text-cc-charcoal/70 leading-relaxed">
+              <p className="text-sm md:text-base text-cc-charcoal/70 leading-relaxed">
                 {t(
                   "I completed a 6-month construction course where I built 15 tiny homes. I invested in understanding how homes are actually constructed — not just how they're sold. When I walk through a property with you, I see what most agents don't.",
                   "Completé un curso de construcción de 6 meses donde construí 15 casas pequeñas. Invertí en entender cómo se construyen las casas — no solo cómo se venden. Cuando camino por una propiedad contigo, veo lo que la mayoría de los agentes no ven."
@@ -216,7 +216,7 @@ const V2AboutContent = () => {
               <h3 className="font-serif text-lg font-bold text-cc-navy mb-2">
                 {t("Personal Development", "Desarrollo Personal")}
               </h3>
-              <p className="text-sm text-cc-charcoal/70 leading-relaxed">
+              <p className="text-sm md:text-base text-cc-charcoal/70 leading-relaxed">
                 {t(
                   "Influenced by Tony Robbins, Jim Rohn, and Les Brown through their books and teachings. Greater Tucson Leadership Class of 2026, and continuous education in real estate. I believe the best agents are the ones who never stop growing.",
                    "Influenciada por Tony Robbins, Jim Rohn y Les Brown a través de sus libros y enseñanzas. Greater Tucson Leadership Promoción 2026, y educación continua en bienes raíces. Creo que los mejores agentes son los que nunca dejan de crecer."
@@ -230,7 +230,7 @@ const V2AboutContent = () => {
               <h3 className="font-serif text-lg font-bold text-cc-navy mb-2">
                 {t("Media & Community Voice", "Voz en Medios y Comunidad")}
               </h3>
-              <p className="text-sm text-cc-charcoal/70 leading-relaxed">
+              <p className="text-sm md:text-base text-cc-charcoal/70 leading-relaxed">
                 {t(
                   "Host of \"Lifting You Up\" on Urbana 92.5 FM and \"Todo Empieza en Casa\" on YouTube. I created these platforms because I believe in lifting others up — and because homeownership education shouldn't only be available in English.",
                   "Conductora de \"Lifting You Up\" en Urbana 92.5 FM y \"Todo Empieza en Casa\" en YouTube. Creé estas plataformas porque creo en levantar a otros — y porque la educación sobre vivienda no debería estar disponible solo en inglés."
@@ -284,7 +284,7 @@ const V2AboutContent = () => {
                 "Realty Executives es una correduría internacional con más de 50 años de excelencia comprobada. A través de Corner Connect, te ofrezco la fortaleza de una red global con la atención personal de una experta local."
               )}
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-cc-charcoal/70">
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm md:text-base text-cc-charcoal/70">
               <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-cc-gold" />{t("50+ Years in Business", "Más de 50 Años en el Negocio")}</span>
               <span className="flex items-center gap-2"><Users className="w-4 h-4 text-cc-gold" />{t("International Network", "Red Internacional")}</span>
               <span className="flex items-center gap-2"><Award className="w-4 h-4 text-cc-gold" />{t("Arizona Territory Office", "Oficina Arizona Territory")}</span>

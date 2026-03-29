@@ -323,19 +323,19 @@ const V2SellContent = () => {
               {t("Need to sell fast? Let me show you what a real cash offer looks like.", "¿Necesitas vender rápido? Déjame mostrarte cómo luce una oferta en efectivo real.")}
             </h2>
             <div className="flex flex-wrap justify-center gap-4 mb-6">
-              <span className="flex items-center gap-2 text-white/80 text-sm">
+              <span className="flex items-center gap-2 text-white/80 text-sm md:text-base">
                 <Check className="w-4 h-4 text-cc-gold" />
                 {t("No fees", "Sin comisiones")}
               </span>
-              <span className="flex items-center gap-2 text-white/80 text-sm">
+              <span className="flex items-center gap-2 text-white/80 text-sm md:text-base">
                 <Check className="w-4 h-4 text-cc-gold" />
                 {t("We cover closing costs", "Cubrimos costos de cierre")}
               </span>
-              <span className="flex items-center gap-2 text-white/80 text-sm">
+              <span className="flex items-center gap-2 text-white/80 text-sm md:text-base">
                 <Check className="w-4 h-4 text-cc-gold" />
                 {t("No inspections", "Sin inspecciones")}
               </span>
-              <span className="flex items-center gap-2 text-white/80 text-sm">
+              <span className="flex items-center gap-2 text-white/80 text-sm md:text-base">
                 <Check className="w-4 h-4 text-cc-gold" />
                 {t("Close on your timeline", "Cierra en tu tiempo")}
               </span>
@@ -387,7 +387,7 @@ const V2SellContent = () => {
                     <h3 className="font-serif text-lg font-bold text-cc-navy">
                       {t("Strategic Analysis", "Análisis Estratégico")}
                     </h3>
-                    <p className="text-sm text-foreground">
+                    <p className="text-sm md:text-base text-foreground">
                       {t(
                         "Market-based pricing strategy using current data and comparable sales in your area.",
                         "Estrategia de precios basada en datos actuales del mercado y ventas comparables en su área."
@@ -401,7 +401,7 @@ const V2SellContent = () => {
                     <h3 className="font-serif text-lg font-bold text-cc-navy">
                       {t("Risk Mitigation", "Mitigación de Riesgos")}
                     </h3>
-                    <p className="text-sm text-foreground">
+                    <p className="text-sm md:text-base text-foreground">
                       {t(
                         "Full disclosure support and offer reliability assessment to protect you throughout.",
                         "Apoyo completo de divulgación y evaluación de confiabilidad de ofertas para protegerle."
@@ -415,7 +415,7 @@ const V2SellContent = () => {
                     <h3 className="font-serif text-lg font-bold text-cc-navy">
                       {t("Expert Execution", "Ejecución Experta")}
                     </h3>
-                    <p className="text-sm text-foreground">
+                    <p className="text-sm md:text-base text-foreground">
                       {t(
                         "Skilled negotiation and professional marketing to maximize your outcome.",
                         "Negociación hábil y marketing profesional para maximizar su resultado."
@@ -535,7 +535,7 @@ const V2SellContent = () => {
                   {t("List on the Market", "Listado en el Mercado")}
                 </h3>
               </div>
-              <p className="text-white/60 text-sm mb-6">Via Realty Executives Arizona Territory</p>
+              <p className="text-white/60 text-sm md:text-base mb-6">Via Realty Executives Arizona Territory</p>
 
               <div className="space-y-4 mb-8 flex-1">
                 <div className="flex items-start gap-3">
@@ -587,28 +587,28 @@ const V2SellContent = () => {
                   {t("Cash Offer", "Oferta en Efectivo")}
                 </h3>
               </div>
-              <p className="text-foreground/60 text-sm mb-6">Via Corner Connect Buyer Network</p>
+              <p className="text-foreground/60 text-sm md:text-base mb-6">Via Corner Connect Buyer Network</p>
 
               <div className="space-y-4 mb-8 flex-1">
                 <div className="flex items-start gap-3">
                   <Clock className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-foreground">{t("Close in 7–14 days", "Cierra en 7–14 días")}</span>
+                  <span className="text-sm md:text-base text-foreground">{t("Close in 7–14 days", "Cierra en 7–14 días")}</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <DollarSign className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-foreground">{t("Certain close, no financing contingencies", "Cierre seguro, sin contingencias de financiamiento")}</span>
+                  <span className="text-sm md:text-base text-foreground">{t("Certain close, no financing contingencies", "Cierre seguro, sin contingencias de financiamiento")}</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <Home className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-foreground">{t("No showings, no open houses", "Sin visitas, sin casas abiertas")}</span>
+                  <span className="text-sm md:text-base text-foreground">{t("No showings, no open houses", "Sin visitas, sin casas abiertas")}</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <Wrench className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-foreground">{t("As-is — no repairs required", "Como está — sin reparaciones requeridas")}</span>
+                  <span className="text-sm md:text-base text-foreground">{t("As-is — no repairs required", "Como está — sin reparaciones requeridas")}</span>
                 </div>
                 <div className="flex items-start gap-3">
                   <Network className="w-5 h-5 text-cc-navy flex-shrink-0 mt-0.5" />
-                  <span className="text-sm text-foreground">{t("Kasandra's vetted buyer network", "Red de compradores verificados de Kasandra")}</span>
+                  <span className="text-sm md:text-base text-foreground">{t("Kasandra's vetted buyer network", "Red de compradores verificados de Kasandra")}</span>
                 </div>
               </div>
 
@@ -629,7 +629,7 @@ const V2SellContent = () => {
           {/* Bottom Callout */}
           <div className="max-w-5xl mx-auto mt-8">
             <div className="bg-cc-sand rounded-xl py-6 px-8 text-center">
-              <p className="text-foreground text-sm max-w-2xl mx-auto mb-3">
+              <p className="text-foreground text-sm md:text-base max-w-2xl mx-auto mb-3">
                 {t(
                   "Not sure which path fits? I walk through both options with every seller — you decide with the full picture.",
                   "¿No estás segura de qué camino va contigo? Yo reviso ambas opciones con cada vendedor — tú decides con toda la información."
