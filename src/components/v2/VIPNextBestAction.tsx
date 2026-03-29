@@ -30,10 +30,9 @@ export default function VIPNextBestAction({
   const { recommendedNextStep, vip, continuationSummary } = useVIP({ localOnly: true });
   const isEs = language === 'es';
 
-  // Don't show for brand-new visitors or users who have already booked
-  if (vip.journey.hasBooked || vip.journey.journeyDepth === 'new') return null;
-
   const step = recommendedNextStep;
+
+  const handleClick = useCallback(() => {
 
   const handleClick = useCallback(() => {
     logEvent('vip_next_action_clicked' as any, {
