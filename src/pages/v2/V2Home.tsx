@@ -37,6 +37,8 @@ import { updateSessionContext, getSessionContext } from '@/lib/analytics/selenaS
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import SelenaShowcase from "@/components/v2/SelenaShowcase";
+const LazyVIPNextBestAction = lazy(() => import("@/components/v2/VIPNextBestAction"));
+const LazyFrictionEscalation = lazy(() => import("@/components/v2/FrictionEscalation"));
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
@@ -140,6 +142,27 @@ const V2HomeContent = () => {
           </div>
         </div>
       </section>
+
+      {/* VIP Next Best Action — only for returning/engaged users */}
+      {progress.isReturningUser && (
+        <section className="py-6 bg-cc-sand">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <Suspense fallback={null}>
+              <LazyVIPNextBestAction
+                contextLine="Based on your progress"
+                contextLineEs="Basado en tu progreso"
+              />
+            </Suspense>
+          </div>
+        </section>
+      )}
+
+      {/* Friction Escalation — surfaces for high-friction users */}
+      <Suspense fallback={null}>
+        <div className="container mx-auto px-4 max-w-3xl py-4">
+          <LazyFrictionEscalation />
+        </div>
+      </Suspense>
 
       {/* Selena Prompt Banner */}
       <div className="bg-cc-navy py-3 px-4">

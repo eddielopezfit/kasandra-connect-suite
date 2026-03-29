@@ -366,7 +366,52 @@ serve(async (req) => {
 
     // Build system prompt with mode context
     const systemPrompt = buildSystemPrompt(language, effectiveIntent, (context.tools_completed ?? []).length > 0);
-    console.log(`[Selena] System prompt assembled: ${systemPrompt.length} chars, intent: ${effectiveIntent}`);
+
+    // ============= VIP CONTEXT INJECTION =============
+    // Build a concise Visitor Intelligence Profile summary for Selena's awareness.
+    // This replaces scattered context reads with a unified intelligence block.
+    const toolsCompletedList = (context.tools_completed ?? []);
+    const guidesCompletedList = (context.guides_completed ?? []);
+    const readinessScore = context.readiness_score ?? 0;
+    const sellerPath = context.seller_decision_recommended_path;
+    const hasBooked = context.has_booked ?? false;
+    const frictionSignals: string[] = [];
+    if (toolsCompletedList.length >= 2 && !hasBooked) frictionSignals.push('high_tool_usage_no_booking');
+    if (guidesCompletedList.length >= 3 && toolsCompletedList.length === 0) frictionSignals.push('guide_heavy_no_tools');
+    if (readinessScore > 0 && !hasBooked) frictionSignals.push('has_readiness_no_booking');
+    
+    // Journey depth (mirrors client VIP selector)
+    const vipJourneyDepth = (readinessScore > 0 || sellerPath || hasBooked) ? 'ready'
+      : (toolsCompletedList.length >= 1 || guidesCompletedList.length >= 3) ? 'engaged'
+      : (effectiveIntent !== 'explore' || guidesCompletedList.length >= 1) ? 'exploring'
+      : 'new';
+    
+    // Booking readiness (mirrors client selector)
+    const hasDecisionSignal = !!(readinessScore || sellerPath);
+    const highToolUsage = toolsCompletedList.length >= 2;
+    const vipBookingReadiness = hasBooked ? 'converted'
+      : (hasDecisionSignal || highToolUsage) ? (guidesCompletedList.length >= 5 && highToolUsage ? 'overdue' : 'ready')
+      : (effectiveIntent !== 'explore' || toolsCompletedList.length >= 1) ? 'warming'
+      : 'not_ready';
+
+    // Build continuation summary parts
+    const vipSummaryParts: string[] = [];
+    if (effectiveIntent && effectiveIntent !== 'explore') vipSummaryParts.push(`intent: ${effectiveIntent}`);
+    if (readinessScore > 0) vipSummaryParts.push(`readiness: ${readinessScore}/100`);
+    if (context.estimated_value) vipSummaryParts.push(`est_value: $${context.estimated_value.toLocaleString()}`);
+    if (context.estimated_budget) vipSummaryParts.push(`budget: $${context.estimated_budget.toLocaleString()}`);
+    if (toolsCompletedList.length > 0) vipSummaryParts.push(`tools: ${toolsCompletedList.join(', ')}`);
+    if (guidesCompletedList.length > 0) vipSummaryParts.push(`guides_read: ${guidesCompletedList.length}`);
+    if (sellerPath) vipSummaryParts.push(`seller_path: ${sellerPath}`);
+    if (context.primary_priority) vipSummaryParts.push(`priority: ${context.primary_priority}`);
+    if (context.last_neighborhood_zip) vipSummaryParts.push(`area: ${context.last_neighborhood_zip}`);
+
+    const vipHint = vipSummaryParts.length > 0 ? (language === 'es'
+      ? `\n\n[PERFIL DE INTELIGENCIA DEL VISITANTE]\nProfundidad: ${vipJourneyDepth} | Preparación para reserva: ${vipBookingReadiness}\nResumen: ${vipSummaryParts.join(' · ')}${frictionSignals.length > 0 ? `\nSeñales de fricción: ${frictionSignals.join(', ')}` : ''}\nUsa este contexto para personalizar tu respuesta. NO repitas datos que el usuario ya proporcionó.`
+      : `\n\n[VISITOR INTELLIGENCE PROFILE]\nDepth: ${vipJourneyDepth} | Booking readiness: ${vipBookingReadiness}\nSummary: ${vipSummaryParts.join(' · ')}${frictionSignals.length > 0 ? `\nFriction signals: ${frictionSignals.join(', ')}` : ''}\nUse this context to personalize your response. Do NOT repeat data the user already provided.`)
+      : '';
+
+    console.log(`[Selena] System prompt assembled: ${systemPrompt.length} chars, intent: ${effectiveIntent}, vip_depth: ${vipJourneyDepth}, booking_readiness: ${vipBookingReadiness}`);
 
     // ============= PERSISTENT MEMORY RECALL =============
     // Fetch stored memories from conversation_memory table via selena-memory function
@@ -1207,7 +1252,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     }
 
     const messagesPayload = [
-      { role: "system", content: systemPrompt + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + entryGreetingHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
+      { role: "system", content: systemPrompt + vipHint + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + entryGreetingHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
       ...history.slice(-10), // Extended to -10 to support persistent memory context
       { role: "user", content: message }
     ];

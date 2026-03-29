@@ -23,6 +23,8 @@ import JourneyRail from "@/components/v2/JourneyRail";
 import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { cn } from "@/lib/utils";
+const VIPNextBestAction = lazy(() => import("@/components/v2/VIPNextBestAction"));
+const FrictionEscalation = lazy(() => import("@/components/v2/FrictionEscalation"));
 
 const PAGE_PATH = '/sell';
 const PAGE_INTENT = 'sell' as const;
@@ -270,6 +272,24 @@ const V2SellContent = () => {
 
       {/* Journey Rail — replaces the old JourneyBreadcrumb */}
       <JourneyRail intent="sell" />
+
+      {/* VIP Next Best Action — only for engaged/ready users */}
+      {(depth === 'engaged' || depth === 'ready') && (
+        <section className="py-6">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <Suspense fallback={null}>
+              <VIPNextBestAction contextLine="Your selling journey" contextLineEs="Tu proceso de venta" />
+            </Suspense>
+          </div>
+        </section>
+      )}
+
+      {/* Friction Escalation */}
+      <Suspense fallback={null}>
+        <div className="container mx-auto px-4 max-w-3xl py-3">
+          <FrictionEscalation />
+        </div>
+      </Suspense>
 
       {/* Kasandra Proximity: READY users see booking CTA right after the rail */}
       {depth === 'ready' && (

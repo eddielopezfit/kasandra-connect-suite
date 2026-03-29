@@ -25,6 +25,8 @@ import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import BuyingTimeline from "@/components/v2/BuyingTimeline";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
+const VIPNextBestAction = lazy(() => import("@/components/v2/VIPNextBestAction"));
+const FrictionEscalation = lazy(() => import("@/components/v2/FrictionEscalation"));
 
 
 const PAGE_PATH = '/buy';
@@ -108,6 +110,24 @@ const V2BuyContent = () => {
           <JourneyBreadcrumb />
         </div>
       </section>
+
+      {/* VIP Next Best Action */}
+      {journey.journeyDepth !== 'new' && (
+        <section className="py-4">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <Suspense fallback={null}>
+              <VIPNextBestAction contextLine="Your buying journey" contextLineEs="Tu proceso de compra" />
+            </Suspense>
+          </div>
+        </section>
+      )}
+
+      {/* Friction Escalation */}
+      <Suspense fallback={null}>
+        <div className="container mx-auto px-4 max-w-3xl py-3">
+          <FrictionEscalation />
+        </div>
+      </Suspense>
 
       {/* Dynamic Buyer Tools Strip */}
       {journey.journeyDepth !== 'ready' && (() => {
