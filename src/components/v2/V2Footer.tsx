@@ -33,7 +33,7 @@ const V2Footer = () => {
               className="inline-flex items-center gap-2 border border-white/30 hover:border-cc-gold text-white hover:text-cc-gold font-medium rounded-full px-6 py-3 text-sm transition-all"
             >
               <Calendar className="w-4 h-4" />
-              {t("Book a Consultation", "Agendar una Consulta")}
+              {t("Book a Strategy Session", "Agendar una Sesión de Estrategia")}
             </Link>
           </div>
         </div>

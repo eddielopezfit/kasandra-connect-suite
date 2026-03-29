@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
-import { Heart, Users, Award, HandHeart, Store, MessageCircle } from "lucide-react";
+import { Heart, Users, Award, HandHeart, Store, MessageCircle, Home, Star, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import arizonaDiaperBankLogo from "@/assets/arizona-diaper-bank-logo.jpg";
 import rumboAlExitoLogo from "@/assets/rumbo-al-exito-logo.jpg";

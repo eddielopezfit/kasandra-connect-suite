@@ -42,8 +42,8 @@ const cells: BentoCell[] = [
     icon: Radio,
     titleEn: "Urbana 92.5 FM",
     titleEs: "Urbana 92.5 FM",
-    descEn: "\"Lifting You Up with Kasandra Prieto\" — Every Saturday 9:30 AM",
-    descEs: "\"Lifting You Up with Kasandra Prieto\" — Cada sábado 9:30 AM",
+    descEn: "\"Lifting You Up: Todo empieza en casita\" — Every Saturday 9:30 AM",
+    descEs: "\"Lifting You Up: Todo empieza en casita\" — Cada sábado 9:30 AM",
   },
   {
     icon: Trophy,

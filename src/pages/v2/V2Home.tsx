@@ -413,7 +413,7 @@ const V2HomeContent = () => {
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted text-sm">{t('Radio Host (Urbana 92.5 FM)', 'Conductora de Radio (Urbana 92.5 FM)')}</span>
+                <span className="text-cc-text-muted text-sm">{t('"Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)', '"Lifting You Up: Todo empieza en casita" (Urbana 92.5 FM)')}</span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />

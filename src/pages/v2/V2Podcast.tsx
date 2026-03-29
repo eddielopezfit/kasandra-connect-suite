@@ -45,7 +45,7 @@ const V2PodcastContent = () => {
               {t("Podcast & Radio", "Podcast y Radio")}
             </span>
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mt-2 mb-6 text-white">
-              {t("Lifting You Up with Kasandra Prieto", "Lifting You Up con Kasandra Prieto")}
+              {t("Lifting You Up: Todo empieza en casita", "Lifting You Up: Todo empieza en casita")}
             </h1>
             <p className="text-xl text-white/90 mb-8">
               {t(
