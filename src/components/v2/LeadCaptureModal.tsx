@@ -92,6 +92,7 @@ const LeadCaptureModal = ({
     }
   }, [isOpen]);
 
+  const defaultTitle = {
     en: "Your Tucson game plan is ready",
     es: "Tu plan de Tucson está listo",
   };
