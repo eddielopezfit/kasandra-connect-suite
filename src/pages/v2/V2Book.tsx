@@ -13,7 +13,7 @@ import { useEffect, useState, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import V2Layout from "@/components/v2/V2Layout";
-import { NativeBookingFlow } from "@/components/v2/booking";
+import { NativeBookingFlow, BookingHydrationPanel } from "@/components/v2/booking";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import { Calendar, CheckCircle, User, BookOpen, Target } from "lucide-react";
 import { logEvent } from "@/lib/analytics/logEvent";
