@@ -279,8 +279,8 @@ const V2CommunityContent = () => {
                 </h2>
                 <p className="text-cc-charcoal mb-6">
                   {t(
-                    "I've invested in multiple Tony Robbins seminars and continuous personal growth because I believe the best agents are the ones who never stop growing. Greater Tucson Leadership Class of 2026 reinforced my commitment to leading with purpose in this community.",
-                    "He invertido en múltiples seminarios de Tony Robbins y crecimiento personal continuo porque creo que los mejores agentes son los que nunca dejan de crecer. Greater Tucson Leadership Promoción 2026 reforzó mi compromiso de liderar con propósito en esta comunidad."
+                    "Influenced by Tony Robbins, Jim Rohn, and Les Brown through their books and teachings, I believe the best agents are the ones who never stop growing. Greater Tucson Leadership Class of 2026 reinforced my commitment to leading with purpose in this community.",
+                    "Influenciada por Tony Robbins, Jim Rohn y Les Brown a través de sus libros y enseñanzas, creo que los mejores agentes son los que nunca dejan de crecer. Greater Tucson Leadership Promoción 2026 reforzó mi compromiso de liderar con propósito en esta comunidad."
                   )}
                 </p>
                 <div className="space-y-3">
