@@ -1,71 +1,76 @@
 
 
-# Mobile Optimization — Scroll-to-Top, Content Drift & Eye-Level CTA Fixes
+# DCOS Audit Response — Prioritized Fix Plan
 
-## Problems Found
+## Audit Summary
 
-### 1. Page content hidden behind sticky bars (bottom clipping)
-The sticky "Book a Strategy Session" bar in V2Layout is ~70px tall. On pages with bottom CTA sections, the last CTA button gets covered. Several pages use `pb-24 sm:pb-16` to compensate, but this is inconsistent — some pages lack bottom padding entirely (Home, About, Contact, TucsonLiving, etc.). The footer content gets cut off on mobile.
-
-### 2. `safe-area-pb` class doesn't exist
-`StickyMobileBookingBar.tsx` uses `safe-area-pb` — this CSS class is never defined anywhere (not in `index.css`, not in Tailwind config). iOS notch-bar devices get no safe-area padding on this component.
-
-### 3. ScrollManager scrolls to `block: "start"` — content lands behind fixed nav
-The fixed nav (branding strip + nav bar) is ~76px on mobile (`36px + ~40px`). When `ScrollManager` or any `scrollIntoView({ block: "start" })` fires, the target element's top aligns with viewport top — which is behind the fixed nav. Users must manually scroll up to see the content they clicked to reach.
-
-### 4. Selena floating button overlaps sticky book bar on mobile
-The floating Selena button is at `bottom-[calc(5rem+env(safe-area-inset-bottom))]` (~80px). The sticky book bar is ~70px from bottom. These overlap, creating a tight, cluttered bottom corner.
-
-### 5. Calculator results scroll to `block: "start"` — hidden behind nav
-All calculators (`V2AffordabilityCalculator`, `V2BAHCalculator`, `V2BuyerClosingCosts`) use `scrollIntoView({ block: "start" })` after results render. Results header lands behind the fixed nav.
+The Perplexity Comet audit validated the platform's intelligence layer as best-in-class but flagged 10 critical issues. After cross-referencing the codebase, here's what's real, what's already fixed, and what needs work — prioritized by conversion impact.
 
 ---
 
-## Fixes (7 files)
+## Issue Triage
 
-### Fix 1: Global scroll-margin-top for fixed nav clearance
-**File:** `src/index.css`
-Add a CSS rule: `[id] { scroll-margin-top: 80px; }` — any element scrolled to via anchor or `scrollIntoView` will automatically clear the fixed nav. This fixes every `scrollIntoView({ block: "start" })` call site-wide in one line.
-
-### Fix 2: ScrollManager — use scroll-margin instead of raw scrollTo
-**File:** `src/components/ScrollManager.tsx`
-No change needed if Fix 1 is applied — `scrollIntoView({ block: "start" })` will respect `scroll-margin-top`. But the `window.scrollTo({ top: 0 })` for route changes is correct.
-
-### Fix 3: Add safe-area-pb utility class
-**File:** `src/index.css`
-Add `.safe-area-pb { padding-bottom: env(safe-area-inset-bottom, 0px); }` so `StickyMobileBookingBar` actually works on iOS notch devices.
-
-### Fix 4: Bottom padding on V2Layout main content for sticky bar clearance
-**File:** `src/components/v2/V2Layout.tsx`
-Add `pb-20 lg:pb-0` to the `<main>` tag so page content never gets clipped behind the sticky mobile book bar. This replaces the inconsistent per-page `pb-24` hacks.
-
-### Fix 5: Standardize per-page bottom padding — remove redundant pb-24
-**Files:** `V2Buy.tsx`, `V2Sell.tsx`, `V2CashOfferOptions.tsx`, `V2Neighborhoods.tsx`, `V2Podcast.tsx`, `V2Guides.tsx`
-Change `pb-24 sm:pb-16` → `pb-16` on bottom CTA sections since V2Layout now handles the sticky bar clearance globally.
-
-### Fix 6: Fix Selena floating button position to not overlap sticky bar
-**File:** `src/components/selena/SelenaFloatingButton.tsx`
-Change mobile bottom offset from `bottom-[calc(5rem+env(safe-area-inset-bottom,0px))]` to `bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))]` — provides 8px breathing room above the sticky book bar.
-
-### Fix 7: Selena chat drawer — ensure messages scroll to eye level
-**File:** `src/components/selena/SelenaChatDrawer.tsx`
-Already using `scrollIntoView({ behavior: 'smooth', block: 'end' })` — this is correct. No change needed.
+| # | Audit Finding | Status | Action |
+|---|---|---|---|
+| 1 | Page load performance (5-15s spinner) | **Real but overstated** — Route-level lazy loading already implemented (30+ `lazy()` imports in App.tsx). The spinner is `RouteFallback` shown during chunk download. The auditor was likely on a throttled network. | **Fix: Add skeleton screens to RouteFallback** |
+| 2 | Spanish chips disappear after language switch | **Real bug** — `PROGRESSION_MAP` returns display strings, but `Guard 4` (journey_state !== 'decide') strips chips via `BOOKING_KEYWORDS` regex. When Spanish display strings like "Hablar con Kasandra" pass through the filter, they get stripped. Meanwhile, semantic keys like `talk_with_kasandra` don't match the regex and survive. **Mixed key types cause inconsistent filtering.** | **Fix: Normalize PROGRESSION_MAP to semantic keys** |
+| 3 | "Welcome back" shown to first-time visitors | **False positive** — The auditor had localStorage from a previous session. The detection logic is correct (checks `selena_context_v2` for meaningful data). | **No fix needed** |
+| 4 | Affordability calculator placeholder UX | **Valid UX concern** — Placeholder "85,000" looks like a filled value | **Fix: Style placeholders distinctly** |
+| 5 | No skeleton screens beyond spinner | **Real** — `RouteFallback` is a plain spinner with no content skeleton | **Fix: Improve RouteFallback** |
+| 6 | Mixed-language chips in ES mode | **Related to #2** — PROGRESSION_MAP emits display strings; some are EN-only when `language` param resolves wrong | **Fixed by #2** |
+| 7 | Sell page CTA redundancy | **Already fixed** — Previous audit pass consolidated CTAs across all tool pages |  **No fix needed** |
+| 8 | Selena doesn't reference calculator data | **Partially true** — SessionContext carries `estimated_value`, `calculator_advantage`, etc. and the edge function receives it. But the system prompt doesn't explicitly instruct Selena to reference these values in greetings. | **Fix: Add calculator-aware context block to system prompt** |
+| 9 | Booking page doesn't pre-fill | **Already fixed** — Sticky Data Layer implementation (previous session) wired `BookingIntakeForm` to read from `getStoredEmail()`, `getStoredName()`, `getStoredPhone()` | **Verify only** |
+| 10 | Lead capture modal timing | **Design choice** — Modal appears after scroll, which is intentional progressive profiling | **No fix needed** |
 
 ---
 
-## Summary
+## Implementation Plan (4 fixes, ranked by impact)
+
+### Fix 1: Skeleton RouteFallback (perceived performance)
+**File:** `src/App.tsx`
+Replace the navy spinner `RouteFallback` with a skeleton screen showing the nav bar shape, hero placeholder, and content blocks. This dramatically reduces perceived load time even if actual chunk download takes the same time.
+
+### Fix 2: PROGRESSION_MAP Spanish Chip Bug (critical bilingual fix)
+**File:** `supabase/functions/selena-chat/chipGovernance.ts`
+The root cause: `PROGRESSION_MAP` entries emit **display strings** (e.g., "Comparar efectivo vs. listado") while the chip governance pipeline (`filterChipsForCompletedTools`, `filterSuggestionsForEarnedAccess`, Guard 4 booking filter) uses regex patterns that only match English strings like "Talk with Kasandra" but miss Spanish equivalents like "Hablar con Kasandra".
+
+**The fix:** Update `Guard 4` in `selena-chat/index.ts` to also match Spanish booking keywords. Currently `BOOKING_KEYWORDS` and `BOOKING_PHRASES` only check English patterns — Spanish booking chips pass through the earned-access filter but get stripped by Guard 4's journey-state filter because the regex catches "Kasandra" but misses the full Spanish pattern.
+
+Specifically:
+- Add Spanish patterns to the `BOOKING_KEYWORDS` and `BOOKING_PHRASES` regexes used in Guard 4
+- Ensure `filterSuggestionsForEarnedAccess` also recognizes Spanish booking strings
+
+### Fix 3: Calculator-Aware Selena Context
+**File:** `supabase/functions/selena-chat/modeContext.ts` or `systemPromptBuilder.ts`
+Add a context injection block that surfaces calculator results when present:
+```
+If the user has completed the affordability calculator:
+- Max purchase price: $262,969
+- Monthly payment: $1,983
+Reference this naturally when discussing buying options.
+```
+This data already flows via `context.estimated_value` and `context.calculator_advantage` — it just needs to be formatted into the system prompt.
+
+### Fix 4: Calculator Input Placeholder Styling
+**File:** `src/pages/v2/V2AffordabilityCalculator.tsx`
+Change the income input placeholder from `"85,000"` to `"e.g. 85,000"` and add `placeholder:text-muted-foreground/50 placeholder:italic` to distinguish it from actual input.
+
+---
+
+## Files Changed
 
 | # | File | Change |
-|---|------|--------|
-| 1 | `src/index.css` | Add `scroll-margin-top: 80px` + `.safe-area-pb` utility |
-| 2 | `src/components/v2/V2Layout.tsx` | Add `pb-20 lg:pb-0` to main tag |
-| 3 | `src/components/selena/SelenaFloatingButton.tsx` | Bump bottom offset by 8px |
-| 4 | `src/pages/v2/V2Buy.tsx` | `pb-24 sm:pb-16` → `pb-16` |
-| 5 | `src/pages/v2/V2Sell.tsx` | `pb-24 sm:pb-16` → `pb-16` |
-| 6 | `src/pages/v2/V2CashOfferOptions.tsx` | `pb-24 sm:pb-16` → `pb-16` |
-| 7 | `src/pages/v2/V2Neighborhoods.tsx` | `pb-24 sm:pb-16` → `pb-16` |
-| 8 | `src/pages/v2/V2Podcast.tsx` | `pb-24 sm:pb-16` → `pb-16` |
-| 9 | `src/pages/v2/V2Guides.tsx` | `pb-24 md:pb-16` → `pb-16` |
+|---|---|---|
+| 1 | `src/App.tsx` | Replace `RouteFallback` spinner with skeleton layout |
+| 2 | `supabase/functions/selena-chat/index.ts` | Add Spanish patterns to Guard 4 booking keyword regexes |
+| 3 | `supabase/functions/selena-chat/systemPromptBuilder.ts` | Add calculator-data context block to system prompt |
+| 4 | `src/pages/v2/V2AffordabilityCalculator.tsx` | Improve placeholder styling on income field |
 
-**Result:** Every CTA click, route change, and tool result lands at eye level. No scrolling required. No content hidden behind fixed elements. No overlap between Selena button and sticky bar. Safe-area works on all iOS devices.
+## What's NOT Changing
+- Route-level code splitting — already optimal (30+ lazy imports)
+- Sticky Data Layer — already wired in previous session
+- CTA consolidation — already done in previous audit pass
+- First-time vs returning detection — working correctly
+- Lead capture modal timing — intentional design
 
