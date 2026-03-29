@@ -8,8 +8,8 @@ import { EMAIL_REGEX } from "./leadCapture.ts";
 import type { ConversationState } from "./modeContext.ts";
 
 // ============= BOOKING GATE PATTERNS =============
-export const BOOKING_KEYWORDS = /book|schedule|call|talk|meet|appointment|consulta|cita|llamar|hablar|agendar/i;
-export const BOOKING_PHRASES = /(talk to kasandra|priority call|strategy call|consultation|consult|review strategy|revisar estrategia|verify.*kasandra|verificar.*kasandra)/i;
+export const BOOKING_KEYWORDS = /book|schedule|call|talk|meet|appointment|consulta|cita|llamar|hablar|agendar|reunión|llamada|reservar/i;
+export const BOOKING_PHRASES = /(talk to kasandra|talk with kasandra|priority call|strategy call|consultation|consult|review strategy|hablar con kasandra|revisar estrategia|verify.*kasandra|verificar.*kasandra|llamada de 15 min|llamada de claridad|sesión de estrategia|agendar.*kasandra)/i;
 
 /**
  * Checks if user explicitly asked to book/call

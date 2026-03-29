@@ -405,6 +405,8 @@ serve(async (req) => {
       const parts: string[] = [];
       if (serverName) parts.push(`Name: ${serverName}`);
       if (context.estimated_value) parts.push(`Property: $${Number(context.estimated_value).toLocaleString()}`);
+      if (context.calculator_advantage) parts.push(`Calculator insight: ${context.calculator_advantage}`);
+      if (context.calculator_difference) parts.push(`Listing vs cash difference: $${Number(context.calculator_difference).toLocaleString()}`);
       if (context.situation) parts.push(`Situation: ${context.situation}`);
       // P1: Lead score in memory summary
       if (context.lead_score) parts.push(`Lead Score: ${context.lead_score}/100 (${context.lead_grade || 'unknown'})`);
