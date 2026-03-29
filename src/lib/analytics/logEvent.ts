@@ -182,6 +182,10 @@ export type EventType =
   // Native Booking Flow
   | 'booking_intake_completed'
   | 'booking_slot_selected'
+  | 'booking_attempt'
+  | 'booking_success'
+  | 'booking_failure'
+  | 'slot_conflict'
   | 'mls_link_click'
   | 'seller_address_entry_submitted';
 
