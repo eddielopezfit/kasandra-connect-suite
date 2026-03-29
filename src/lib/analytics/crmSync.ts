@@ -8,7 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { getLeadId } from '@/lib/analytics/bridgeLeadIdToV2';
 import { getSessionContext } from '@/lib/analytics/selenaSession';
 
-type SyncTrigger = 'tool_completion' | 'readiness_threshold' | 'returning_user' | 'context_update';
+type SyncTrigger = 'tool_completion' | 'readiness_threshold' | 'returning_user' | 'context_update' | 'high_friction_no_action' | 'cta_ignored';
 
 let lastSyncAt = 0;
 const SYNC_COOLDOWN_MS = 30_000; // 30s minimum between syncs
