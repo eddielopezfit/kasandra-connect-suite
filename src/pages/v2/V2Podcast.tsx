@@ -27,7 +27,7 @@ const V2PodcastContent = () => {
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "PodcastSeries",
-        name: "Lifting You Up with Kasandra Prieto",
+        name: "Lifting You Up: Todo empieza en casita",
         description: "Inspiring conversations about community leadership, generational wealth, and Hispanic success stories in Tucson.",
         url: "https://www.youtube.com/@KasandraPrietoTucson",
         author: { "@type": "Person", name: "Kasandra Prieto" },
