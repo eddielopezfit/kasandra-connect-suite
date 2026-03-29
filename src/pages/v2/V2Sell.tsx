@@ -23,6 +23,8 @@ import JourneyRail from "@/components/v2/JourneyRail";
 import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { cn } from "@/lib/utils";
+const VIPNextBestAction = lazy(() => import("@/components/v2/VIPNextBestAction"));
+const FrictionEscalation = lazy(() => import("@/components/v2/FrictionEscalation"));
 
 const PAGE_PATH = '/sell';
 const PAGE_INTENT = 'sell' as const;
