@@ -159,6 +159,7 @@ const App = () => {
             </Suspense>
           </BrowserRouter>
         </TooltipProvider>
+        </VIPProvider>
       </LanguageProvider>
     </QueryClientProvider>
   );
