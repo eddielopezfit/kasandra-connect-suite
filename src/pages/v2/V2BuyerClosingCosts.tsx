@@ -172,7 +172,7 @@ const fmtRange = (low: number, high: number) =>
 
 const V2BuyerClosingCostsContent = () => {
   const { t, language } = useLanguage();
-  const { openChat } = useSelenaChat();
+  
 
   useDocumentHead({
     titleEn: "Buyer Closing Cost Estimator | Tucson, Arizona",
