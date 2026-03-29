@@ -14,6 +14,8 @@ import heroImage from "@/assets/hero-community-neighborhood.png";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
+import KasandraVideoBlock from "@/components/v2/KasandraVideoBlock";
+import KasandraPhotoGallery from "@/components/v2/KasandraPhotoGallery";
 
 const V2AboutContent = () => {
   const { t } = useLanguage();
