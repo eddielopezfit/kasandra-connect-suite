@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, lazy, Suspense } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Calendar } from "lucide-react";
 import V2Navigation from "./V2Navigation";
