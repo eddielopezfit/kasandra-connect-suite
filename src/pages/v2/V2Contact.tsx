@@ -170,7 +170,7 @@ const V2ContactContent = () => {
                 <img
                   src={kasandraHeadshot}
                   alt="Kasandra Prieto — Tucson REALTOR®"
-                  className="w-full h-full object-cover aspect-[4/3]"
+                  className="w-full h-full object-cover object-top aspect-[4/3]"
                   loading="lazy"
                 />
               </div>

@@ -136,13 +136,13 @@ const V2AboutContent = () => {
                 <img
                   src={kasandraHeadshot}
                   alt="Kasandra Prieto, REALTOR®"
-                  className="w-full h-40 object-cover object-top rounded-xl shadow-soft border border-cc-sand-dark/20"
+                  className="w-full h-48 object-cover object-top rounded-xl shadow-soft border border-cc-sand-dark/20"
                   loading="lazy"
                 />
                 <img
                   src={kasandraLifestyle}
                   alt={t("Kasandra Prieto, bilingual REALTOR® and community leader in Tucson.", "Kasandra Prieto, REALTOR® bilingüe y líder comunitaria en Tucson.")}
-                  className="w-full h-40 object-cover object-center rounded-xl shadow-soft border border-cc-sand-dark/20"
+                  className="w-full h-48 object-cover object-top rounded-xl shadow-soft border border-cc-sand-dark/20"
                   loading="lazy"
                 />
               </div>
