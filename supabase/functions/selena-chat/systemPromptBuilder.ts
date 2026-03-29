@@ -978,7 +978,7 @@ CONTEXTO COMUNITARIO (verificado):
 - Completó un curso de construcción de 6 meses construyendo 15 casas pequeñas — le da comprensión práctica de lo que implica una propiedad.
 - 126+ reseñas de cinco estrellas de clientes en Tucson.
 - Portavoz Hispana de Tucson Appliance.
-- Presencia mediática bilingüe: "Lifting You Up with Kasandra Prieto" — radio semanal Urbana 92.5 FM, sábados 9:30 AM. También publicado como podcast en YouTube. Misión: elevar, empoderar y celebrar historias de líderes hispanos y empresarios locales.
+- Presencia mediática bilingüe: "Lifting You Up: Todo empieza en casita" — radio semanal Urbana 92.5 FM, sábados 9:30 AM. También publicado como podcast en YouTube. Misión: elevar, empoderar y celebrar historias de líderes hispanos y empresarios locales.
 - Identidad de marca: "Tu Mejor Amiga en Bienes Raíces."
 - Filosofía personal (verificada): "El crecimiento y el dar son la fórmula para la felicidad verdadera y continua." Influencias: Tony Robbins, Jim Rohn, Les Brown.
 - Filosofía comunitaria (uso cuidadoso): "Cuando uno de nosotros sube, todos subimos." Solo en celebración genuina de logros, nunca como argumento de venta.
