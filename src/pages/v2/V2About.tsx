@@ -97,7 +97,7 @@ const V2AboutContent = () => {
             {/* Right — Copy + Images */}
             <div>
               <h2 className="font-serif text-4xl xl:text-5xl font-bold text-cc-blue mt-2 mb-6">
-                {t("Your Trusted Tucson REALTOR®", "Su REALTOR® de Confianza en Tucson")}
+                {t("Your Trusted Tucson REALTOR®", "Tu REALTOR® de Confianza en Tucson")}
               </h2>
               <div className="space-y-4 text-cc-text-muted mb-6">
                 <p>
