@@ -4,13 +4,21 @@
  * and binds user to lead_profiles
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { getSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { bridgeLeadIdToV2 } from "@/lib/analytics/bridgeLeadIdToV2";
+import {
+  bridgeLeadIdToV2,
+  setStoredEmail,
+  setStoredUserName,
+  setStoredPhone,
+  getStoredEmail,
+  getStoredUserName,
+  getStoredPhone,
+} from "@/lib/analytics/bridgeLeadIdToV2";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import {
@@ -65,6 +73,24 @@ const LeadCaptureModal = ({
   const { t, language } = useLanguage();
   const { setLeadIdentity } = useSelenaChat();
   const isMobile = useIsMobile();
+
+  // Pre-fill from localStorage when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      const storedEmail = getStoredEmail();
+      const storedName = getStoredUserName();
+      const storedPhone = getStoredPhone();
+      
+      if (storedEmail) setEmail(storedEmail);
+      if (storedName) setName(storedName);
+      if (storedPhone) setPhone(storedPhone);
+      
+      // If email already known, skip to details step
+      if (storedEmail) {
+        setStep("details");
+      }
+    }
+  }, [isOpen]);
 
   const defaultTitle = {
     en: "Your Tucson game plan is ready",
@@ -145,6 +171,11 @@ const LeadCaptureModal = ({
       
       // Bridge lead ID to V2 ecosystem (full dossier sync)
       bridgeLeadIdToV2(leadId, source);
+
+      // Persist contact data to localStorage for progressive profiling
+      setStoredEmail(email.trim().toLowerCase());
+      if (name.trim()) setStoredUserName(name.trim());
+      if (phone.trim()) setStoredPhone(phone.trim());
 
       // Log event
       logEvent("form_submit", {

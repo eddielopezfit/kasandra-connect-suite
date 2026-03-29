@@ -13,6 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { getOrCreateSessionId } from "@/lib/analytics/selenaSession";
+import { setStoredEmail, getStoredEmail, bridgeLeadIdToV2 } from "@/lib/analytics/bridgeLeadIdToV2";
 import { X, Mail, ArrowRight } from "lucide-react";
 
 export type ToolType = 'affordability' | 'bah' | 'buyer_closing_costs' | 'seller_timeline';
@@ -100,6 +101,12 @@ export function ToolResultLeadCapture({
 
   const copy = TOOL_COPY[toolType][language as 'en' | 'es'];
 
+  // Pre-fill email from localStorage
+  useEffect(() => {
+    const stored = getStoredEmail();
+    if (stored) setEmail(stored);
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), delayMs);
     return () => clearTimeout(timer);
@@ -138,6 +145,10 @@ export function ToolResultLeadCapture({
       });
 
       if (!error && data?.lead_id) {
+        // Persist to Sticky Data Layer
+        setStoredEmail(email.trim().toLowerCase());
+        bridgeLeadIdToV2(data.lead_id, `tool_capture_${toolType}`);
+        
         logEvent('tool_capture_submitted', { tool: toolType, lead_id: data.lead_id });
         setDone(true);
         onCapture?.(data.lead_id);
