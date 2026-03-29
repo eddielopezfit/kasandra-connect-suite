@@ -181,7 +181,6 @@ const V2Footer = () => {
         </div>
       </div>
     </footer>
-    </>
   );
 };
 

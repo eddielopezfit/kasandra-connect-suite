@@ -180,7 +180,9 @@ const V2Navigation = () => {
               )}
               <a
                 href="tel:5203493248"
-                className="hidden lg:flex items-center gap-1.5 text-white/70 hover:text-white text-sm transition-colors"
+                className={`hidden lg:flex items-center gap-1.5 text-sm transition-colors ${
+                  isScrolled ? 'text-cc-navy/70 hover:text-cc-navy' : 'text-white/70 hover:text-white'
+                }`}
                 aria-label="Call Kasandra"
               >
                 <Phone className="w-3.5 h-3.5" />
