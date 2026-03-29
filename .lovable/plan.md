@@ -1,86 +1,107 @@
 
 
-# Expand Trusted Network + Add Tucson Events Page
+# Integrate Kasandra's Personal Photos & Videos into the Hub
 
-Kasandra asked for two things: (1) upgrade the existing `/network` page from a placeholder into a real partner showcase with categories, spotlights, and real stories, and (2) a new `/tucson-living` page highlighting local events and what makes Tucson special.
+Based on the social media audit, here's a concrete plan to embed her singing, performing, community leadership, and personal brand content across the hub using existing components and new placements.
 
 ---
 
-## Part 1: Trusted Network Page Upgrade (`/network`)
+## Top-Tier Assets to Integrate (starred items from audit)
 
-The page already exists but only has a single "Coming Soon" placeholder card. We'll rebuild it into a full partner showcase.
+| # | Content | Source | Placement |
+|---|---------|--------|-----------|
+| 1 | Karaoke at The Neighborhood Bar (Reel) | IG #1 | About page — singing video block |
+| 7 | Dancing with Stars 2024 — 401 likes, 74 comments | IG #7 | Community page — Diaper Bank section |
+| 26 | Cowboy hat desert sunset photo | FB | Tucson Living hero background |
+| 31 | Professional brand photoshoot (red door, 528 likes) | TikTok | Home page hero or About page gallery |
+| 21 | "About Kasandra Prieto" intro video | YouTube | About page — replace/supplement current welcome video |
+| 11 | Housing4Good podcast interview (17:48) | YouTube | Community page — inline video embed |
+| 4 | Fiestas Patrias 2025 performer promo | IG | Tucson Living — Kasandra's Picks section |
 
-### New Sections
+---
 
-1. **Partner Grid by Category** — Organized tabs or sections: Lenders, Inspectors, Contractors, Title/Escrow, Other. Each card shows: name, company, specialty, Kasandra's personal endorsement quote, years working together, optional photo placeholder, bilingual throughout.
+## Implementation
 
-2. **Partner of the Week Spotlight** — A highlighted card at the top (larger, gold border) featuring one partner with a longer testimonial from Kasandra about why she trusts them. Rotates based on a simple array index or date-based selection.
+### 1. New Asset Directory + Downloaded Media
+Create `src/assets/kasandra/` and add downloaded photos/thumbnails. Videos will be YouTube embeds (no hosting needed).
 
-3. **Real Stories Section** — "From the Field" stories: short case-study cards where Kasandra describes a real situation (e.g., "My inspector caught a foundation issue that saved my client $40K"). These build trust while showing market experience. Each story has: title, situation summary, outcome, which partner category was involved, bilingual.
+Files to download and add:
+- `singing-karaoke.jpg` — thumbnail from IG reel #1
+- `dancing-stars-2024.jpg` — thumbnail from IG reel #7
+- `desert-sunset-cowboy.jpg` — FB photo #26
+- `brand-photoshoot-red-door.jpg` — TikTok screenshot #31
+- `fiestas-patrias-performer.jpg` — IG reel #4 thumbnail
+- `construction-class.jpg` — from Arizona Daily Star / FB archives
 
-4. **Sponsor Recognition** — Optional badge on partner cards: "Hub Sponsor" for partners who support the platform. Not paid placement — genuine working relationships with a sponsorship layer.
+### 2. About Page (`src/pages/v2/V2About.tsx`)
 
-5. **CTA** — "Know someone Kasandra should meet?" links to `/contact`.
+**A. Add singing video block** after the "My Journey" section (~line 183):
+- Use existing `KasandraVideoBlock` component (compact variant)
+- Label: "Beyond Real Estate" / "Más Allá de los Bienes Raíces"
+- Video URL: `https://www.instagram.com/reel/DH2hf1Tum9T/` (or YouTube repost if available)
+- Fallback thumbnail: `singing-karaoke.jpg`
 
-### Data Structure
+**B. Add "The Real Kasandra" photo gallery** after the singing block:
+- New component `KasandraPhotoGallery.tsx` — responsive 2x3 masonry grid
+- 6 photos: singing, Dancing with Stars, construction class, desert sunset, brand photoshoot, community event
+- Each has a bilingual hover/tap caption
+- Warm cc-ivory background, rounded corners, shadow-soft treatment
 
-Partners and stories stored as static TypeScript arrays (same pattern as guides/neighborhoods). Kasandra can provide names later — we'll ship with 3-4 placeholder slots per category plus the story section with 2-3 example stories she can customize.
+**C. Update image row** (lines 133-146): Replace the two generic images with the brand photoshoot and desert sunset photos for immediate visual impact.
 
-### File Changes
+### 3. Community Page (`src/pages/v2/V2Community.tsx`)
+
+**A. Dancing with Stars video** in the Diaper Bank section:
+- Add `KasandraVideoBlock` (compact) with YouTube URL: `https://www.instagram.com/reel/DAO0VydylEA/` embed
+- Label: "Dancing for Diapers — 2024" / "Bailando por los Pañales — 2024"
+
+**B. Housing4Good podcast interview** inline:
+- Add `KasandraVideoBlock` (compact) with YouTube URL: `https://www.youtube.com/watch?v=Eca31eeUxRQ`
+- Label: "Featured on Housing4Good Podcast" / "Destacada en Housing4Good Podcast"
+
+### 4. Tucson Living Page (`src/pages/v2/V2TucsonLiving.tsx`)
+
+**A. Hero background upgrade** (line 40-41):
+- Replace solid navy gradient with the cowboy hat desert sunset photo as background
+- Keep gradient overlay for text readability
+
+**B. Add Fiestas Patrias to "Kasandra's Picks"** section:
+- Photo of her performing at St. Philip's Plaza
+- Quote about what Fiestas Patrias means to her
+
+### 5. Home Page (`src/pages/v2/V2Home.tsx`)
+
+**A. Upgrade the "Meet Kasandra" section** with the brand photoshoot (red door) image as the primary headshot, replacing or supplementing `kasandraHeadshot.jpg`.
+
+### 6. New Component: `KasandraPhotoGallery.tsx`
+
+```text
+┌─────────────┬─────────────┬─────────────┐
+│  Singing    │  Dancing    │  Desert     │
+│  Karaoke    │  w/ Stars   │  Sunset     │
+├─────────────┼─────────────┼─────────────┤
+│  Brand      │  Construc-  │  Fiestas    │
+│  Photoshoot │  tion Class │  Patrias    │
+└─────────────┴─────────────┴─────────────┘
+       (2 cols on mobile, 3 on desktop)
+```
+
+- Each cell: `aspect-[4/3]`, rounded-xl, overflow-hidden
+- Hover overlay: bilingual caption + subtle scale(1.03) transition
+- Lazy-loaded images
+
+---
+
+## Files to Create/Edit
 
 | File | Change |
 |------|--------|
-| `src/pages/v2/V2TrustedNetwork.tsx` | Full rebuild: category tabs, spotlight, stories section |
-| `src/data/trustedPartners.ts` | New file: partner data array with categories, EN/ES |
-| `src/data/fieldStories.ts` | New file: real market stories data, EN/ES |
+| `src/assets/kasandra/` | NEW directory — 6 downloaded photos |
+| `src/components/v2/KasandraPhotoGallery.tsx` | NEW — responsive photo mosaic with hover captions |
+| `src/pages/v2/V2About.tsx` | Add singing video block + photo gallery section + upgrade image row |
+| `src/pages/v2/V2Community.tsx` | Add Dancing with Stars + Housing4Good video embeds |
+| `src/pages/v2/V2TucsonLiving.tsx` | Replace hero with desert sunset photo background |
+| `src/pages/v2/V2Home.tsx` | Upgrade Kasandra headshot with brand photoshoot image |
 
----
-
-## Part 2: New Tucson Living / Events Page (`/tucson-living`)
-
-A new page celebrating Tucson lifestyle — local events, seasonal highlights, and why Tucson is a great place to live. This supports the "relocating to Tucson" audience and gives Kasandra content to share on social media.
-
-### Sections
-
-1. **Hero** — "Discover Tucson Living" / "Descubre la Vida en Tucson" with a warm lifestyle-focused intro from Kasandra's perspective.
-
-2. **Seasonal Events Calendar** — Static curated list of Tucson's signature events organized by season (Gem Show, Tucson Meet Yourself, 4th Ave Street Fair, Día de los Muertos, Rodeo, etc.). Each event card: name, typical month, short description, category tag (Culture, Food, Outdoors, Family), bilingual.
-
-3. **Why Tucson** — Quick lifestyle highlights grid: 350+ days of sunshine, cost of living vs Phoenix/CA, food scene, outdoor access, cultural diversity, bilingual community.
-
-4. **Neighborhood Connection** — "Find your perfect Tucson neighborhood" CTA linking to `/neighborhoods` and the neighborhood quiz.
-
-5. **Kasandra's Picks** — A personal "What I love about Tucson" section with 3-4 short blurbs (her favorite spots, traditions, hidden gems).
-
-### Publish Gate Compliance
-
-- Route: `/tucson-living`
-- `useDocumentHead` with EN/ES titles
-- SEO meta in `seoRouteMeta.ts`
-- Linked from nav (add to `exploreLinks` in V2Navigation)
-- Chip registered in `chipsRegistry.ts` for Selena
-- Destination registered in `destinationsRegistry.ts`
-
-### File Changes
-
-| File | Change |
-|------|--------|
-| `src/pages/v2/V2TucsonLiving.tsx` | New page: hero, events calendar, lifestyle grid, Kasandra's picks |
-| `src/data/tucsonEvents.ts` | New file: curated events data by season, EN/ES |
-| `src/App.tsx` | Add lazy import + route for `/tucson-living` |
-| `src/components/v2/V2Navigation.tsx` | Add "Tucson Living" to exploreLinks |
-| `src/lib/seo/seoRouteMeta.ts` | Add meta for `/tucson-living` |
-| `src/lib/registry/destinationsRegistry.ts` | Add `tucson_living` destination |
-| `src/lib/registry/chipsRegistry.ts` | Add chip for "Tucson Events" / "Eventos de Tucson" |
-| `src/lib/registry/chipKeys.ts` | Add `tucson_living` key |
-
----
-
-## Summary
-
-- **Part 1**: 3 files (1 rebuild, 2 new data files)
-- **Part 2**: 8 files (1 new page, 1 new data file, 6 registry/config updates)
-- Both pages are fully bilingual, mobile-responsive, and follow the existing V2Layout + brand token patterns
-- Partner data ships with editable placeholders so Kasandra can fill in real names when ready
-- Events data is static/curated — no API needed, Kasandra or her team updates seasonally
+**Note:** Since we can't download from Instagram/TikTok/Facebook directly, we'll create the component structure and image import references. Kasandra will need to provide the actual photo files (screenshots or downloads from her accounts), which we'll place in `src/assets/kasandra/`. The YouTube video embeds will work immediately via URL.
 
