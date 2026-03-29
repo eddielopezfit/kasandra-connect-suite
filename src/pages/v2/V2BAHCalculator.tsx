@@ -1,7 +1,5 @@
 import { useState, useRef } from "react";
-
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
