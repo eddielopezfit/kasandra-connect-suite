@@ -137,7 +137,7 @@ const V2CashOfferOptionsContent = () => {
                 "Ya viste los números — hablemos de lo que se adapta a tu situación"
               )}
             </h2>
-            <p className="text-white/80 text-sm mb-6">
+            <p className="text-white/80 text-sm md:text-base mb-6">
               {t(
                 "I walk through both paths with every seller I work with — no pressure, just the full picture so you can decide what actually fits your life.",
                 "Reviso ambos caminos con cada vendedor con el que trabajo — sin presión, solo el panorama completo para que decidas lo que realmente se adapta a tu vida."

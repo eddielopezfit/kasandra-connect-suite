@@ -94,7 +94,7 @@ const V2HomeContent = () => {
                 <p className="font-semibold text-cc-navy text-base leading-snug">
                   {t("I'm looking to buy", "Quiero comprar")}
                 </p>
-                <p className="text-sm text-cc-charcoal/60 mt-1">
+                <p className="text-sm md:text-base text-cc-charcoal/60 mt-1">
                   {t("Get your free buying game plan", "Obtén tu plan gratuito de compra")}
                 </p>
               </div>
@@ -113,7 +113,7 @@ const V2HomeContent = () => {
                 <p className="font-semibold text-cc-navy text-base leading-snug">
                   {t("I'm looking to sell", "Quiero vender")}
                 </p>
-                <p className="text-sm text-cc-charcoal/60 mt-1">
+                <p className="text-sm md:text-base text-cc-charcoal/60 mt-1">
                   {t("Find out your home's real value", "Descubre el valor real de tu casa")}
                 </p>
               </div>
@@ -132,7 +132,7 @@ const V2HomeContent = () => {
                 <p className="font-semibold text-cc-navy text-base leading-snug">
                   {t("I want a cash offer", "Quiero una oferta en efectivo")}
                 </p>
-                <p className="text-sm text-cc-charcoal/60 mt-1">
+                <p className="text-sm md:text-base text-cc-charcoal/60 mt-1">
                   {t("Close in days, skip the showings", "Cierra en días, sin visitas")}
                 </p>
               </div>
@@ -144,7 +144,7 @@ const V2HomeContent = () => {
       {/* Selena Prompt Banner */}
       <div className="bg-cc-navy py-3 px-4">
         <div className="container mx-auto max-w-3xl flex items-center justify-between gap-4 flex-wrap">
-          <p className="text-white/80 text-sm">
+          <p className="text-white/80 text-sm md:text-base">
             {t(
               "Have a quick question? Selena is available right now.",
               "¿Tienes una pregunta rápida? Selena está disponible ahora."
@@ -221,7 +221,7 @@ const V2HomeContent = () => {
                 <h3 className="font-serif text-xl font-bold text-cc-blue mb-4">
                   {t("For Buyers", "Para Compradores")}
                 </h3>
-                <ul className="space-y-2 text-sm text-cc-text-muted mb-6">
+                <ul className="space-y-2 text-sm md:text-base text-cc-text-muted mb-6">
                   <li>• {t("Financing clarity and guidance", "Claridad y orientación sobre financiamiento")}</li>
                   <li>• {t("Down payment assistance partners", "Socios de asistencia para pago inicial")}</li>
                   <li>• {t("Step-by-step buying process", "Proceso de compra paso a paso")}</li>
@@ -240,7 +240,7 @@ const V2HomeContent = () => {
                 <h3 className="font-serif text-xl font-bold text-cc-blue mb-4">
                   {t("For Sellers", "Para Vendedores")}
                 </h3>
-                <ul className="space-y-2 text-sm text-cc-text-muted mb-6">
+                <ul className="space-y-2 text-sm md:text-base text-cc-text-muted mb-6">
                   <li>• {t("Market-based pricing strategy", "Estrategia de precios basada en el mercado")}</li>
                   <li>• {t("Offer reliability assessment", "Evaluación de confiabilidad de ofertas")}</li>
                   <li>• {t("Full disclosure guidance", "Orientación sobre divulgaciones")}</li>
@@ -259,7 +259,7 @@ const V2HomeContent = () => {
                 <h3 className="font-serif text-xl font-bold text-cc-blue mb-4">
                   {t("Cash Offer Options", "Opciones de Oferta en Efectivo")}
                 </h3>
-                <ul className="space-y-2 text-sm text-cc-text-muted mb-6">
+                <ul className="space-y-2 text-sm md:text-base text-cc-text-muted mb-6">
                   <li>• {t("Compare cash vs traditional listing", "Compare efectivo vs venta tradicional")}</li>
                   <li>• {t("Understand all your options", "Comprenda todas sus opciones")}</li>
                   <li>• {t("Risk awareness guidance", "Orientación sobre riesgos")}</li>
@@ -333,7 +333,7 @@ const V2HomeContent = () => {
               <h3 className="text-white font-semibold text-lg mb-2">
                 {t("Off-Market Properties", "Propiedades Fuera del Mercado")}
               </h3>
-              <p className="text-white/60 text-sm leading-relaxed">
+              <p className="text-white/60 text-sm md:text-base leading-relaxed">
                 {t(
                   "Properties that sell before they're ever listed. Corner Connect's network gives you first access to inventory most buyers never see.",
                   "Propiedades que se venden antes de ser listadas. La red de Corner Connect te da primer acceso a inventario que la mayoría de compradores nunca ve."
@@ -347,7 +347,7 @@ const V2HomeContent = () => {
               <h3 className="text-white font-semibold text-lg mb-2">
                 {t("Cash Offer Solutions", "Soluciones de Oferta en Efectivo")}
               </h3>
-              <p className="text-white/60 text-sm leading-relaxed">
+              <p className="text-white/60 text-sm md:text-base leading-relaxed">
                 {t(
                   "Need to sell fast? No stress, no fees, we cover closing costs, no inspections required. A real solution for sellers who need speed and certainty.",
                   "¿Necesitas vender rápido? Sin estrés, sin comisiones, cubrimos costos de cierre, sin inspecciones requeridas. Una solución real para vendedores que necesitan rapidez y certeza."
@@ -361,7 +361,7 @@ const V2HomeContent = () => {
               <h3 className="text-white font-semibold text-lg mb-2">
                 {t("Distressed Property Solutions", "Soluciones para Propiedades en Dificultad")}
               </h3>
-              <p className="text-white/60 text-sm leading-relaxed">
+              <p className="text-white/60 text-sm md:text-base leading-relaxed">
                 {t(
                   "Behind on payments? Facing a difficult situation with your property? Kasandra specializes in finding solutions that protect your equity and your future — with discretion and care.",
                   "¿Atrasado en pagos? ¿Enfrentando una situación difícil con tu propiedad? Kasandra se especializa en encontrar soluciones que protejan tu patrimonio y tu futuro — con discreción y cuidado."
@@ -450,19 +450,19 @@ const V2HomeContent = () => {
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
                   <Heart className="w-10 h-10 text-cc-gold mx-auto mb-3" />
-                  <p className="text-sm text-cc-text-muted">{t("Former Vice Chair, Arizona Diaper Bank", "Ex-Vicepresidenta, Arizona Diaper Bank")}</p>
+                  <p className="text-sm md:text-base text-cc-text-muted">{t("Former Vice Chair, Arizona Diaper Bank", "Ex-Vicepresidenta, Arizona Diaper Bank")}</p>
                 </div>
                 <div className="text-center">
                   <Users className="w-10 h-10 text-cc-gold mx-auto mb-3" />
-                  <p className="text-sm text-cc-text-muted">{t("Vice President, Rumbo al Éxito", "Vicepresidenta, Rumbo al Éxito")}</p>
+                  <p className="text-sm md:text-base text-cc-text-muted">{t("Vice President, Rumbo al Éxito", "Vicepresidenta, Rumbo al Éxito")}</p>
                 </div>
                 <div className="text-center">
                   <Star className="w-10 h-10 text-cc-gold mx-auto mb-3" />
-                  <p className="text-sm text-cc-text-muted">{t("Leadership Tucson", "Liderazgo Tucson")}</p>
+                  <p className="text-sm md:text-base text-cc-text-muted">{t("Leadership Tucson", "Liderazgo Tucson")}</p>
                 </div>
                 <div className="text-center">
                   <HeartHandshake className="w-10 h-10 text-cc-gold mx-auto mb-3" />
-                  <p className="text-sm text-cc-text-muted">{t("Community Advocate", "Defensora Comunitaria")}</p>
+                  <p className="text-sm md:text-base text-cc-text-muted">{t("Community Advocate", "Defensora Comunitaria")}</p>
                 </div>
               </div>
             </div>

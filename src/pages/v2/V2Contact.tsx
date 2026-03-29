@@ -184,13 +184,13 @@ const V2ContactContent = () => {
                 <p className="font-serif text-lg text-cc-navy font-semibold mb-3">
                   {t("A quick note", "Una nota rápida")}
                 </p>
-                <p className="text-foreground text-sm leading-relaxed mb-3">
+                <p className="text-foreground text-sm md:text-base leading-relaxed mb-3">
                   {t(
                     "Whatever brought you here — whether you're just starting to think about it or you've been losing sleep over a decision — I want you to know there's no wrong time to reach out.",
                     "Lo que sea que te trajo aquí — ya sea que apenas estés pensándolo o que lleves noches sin dormir por una decisión — quiero que sepas que no hay mal momento para escribirme."
                   )}
                 </p>
-                <p className="text-foreground text-sm leading-relaxed">
+                <p className="text-foreground text-sm md:text-base leading-relaxed">
                   {t(
                     "I'll personally read your message and get back to you. No scripts, no hand-offs. Just me.",
                     "Yo personalmente leo tu mensaje y te respondo. Sin guiones, sin intermediarios. Solo yo."

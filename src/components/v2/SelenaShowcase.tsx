@@ -27,7 +27,7 @@ const SelenaShowcase = ({ variant = "full" }: SelenaShowcaseProps) => {
                   AI
                 </span>
               </div>
-              <p className="text-cc-charcoal/70 text-sm mb-3">
+              <p className="text-cc-charcoal/70 text-sm md:text-base mb-3">
                 {t(
                   "Kasandra's AI assistant — available 24/7 in English and Spanish to answer your real estate questions.",
                   "La asistente de IA de Kasandra — disponible 24/7 en inglés y español para responder tus preguntas de bienes raíces."
@@ -76,19 +76,19 @@ const SelenaShowcase = ({ variant = "full" }: SelenaShowcaseProps) => {
         </p>
 
         <ul className="space-y-3 mb-8 inline-block text-left">
-          <li className="flex items-center gap-3 text-white/80 text-sm">
+          <li className="flex items-center gap-3 text-white/80 text-sm md:text-base">
             <Sparkles className="w-4 h-4 text-cc-gold flex-shrink-0" />
             {t("Bilingual — English & Spanish", "Bilingüe — Inglés y Español")}
           </li>
-          <li className="flex items-center gap-3 text-white/80 text-sm">
+          <li className="flex items-center gap-3 text-white/80 text-sm md:text-base">
             <Sparkles className="w-4 h-4 text-cc-gold flex-shrink-0" />
             {t("Trained on local Tucson market data", "Entrenada en datos del mercado local de Tucson")}
           </li>
-          <li className="flex items-center gap-3 text-white/80 text-sm">
+          <li className="flex items-center gap-3 text-white/80 text-sm md:text-base">
             <Sparkles className="w-4 h-4 text-cc-gold flex-shrink-0" />
             {t("Available 24/7 — nights, weekends, holidays", "Disponible 24/7 — noches, fines de semana, días festivos")}
           </li>
-          <li className="flex items-center gap-3 text-white/80 text-sm">
+          <li className="flex items-center gap-3 text-white/80 text-sm md:text-base">
             <Sparkles className="w-4 h-4 text-cc-gold flex-shrink-0" />
             {t("Knows Kasandra's programs and specialties", "Conoce los programas y especialidades de Kasandra")}
           </li>

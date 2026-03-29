@@ -119,7 +119,7 @@ export default function CredentialsBentoGrid() {
                       {t(cell.titleEn, cell.titleEs)}
                     </h3>
                     <p
-                      className={`mt-1 text-sm leading-relaxed ${
+                      className={`mt-1 text-sm md:text-base leading-relaxed ${
                         isLarge ? "text-white/70" : "text-cc-text-muted"
                       }`}
                     >

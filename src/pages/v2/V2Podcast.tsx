@@ -99,7 +99,7 @@ const V2PodcastContent = () => {
                   <Users className="w-6 h-6 text-cc-gold flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-cc-navy">{t("Community Leaders", "Líderes Comunitarios")}</h4>
-                    <p className="text-sm text-cc-charcoal">
+                    <p className="text-sm md:text-base text-cc-charcoal">
                       {t("Featuring local voices making a difference in Tucson", "Presentando voces locales que hacen la diferencia en Tucson")}
                     </p>
                   </div>
@@ -108,7 +108,7 @@ const V2PodcastContent = () => {
                   <TrendingUp className="w-6 h-6 text-cc-gold flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-cc-navy">{t("Generational Wealth", "Riqueza Generacional")}</h4>
-                    <p className="text-sm text-cc-charcoal">
+                    <p className="text-sm md:text-base text-cc-charcoal">
                       {t("Discussions on building lasting financial foundations", "Discusiones sobre construir bases financieras duraderas")}
                     </p>
                   </div>
@@ -117,7 +117,7 @@ const V2PodcastContent = () => {
                   <Heart className="w-6 h-6 text-cc-gold flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-cc-navy">{t("Hispanic Leadership", "Liderazgo Hispano")}</h4>
-                    <p className="text-sm text-cc-charcoal">
+                    <p className="text-sm md:text-base text-cc-charcoal">
                       {t("Celebrating success stories from our community", "Celebrando historias de éxito de nuestra comunidad")}
                     </p>
                   </div>
@@ -193,7 +193,7 @@ const V2PodcastContent = () => {
               <p className="font-serif text-2xl text-cc-navy italic mb-4">
                 {t("\"Because everything starts at home.\"", "\"Porque todo empieza en casa.\"")}
               </p>
-              <p className="text-cc-charcoal text-sm mb-6">
+              <p className="text-cc-charcoal text-sm md:text-base mb-6">
                 {t(
                   "First conversation: Money. Emotional health. Stability. With a lender and a psychologist.",
                   "Primera conversación: Dinero. Salud emocional. Estabilidad. Con un lender y una psicóloga."
@@ -226,7 +226,7 @@ const V2PodcastContent = () => {
                 "¿Escuchaste algo en el programa que te hizo pensar?"
               )}
             </h3>
-            <p className="text-cc-charcoal text-sm mb-6 max-w-md mx-auto">
+            <p className="text-cc-charcoal text-sm md:text-base mb-6 max-w-md mx-auto">
               {t(
                 "Ask Selena any real estate question — buying, selling, cash offers, or just exploring your options. Free, confidential, available 24/7.",
                 "Pregúntale a Selena cualquier pregunta de bienes raíces — comprar, vender, ofertas en efectivo, o solo explorar tus opciones. Gratis, confidencial, disponible 24/7."
