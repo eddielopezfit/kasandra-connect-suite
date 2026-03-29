@@ -267,7 +267,7 @@ const V2AboutContent = () => {
               <span className="flex items-center gap-2"><Award className="w-4 h-4 text-cc-gold" />{t("Arizona Territory Office", "Oficina Arizona Territory")}</span>
             </div>
             <a
-              href="https://www.realtyexecutives.com/agents"
+              href="https://www.realtyexecutives.com/agents/kasandra-prieto"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block mt-6 text-sm text-cc-gold hover:underline transition-colors"
