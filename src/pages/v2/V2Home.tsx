@@ -160,23 +160,6 @@ const V2HomeContent = () => {
         </div>
       </div>
 
-      <section className="py-16 lg:py-20 bg-cc-ivory">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
-              {t("Run the Numbers", "Haz los Números")}
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mt-2">
-              {t("Check Your Buying Power", "Descubre Tu Poder de Compra")}
-            </h2>
-          </div>
-          <Suspense fallback={<div className="h-64 bg-cc-sand/50 rounded-2xl animate-pulse" />}>
-            <LazyInstantAnswerWidget />
-          </Suspense>
-        </div>
-      </section>
-
-
       {/* About Kasandra — Compact Teaser */}
       <section className="py-16 lg:py-20 bg-cc-sand">
         <div className="container mx-auto px-4 max-w-3xl">
