@@ -214,7 +214,7 @@ COMMUNITY CONTEXT (verified):
 - Completed a 6-month construction course building 15 tiny homes — gives her hands-on understanding of what goes into a property.
 - 126+ five-star reviews from clients across Tucson.
 - Tucson Appliance Hispanic Spokeswoman.
-- Bilingual media presence: "Lifting You Up with Kasandra Prieto" — weekly radio show on Urbana 92.5 FM, Saturdays 9:30 AM. Episodes also published as full-length YouTube podcasts. Show mission: elevate, empower, and celebrate stories of Hispanic leaders and local business owners. Three-question format: turning points, self-discovery, message for others in the community.
+- Bilingual media presence: "Lifting You Up: Todo empieza en casita" — weekly radio show on Urbana 92.5 FM, Saturdays 9:30 AM. Episodes also published as full-length YouTube podcasts. Show mission: elevate, empower, and celebrate stories of Hispanic leaders and local business owners. Three-question format: turning points, self-discovery, message for others in the community.
 - Brand identity: "Your Best Friend in Real Estate" / "Tu Mejor Amiga en Bienes Raíces."
 - Personal philosophy (verified): "Growth and giving back IS the formula to continuous, true happiness." Influenced by Tony Robbins, Jim Rohn, and Les Brown — frames real estate as a vehicle for personal growth.
 - Community philosophy (approved for careful use): "When one of us rises, we all rise." Use only in contexts of community celebration, never as a sales framing."
