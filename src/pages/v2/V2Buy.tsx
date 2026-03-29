@@ -25,6 +25,8 @@ import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import BuyingTimeline from "@/components/v2/BuyingTimeline";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
+const VIPNextBestAction = lazy(() => import("@/components/v2/VIPNextBestAction"));
+const FrictionEscalation = lazy(() => import("@/components/v2/FrictionEscalation"));
 
 
 const PAGE_PATH = '/buy';
