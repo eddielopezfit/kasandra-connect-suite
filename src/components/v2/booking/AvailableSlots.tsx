@@ -140,22 +140,33 @@ const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName }: AvailableS
         </div>
       )}
 
-      {/* Error / No slots */}
+      {/* Error / No slots — graceful fallback with multiple options */}
       {!loading && (error || slots.length === 0) && (
-        <div className="py-10 text-center bg-cc-sand/50 rounded-xl border border-cc-sand-dark/20">
+        <div className="py-8 text-center bg-cc-sand/50 rounded-xl border border-cc-sand-dark/20">
           <CalendarDays className="w-10 h-10 text-cc-slate/40 mx-auto mb-3" />
           <p className="text-cc-charcoal font-medium mb-1">
             {t("No available times for this window", "No hay horarios disponibles para este periodo")}
           </p>
           <p className="text-sm text-cc-slate mb-4">
-            {t("Try a different range, or call Kasandra directly.", "Prueba otro rango, o llama a Kasandra directamente.")}
+            {t(
+              "Try a different range above, or reach Kasandra directly:",
+              "Prueba otro rango arriba, o contacta a Kasandra directamente:"
+            )}
           </p>
-          <a
-            href="tel:+15203493248"
-            className="inline-flex items-center gap-2 text-cc-gold font-medium text-sm hover:underline"
-          >
-            📞 (520) 349-3248
-          </a>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href="tel:+15203493248"
+              className="inline-flex items-center gap-2 bg-cc-navy text-white font-medium text-sm px-5 py-2.5 rounded-xl hover:bg-cc-navy-dark transition-colors"
+            >
+              📞 {t("Call (520) 349-3248", "Llamar (520) 349-3248")}
+            </a>
+            <a
+              href="mailto:kasandra@cornerconnect.co?subject=Booking%20Request"
+              className="inline-flex items-center gap-2 bg-white text-cc-charcoal font-medium text-sm px-5 py-2.5 rounded-xl border border-cc-sand-dark/30 hover:border-cc-gold transition-colors"
+            >
+              ✉️ {t("Email Kasandra", "Enviar correo a Kasandra")}
+            </a>
+          </div>
         </div>
       )}
 

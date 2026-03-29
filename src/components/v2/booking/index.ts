@@ -3,3 +3,4 @@ export { default as NativeBookingFlow } from './NativeBookingFlow';
 export { default as BookingIntakeForm } from './BookingIntakeForm';
 export { default as AvailableSlots } from './AvailableSlots';
 export { default as BookingConfirmation } from './BookingConfirmation';
+export { default as BookingHydrationPanel } from './BookingHydrationPanel';
