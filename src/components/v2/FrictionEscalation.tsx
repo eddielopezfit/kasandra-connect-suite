@@ -27,9 +27,6 @@ export default function FrictionEscalation({
   const { frictionScore, bookingReadiness, vip } = useVIP({ localOnly: true });
   const isEs = language === 'es';
 
-  // Only show when friction is above threshold and user hasn't booked
-  if (frictionScore < threshold || vip.journey.hasBooked) return null;
-
   const handleBookClick = useCallback(() => {
     logEvent('friction_escalation_clicked' as any, {
       friction_score: frictionScore,
