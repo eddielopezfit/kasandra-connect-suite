@@ -84,11 +84,16 @@ const V2TucsonLivingContent = () => {
       {/* Seasonal Events Calendar */}
       <section className="bg-cc-sand py-16 md:py-20">
         <div className="container mx-auto px-4 max-w-5xl">
-          <div className="flex items-center gap-2 justify-center mb-3">
+          <div className="flex items-center gap-2 justify-center mb-3 flex-wrap">
             <Calendar className="w-5 h-5 text-cc-gold" />
             <h2 className="font-serif text-3xl font-bold text-cc-navy">
               {t("Tucson Events Calendar", "Calendario de Eventos de Tucson")}
             </h2>
+            {isLive && scrapedMonth && (
+              <span className="text-xs bg-cc-gold/15 text-cc-gold-dark px-2.5 py-1 rounded-full font-medium">
+                {t("Live Data", "Datos en Vivo")} · {scrapedMonth}
+              </span>
+            )}
           </div>
           <p className="text-center text-cc-charcoal/60 mb-10 max-w-xl mx-auto">
             {t(
