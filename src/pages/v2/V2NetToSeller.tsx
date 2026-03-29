@@ -8,7 +8,6 @@ import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
 const V2NetToSellerContent = () => {
   const { t } = useLanguage();
-  const { openChat } = useSelenaChat();
 
   useDocumentHead({
     titleEn: "Net-to-Seller Calculator | What Will You Actually Walk Away With?",
