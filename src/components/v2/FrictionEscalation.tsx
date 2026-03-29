@@ -4,7 +4,7 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Calendar, Phone, MessageCircle } from 'lucide-react';
+import { Calendar, MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
 import { useVIP } from '@/hooks/useVIP';
