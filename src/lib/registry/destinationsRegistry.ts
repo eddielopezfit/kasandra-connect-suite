@@ -30,7 +30,9 @@ export type DestinationKey =
   | 'selena_open'
   | 'external_youtube'
   | 'neighborhoods'
-  | 'neighborhood_detail';
+  | 'neighborhood_detail'
+  | 'trusted_network'
+  | 'tucson_living';
 
 interface DestinationEntry {
   key: DestinationKey;
