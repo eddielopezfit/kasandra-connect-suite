@@ -40,9 +40,13 @@ export const CHIP_KEYS = {
   // === Conversational / Exploratory ===
   WHAT_ARE_MY_OPTIONS: 'what_are_my_options',
   I_HAVE_A_QUESTION: 'i_have_a_question',
+  SKIP_FOR_NOW: 'skip_for_now',
   THINKING_ABOUT_SELLING: 'thinking_about_selling',
   LOOKING_TO_BUY: 'looking_to_buy',
   JUST_EXPLORING: 'just_exploring',
+  SUMMARIZE_WHERE_I_AM: 'summarize_where_i_am',
+  KEEP_EXPLORING: 'keep_exploring',
+  SPECIFIC_QUESTION: 'specific_question',
 
   // === Specific Guides ===
   GUIDE_CASH_VS_LISTING: 'guide_cash_vs_listing',
