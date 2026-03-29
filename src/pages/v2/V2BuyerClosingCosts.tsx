@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
-import { MessageCircle, ArrowRight, Info, DollarSign, Home, Percent, FileText } from "lucide-react";
+import { Info, DollarSign, Home, Percent, FileText } from "lucide-react";
 import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
 import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 

@@ -8,7 +8,7 @@ import { useMarketPulse } from "@/hooks/useMarketPulse";
 import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import { calculateBAHMortgage, type BAHInput, type BAHResult } from "@/lib/calculator/bahMortgageAlgorithm";
 import {
-  DollarSign, Home, MessageCircle, ArrowRight, Shield, CreditCard,
+  DollarSign, Home, Shield, CreditCard,
 } from "lucide-react";
 import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
 import ToolResultNextStep from "@/components/v2/ToolResultNextStep";

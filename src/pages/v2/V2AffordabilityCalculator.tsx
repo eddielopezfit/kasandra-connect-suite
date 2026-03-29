@@ -13,7 +13,7 @@ import {
   type AffordabilityResult,
 } from "@/lib/calculator/affordabilityAlgorithm";
 import {
-  DollarSign, Home, MessageCircle, ArrowRight, CreditCard, TrendingUp, Percent,
+  DollarSign, Home, CreditCard, TrendingUp, Percent,
 } from "lucide-react";
 import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
 import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
