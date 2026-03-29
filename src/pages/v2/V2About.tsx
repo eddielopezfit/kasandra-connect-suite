@@ -278,7 +278,7 @@ const V2AboutContent = () => {
       {/* Podcast Link */}
       <div className="bg-cc-sand py-4 text-center">
         <Link to="/podcast" className="text-sm text-cc-gold hover:underline transition-colors">
-          🎙 {t("Listen to Lifting You Up on Urbana 92.5 FM →", "Escucha Lifting You Up en Urbana 92.5 FM →")}
+          🎙 {t('Listen to "Lifting You Up: Todo empieza en casita" on Urbana 92.5 FM →', 'Escucha "Lifting You Up: Todo empieza en casita" en Urbana 92.5 FM →')}
         </Link>
       </div>
 
