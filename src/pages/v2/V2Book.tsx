@@ -9,6 +9,7 @@
  * Still calls enrich-booking-context for dossier bridge.
  */
 import { useSearchParams } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import { useEffect, useState, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
