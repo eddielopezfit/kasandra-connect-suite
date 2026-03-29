@@ -109,7 +109,7 @@ const V2AboutContent = () => {
                 <ul className="space-y-2">
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t("Former Vice Chair, Arizona Diaper Bank", "Ex-Vicepresidenta, Arizona Diaper Bank")}</span>
+                    <span className="text-sm">{t("VP, Governing Board — Arizona Diaper Bank", "VP, Junta Directiva — Arizona Diaper Bank")}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
