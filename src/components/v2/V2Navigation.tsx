@@ -202,8 +202,8 @@ const V2Navigation = () => {
           </div>
 
           {/* Mobile Menu */}
-          <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-              isMobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+          <div className={`lg:hidden overflow-y-auto transition-all duration-300 ease-in-out ${
+              isMobileMenuOpen ? "max-h-[calc(100vh-120px)] opacity-100" : "max-h-0 opacity-0"
             }`}>
             <div className={`mt-4 pb-4 border-t pt-4 space-y-0 ${isScrolled ? "bg-cc-sand border-cc-sand-dark/30" : "bg-cc-navy border-white/20"}`}>
               <div className="flex justify-center mb-4">
