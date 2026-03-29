@@ -49,6 +49,9 @@ export default function FrictionEscalation({
     });
   }, [frictionScore, bookingReadiness, openChat, isEs]);
 
+  // Only show when friction is above threshold and user hasn't booked
+  if (frictionScore < threshold || vip.journey.hasBooked) return null;
+
   const isOverdue = bookingReadiness === 'overdue';
 
   return (

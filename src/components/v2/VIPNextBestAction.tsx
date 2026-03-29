@@ -50,6 +50,9 @@ export default function VIPNextBestAction({
     });
   }, [step, openChat, isEs]);
 
+  // Don't show for brand-new visitors or users who have already booked
+  if (vip.journey.hasBooked || vip.journey.journeyDepth === 'new') return null;
+
   const isSelenaAction = step.destination.startsWith('selena:');
   const isCapture = step.type === 'capture';
 
