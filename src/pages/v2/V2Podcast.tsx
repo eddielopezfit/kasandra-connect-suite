@@ -247,7 +247,7 @@ const V2PodcastContent = () => {
       </section>
 
       {/* Booking CTA */}
-      <section className="py-16 lg:py-20 pb-24 sm:pb-16 bg-cc-navy">
+      <section className="py-16 lg:py-20 pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6 text-white">
             {t("Thinking About Real Estate?", "¿Pensando en Bienes Raíces?")}

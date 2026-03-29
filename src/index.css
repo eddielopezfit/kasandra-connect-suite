@@ -223,6 +223,10 @@
   .touch-scroll-x > * {
     scroll-snap-align: start;
   }
+
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 @layer components {
