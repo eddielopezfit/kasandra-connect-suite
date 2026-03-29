@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Button } from "@/components/ui/button";
@@ -6,8 +6,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
-import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-import { AlertTriangle, ArrowRight, Calendar, MessageCircle } from "lucide-react";
+const LazyGoogleReviews = lazy(() => import("@/components/v2/GoogleReviewsSection"));
+import { AlertTriangle, Calendar, MessageCircle } from "lucide-react";
+import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import heroImage from "@/assets/hero-cash-calm.png";
