@@ -72,45 +72,34 @@ export function useSessionPrePopulation(): PrePopulationData {
   });
 
   useEffect(() => {
+    // Build VIP for canonical identity/intent, fall back to session for full context
+    const vip = buildVIPFromLocal();
     const session = getSessionContext();
-    
-    // Get stored contact info
-    const storedName = getStoredUserName();
-    const storedEmail = getStoredEmail();
-    const storedPhone = getStoredPhone();
     
     const data: PrePopulationData = {
       sessionContext: session,
       hasPrePopulatedData: false,
     };
     
-    // Pre-populate from stored contact info
-    if (storedName) data.name = storedName;
-    if (storedEmail) data.email = storedEmail;
-    if (storedPhone) data.phone = storedPhone;
+    // Pre-populate from VIP identity (canonical source)
+    if (vip.identity.name) data.name = vip.identity.name;
+    if (vip.identity.email) data.email = vip.identity.email;
+    if (vip.identity.phone) data.phone = vip.identity.phone;
     
-    // Pre-populate from session context
-    if (session) {
-      // NOTE: Language is NOT pre-populated from session.
-      // The form uses the current LanguageContext as default to respect the user's
-      // active language toggle choice, preventing stale session language overwrites.
-      // See: Consultation Intake Form Language Data Contract Audit
-      
-      if (session.intent) {
-        data.intent = mapIntent(session.intent);
-      }
-      
-      if (session.timeline) {
-        data.timeline = mapTimeline(session.timeline);
-      }
-      
-      if (session.situation) {
-        data.situation = session.situation;
-      }
-      
-      if (session.condition) {
-        data.condition = session.condition;
-      }
+    // Pre-populate from VIP intent (canonical source)
+    // NOTE: Language is NOT pre-populated from VIP.
+    // The form uses the current LanguageContext as default.
+    if (vip.intent.intent) {
+      data.intent = mapIntent(vip.intent.intent);
+    }
+    if (vip.intent.timeline) {
+      data.timeline = mapTimeline(vip.intent.timeline);
+    }
+    if (vip.intent.situation) {
+      data.situation = vip.intent.situation;
+    }
+    if (vip.intent.condition) {
+      data.condition = vip.intent.condition;
     }
     
     // Determine if we have pre-populated data
