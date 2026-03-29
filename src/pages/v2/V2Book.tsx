@@ -280,47 +280,10 @@ const V2BookContent = () => {
               </div>
             )}
 
-            {/* Dossier Ready — Show profile summary if enriched */}
-            {dossierState === 'ready' && dossierResult && (
-              <div className="bg-white border border-cc-gold/30 rounded-xl p-5 mb-6 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-cc-navy mb-2">
-                      {t("Kasandra's pre-call review is ready", "La revisión previa de Kasandra está lista")}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {dossierResult.readiness_score && dossierResult.readiness_score > 0 && (
-                        <span className="inline-flex items-center gap-1 text-xs bg-cc-sand rounded-full px-3 py-1 text-cc-charcoal">
-                          <Target className="w-3 h-3" />
-                          {t(`Readiness: ${dossierResult.readiness_score}/100`, `Preparación: ${dossierResult.readiness_score}/100`)}
-                        </span>
-                      )}
-                      {dossierResult.tools_completed && dossierResult.tools_completed.length > 0 && (
-                        <span className="inline-flex items-center gap-1 text-xs bg-cc-sand rounded-full px-3 py-1 text-cc-charcoal">
-                          <BookOpen className="w-3 h-3" />
-                          {t(`${dossierResult.tools_completed.length} tool${dossierResult.tools_completed.length > 1 ? 's' : ''} completed`, `${dossierResult.tools_completed.length} herramienta${dossierResult.tools_completed.length > 1 ? 's' : ''} completada${dossierResult.tools_completed.length > 1 ? 's' : ''}`)}
-                        </span>
-                      )}
-                      {dossierResult.guides_read_count && dossierResult.guides_read_count > 0 && (
-                        <span className="inline-flex items-center gap-1 text-xs bg-cc-sand rounded-full px-3 py-1 text-cc-charcoal">
-                          <User className="w-3 h-3" />
-                          {t(`${dossierResult.guides_read_count} guide${dossierResult.guides_read_count > 1 ? 's' : ''} read`, `${dossierResult.guides_read_count} guía${dossierResult.guides_read_count > 1 ? 's' : ''} leída${dossierResult.guides_read_count > 1 ? 's' : ''}`)}
-                        </span>
-                      )}
-                      {dossierResult.inherited_home && (
-                        <span className="inline-flex items-center gap-1 text-xs bg-amber-50 border border-amber-200 rounded-full px-3 py-1 text-amber-700">
-                          {t("Inherited property", "Propiedad heredada")}
-                        </span>
-                      )}
-                      {dossierResult.military_flag && (
-                        <span className="inline-flex items-center gap-1 text-xs bg-blue-50 border border-blue-200 rounded-full px-3 py-1 text-blue-700">
-                          {t("VA loan eligible", "Elegible para préstamo VA")}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
+            {/* What Kasandra Already Knows — session-aware hydration panel */}
+            {dossierState === 'ready' && (
+              <div className="mb-6">
+                <BookingHydrationPanel />
               </div>
             )}
 
