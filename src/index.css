@@ -128,6 +128,11 @@
     @apply font-serif;
   }
 
+  /* Global scroll-margin so scrollIntoView clears the fixed nav */
+  [id] {
+    scroll-margin-top: 80px;
+  }
+
   /* FIX 1 — iOS Safari: prevent auto-zoom on input focus (requires ≥16px) */
   input, textarea, select {
     font-size: 16px;
