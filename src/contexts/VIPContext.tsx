@@ -27,8 +27,8 @@ interface VIPContextValue {
   serverHydrated: boolean;
   /** Refresh VIP from local state (call after tool completion, booking, etc.) */
   refresh: () => void;
-  /** Trigger a write-back to the server snapshot */
-  persist: () => void;
+  /** Trigger a write-back to the server snapshot + CRM sync */
+  persist: (trigger?: 'tool_completion' | 'readiness_threshold' | 'returning_user' | 'context_update', detail?: string) => void;
   // Selectors
   bookingReadiness: BookingReadiness;
   frictionScore: number;
