@@ -33,8 +33,6 @@ export default function VIPNextBestAction({
   const step = recommendedNextStep;
 
   const handleClick = useCallback(() => {
-
-  const handleClick = useCallback(() => {
     logEvent('vip_next_action_clicked' as any, {
       type: step.type,
       destination: step.destination,
