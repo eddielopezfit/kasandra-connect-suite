@@ -1,18 +1,18 @@
 /**
- * AvailableSlots — Displays real GHL calendar slots in branded UI
+ * AvailableSlots — Displays real GHL calendar slots.
  * Fetches from check-availability edge function.
+ * Passes selected slot to parent for booking via book-appointment.
  */
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { Clock, CalendarDays, ArrowLeft, CheckCircle } from "lucide-react";
+import { Clock, CalendarDays, ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TimeSlot {
   start: string;
   end: string;
-  booking_url: string;
   display_time: string;
 }
 
@@ -21,11 +21,12 @@ interface AvailableSlotsProps {
   onSlotSelected: (slot: TimeSlot) => void;
   onBack: () => void;
   userName?: string;
+  isBooking?: boolean;
 }
 
 type WindowOption = "today" | "tomorrow" | "next_3_days" | "next_7_days";
 
-const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName }: AvailableSlotsProps) => {
+const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName, isBooking }: AvailableSlotsProps) => {
   const { t } = useLanguage();
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,6 +37,7 @@ const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName }: AvailableS
   const fetchSlots = async (preferred: WindowOption) => {
     setLoading(true);
     setError(false);
+    setSelectedSlot(null);
     try {
       const { data, error: fnErr } = await supabase.functions.invoke("check-availability", {
         body: {
@@ -46,16 +48,11 @@ const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName }: AvailableS
         },
       });
       if (fnErr) throw fnErr;
-      if (data?.ok && data.slots) {
-        // Filter out fallback-only slots
-        const realSlots = data.source === "ghl_calendar"
-          ? data.slots
-          : [];
-        setSlots(realSlots);
-        if (realSlots.length === 0 && data.source !== "ghl_calendar") {
-          setError(true);
-        }
+      if (data?.ok && data.source === "ghl_calendar") {
+        setSlots(data.slots ?? []);
+        if ((data.slots ?? []).length === 0) setError(true);
       } else {
+        setSlots([]);
         setError(true);
       }
     } catch {
@@ -97,6 +94,7 @@ const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName }: AvailableS
           onClick={onBack}
           className="w-9 h-9 rounded-full bg-cc-sand flex items-center justify-center hover:bg-cc-sand-dark transition-colors"
           aria-label="Go back"
+          disabled={isBooking}
         >
           <ArrowLeft className="w-4 h-4 text-cc-navy" />
         </button>
@@ -118,6 +116,7 @@ const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName }: AvailableS
           <button
             key={w.key}
             onClick={() => setWindow(w.key)}
+            disabled={isBooking}
             className={cn(
               "px-4 py-2 rounded-full text-sm font-medium transition-all",
               window === w.key
@@ -140,7 +139,7 @@ const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName }: AvailableS
         </div>
       )}
 
-      {/* Error / No slots — graceful fallback with multiple options */}
+      {/* Error / No slots — graceful fallback */}
       {!loading && (error || slots.length === 0) && (
         <div className="py-8 text-center bg-cc-sand/50 rounded-xl border border-cc-sand-dark/20">
           <CalendarDays className="w-10 h-10 text-cc-slate/40 mx-auto mb-3" />
@@ -192,6 +191,7 @@ const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName }: AvailableS
                     <button
                       key={slot.start}
                       onClick={() => setSelectedSlot(slot)}
+                      disabled={isBooking}
                       className={cn(
                         "flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-medium border transition-all",
                         isSelected
@@ -219,9 +219,17 @@ const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName }: AvailableS
         <div className="pt-2">
           <Button
             onClick={() => onSlotSelected(selectedSlot)}
+            disabled={isBooking}
             className="w-full h-14 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold text-base rounded-xl shadow-gold"
           >
-            {t("Confirm This Time", "Confirmar Este Horario")}
+            {isBooking ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                {t("Confirming...", "Confirmando...")}
+              </span>
+            ) : (
+              t("Confirm This Time", "Confirmar Este Horario")
+            )}
           </Button>
         </div>
       )}

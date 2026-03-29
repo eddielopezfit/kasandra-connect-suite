@@ -1,10 +1,10 @@
 /**
  * NativeBookingFlow — Orchestrates the 3-step native booking:
  * 1. Intake form (capture lead)
- * 2. Slot selection (real GHL slots)
- * 3. Confirmation (handoff created)
+ * 2. Slot selection (real GHL slots via check-availability)
+ * 3. Confirmation (real GHL appointment via book-appointment)
  *
- * Replaces GHLBookingCalendar iframe entirely.
+ * Production GHL Calendar integration — no stubs.
  */
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -20,7 +20,6 @@ import { toast } from "sonner";
 interface TimeSlot {
   start: string;
   end: string;
-  booking_url: string;
   display_time: string;
 }
 
@@ -45,15 +44,13 @@ const NativeBookingFlow = ({ defaultIntent }: NativeBookingFlowProps) => {
   const handleIntakeSubmit = async (data: BookingFormData) => {
     setIsSubmitting(true);
     setFormData(data);
-    setUserName(data.name.split(" ")[0]); // First name for personalization
+    setUserName(data.name.split(" ")[0]);
 
     try {
-      // Persist to localStorage for cross-session identity
       setStoredUserName(data.name);
       setStoredEmail(data.email);
       setStoredPhone(data.phone);
 
-      // Upsert lead profile via edge function
       const { data: result, error } = await supabase.functions.invoke("upsert-lead-profile", {
         body: {
           email: data.email.trim(),
@@ -74,7 +71,6 @@ const NativeBookingFlow = ({ defaultIntent }: NativeBookingFlowProps) => {
       setLeadId(newLeadId);
       bridgeLeadIdToV2(newLeadId, "native_booking_form");
 
-      // Update session context
       updateSessionContext({
         intent: data.intent as "buy" | "sell" | "cash" | "explore",
       });
@@ -99,67 +95,76 @@ const NativeBookingFlow = ({ defaultIntent }: NativeBookingFlowProps) => {
   };
 
   /**
-   * Step 2: Slot selected → create handoff → show confirmation
+   * Step 2: Slot selected → book-appointment (validates + creates GHL appointment) → confirmation
    */
   const handleSlotSelected = async (slot: TimeSlot) => {
     if (!leadId || !formData) return;
 
     setIsSubmitting(true);
     try {
-      const slotDate = new Date(slot.start);
-      const displayDate = slotDate.toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        timeZone: "America/Phoenix",
-      });
-      const displayTime = slotDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-        timeZone: "America/Phoenix",
-      });
-      const slotLabel = `${displayDate} at ${displayTime}`;
-      setSelectedSlotDisplay(slotLabel);
-
-      // Create handoff with selected slot
-      const { error } = await supabase.functions.invoke("create-handoff", {
-        body: {
-          lead_id: leadId,
-          channel: "call",
-          priority: "hot",
-          reason: `Booking via native form — ${formData.intent}`,
-          summary_md: [
-            `**Name:** ${formData.name}`,
-            `**Email:** ${formData.email}`,
-            `**Phone:** ${formData.phone}`,
-            `**Intent:** ${formData.intent}`,
-            formData.message ? `**Note:** ${formData.message}` : null,
-            `**Requested Slot:** ${slotLabel}`,
-          ].filter(Boolean).join("\n"),
-          recommended_next_step: "Strategy call",
-          selected_slot: {
-            start: slot.start,
-            label: slotLabel,
-            booking_url: slot.booking_url,
-          },
-          contact_pref: "call",
-        },
-      });
-
-      if (error) throw error;
-
-      // Mark booking in session
-      updateSessionContext({ has_booked: true });
-
-      logEvent("booking_slot_selected", {
+      logEvent("booking_attempt", {
         intent: formData.intent,
         slot_start: slot.start,
       });
 
+      // Call book-appointment: validates slot, creates GHL contact + appointment
+      const { data: result, error } = await supabase.functions.invoke("book-appointment", {
+        body: {
+          lead_id: leadId,
+          slot_start: slot.start,
+          slot_end: slot.end,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          intent: formData.intent,
+          message: formData.message || undefined,
+          timezone: "America/Phoenix",
+        },
+      });
+
+      // Handle slot conflict — prompt reselection
+      if (error || !result?.ok) {
+        const code = result?.code;
+
+        if (code === "slot_conflict") {
+          logEvent("slot_conflict", { slot_start: slot.start });
+          toast.error(
+            t(
+              "That time was just taken! Please pick another slot.",
+              "¡Ese horario acaba de ser tomado! Elige otro horario."
+            )
+          );
+          // Stay on slots step — AvailableSlots will auto-refresh
+          return;
+        }
+
+        throw new Error(result?.error || "Booking failed");
+      }
+
+      // Success — set display and advance
+      const slotLabel = result.slotLabel || new Date(slot.start).toLocaleDateString("en-US", {
+        weekday: "long", month: "long", day: "numeric", timeZone: "America/Phoenix",
+      }) + " at " + new Date(slot.start).toLocaleTimeString("en-US", {
+        hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/Phoenix",
+      });
+
+      setSelectedSlotDisplay(slotLabel);
+      updateSessionContext({ has_booked: true });
+
+      logEvent("booking_success", {
+        intent: formData.intent,
+        slot_start: slot.start,
+        appointment_id: result.appointmentId,
+      });
+
       setStep("confirmed");
     } catch (err) {
-      console.error("[NativeBookingFlow] Handoff error:", err);
+      console.error("[NativeBookingFlow] Booking error:", err);
+      logEvent("booking_failure", {
+        intent: formData?.intent,
+        slot_start: slot.start,
+        error: String(err),
+      });
       toast.error(
         t(
           "Could not confirm your time. Please try again or call (520) 349-3248.",
@@ -213,6 +218,7 @@ const NativeBookingFlow = ({ defaultIntent }: NativeBookingFlowProps) => {
           onSlotSelected={handleSlotSelected}
           onBack={() => setStep("intake")}
           userName={userName}
+          isBooking={isSubmitting}
         />
       )}
 
