@@ -76,8 +76,19 @@ const V2Navigation = () => {
         />
       )}
 
+      {/* Branding / Compliance Strip — REALTOR®, Fair Housing, Equal Housing */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-cc-sand-dark/20">
+        <div className="flex items-center justify-center py-1 px-4">
+          <img
+            src="/images/kasandra-brand-lockup.jpg"
+            alt="Kasandra Prieto — REALTOR®, Equal Housing Opportunity"
+            className="h-7 md:h-8 object-contain"
+          />
+        </div>
+      </div>
+
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-[36px] md:top-[40px] left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
             ? "bg-cc-sand/95 backdrop-blur-md shadow-md border-b border-white/[0.08] py-3"
             : "bg-cc-navy py-4"

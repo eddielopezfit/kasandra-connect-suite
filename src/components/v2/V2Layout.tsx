@@ -137,7 +137,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         <V2Navigation />
         <EscalationBanner />
         <SessionIntelligenceBanner />
-        <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden bg-cc-navy">{children}</main>
+        <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden bg-cc-navy pt-[36px] md:pt-[40px]">{children}</main>
         
         <V2Footer />
         
