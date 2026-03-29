@@ -93,8 +93,8 @@ serve(async (req) => {
     const validationEnd = new Date(slotDate.getTime() + 35 * 60 * 1000);  // 5 min after end
 
     const validationParams = new URLSearchParams({
-      startDate: validationStart.toISOString(),
-      endDate: validationEnd.toISOString(),
+      startDate: String(validationStart.getTime()),
+      endDate: String(validationEnd.getTime()),
       timezone,
     });
 

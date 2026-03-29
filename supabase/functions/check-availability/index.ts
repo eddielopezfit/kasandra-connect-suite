@@ -160,8 +160,8 @@ serve(async (req) => {
     } else {
       try {
         const params = new URLSearchParams({
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
+          startDate: String(startDate.getTime()),
+          endDate: String(endDate.getTime()),
           timezone,
         });
 
