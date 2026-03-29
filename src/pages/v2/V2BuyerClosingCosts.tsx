@@ -1,13 +1,11 @@
 import { useState, useMemo, useRef } from "react";
-import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { Button } from "@/components/ui/button";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
-import { MessageCircle, ArrowRight, Info, DollarSign, Home, Percent, FileText, Calendar } from "lucide-react";
+import { Info, DollarSign, Home, Percent, FileText } from "lucide-react";
 import { ToolResultLeadCapture } from "@/components/v2/ToolResultLeadCapture";
 import ToolResultNextStep from "@/components/v2/ToolResultNextStep";
 
@@ -174,7 +172,7 @@ const fmtRange = (low: number, high: number) =>
 
 const V2BuyerClosingCostsContent = () => {
   const { t, language } = useLanguage();
-  const { openChat } = useSelenaChat();
+  
 
   useDocumentHead({
     titleEn: "Buyer Closing Cost Estimator | Tucson, Arizona",
@@ -455,45 +453,6 @@ const V2BuyerClosingCostsContent = () => {
               )}
             </p>
 
-            {/* Selena CTA */}
-            <div className="mt-8 bg-cc-sand rounded-2xl p-6 text-center border border-cc-sand-dark/20">
-              <p className="font-serif text-lg font-bold text-cc-navy mb-2">
-                {t("Questions about these numbers?", "¿Preguntas sobre estos números?")}
-              </p>
-              <p className="text-cc-charcoal text-sm mb-4">
-                {t(
-                  "Kasandra can walk you through what's negotiable, what programs can reduce these costs, and what to expect on your specific purchase.",
-                  "Kasandra puede orientarte sobre qué es negociable, qué programas pueden reducir estos costos y qué esperar en tu compra específica."
-                )}
-              </p>
-              <Button
-                onClick={() => openChat({
-                  source: 'buyer_closing_costs',
-                  intent: 'buy',
-                  ...(calculated && price >= 50000 ? {
-                    closingCostData: {
-                      purchasePrice: price,
-                      loanType: inputs.loanType,
-                      downPaymentPercent: downPct,
-                      estimatedLow: totLow,
-                      estimatedHigh: totHigh,
-                      totalCashNeeded: cashNeeded,
-                    }
-                  } : {}),
-                })}
-                className="bg-cc-navy text-white rounded-full px-8 font-semibold"
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                {t("Ask Selena About My Costs", "Preguntarle a Selena Sobre Mis Costos")}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-              <Link to="/book?intent=buy&source=closing_costs" className="inline-block mt-3">
-                <Button className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  {t("Review This With Kasandra", "Revisar Esto Con Kasandra")}
-                </Button>
-              </Link>
-            </div>
           </div>
         </section>
       )}
