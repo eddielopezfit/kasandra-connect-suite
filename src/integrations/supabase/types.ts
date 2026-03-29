@@ -676,6 +676,51 @@ export type Database = {
         }
         Relationships: []
       }
+      tucson_events: {
+        Row: {
+          category: string
+          created_at: string
+          description_en: string
+          description_es: string
+          event_date: string | null
+          id: string
+          month: string
+          name_en: string
+          name_es: string
+          scraped_month: string
+          season: string
+          source_url: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description_en: string
+          description_es: string
+          event_date?: string | null
+          id?: string
+          month: string
+          name_en: string
+          name_es: string
+          scraped_month: string
+          season: string
+          source_url?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description_en?: string
+          description_es?: string
+          event_date?: string | null
+          id?: string
+          month?: string
+          name_en?: string
+          name_es?: string
+          scraped_month?: string
+          season?: string
+          source_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
