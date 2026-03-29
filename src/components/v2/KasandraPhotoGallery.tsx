@@ -37,9 +37,9 @@ const GALLERY_ITEMS: GalleryItem[] = [
     captionEs: "Mi Tucson",
   },
   {
-    src: brandPhotoshoot,
-    altEn: "Kasandra Prieto professional brand photo",
-    altEs: "Foto profesional de marca de Kasandra Prieto",
+    src: navyDressIronGate,
+    altEn: "Kasandra Prieto at a Tucson iron gate",
+    altEs: "Kasandra Prieto en una puerta de hierro en Tucson",
     captionEn: "The Real Me",
     captionEs: "La Verdadera Yo",
   },
@@ -51,11 +51,11 @@ const GALLERY_ITEMS: GalleryItem[] = [
     captionEs: "15 Casas Pequeñas Construidas",
   },
   {
-    src: fiestasPatrias,
-    altEn: "Kasandra performing at Fiestas Patrias",
-    altEs: "Kasandra cantando en Fiestas Patrias",
-    captionEn: "Fiestas Patrias — St. Philip's Plaza",
-    captionEs: "Fiestas Patrias — St. Philip's Plaza",
+    src: missLilly,
+    altEn: "Miss Lilly celebrating with gold balloons",
+    altEs: "Miss Lilly celebrando con globos dorados",
+    captionEn: "Miss Lilly 🐾",
+    captionEs: "Miss Lilly 🐾",
   },
 ];
 
