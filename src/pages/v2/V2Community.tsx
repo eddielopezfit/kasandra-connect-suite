@@ -96,14 +96,14 @@ const V2CommunityContent = () => {
                 </h2>
                 <p className="text-cc-charcoal mb-6">
                   {t(
-                    "I served as Vice Chair of the Governing Board and Chair of the Ambassador Program for five years, working to ensure families across Arizona had access to essential supplies for their children.",
-                    "Serví como Vicepresidenta de la Junta Directiva y Presidenta del Programa de Embajadores durante cinco años, trabajando para asegurar que las familias en todo Arizona tuvieran acceso a suministros esenciales para sus hijos."
+                    "I served as VP of the Governing Board and Chair of the Ambassador Program for five years, working to ensure families across Arizona had access to essential supplies for their children.",
+                    "Serví como VP de la Junta Directiva y Presidenta del Programa de Embajadores durante cinco años, trabajando para asegurar que las familias en todo Arizona tuvieran acceso a suministros esenciales para sus hijos."
                   )}
                 </p>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <Award className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("Vice Chair, Governing Board", "Vicepresidenta, Junta Directiva")}</span>
+                    <span className="text-cc-charcoal">{t("VP, Governing Board", "VP, Junta Directiva")}</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Users className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
@@ -279,14 +279,14 @@ const V2CommunityContent = () => {
                 </h2>
                 <p className="text-cc-charcoal mb-6">
                   {t(
-                    "I've invested in multiple Tony Robbins seminars and continuous personal growth because I believe the best agents are the ones who never stop growing. Greater Tucson Leadership Class of 2026 reinforced my commitment to leading with purpose in this community.",
-                    "He invertido en múltiples seminarios de Tony Robbins y crecimiento personal continuo porque creo que los mejores agentes son los que nunca dejan de crecer. Greater Tucson Leadership Promoción 2026 reforzó mi compromiso de liderar con propósito en esta comunidad."
+                    "Influenced by Tony Robbins, Jim Rohn, and Les Brown through their books and teachings, I believe the best agents are the ones who never stop growing. Greater Tucson Leadership Class of 2026 reinforced my commitment to leading with purpose in this community.",
+                    "Influenciada por Tony Robbins, Jim Rohn y Les Brown a través de sus libros y enseñanzas, creo que los mejores agentes son los que nunca dejan de crecer. Greater Tucson Leadership Promoción 2026 reforzó mi compromiso de liderar con propósito en esta comunidad."
                   )}
                 </p>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <Award className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("Multiple Tony Robbins seminars", "Múltiples seminarios de Tony Robbins")}</span>
+                    <span className="text-cc-charcoal">{t("Tony Robbins, Jim Rohn & Les Brown — books & teachings", "Tony Robbins, Jim Rohn y Les Brown — libros y enseñanzas")}</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Users className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />

@@ -16,8 +16,8 @@ interface BentoCell {
 const cells: BentoCell[] = [
   {
     icon: Gem,
-    titleEn: "Certified Global Luxury Property Specialist",
-    titleEs: "Especialista Certificada en Propiedades de Lujo Global",
+    titleEn: "Luxury Property Specialist",
+    titleEs: "Especialista en Propiedades de Lujo",
     descEn: "Elevated expertise for premium properties and discerning clients across Tucson's finest corridors.",
     descEs: "Experiencia elevada para propiedades premium y clientes exigentes en los mejores corredores de Tucson.",
     span: "large",
@@ -26,8 +26,8 @@ const cells: BentoCell[] = [
     icon: Users,
     titleEn: "Arizona Diaper Bank",
     titleEs: "Arizona Diaper Bank",
-    descEn: "Vice President, Governing Board",
-    descEs: "Vicepresidenta, Junta Directiva",
+    descEn: "VP, Governing Board · Chair, Ambassador Program",
+    descEs: "VP, Junta Directiva · Presidenta, Programa de Embajadores",
     image: diaperBankLogo,
     imageAlt: "Arizona Diaper Bank logo",
   },

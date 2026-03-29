@@ -47,8 +47,8 @@ const V2AboutContent = () => {
             </h1>
             <p className="text-xl text-white/90">
               {t(
-                "Born in Agua Prieta. Raised in Douglas, AZ. Tucson resident for over 20 years.",
-                "Nacida en Agua Prieta. Criada en Douglas, AZ. Residente de Tucson por más de 20 años."
+                "Born in Tucson. Raised in Douglas, AZ. Resident for over 20 years.",
+                "Nacida en Tucson. Criada en Douglas, AZ. Residente por más de 20 años."
               )}
             </p>
           </div>
@@ -109,7 +109,7 @@ const V2AboutContent = () => {
                 <ul className="space-y-2">
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t("Former Vice Chair, Arizona Diaper Bank", "Ex-Vicepresidenta, Arizona Diaper Bank")}</span>
+                    <span className="text-sm">{t("VP, Governing Board — Arizona Diaper Bank", "VP, Junta Directiva — Arizona Diaper Bank")}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
@@ -121,7 +121,7 @@ const V2AboutContent = () => {
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t("Certified Global Luxury Property Specialist", "Especialista Certificada en Propiedades de Lujo Global")}</span>
+                    <span className="text-sm">{t("Luxury Property Specialist", "Especialista en Propiedades de Lujo")}</span>
                   </li>
                 </ul>
                 <p className="text-sm text-cc-text-muted">
@@ -174,8 +174,8 @@ const V2AboutContent = () => {
             </p>
             <p>
               {t(
-                "I started this career at 35. Some people thought I was late. I think I was right on time. By 42, I've guided over 100 families through one of the biggest decisions of their lives — and I've earned the International Diamond Society recognition, the Certified Global Luxury Property Specialist designation, and a 5-star average across 126+ reviews. But the credential I'm most proud of? The families who call me back for their second, third, or fourth transaction.",
-                "Comencé esta carrera a los 35. Algunas personas pensaron que era tarde. Yo creo que fue justo a tiempo. A los 42, he guiado a más de 100 familias a través de una de las decisiones más grandes de sus vidas — y he ganado el reconocimiento International Diamond Society, la designación de Especialista Certificada en Propiedades de Lujo Global, y un promedio de 5 estrellas en más de 126 reseñas. Pero la credencial de la que más me enorgullezco? Las familias que me llaman de nuevo para su segunda, tercera o cuarta transacción."
+                "I started this career at 35. Some people thought I was late. I think I was right on time. By 42, I've guided over 100 families through one of the biggest decisions of their lives — and I've earned the International Diamond Society recognition, the Luxury Property Specialist designation, and a 5-star average across 126+ reviews. But the credential I'm most proud of? The families who call me back for their second, third, or fourth transaction.",
+                "Comencé esta carrera a los 35. Algunas personas pensaron que era tarde. Yo creo que fue justo a tiempo. A los 42, he guiado a más de 100 familias a través de una de las decisiones más grandes de sus vidas — y he ganado el reconocimiento International Diamond Society, la designación de Especialista en Propiedades de Lujo, y un promedio de 5 estrellas en más de 126 reseñas. Pero la credencial de la que más me enorgullezco? Las familias que me llaman de nuevo para su segunda, tercera o cuarta transacción."
               )}
             </p>
           </div>
@@ -216,8 +216,8 @@ const V2AboutContent = () => {
               </h3>
               <p className="text-sm text-cc-charcoal/70 leading-relaxed">
                 {t(
-                  "Multiple Tony Robbins seminars, Greater Tucson Leadership Class of 2026, and continuous education in real estate. I believe the best agents are the ones who never stop growing.",
-                  "Múltiples seminarios de Tony Robbins, Greater Tucson Leadership Promoción 2026, y educación continua en bienes raíces. Creo que los mejores agentes son los que nunca dejan de crecer."
+                  "Influenced by Tony Robbins, Jim Rohn, and Les Brown through their books and teachings. Greater Tucson Leadership Class of 2026, and continuous education in real estate. I believe the best agents are the ones who never stop growing.",
+                   "Influenciada por Tony Robbins, Jim Rohn y Les Brown a través de sus libros y enseñanzas. Greater Tucson Leadership Promoción 2026, y educación continua en bienes raíces. Creo que los mejores agentes son los que nunca dejan de crecer."
                 )}
               </p>
             </div>

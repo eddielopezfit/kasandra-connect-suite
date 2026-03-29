@@ -241,7 +241,7 @@ const V2HomeContent = () => {
                 <ul className="space-y-2">
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t("Former Vice Chair, Arizona Diaper Bank", "Ex-Vicepresidenta, Arizona Diaper Bank")}</span>
+                    <span className="text-sm">{t("VP, Governing Board — Arizona Diaper Bank", "VP, Junta Directiva — Arizona Diaper Bank")}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
@@ -253,7 +253,7 @@ const V2HomeContent = () => {
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                    <span className="text-sm">{t("Certified Global Luxury Property Specialist", "Especialista Certificada en Propiedades de Lujo Global")}</span>
+                    <span className="text-sm">{t("Luxury Property Specialist", "Especialista en Propiedades de Lujo")}</span>
                   </li>
                 </ul>
               </div>
@@ -323,7 +323,7 @@ const V2HomeContent = () => {
             <ul className="space-y-3 max-w-xl mx-auto mb-8">
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted">{t("Former Vice Chair, Arizona Diaper Bank", "Ex-Vicepresidenta, Arizona Diaper Bank")}</span>
+                <span className="text-cc-text-muted">{t("VP, Governing Board — Arizona Diaper Bank", "VP, Junta Directiva — Arizona Diaper Bank")}</span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
@@ -335,7 +335,7 @@ const V2HomeContent = () => {
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted">{t("Certified Global Luxury Property Specialist", "Especialista Certificada en Propiedades de Lujo Global")}</span>
+                <span className="text-cc-text-muted">{t("Luxury Property Specialist", "Especialista en Propiedades de Lujo")}</span>
               </li>
             </ul>
 
@@ -405,7 +405,7 @@ const V2HomeContent = () => {
             <ul className="space-y-3 mb-6">
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
-                <span className="text-cc-text-muted text-sm">{t("Former Vice Chair, Arizona Diaper Bank", "Ex-Vicepresidenta, Arizona Diaper Bank")}</span>
+                <span className="text-cc-text-muted text-sm">{t("VP, Governing Board — Arizona Diaper Bank", "VP, Junta Directiva — Arizona Diaper Bank")}</span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-cc-gold mt-0.5 flex-shrink-0" />
