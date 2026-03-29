@@ -1,12 +1,11 @@
 /**
  * BookingHydrationPanel — "What Kasandra Already Knows"
- * Pulls from SessionContext + localStorage to show the visitor
+ * Pulls from VIP (Visitor Intelligence Profile) to show the visitor
  * a trust-building summary of everything the system has learned.
  * Reduces friction by proving the call will be personalized.
  */
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getSessionContext } from "@/lib/analytics/selenaSession";
-import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
+import { useVIP } from "@/hooks/useVIP";
 import {
   CheckCircle,
   Target,
@@ -28,15 +27,13 @@ interface InsightItem {
 
 const BookingHydrationPanel = () => {
   const { t } = useLanguage();
-  const ctx = getSessionContext();
-  const userName = getStoredUserName();
+  const { vip } = useVIP({ localOnly: true });
 
-  if (!ctx) return null;
-
+  const { identity, intent: vipIntent, financial, journey } = vip;
   const insights: InsightItem[] = [];
 
   // Intent
-  if (ctx.intent && ctx.intent !== "explore") {
+  if (vipIntent.intent && vipIntent.intent !== "explore") {
     const intentLabels: Record<string, { en: string; es: string }> = {
       buy: { en: "Looking to buy a home", es: "Interesado en comprar" },
       sell: { en: "Considering selling", es: "Considerando vender" },
@@ -44,7 +41,7 @@ const BookingHydrationPanel = () => {
       dual: { en: "Buying and selling", es: "Comprando y vendiendo" },
       investor: { en: "Investment opportunity", es: "Oportunidad de inversión" },
     };
-    const label = intentLabels[ctx.intent];
+    const label = intentLabels[vipIntent.intent];
     if (label) {
       insights.push({
         icon: <Home className="w-3.5 h-3.5" />,
@@ -54,14 +51,14 @@ const BookingHydrationPanel = () => {
   }
 
   // Timeline
-  if (ctx.timeline) {
+  if (vipIntent.timeline) {
     const timelineLabels: Record<string, { en: string; es: string }> = {
       asap: { en: "Timeline: ASAP (0–30 days)", es: "Plazo: Lo antes posible (0–30 días)" },
       "30_days": { en: "Timeline: Next 30 days", es: "Plazo: Próximos 30 días" },
       "60_90": { en: "Timeline: 2–3 months", es: "Plazo: 2–3 meses" },
       exploring: { en: "Timeline: Exploring options", es: "Plazo: Explorando opciones" },
     };
-    const label = timelineLabels[ctx.timeline];
+    const label = timelineLabels[vipIntent.timeline];
     if (label) {
       insights.push({
         icon: <Clock className="w-3.5 h-3.5" />,
@@ -71,24 +68,24 @@ const BookingHydrationPanel = () => {
   }
 
   // Readiness score
-  if (ctx.readiness_score && ctx.readiness_score > 0) {
+  if (vipIntent.readinessScore && vipIntent.readinessScore > 0) {
     insights.push({
       icon: <Target className="w-3.5 h-3.5" />,
       label: t(
-        `Readiness score: ${ctx.readiness_score}/100`,
-        `Preparación: ${ctx.readiness_score}/100`
+        `Readiness score: ${vipIntent.readinessScore}/100`,
+        `Preparación: ${vipIntent.readinessScore}/100`
       ),
-      variant: ctx.readiness_score >= 75 ? "highlight" : "default",
+      variant: vipIntent.readinessScore >= 75 ? "highlight" : "default",
     });
   }
 
   // Budget (buyer)
-  if (ctx.estimated_budget) {
+  if (financial.estimatedBudget) {
     const formatted = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
-    }).format(ctx.estimated_budget);
+    }).format(financial.estimatedBudget);
     insights.push({
       icon: <DollarSign className="w-3.5 h-3.5" />,
       label: t(`Estimated budget: ${formatted}`, `Presupuesto estimado: ${formatted}`),
@@ -96,25 +93,25 @@ const BookingHydrationPanel = () => {
   }
 
   // Estimated value (seller)
-  if (ctx.estimated_value && !ctx.estimated_budget) {
+  if (financial.estimatedValue && !financial.estimatedBudget) {
     const formatted = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
-    }).format(ctx.estimated_value);
+    }).format(financial.estimatedValue);
     insights.push({
       icon: <DollarSign className="w-3.5 h-3.5" />,
       label: t(`Estimated home value: ${formatted}`, `Valor estimado: ${formatted}`),
     });
   }
 
-  // Calculator advantage (seller)
-  if (ctx.calculator_advantage && ctx.calculator_difference) {
+  // Calculator advantage
+  if (financial.calculatorAdvantage && financial.calculatorDifference) {
     const diff = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
-    }).format(Math.abs(ctx.calculator_difference));
+    }).format(Math.abs(financial.calculatorDifference));
     const advantageLabels: Record<string, { en: string; es: string }> = {
       traditional: {
         en: `Traditional listing nets ~${diff} more`,
@@ -129,7 +126,7 @@ const BookingHydrationPanel = () => {
         es: "Los caminos están cerca — consulta recomendada",
       },
     };
-    const label = advantageLabels[ctx.calculator_advantage];
+    const label = advantageLabels[financial.calculatorAdvantage];
     if (label) {
       insights.push({
         icon: <TrendingUp className="w-3.5 h-3.5" />,
@@ -140,8 +137,8 @@ const BookingHydrationPanel = () => {
   }
 
   // Tools completed
-  if (ctx.tools_completed && ctx.tools_completed.length > 0) {
-    const count = ctx.tools_completed.length;
+  if (journey.toolsCompleted.length > 0) {
+    const count = journey.toolsCompleted.length;
     insights.push({
       icon: <BookOpen className="w-3.5 h-3.5" />,
       label: t(
@@ -152,44 +149,36 @@ const BookingHydrationPanel = () => {
   }
 
   // Guides read
-  if (ctx.guides_read && ctx.guides_read > 0) {
+  if (journey.guidesCompleted.length > 0) {
+    const count = journey.guidesCompleted.length;
     insights.push({
       icon: <User className="w-3.5 h-3.5" />,
       label: t(
-        `${ctx.guides_read} guide${ctx.guides_read > 1 ? "s" : ""} read`,
-        `${ctx.guides_read} guía${ctx.guides_read > 1 ? "s" : ""} leída${ctx.guides_read > 1 ? "s" : ""}`
+        `${count} guide${count > 1 ? "s" : ""} read`,
+        `${count} guía${count > 1 ? "s" : ""} leída${count > 1 ? "s" : ""}`
       ),
     });
   }
 
   // Neighborhood interest
-  if (ctx.last_neighborhood_zip) {
+  if (journey.lastNeighborhoodZip) {
     insights.push({
       icon: <MapPin className="w-3.5 h-3.5" />,
       label: t(
-        `Area interest: ${ctx.last_neighborhood_zip}`,
-        `Área de interés: ${ctx.last_neighborhood_zip}`
+        `Area interest: ${journey.lastNeighborhoodZip}`,
+        `Área de interés: ${journey.lastNeighborhoodZip}`
       ),
     });
   }
 
-  // Inherited home
-  if (ctx.inherited_home) {
-    insights.push({
-      icon: <Home className="w-3.5 h-3.5" />,
-      label: t("Inherited property situation", "Situación de propiedad heredada"),
-      variant: "special",
-    });
-  }
-
   // Seller decision path
-  if (ctx.seller_decision_recommended_path) {
+  if (vipIntent.sellerDecisionPath) {
     const pathLabels: Record<string, { en: string; es: string }> = {
       cash: { en: "Recommended: Cash offer path", es: "Recomendado: Camino de oferta en efectivo" },
       traditional: { en: "Recommended: Traditional listing", es: "Recomendado: Venta tradicional" },
       consult: { en: "Recommended: Strategy consultation", es: "Recomendado: Consulta estratégica" },
     };
-    const label = pathLabels[ctx.seller_decision_recommended_path];
+    const label = pathLabels[vipIntent.sellerDecisionPath];
     if (label) {
       insights.push({
         icon: <Shield className="w-3.5 h-3.5" />,
@@ -202,10 +191,10 @@ const BookingHydrationPanel = () => {
   // If no insights, don't render
   if (insights.length === 0) return null;
 
-  const greeting = userName
+  const greeting = identity.name
     ? t(
-        `${userName}, here's what Kasandra already knows about you:`,
-        `${userName}, esto es lo que Kasandra ya sabe sobre ti:`
+        `${identity.name}, here's what Kasandra already knows about you:`,
+        `${identity.name}, esto es lo que Kasandra ya sabe sobre ti:`
       )
     : t(
         "Here's what Kasandra already knows about you:",
