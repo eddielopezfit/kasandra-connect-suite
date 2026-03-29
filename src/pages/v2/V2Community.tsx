@@ -96,8 +96,8 @@ const V2CommunityContent = () => {
                 </h2>
                 <p className="text-cc-charcoal mb-6">
                   {t(
-                    "I served as Vice Chair of the Governing Board and Chair of the Ambassador Program for five years, working to ensure families across Arizona had access to essential supplies for their children.",
-                    "Serví como Vicepresidenta de la Junta Directiva y Presidenta del Programa de Embajadores durante cinco años, trabajando para asegurar que las familias en todo Arizona tuvieran acceso a suministros esenciales para sus hijos."
+                    "I served as VP of the Governing Board and Chair of the Ambassador Program for five years, working to ensure families across Arizona had access to essential supplies for their children.",
+                    "Serví como VP de la Junta Directiva y Presidenta del Programa de Embajadores durante cinco años, trabajando para asegurar que las familias en todo Arizona tuvieran acceso a suministros esenciales para sus hijos."
                   )}
                 </p>
                 <div className="space-y-3">
