@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { getSessionContext, SessionContext } from '@/lib/analytics/selenaSession';
 import { getStoredUserName, getStoredEmail, getStoredPhone } from '@/lib/analytics/bridgeLeadIdToV2';
+import { buildVIPFromLocal } from '@/lib/vip';
 
 export interface PrePopulationData {
   name?: string;
