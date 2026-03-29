@@ -187,7 +187,11 @@ export type EventType =
   | 'booking_failure'
   | 'slot_conflict'
   | 'mls_link_click'
-  | 'seller_address_entry_submitted';
+  | 'seller_address_entry_submitted'
+  // Banner intelligence + CRM feedback
+  | 'banner_impression'
+  | 'banner_cta_clicked'
+  | 'banner_cta_ignored';
 
 export interface EventPayload {
   [key: string]: unknown;

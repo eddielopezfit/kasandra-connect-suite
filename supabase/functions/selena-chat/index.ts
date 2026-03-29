@@ -1401,35 +1401,22 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       !isMode4Handoff;
 
     if (isMode4Handoff) {
-      // HANDOFF mode: bypass all chip governance — chips must align with reply text
-      suggestedReplies = language === "es"
-        ? ["Encontrar un horario con Kasandra", "Tengo otra pregunta"]
-        : ["Find a time with Kasandra", "I have another question"];
+      // HANDOFF mode: use semantic keys — resolved to localized labels by client
+      suggestedReplies = [CHIP_KEYS.FIND_A_TIME, 'i_have_a_question'];
     } else if (isStallRecovery) {
-      // Stall recovery — 3 options to re-anchor
-      suggestedReplies = language === "es"
-        ? ["Sí, resume dónde estoy", "Prefiero seguir explorando", "Tengo una pregunta específica"]
-        : ["Yes, summarize where I am", "I'd rather keep exploring", "I have a specific question"];
+      // Stall recovery — semantic keys for 3 options
+      suggestedReplies = ['summarize_where_i_am', 'keep_exploring', 'specific_question'];
     } else if (isProceedsOverride) {
-      // PROCEEDS / ASAP override — hard lock to Phase 3 chips
-      suggestedReplies = language === 'es'
-        ? ["Estimar mis ganancias netas", "Hablar con Kasandra"]
-        : ["Estimate my net proceeds", "Talk with Kasandra"];
+      // PROCEEDS / ASAP override — hard lock to Phase 3 semantic keys
+      suggestedReplies = [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA];
     } else if (effectiveIntent === 'invest') {
       // P4: INVESTOR REDIRECT — hard-lock to booking pivot
-      suggestedReplies = language === 'es'
-        ? ["Hablar con Kasandra", "Solo estoy explorando"]
-        : ["Talk with Kasandra", "Just exploring for now"];
+      suggestedReplies = [CHIP_KEYS.TALK_WITH_KASANDRA, CHIP_KEYS.INTENT_EXPLORE];
     } else if (isBAHTool) {
       // P12: MILITARY RECOGNITION — hard-lock to military guide + booking
-      suggestedReplies = language === 'es'
-        ? ["Guía militar y VA", "Hablar con Kasandra"]
-        : ["Military & VA guide", "Talk with Kasandra"];
+      suggestedReplies = [CHIP_KEYS.GUIDE_MILITARY, CHIP_KEYS.TALK_WITH_KASANDRA];
     } else {
       // Layer 5: Keyword-triggered chips (PROGRESSION_MAP) — highest specificity
-      // getSuggestedReplies checks PROGRESSION_MAP first, then falls back to intent-based statics.
-      // We detect a keyword hit by passing the user message — if PROGRESSION_MAP matches,
-      // it returns keyword-specific chips different from the intent-based fallback.
       const keywordChips = getSuggestedReplies(effectiveIntent, language, message);
       const fallbackChips = getSuggestedReplies(effectiveIntent, language);
       const hasKeywordHit = keywordChips.length > 0 && JSON.stringify(keywordChips) !== JSON.stringify(fallbackChips);
@@ -1446,8 +1433,30 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       } else {
         // FIX 6: Empty chips guard — never return empty array
         suggestedReplies = effectiveIntent === 'buy'
-          ? (language === 'es' ? [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.BROWSE_GUIDES] : [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.BROWSE_GUIDES])
-          : (language === 'es' ? [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA] : [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA]);
+          ? [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.BROWSE_GUIDES]
+          : [CHIP_KEYS.ESTIMATE_PROCEEDS, CHIP_KEYS.TALK_WITH_KASANDRA];
+      }
+
+      // ============= CONTEXT-AWARE CHIP INJECTION =============
+      // When AI response mentions specific tools, override with relevant tool chips
+      const replyLower = reply.toLowerCase();
+      const toolMentionChips: string[] = [];
+      if (/affordability|buying power|poder de compra|cuánto puedo pagar/.test(replyLower)) toolMentionChips.push(CHIP_KEYS.AFFORDABILITY_CALCULATOR);
+      if (/closing cost|costos de cierre/.test(replyLower)) toolMentionChips.push(CHIP_KEYS.ESTIMATE_CLOSING_COSTS);
+      if (/net proceeds|ganancias netas|walk away/.test(replyLower)) toolMentionChips.push(CHIP_KEYS.ESTIMATE_PROCEEDS);
+      if (/readiness|preparación/.test(replyLower) && effectiveIntent === 'buy') toolMentionChips.push(CHIP_KEYS.BUYER_READINESS);
+      if (/readiness|preparación/.test(replyLower) && (effectiveIntent === 'sell' || effectiveIntent === 'cash')) toolMentionChips.push(CHIP_KEYS.SELLER_READINESS);
+      if (/neighborhood|vecindario|area|área/.test(replyLower)) toolMentionChips.push(CHIP_KEYS.COMPARE_NEIGHBORHOODS);
+      if (/home.*worth|home.*value|cuánto vale|valuation|valuación/.test(replyLower)) toolMentionChips.push(CHIP_KEYS.HOME_VALUATION);
+      
+      // If we detected tool mentions and current chips don't match, inject them
+      if (toolMentionChips.length > 0) {
+        const existingSet = new Set(suggestedReplies);
+        const newChips = toolMentionChips.filter(c => !existingSet.has(c));
+        if (newChips.length > 0) {
+          // Prepend tool-specific chips, keep max 3
+          suggestedReplies = [...newChips, ...suggestedReplies].slice(0, 3);
+        }
       }
     }
 
@@ -1482,9 +1491,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // so users can't click stale Phase 3 chips instead of typing their address.
     const replyAsksForEmail = /email\s*(address)?.*\?|what.*email|your email|correo\s*(electr[oó]nico)?.*\?/i.test(reply);
     if (replyAsksForEmail && !extractedEmail && currentMode !== 4) {
-      suggestedReplies = language === "es"
-        ? ["Prefiero omitir esto por ahora"]
-        : ["Skip for now"];
+      suggestedReplies = ['skip_for_now'];
     }
 
     // ============= GUARD CHIP OVERRIDES =============
