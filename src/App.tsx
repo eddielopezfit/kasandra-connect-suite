@@ -91,6 +91,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
+        <VIPProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
