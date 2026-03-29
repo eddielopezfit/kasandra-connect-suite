@@ -117,7 +117,7 @@ function getBannerContent(
   ctx: ReturnType<typeof getSessionContext>,
   t: (en: string, es: string) => string,
   displayIntent: string | undefined,
-  pathname: string,
+  _pathname: string,
 ): { message: string | null; actions: BannerAction[] | null; isReturning: boolean; momentum: boolean } {
   const { intent, toolCount, guideCount, journeyDepth, hasExploredNeighborhood, confidenceLevel, isReturningUser, estimatedValue } = progress;
 
