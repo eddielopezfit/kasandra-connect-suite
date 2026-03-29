@@ -1,44 +1,14 @@
-import { Instagram, Linkedin, Phone, Mail, Home, Facebook, MessageCircle, Calendar } from "lucide-react";
+import { Instagram, Linkedin, Phone, Mail, Home, Facebook } from "lucide-react";
 import { Link } from "react-router-dom";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useSelenaChat } from "@/contexts/SelenaChatContext";
 
 const V2Footer = () => {
   const { t } = useLanguage();
-  const { openChat } = useSelenaChat();
   const currentYear = new Date().getFullYear();
 
   return (
-    <>
-      {/* Footer Conversion CTA Strip — for users who scroll past all content [audit UX-02] */}
-      <div className="bg-cc-navy border-t border-cc-gold/20 py-8">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-white/70 text-sm mb-4">
-            {t(
-              "Not sure where to start? Talk to Selena — free, bilingual, no pressure.",
-              "¿No sabes por dónde empezar? Habla con Selena — gratis, bilingüe, sin presión."
-            )}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button
-              onClick={() => openChat({ source: 'footer_cta' })}
-              className="inline-flex items-center gap-2 bg-cc-gold hover:bg-cc-gold/90 text-cc-navy font-semibold rounded-full px-6 py-3 text-sm transition-all hover:scale-105 shadow-gold"
-            >
-              <MessageCircle className="w-4 h-4" />
-              {t("Chat with Selena", "Hablar con Selena")}
-            </button>
-            <Link
-              to="/book"
-              className="inline-flex items-center gap-2 border border-white/30 hover:border-cc-gold text-white hover:text-cc-gold font-medium rounded-full px-6 py-3 text-sm transition-all"
-            >
-              <Calendar className="w-4 h-4" />
-              {t("Book a Strategy Session", "Agendar una Sesión de Estrategia")}
-            </Link>
-          </div>
-        </div>
-      </div>
-      <footer className="bg-cc-blue text-white py-12">
+    <footer className="bg-cc-blue text-white py-12">
       <div className="container mx-auto px-4">
         {/* Main Footer Content */}
         <div className="grid md:grid-cols-4 gap-8 mb-8">
@@ -128,7 +98,7 @@ const V2Footer = () => {
                 className="flex items-center justify-center md:justify-end gap-2 text-white/80 hover:text-white transition-colors min-w-0"
               >
                 <Mail className="w-4 h-4 flex-shrink-0" />
-                <span className="break-all">kasandra@prietorealestategroup.com</span>
+                <span className="break-words">kasandra@prietorealestategroup.com</span>
               </a>
             </div>
             {/* Social Links */}
@@ -211,7 +181,6 @@ const V2Footer = () => {
         </div>
       </div>
     </footer>
-    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { Button } from "@/components/ui/button";
@@ -6,8 +6,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import V2Layout from "@/components/v2/V2Layout";
 import { TucsonAlphaCalculator } from "@/components/v2/calculator";
-import GoogleReviewsSection from "@/components/v2/GoogleReviewsSection";
-import { AlertTriangle, ArrowRight, Calendar, MessageCircle } from "lucide-react";
+const LazyGoogleReviews = lazy(() => import("@/components/v2/GoogleReviewsSection"));
+import { AlertTriangle, Calendar, MessageCircle } from "lucide-react";
+import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
 import heroImage from "@/assets/hero-cash-calm.png";
@@ -157,33 +158,17 @@ const V2CashOfferOptionsContent = () => {
             >
               {t("Or take the Cash Readiness Check first →", "O toma el Check de Preparación primero →")}
             </Link>
-            <button
-              onClick={() => openChat({ source: 'cash_offer_bottom', intent: 'cash' })}
-              className="block mx-auto mt-2 text-white/50 hover:text-cc-gold text-xs underline underline-offset-2 transition-colors"
-            >
-              {t("Or talk to Selena first", "O habla primero con Selena")}
-            </button>
           </div>
         </div>
       </section>
 
       {/* Google Reviews — Social Proof */}
-      <GoogleReviewsSection />
+      <Suspense fallback={null}>
+        <LazyGoogleReviews />
+      </Suspense>
 
-      {/* Back Link */}
-      <section className="py-10 pb-24 sm:pb-10 bg-cc-navy">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-white/80 mb-4">
-            {t(
-              "Thinking a traditional sale might be the move? Let me show you how I help sellers get there.",
-              "¿Pensando que una venta tradicional podría ser el camino? Déjame mostrarte cómo ayudo a los vendedores a lograrlo."
-            )}
-          </p>
-          <Link to="/sell" className="inline-flex items-center text-cc-gold font-semibold hover:text-cc-gold-dark gap-2">
-            {t("See how I help sellers", "Descubre cómo ayudo a vendedores")} <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </section>
+      {/* Sticky Mobile Booking Bar */}
+      <StickyMobileBookingBar intent="sell" source="cash_offer_sticky" />
     </>
   );
 };

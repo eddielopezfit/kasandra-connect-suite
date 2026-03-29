@@ -143,9 +143,12 @@ const V2ContactContent = () => {
       <JsonLd data={realEstateAgentSchema()} />
       <JsonLd data={localBusinessSchema()} />
       {/* Hero */}
-      <section className="bg-cc-navy pt-32 pb-16">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="font-serif text-5xl md:text-6xl font-bold text-white mb-4">
+      <section className="relative min-h-[50vh] flex items-end w-full overflow-hidden">
+        <div className="absolute inset-0 bg-cc-navy">
+          <div className="absolute inset-0 bg-gradient-to-br from-cc-navy via-cc-navy/95 to-cc-blue/80" />
+        </div>
+        <div className="relative container mx-auto px-4 pt-32 pb-16 text-center">
+          <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
             {t("Let's Talk", "Hablemos")}
           </h1>
           <p className="text-xl text-white/80 max-w-xl mx-auto mb-6">
