@@ -1,60 +1,40 @@
 
 
-# UX Optimization: Remove Redundancy, Compress Bio, Fix Sticky Bar Collision
+# Add Kasandra's Construction Class Video to About Page
 
-Four strategic changes to tighten the hub's conversion architecture.
+## Strategic Placement
 
----
+This video is a perfect authority-building asset. It directly supports the **Construction Course** credential card already on the About page (line 207-216). Place the video immediately below that credentials section as a visual proof point.
 
-## Change 1: Remove "Not sure yet?" Selena Link
+## Implementation
 
-**File:** `src/pages/v2/V2Home.tsx` (lines 142-153)
+### Step 1: Copy Video Asset
+Copy `user-uploads://...mp4` to `src/assets/kasandra/construction-class-story.mp4`
 
-Delete the "Not sure yet? Let Selena help you figure it out" text link below the 3 intent cards. The Selena Prompt Banner (navy bar, lines 157-174) sits directly below and serves the same purpose with better visual authority. Removing the text link eliminates CTA stacking.
+### Step 2: Add Self-Hosted Video Block to About Page
 
----
+Insert a new section between the credentials grid (line 246) and the "Backed by Realty Executives" section (line 249). This section will:
 
-## Change 2: Compress "Meet Kasandra" Section
+- Use a native `<video>` element (not an embed — this is a local file)
+- Mobile-optimized with `aspect-[9/16]` since this is a vertical TikTok/Reel-format video
+- Tight professional frame: rounded corners, subtle shadow, max-width constrained
+- Caption overlay below with the key quote in EN/ES
+- Lazy loading with `preload="none"` and poster frame
 
-**File:** `src/pages/v2/V2Home.tsx` (lines ~270-435)
+**Layout:**
+- Centered, `max-w-sm` on mobile (full vertical video), `max-w-xs` on desktop (doesn't dominate)
+- Gold label above: "FROM THE FIELD" / "DESDE EL CAMPO"
+- Caption text below: condensed version of the post caption
+- Brand-consistent styling (cc-sand background, cc-navy text)
 
-The current section is ~165 lines with full bio, 4 credential bullets, video embed, and lifestyle photo — duplicating the About page. Replace with a compact card:
+### Step 3: No Component Changes Needed
 
-- Photo (desert landscape) + 2-line tagline + "Learn more about Kasandra" link to `/about`
-- Remove the video embed, credential bullets, and lifestyle photo from Home
-- Keeps the section to ~30 lines total
-- The About page remains the canonical bio destination
-
----
-
-## Change 3: Create Reusable `KasandraPortrait` Component
-
-**New file:** `src/components/v2/KasandraPortrait.tsx`
-
-A standardized image component that:
-- Uses `aspect-[3/4]` ratio with `object-top` positioning (prevents head cropping)
-- Accepts `size` prop (`sm | md | lg`) for consistent sizing across pages
-- Applies standard border, shadow, and rounded corners from brand tokens
-- Used in: V2Home (compressed bio), V2About, V2Contact
-
----
-
-## Change 4: Fix Mobile Sticky Bar Collision
-
-**Problem:** V2Layout renders a generic sticky "Book a Strategy Session" bar on all pages. V2Buy and V2Sell also render their own `StickyMobileBookingBar` with intent-specific CTAs. On those pages, two bars stack.
-
-**Fix in `src/components/v2/V2Layout.tsx`:**
-- Add `/buy` and `/sell` to the `SUPPRESS_STICKY_BOOK` array (line ~121), so the generic bar hides when the page-specific one is active.
-
----
+Use a simple inline `<video>` tag with controls — no need for `KasandraVideoBlock` (that's for social embeds). This is a self-hosted MP4.
 
 ## Files Changed
 
 | File | Action |
 |------|--------|
-| `src/pages/v2/V2Home.tsx` | Remove "Not sure yet?" link; compress Meet Kasandra section |
-| `src/components/v2/KasandraPortrait.tsx` | New reusable portrait component |
-| `src/components/v2/V2Layout.tsx` | Add `/buy`, `/sell` to `SUPPRESS_STICKY_BOOK` |
-| `src/pages/v2/V2About.tsx` | Swap img tags for `KasandraPortrait` |
-| `src/pages/v2/V2Contact.tsx` | Swap img tag for `KasandraPortrait` |
+| `src/assets/kasandra/construction-class-story.mp4` | Copy uploaded video |
+| `src/pages/v2/V2About.tsx` | Add video section after credentials grid (~15 lines) |
 
