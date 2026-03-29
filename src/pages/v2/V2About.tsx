@@ -14,6 +14,8 @@ import heroImage from "@/assets/hero-community-neighborhood.png";
 import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
 import kasandraLifestyle from "@/assets/kasandra-lifestyle.jpg";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
+import KasandraVideoBlock from "@/components/v2/KasandraVideoBlock";
+import KasandraPhotoGallery from "@/components/v2/KasandraPhotoGallery";
 
 const V2AboutContent = () => {
   const { t } = useLanguage();
@@ -181,6 +183,17 @@ const V2AboutContent = () => {
           </div>
         </div>
       </section>
+
+      {/* Singing Video — Beyond Real Estate */}
+      <KasandraVideoBlock
+        videoUrl="https://www.youtube.com/watch?v=c1HbgVktpP4"
+        labelEn="Beyond Real Estate"
+        labelEs="Más Allá de los Bienes Raíces"
+        variant="compact"
+      />
+
+      {/* The Real Kasandra — Photo Gallery */}
+      <KasandraPhotoGallery />
 
       {/* Investments in Myself */}
       <section className="bg-cc-ivory py-16 md:py-20">
