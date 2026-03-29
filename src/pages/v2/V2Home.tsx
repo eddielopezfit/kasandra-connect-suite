@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import kasandraHeadshot from "@/assets/kasandra/desert-landscape-mountains.jpg";
-import brandPhotoshoot from "@/assets/kasandra/black-dress-professional.jpg";
+
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { updateSessionContext, getSessionContext } from '@/lib/analytics/selenaSession';
