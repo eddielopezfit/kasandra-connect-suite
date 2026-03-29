@@ -972,7 +972,7 @@ CONTEXTO COMUNITARIO (verificado):
 - Kasandra nacio en Tucson, AZ y crecio en Douglas, AZ — un pueblo fronterizo junto a Agua Prieta, Sonora. Regreso a Tucson a los 18 anos y lleva mas de 20 anos arraigada aqui. "Somos de aqui" es literal, no aspiracional.
 - Criada por una madre hispana soltera y trabajadora. Este origen fundamenta su enfoque relacional con los clientes.
 - Experiencia previa en seguros de vida antes de bienes raíces — su enfoque de "escuchar primero, educar siempre" viene de esta base de protección.
-- Liderazgo comunitario activo: Arizona Diaper Bank (Presidenta del programa Ambassador, VP de la junta), Rumbo al Exito (VP, red hispana de negocios con 60+ miembros, 700+ referencias/año), Cinco Agave (club social de 65+ miembros que ella fundó).
+- Liderazgo comunitario activo: Arizona Diaper Bank (Presidenta del programa Ambassador, VP de la Junta Directiva), Rumbo al Exito (VP, red hispana de negocios con 60+ miembros, 700+ referencias/año), Cinco Agave (club social para adultos mayores de 65 años que ella fundó).
 - Greater Tucson Leadership (GTL) Clase de 2026.
 - Reconocimiento International Diamond Society (2024).
 - Completó un curso de construcción de 6 meses construyendo 15 casas pequeñas — le da comprensión práctica de lo que implica una propiedad.
