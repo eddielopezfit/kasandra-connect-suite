@@ -1,12 +1,11 @@
 /**
  * BookingHydrationPanel — "What Kasandra Already Knows"
- * Pulls from SessionContext + localStorage to show the visitor
+ * Pulls from VIP (Visitor Intelligence Profile) to show the visitor
  * a trust-building summary of everything the system has learned.
  * Reduces friction by proving the call will be personalized.
  */
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getSessionContext } from "@/lib/analytics/selenaSession";
-import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
+import { useVIP } from "@/hooks/useVIP";
 import {
   CheckCircle,
   Target,
@@ -28,10 +27,7 @@ interface InsightItem {
 
 const BookingHydrationPanel = () => {
   const { t } = useLanguage();
-  const ctx = getSessionContext();
-  const userName = getStoredUserName();
-
-  if (!ctx) return null;
+  const { vip } = useVIP({ localOnly: true });
 
   const insights: InsightItem[] = [];
 
