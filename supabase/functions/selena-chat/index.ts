@@ -1401,15 +1401,11 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       !isMode4Handoff;
 
     if (isMode4Handoff) {
-      // HANDOFF mode: bypass all chip governance — chips must align with reply text
-      suggestedReplies = language === "es"
-        ? ["Encontrar un horario con Kasandra", "Tengo otra pregunta"]
-        : ["Find a time with Kasandra", "I have another question"];
+      // HANDOFF mode: use semantic keys — resolved to localized labels by client
+      suggestedReplies = [CHIP_KEYS.FIND_A_TIME, 'i_have_a_question'];
     } else if (isStallRecovery) {
-      // Stall recovery — 3 options to re-anchor
-      suggestedReplies = language === "es"
-        ? ["Sí, resume dónde estoy", "Prefiero seguir explorando", "Tengo una pregunta específica"]
-        : ["Yes, summarize where I am", "I'd rather keep exploring", "I have a specific question"];
+      // Stall recovery — semantic keys for 3 options
+      suggestedReplies = ['summarize_where_i_am', 'keep_exploring', 'specific_question'];
     } else if (isProceedsOverride) {
       // PROCEEDS / ASAP override — hard lock to Phase 3 chips
       suggestedReplies = language === 'es'
