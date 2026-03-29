@@ -1,69 +1,71 @@
 
 
-# Sticky Data Layer — Session-Aware Progressive Profiling
+# Mobile Optimization — Scroll-to-Top, Content Drift & Eye-Level CTA Fixes
 
-## Problem
+## Problems Found
 
-The system has all the infrastructure for "zero re-entry" but critical wiring is missing:
+### 1. Page content hidden behind sticky bars (bottom clipping)
+The sticky "Book a Strategy Session" bar in V2Layout is ~70px tall. On pages with bottom CTA sections, the last CTA button gets covered. Several pages use `pb-24 sm:pb-16` to compensate, but this is inconsistent — some pages lack bottom padding entirely (Home, About, Contact, TucsonLiving, etc.). The footer content gets cut off on mobile.
 
-1. **Two major capture points don't persist contact data to localStorage:**
-   - `LeadCaptureModal` — captures email, name, phone → sends to edge function → never stores locally
-   - `ToolResultLeadCapture` — captures email → sends to edge function → never stores locally
+### 2. `safe-area-pb` class doesn't exist
+`StickyMobileBookingBar.tsx` uses `safe-area-pb` — this CSS class is never defined anywhere (not in `index.css`, not in Tailwind config). iOS notch-bar devices get no safe-area padding on this component.
 
-2. **`useSessionPrePopulation` hook exists but is consumed by zero components.** It was built as a universal pre-fill bridge but never wired into any form.
+### 3. ScrollManager scrolls to `block: "start"` — content lands behind fixed nav
+The fixed nav (branding strip + nav bar) is ~76px on mobile (`36px + ~40px`). When `ScrollManager` or any `scrollIntoView({ block: "start" })` fires, the target element's top aligns with viewport top — which is behind the fixed nav. Users must manually scroll up to see the content they clicked to reach.
 
-3. **ToolResultLeadCapture doesn't pre-fill existing email** — if a user already provided their email on a previous tool, the next tool's capture card shows an empty field instead of auto-filling.
+### 4. Selena floating button overlaps sticky book bar on mobile
+The floating Selena button is at `bottom-[calc(5rem+env(safe-area-inset-bottom))]` (~80px). The sticky book bar is ~70px from bottom. These overlap, creating a tight, cluttered bottom corner.
 
-## Fix (3 files, surgical)
+### 5. Calculator results scroll to `block: "start"` — hidden behind nav
+All calculators (`V2AffordabilityCalculator`, `V2BAHCalculator`, `V2BuyerClosingCosts`) use `scrollIntoView({ block: "start" })` after results render. Results header lands behind the fixed nav.
 
-### 1. `src/components/v2/LeadCaptureModal.tsx`
-**After successful submit (line ~147, after `bridgeLeadIdToV2`):**
-- Add `setStoredEmail(email.trim())`, `setStoredUserName(name.trim())`, `setStoredPhone(phone.trim())`
-- Import the three setters from `bridgeLeadIdToV2`
+---
 
-**On mount (when `isOpen` changes to true):**
-- Pre-fill email/name/phone from `getStoredEmail()`, `getStoredUserName()`, `getStoredPhone()`
-- If email is already known, skip to step "details" automatically
+## Fixes (7 files)
 
-### 2. `src/components/v2/ToolResultLeadCapture.tsx`
-**After successful submit (line ~142, after `logEvent`):**
-- Add `setStoredEmail(email.trim())`
-- Import `setStoredEmail` and `getStoredEmail` from `bridgeLeadIdToV2`
-- Also call `bridgeLeadIdToV2(data.lead_id, ...)` to persist lead_id
+### Fix 1: Global scroll-margin-top for fixed nav clearance
+**File:** `src/index.css`
+Add a CSS rule: `[id] { scroll-margin-top: 80px; }` — any element scrolled to via anchor or `scrollIntoView` will automatically clear the fixed nav. This fixes every `scrollIntoView({ block: "start" })` call site-wide in one line.
 
-**On mount:**
-- Pre-fill email field from `getStoredEmail()` if available
-- If email is pre-filled, auto-focus the submit button instead
+### Fix 2: ScrollManager — use scroll-margin instead of raw scrollTo
+**File:** `src/components/ScrollManager.tsx`
+No change needed if Fix 1 is applied — `scrollIntoView({ block: "start" })` will respect `scroll-margin-top`. But the `window.scrollTo({ top: 0 })` for route changes is correct.
 
-### 3. `src/components/v2/LeadCaptureModal.tsx` (pre-fill on open)
-Add a `useEffect` watching `isOpen` that reads stored values and pre-populates the form fields. If all three fields (email, name, phone) are already known, the modal can auto-submit or show a "Welcome back" confirmation instead.
+### Fix 3: Add safe-area-pb utility class
+**File:** `src/index.css`
+Add `.safe-area-pb { padding-bottom: env(safe-area-inset-bottom, 0px); }` so `StickyMobileBookingBar` actually works on iOS notch devices.
 
-## What This Enables
+### Fix 4: Bottom padding on V2Layout main content for sticky bar clearance
+**File:** `src/components/v2/V2Layout.tsx`
+Add `pb-20 lg:pb-0` to the `<main>` tag so page content never gets clipped behind the sticky mobile book bar. This replaces the inconsistent per-page `pb-24` hacks.
 
-After these changes, the data flow becomes fully circular:
+### Fix 5: Standardize per-page bottom padding — remove redundant pb-24
+**Files:** `V2Buy.tsx`, `V2Sell.tsx`, `V2CashOfferOptions.tsx`, `V2Neighborhoods.tsx`, `V2Podcast.tsx`, `V2Guides.tsx`
+Change `pb-24 sm:pb-16` → `pb-16` on bottom CTA sections since V2Layout now handles the sticky bar clearance globally.
 
-```text
-User enters email on Affordability Calculator
-  → stored in localStorage + lead_profiles
-  → BAH Calculator pre-fills email
-  → Booking Form pre-fills email + name + phone
-  → Selena greets by name
-  → GHL receives full dossier
-```
+### Fix 6: Fix Selena floating button position to not overlap sticky bar
+**File:** `src/components/selena/SelenaFloatingButton.tsx`
+Change mobile bottom offset from `bottom-[calc(5rem+env(safe-area-inset-bottom,0px))]` to `bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))]` — provides 8px breathing room above the sticky book bar.
 
-Every form in the system becomes a read-then-write participant in the Sticky Data Layer.
+### Fix 7: Selena chat drawer — ensure messages scroll to eye level
+**File:** `src/components/selena/SelenaChatDrawer.tsx`
+Already using `scrollIntoView({ behavior: 'smooth', block: 'end' })` — this is correct. No change needed.
 
-## Files Changed
+---
+
+## Summary
 
 | # | File | Change |
 |---|------|--------|
-| 1 | `src/components/v2/LeadCaptureModal.tsx` | Add localStorage persistence on submit + pre-fill on open |
-| 2 | `src/components/v2/ToolResultLeadCapture.tsx` | Add `setStoredEmail` + `bridgeLeadIdToV2` on submit + pre-fill email on mount |
+| 1 | `src/index.css` | Add `scroll-margin-top: 80px` + `.safe-area-pb` utility |
+| 2 | `src/components/v2/V2Layout.tsx` | Add `pb-20 lg:pb-0` to main tag |
+| 3 | `src/components/selena/SelenaFloatingButton.tsx` | Bump bottom offset by 8px |
+| 4 | `src/pages/v2/V2Buy.tsx` | `pb-24 sm:pb-16` → `pb-16` |
+| 5 | `src/pages/v2/V2Sell.tsx` | `pb-24 sm:pb-16` → `pb-16` |
+| 6 | `src/pages/v2/V2CashOfferOptions.tsx` | `pb-24 sm:pb-16` → `pb-16` |
+| 7 | `src/pages/v2/V2Neighborhoods.tsx` | `pb-24 sm:pb-16` → `pb-16` |
+| 8 | `src/pages/v2/V2Podcast.tsx` | `pb-24 sm:pb-16` → `pb-16` |
+| 9 | `src/pages/v2/V2Guides.tsx` | `pb-24 md:pb-16` → `pb-16` |
 
-## What We're NOT Changing
-
-- `useSessionPrePopulation` — keeping it available but not force-wiring it into forms that already use direct `getStored*` calls (BookingIntakeForm, StepContact). Those patterns work correctly.
-- `NativeBookingFlow` — already persists correctly
-- SessionContext / selenaSession — already working as the intent/timeline/tool data layer
-- Edge functions — no changes needed, they already receive all data
+**Result:** Every CTA click, route change, and tool result lands at eye level. No scrolling required. No content hidden behind fixed elements. No overlap between Selena button and sticky bar. Safe-area works on all iOS devices.
 
