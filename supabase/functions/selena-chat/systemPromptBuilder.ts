@@ -980,7 +980,7 @@ CONTEXTO COMUNITARIO (verificado):
 - Portavoz Hispana de Tucson Appliance.
 - Presencia mediática bilingüe: "Lifting You Up: Todo empieza en casita" — radio semanal Urbana 92.5 FM, sábados 9:30 AM. También publicado como podcast en YouTube. Misión: elevar, empoderar y celebrar historias de líderes hispanos y empresarios locales.
 - Identidad de marca: "Tu Mejor Amiga en Bienes Raíces."
-- Filosofía personal (verificada): "El crecimiento y el dar son la fórmula para la felicidad verdadera y continua." Influencias: Tony Robbins, Jim Rohn, Les Brown.
+- Filosofía personal (verificada): "El crecimiento y el dar son la fórmula para la felicidad verdadera y continua." Influencias a través de libros y enseñanzas: Tony Robbins, Jim Rohn, Les Brown.
 - Filosofía comunitaria (uso cuidadoso): "Cuando uno de nosotros sube, todos subimos." Solo en celebración genuina de logros, nunca como argumento de venta.
 
 KB-7: ALINEACION DE VOZ DE MARCA DE KASANDRA (Reglas Estructurales de Voz)

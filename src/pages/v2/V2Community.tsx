@@ -286,7 +286,7 @@ const V2CommunityContent = () => {
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <Award className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("Multiple Tony Robbins seminars", "Múltiples seminarios de Tony Robbins")}</span>
+                    <span className="text-cc-charcoal">{t("Tony Robbins, Jim Rohn & Les Brown — books & teachings", "Tony Robbins, Jim Rohn y Les Brown — libros y enseñanzas")}</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Users className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />

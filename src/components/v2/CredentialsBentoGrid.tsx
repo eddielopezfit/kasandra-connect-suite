@@ -16,8 +16,8 @@ interface BentoCell {
 const cells: BentoCell[] = [
   {
     icon: Gem,
-    titleEn: "Certified Global Luxury Property Specialist",
-    titleEs: "Especialista Certificada en Propiedades de Lujo Global",
+    titleEn: "Luxury Property Specialist",
+    titleEs: "Especialista en Propiedades de Lujo",
     descEn: "Elevated expertise for premium properties and discerning clients across Tucson's finest corridors.",
     descEs: "Experiencia elevada para propiedades premium y clientes exigentes en los mejores corredores de Tucson.",
     span: "large",

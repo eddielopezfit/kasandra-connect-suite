@@ -216,8 +216,8 @@ const V2AboutContent = () => {
               </h3>
               <p className="text-sm text-cc-charcoal/70 leading-relaxed">
                 {t(
-                  "Multiple Tony Robbins seminars, Greater Tucson Leadership Class of 2026, and continuous education in real estate. I believe the best agents are the ones who never stop growing.",
-                  "Múltiples seminarios de Tony Robbins, Greater Tucson Leadership Promoción 2026, y educación continua en bienes raíces. Creo que los mejores agentes son los que nunca dejan de crecer."
+                  "Influenced by Tony Robbins, Jim Rohn, and Les Brown through their books and teachings. Greater Tucson Leadership Class of 2026, and continuous education in real estate. I believe the best agents are the ones who never stop growing.",
+                   "Influenciada por Tony Robbins, Jim Rohn y Les Brown a través de sus libros y enseñanzas. Greater Tucson Leadership Promoción 2026, y educación continua en bienes raíces. Creo que los mejores agentes son los que nunca dejan de crecer."
                 )}
               </p>
             </div>
