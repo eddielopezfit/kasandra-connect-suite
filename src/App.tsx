@@ -47,6 +47,7 @@ const V2Contact = lazy(() => import("./pages/v2/V2Contact"));
 const V2Privacy = lazy(() => import("./pages/v2/V2Privacy"));
 const V2Terms = lazy(() => import("./pages/v2/V2Terms"));
 const V2TrustedNetwork = lazy(() => import("./pages/v2/V2TrustedNetwork"));
+const V2TucsonLiving = lazy(() => import("./pages/v2/V2TucsonLiving"));
 const V2SelenaAI = lazy(() => import("./pages/v2/V2SelenaAI"));
 const V2AffordabilityCalculator = lazy(() => import("./pages/v2/V2AffordabilityCalculator"));
 const V2BAHCalculator = lazy(() => import("./pages/v2/V2BAHCalculator"));
