@@ -98,7 +98,7 @@ const V2Footer = () => {
                 className="flex items-center justify-center md:justify-end gap-2 text-white/80 hover:text-white transition-colors min-w-0"
               >
                 <Mail className="w-4 h-4 flex-shrink-0" />
-                <span className="break-all">kasandra@prietorealestategroup.com</span>
+                <span className="break-words">kasandra@prietorealestategroup.com</span>
               </a>
             </div>
             {/* Social Links */}
