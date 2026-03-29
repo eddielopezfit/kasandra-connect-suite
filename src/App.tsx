@@ -127,6 +127,7 @@ const App = () => {
                 <Route path="/privacy" element={<V2Privacy />} />
                 <Route path="/terms" element={<V2Terms />} />
                 <Route path="/network" element={<V2TrustedNetwork />} />
+                <Route path="/tucson-living" element={<V2TucsonLiving />} />
 
                 {/* Ad Funnel Routes (Isolated) */}
                 <Route path="/ad/seller" element={<SellerLanding />} />

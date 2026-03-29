@@ -117,6 +117,16 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description: 'Meet Selena — Kasandra\'s AI-powered real estate concierge. Ask anything about buying or selling in Tucson, get instant personalized guidance, 24/7.',
     canonical: 'https://kasandraprietorealtor.com/selena-ai',
   },
+  '/network': {
+    title: "Kasandra's Trusted Network | Contractors, Lenders & Inspectors — Tucson",
+    description: "Kasandra's personally vetted network of Tucson professionals — lenders, inspectors, contractors. Only people she's actually worked with.",
+    canonical: 'https://kasandraprietorealtor.com/network',
+  },
+  '/tucson-living': {
+    title: 'Discover Tucson Living | Events, Culture & Lifestyle — Kasandra Prieto',
+    description: "Explore what makes Tucson special — signature events, UNESCO food culture, 350+ days of sunshine, and why families love living here.",
+    canonical: 'https://kasandraprietorealtor.com/tucson-living',
+  },
   '/contact': {
     title: 'Contact Kasandra Prieto | Tucson REALTOR® — Realty Executives Arizona',
     description: 'Reach Kasandra Prieto directly. Bilingual real estate agent serving Tucson and Pima County. Call (520) 349-3248 or send a message.',

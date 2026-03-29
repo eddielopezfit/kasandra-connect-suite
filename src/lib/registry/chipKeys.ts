@@ -156,4 +156,6 @@ export const CHIP_KEY_TO_DESTINATION: Record<ChipKey, string> = {
   [CHIP_KEYS.AFFORDABILITY_CALCULATOR]: '/affordability-calculator',
   [CHIP_KEYS.BAH_CALCULATOR]: '/bah-calculator',
   [CHIP_KEYS.HOME_VALUATION]: '/home-valuation',
+  [CHIP_KEYS.TUCSON_LIVING]: '/tucson-living',
+  [CHIP_KEYS.TRUSTED_NETWORK]: '/network',
 };
