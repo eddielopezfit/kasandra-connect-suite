@@ -16,7 +16,6 @@ import constructionVideo from "@/assets/kasandra/construction-class-story.mp4";
 
 const V2AboutContent = () => {
   const { t } = useLanguage();
-  const { openChat } = useSelenaChat();
 
   useDocumentHead({
     titleEn: "About Kasandra Prieto | Tucson REALTOR® & Community Leader",
