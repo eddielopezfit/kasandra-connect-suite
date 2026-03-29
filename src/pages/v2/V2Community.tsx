@@ -220,8 +220,98 @@ const V2CommunityContent = () => {
         </div>
       </section>
 
-      {/* Why Community Matters */}
+      {/* Construction Course */}
+      <section className="py-16 lg:py-20 bg-cc-sand">
+        <div className="container mx-auto px-4">
+          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-elevated border border-cc-sand-dark/30">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+              <div className="order-2 md:order-1 bg-cc-ivory rounded-xl p-8 flex items-center justify-center border border-cc-sand-dark/30">
+                <div className="text-center">
+                  <Home className="w-16 h-16 text-cc-gold mx-auto mb-4" />
+                  <p className="font-serif text-lg font-bold text-cc-navy">{t("15 Tiny Homes Built", "15 Casas Pequeñas Construidas")}</p>
+                  <p className="text-sm text-cc-charcoal/60 mt-1">{t("6-Month Construction Program", "Programa de Construcción de 6 Meses")}</p>
+                </div>
+              </div>
+              <div className="order-1 md:order-2">
+                <div className="w-16 h-16 bg-cc-gold/10 rounded-full flex items-center justify-center mb-6">
+                  <Award className="w-8 h-8 text-cc-gold" />
+                </div>
+                <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">
+                  {t("Construction Course", "Curso de Construcción")}
+                </h2>
+                <p className="text-cc-charcoal mb-6">
+                  {t(
+                    "I invested in a 6-month construction course where I built 15 tiny homes from the ground up. I didn't do it to become a builder — I did it so when I walk through a property with you, I see what most agents don't. Foundation issues, framing shortcuts, plumbing red flags — I understand homes from the inside out.",
+                    "Invertí en un curso de construcción de 6 meses donde construí 15 casas pequeñas desde cero. No lo hice para ser constructora — lo hice para que cuando camine por una propiedad contigo, vea lo que la mayoría de los agentes no ven. Problemas de cimentación, atajos en la estructura, señales de alerta en la plomería — entiendo las casas desde adentro."
+                  )}
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Award className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Hands-on building experience", "Experiencia práctica de construcción")}</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Users className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Superior property inspection knowledge", "Conocimiento superior de inspección de propiedades")}</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <HandHeart className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Protecting buyers from hidden issues", "Protegiendo a compradores de problemas ocultos")}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Personal Development */}
       <section className="py-16 lg:py-20 bg-cc-ivory">
+        <div className="container mx-auto px-4">
+          <div className="bg-white rounded-2xl p-6 md:p-10 shadow-elevated border border-cc-sand-dark/30">
+            <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+              <div>
+                <div className="w-16 h-16 bg-cc-gold/10 rounded-full flex items-center justify-center mb-6">
+                  <Star className="w-8 h-8 text-cc-gold" />
+                </div>
+                <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">
+                  {t("Personal Development", "Desarrollo Personal")}
+                </h2>
+                <p className="text-cc-charcoal mb-6">
+                  {t(
+                    "I've invested in multiple Tony Robbins seminars and continuous personal growth because I believe the best agents are the ones who never stop growing. Greater Tucson Leadership Class of 2026 reinforced my commitment to leading with purpose in this community.",
+                    "He invertido en múltiples seminarios de Tony Robbins y crecimiento personal continuo porque creo que los mejores agentes son los que nunca dejan de crecer. Greater Tucson Leadership Promoción 2026 reforzó mi compromiso de liderar con propósito en esta comunidad."
+                  )}
+                </p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Award className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Multiple Tony Robbins seminars", "Múltiples seminarios de Tony Robbins")}</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Users className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("Greater Tucson Leadership — Class of 2026", "Greater Tucson Leadership — Promoción 2026")}</span>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <HandHeart className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
+                    <span className="text-cc-charcoal">{t("\"Growth IS the formula to happiness\"", "\"El crecimiento ES la fórmula de la felicidad\"")}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-cc-sand rounded-xl p-8 flex items-center justify-center border border-cc-sand-dark/30">
+                <div className="text-center">
+                  <Sparkles className="w-16 h-16 text-cc-gold mx-auto mb-4" />
+                  <p className="font-serif text-lg font-bold text-cc-navy">{t("Always Growing", "Siempre Creciendo")}</p>
+                  <p className="text-sm text-cc-charcoal/60 mt-1 italic">{t("\"Growth and giving back IS the formula.\"", "\"El crecimiento y retribuir ES la fórmula.\"")}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Community Matters */}
+      <section className="py-16 lg:py-20 bg-cc-sand">
         <div className="container mx-auto px-4 text-center max-w-3xl">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-navy mb-6">
             {t("Why Community Matters", "Por Qué la Comunidad Importa")}
