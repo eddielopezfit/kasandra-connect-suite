@@ -13,6 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { getOrCreateSessionId } from "@/lib/analytics/selenaSession";
+import { setStoredEmail, getStoredEmail, bridgeLeadIdToV2 } from "@/lib/analytics/bridgeLeadIdToV2";
 import { X, Mail, ArrowRight } from "lucide-react";
 
 export type ToolType = 'affordability' | 'bah' | 'buyer_closing_costs' | 'seller_timeline';

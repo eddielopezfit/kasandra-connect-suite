@@ -4,13 +4,21 @@
  * and binds user to lead_profiles
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { getSessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { bridgeLeadIdToV2 } from "@/lib/analytics/bridgeLeadIdToV2";
+import {
+  bridgeLeadIdToV2,
+  setStoredEmail,
+  setStoredUserName,
+  setStoredPhone,
+  getStoredEmail,
+  getStoredUserName,
+  getStoredPhone,
+} from "@/lib/analytics/bridgeLeadIdToV2";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import {
