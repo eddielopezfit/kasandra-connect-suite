@@ -103,7 +103,7 @@ const V2CommunityContent = () => {
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <Award className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
-                    <span className="text-cc-charcoal">{t("Vice Chair, Governing Board", "Vicepresidenta, Junta Directiva")}</span>
+                    <span className="text-cc-charcoal">{t("VP, Governing Board", "VP, Junta Directiva")}</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <Users className="w-5 h-5 text-cc-gold flex-shrink-0 mt-0.5" />
