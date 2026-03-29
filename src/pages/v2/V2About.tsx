@@ -184,13 +184,6 @@ const V2AboutContent = () => {
         </div>
       </section>
 
-      {/* Singing Video — Beyond Real Estate (Instagram Reel) */}
-      <KasandraVideoBlock
-        videoUrl="https://www.instagram.com/reel/DH2hf1Tum9T/"
-        labelEn="Beyond Real Estate"
-        labelEs="Más Allá de los Bienes Raíces"
-        variant="compact"
-      />
 
       {/* The Real Kasandra — Photo Gallery */}
       <KasandraPhotoGallery />
