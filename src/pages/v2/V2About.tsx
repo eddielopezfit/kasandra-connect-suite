@@ -174,8 +174,8 @@ const V2AboutContent = () => {
             </p>
             <p>
               {t(
-                "I started this career at 35. Some people thought I was late. I think I was right on time. By 42, I've guided over 100 families through one of the biggest decisions of their lives — and I've earned the International Diamond Society recognition, the Certified Global Luxury Property Specialist designation, and a 5-star average across 126+ reviews. But the credential I'm most proud of? The families who call me back for their second, third, or fourth transaction.",
-                "Comencé esta carrera a los 35. Algunas personas pensaron que era tarde. Yo creo que fue justo a tiempo. A los 42, he guiado a más de 100 familias a través de una de las decisiones más grandes de sus vidas — y he ganado el reconocimiento International Diamond Society, la designación de Especialista Certificada en Propiedades de Lujo Global, y un promedio de 5 estrellas en más de 126 reseñas. Pero la credencial de la que más me enorgullezco? Las familias que me llaman de nuevo para su segunda, tercera o cuarta transacción."
+                "I started this career at 35. Some people thought I was late. I think I was right on time. By 42, I've guided over 100 families through one of the biggest decisions of their lives — and I've earned the International Diamond Society recognition, the Luxury Property Specialist designation, and a 5-star average across 126+ reviews. But the credential I'm most proud of? The families who call me back for their second, third, or fourth transaction.",
+                "Comencé esta carrera a los 35. Algunas personas pensaron que era tarde. Yo creo que fue justo a tiempo. A los 42, he guiado a más de 100 familias a través de una de las decisiones más grandes de sus vidas — y he ganado el reconocimiento International Diamond Society, la designación de Especialista en Propiedades de Lujo, y un promedio de 5 estrellas en más de 126 reseñas. Pero la credencial de la que más me enorgullezco? Las familias que me llaman de nuevo para su segunda, tercera o cuarta transacción."
               )}
             </p>
           </div>
