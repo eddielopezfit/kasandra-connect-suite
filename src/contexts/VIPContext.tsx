@@ -97,9 +97,13 @@ export function VIPProvider({ children }: { children: ReactNode }) {
     });
   }, [serverHydrated]);
 
-  // Write-back to server (debounced via saveSnapshot)
-  const persist = useCallback(() => {
+  // Write-back to server (debounced via saveSnapshot) + CRM sync
+  const persist = useCallback((trigger?: 'tool_completion' | 'readiness_threshold' | 'returning_user' | 'context_update', detail?: string) => {
     saveSnapshot();
+    // Lazy import to avoid circular deps
+    import('@/lib/analytics/crmSync').then(({ triggerCRMSync }) => {
+      triggerCRMSync(trigger ?? 'context_update', detail);
+    }).catch(() => {});
   }, []);
 
   // Memoized selectors
