@@ -349,41 +349,6 @@ const V2AboutContent = () => {
       </div>
       <SelenaShowcase variant="compact" />
 
-      {/* Bottom CTA */}
-      <section className="bg-cc-navy py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
-            {t("Ready to Talk?", "¿Lista para Hablar?")}
-          </h2>
-          <p className="text-white/80 mb-8 max-w-xl mx-auto">
-            {t(
-              "Whether you're buying, selling, or just curious — Kasandra is here for you.",
-              "Ya sea que quieras comprar, vender, o simplemente tengas curiosidad — Kasandra está aquí para ti."
-            )}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 shadow-gold">
-              <Link
-                to="/book"
-                onClick={() => logCTAClick({ cta_name: CTA_NAMES.TOOL_BOOK_CONSULTATION, destination: '/book', page_path: '/about', intent: 'neutral' })}
-              >
-                {t("Book a Strategy Session", "Agendar una Sesión de Estrategia")}
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              className="border-white/40 text-white hover:bg-white/10 rounded-full px-8"
-              onClick={() => {
-                logCTAClick({ cta_name: CTA_NAMES.RESULT_CHAT_SELENA, destination: 'selena_drawer', page_path: '/about', intent: 'neutral' });
-                openChat({ source: 'about_page' });
-              }}
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              {t("Talk to Selena First", "Habla con Selena Primero")}
-            </Button>
-          </div>
-        </div>
-      </section>
     </>
   );
 };
