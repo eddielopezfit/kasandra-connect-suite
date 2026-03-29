@@ -37,6 +37,8 @@ import { updateSessionContext, getSessionContext } from '@/lib/analytics/selenaS
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import SelenaShowcase from "@/components/v2/SelenaShowcase";
+const LazyVIPNextBestAction = lazy(() => import("@/components/v2/VIPNextBestAction"));
+const LazyFrictionEscalation = lazy(() => import("@/components/v2/FrictionEscalation"));
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
