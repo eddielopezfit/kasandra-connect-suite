@@ -1,82 +1,109 @@
 
 
-# Sold Listings + Selena Listing Intelligence
+# Full Hub Audit — UI/UX + Code
 
-## Overview
+## Architecture & Code Health
 
-Add sold listings display with Active/Sold tabs on `/listings`, inject active listing data into Selena's system prompt for buyer-aware property recommendations.
+### Strengths
+- Clean route architecture: 30 routes, all lazy-loaded with a proper skeleton fallback
+- Consistent V2Layout wrapper with SelenaChatProvider, scroll management, analytics
+- Proper bilingual governance via LanguageContext + t() pattern throughout
+- Session intelligence system (VIP context, journey progress, session snapshots) is sophisticated and well-integrated
+- Edge functions are properly secured with ADMIN_SECRET where cost-bearing
+- RLS policies are correctly configured (public reads, service role writes)
+- Brand tokens are consistent (cc-navy, cc-gold, cc-ivory, cc-sand)
+- Analytics layer is comprehensive (logEvent, logCTAClick, sessionTrail)
 
-## Step 1: Update RLS Policy
+### Issues Found
 
-The current RLS only allows `status = 'active' AND is_featured = true`. We need to also allow `status = 'sold'` rows to be publicly readable.
+**1. Missing SEO Route Meta for /listings**
+`seoRouteMeta.ts` has no entry for `/listings`. This means social crawlers get no OG tags for the listings page.
 
-Migration: Replace the SELECT policy with `(is_featured = true AND status IN ('active', 'pending', 'sold'))`.
+**2. Missing /listings in sitemap.xml**
+The public sitemap likely doesn't include `/listings` — needs verification and update.
 
-## Step 2: Seed Sold Listings
+**3. V2Layout main padding creates gap on desktop**
+`pb-20 lg:pb-0` — the `pb-20` exists to clear the sticky mobile booking bar. But on pages where the bar is suppressed (buy, sell, book, etc.), this creates 80px of unnecessary bottom padding on mobile.
 
-Insert Kasandra's recently sold properties into `featured_listings` with `status = 'sold'`. We'll need her sold history — either from homes.com or manually provided. Add `sold_price` and `sold_date` columns to the table for sold-specific data.
+**4. Navigation mobile menu — 15 links is overwhelming**
+The mobile menu lists ALL 15 nav links vertically. On a 390px viewport, this is a very long scroll. The "Explore" dropdown pattern only works on desktop — mobile flattens everything.
 
-Migration: `ALTER TABLE featured_listings ADD COLUMN sold_price integer, ADD COLUMN sold_date date;`
+**5. Contact form missing phone field**
+The contact form on `/contact` captures name, email, and message but no phone number. This is a missed lead capture opportunity — phone is the highest-value field for GHL follow-up. The booking form has it, but the contact form doesn't.
 
-## Step 3: Update V2Listings Page — Add Tabs
+**6. Homepage vertical scroll depth is extreme**
+The homepage has 10+ sections: Hero → Journey Fork → VIP → Selena Banner → About Kasandra → TrustBar → Services (3 cards) → Selena Showcase → Calculator Widget → Featured Listings → Neighborhoods → Testimonials → Google Reviews → Corner Connect Advantage → Podcast → Community. On mobile at 390px, this is approximately 15+ screens of scroll. Most visitors won't reach the bottom sections.
 
-Modify `src/pages/v2/V2Listings.tsx`:
-- Add Active / Recently Sold tabs using existing shadcn Tabs component
-- Active tab (default): fetches `status = 'active'`
-- Sold tab: fetches `status = 'sold'`, ordered by `sold_date DESC`
-- Each tab has its own query key
+**7. Duplicate CTA patterns**
+Both "Book a Strategy Call" and "Ask Selena" appear in heroes AND bottom CTAs across Buy, Sell, and Home pages. The bottom CTA sections are near-identical across pages — could be a shared component to reduce maintenance.
 
-## Step 4: Update PropertyCard — Sold State
+**8. PropertyCard — sold card CTA loops back to /listings**
+When a user clicks "See Active Listings" on a sold card, they're already on `/listings`. The CTA should scroll to the active tab or switch tabs, not navigate to the same page.
 
-Modify `src/components/v2/listings/PropertyCard.tsx`:
-- When `status = 'sold'`: show cc-gold "Sold" badge, display `sold_price` if available
-- If both `price` (list) and `sold_price` exist, show both: "Listed $299,000 · Sold $295,000"
-- Replace "Schedule a Showing" CTA with "See Active Listings" link for sold cards
-- Subtle grayscale filter on sold card photos (optional, signals unavailability)
+**9. No error boundary on FeaturedListingsSection**
+If the Supabase query fails, the homepage listings section will throw. The homepage should gracefully degrade (it does return `null` on empty, but not on error).
 
-## Step 5: Homepage Section — No Change
+**10. GlassmorphismHero has duplicated secondary CTA logic**
+Lines 305-323 — both the `if` and `else` branches render identical JSX. The conditional serves no purpose.
 
-`FeaturedListingsSection` already filters `status = 'active'` — sold listings won't leak onto the homepage. No changes needed.
+**11. Orphaned hooks confirmed**
+`src/hooks/useConsultationForm.ts` and `src/components/v2/ConsultationFormFields.tsx` are still present per CLAUDE.md, safe to delete.
 
-## Step 6: Selena Listing Intelligence
+**12. sync-listings TODO is live**
+`supabase/functions/sync-listings/index.ts` has the IDX Broker TODO — this is expected and correct per plan.
 
-Modify `supabase/functions/selena-chat/systemPromptBuilder.ts`:
-- Add a `buildListingsContext()` function that queries `featured_listings` where `status = 'active'`
-- Format as a compact context block: address, price, beds/baths/sqft, zip, status
-- Inject into system prompt as `[ACTIVE_LISTINGS]` block
+## UX Findings
 
-Modify `supabase/functions/selena-chat/index.ts`:
-- Call `buildListingsContext()` during prompt assembly
-- Pass listings context into the system prompt builder
+### Strengths
+- Journey-aware UI (returning users see different headlines, breadcrumbs, VIP cards)
+- Click-first chip governance prevents cognitive overload
+- Tool strips show completion state (checkmarks for finished tools)
+- Bilingual parity is thorough — nearly every string has EN/ES
+- Trust signals are well-placed (brokerage strip, equal housing, review counts)
+- Kasandra Proximity pattern on /sell (ready users see booking CTA earlier) is smart
 
-### Selena Behavior Rules (added to system prompt):
-- Can reference active listings by address, price, and features
-- Can compare listings when buyer mentions budget or area preference
-- Must NOT say "good deal," "great value," or advise on pricing (KB-0)
-- Must route to "Schedule a Showing" / booking when interest is expressed
-- Can mention sold count as social proof: "Kasandra has closed X properties recently"
-- Must NOT reference specific sold prices unless asked
+### Issues Found
 
-## Step 7: Chip Governance — Listing Chip
+**13. Mobile sticky bar + Selena FAB overlap**
+The sticky mobile booking bar sits at `bottom-0 z-40`. The Selena floating button is also bottom-right. On small screens, these can visually collide. Pages that suppress the sticky bar are fine, but pages like `/neighborhoods`, `/guides`, `/about` show both.
 
-Modify `supabase/functions/selena-chat/chipGovernance.ts`:
-- Add a `browse_listings` chip for buy-intent users: "Browse Kasandra's listings" / "Ver propiedades de Kasandra"
-- Phase 2+ only (after orientation)
-- Intent filter: `buy` or `explore` only
+**14. Navigation — intent badge on desktop shows "Buying" even on irrelevant pages**
+The intent badge (e.g., "Buying") shows in the nav unless you're on a conflicting page (buy/sell cross-intent). But it shows on pages like `/podcast`, `/community`, `/privacy` where it adds no value and takes up nav space.
 
-## Files Summary
+**15. V2Book — dossier loading spinner on first visit**
+First-time visitors who click "Book" see a spinner + "Kasandra is reviewing your profile" message. But there's no profile to review for a first-time visitor. This creates a false expectation. The 600ms delay (`setTimeout(enrichBooking, 600)`) adds latency for no benefit on cold sessions.
 
-| Action | File |
-|--------|------|
-| Migration | Add `sold_price`, `sold_date` columns + update RLS |
-| Seed | Insert sold listing rows |
-| Edit | `src/pages/v2/V2Listings.tsx` — add tabs |
-| Edit | `src/components/v2/listings/PropertyCard.tsx` — sold state |
-| Edit | `supabase/functions/selena-chat/systemPromptBuilder.ts` — listings context |
-| Edit | `supabase/functions/selena-chat/index.ts` — inject listings |
-| Edit | `supabase/functions/selena-chat/chipGovernance.ts` — browse chip |
+**16. Homepage "Check Your Buying Power" section assumes buyer intent**
+The InstantAnswerWidget is buyer-focused, but the homepage serves all intents. Sellers and cash-offer seekers scroll past a buyer tool that's irrelevant to them.
 
-## What's NOT Changing
+**17. No 404 branding**
+`NotFound.tsx` should be checked — it likely uses default styling rather than the cc-brand tokens and V2Layout wrapper.
 
-Booking system, VIP system, CRM sync, guard state hierarchy, homepage featured section.
+## Recommended Priority Actions
+
+### P0 — Fix Now (breaks SEO/UX)
+1. Add `/listings` to `seoRouteMeta.ts`
+2. Fix PropertyCard sold CTA (don't navigate to same page)
+3. Remove duplicate GlassmorphismHero secondary CTA branch
+
+### P1 — Fix Soon (polish)
+4. Add phone field to Contact form
+5. Fix V2Book dossier spinner for first-time visitors (show only if session has data)
+6. Fix mobile sticky bar + Selena FAB z-index overlap
+
+### P2 — Improve (quality of life)
+7. Group mobile nav into sections (Primary / Explore) with visual divider
+8. Extract shared bottom CTA section into reusable component
+9. Delete orphaned hooks (useConsultationForm, ConsultationFormFields)
+10. Add error boundary to FeaturedListingsSection
+11. Trim homepage sections or make lower sections lazy-load with intersection observer (they already are lazy, but consider priority)
+
+### Not Broken (No Action Needed)
+- Brand tokens: consistent
+- Edge function security: verified
+- RLS policies: correct
+- Analytics: comprehensive
+- Bilingual: thorough
+- Session intelligence: working
+- Guard state hierarchy: intact
 
