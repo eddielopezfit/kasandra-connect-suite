@@ -140,6 +140,72 @@ export type Database = {
         }
         Relationships: []
       }
+      featured_listings: {
+        Row: {
+          address: string
+          baths: number | null
+          beds: number | null
+          city: string
+          created_at: string
+          description_en: string | null
+          description_es: string | null
+          display_order: number
+          id: string
+          is_featured: boolean
+          listing_url: string | null
+          mls_number: string | null
+          photo_urls: Json
+          price: number
+          sqft: number | null
+          state: string
+          status: string
+          updated_at: string
+          zip_code: string | null
+        }
+        Insert: {
+          address: string
+          baths?: number | null
+          beds?: number | null
+          city?: string
+          created_at?: string
+          description_en?: string | null
+          description_es?: string | null
+          display_order?: number
+          id?: string
+          is_featured?: boolean
+          listing_url?: string | null
+          mls_number?: string | null
+          photo_urls?: Json
+          price: number
+          sqft?: number | null
+          state?: string
+          status?: string
+          updated_at?: string
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string
+          baths?: number | null
+          beds?: number | null
+          city?: string
+          created_at?: string
+          description_en?: string | null
+          description_es?: string | null
+          display_order?: number
+          id?: string
+          is_featured?: boolean
+          listing_url?: string | null
+          mls_number?: string | null
+          photo_urls?: Json
+          price?: number
+          sqft?: number | null
+          state?: string
+          status?: string
+          updated_at?: string
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
       guide_queue: {
         Row: {
           content_json: Json
