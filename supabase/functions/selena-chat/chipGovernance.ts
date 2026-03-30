@@ -435,6 +435,12 @@ export const CHIP_DESTINATION: Record<string, string> = {
   'Obtener mi análisis': '/home-valuation',
   'Valuación de mi casa': '/home-valuation',
   '¿Cuánto vale mi casa?': '/home-valuation',
+
+  // Browse listings
+  "Browse Kasandra's listings": '/listings',
+  'Ver propiedades de Kasandra': '/listings',
+  'See active listings': '/listings',
+  'Ver propiedades activas': '/listings',
 };
 
 // Tool ID → destination paths it blocks (the routes the tool lives on)
