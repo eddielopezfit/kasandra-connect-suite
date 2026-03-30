@@ -37,6 +37,7 @@ const V2Navigation = () => {
     { href: "/buy", label: t("Buy", "Comprar") },
     { href: "/sell", label: t("Sell", "Vender") },
     { href: "/cash-offer-options", label: t("Cash Options", "Opciones en Efectivo") },
+    { href: "/listings", label: t("Listings", "Propiedades") },
   ];
 
   const exploreLinks = [

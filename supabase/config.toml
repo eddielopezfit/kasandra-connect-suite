@@ -53,3 +53,6 @@ verify_jwt = false
 
 [functions.get-tucson-events]
 verify_jwt = false
+
+[functions.sync-listings]
+verify_jwt = false
