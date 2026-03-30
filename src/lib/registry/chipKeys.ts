@@ -167,4 +167,5 @@ export const CHIP_KEY_TO_DESTINATION: Record<ChipKey, string> = {
   [CHIP_KEYS.HOME_VALUATION]: '/home-valuation',
   [CHIP_KEYS.TUCSON_LIVING]: '/tucson-living',
   [CHIP_KEYS.TRUSTED_NETWORK]: '/network',
+  [CHIP_KEYS.BROWSE_LISTINGS]: '/listings',
 };
