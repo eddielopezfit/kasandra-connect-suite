@@ -19,6 +19,7 @@ const ContactForm = () => {
   const { t } = useLanguage();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -32,6 +33,7 @@ const ContactForm = () => {
         body: {
           email: email.trim(),
           name: name.trim() || undefined,
+          phone: phone.trim() || undefined,
           source: "contact_form",
           tags: ["contact_form"],
           notes: message.trim() || undefined,
@@ -83,6 +85,13 @@ const ContactForm = () => {
         placeholder={t("Your email *", "Tu correo electrónico *")}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        className="border-border/30"
+      />
+      <Input
+        type="tel"
+        placeholder={t("Your phone (optional)", "Tu teléfono (opcional)")}
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
         className="border-border/30"
       />
       <Textarea

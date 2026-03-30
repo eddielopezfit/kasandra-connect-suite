@@ -302,25 +302,14 @@ export default function GlassmorphismHero({
                 {primaryLabel}
               </Link>
 
-              {secondaryLabelOverride && secondaryLinkOverride ? (
-                <Link
-                  to={secondaryLink}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
-                >
-                  {secondaryIcon || <BookOpen className="w-5 h-5" />}
-                  {secondaryLabel}
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              ) : (
-                <Link
-                  to={secondaryLink}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
-                >
-                  {secondaryIcon || <BookOpen className="w-5 h-5" />}
-                  {secondaryLabel}
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              )}
+              <Link
+                to={secondaryLink}
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
+              >
+                {secondaryIcon || <BookOpen className="w-5 h-5" />}
+                {secondaryLabel}
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
 
             {/* V2: Elevated Selena soft-entry — Priority 5 */}

@@ -119,10 +119,12 @@ const PropertyCard = ({ listing }: { listing: Listing }) => {
         {/* CTA */}
         <div className="pt-2 flex gap-2">
           {isSold ? (
-            <Button asChild className="flex-1 bg-cc-navy hover:bg-cc-navy-dark text-white font-semibold rounded-full text-sm">
-              <Link to="/listings">
-                {t("See Active Listings", "Ver Propiedades Activas")}
-              </Link>
+            <Button className="flex-1 bg-cc-navy hover:bg-cc-navy-dark text-white font-semibold rounded-full text-sm" onClick={() => {
+              const tabsTrigger = document.querySelector<HTMLButtonElement>('[data-state][value="active"]');
+              if (tabsTrigger) { tabsTrigger.click(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+              else { window.location.href = '/listings'; }
+            }}>
+              {t("See Active Listings", "Ver Propiedades Activas")}
             </Button>
           ) : (
             <Button asChild className="flex-1 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full text-sm">

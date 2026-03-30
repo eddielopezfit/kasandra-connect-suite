@@ -240,4 +240,10 @@ export const GUIDE_ROUTE_META: Record<string, RouteMeta> = {
     canonical: 'https://kasandraprietorealtor.com/net-to-seller',
     schemaType: 'WebApplication',
   },
+  '/listings': {
+    title: 'Featured Properties | Kasandra Prieto, Tucson REALTOR®',
+    description: 'Browse Kasandra Prieto\'s featured Tucson listings — active properties and recently sold homes. Schedule a showing or explore the market.',
+    canonical: 'https://kasandraprietorealtor.com/listings',
+    schemaType: 'ItemList',
+  },
 };
