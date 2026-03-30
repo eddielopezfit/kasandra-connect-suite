@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
   // const listings = await response.json()
   // ... upsert listings into featured_listings table using SERVICE_ROLE_KEY
 
-  const supabase = createClient(
+  const _supabase = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   )

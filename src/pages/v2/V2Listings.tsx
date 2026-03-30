@@ -14,14 +14,10 @@ const V2Listings = () => {
   const { t } = useLanguage();
 
   useDocumentHead({
-    title: t(
-      "Featured Properties | Kasandra Prieto REALTOR®",
-      "Propiedades Destacadas | Kasandra Prieto REALTOR®"
-    ),
-    description: t(
-      "Browse Kasandra Prieto's featured Tucson listings. Schedule a showing today.",
-      "Explore las propiedades destacadas de Kasandra Prieto en Tucson. Agende una visita hoy."
-    ),
+    titleEn: "Featured Properties | Kasandra Prieto REALTOR®",
+    titleEs: "Propiedades Destacadas | Kasandra Prieto REALTOR®",
+    descriptionEn: "Browse Kasandra Prieto's featured Tucson listings. Schedule a showing today.",
+    descriptionEs: "Explore las propiedades destacadas de Kasandra Prieto en Tucson. Agende una visita hoy.",
   });
 
   const { data: listings, isLoading } = useQuery({
