@@ -21,6 +21,8 @@ interface Listing {
   mls_number: string | null;
   listing_url: string | null;
   display_order: number;
+  sold_price?: number | null;
+  sold_date?: string | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -33,12 +35,14 @@ const PropertyCard = ({ listing }: { listing: Listing }) => {
   const { t, language } = useLanguage();
   const hasPhoto = listing.photo_urls && listing.photo_urls.length > 0;
   const description = language === "es" ? listing.description_es : listing.description_en;
+  const isSold = listing.status === "sold";
 
-  const formattedPrice = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(listing.price);
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(price);
 
   const statusLabel =
     listing.status === "active"
@@ -48,14 +52,14 @@ const PropertyCard = ({ listing }: { listing: Listing }) => {
       : t("Sold", "Vendido");
 
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-cc-sand-dark/20">
+    <div className={`group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-cc-sand-dark/20 ${isSold ? "opacity-90" : ""}`}>
       {/* Photo / Placeholder */}
       <div className="relative aspect-[4/3] overflow-hidden">
         {hasPhoto ? (
           <img
             src={listing.photo_urls[0]}
             alt={listing.address}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${isSold ? "grayscale-[30%]" : ""}`}
             loading="lazy"
           />
         ) : (
@@ -71,7 +75,16 @@ const PropertyCard = ({ listing }: { listing: Listing }) => {
 
       {/* Info */}
       <div className="p-5 space-y-3">
-        <p className="font-serif text-2xl font-bold text-cc-navy">{formattedPrice}</p>
+        {/* Price display — sold shows both list and sale price */}
+        {isSold && listing.sold_price ? (
+          <div>
+            <p className="font-serif text-2xl font-bold text-cc-navy">{formatPrice(listing.sold_price)}</p>
+            <p className="text-xs text-cc-charcoal/50 line-through">{t("Listed", "Listado")} {formatPrice(listing.price)}</p>
+          </div>
+        ) : (
+          <p className="font-serif text-2xl font-bold text-cc-navy">{formatPrice(listing.price)}</p>
+        )}
+
         <p className="text-sm text-cc-charcoal/80">
           {listing.address}, {listing.city}, {listing.state} {listing.zip_code}
         </p>
@@ -105,12 +118,20 @@ const PropertyCard = ({ listing }: { listing: Listing }) => {
 
         {/* CTA */}
         <div className="pt-2 flex gap-2">
-          <Button asChild className="flex-1 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full text-sm">
-            <Link to="/book">
-              {t("Schedule a Showing", "Agendar una Visita")}
-            </Link>
-          </Button>
-          {listing.listing_url && (
+          {isSold ? (
+            <Button asChild className="flex-1 bg-cc-navy hover:bg-cc-navy-dark text-white font-semibold rounded-full text-sm">
+              <Link to="/listings">
+                {t("See Active Listings", "Ver Propiedades Activas")}
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild className="flex-1 bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full text-sm">
+              <Link to="/book">
+                {t("Schedule a Showing", "Agendar una Visita")}
+              </Link>
+            </Button>
+          )}
+          {listing.listing_url && !isSold && (
             <Button variant="outline" size="icon" asChild className="rounded-full border-cc-sand-dark/30">
               <a href={listing.listing_url} target="_blank" rel="noopener noreferrer" aria-label={t("View on homes.com", "Ver en homes.com")}>
                 <ExternalLink className="w-4 h-4" />
