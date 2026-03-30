@@ -85,6 +85,7 @@ export const CHIP_KEYS = {
   HOME_VALUATION: 'home_valuation',
   TUCSON_LIVING: 'tucson_living',
   TRUSTED_NETWORK: 'trusted_network',
+  BROWSE_LISTINGS: 'browse_listings',
 } as const;
 
 export type ChipKey = typeof CHIP_KEYS[keyof typeof CHIP_KEYS];
