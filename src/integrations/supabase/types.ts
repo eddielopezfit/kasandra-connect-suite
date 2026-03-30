@@ -156,6 +156,8 @@ export type Database = {
           mls_number: string | null
           photo_urls: Json
           price: number
+          sold_date: string | null
+          sold_price: number | null
           sqft: number | null
           state: string
           status: string
@@ -177,6 +179,8 @@ export type Database = {
           mls_number?: string | null
           photo_urls?: Json
           price: number
+          sold_date?: string | null
+          sold_price?: number | null
           sqft?: number | null
           state?: string
           status?: string
@@ -198,6 +202,8 @@ export type Database = {
           mls_number?: string | null
           photo_urls?: Json
           price?: number
+          sold_date?: string | null
+          sold_price?: number | null
           sqft?: number | null
           state?: string
           status?: string
