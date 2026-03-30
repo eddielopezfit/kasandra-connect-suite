@@ -57,6 +57,7 @@ const V2NetToSeller = lazy(() => import("./pages/v2/V2NetToSeller"));
 const SellerLanding = lazy(() => import("./pages/ad/SellerLanding"));
 const SellerQuiz = lazy(() => import("./pages/ad/SellerQuiz"));
 const SellerResult = lazy(() => import("./pages/ad/SellerResult"));
+const V2Listings = lazy(() => import("./pages/v2/V2Listings"));
 
 const queryClient = new QueryClient();
 
