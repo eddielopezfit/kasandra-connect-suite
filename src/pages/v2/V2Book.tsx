@@ -115,15 +115,31 @@ const V2BookContent = () => {
   };
 
   // Priority 1: Enrich booking context before showing form
+  // Skip dossier spinner for cold sessions (no meaningful data)
   useEffect(() => {
     if (enrichedRef.current) return;
     enrichedRef.current = true;
+
+    const ctx = getSessionContext();
+    const hasMeaningfulData = ctx && (
+      ctx.readiness_score ||
+      ctx.intent !== 'explore' ||
+      ctx.tools_completed?.length ||
+      ctx.guides_completed?.length ||
+      ctx.estimated_value ||
+      ctx.seller_decision_recommended_path
+    );
+
+    // Cold session — skip the spinner entirely
+    if (!hasMeaningfulData) {
+      setDossierState('skipped');
+      return;
+    }
 
     const enrichBooking = async () => {
       try {
         const sessionId = getOrCreateSessionId();
         const leadId = getLeadId();
-        const ctx = getSessionContext();
 
         const payload = {
           session_id: sessionId,

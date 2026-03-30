@@ -55,7 +55,7 @@ export function SelenaFloatingButton() {
       onClick={handleClick}
       className={cn(
         "fixed right-4 z-50 lg:bottom-6",
-        "bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))]",
+        "bottom-[calc(6rem+env(safe-area-inset-bottom,0px))]",
         "w-14 h-14 rounded-full",
         "bg-cc-gold text-cc-navy",
         "shadow-lg hover:shadow-xl",

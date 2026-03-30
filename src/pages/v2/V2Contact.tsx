@@ -87,6 +87,13 @@ const ContactForm = () => {
         onChange={(e) => setEmail(e.target.value)}
         className="border-border/30"
       />
+      <Input
+        type="tel"
+        placeholder={t("Your phone (optional)", "Tu teléfono (opcional)")}
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+        className="border-border/30"
+      />
       <Textarea
         placeholder={t(
           "What can Kasandra help you with?",
