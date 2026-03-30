@@ -251,6 +251,7 @@ export const CHIP_KEYS = {
   AFFORDABILITY_CALCULATOR: 'affordability_calculator',
   BAH_CALCULATOR: 'bah_calculator',
   HOME_VALUATION: 'home_valuation',
+  BROWSE_LISTINGS: 'browse_listings',
 } as const;
 
 /** Semantic chip key → destination path */
