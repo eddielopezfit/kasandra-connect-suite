@@ -11,6 +11,7 @@ import KasandraPortrait from "@/components/v2/KasandraPortrait";
 const LazyHomepageNeighborhoodCards = lazy(() => import("@/components/v2/neighborhood/HomepageNeighborhoodCards"));
 const LazyInstantAnswerWidget = lazy(() => import("@/components/v2/calculator/InstantAnswerWidget"));
 const LazyGoogleReviews = lazy(() => import("@/components/v2/GoogleReviewsSection"));
+const LazyFeaturedListings = lazy(() => import("@/components/v2/listings/FeaturedListingsSection"));
 import {
   Home,
   Shield,
