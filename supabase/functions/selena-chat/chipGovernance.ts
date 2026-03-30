@@ -307,6 +307,7 @@ export const CHIP_KEY_DESTINATION: Record<string, string> = {
   [CHIP_KEYS.AFFORDABILITY_CALCULATOR]: '/affordability-calculator',
   [CHIP_KEYS.BAH_CALCULATOR]: '/bah-calculator',
   [CHIP_KEYS.HOME_VALUATION]: '/home-valuation',
+  [CHIP_KEYS.BROWSE_LISTINGS]: '/listings',
 };
 
 /**
