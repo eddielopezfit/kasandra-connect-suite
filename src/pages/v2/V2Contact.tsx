@@ -33,6 +33,7 @@ const ContactForm = () => {
         body: {
           email: email.trim(),
           name: name.trim() || undefined,
+          phone: phone.trim() || undefined,
           source: "contact_form",
           tags: ["contact_form"],
           notes: message.trim() || undefined,
