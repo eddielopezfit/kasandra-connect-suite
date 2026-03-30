@@ -182,8 +182,8 @@ export function getGovernedChips(
         return { chips: [CHIP_KEYS.AFFORDABILITY_CALCULATOR, CHIP_KEYS.BUYER_READINESS, suppressBrowseGuides ? CHIP_KEYS.TALK_WITH_KASANDRA : CHIP_KEYS.BROWSE_GUIDES], phase: 2, escalated: false };
       }
       if (phase2TurnCount === 2) {
-        // Turn 2: neighborhood tools + off-market
-        return { chips: [CHIP_KEYS.COMPARE_NEIGHBORHOODS, CHIP_KEYS.FIND_OFF_MARKET, CHIP_KEYS.ESTIMATE_CLOSING_COSTS], phase: 2, escalated: false };
+        // Turn 2: neighborhood tools + listings + off-market
+        return { chips: [CHIP_KEYS.COMPARE_NEIGHBORHOODS, CHIP_KEYS.BROWSE_LISTINGS, CHIP_KEYS.FIND_OFF_MARKET], phase: 2, escalated: false };
       }
       // Turn 3+: progress toward decision
       return { chips: [CHIP_KEYS.BUYER_READINESS_CHECK, CHIP_KEYS.FIND_OFF_MARKET, CHIP_KEYS.TALK_WITH_KASANDRA], phase: 2, escalated: false };
@@ -251,6 +251,7 @@ export const CHIP_KEYS = {
   AFFORDABILITY_CALCULATOR: 'affordability_calculator',
   BAH_CALCULATOR: 'bah_calculator',
   HOME_VALUATION: 'home_valuation',
+  BROWSE_LISTINGS: 'browse_listings',
 } as const;
 
 /** Semantic chip key → destination path */
@@ -306,6 +307,7 @@ export const CHIP_KEY_DESTINATION: Record<string, string> = {
   [CHIP_KEYS.AFFORDABILITY_CALCULATOR]: '/affordability-calculator',
   [CHIP_KEYS.BAH_CALCULATOR]: '/bah-calculator',
   [CHIP_KEYS.HOME_VALUATION]: '/home-valuation',
+  [CHIP_KEYS.BROWSE_LISTINGS]: '/listings',
 };
 
 /**
@@ -433,6 +435,12 @@ export const CHIP_DESTINATION: Record<string, string> = {
   'Obtener mi análisis': '/home-valuation',
   'Valuación de mi casa': '/home-valuation',
   '¿Cuánto vale mi casa?': '/home-valuation',
+
+  // Browse listings
+  "Browse Kasandra's listings": '/listings',
+  'Ver propiedades de Kasandra': '/listings',
+  'See active listings': '/listings',
+  'Ver propiedades activas': '/listings',
 };
 
 // Tool ID → destination paths it blocks (the routes the tool lives on)

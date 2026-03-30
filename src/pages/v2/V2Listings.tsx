@@ -7,6 +7,7 @@ import PropertyCard from "@/components/v2/listings/PropertyCard";
 import type { Listing } from "@/components/v2/listings/PropertyCard";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const HOMES_COM_URL = "https://www.homes.com/real-estate-agents/kasandra-prieto/s5959r7/";
 
@@ -20,8 +21,8 @@ const V2Listings = () => {
     descriptionEs: "Explore las propiedades destacadas de Kasandra Prieto en Tucson. Agende una visita hoy.",
   });
 
-  const { data: listings, isLoading } = useQuery({
-    queryKey: ["featured-listings-all"],
+  const { data: activeListings, isLoading: loadingActive } = useQuery({
+    queryKey: ["featured-listings-active"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("featured_listings")
@@ -34,6 +35,51 @@ const V2Listings = () => {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  const { data: soldListings, isLoading: loadingSold } = useQuery({
+    queryKey: ["featured-listings-sold"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("featured_listings")
+        .select("*")
+        .eq("status", "sold")
+        .eq("is_featured", true)
+        .order("sold_date", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as Listing[];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const renderGrid = (listings: Listing[] | undefined, isLoading: boolean) => {
+    if (isLoading) {
+      return (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-96 rounded-2xl bg-muted animate-pulse" />
+          ))}
+        </div>
+      );
+    }
+    if (!listings?.length) {
+      return (
+        <div className="text-center py-20">
+          <p className="text-cc-charcoal/60 text-lg">
+            {t("No listings available at this time.", "No hay propiedades disponibles en este momento.")}
+          </p>
+        </div>
+      );
+    }
+    return (
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {listings.map((listing) => (
+          <PropertyCard key={listing.id} listing={listing} />
+        ))}
+      </div>
+    );
+  };
+
+  const soldCount = soldListings?.length ?? 0;
 
   return (
     <V2Layout>
@@ -55,28 +101,27 @@ const V2Listings = () => {
         </div>
       </section>
 
-      {/* Grid */}
+      {/* Tabbed Grid */}
       <section className="py-16 bg-cc-sand">
         <div className="container mx-auto px-4 max-w-6xl">
-          {isLoading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-96 rounded-2xl bg-muted animate-pulse" />
-              ))}
-            </div>
-          ) : !listings?.length ? (
-            <div className="text-center py-20">
-              <p className="text-cc-charcoal/60 text-lg">
-                {t("No listings available at this time.", "No hay propiedades disponibles en este momento.")}
-              </p>
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {listings.map((listing) => (
-                <PropertyCard key={listing.id} listing={listing} />
-              ))}
-            </div>
-          )}
+          <Tabs defaultValue="active" className="w-full">
+            <TabsList className="mx-auto mb-8 bg-white/80 border border-cc-sand-dark/20">
+              <TabsTrigger value="active" className="data-[state=active]:bg-cc-navy data-[state=active]:text-white px-6">
+                {t("Active Listings", "Propiedades Activas")}
+              </TabsTrigger>
+              <TabsTrigger value="sold" className="data-[state=active]:bg-cc-gold data-[state=active]:text-cc-navy px-6">
+                {t(`Recently Sold${soldCount ? ` (${soldCount})` : ""}`, `Vendidas${soldCount ? ` (${soldCount})` : ""}`)}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="active">
+              {renderGrid(activeListings, loadingActive)}
+            </TabsContent>
+
+            <TabsContent value="sold">
+              {renderGrid(soldListings, loadingSold)}
+            </TabsContent>
+          </Tabs>
         </div>
       </section>
 

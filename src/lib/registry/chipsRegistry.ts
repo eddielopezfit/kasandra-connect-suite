@@ -923,6 +923,24 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     actionSpec: { type: 'navigate', path: '/network', label: { en: "Kasandra's trusted network", es: 'Red de confianza' } },
     chipKey: CHIP_KEYS.TRUSTED_NETWORK,
   },
+
+  // --- Navigate: Browse Listings ---
+  {
+    id: 'nav-browse-listings-en',
+    label_en: "Browse Kasandra's listings",
+    label_es: 'Ver propiedades de Kasandra',
+    normalized_key: "browse kasandras listings",
+    actionSpec: { type: 'navigate', path: '/listings', label: { en: "Browse Kasandra's listings", es: 'Ver propiedades de Kasandra' } },
+    chipKey: CHIP_KEYS.BROWSE_LISTINGS,
+  },
+  {
+    id: 'nav-browse-listings-es',
+    label_en: "Browse Kasandra's listings",
+    label_es: 'Ver propiedades de Kasandra',
+    normalized_key: 'ver propiedades de kasandra',
+    actionSpec: { type: 'navigate', path: '/listings', label: { en: "Browse Kasandra's listings", es: 'Ver propiedades de Kasandra' } },
+    chipKey: CHIP_KEYS.BROWSE_LISTINGS,
+  },
 ] as const;
 
 // ============= LOOKUP =============

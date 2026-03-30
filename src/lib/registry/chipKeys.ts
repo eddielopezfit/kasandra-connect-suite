@@ -85,6 +85,7 @@ export const CHIP_KEYS = {
   HOME_VALUATION: 'home_valuation',
   TUCSON_LIVING: 'tucson_living',
   TRUSTED_NETWORK: 'trusted_network',
+  BROWSE_LISTINGS: 'browse_listings',
 } as const;
 
 export type ChipKey = typeof CHIP_KEYS[keyof typeof CHIP_KEYS];
@@ -166,4 +167,5 @@ export const CHIP_KEY_TO_DESTINATION: Record<ChipKey, string> = {
   [CHIP_KEYS.HOME_VALUATION]: '/home-valuation',
   [CHIP_KEYS.TUCSON_LIVING]: '/tucson-living',
   [CHIP_KEYS.TRUSTED_NETWORK]: '/network',
+  [CHIP_KEYS.BROWSE_LISTINGS]: '/listings',
 };

@@ -666,6 +666,62 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       } catch (_e) { /* non-blocking — ZIP intelligence is additive, not critical */ }
     }
 
+    // ============= ACTIVE LISTINGS INTELLIGENCE =============
+    // Injects Kasandra's active listings into Selena's prompt for buyer-aware recommendations.
+    let listingsHint = "";
+    if (rlUrl && rlKey) {
+      try {
+        const listingsCacheKey = 'active_listings';
+        const cachedListings = getCached<Record<string, unknown>[]>(listingsCacheKey);
+        const listings = cachedListings ?? await (async () => {
+          const lClient = createClient(rlUrl, rlKey);
+          const { data } = await lClient
+            .from("featured_listings")
+            .select("address, city, zip_code, price, beds, baths, sqft, status")
+            .eq("status", "active")
+            .eq("is_featured", true)
+            .order("display_order", { ascending: true })
+            .limit(10);
+          if (data && data.length > 0) setCache(listingsCacheKey, data, 3600000); // 1hr TTL
+          return data;
+        })();
+        if (cachedListings) console.log('[Selena] Listings cache HIT');
+
+        // Count sold for social proof
+        const soldCacheKey = 'sold_count';
+        const cachedSoldCount = getCached<number>(soldCacheKey);
+        const soldCount = cachedSoldCount ?? await (async () => {
+          const sClient = createClient(rlUrl, rlKey);
+          const { count } = await sClient
+            .from("featured_listings")
+            .select("id", { count: 'exact', head: true })
+            .eq("status", "sold")
+            .eq("is_featured", true);
+          const c = count ?? 0;
+          setCache(soldCacheKey, c, 3600000);
+          return c;
+        })();
+
+        if (listings && listings.length > 0) {
+          const listingLines = listings.map((l: Record<string, unknown>) => {
+            const parts = [`${l.address}, ${l.city} ${l.zip_code}`, `$${Number(l.price).toLocaleString()}`];
+            if (l.beds) parts.push(`${l.beds}bd`);
+            if (l.baths) parts.push(`${l.baths}ba`);
+            if (l.sqft) parts.push(`${Number(l.sqft).toLocaleString()}sqft`);
+            return `- ${parts.join(' · ')}`;
+          }).join('\n');
+
+          const soldLine = soldCount > 0
+            ? (language === 'es' ? `\nKasandra ha cerrado ${soldCount} propiedades recientemente.` : `\nKasandra has closed ${soldCount} properties recently.`)
+            : '';
+
+          listingsHint = language === 'es'
+            ? `\n\n[PROPIEDADES ACTIVAS DE KASANDRA]\n${listingLines}${soldLine}\nPuedes referenciar estas propiedades por dirección, precio y características cuando un comprador mencione presupuesto o zona. NUNCA digas "buen precio", "gran valor" ni aconsejes sobre precios (KB-0). Cuando el usuario muestre interés, sugiere "Agendar una Visita" vía reserva.`
+            : `\n\n[KASANDRA'S ACTIVE LISTINGS]\n${listingLines}${soldLine}\nYou may reference these properties by address, price, and features when a buyer mentions budget or area. NEVER say "good deal", "great value", or advise on pricing (KB-0). When interest is expressed, suggest "Schedule a Showing" via booking.`;
+        }
+      } catch (_e) { /* non-blocking — listing intelligence is additive */ }
+    }
+
     // Tell the AI what phase we're in so response text matches chip direction
     const rawGoverned = getGovernedChips(effectiveIntent, timeline, engagement, language, { guidesReadCount: context.guides_read ?? 0 });
     
@@ -1270,7 +1326,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     }
 
     const messagesPayload = [
-      { role: "system", content: systemPrompt + vipHint + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + entryGreetingHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
+      { role: "system", content: systemPrompt + vipHint + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + listingsHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + entryGreetingHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
       ...history.slice(-10), // Extended to -10 to support persistent memory context
       { role: "user", content: message }
     ];

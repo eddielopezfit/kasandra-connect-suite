@@ -246,7 +246,7 @@ export function getPhaseAwareChips(
     );
   }
   if (floor >= 2 && intent === 'buy') {
-    const keys = filterAndReplace([CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_GUIDES]);
+    const keys = filterAndReplace([CHIP_KEYS.BUYER_READINESS, CHIP_KEYS.BROWSE_LISTINGS]);
     const labels = prependGuideChip(keys, 'buy');
     return mapChipsToActionSpecs(
       labels.length ? labels : [resolveLabel(CHIP_KEYS.BROWSE_GUIDES)],
@@ -255,7 +255,7 @@ export function getPhaseAwareChips(
   }
   if (floor >= 2 && intent) {
     // Explore / generic intent at Phase 2+ → ActionSpec-backed chips (no dead ends)
-    const keys = filterAndReplace([CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.EXPLORE_NEIGHBORHOODS]);
+    const keys = filterAndReplace([CHIP_KEYS.BROWSE_GUIDES, CHIP_KEYS.BROWSE_LISTINGS]);
     const labels = keys.length
       ? keys.map(resolveLabel)
       : [resolveLabel(CHIP_KEYS.BROWSE_GUIDES)];
