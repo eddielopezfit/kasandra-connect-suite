@@ -214,16 +214,45 @@ serve(async (req) => {
 
     const language = (() => {
       const clientLang = context.language || 'en';
-      // Priority 1: Detect CURRENT message language (overrides stale session lang)
-      const spanishSignals = /\b(quiero|necesito|busco|estoy|comprar|vender|casa|ayuda|hola|tengo|puedo|dónde|cómo|cuánto|gracias|por favor|quería|quisiera|podría|favor)\b/i;
-      const englishSignals = /\b(want|need|looking|help|sell|buy|home|house|how much|can I|should I|what is|tell me|show me|get|find|market|offer|value|worth|move|moving|divorce|inherited)\b/i;
+      // LANGUAGE LOCK: message-level language ALWAYS overrides UI LanguageContext when they conflict.
+      // Three-tier detection: (1) explicit Spanish signals, (2) explicit English signals,
+      // (3) structural fallback (Spanish diacritics / Spanish-only function words),
+      // (4) ASCII-only English fallback, (5) UI toggle as last resort.
+      const trimmed = (message || '').trim();
+
+      // Skip detection on ultra-short messages (chips, "yes", "ok") — defer to UI toggle.
+      if (trimmed.length < 4) return clientLang;
+
+      // Priority 1: explicit lexical signals (existing logic)
+      const spanishSignals = /\b(quiero|necesito|busco|estoy|comprar|vender|casa|ayuda|hola|tengo|puedo|dónde|cómo|cuánto|gracias|por favor|quería|quisiera|podría|favor|qué|cuál|cuáles|por qué|para qué|con qué|sobre|hacer|saber|decir|premios|reconocimientos|trabaja|corredora|inmobiliaria)\b/i;
+      const englishSignals = /\b(want|need|looking|help|sell|buy|home|house|how much|can I|should I|what is|tell me|show me|get|find|market|offer|value|worth|move|moving|divorce|inherited|what|which|who|when|where|why|how|does|did|has|have|had|won|with|about|brokerage|awards|agent|kasandra)\b/i;
       const hasSpanish = spanishSignals.test(message);
       const hasEnglish = englishSignals.test(message);
-      // If message has English signals but no Spanish, it's English — even if session was Spanish
+
       if (hasEnglish && !hasSpanish) return 'en';
-      // If message has Spanish signals, it's Spanish
-      if (hasSpanish) return 'es';
-      // Fallback to client toggle
+      if (hasSpanish && !hasEnglish) return 'es';
+      // Both matched (Spanglish) — defer to structural cues below.
+
+      // Priority 2: structural Spanish cues — diacritics or inverted punctuation
+      // (English never uses ¿, ¡, á, é, í, ó, ú, ñ in normal text).
+      const spanishStructural = /[¿¡áéíóúñÁÉÍÓÚÑ]/;
+      if (spanishStructural.test(message)) return 'es';
+
+      // Priority 3: Spanish-only stopwords (high-precision, low-recall fallback for short
+      // questions that miss the lexical lists above — e.g. "¿es licenciada?", "y tú?").
+      const spanishStopwords = /\b(el|la|los|las|un|una|unos|unas|de|del|en|con|por|para|que|es|son|está|están|esto|eso|aquí|allí|muy|más|menos|también|pero|sin|sobre|entre|desde|hasta)\b/i;
+      const englishStopwords = /\b(the|a|an|of|in|on|at|to|for|with|is|are|was|were|this|that|these|those|here|there|very|more|less|also|but|without|about|between|from|until|and|or|if)\b/i;
+      const spanishStopHit = spanishStopwords.test(message);
+      const englishStopHit = englishStopwords.test(message);
+      if (spanishStopHit && !englishStopHit) return 'es';
+      if (englishStopHit && !spanishStopHit) return 'en';
+
+      // Priority 4: ASCII-only message with no Spanish signals → treat as English.
+      // Catches questions like "what awards has Kasandra won?" that miss every keyword list.
+      const isAsciiOnly = /^[\x00-\x7F]*$/.test(message);
+      if (isAsciiOnly && !hasSpanish && !spanishStopHit) return 'en';
+
+      // Priority 5: fallback to UI toggle.
       return clientLang;
     })();
     let leadId = context.lead_id;
