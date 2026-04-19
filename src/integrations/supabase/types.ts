@@ -798,9 +798,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_market_pulse_freshness: {
+        Args: never
+        Returns: {
+          current_month_label: string
+          days_since_last_insert: number
+          has_current_month_data: boolean
+          latest_inserted_at: string
+          latest_month: string
+        }[]
+      }
       cleanup_old_events: { Args: never; Returns: undefined }
       cleanup_rate_limits: { Args: never; Returns: undefined }
       invoke_refresh_market_pulse: { Args: never; Returns: undefined }
+      monitor_market_pulse_freshness: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
