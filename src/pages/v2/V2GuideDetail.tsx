@@ -13,6 +13,7 @@ import { getGovernedMediaSlots, validateMediaSlots, type MediaSlot } from "@/lib
 import { useGuideScrollTracking } from "@/hooks/useGuideScrollTracking";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { markGuideOpened, setLastGuideId, getGuidesRead } from '@/lib/guides/personalization';
+import { BROKERAGE_LEGAL } from "@/lib/brand";
 import { getGuideById, type GuideCategory } from "@/lib/guides/guideRegistry";
 import { getHowToSchema } from "@/lib/guides/howToSchemas";
 import { RelatedGuides } from "@/components/v2/guides/RelatedGuides";
@@ -415,7 +416,7 @@ function GuideDetailContent() {
           "@type": "Person",
           name: guide.author,
           jobTitle: "REALTOR®",
-          worksFor: { "@type": "Organization", name: "Corner Connect brokered by Realty Executives Arizona Territory" },
+          worksFor: { "@type": "Organization", name: BROKERAGE_LEGAL },
           url: "https://kasandraprietorealtor.com",
         },
         publisher: {

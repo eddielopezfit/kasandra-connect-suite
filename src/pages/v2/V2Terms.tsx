@@ -1,6 +1,7 @@
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import { AGENT_NAME, BROKERAGE_LEGAL, AGENT_LICENSE_NUMBER } from "@/lib/brand";
 
 const V2TermsContent = () => {
   const { t } = useLanguage();
@@ -30,7 +31,7 @@ const V2TermsContent = () => {
           <div className="bg-white rounded-2xl p-8 shadow-soft border border-cc-sand-dark/20 space-y-8 text-cc-charcoal">
             <div>
               <h2 className="font-serif text-2xl font-bold text-cc-navy mb-3">Use of This Website</h2>
-              <p className="leading-relaxed">This website is operated by Kasandra Prieto, a licensed REALTOR® with Corner Connect, brokered by Realty Executives Arizona Territory (License #SA682372000). By using this website, you agree to these terms. The content provided is for informational purposes only and does not constitute legal, financial, or real estate advice.</p>
+              <p className="leading-relaxed">This website is operated by {AGENT_NAME}, a licensed REALTOR® with {BROKERAGE_LEGAL} (License #{AGENT_LICENSE_NUMBER}). By using this website, you agree to these terms. The content provided is for informational purposes only and does not constitute legal, financial, or real estate advice.</p>
             </div>
             <div>
               <h2 className="font-serif text-2xl font-bold text-cc-navy mb-3">Selena AI Disclaimer</h2>

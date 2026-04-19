@@ -2,6 +2,7 @@ import { Instagram, Linkedin, Phone, Mail, Home, Facebook } from "lucide-react";
 import { Link } from "react-router-dom";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { TEAM_NAME, BROKERAGE_NAME } from "@/lib/brand";
 
 const V2Footer = () => {
   const { t } = useLanguage();
@@ -19,8 +20,8 @@ const V2Footer = () => {
             </span>
             <p className="text-white/70 mt-1 text-sm">REALTOR®</p>
             <div className="mt-3 space-y-1 text-sm text-white/80">
-              <p>Corner Connect</p>
-              <p>Realty Executives Arizona Territory</p>
+              <p>{TEAM_NAME}</p>
+              <p>{BROKERAGE_NAME}</p>
             </div>
             {/* Equal Housing */}
             <div className="mt-4 flex items-center gap-2">
