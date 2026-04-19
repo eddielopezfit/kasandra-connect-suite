@@ -21,7 +21,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { saveSnapshot } from '@/lib/analytics/sessionSnapshot';
 
-interface VIPContextValue {
+export interface VIPContextValue {
   vip: VisitorIntelligenceProfile;
   isLoading: boolean;
   serverHydrated: boolean;
