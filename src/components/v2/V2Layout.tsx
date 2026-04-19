@@ -139,7 +139,8 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         <Suspense fallback={null}><ReturningUserBanner /></Suspense>
         <EscalationBanner />
         <SessionIntelligenceBanner />
-        <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden bg-cc-navy pt-[36px] md:pt-[40px] pb-20 lg:pb-0">{children}</main>
+        {/* Bottom padding clears: sticky book bar (~70px) + FAB clearance (~80px more) on mobile when sticky shows */}
+        <main className={`flex-1 w-full max-w-full min-w-0 overflow-x-hidden bg-cc-navy pt-[36px] md:pt-[40px] ${showStickyBook ? 'pb-40 lg:pb-0' : 'pb-24 lg:pb-0'}`}>{children}</main>
         
         <V2Footer />
         
