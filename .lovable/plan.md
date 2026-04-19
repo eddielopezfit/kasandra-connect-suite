@@ -1,95 +1,78 @@
 
 
-# Full Hub Audit — UI/UX, Selena AI System Prompt, KB, Code Health
+## Goal
+Adapt the Luna concierge formula to Selena, layered on top of the existing `selena-chat` edge function without breaking the GuardState hierarchy, mode system, or chip governance that already exist.
 
-## Executive Summary
+## What's already in place (don't rebuild)
+- `guardState.ts` (549 lines) — KB-0/Brokerage/Conversational/STATE GUARD/Mode hierarchy. This already covers Pillar 5 (Hard Walls) and parts of Pillar 4 (Neutral Guidance — no competitor steering, no commission quotes, no specific home values).
+- `modeContext.ts` — 4-mode psychological progression (Orientation→Clarity→Confidence→Handoff). This is the structural equivalent of Luna's 8-step arc, just expressed as modes rather than steps.
+- `systemPromptBuilder.ts` — assembles `SYSTEM_PROMPT_EN`/`SYSTEM_PROMPT_ES` (~2,500 lines) containing KB-0, KB-1, KB-4, KB-6, KB-7, KB-7.1, KB-8, KB-12.
+- `bookingLogic.ts` — `hasEarnedBookingAccess()` already enforces Luna's "Lead Capture Timing Gates."
+- `chipGovernance.ts` — chip determinism, banned-phrase filtering scaffold.
+- Bilingual EN/ES is enforced everywhere.
 
-System is **architecturally production-grade** but has **9 concrete code/config issues** to fix before calling it locked. Selena's KB stack (KB-0 through KB-14, with KB-7.1 voice addendum and KB-9 containment overlay) is internally consistent and properly hierarchized. Guard state enforcement is intact. The issues are real but isolated — no architectural rework needed.
+The Luna formula is **80% already implemented architecturally**. The gap is **doctrinal depth and anti-deflection enforcement**, not infrastructure.
 
-## Findings
+## What's actually missing (the real work)
 
-### 🔴 Critical (fix now)
+### 1. Anti-Deflection Doctrine (Pillar 2) — biggest gap
+Selena's current `<40 words, defer to Kasandra` rule is producing the exact failure Luna explicitly forbids: punting real questions instead of leading with substance. Need a new KB layer that mandates **"answer first, hand off second"** — and a banned-phrases list to enforce it.
 
-1. **Google Places API key invalid** — every page load logs `API key not valid. Please pass a valid API key.` from `fetch-google-reviews`. Reviews silently fall back, but the key in `GOOGLE_PLACES_API_KEY` is rejected by Google. Needs key rotation OR enable "Places API (New)" in Google Cloud Console for the existing key.
+### 2. Identity Doctrine (Pillar 1) — needs sharpening
+Current persona is "calm digital concierge, defer to Kasandra." Luna's version is a manifesto ("Not a bot. Not a receptionist."). Selena needs the same — written as absolutes.
 
-2. **`useVIP.ts` violates Rules of Hooks** — `useMemo` is called inside a try/catch fallback after `useVIPContext()` may have thrown. React will misbehave on the rare fallback path. Fix: call hooks unconditionally, then branch on whether context exists.
+### 3. Consultative 8-Step Arc (Pillar 3) — partially present
+Modes cover the macro structure, but the **One Question Rule** and **Reflect-in-upgraded-language** patterns aren't explicit. These are the magic moments.
 
-3. **Dead code path in ConciergeTabPanels.tsx** (line 459) — `{false && leadId && (...)}` is a permanently-disabled "View Latest Report" button. Either wire it to real report state (`reportManager.ts` already exists) or remove it.
+### 4. KB10/KB11 depth files — don't exist yet
+Current prompt has KB-0 through KB-12 but no per-transaction-type 10-section depth document. This is what makes Selena sound like she's done 500 closings.
 
-### 🟡 Code Health (lint errors — 45 total, all real)
+### 5. Tone Test Suite — doesn't exist
+No regression harness for prompt changes.
 
-4. **Sparse arrays in 5 guide files** — `capital-gains-home-sale-arizona.ts`, `distressed-preforeclosure.ts`, `pricing-strategy.ts`, `sell-now-or-wait.ts`, `sell-or-rent-tucson.ts`, `understanding-home-valuation.ts` have `[ , ]` patterns (likely accidental trailing commas creating undefined slots). Could break runtime if iterated.
+## Proposed implementation (3 phases, surgical)
 
-5. **`useSessionEnrichment.ts`** — 6 `any` types on session enrichment functions. Should be typed against `SessionContext`.
+### Phase 1 — Doctrine layer (highest leverage, lowest risk)
+Add 3 new KB sections to `systemPromptBuilder.ts`, injected **between Conversational Doctrine and STATE GUARD** (preserving the hierarchy):
 
-6. **`metaPixel.ts:104`** — uses `.apply()` instead of spread; minor but flagged.
+- **KB-13 — Identity Manifesto** (~40 lines EN + 40 ES). Absolutes-only. "Not a bot. Not a lead form. Not a Zillow search box."
+- **KB-14 — Anti-Deflection Doctrine** (~80 lines EN + 80 ES). Banned phrases + required pattern (substance first, handoff second). Includes 6–8 BAD/GOOD examples for Tucson real estate.
+- **KB-15 — Consultative Arc & One Question Rule** (~60 lines EN + 60 ES). Explicit 8-step arc, one open question per turn, reflect-in-upgraded-language pattern.
 
-7. **Empty interfaces** in `command.tsx` (line 24) and `textarea.tsx` (line 5) — shadcn defaults; safe to convert to type aliases.
+These are **additive prompt layers** — no changes to `guardState.ts`, no changes to mode logic, no changes to the response shape. The existing 549-line guard system stays intact and continues to win on conflicts (KB-0 always wins).
 
-### 🟢 Selena KB / System Prompt — Verified Healthy
+**Brevity rule reconciliation**: The current `<40 words, max 2 sentences` rule conflicts with Luna's "answer with substance" pattern. Resolution: relax to **<70 words, max 3 sentences when answering a substantive question; keep <40 words for greetings/transitions**. Codified in KB-14.
 
-KB inventory in `systemPromptBuilder.ts` (1,574 lines, EN+ES):
-- **KB-0** (Constitution, non-overrideable) ✅
-- **KB-4** (Capabilities & Limits) ✅
-- **KB-6** (Real Estate Education, neutral) ✅
-- **KB-7 / KB-7.1** (Voice — 7.1 supersedes 7 for tone) ✅
-- **KB-8** (Corner Connect Platform, factual-only) ✅
-- **KB-9 / 9.1–9.6** (Silence & Restraint / Containment) ✅
-- **KB-10** (Concierge Routing Doctrine) ✅
-- **KB-11** (Persona Authority) ✅
-- **KB-12** (Session Trail Awareness) ✅
-- **KB-13** (Fair Housing & AZ Law) ✅
-- **KB-14** (Platform Hub Awareness) ✅
+### Phase 2 — Banned phrase enforcement
+Add a server-side post-processor in `selena-chat/index.ts` (alongside the existing 3rd-sentence truncator) that scans the model's reply for the banned phrases list and, on match, regenerates with a stronger anti-deflection instruction. Banned list lives in a new `selena-chat/bannedPhrases.ts` module so it's editable without touching the prompt.
 
-Hierarchy is consistent: every KB declares "Subordinate to KB-0." `guardState.ts` enforces KB-0 + KB-9 at runtime. Mode/journey separation is clean. Bilingual parity confirmed (EN block lines 14–777, ES block lines 778+).
+### Phase 3 — KB depth files (deferred — needs Kasandra interview content)
+Create stub files for the 10-section templates so the structure is in place, but flag that real content requires the 6–8hr Kasandra interview from the Luna 30-day plan. Stubs:
+- `selena-chat/kb/transactions.ts` — 10 transaction categories × 10 sections
+- `selena-chat/kb/team.ts` — Kasandra + referral partners
+- `selena-chat/kb/neighborhoods.ts` — already partially covered by `neighborhoodRegistry.ts`; map existing data into the 10-section template
 
-**No KB drift, no contradictions, no missing boundary statements.**
+These get loaded conditionally based on detected intent (already wired via `intentDetection.ts`) so we don't blow the token budget.
 
-### 🟢 Backend / Security — Verified Healthy
+### What I will NOT touch
+- `guardState.ts` — KB-0 hierarchy stays exactly as-is. New KBs are added BELOW Conversational Doctrine, ABOVE STATE GUARD injection point, per existing architecture rules.
+- `modeContext.ts` — modes stay 4 states, one-directional.
+- `journeyState.ts` — TOFU/MOFU/BOFU classifier untouched.
+- Chip determinism, ActionSpec, language lock, lead capture gates — all preserved.
+- Frontend `SelenaChatContext.tsx` — no changes needed; new doctrine is server-side only.
 
-- Supabase linter: 2 advisory warnings only (1 generic policy template, 1 leaked-password protection — both non-blocking advisories, not actual vulnerabilities on our tables)
-- All sensitive tables (`lead_profiles`, `lead_reports`, `lead_handoffs`, `seller_leads`, `conversation_memory`) have `Deny public read/write` RLS — correct
-- `featured_listings` correctly public-readable for `active|pending|sold` only
-- Edge function admin guards in place on cost-bearing functions
-- TypeScript compile: clean (0 errors)
+## Files to create/edit (Phase 1 + 2 only)
 
-### 🟢 Console / Runtime — Clean
+| File | Action | Approx. size |
+|------|--------|--------------|
+| `supabase/functions/selena-chat/systemPromptBuilder.ts` | Edit — add KB-13/14/15 sections to both EN and ES prompts | +400 lines |
+| `supabase/functions/selena-chat/bannedPhrases.ts` | Create | ~80 lines |
+| `supabase/functions/selena-chat/index.ts` | Edit — wire banned-phrase post-processor | ~30 line patch |
+| `.lovable/memory/selena-luna-doctrine.md` | Create — record the doctrine + brevity reconciliation | ~40 lines |
 
-No browser console errors. No runtime errors. Network requests all 200 except the Google Places key issue (which is server-side and handled gracefully).
+## Open questions before I proceed
 
----
-
-## Plan
-
-### Phase A — Critical Fixes (must ship)
-
-1. **Fix `useVIP.ts` Rules of Hooks violation** — restructure to call `useMemo` unconditionally, branch on context availability via a ref or separate hook.
-2. **Remove dead `{false && leadId && ...}` block** in `ConciergeTabPanels.tsx` (or wire to report manager — recommend remove for now since report tracking state isn't wired).
-3. **Document Google Places key issue** — add a console warning + user-facing note. The key needs rotation OR Places API (New) enabled in Google Cloud. I'll add a `.lovable/memory/` note since this requires user action in Google Cloud Console.
-
-### Phase B — Code Health (cleanup pass)
-
-4. **Fix sparse arrays in 6 guide files** — remove stray commas in EN/ES content arrays.
-5. **Type `useSessionEnrichment.ts`** — replace 6 `any` with proper `SessionContext` partials.
-6. **Fix `metaPixel.ts:104`** — replace `.apply()` with spread operator.
-7. **Convert empty interfaces** in `command.tsx` + `textarea.tsx` to type aliases.
-
-### Phase C — Verification
-
-8. Re-run `npx eslint src --quiet` → expect 0 errors
-9. Re-run `npx tsc -p tsconfig.app.json --noEmit` → expect 0 errors
-10. Confirm Selena chat still loads and chip governance still routes deterministically
-
-### NOT Doing (intentional, per architecture rules)
-
-- Not touching `guardState.ts` KB hierarchy — verified intact
-- Not touching `systemPromptBuilder.ts` KB blocks — verified consistent
-- Not refactoring `selena-chat/index.ts` (1,672 lines) — already extracted to 6 modules
-- Not changing `notify-handoff` fire-and-forget pattern — intentional
-- Not removing `check-availability` stub TODO — tracked work item
-- Not changing the 2 Supabase advisory warnings — they're informational, not vulnerabilities
-
-### Risk
-
-Low. Phase A is surgical (3 files). Phase B is mechanical (data + minor utility). No edge function logic, no KB content, no chip registry, no RLS changes.
+1. **Brevity rule**: OK to relax Selena from `<40 words / 2 sentences` to `<70 words / 3 sentences` when answering substantive questions? (Required for anti-deflection to work; greetings/transitions stay tight.)
+2. **Phase scope**: Ship Phase 1 + Phase 2 in one pass, OR Phase 1 only first so you can review the doctrine before the post-processor goes live?
+3. **Phase 3 / KB depth**: Defer until you can record the Kasandra interviews, or stub the files now with placeholder content sourced from existing guides + neighborhood registry?
 
