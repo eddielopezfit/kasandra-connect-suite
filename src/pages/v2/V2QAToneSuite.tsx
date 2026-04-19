@@ -103,10 +103,6 @@ const V2QAToneSuite = () => {
   const [progress, setProgress] = useState(0);
   const [filter, setFilter] = useState<"all" | "fail" | "pass">("all");
 
-  if (!isQaAccessGranted()) {
-    return <Navigate to="/" replace />;
-  }
-
   const runSuite = useCallback(async () => {
     setStatus("running");
     setResults([]);
@@ -155,6 +151,11 @@ const V2QAToneSuite = () => {
     if (filter === "fail") return results.filter((r) => r.error || (r.evaluation && !r.evaluation.passed));
     return results.filter((r) => r.evaluation?.passed);
   }, [results, filter]);
+
+  // Prod gate — runs after all hooks
+  if (!isQaAccessGranted()) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <V2Layout>
