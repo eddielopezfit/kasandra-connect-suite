@@ -92,7 +92,7 @@ export function realEstateAgentSchema(): Record<string, unknown> {
     },
     worksFor: {
       "@type": "RealEstateAgent",
-      name: BROKERAGE_NAME,
+      name: BROKERAGE_DISPLAY_NAME,
       alternateName: BROKERAGE_DBA,
       address: sharedAddress,
       url: WEBSITE,
@@ -129,7 +129,7 @@ export function localBusinessSchema(): Record<string, unknown> {
   return {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "RealEstateAgent"],
-    name: BROKERAGE_NAME,
+    name: BROKERAGE_DISPLAY_NAME,
     alternateName: BROKERAGE_DBA,
     description:
       "Corner Connect Real Estate, operating under Realty Executives Arizona Territory, serves buyers and sellers throughout Tucson and Pima County with bilingual real estate expertise.",
@@ -224,7 +224,7 @@ export function howToSchema(
     "@context": "https://schema.org",
     "@type": "HowTo",
     name,
-    description: `Step-by-step guide: ${name}. Provided by ${AGENT_NAME}, bilingual REALTOR® at ${BROKERAGE_NAME} in Tucson, AZ.`,
+    description: `Step-by-step guide: ${name}. Provided by ${AGENT_NAME}, bilingual REALTOR® at ${BROKERAGE_DISPLAY_NAME} in Tucson, AZ.`,
     image: `${WEBSITE}/og-image.jpg`,
     author: {
       "@type": "Person",
@@ -236,7 +236,7 @@ export function howToSchema(
     },
     publisher: {
       "@type": "Organization",
-      name: BROKERAGE_NAME,
+      name: BROKERAGE_DISPLAY_NAME,
       url: WEBSITE,
     },
     step: steps.map(({ name: stepName, text }, index) => ({
