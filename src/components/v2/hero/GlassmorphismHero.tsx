@@ -8,7 +8,7 @@ import { isReturningVisitor, getIntent, getGuidesRead } from "@/lib/guides/perso
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { useState, useEffect, useRef, useCallback } from "react";
-import heroImage from "@/assets/hero-bg.jpg";
+import heroImage from "@/assets/hero-bg.webp";
 import type { EntrySource } from "@/contexts/selena/types";
 import type { JourneyIntent } from "@/components/selena/ConciergeTabBar";
 

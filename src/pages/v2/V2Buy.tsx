@@ -19,7 +19,7 @@ const NeighborhoodExplorer = lazy(() =>
 const NeighborhoodQuiz = lazy(() =>
   import("@/components/v2/neighborhood").then(m => ({ default: m.NeighborhoodQuiz }))
 );
-import heroImage from "@/assets/hero-neighborhood-road.png";
+import heroImage from "@/assets/hero-neighborhood-road.webp";
 import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import BuyingTimeline from "@/components/v2/BuyingTimeline";
