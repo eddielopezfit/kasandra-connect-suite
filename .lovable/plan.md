@@ -1,109 +1,95 @@
 
 
-# Full Hub Audit — UI/UX + Code
+# Full Hub Audit — UI/UX, Selena AI System Prompt, KB, Code Health
 
-## Architecture & Code Health
+## Executive Summary
 
-### Strengths
-- Clean route architecture: 30 routes, all lazy-loaded with a proper skeleton fallback
-- Consistent V2Layout wrapper with SelenaChatProvider, scroll management, analytics
-- Proper bilingual governance via LanguageContext + t() pattern throughout
-- Session intelligence system (VIP context, journey progress, session snapshots) is sophisticated and well-integrated
-- Edge functions are properly secured with ADMIN_SECRET where cost-bearing
-- RLS policies are correctly configured (public reads, service role writes)
-- Brand tokens are consistent (cc-navy, cc-gold, cc-ivory, cc-sand)
-- Analytics layer is comprehensive (logEvent, logCTAClick, sessionTrail)
+System is **architecturally production-grade** but has **9 concrete code/config issues** to fix before calling it locked. Selena's KB stack (KB-0 through KB-14, with KB-7.1 voice addendum and KB-9 containment overlay) is internally consistent and properly hierarchized. Guard state enforcement is intact. The issues are real but isolated — no architectural rework needed.
 
-### Issues Found
+## Findings
 
-**1. Missing SEO Route Meta for /listings**
-`seoRouteMeta.ts` has no entry for `/listings`. This means social crawlers get no OG tags for the listings page.
+### 🔴 Critical (fix now)
 
-**2. Missing /listings in sitemap.xml**
-The public sitemap likely doesn't include `/listings` — needs verification and update.
+1. **Google Places API key invalid** — every page load logs `API key not valid. Please pass a valid API key.` from `fetch-google-reviews`. Reviews silently fall back, but the key in `GOOGLE_PLACES_API_KEY` is rejected by Google. Needs key rotation OR enable "Places API (New)" in Google Cloud Console for the existing key.
 
-**3. V2Layout main padding creates gap on desktop**
-`pb-20 lg:pb-0` — the `pb-20` exists to clear the sticky mobile booking bar. But on pages where the bar is suppressed (buy, sell, book, etc.), this creates 80px of unnecessary bottom padding on mobile.
+2. **`useVIP.ts` violates Rules of Hooks** — `useMemo` is called inside a try/catch fallback after `useVIPContext()` may have thrown. React will misbehave on the rare fallback path. Fix: call hooks unconditionally, then branch on whether context exists.
 
-**4. Navigation mobile menu — 15 links is overwhelming**
-The mobile menu lists ALL 15 nav links vertically. On a 390px viewport, this is a very long scroll. The "Explore" dropdown pattern only works on desktop — mobile flattens everything.
+3. **Dead code path in ConciergeTabPanels.tsx** (line 459) — `{false && leadId && (...)}` is a permanently-disabled "View Latest Report" button. Either wire it to real report state (`reportManager.ts` already exists) or remove it.
 
-**5. Contact form missing phone field**
-The contact form on `/contact` captures name, email, and message but no phone number. This is a missed lead capture opportunity — phone is the highest-value field for GHL follow-up. The booking form has it, but the contact form doesn't.
+### 🟡 Code Health (lint errors — 45 total, all real)
 
-**6. Homepage vertical scroll depth is extreme**
-The homepage has 10+ sections: Hero → Journey Fork → VIP → Selena Banner → About Kasandra → TrustBar → Services (3 cards) → Selena Showcase → Calculator Widget → Featured Listings → Neighborhoods → Testimonials → Google Reviews → Corner Connect Advantage → Podcast → Community. On mobile at 390px, this is approximately 15+ screens of scroll. Most visitors won't reach the bottom sections.
+4. **Sparse arrays in 5 guide files** — `capital-gains-home-sale-arizona.ts`, `distressed-preforeclosure.ts`, `pricing-strategy.ts`, `sell-now-or-wait.ts`, `sell-or-rent-tucson.ts`, `understanding-home-valuation.ts` have `[ , ]` patterns (likely accidental trailing commas creating undefined slots). Could break runtime if iterated.
 
-**7. Duplicate CTA patterns**
-Both "Book a Strategy Call" and "Ask Selena" appear in heroes AND bottom CTAs across Buy, Sell, and Home pages. The bottom CTA sections are near-identical across pages — could be a shared component to reduce maintenance.
+5. **`useSessionEnrichment.ts`** — 6 `any` types on session enrichment functions. Should be typed against `SessionContext`.
 
-**8. PropertyCard — sold card CTA loops back to /listings**
-When a user clicks "See Active Listings" on a sold card, they're already on `/listings`. The CTA should scroll to the active tab or switch tabs, not navigate to the same page.
+6. **`metaPixel.ts:104`** — uses `.apply()` instead of spread; minor but flagged.
 
-**9. No error boundary on FeaturedListingsSection**
-If the Supabase query fails, the homepage listings section will throw. The homepage should gracefully degrade (it does return `null` on empty, but not on error).
+7. **Empty interfaces** in `command.tsx` (line 24) and `textarea.tsx` (line 5) — shadcn defaults; safe to convert to type aliases.
 
-**10. GlassmorphismHero has duplicated secondary CTA logic**
-Lines 305-323 — both the `if` and `else` branches render identical JSX. The conditional serves no purpose.
+### 🟢 Selena KB / System Prompt — Verified Healthy
 
-**11. Orphaned hooks confirmed**
-`src/hooks/useConsultationForm.ts` and `src/components/v2/ConsultationFormFields.tsx` are still present per CLAUDE.md, safe to delete.
+KB inventory in `systemPromptBuilder.ts` (1,574 lines, EN+ES):
+- **KB-0** (Constitution, non-overrideable) ✅
+- **KB-4** (Capabilities & Limits) ✅
+- **KB-6** (Real Estate Education, neutral) ✅
+- **KB-7 / KB-7.1** (Voice — 7.1 supersedes 7 for tone) ✅
+- **KB-8** (Corner Connect Platform, factual-only) ✅
+- **KB-9 / 9.1–9.6** (Silence & Restraint / Containment) ✅
+- **KB-10** (Concierge Routing Doctrine) ✅
+- **KB-11** (Persona Authority) ✅
+- **KB-12** (Session Trail Awareness) ✅
+- **KB-13** (Fair Housing & AZ Law) ✅
+- **KB-14** (Platform Hub Awareness) ✅
 
-**12. sync-listings TODO is live**
-`supabase/functions/sync-listings/index.ts` has the IDX Broker TODO — this is expected and correct per plan.
+Hierarchy is consistent: every KB declares "Subordinate to KB-0." `guardState.ts` enforces KB-0 + KB-9 at runtime. Mode/journey separation is clean. Bilingual parity confirmed (EN block lines 14–777, ES block lines 778+).
 
-## UX Findings
+**No KB drift, no contradictions, no missing boundary statements.**
 
-### Strengths
-- Journey-aware UI (returning users see different headlines, breadcrumbs, VIP cards)
-- Click-first chip governance prevents cognitive overload
-- Tool strips show completion state (checkmarks for finished tools)
-- Bilingual parity is thorough — nearly every string has EN/ES
-- Trust signals are well-placed (brokerage strip, equal housing, review counts)
-- Kasandra Proximity pattern on /sell (ready users see booking CTA earlier) is smart
+### 🟢 Backend / Security — Verified Healthy
 
-### Issues Found
+- Supabase linter: 2 advisory warnings only (1 generic policy template, 1 leaked-password protection — both non-blocking advisories, not actual vulnerabilities on our tables)
+- All sensitive tables (`lead_profiles`, `lead_reports`, `lead_handoffs`, `seller_leads`, `conversation_memory`) have `Deny public read/write` RLS — correct
+- `featured_listings` correctly public-readable for `active|pending|sold` only
+- Edge function admin guards in place on cost-bearing functions
+- TypeScript compile: clean (0 errors)
 
-**13. Mobile sticky bar + Selena FAB overlap**
-The sticky mobile booking bar sits at `bottom-0 z-40`. The Selena floating button is also bottom-right. On small screens, these can visually collide. Pages that suppress the sticky bar are fine, but pages like `/neighborhoods`, `/guides`, `/about` show both.
+### 🟢 Console / Runtime — Clean
 
-**14. Navigation — intent badge on desktop shows "Buying" even on irrelevant pages**
-The intent badge (e.g., "Buying") shows in the nav unless you're on a conflicting page (buy/sell cross-intent). But it shows on pages like `/podcast`, `/community`, `/privacy` where it adds no value and takes up nav space.
+No browser console errors. No runtime errors. Network requests all 200 except the Google Places key issue (which is server-side and handled gracefully).
 
-**15. V2Book — dossier loading spinner on first visit**
-First-time visitors who click "Book" see a spinner + "Kasandra is reviewing your profile" message. But there's no profile to review for a first-time visitor. This creates a false expectation. The 600ms delay (`setTimeout(enrichBooking, 600)`) adds latency for no benefit on cold sessions.
+---
 
-**16. Homepage "Check Your Buying Power" section assumes buyer intent**
-The InstantAnswerWidget is buyer-focused, but the homepage serves all intents. Sellers and cash-offer seekers scroll past a buyer tool that's irrelevant to them.
+## Plan
 
-**17. No 404 branding**
-`NotFound.tsx` should be checked — it likely uses default styling rather than the cc-brand tokens and V2Layout wrapper.
+### Phase A — Critical Fixes (must ship)
 
-## Recommended Priority Actions
+1. **Fix `useVIP.ts` Rules of Hooks violation** — restructure to call `useMemo` unconditionally, branch on context availability via a ref or separate hook.
+2. **Remove dead `{false && leadId && ...}` block** in `ConciergeTabPanels.tsx` (or wire to report manager — recommend remove for now since report tracking state isn't wired).
+3. **Document Google Places key issue** — add a console warning + user-facing note. The key needs rotation OR Places API (New) enabled in Google Cloud. I'll add a `.lovable/memory/` note since this requires user action in Google Cloud Console.
 
-### P0 — Fix Now (breaks SEO/UX)
-1. Add `/listings` to `seoRouteMeta.ts`
-2. Fix PropertyCard sold CTA (don't navigate to same page)
-3. Remove duplicate GlassmorphismHero secondary CTA branch
+### Phase B — Code Health (cleanup pass)
 
-### P1 — Fix Soon (polish)
-4. Add phone field to Contact form
-5. Fix V2Book dossier spinner for first-time visitors (show only if session has data)
-6. Fix mobile sticky bar + Selena FAB z-index overlap
+4. **Fix sparse arrays in 6 guide files** — remove stray commas in EN/ES content arrays.
+5. **Type `useSessionEnrichment.ts`** — replace 6 `any` with proper `SessionContext` partials.
+6. **Fix `metaPixel.ts:104`** — replace `.apply()` with spread operator.
+7. **Convert empty interfaces** in `command.tsx` + `textarea.tsx` to type aliases.
 
-### P2 — Improve (quality of life)
-7. Group mobile nav into sections (Primary / Explore) with visual divider
-8. Extract shared bottom CTA section into reusable component
-9. Delete orphaned hooks (useConsultationForm, ConsultationFormFields)
-10. Add error boundary to FeaturedListingsSection
-11. Trim homepage sections or make lower sections lazy-load with intersection observer (they already are lazy, but consider priority)
+### Phase C — Verification
 
-### Not Broken (No Action Needed)
-- Brand tokens: consistent
-- Edge function security: verified
-- RLS policies: correct
-- Analytics: comprehensive
-- Bilingual: thorough
-- Session intelligence: working
-- Guard state hierarchy: intact
+8. Re-run `npx eslint src --quiet` → expect 0 errors
+9. Re-run `npx tsc -p tsconfig.app.json --noEmit` → expect 0 errors
+10. Confirm Selena chat still loads and chip governance still routes deterministically
+
+### NOT Doing (intentional, per architecture rules)
+
+- Not touching `guardState.ts` KB hierarchy — verified intact
+- Not touching `systemPromptBuilder.ts` KB blocks — verified consistent
+- Not refactoring `selena-chat/index.ts` (1,672 lines) — already extracted to 6 modules
+- Not changing `notify-handoff` fire-and-forget pattern — intentional
+- Not removing `check-availability` stub TODO — tracked work item
+- Not changing the 2 Supabase advisory warnings — they're informational, not vulnerabilities
+
+### Risk
+
+Low. Phase A is surgical (3 files). Phase B is mechanical (data + minor utility). No edge function logic, no KB content, no chip registry, no RLS changes.
 
