@@ -86,7 +86,8 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { message: rawMessage, context, history: rawHistory = [] }: ChatRequest = body;
+    const { message: rawMessage, context: rawContext, history: rawHistory = [] }: ChatRequest = body;
+    const context = (rawContext ?? {}) as NonNullable<ChatRequest['context']>;
 
     // ── Input guards: length-cap before anything touches the AI gateway ──────
     const MAX_MESSAGE_CHARS = 2000;
