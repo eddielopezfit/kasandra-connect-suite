@@ -18,12 +18,10 @@ import {
 } from '@/components/ui/tooltip';
 
 export function SelenaFloatingButton() {
-  const { isOpen, toggleChat, openChat, messages } = useSelenaChat();
+  const { isOpen, toggleChat, openChat } = useSelenaChat();
   const location = useLocation();
   const { language } = useLanguage();
-  
-  const hasMessages = messages.length > 0;
-  
+
   const handleClick = () => {
     if (isOpen) {
       toggleChat();
@@ -72,9 +70,14 @@ export function SelenaFloatingButton() {
       ) : (
         <>
           <MessageCircle className="w-6 h-6" />
-          {!hasMessages && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-pulse" />
-          )}
+          {/* Live presence indicator — Selena is a 24/7 system, signal it visually */}
+          <span
+            className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5"
+            aria-label="Selena is available now"
+          >
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+            <span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-emerald-500 ring-2 ring-cc-gold" />
+          </span>
         </>
       )}
     </button>
@@ -90,7 +93,13 @@ export function SelenaFloatingButton() {
         </TooltipTrigger>
         <TooltipContent side="left" className="bg-cc-navy text-white border-cc-navy">
           <span className="block text-sm">{language === 'es' ? 'Hablar con Selena' : 'Chat with Selena'}</span>
-          <span className="block text-[10px] text-white/50">{language === 'es' ? 'Disponible 24/7' : 'Available 24/7'}</span>
+          <span className="flex items-center gap-1.5 text-[10px] text-white/70 mt-0.5">
+            <span className="relative inline-flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            </span>
+            {language === 'es' ? 'En línea ahora' : 'Online now'}
+          </span>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

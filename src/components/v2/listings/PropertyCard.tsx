@@ -53,18 +53,32 @@ const PropertyCard = ({ listing }: { listing: Listing }) => {
 
   return (
     <div className={`group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-cc-sand-dark/20 ${isSold ? "opacity-90" : ""}`}>
-      {/* Photo / Placeholder */}
+      {/* Photo / Branded Placeholder — never look "broken" if photo is missing */}
       <div className="relative aspect-[4/3] overflow-hidden">
         {hasPhoto ? (
           <img
             src={listing.photo_urls[0]}
             alt={listing.address}
+            width={640}
+            height={480}
             className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${isSold ? "grayscale-[30%]" : ""}`}
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-cc-navy flex items-center justify-center">
-            <Home className="w-16 h-16 text-cc-gold/60" />
+          <div className="relative w-full h-full bg-gradient-to-br from-cc-navy via-cc-navy-light to-cc-navy-dark flex flex-col items-center justify-center text-center px-4">
+            {/* Subtle desert silhouette texture */}
+            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-cc-gold/15 to-transparent" />
+            <div className="relative z-10 flex flex-col items-center gap-2">
+              <div className="w-14 h-14 rounded-full bg-cc-gold/15 flex items-center justify-center">
+                <Home className="w-7 h-7 text-cc-gold" />
+              </div>
+              <p className="text-[11px] uppercase tracking-widest text-cc-gold/80 font-semibold">
+                {t("Photos coming soon", "Fotos próximamente")}
+              </p>
+              <p className="text-sm text-white/85 font-medium leading-tight max-w-[200px]">
+                {listing.city}, {listing.state}
+              </p>
+            </div>
           </div>
         )}
         {/* Status badge */}

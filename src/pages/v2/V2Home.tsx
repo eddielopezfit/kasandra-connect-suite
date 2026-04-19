@@ -6,7 +6,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TrustBar from "@/components/v2/TrustBar";
 import { lazy, Suspense, useState } from "react";
-const TestimonialColumns = lazy(() => import("@/components/v2/TestimonialColumns"));
 import KasandraPortrait from "@/components/v2/KasandraPortrait";
 const LazyHomepageNeighborhoodCards = lazy(() => import("@/components/v2/neighborhood/HomepageNeighborhoodCards"));
 const LazyInstantAnswerWidget = lazy(() => import("@/components/v2/calculator/InstantAnswerWidget"));
@@ -164,13 +163,17 @@ const V2HomeContent = () => {
         </div>
       </Suspense>
 
-      {/* Selena Prompt Banner */}
+      {/* Selena Prompt Banner — with live presence indicator */}
       <div className="bg-cc-navy py-3 px-4">
         <div className="container mx-auto max-w-3xl flex items-center justify-between gap-4 flex-wrap">
-          <p className="text-white/80 text-sm md:text-base">
+          <p className="text-white/80 text-sm md:text-base flex items-center gap-2">
+            <span className="relative inline-flex h-2 w-2 shrink-0" aria-hidden="true">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+            </span>
             {t(
-              "Have a quick question? Selena is available right now.",
-              "¿Tienes una pregunta rápida? Selena está disponible ahora."
+              "Selena is online now — ask anything.",
+              "Selena está en línea ahora — pregunta lo que sea."
             )}
           </p>
           <button
@@ -327,12 +330,11 @@ const V2HomeContent = () => {
         <LazyHomepageNeighborhoodCards />
       </Suspense>
 
-      {/* Social Proof — Testimonials + Google Reviews */}
+      {/* Social Proof — Live Google Reviews only (consolidated per audit:
+          TestimonialColumns previously rendered here was redundant with the
+          live multi-platform reviews carousel below. TestimonialColumns is
+          still available for other pages.) */}
       <Suspense fallback={<div className="h-64 bg-cc-ivory animate-pulse" />}>
-        <TestimonialColumns />
-      </Suspense>
-
-      <Suspense fallback={null}>
         <LazyGoogleReviews />
       </Suspense>
 

@@ -94,6 +94,17 @@ const SelenaShowcase = ({ variant = "full" }: SelenaShowcaseProps) => {
           </li>
         </ul>
 
+        {/* Live presence row above CTAs */}
+        <div className="flex items-center justify-center gap-2 mb-4 text-xs text-white/70">
+          <span className="relative inline-flex h-2 w-2" aria-hidden="true">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+          </span>
+          <span className="font-medium">
+            {t("Selena is online now", "Selena está en línea ahora")}
+          </span>
+        </div>
+
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button
             className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6"
@@ -102,7 +113,13 @@ const SelenaShowcase = ({ variant = "full" }: SelenaShowcaseProps) => {
             <MessageCircle className="w-4 h-4 mr-2" />
             {t("Chat with Selena", "Habla con Selena")}
           </Button>
-          <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-full px-6">
+          {/* Visibility parity fix — filled gold-outline button so 'Meet Kasandra'
+              doesn't disappear against navy background (audit fix #6) */}
+          <Button
+            asChild
+            variant="outline"
+            className="border-2 border-cc-gold/70 text-cc-gold hover:bg-cc-gold hover:text-cc-navy hover:border-cc-gold rounded-full px-6 font-semibold transition-all"
+          >
             <Link to="/about">
               {t("Meet Kasandra", "Conoce a Kasandra")}
               <ArrowRight className="w-4 h-4 ml-2" />

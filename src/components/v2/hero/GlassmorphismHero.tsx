@@ -216,17 +216,24 @@ export default function GlassmorphismHero({
   const primaryLabel = primaryLabelOverride
     || t("Book a Strategy Call", "Agenda una Llamada de Estrategia");
 
+  const isQuizPath = !secondaryLabelOverride
+    && returningContext.isReturning
+    && (returningContext.intent === "sell" || returningContext.intent === "cash");
+
   const secondaryLabel = secondaryLabelOverride
-    || (returningContext.isReturning
-      && (returningContext.intent === "sell" || returningContext.intent === "cash")
+    || (isQuizPath
       ? t("Find My Best Path", "Encontrar Mi Mejor Camino")
       : t("Explore Guides", "Explorar Guías"));
 
+  // Hint at destination — kills CTA ambiguity (audit fix)
+  const secondaryHint = secondaryLabelOverride
+    ? null
+    : isQuizPath
+      ? t("2-minute quiz", "Quiz de 2 minutos")
+      : t("Free educational library", "Biblioteca educativa gratuita");
+
   const secondaryLink = secondaryLinkOverride
-    || (returningContext.isReturning
-      && (returningContext.intent === "sell" || returningContext.intent === "cash")
-      ? "/seller-decision"
-      : "/guides");
+    || (isQuizPath ? "/seller-decision" : "/guides");
 
   const primaryLink = `/book?intent=${resolvedIntent}&source=${entrySource || 'hero'}`;
 
@@ -251,12 +258,17 @@ export default function GlassmorphismHero({
         .hero-delay-500 { animation-delay: 0.5s; }
       `}</style>
 
-      {/* Background image + navy overlay */}
+      {/* Background image + layered overlays for WCAG AA text contrast */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${backgroundImage || heroImage})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-cc-navy/[0.97] via-cc-navy/90 to-cc-navy-dark/95" />
+        {/* Base navy wash — ensures floor contrast even on bright background images */}
+        <div className="absolute inset-0 bg-cc-navy/85" />
+        {/* Left-weighted gradient — protects copy column legibility on any device brightness */}
+        <div className="absolute inset-0 bg-gradient-to-r from-cc-navy via-cc-navy/85 to-cc-navy/40" />
+        {/* Vertical fade — strengthens bottom CTA area */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-cc-navy-dark/60" />
       </div>
 
       {/* Content */}
@@ -303,14 +315,21 @@ export default function GlassmorphismHero({
                 {primaryLabel}
               </Link>
 
-              <Link
-                to={secondaryLink}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
-              >
-                {secondaryIcon || <BookOpen className="w-5 h-5" />}
-                {secondaryLabel}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              <div className="flex flex-col items-start gap-1">
+                <Link
+                  to={secondaryLink}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
+                >
+                  {secondaryIcon || <BookOpen className="w-5 h-5" />}
+                  {secondaryLabel}
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                {secondaryHint && (
+                  <span className="px-3 text-[11px] uppercase tracking-wider text-cc-ivory/50 font-medium">
+                    {secondaryHint}
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* V2: Elevated Selena soft-entry — Priority 5 */}
