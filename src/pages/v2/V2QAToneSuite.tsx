@@ -411,13 +411,15 @@ const V2QAToneSuite = () => {
   );
 };
 
+type FilterValue = "all" | "fail" | "pass" | "followups";
+
 const SummaryStat = ({
   label,
   value,
   tone,
 }: {
   label: string;
-  value: number;
+  value: number | string;
   tone?: "success" | "destructive" | "warning";
 }) => {
   const colorClass =
@@ -443,8 +445,8 @@ const FilterButton = ({
   children,
 }: {
   current: string;
-  value: "all" | "fail" | "pass";
-  onClick: (v: "all" | "fail" | "pass") => void;
+  value: FilterValue;
+  onClick: (v: FilterValue) => void;
   children: React.ReactNode;
 }) => (
   <button
