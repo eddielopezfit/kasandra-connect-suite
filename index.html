@@ -38,10 +38,14 @@
     <meta name="geo.position" content="32.2226;-110.9747" />
     <meta name="ICBM" content="32.2226, -110.9747" />
 
-    <!-- Fonts -->
+    <!-- Fonts — preconnect for faster handshake, then stylesheet -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Preload homepage LCP hero (WebP) — Vite hashes the asset, so we use a runtime-safe fetchpriority hint on the img instead of static preload. -->
+    <link rel="preload" as="image" href="/src/assets/hero-bg.webp" type="image/webp" fetchpriority="high">
 
     <!-- SEO: LocalBusiness + RealEstateAgent schema — rendered in <head> for Googlebot (no JS required) -->
     <script type="application/ld+json">
