@@ -140,7 +140,7 @@ export function getPhaseAwareChips(
   let floor = ctx?.chip_phase_floor ?? 0;
   const intent = ctx?.intent;
   const toolsDone = new Set(ctx?.tools_completed ?? []);
-  const lang = (ctx as any)?._lang ?? 'en';
+  const lang = (ctx as (SessionContext & { _lang?: 'en' | 'es' }) | null | undefined)?._lang ?? 'en';
   
   // FIX 3: Get completed guides for chip suppression
   const guidesCompleted = new Set(getGuidesCompleted());

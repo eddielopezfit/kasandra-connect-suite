@@ -388,7 +388,7 @@ const V2MarketIntelligenceContent = () => {
             </p>
             <Button
               onClick={() => openChat({
-                source: 'market_intelligence_result' as any,
+                source: 'market_intelligence_result',
                 intent: 'explore',
                 marketIntelData: {
                   daysOnMarket: dom,

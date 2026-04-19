@@ -28,7 +28,7 @@ export default function FrictionEscalation({
   const isEs = language === 'es';
 
   const handleBookClick = useCallback(() => {
-    logEvent('friction_escalation_clicked' as any, {
+    logEvent('friction_escalation_clicked', {
       friction_score: frictionScore,
       booking_readiness: bookingReadiness,
       action: 'book',
@@ -36,7 +36,7 @@ export default function FrictionEscalation({
   }, [frictionScore, bookingReadiness]);
 
   const handleChatClick = useCallback(() => {
-    logEvent('friction_escalation_clicked' as any, {
+    logEvent('friction_escalation_clicked', {
       friction_score: frictionScore,
       booking_readiness: bookingReadiness,
       action: 'chat',

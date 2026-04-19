@@ -92,7 +92,7 @@ const V2SellerDecision = () => {
     setWizardData(prev => ({ ...prev, ...data }));
     setFieldIfEmpty('intent', 'sell');
     updateSessionContext({
-      situation: data.situation as any,
+      situation: data.situation as SessionContext['situation'],
       timeline: data.timeline === 'soon' ? 'asap' : data.timeline === 'considering' ? '30_days' : 'exploring',
       seller_goal_priority: data.goalPriority,
       seller_decision_step: 1,

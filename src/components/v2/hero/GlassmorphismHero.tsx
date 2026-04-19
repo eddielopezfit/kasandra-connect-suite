@@ -147,11 +147,11 @@ export default function GlassmorphismHero({
       cta_name: CTA_NAMES.SELENA_ROUTE_CALL,
       destination: "selena_chat",
       page_path: pagePath,
-      intent: resolvedIntent as any,
+      intent: resolvedIntent as JourneyIntent,
     });
     openChat({
       source: entrySource || (returningContext.isReturning ? "hero_returning" : "hero"),
-      intent: resolvedIntent as any,
+      intent: resolvedIntent as JourneyIntent,
     });
   };
 
@@ -294,7 +294,7 @@ export default function GlassmorphismHero({
                   cta_name: 'hero_book_call',
                   destination: primaryLink,
                   page_path: pagePath,
-                  intent: resolvedIntent as any,
+                  intent: resolvedIntent as JourneyIntent,
                 })}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-cc-gold text-cc-navy font-semibold text-base shadow-gold hover:bg-cc-gold-dark hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cc-gold/50 focus:ring-offset-2 focus:ring-offset-cc-navy"
               >

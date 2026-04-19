@@ -558,7 +558,7 @@ function GuideDetailContent() {
                   <GuidePathSelector data={section.pathData} />
                 )}
                 {section.variant === 'stats-grid' && section.statsData && (
-                  section.statsData.some((s: any) => s.dynamicKey)
+                  section.statsData.some((s: { dynamicKey?: string }) => s.dynamicKey)
                     ? <DynamicStatsGrid data={section.statsData} />
                     : <GuideStatsGrid data={section.statsData} />
                 )}
