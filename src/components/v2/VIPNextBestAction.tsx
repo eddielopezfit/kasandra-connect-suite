@@ -48,8 +48,18 @@ export default function VIPNextBestAction({
     });
   }, [step, openChat, isEs]);
 
-  // Don't show for brand-new visitors or users who have already booked
-  if (vip.journey.hasBooked || vip.journey.journeyDepth === 'new') return null;
+  // STRICT GATE: only render with real, attributable session evidence.
+  // Hide for: new visitors, already-booked users, and stale/empty sessions
+  // where there's no concrete signal to anchor a recommendation on.
+  const hasRealSignal =
+    continuationSummary.insightsCount > 0 ||
+    vip.journey.toolCount > 0 ||
+    vip.journey.hasReadinessScore ||
+    !!vip.intent.primary;
+
+  if (vip.journey.hasBooked || vip.journey.journeyDepth === 'new' || !hasRealSignal) {
+    return null;
+  }
 
   const isSelenaAction = step.destination.startsWith('selena:');
   const isCapture = step.type === 'capture';
