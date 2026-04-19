@@ -25,7 +25,7 @@ const ENDPOINT_LIMITS: Record<string, RateLimitConfig> = {
   'submit-valuation-request': { maxRequests: 5, windowSeconds: 3600 },  // V2 fix: was using default 20/min
   'upsert-conversation': { maxRequests: 60, windowSeconds: 3600 },
   'get-conversation': { maxRequests: 60, windowSeconds: 3600 },
-  'enrich-booking-context': { maxRequests: 10, windowSeconds: 3600 },
+  'enrich-booking-context': { maxRequests: 60, windowSeconds: 60 },
   'receive-elevenlabs-webhook': { maxRequests: 20, windowSeconds: 60 },
   'get-session-snapshot': { maxRequests: 60, windowSeconds: 3600 },
   'create-handoff': { maxRequests: 5, windowSeconds: 3600 },
