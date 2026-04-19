@@ -93,13 +93,15 @@ export function SelenaChatDrawer() {
   const { keyboardInset, isKeyboardOpen } = useKeyboardInset();
   
   // Compute journey context for tab bar
+  // Re-compute when messages change (user may have progressed through journey)
   const journeyContext = useMemo(() => {
     const ctx = getSessionContext();
     return {
       intent: ctx?.intent as JourneyIntent | undefined,
       step: computeJourneyStep(ctx),
     };
-  }, [messages.length]); // Re-compute when messages change (user may have progressed)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages.length]);
 
   // Get suggested replies from the last assistant message
   const lastMessage = messages[messages.length - 1];
