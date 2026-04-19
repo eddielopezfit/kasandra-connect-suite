@@ -35,7 +35,7 @@ import {
   type EvaluationResult,
   type Violation,
 } from "@/lib/qa/toneEvaluator";
-import { CheckCircle2, AlertTriangle, XCircle, Loader2, MessageCircle } from "lucide-react";
+import { CheckCircle2, AlertTriangle, XCircle, Loader2 } from "lucide-react";
 
 interface RunResult {
   /** Per-turn unique id, e.g. "p1" or "p1:t2" */
