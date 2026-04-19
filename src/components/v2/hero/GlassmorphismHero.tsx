@@ -230,7 +230,7 @@ export default function GlassmorphismHero({
     ? null
     : isQuizPath
       ? t("2-minute quiz", "Quiz de 2 minutos")
-      : t("Free educational library", "Biblioteca educativa gratuita");
+      : t("Educational library", "Biblioteca educativa");
 
   const secondaryLink = secondaryLinkOverride
     || (isQuizPath ? "/seller-decision" : "/guides");
@@ -345,7 +345,7 @@ export default function GlassmorphismHero({
                   </svg>
                 </span>
                 <span className="underline underline-offset-2">
-                  {t("Not ready to book? Start with Selena — free, no pressure.", "¿No estás listo para reservar? Empieza con Selena — gratis, sin presión.")}
+                  {t("Not ready to book? Start with Selena — no pressure.", "¿Aún no estás listo para reservar? Empieza con Selena — sin presión.")}
                 </span>
               </button>
             </div>

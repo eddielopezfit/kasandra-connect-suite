@@ -175,10 +175,10 @@ function GuidesContent() {
   const storyGuides = useMemo(() => allGuides.filter(g => g.category === 'stories'), [allGuides]);
   
   useDocumentHead({
-    titleEn: "Free Tucson Real Estate Guides | Home Buying & Selling Education — Kasandra Prieto",
-    titleEs: "Guías Gratuitas de Bienes Raíces en Tucson | Educación de Compra y Venta — Kasandra Prieto",
-    descriptionEn: "38 free bilingual guides on buying, selling, cash offers, Pima County taxes, and Tucson neighborhoods. Learn at your own pace, no sign-up required.",
-    descriptionEs: "38 guías bilingües gratuitas sobre compra, venta, ofertas en efectivo, impuestos de Pima County y vecindarios de Tucson. Sin registro.",
+    titleEn: "Tucson Real Estate Guides | Home Buying & Selling Education — Kasandra Prieto",
+    titleEs: "Guías de Bienes Raíces en Tucson | Educación de Compra y Venta — Kasandra Prieto",
+    descriptionEn: "38 bilingual guides on buying, selling, cash offers, Pima County taxes, and Tucson neighborhoods. Learn at your own pace, no sign-up required.",
+    descriptionEs: "38 guías bilingües sobre compra, venta, ofertas en efectivo, impuestos de Pima County y vecindarios de Tucson. Sin registro.",
   });
   
   // Personalization state
