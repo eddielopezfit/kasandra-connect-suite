@@ -135,7 +135,7 @@ const KasandraVideoBlock = ({
         <div className={`relative ${className}`}>
           {label && <EmbedLabel text={label} centered />}
           <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-video max-w-4xl mx-auto">
-            <img src={thumbnail} alt="Kasandra Prieto" className="w-full h-full object-cover" loading="lazy" />
+            <img src={thumbnail} alt="Kasandra Prieto" width={640} height={360} className="w-full h-full object-cover" loading="lazy" decoding="async" />
             {videoUrl && (
               <PlayOverlay onPlay={handlePlay} size="lg" gradient />
             )}
@@ -152,7 +152,7 @@ const KasandraVideoBlock = ({
       <div className={`my-12 max-w-3xl mx-auto ${className}`}>
         {label && <EmbedLabel text={label} />}
         <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-video bg-cc-navy/5">
-          <img src={thumbnail} alt="Kasandra Prieto" className="w-full h-full object-cover" loading="lazy" />
+          <img src={thumbnail} alt="Kasandra Prieto" width={640} height={360} className="w-full h-full object-cover" loading="lazy" decoding="async" />
           {videoUrl && <PlayOverlay onPlay={handlePlay} />}
         </div>
       </div>
@@ -222,7 +222,7 @@ function ThumbnailWithPlay({ thumbnail, onPlay, hasVideo }: {
   const { t } = useLanguage();
   return (
     <>
-      <img src={thumbnail} alt="Kasandra Prieto" className="w-full h-full object-cover" loading="lazy" />
+      <img src={thumbnail} alt="Kasandra Prieto" width={640} height={360} className="w-full h-full object-cover" loading="lazy" decoding="async" />
       {hasVideo && (
         <button
           onClick={onPlay}

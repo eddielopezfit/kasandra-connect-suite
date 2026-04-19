@@ -132,8 +132,11 @@ export default function CredentialsBentoGrid() {
                     <img
                       src={cell.image}
                       alt={cell.imageAlt || ""}
+                      width={48}
+                      height={48}
                       className="h-12 w-12 flex-shrink-0 rounded-lg object-contain"
                       loading="lazy"
+                      decoding="async"
                     />
                   )}
                 </div>

@@ -130,6 +130,10 @@ const GoogleReviewsSection = () => {
               <img
                 src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png"
                 alt="Google"
+                width={20}
+                height={20}
+                loading="lazy"
+                decoding="async"
                 className="h-5 w-5"
               />
               <span className="text-sm text-cc-ivory/50">
@@ -214,6 +218,10 @@ const GoogleReviewsSection = () => {
                 <img
                   src={current.photo}
                   alt={current.author}
+                  width={40}
+                  height={40}
+                  loading="lazy"
+                  decoding="async"
                   className="w-10 h-10 rounded-full object-cover border border-cc-ivory/10"
                 />
               )}

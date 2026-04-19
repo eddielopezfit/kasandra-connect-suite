@@ -84,7 +84,11 @@ const V2Navigation = () => {
           <img
             src="/images/kasandra-brand-lockup.jpg"
             alt="Kasandra Prieto — REALTOR®, Equal Housing Opportunity"
-            className="h-7 md:h-8 object-contain"
+            width={400}
+            height={32}
+            fetchPriority="high"
+            decoding="async"
+            className="h-7 md:h-8 w-auto object-contain"
           />
         </div>
       </div>

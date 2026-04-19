@@ -99,6 +99,10 @@ const NeighborhoodDetailContent = ({ neighborhood }: { neighborhood: Neighborhoo
           <img
             src={heroUrl}
             alt={`${neighborhood.name} Arizona neighborhood`}
+            width={1920}
+            height={1080}
+            fetchPriority="high"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover opacity-25"
             onError={() => setHeroError(true)}
           />

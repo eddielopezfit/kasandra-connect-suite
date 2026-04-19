@@ -49,8 +49,11 @@ const AreaVisualSection = ({ lifestyleHighlights, imageUrl, areaName }: AreaVisu
                 <img
                   src={imageUrl}
                   alt={`${areaName} lifestyle`}
+                  width={800}
+                  height={600}
                   className="w-full h-full object-cover"
                   loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-cc-navy via-cc-navy-dark to-cc-charcoal flex items-center justify-center">

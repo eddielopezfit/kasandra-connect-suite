@@ -21,6 +21,10 @@ const GuidePullQuote = ({ quote, quoteEs, className = "" }: GuidePullQuoteProps)
         <img
           src={kasandraHeadshot}
           alt="Kasandra Prieto"
+          width={56}
+          height={56}
+          loading="lazy"
+          decoding="async"
           className="w-14 h-14 rounded-full object-cover flex-shrink-0 mt-1"
         />
         <div>

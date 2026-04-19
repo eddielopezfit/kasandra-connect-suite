@@ -17,8 +17,11 @@ const GuideImage = ({ src, alt, altEs, className = "" }: GuideImageProps) => {
       <img
         src={src}
         alt={t(alt, altEs)}
+        width={1024}
+        height={576}
         loading="lazy"
-        className="w-full rounded-xl shadow-sm"
+        decoding="async"
+        className="w-full h-auto rounded-xl shadow-sm"
       />
     </div>
   );

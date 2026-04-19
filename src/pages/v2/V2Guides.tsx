@@ -472,7 +472,10 @@ function GuidesContent() {
                       <img
                         src={thumbnail}
                         alt={t(guide.title, guide.titleEs)}
+                        width={400}
+                        height={isTier1 ? 144 : 96}
                         loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
