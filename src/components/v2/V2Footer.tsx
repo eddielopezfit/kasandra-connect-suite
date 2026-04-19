@@ -166,20 +166,28 @@ const V2Footer = () => {
               "Toda la información se considera confiable pero no está garantizada y debe ser verificada de forma independiente. Kasandra Prieto es una REALTOR® licenciada con Realty Executives Arizona Territory."
             )}
           </p>
-          <p className="text-white/70 text-[12px]">
+
+          {/* Selena AI Disclosure — elevated prominence */}
+          <div className="mb-5 flex justify-center">
+            <Link
+              to="/selena-ai"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cc-gold/10 border border-cc-gold/30 text-cc-gold text-xs font-medium hover:bg-cc-gold/15 hover:border-cc-gold/50 transition-colors"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-cc-gold animate-pulse" />
+              {t("Powered by Selena AI · Bilingual Concierge", "Impulsado por Selena AI · Concierge Bilingüe")}
+            </Link>
+          </div>
+
+          <p className="text-white/70 text-[12px] mb-3">
             © {currentYear} Kasandra Prieto. {t("All rights reserved.", "Todos los derechos reservados.")}
           </p>
-          <div className="flex items-center justify-center gap-4 mt-2">
-            <Link to="/privacy" className="text-[12px] text-white/40 hover:text-cc-gold transition-colors">
+          <div className="flex items-center justify-center gap-4">
+            <Link to="/privacy" className="text-[12px] text-white/50 hover:text-cc-gold transition-colors">
               {t("Privacy Policy", "Política de Privacidad")}
             </Link>
             <span className="text-white/20 text-xs">·</span>
-            <Link to="/terms" className="text-xs text-white/40 hover:text-cc-gold transition-colors">
+            <Link to="/terms" className="text-xs text-white/50 hover:text-cc-gold transition-colors">
               {t("Terms of Service", "Términos de Servicio")}
-            </Link>
-            <span className="text-white/20 text-xs">·</span>
-            <Link to="/selena-ai" className="text-xs text-white/40 hover:text-cc-gold transition-colors">
-              Powered by Selena AI
             </Link>
           </div>
         </div>
