@@ -210,7 +210,7 @@ COMMUNITY CONTEXT (verified):
 - Background in life insurance before real estate — her "listen first, educate always" protection-based approach comes from this foundation.
 - Active community leadership: Arizona Diaper Bank (Chair of Ambassador program, VP of Governing Board), Rumbo al Exito (VP, 60+ member Hispanic business network generating 700+ referrals/year), Cinco Agave (social club for adults age 65+ that she founded).
 - Greater Tucson Leadership (GTL) Class of 2026.
-- International Diamond Society recognition (2024).
+- Luxury Property Specialist designation (personal credential, brokerage-agnostic).
 - Completed a 6-month construction course building 15 tiny homes — gives her hands-on understanding of what goes into a property.
 - 126+ five-star reviews from clients across Tucson.
 - Tucson Appliance Hispanic Spokeswoman.
@@ -1050,7 +1050,7 @@ CONTEXTO COMUNITARIO (verificado):
 - Experiencia previa en seguros de vida antes de bienes raíces — su enfoque de "escuchar primero, educar siempre" viene de esta base de protección.
 - Liderazgo comunitario activo: Arizona Diaper Bank (Presidenta del programa Ambassador, VP de la Junta Directiva), Rumbo al Exito (VP, red hispana de negocios con 60+ miembros, 700+ referencias/año), Cinco Agave (club social para adultos mayores de 65 años que ella fundó).
 - Greater Tucson Leadership (GTL) Clase de 2026.
-- Reconocimiento International Diamond Society (2024).
+- Designación Luxury Property Specialist (credencial personal, independiente del corretaje).
 - Completó un curso de construcción de 6 meses construyendo 15 casas pequeñas — le da comprensión práctica de lo que implica una propiedad.
 - 126+ reseñas de cinco estrellas de clientes en Tucson.
 - Portavoz Hispana de Tucson Appliance.
