@@ -35,7 +35,7 @@ export function useSessionEnrichment() {
     // Detect intent changes
     const currentIntent = ctx.intent;
     if (currentIntent && currentIntent !== prevIntentRef.current) {
-      const eventType = prevIntentRef.current ? 'intent_updated' : 'intent_detected';
+      const eventType = (prevIntentRef.current ? 'intent_updated' : 'intent_detected') as Parameters<typeof logEvent>[0];
       logEvent(eventType, {
         intent: currentIntent,
         previous_intent: prevIntentRef.current || 'none',
