@@ -64,8 +64,13 @@ const VIOLATION_LABELS: Record<Violation["type"], { label: string; tone: "destru
   exceeds_sentence_limit: { label: "Over 3 sentences", tone: "warning" },
 };
 
-async function callSelena(sample: ToneTestSample): Promise<{ reply: string; durationMs: number }> {
-  const sessionId = `qa-tone-${sample.id}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+async function callSelena(
+  sample: ToneTestSample,
+  userMessage: string,
+  sessionId: string,
+  history: ChatMessage[],
+  turnIndex: number
+): Promise<{ reply: string; durationMs: number }> {
   const start = performance.now();
 
   const response = await fetch(
@@ -77,12 +82,12 @@ async function callSelena(sample: ToneTestSample): Promise<{ reply: string; dura
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
       body: JSON.stringify({
-        message: sample.message,
+        message: userMessage,
         context: {
           session_id: sessionId,
           route: "/qa-tone-suite",
           language: sample.language,
-          turn_count: 1,
+          turn_count: turnIndex,
           current_mode: 1,
           chip_phase_floor: 0,
           greeting_phase_seen: 0,
@@ -90,7 +95,7 @@ async function callSelena(sample: ToneTestSample): Promise<{ reply: string; dura
           guides_completed: [],
           readiness_score: 0,
         },
-        history: [],
+        history,
       }),
     }
   );
@@ -116,31 +121,68 @@ const V2QAToneSuite = () => {
   const [status, setStatus] = useState<RunStatus>("idle");
   const [results, setResults] = useState<RunResult[]>([]);
   const [progress, setProgress] = useState(0);
-  const [filter, setFilter] = useState<"all" | "fail" | "pass">("all");
+  const [filter, setFilter] = useState<"all" | "fail" | "pass" | "followups">("all");
 
   const runSuite = useCallback(async () => {
     setStatus("running");
     setResults([]);
     setProgress(0);
     const collected: RunResult[] = [];
+    let turnsCompleted = 0;
 
     for (let i = 0; i < TONE_TEST_SAMPLES.length; i++) {
       const sample = TONE_TEST_SAMPLES[i];
-      try {
-        const { reply, durationMs } = await callSelena(sample);
-        const evaluation = evaluateReply(reply, sample.language);
-        collected.push({ sample, evaluation, durationMs });
-      } catch (err) {
-        collected.push({
-          sample,
-          error: err instanceof Error ? err.message : String(err),
-          durationMs: 0,
-        });
+      // One stable session id per sample so follow-ups share context.
+      const sessionId = `qa-tone-${sample.id}-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 8)}`;
+
+      // Build the full turn list: cold-start + each follow-up.
+      const turns = [sample.message, ...(sample.followUps ?? [])];
+      const history: ChatMessage[] = [];
+
+      for (let t = 0; t < turns.length; t++) {
+        const userMessage = turns[t];
+        const turnIndex = t + 1;
+        const turnId = t === 0 ? sample.id : `${sample.id}:t${turnIndex}`;
+
+        try {
+          const { reply, durationMs } = await callSelena(
+            sample,
+            userMessage,
+            sessionId,
+            history,
+            turnIndex
+          );
+          const evaluation = evaluateReply(reply, sample.language);
+          collected.push({
+            turnId,
+            sample,
+            turnIndex,
+            userMessage,
+            evaluation,
+            durationMs,
+          });
+          history.push({ role: "user", content: userMessage });
+          history.push({ role: "assistant", content: reply });
+        } catch (err) {
+          collected.push({
+            turnId,
+            sample,
+            turnIndex,
+            userMessage,
+            error: err instanceof Error ? err.message : String(err),
+            durationMs: 0,
+          });
+          // Stop the chain for this sample if a turn errors out.
+          break;
+        }
+
+        turnsCompleted++;
+        setResults([...collected]);
+        setProgress(Math.round((turnsCompleted / TOTAL_TURN_COUNT) * 100));
+        await new Promise((r) => setTimeout(r, 250));
       }
-      setResults([...collected]);
-      setProgress(Math.round(((i + 1) / TONE_TEST_SAMPLES.length) * 100));
-      // Light delay between calls — keep edge function happy.
-      await new Promise((r) => setTimeout(r, 250));
     }
 
     setStatus("complete");
