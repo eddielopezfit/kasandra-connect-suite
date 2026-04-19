@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import LanguageToggle from "./LanguageToggle";
+import { BROKERAGE_DISPLAY } from "@/lib/brand";
 
 const V2Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);

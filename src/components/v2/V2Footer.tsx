@@ -2,6 +2,7 @@ import { Instagram, Linkedin, Phone, Mail, Home, Facebook } from "lucide-react";
 import { Link } from "react-router-dom";
 import TikTokIcon from "@/components/icons/TikTokIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { TEAM_NAME, BROKERAGE_NAME } from "@/lib/brand";
 
 const V2Footer = () => {
   const { t } = useLanguage();

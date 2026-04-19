@@ -1,6 +1,7 @@
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
+import { AGENT_NAME, BROKERAGE_LEGAL, AGENT_LICENSE_NUMBER } from "@/lib/brand";
 
 const V2TermsContent = () => {
   const { t } = useLanguage();
