@@ -25,19 +25,34 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { isQaAccessGranted } from "@/lib/qa/qaAccess";
-import { TONE_TEST_SAMPLES, type ToneTestSample } from "@/lib/qa/toneTestSamples";
+import {
+  TONE_TEST_SAMPLES,
+  TOTAL_TURN_COUNT,
+  type ToneTestSample,
+} from "@/lib/qa/toneTestSamples";
 import {
   evaluateReply,
   type EvaluationResult,
   type Violation,
 } from "@/lib/qa/toneEvaluator";
-import { CheckCircle2, AlertTriangle, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, AlertTriangle, XCircle, Loader2, MessageCircle } from "lucide-react";
 
 interface RunResult {
+  /** Per-turn unique id, e.g. "p1" or "p1:t2" */
+  turnId: string;
   sample: ToneTestSample;
+  /** 1 = cold-start; 2+ = follow-up turn */
+  turnIndex: number;
+  /** The actual user message for this turn */
+  userMessage: string;
   evaluation?: EvaluationResult;
   error?: string;
   durationMs: number;
+}
+
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
 }
 
 type RunStatus = "idle" | "running" | "complete";
