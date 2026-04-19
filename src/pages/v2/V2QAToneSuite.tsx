@@ -193,6 +193,10 @@ const V2QAToneSuite = () => {
     const passed = results.filter((r) => r.evaluation?.passed).length;
     const failed = results.filter((r) => r.evaluation && !r.evaluation.passed).length;
     const errored = results.filter((r) => r.error).length;
+    const followUpTurns = results.filter((r) => r.turnIndex > 1).length;
+    const followUpFailed = results.filter(
+      (r) => r.turnIndex > 1 && r.evaluation && !r.evaluation.passed
+    ).length;
     const avgWords =
       results.length > 0
         ? Math.round(
@@ -200,12 +204,14 @@ const V2QAToneSuite = () => {
               Math.max(results.length, 1)
           )
         : 0;
-    return { total, passed, failed, errored, avgWords };
+    return { total, passed, failed, errored, avgWords, followUpTurns, followUpFailed };
   }, [results]);
 
   const visibleResults = useMemo(() => {
     if (filter === "all") return results;
-    if (filter === "fail") return results.filter((r) => r.error || (r.evaluation && !r.evaluation.passed));
+    if (filter === "fail")
+      return results.filter((r) => r.error || (r.evaluation && !r.evaluation.passed));
+    if (filter === "followups") return results.filter((r) => r.turnIndex > 1);
     return results.filter((r) => r.evaluation?.passed);
   }, [results, filter]);
 
@@ -225,10 +231,11 @@ const V2QAToneSuite = () => {
             </Badge>
           </div>
           <p className="text-white/70 text-sm max-w-2xl">
-            Fires {TONE_TEST_SAMPLES.length} sample messages at selena-chat. Flags replies with KB-16
-            banned phrases, brevity violations (over 70 words or 3 sentences), or legacy brokerage
-            mentions (Coldwell, MoxiWorks, Diamond Society). Each sample runs in a fresh session.
-            Language: {language}
+            Fires {TONE_TEST_SAMPLES.length} scenarios ({TOTAL_TURN_COUNT} total turns including
+            multi-turn follow-ups) at selena-chat. Flags replies with KB-16 banned phrases, brevity
+            violations (over 70 words or 3 sentences), or legacy brokerage mentions (Coldwell,
+            MoxiWorks, Diamond Society). Follow-ups share session_id + history to test
+            conversational drift. Language: {language}
           </p>
         </div>
       </section>
@@ -251,7 +258,7 @@ const V2QAToneSuite = () => {
                 ) : status === "complete" ? (
                   "Run again"
                 ) : (
-                  `Run ${TONE_TEST_SAMPLES.length} samples`
+                  `Run ${TONE_TEST_SAMPLES.length} scenarios (${TOTAL_TURN_COUNT} turns)`
                 )}
               </Button>
 
@@ -259,27 +266,33 @@ const V2QAToneSuite = () => {
                 <div className="flex-1 min-w-[200px]">
                   <Progress value={progress} className="h-2" />
                   <p className="text-xs text-muted-foreground mt-1">
-                    {results.length} / {TONE_TEST_SAMPLES.length} complete
+                    {results.length} / {TOTAL_TURN_COUNT} turns complete
                   </p>
                 </div>
               )}
             </div>
 
             {results.length > 0 && (
-              <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
-                <SummaryStat label="Total" value={summary.total} />
+              <div className="mt-6 grid grid-cols-2 md:grid-cols-6 gap-3 text-sm">
+                <SummaryStat label="Total turns" value={summary.total} />
                 <SummaryStat label="Passed" value={summary.passed} tone="success" />
                 <SummaryStat label="Failed" value={summary.failed} tone="destructive" />
                 <SummaryStat label="Errored" value={summary.errored} tone="warning" />
+                <SummaryStat
+                  label="Follow-up fails"
+                  value={`${summary.followUpFailed}/${summary.followUpTurns}`}
+                  tone={summary.followUpFailed > 0 ? "destructive" : "success"}
+                />
                 <SummaryStat label="Avg words" value={summary.avgWords} />
               </div>
             )}
 
             {results.length > 0 && (
-              <div className="mt-4 flex gap-2">
+              <div className="mt-4 flex flex-wrap gap-2">
                 <FilterButton current={filter} value="all" onClick={setFilter}>All</FilterButton>
                 <FilterButton current={filter} value="fail" onClick={setFilter}>Failures only</FilterButton>
                 <FilterButton current={filter} value="pass" onClick={setFilter}>Passes only</FilterButton>
+                <FilterButton current={filter} value="followups" onClick={setFilter}>Follow-ups only</FilterButton>
               </div>
             )}
           </Card>
@@ -289,10 +302,11 @@ const V2QAToneSuite = () => {
             <Accordion type="multiple" className="space-y-3">
               {visibleResults.map((result) => {
                 const failed = !!result.error || (result.evaluation && !result.evaluation.passed);
+                const isFollowUp = result.turnIndex > 1;
                 return (
                   <AccordionItem
-                    key={result.sample.id}
-                    value={result.sample.id}
+                    key={result.turnId}
+                    value={result.turnId}
                     className="border rounded-lg bg-card px-4"
                   >
                     <AccordionTrigger className="hover:no-underline">
@@ -312,12 +326,17 @@ const V2QAToneSuite = () => {
                             <Badge variant="outline" className="text-xs">
                               {result.sample.language}
                             </Badge>
+                            {isFollowUp && (
+                              <Badge className="bg-cc-navy text-white text-xs hover:bg-cc-navy">
+                                Turn {result.turnIndex}
+                              </Badge>
+                            )}
                             <span className="text-xs text-muted-foreground">
-                              #{result.sample.id} · {Math.round(result.durationMs)}ms
+                              #{result.turnId} · {Math.round(result.durationMs)}ms
                             </span>
                           </div>
                           <p className="text-sm font-medium truncate">
-                            {result.sample.message}
+                            {result.userMessage}
                           </p>
                         </div>
                       </div>
@@ -332,6 +351,11 @@ const V2QAToneSuite = () => {
                           {result.sample.expectation && (
                             <p className="text-xs italic text-muted-foreground">
                               Expectation: {result.sample.expectation}
+                            </p>
+                          )}
+                          {isFollowUp && (
+                            <p className="text-xs text-muted-foreground">
+                              Cold-start was: <span className="italic">"{result.sample.message}"</span>
                             </p>
                           )}
                           <div className="bg-muted/50 p-3 rounded text-sm whitespace-pre-wrap">
@@ -376,8 +400,8 @@ const V2QAToneSuite = () => {
           {status === "idle" && (
             <Card className="p-8 text-center text-muted-foreground">
               <p className="text-sm">
-                Click <strong>Run {TONE_TEST_SAMPLES.length} samples</strong> to start the regression.
-                Expected runtime: ~{Math.ceil(TONE_TEST_SAMPLES.length * 2.5)}s.
+                Click <strong>Run {TONE_TEST_SAMPLES.length} scenarios</strong> to start the regression.
+                Total turns: {TOTAL_TURN_COUNT}. Expected runtime: ~{Math.ceil(TOTAL_TURN_COUNT * 2.5)}s.
               </p>
             </Card>
           )}
