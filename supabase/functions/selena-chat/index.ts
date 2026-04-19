@@ -77,6 +77,7 @@ import {
 } from "./chipGovernance.ts";
 import { SYSTEM_PROMPT_EN, SYSTEM_PROMPT_ES, stripSection, buildSystemPrompt } from "./systemPromptBuilder.ts";
 import { detectBannedPhrase, buildAntiDeflectionNudge } from "./bannedPhrases.ts";
+import { runPostProcessor } from "./postProcessor.ts";
 
 // ============= MAIN HANDLER =============
 serve(async (req) => {
@@ -1415,90 +1416,41 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     const rawReply = data.choices?.[0]?.message?.content || "I'm here to help. How can I guide you today?";
     let reply = sanitizeBracketCTAs(rawReply);
 
-    // ============= POST-PROCESSING: BREVITY ENFORCEMENT =============
-    // KB-10 mandates 1-3 sentences max. Truncate at 3rd sentence boundary.
-    // Preserve the reply if it's already short enough.
-    const SENTENCE_BOUNDARY = /(?<=[.?!。])\s+/g;
-    const sentences = reply.split(SENTENCE_BOUNDARY).filter(s => s.trim().length > 0);
-    if (sentences.length > 3) {
-      reply = sentences.slice(0, 3).join(' ');
-    }
-    // FIX 1: Sentence completeness guard — drop incomplete trailing fragment
-    if (reply.length > 0 && !/[.?!。]$/.test(reply.trim())) {
-      const completeSentences = reply.match(/[^.?!。]*[.?!。]/g);
-      if (completeSentences && completeSentences.length > 0) {
-        reply = completeSentences.join(' ').trim();
-      } else {
-        // Entire reply is one incomplete fragment — append ellipsis
-        reply = reply.trim() + '...';
-      }
-    }
+    // ============= POST-PROCESSING PIPELINE =============
+    // Sentence cap (KB-10) → completeness guard → 70-word cap (KB-16) →
+    // banned-opener strip → onboarding block. Extracted to postProcessor.ts
+    // for unit testability. The regenerate-once flow stays here because it
+    // requires re-calling the AI gateway.
+    const { reply: processedReply, wordCap: wordCapResult } = runPostProcessor(reply, {
+      language,
+      hasIntent: Boolean(context.intent || effectiveChipPhase >= 2),
+    });
+    reply = processedReply;
 
-    // ============= POST-PROCESSING: 70-WORD HARD CAP =============
-    // KB-16 brevity ceiling: substantive answers ≤70 words / ≤3 sentences.
-    // The sentence cap above handles 4+-sentence drift; this catches replies
-    // that stay within 3 sentences but inflate past the word ceiling
-    // (e.g. ~110-word "awards" answer the Tone Suite caught).
-    // Strategy: keep adding sentences from the start until adding the next one
-    // would breach 70 words. Always preserve at least 1 sentence.
-    // Log every truncation to event_log so the QA Tone Suite can track regressions.
-    const wordCount = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
-    const WORD_CAP = 70;
-    const originalWords = wordCount(reply);
-    if (originalWords > WORD_CAP) {
-      const capSentences = reply.split(SENTENCE_BOUNDARY).filter(s => s.trim().length > 0);
-      let kept: string[] = [];
-      for (const s of capSentences) {
-        const candidate = [...kept, s].join(' ');
-        if (wordCount(candidate) > WORD_CAP && kept.length > 0) break;
-        kept.push(s);
-        // Hard ceiling: never exceed 2 kept sentences once we've crossed the cap.
-        if (kept.length >= 2 && wordCount(candidate) >= WORD_CAP) break;
-      }
-      if (kept.length === 0 && capSentences.length > 0) kept = [capSentences[0]];
-      const truncated = kept.join(' ').trim();
-      const truncatedWords = wordCount(truncated);
-
-      // Fire-and-forget telemetry — never block the response.
+    // Fire-and-forget telemetry: log every word-cap truncation so the QA
+    // Tone Suite can track regressions.
+    if (wordCapResult.truncated) {
       try {
         await supabase.from("event_log").insert({
           session_id: context.session_id,
           event_type: "selena_brevity_truncated",
           event_payload: {
-            original_words: originalWords,
-            truncated_words: truncatedWords,
-            original_sentences: capSentences.length,
-            truncated_sentences: kept.length,
+            original_words: wordCapResult.originalWords,
+            truncated_words: wordCapResult.truncatedWords,
+            original_sentences: wordCapResult.originalSentences,
+            truncated_sentences: wordCapResult.truncatedSentences,
             language,
             route: context.route,
             intent: effectiveIntent,
-            word_cap: WORD_CAP,
+            word_cap: wordCapResult.wordCap,
           },
         });
       } catch (e) {
         console.error("Failed to log brevity truncation event:", e);
       }
-
-      reply = truncated;
     }
 
-    // FIX 2: Banned phrase post-filter — deterministic safety net
-    const BANNED_OPENER = /^(I apologize[—\-,.]?\s*|I'm sorry[—\-,.]?\s*|Me disculpo[—\-,.]?\s*|Lo siento[—\-,.]?\s*)/i;
-    if (BANNED_OPENER.test(reply)) {
-      reply = reply.replace(BANNED_OPENER, '').trim();
-      // If stripping left nothing meaningful, use neutral reframe
-      if (reply.length < 10) {
-        reply = language === 'es'
-          ? 'Continuemos desde donde estábamos.'
-          : "Let's pick up where we were.";
-      }
-      // Capitalize first letter after strip
-      if (reply.length > 0) {
-        reply = reply.charAt(0).toUpperCase() + reply.slice(1);
-      }
-    }
-
-    // ============= KB-16 ANTI-DEFLECTION POST-PROCESSOR =============
+    // ============= KB-16 ANTI-DEFLECTION REGENERATE-ONCE =============
     // If the model emitted a banned deflection phrase, regenerate ONCE with
     // a stronger anti-deflection nudge appended to the system prompt.
     const banned = detectBannedPhrase(reply, language);
@@ -1525,30 +1477,21 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
           const regenData = await regenResp.json();
           const regenRaw = regenData.choices?.[0]?.message?.content;
           if (regenRaw) {
-            let regen = sanitizeBracketCTAs(regenRaw);
-            const regenSentences = regen.split(SENTENCE_BOUNDARY).filter(s => s.trim().length > 0);
-            if (regenSentences.length > 3) {
-              regen = regenSentences.slice(0, 3).join(' ');
-            }
-            if (!detectBannedPhrase(regen, language).matched && regen.length > 10) {
-              reply = regen;
+            // Run the regenerated reply through the same pipeline so it
+            // also respects sentence/word caps and openers.
+            const sanitizedRegen = sanitizeBracketCTAs(regenRaw);
+            const { reply: regenProcessed } = runPostProcessor(sanitizedRegen, {
+              language,
+              hasIntent: Boolean(context.intent || effectiveChipPhase >= 2),
+            });
+            if (!detectBannedPhrase(regenProcessed, language).matched && regenProcessed.length > 10) {
+              reply = regenProcessed;
             }
           }
         }
       } catch (e) {
         console.warn("[KB-16] Regenerate failed, keeping original reply", e);
       }
-    }
-
-    // ============= SERVER-SIDE ONBOARDING HARD BLOCK =============
-    // Safety backstop: if intent exists or chip_phase_floor >= 2, the AI must never
-    // output literal onboarding prompt variants. Replace with neutral "welcome back".
-    const ONBOARDING_BLOCK_PATTERNS = /are you looking to buy.*sell.*explore|just explore what's possible|what brings you here today|what brings you here|qué le trae por aquí|está pensando en comprar.*vender.*explorar|está buscando comprar.*vender.*explorar/i;
-    
-    if ((context.intent || effectiveChipPhase >= 2) && ONBOARDING_BLOCK_PATTERNS.test(reply)) {
-      reply = language === 'es'
-        ? 'Bienvenido/a de vuelta — podemos continuar donde lo dejamos.'
-        : 'Welcome back — we can pick up where you left off.';
     }
 
     // Check if booking access is earned (from mode detection)
