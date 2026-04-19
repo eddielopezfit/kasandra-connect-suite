@@ -5,7 +5,8 @@
  */
 
 import { useMemo } from 'react';
-import { useVIPContext } from '@/contexts/VIPContext';
+import { VIPContext, type VIPContextValue } from '@/contexts/VIPContext';
+import { useContext } from 'react';
 import {
   buildVIPFromLocal,
   selectBookingReadiness,
@@ -19,24 +20,23 @@ interface UseVIPOptions {
   localOnly?: boolean;
 }
 
-export function useVIP(_options: UseVIPOptions = {}) {
-  // Try global context first
-  try {
-    const ctx = useVIPContext();
-    return ctx;
-  } catch {
-    // Fallback for components rendered outside VIPProvider (shouldn't happen in prod)
-    const vip = useMemo(() => buildVIPFromLocal(), []);
-    return {
-      vip,
-      isLoading: false,
-      serverHydrated: false,
-      refresh: () => {},
-      persist: () => {},
-      bookingReadiness: selectBookingReadiness(vip),
-      frictionScore: selectFrictionScore(vip),
-      recommendedNextStep: selectRecommendedNextStep(vip),
-      continuationSummary: selectContinuationSummary(vip),
-    };
-  }
+export function useVIP(_options: UseVIPOptions = {}): VIPContextValue {
+  // Hooks must always be called unconditionally — call both, then branch.
+  const ctx = useContext(VIPContext);
+  const fallbackVip = useMemo(() => buildVIPFromLocal(), []);
+
+  if (ctx) return ctx;
+
+  // Fallback for components rendered outside VIPProvider (shouldn't happen in prod)
+  return {
+    vip: fallbackVip,
+    isLoading: false,
+    serverHydrated: false,
+    refresh: () => {},
+    persist: () => {},
+    bookingReadiness: selectBookingReadiness(fallbackVip),
+    frictionScore: selectFrictionScore(fallbackVip),
+    recommendedNextStep: selectRecommendedNextStep(fallbackVip),
+    continuationSummary: selectContinuationSummary(fallbackVip),
+  };
 }

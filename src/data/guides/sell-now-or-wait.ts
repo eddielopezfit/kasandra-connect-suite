@@ -27,7 +27,6 @@ const data: GuideContentData = {
       contentEs:
         'En Tucson, esperar un \u201cmejor mercado\u201d a menudo cuesta m\u00e1s en gastos de mantenimiento\u2014hipoteca, seguro, reparaciones\u2014que la diferencia de precio que ganar\u00edas. En una casa de precio medio, dos o tres meses de gastos fijos pueden borrar un aumento modesto de precio. Eso hace que el momento dependa menos del mercado y m\u00e1s de tu preparaci\u00f3n personal.',
     },
-,
     {
       heading: "Tucson Market Snapshot: The Numbers Behind the Decision",
       headingEs: "Panorama del Mercado de Tucson: Los Números Detrás de la Decisión",

@@ -1,7 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { updateSessionContext, getSessionContext } from '@/lib/analytics/selenaSession';
+import { updateSessionContext, getSessionContext, type SessionContext } from '@/lib/analytics/selenaSession';
 import { logEvent } from '@/lib/analytics/logEvent';
+
+type EnrichedContext = SessionContext & {
+  pages_viewed?: string[];
+  scroll_depth?: number;
+  time_on_site?: number;
+};
 
 /**
  * Lightweight session enrichment hook:
@@ -17,20 +23,20 @@ export function useSessionEnrichment() {
 
   // Track page views in context
   useEffect(() => {
-    const ctx = getSessionContext();
+    const ctx = getSessionContext() as EnrichedContext | null;
     if (!ctx) return;
 
-    const currentPages: string[] = (ctx as any).pages_viewed ?? [];
+    const currentPages: string[] = ctx.pages_viewed ?? [];
     const path = location.pathname;
     if (!currentPages.includes(path)) {
-      updateSessionContext({ pages_viewed: [...currentPages, path] } as any);
+      updateSessionContext({ pages_viewed: [...currentPages, path] } as Partial<SessionContext>);
     }
 
     // Detect intent changes
     const currentIntent = ctx.intent;
     if (currentIntent && currentIntent !== prevIntentRef.current) {
       const eventType = prevIntentRef.current ? 'intent_updated' : 'intent_detected';
-      logEvent(eventType as any, {
+      logEvent(eventType, {
         intent: currentIntent,
         previous_intent: prevIntentRef.current || 'none',
         page: path,
@@ -66,7 +72,7 @@ export function useSessionEnrichment() {
     return () => {
       window.removeEventListener('scroll', onScroll);
       if (scrollDepthRef.current > 0) {
-        updateSessionContext({ scroll_depth: scrollDepthRef.current } as any);
+        updateSessionContext({ scroll_depth: scrollDepthRef.current } as Partial<SessionContext>);
       }
     };
   }, [location.pathname]);
@@ -74,10 +80,10 @@ export function useSessionEnrichment() {
   // Time on site (increment every 30s)
   useEffect(() => {
     const interval = setInterval(() => {
-      const ctx = getSessionContext();
+      const ctx = getSessionContext() as EnrichedContext | null;
       if (!ctx) return;
-      const current = (ctx as any).time_on_site ?? 0;
-      updateSessionContext({ time_on_site: current + 30 } as any);
+      const current = ctx.time_on_site ?? 0;
+      updateSessionContext({ time_on_site: current + 30 } as Partial<SessionContext>);
     }, 30_000);
 
     return () => clearInterval(interval);
