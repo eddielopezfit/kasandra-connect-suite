@@ -50,11 +50,9 @@ const V2SellerReadinessContent = () => {
       const leadId = localStorage.getItem(LEAD_ID_KEY);
       const storedEmail = getStoredEmail();
       const ctx = getSessionContext();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const alreadyPrompted = !!ctx?.tool_seller_readiness_capture_prompted;
       const alreadyKnown = !!leadId || !!storedEmail || alreadyPrompted;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       updateSessionContext({
         tool_seller_readiness_capture_prompted: true,
       });
