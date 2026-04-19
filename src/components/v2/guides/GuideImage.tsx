@@ -8,9 +8,9 @@ interface GuideImageProps {
 }
 
 const GuideImage = ({ src, alt, altEs, className = "" }: GuideImageProps) => {
-  if (!src) return null;
-
   const { t } = useLanguage();
+
+  if (!src) return null;
 
   return (
     <div className={`my-10 max-w-3xl mx-auto ${className}`}>
