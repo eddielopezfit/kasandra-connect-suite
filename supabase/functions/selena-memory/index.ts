@@ -178,15 +178,44 @@ function extractMemories(
   const lower = message.toLowerCase();
 
   // --- Name detection ---
+  // Blocklist: common words that follow "I'm/I am/soy" but are NOT names
+  // (states, roles, activities, emotions, intents). Prevents false positives
+  // like "I'm active duty" → Name: "Active duty".
+  const NAME_BLOCKLIST = new Set([
+    // English states/activities/intents
+    "active", "looking", "going", "just", "here", "ready", "thinking",
+    "planning", "hoping", "trying", "interested", "curious", "exploring",
+    "wondering", "considering", "moving", "selling", "buying", "renting",
+    "shopping", "searching", "browsing", "checking", "starting", "trying",
+    "working", "living", "staying", "leaving", "thinking", "feeling",
+    "tired", "stressed", "excited", "nervous", "worried", "scared",
+    "single", "married", "divorced", "widowed", "retired", "employed",
+    "self", "new", "old", "young", "first", "back", "still", "almost",
+    "pretty", "very", "really", "kinda", "sorta", "maybe", "probably",
+    "definitely", "absolutely", "totally", "super", "quite", "fairly",
+    "from", "with", "about", "around", "near", "currently", "originally",
+    "military", "veteran", "civilian", "active", "reserve", "guard",
+    // Spanish states/activities
+    "buscando", "pensando", "planeando", "interesado", "interesada",
+    "listo", "lista", "casado", "casada", "soltero", "soltera",
+    "jubilado", "jubilada", "militar", "veterano", "veterana",
+    "nuevo", "nueva", "activo", "activa", "actualmente",
+  ]);
+
   const nameMatch = message.match(
     /(?:(?:my name is|i'm|i am|me llamo|soy)\s+)([A-Z][a-záéíóúñ]+(?:\s+[A-Z][a-záéíóúñ]+)?)(?:\s|[.,!?]|$)/i
   );
   if (nameMatch) {
-    memories.push({
-      key: "user_name",
-      value: { name: nameMatch[1].trim() },
-      category: "fact",
-    });
+    const candidate = nameMatch[1].trim();
+    const firstWord = candidate.split(/\s+/)[0].toLowerCase();
+    // Skip if first word is a blocklisted non-name word
+    if (!NAME_BLOCKLIST.has(firstWord)) {
+      memories.push({
+        key: "user_name",
+        value: { name: candidate },
+        category: "fact",
+      });
+    }
   }
 
   // --- Intent from context ---
