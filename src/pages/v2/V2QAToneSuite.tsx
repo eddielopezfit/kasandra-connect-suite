@@ -169,7 +169,7 @@ const V2QAToneSuite = () => {
           </div>
           <p className="text-white/70 text-sm max-w-2xl">
             Fires {TONE_TEST_SAMPLES.length} sample messages at selena-chat. Flags replies with KB-16
-            banned phrases, brevity violations (>70 words / >3 sentences), or legacy brokerage
+            banned phrases, brevity violations (over 70 words or 3 sentences), or legacy brokerage
             mentions (Coldwell, MoxiWorks, Diamond Society). Each sample runs in a fresh session.
             Language: {language}
           </p>
