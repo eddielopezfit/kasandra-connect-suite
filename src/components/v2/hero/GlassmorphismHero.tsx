@@ -10,6 +10,7 @@ import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { useState, useEffect, useRef, useCallback } from "react";
 import heroImage from "@/assets/hero-bg.jpg";
 import type { EntrySource } from "@/contexts/selena/types";
+import type { JourneyIntent } from "@/components/selena/ConciergeTabBar";
 
 interface StatItemProps {
   value: string;

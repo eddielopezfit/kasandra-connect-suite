@@ -10,7 +10,7 @@ import type { PropertySnapshotData } from "@/components/v2/seller-decision/StepP
 import type { ConditionTier } from "@/components/v2/seller-decision/conditionInsights";
 import type { RecommendedPath } from "@/components/v2/seller-decision/StepDualPath";
 import type { ContactResult } from "@/components/v2/seller-decision/StepContact";
-import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { updateSessionContext, setFieldIfEmpty, type SessionContext } from "@/lib/analytics/selenaSession";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
 
