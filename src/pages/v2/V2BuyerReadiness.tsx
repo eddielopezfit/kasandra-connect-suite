@@ -55,15 +55,12 @@ const V2BuyerReadinessContent = () => {
       const leadId = localStorage.getItem(LEAD_ID_KEY);
       const storedEmail = getStoredEmail();
       const ctx = getSessionContext();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const alreadyPrompted = !!ctx?.tool_buyer_readiness_capture_prompted;
 
       const alreadyKnown = !!leadId || !!storedEmail || alreadyPrompted;
 
 
       // Guardrail 3: namespaced flag to prevent re-open on refresh
-      // Using any cast because this is an ad-hoc flag not in SessionContext type
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       updateSessionContext({
         tool_buyer_readiness_capture_prompted: true,
       });
