@@ -40,6 +40,7 @@ const V2NeighborhoodCompare = lazy(() => import("./pages/v2/V2NeighborhoodCompar
 const V2BuyerClosingCosts = lazy(() => import("./pages/v2/V2BuyerClosingCosts"));
 const V2CTAQualityAssurance = lazy(() => import("./pages/v2/V2CTAQualityAssurance"));
 const V2QADeterminism = lazy(() => import("./pages/v2/V2QADeterminism"));
+const V2QAToneSuite = lazy(() => import("./pages/v2/V2QAToneSuite"));
 const V2Neighborhoods = lazy(() => import("./pages/v2/V2Neighborhoods"));
 const V2NeighborhoodDetail = lazy(() => import("./pages/v2/V2NeighborhoodDetail"));
 const V2OffMarketBuyer = lazy(() => import("./pages/v2/V2OffMarketBuyer"));
@@ -135,6 +136,7 @@ const App = () => {
                 <Route path="/buyer-closing-costs" element={<V2BuyerClosingCosts />} />
                 <Route path="/qa-cta" element={import.meta.env.DEV ? <V2CTAQualityAssurance /> : <Navigate to="/" replace />} />
                 <Route path="/qa-determinism" element={import.meta.env.DEV ? <V2QADeterminism /> : <Navigate to="/" replace />} />
+                <Route path="/qa-tone-suite" element={<V2QAToneSuite />} />
                 <Route path="/neighborhoods" element={<V2Neighborhoods />} />
                 <Route path="/neighborhoods/:slug" element={<V2NeighborhoodDetail />} />
                 <Route path="/about" element={<V2About />} />
