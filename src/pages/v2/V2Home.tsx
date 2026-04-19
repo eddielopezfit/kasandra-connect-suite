@@ -22,7 +22,6 @@ import {
   HeartHandshake,
   Star,
   MessageCircle,
-  Calendar,
   ArrowRight,
   DollarSign,
   Banknote,

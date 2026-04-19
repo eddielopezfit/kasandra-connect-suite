@@ -80,6 +80,7 @@ function fmtDate(d: Date, lang: "en" | "es"): string {
   return d.toLocaleDateString(lang === "es" ? "es-MX" : "en-US", opts);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function fmtMonth(d: Date, lang: "en" | "es"): string {
   const opts: Intl.DateTimeFormatOptions = { month: "long", year: "numeric" };
   return d.toLocaleDateString(lang === "es" ? "es-MX" : "en-US", opts);
@@ -121,6 +122,7 @@ function buildPhases(
   const contractEnd = addWeeks(contractStart, isCompressed ? 4 : 6);
 
   // Warning if timeline is too compressed
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const estimatedClose = contractEnd;
 
   const phases: PhaseData[] = [

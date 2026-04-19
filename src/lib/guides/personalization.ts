@@ -36,6 +36,7 @@ export interface RecommendedGuide {
 const START_HERE_GUIDES = ['first-time-buyer-guide', 'selling-for-top-dollar'];
 
 // Map categories to intents
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CATEGORY_INTENT_MAP: Record<string, Intent> = {
   buying: 'buy',
   selling: 'sell',

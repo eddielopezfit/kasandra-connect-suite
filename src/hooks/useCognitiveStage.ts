@@ -4,7 +4,7 @@
  */
 
 import { useMemo } from 'react';
-import { getGuidesRead, getIntent, type JourneyStage } from '@/lib/guides/personalization';
+import { getGuidesRead, getIntent } from '@/lib/guides/personalization';
 import { getSessionContext } from '@/lib/analytics/selenaSession';
 
 export type CognitiveStageId = 'arriving' | 'exploring' | 'understanding' | 'clarifying' | 'deciding' | 'confident';
@@ -149,7 +149,7 @@ export function useCognitiveStage() {
   const stageData = useMemo(() => {
     const guidesRead = getGuidesRead();
     const intent = getIntent();
-    const context = getSessionContext();
+    getSessionContext();
     
     // Check for Selena interaction (from session context or localStorage)
     const hasInteractedWithSelena = typeof window !== 'undefined' 

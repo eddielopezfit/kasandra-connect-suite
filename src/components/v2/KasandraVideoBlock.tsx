@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Play, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

@@ -393,9 +393,9 @@ function GuidesPanel({
 // Routes cards to Decision Rooms and chat triggers based on user intent
 function MyOptionsPanel({ 
   t,
-  leadId,
-  onActionClick,
-  onClose,
+  leadId: _leadId,
+  onActionClick: _onActionClick,
+  onClose: _onClose,
   onSendMessage,
   onNavigate,
   effectiveIntent,

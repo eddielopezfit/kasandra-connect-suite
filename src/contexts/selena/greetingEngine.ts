@@ -3,7 +3,7 @@ import { SessionContext, updateSessionContext } from '@/lib/analytics/selenaSess
 import { MappedReply } from '@/lib/registry/chipsRegistry';
 import { mapChipsToActionSpecs, getPhaseAwareChips } from './chipGovernance';
 import type { Language } from '@/contexts/LanguageContext';
-import { TrailEvent, serializeTrailForSelena } from '@/lib/analytics/sessionTrail';
+import { serializeTrailForSelena } from '@/lib/analytics/sessionTrail';
 
 // FIX 5: Trail-aware greeting generation
 interface TrailSummary {

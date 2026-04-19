@@ -61,7 +61,7 @@ export function VIPProvider({ children }: { children: ReactNode }) {
         const serverData: ServerProfileData = {};
         const body = { session_id: sessionId || undefined, lead_id: leadId || undefined };
 
-        const [snapshotRes, conversationRes] = await Promise.all([
+        const [snapshotRes, _conversationRes] = await Promise.all([
           supabase.functions.invoke('get-session-snapshot', { body }),
           supabase.functions.invoke('get-conversation', { body }),
         ]);

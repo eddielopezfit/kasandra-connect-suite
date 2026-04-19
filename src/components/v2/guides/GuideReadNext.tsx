@@ -164,7 +164,7 @@ interface GuideReadNextProps {
   currentCategory: GuideCategory;
 }
 
-export function GuideReadNext({ currentGuideId, currentCategory }: GuideReadNextProps) {
+export function GuideReadNext({ currentGuideId, currentCategory: _currentCategory }: GuideReadNextProps) {
   const { t, language } = useLanguage();
 
   const related = RELATED_GUIDES[currentGuideId];

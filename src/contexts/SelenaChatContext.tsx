@@ -656,7 +656,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     });
     
     // Read context AFTER updateSessionContext so intent override is reflected
-    const ctx = getSessionContext();
+    getSessionContext();
     const greeting: ChatMessage = {
       id: generateMessageId(),
       role: 'assistant',

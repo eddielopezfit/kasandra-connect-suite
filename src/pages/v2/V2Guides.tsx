@@ -1,11 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import JourneyBreadcrumb from '@/components/v2/JourneyBreadcrumb';
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, DollarSign, Calendar, MessageCircle, Search } from "lucide-react";
+import { BookOpen, Home, TrendingUp, Calculator, ArrowRight, DollarSign, Search } from "lucide-react";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import JsonLd from "@/components/seo/JsonLd";
 import { aggregateRatingSchema } from "@/lib/seo/schemaGenerators";
-import { Button } from "@/components/ui/button";
 import V2Layout from "@/components/v2/V2Layout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
@@ -33,12 +32,11 @@ import {
   isReturningVisitor,
   getRecommendedGuides,
   getGridBadge,
-  trackJourneyAction,
   setIntent,
   type Guide,
 } from "@/lib/guides/personalization";
 import { getCategoryColor, getDecisionLabel } from "@/lib/guides/categoryColors";
-import { getLiveGuides, GUIDE_REGISTRY } from "@/lib/guides/guideRegistry";
+import { getLiveGuides } from "@/lib/guides/guideRegistry";
 import { getGovernedMediaSlots } from "@/lib/guides/guideMediaSlots";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { useCognitiveStage } from "@/hooks/useCognitiveStage";

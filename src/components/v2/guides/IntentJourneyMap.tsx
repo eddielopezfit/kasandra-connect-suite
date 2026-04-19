@@ -11,7 +11,7 @@
  * Architecture: reads from registry — no hardcoded guide lists.
  */
 
-import { ArrowRight, CheckCircle2, Circle } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { getLiveGuides } from '@/lib/guides/guideRegistry';
@@ -166,7 +166,7 @@ const JOURNEY_MAPS: Record<DecisionLaneIntent, JourneyStep[]> = {
 /** Get the 1-2 most relevant guide titles for a step */
 function getStepGuides(
   step: JourneyStep,
-  intent: DecisionLaneIntent
+  _intent: DecisionLaneIntent
 ): Array<{ titleEn: string; titleEs: string }> {
   const allGuides = getLiveGuides().filter(g => g.tier !== 3);
 

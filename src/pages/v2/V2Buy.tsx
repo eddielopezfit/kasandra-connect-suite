@@ -35,7 +35,7 @@ const PAGE_INTENT = 'buy' as const;
 const V2BuyContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
-  const [leadName, setLeadName] = useState<string | null>(null);
+  const [, setLeadName] = useState<string | null>(null);
   const [quizExploreZip, setQuizExploreZip] = useState<string | null>(null);
   const journey = useJourneyProgress();
 

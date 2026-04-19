@@ -424,7 +424,7 @@ interface GuideToolBridgeProps {
 }
 
 export function GuideToolBridge({ guideId }: GuideToolBridgeProps) {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const config = TOOL_BRIDGES[guideId];
 
   if (!config) return null;

@@ -6,7 +6,7 @@
  */
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { Sparkles, FileText, Loader2, MessageCircle, ArrowLeft, X } from 'lucide-react';
+import { Sparkles, FileText, Loader2, MessageCircle, ArrowLeft } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { useKeyboardInset } from '@/hooks/useKeyboardInset';
 import { useSelenaChat } from '@/contexts/SelenaChatContext';
@@ -78,7 +78,7 @@ export function SelenaChatDrawer() {
     closeLeadCapture,
     onLeadCaptured,
     leadId,
-    pendingAction,
+    pendingAction: _pendingAction,
     clearHistory,
   } = useSelenaChat();
   const { t, language, setLanguage } = useLanguage();
