@@ -1390,6 +1390,11 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
           model: modelUsed,
           messages: messagesPayload,
           max_tokens: substanceModeActive ? 260 : (guardRules.maxTokensOverride ?? (effectiveChipPhase >= 2 ? 160 : 200)),
+          temperature: 0.7,
+        }),
+      });
+      
+      if (!response.ok) {
         throw new Error(`Primary model failed: ${response.status}`);
       }
     } catch (e) {
@@ -1402,6 +1407,10 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
           model: modelUsed,
           messages: messagesPayload,
           max_tokens: substanceModeActive ? 260 : (guardRules.maxTokensOverride ?? (effectiveChipPhase >= 2 ? 160 : 200)),
+          temperature: 0.7,
+        }),
+      });
+    }
 
     // Log model usage for analytics (uses handler-scoped supabase client)
     if (supabase) {
