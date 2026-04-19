@@ -137,7 +137,7 @@ export function SelenaDrawerSuggestedRepliesChips({
       onSuggestedReplyClick(reply);
     } else if (reply.actionSpec) {
       resolveAction(reply.actionSpec, navigate, (payload) => {
-        openChat(payload as Parameters<typeof openChat>[0]);
+        openChat(payload as unknown as Parameters<typeof openChat>[0]);
       });
     } else {
       // Unmatched chip with label only — treat as conversational text
