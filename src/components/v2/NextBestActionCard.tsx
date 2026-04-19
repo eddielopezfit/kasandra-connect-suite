@@ -45,7 +45,7 @@ export default function NextBestActionCard({
   }, [override, progress]);
 
   const handlePrimaryClick = useCallback(() => {
-    logEvent('predicted_action_clicked' as any, {
+    logEvent('predicted_action_clicked', {
       action: prediction.action,
       cta: 'primary',
       destination: prediction.primaryCta.destination,
@@ -53,7 +53,7 @@ export default function NextBestActionCard({
   }, [prediction]);
 
   const handleSecondaryClick = useCallback(() => {
-    logEvent('predicted_action_clicked' as any, {
+    logEvent('predicted_action_clicked', {
       action: prediction.action,
       cta: 'secondary',
       destination: prediction.secondaryCta.destination,
@@ -62,7 +62,7 @@ export default function NextBestActionCard({
 
   const handleSelenaOpen = useCallback(
     () => {
-      logEvent('selena_predictive_trigger' as any, { action: prediction.action });
+      logEvent('selena_predictive_trigger', { action: prediction.action });
       openChat({
         source: 'tool_result_next_step',
         prefillMessage: isEs ? prediction.subtextEs : prediction.subtextEn,

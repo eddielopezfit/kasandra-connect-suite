@@ -179,6 +179,8 @@ export type EventType =
   | 'predicted_action_shown'
   | 'predicted_action_clicked'
   | 'selena_predictive_trigger'
+  | 'friction_escalation_clicked'
+  | 'vip_next_action_clicked'
   // Native Booking Flow
   | 'booking_intake_completed'
   | 'booking_slot_selected'

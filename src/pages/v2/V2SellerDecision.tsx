@@ -10,7 +10,7 @@ import type { PropertySnapshotData } from "@/components/v2/seller-decision/StepP
 import type { ConditionTier } from "@/components/v2/seller-decision/conditionInsights";
 import type { RecommendedPath } from "@/components/v2/seller-decision/StepDualPath";
 import type { ContactResult } from "@/components/v2/seller-decision/StepContact";
-import { updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { updateSessionContext, setFieldIfEmpty, type SessionContext } from "@/lib/analytics/selenaSession";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
 
@@ -92,7 +92,7 @@ const V2SellerDecision = () => {
     setWizardData(prev => ({ ...prev, ...data }));
     setFieldIfEmpty('intent', 'sell');
     updateSessionContext({
-      situation: data.situation as any,
+      situation: data.situation as SessionContext['situation'],
       timeline: data.timeline === 'soon' ? 'asap' : data.timeline === 'considering' ? '30_days' : 'exploring',
       seller_goal_priority: data.goalPriority,
       seller_decision_step: 1,

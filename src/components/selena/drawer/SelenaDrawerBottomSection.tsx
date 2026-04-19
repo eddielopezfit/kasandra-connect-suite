@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConciergeTabBar, type ConciergeTab, type JourneyIntent } from "@/components/selena/ConciergeTabBar";
 import { ConciergeTabPanels } from "@/components/selena/ConciergeTabPanels";
+import type { ChatAction } from "@/contexts/SelenaChatContext";
 import { cn } from "@/lib/utils";
 
 export function SelenaDrawerBottomSection({
@@ -25,7 +26,7 @@ export function SelenaDrawerBottomSection({
   onCloseTabPanel: () => void;
   onTabChange: (tab: ConciergeTab | null) => void;
   onSuggestedReplyClick: (text: string) => void;
-  onActionClick: (action: any) => void;
+  onActionClick: (action: ChatAction) => void;
   language: "en" | "es";
   leadId?: string | null;
   closeDrawer: () => void;

@@ -335,7 +335,7 @@ const V2NeighborhoodCompareContent = () => {
             </p>
             <Button
               onClick={() => openChat({
-                source: 'neighborhood_compare_result' as any,
+                source: 'neighborhood_compare_result',
                 neighborhoodCompareData: {
                   areasCompared: results.map(r => `${r.zip}`),
                 },

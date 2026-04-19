@@ -130,14 +130,14 @@ export function SelenaDrawerSuggestedRepliesChips({
 
     // Clear recovery state if booking chip is clicked (use null, not undefined, for reliable clearing)
     if (isBooking && ctx?.booking_chips_shown_at) {
-      updateSessionContext({ booking_chips_shown_at: null } as any);
+      updateSessionContext({ booking_chips_shown_at: null } as Partial<ReturnType<typeof getSessionContext>> as never);
     }
 
     if (typeof reply === 'string') {
       onSuggestedReplyClick(reply);
     } else if (reply.actionSpec) {
       resolveAction(reply.actionSpec, navigate, (payload) => {
-        openChat(payload as any);
+        openChat(payload as unknown as Parameters<typeof openChat>[0]);
       });
     } else {
       // Unmatched chip with label only — treat as conversational text

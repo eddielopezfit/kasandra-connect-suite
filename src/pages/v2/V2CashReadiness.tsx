@@ -57,10 +57,9 @@ const V2CashReadinessContent = () => {
       const alreadyPrompted = !!(ctx as any)?.tool_cash_readiness_capture_prompted;
       const alreadyKnown = !!leadId || !!storedEmail || alreadyPrompted;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       updateSessionContext({
         tool_cash_readiness_capture_prompted: true,
-      } as any);
+      });
 
       if (leadId) {
         supabase.functions.invoke("update-lead-score", {

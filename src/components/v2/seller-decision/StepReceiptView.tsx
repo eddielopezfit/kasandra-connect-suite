@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { supabase } from "@/integrations/supabase/client";
-import { getOrCreateSessionId, getSessionContext, updateSessionContext, setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { getOrCreateSessionId, getSessionContext, updateSessionContext, setFieldIfEmpty, type SessionContext } from "@/lib/analytics/selenaSession";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -325,9 +325,9 @@ export default function StepReceiptView({ onBackToComparison, onRestart }: StepR
                 tool_used: 'seller_decision',
                 seller_decision_step: 7,
                 seller_decision_recommended_path: rd.recommended_path,
-                seller_goal_priority: rd.goal_priority as any,
-                ...(situationSafe ? { situation: situationSafe as any } : {}),
-                ...(conditionSafe ? { property_condition_raw: conditionSafe as any } : {}),
+                seller_goal_priority: rd.goal_priority as SessionContext['seller_goal_priority'],
+                ...(situationSafe ? { situation: situationSafe as SessionContext['situation'] } : {}),
+                ...(conditionSafe ? { property_condition_raw: conditionSafe as SessionContext['property_condition_raw'] } : {}),
                 ...(timelineCanonical ? { timeline: timelineCanonical } : {}),
               });
               // P1.1: Persist snapshot after seller decision completion

@@ -92,7 +92,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         if (cj.seller_goal_priority) merged.seller_goal_priority = cj.seller_goal_priority;
         if (cj.property_condition_raw) merged.property_condition_raw = cj.property_condition_raw;
       }
-      updateSessionContext(merged as any);
+      updateSessionContext(merged);
       logEvent('session_snapshot_restored', {
         intent: snapshot.intent,
         has_score: typeof snapshot.readiness_score === 'number',
