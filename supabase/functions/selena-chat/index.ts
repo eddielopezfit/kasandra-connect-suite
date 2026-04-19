@@ -1434,6 +1434,54 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       }
     }
 
+    // ============= POST-PROCESSING: 70-WORD HARD CAP =============
+    // KB-16 brevity ceiling: substantive answers ≤70 words / ≤3 sentences.
+    // The sentence cap above handles 4+-sentence drift; this catches replies
+    // that stay within 3 sentences but inflate past the word ceiling
+    // (e.g. ~110-word "awards" answer the Tone Suite caught).
+    // Strategy: keep adding sentences from the start until adding the next one
+    // would breach 70 words. Always preserve at least 1 sentence.
+    // Log every truncation to event_log so the QA Tone Suite can track regressions.
+    const wordCount = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
+    const WORD_CAP = 70;
+    const originalWords = wordCount(reply);
+    if (originalWords > WORD_CAP) {
+      const capSentences = reply.split(SENTENCE_BOUNDARY).filter(s => s.trim().length > 0);
+      let kept: string[] = [];
+      for (const s of capSentences) {
+        const candidate = [...kept, s].join(' ');
+        if (wordCount(candidate) > WORD_CAP && kept.length > 0) break;
+        kept.push(s);
+        // Hard ceiling: never exceed 2 kept sentences once we've crossed the cap.
+        if (kept.length >= 2 && wordCount(candidate) >= WORD_CAP) break;
+      }
+      if (kept.length === 0 && capSentences.length > 0) kept = [capSentences[0]];
+      const truncated = kept.join(' ').trim();
+      const truncatedWords = wordCount(truncated);
+
+      // Fire-and-forget telemetry — never block the response.
+      try {
+        await supabase.from("event_log").insert({
+          session_id: context.session_id,
+          event_type: "selena_brevity_truncated",
+          event_payload: {
+            original_words: originalWords,
+            truncated_words: truncatedWords,
+            original_sentences: capSentences.length,
+            truncated_sentences: kept.length,
+            language,
+            route: context.route,
+            intent: effectiveIntent,
+            word_cap: WORD_CAP,
+          },
+        });
+      } catch (e) {
+        console.error("Failed to log brevity truncation event:", e);
+      }
+
+      reply = truncated;
+    }
+
     // FIX 2: Banned phrase post-filter — deterministic safety net
     const BANNED_OPENER = /^(I apologize[—\-,.]?\s*|I'm sorry[—\-,.]?\s*|Me disculpo[—\-,.]?\s*|Lo siento[—\-,.]?\s*)/i;
     if (BANNED_OPENER.test(reply)) {
