@@ -6,7 +6,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TrustBar from "@/components/v2/TrustBar";
 import { lazy, Suspense, useState } from "react";
-const TestimonialColumns = lazy(() => import("@/components/v2/TestimonialColumns"));
 import KasandraPortrait from "@/components/v2/KasandraPortrait";
 const LazyHomepageNeighborhoodCards = lazy(() => import("@/components/v2/neighborhood/HomepageNeighborhoodCards"));
 const LazyInstantAnswerWidget = lazy(() => import("@/components/v2/calculator/InstantAnswerWidget"));

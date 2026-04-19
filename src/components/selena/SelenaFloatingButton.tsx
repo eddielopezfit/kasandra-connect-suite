@@ -18,12 +18,10 @@ import {
 } from '@/components/ui/tooltip';
 
 export function SelenaFloatingButton() {
-  const { isOpen, toggleChat, openChat, messages } = useSelenaChat();
+  const { isOpen, toggleChat, openChat } = useSelenaChat();
   const location = useLocation();
   const { language } = useLanguage();
-  
-  const hasMessages = messages.length > 0;
-  
+
   const handleClick = () => {
     if (isOpen) {
       toggleChat();
