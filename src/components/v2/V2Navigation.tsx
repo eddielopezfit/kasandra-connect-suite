@@ -121,14 +121,35 @@ const V2Navigation = () => {
 
             {/* Desktop Nav */}
             <div className="hidden lg:flex items-center gap-6">
-              {primaryLinks.map((link) => (
-                <Link key={link.href} to={link.href} className={linkClass(isActive(link.href))} aria-current={isActive(link.href) ? "page" : undefined}>
-                  {link.label}
-                  {isActive(link.href) && (
-                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cc-gold rounded-full" />
-                  )}
-                </Link>
-              ))}
+              {primaryLinks.map((link) => {
+                const isCash = link.href === "/cash-offer-options";
+                if (isCash) {
+                  return (
+                    <Link
+                      key={link.href}
+                      to={link.href}
+                      className={`relative text-sm font-semibold transition-all duration-200 px-3 py-1 rounded-full border ${
+                        isActive(link.href)
+                          ? "bg-cc-gold/15 text-cc-gold border-cc-gold/60"
+                          : isScrolled
+                            ? "text-cc-gold-dark border-cc-gold/40 hover:bg-cc-gold/10 hover:border-cc-gold/70"
+                            : "text-cc-gold border-cc-gold/50 hover:bg-cc-gold/15 hover:border-cc-gold"
+                      }`}
+                      aria-current={isActive(link.href) ? "page" : undefined}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                }
+                return (
+                  <Link key={link.href} to={link.href} className={linkClass(isActive(link.href))} aria-current={isActive(link.href) ? "page" : undefined}>
+                    {link.label}
+                    {isActive(link.href) && (
+                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cc-gold rounded-full" />
+                    )}
+                  </Link>
+                );
+              })}
 
               {/* Explore Dropdown */}
               <div ref={exploreRef} className="relative">
