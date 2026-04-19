@@ -53,9 +53,10 @@ export default function VIPNextBestAction({
   // where there's no concrete signal to anchor a recommendation on.
   const hasRealSignal =
     continuationSummary.insightsCount > 0 ||
-    vip.journey.toolCount > 0 ||
-    vip.journey.hasReadinessScore ||
-    !!vip.intent.primary;
+    vip.journey.toolsCompleted.length > 0 ||
+    vip.journey.guidesCompleted.length > 0 ||
+    typeof vip.intent.readinessScore === 'number' ||
+    !!vip.intent.intent;
 
   if (vip.journey.hasBooked || vip.journey.journeyDepth === 'new' || !hasRealSignal) {
     return null;
