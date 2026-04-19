@@ -25,7 +25,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { isQaAccessGranted } from "@/lib/qa/qaAccess";
-import { TONE_TEST_SAMPLES, type ToneTestSample } from "@/lib/qa/toneTestSamples";
+import {
+  TONE_TEST_SAMPLES,
+  TOTAL_TURN_COUNT,
+  type ToneTestSample,
+} from "@/lib/qa/toneTestSamples";
 import {
   evaluateReply,
   type EvaluationResult,
@@ -34,10 +38,21 @@ import {
 import { CheckCircle2, AlertTriangle, XCircle, Loader2 } from "lucide-react";
 
 interface RunResult {
+  /** Per-turn unique id, e.g. "p1" or "p1:t2" */
+  turnId: string;
   sample: ToneTestSample;
+  /** 1 = cold-start; 2+ = follow-up turn */
+  turnIndex: number;
+  /** The actual user message for this turn */
+  userMessage: string;
   evaluation?: EvaluationResult;
   error?: string;
   durationMs: number;
+}
+
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
 }
 
 type RunStatus = "idle" | "running" | "complete";
@@ -49,8 +64,13 @@ const VIOLATION_LABELS: Record<Violation["type"], { label: string; tone: "destru
   exceeds_sentence_limit: { label: "Over 3 sentences", tone: "warning" },
 };
 
-async function callSelena(sample: ToneTestSample): Promise<{ reply: string; durationMs: number }> {
-  const sessionId = `qa-tone-${sample.id}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+async function callSelena(
+  sample: ToneTestSample,
+  userMessage: string,
+  sessionId: string,
+  history: ChatMessage[],
+  turnIndex: number
+): Promise<{ reply: string; durationMs: number }> {
   const start = performance.now();
 
   const response = await fetch(
@@ -62,12 +82,12 @@ async function callSelena(sample: ToneTestSample): Promise<{ reply: string; dura
         Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
       },
       body: JSON.stringify({
-        message: sample.message,
+        message: userMessage,
         context: {
           session_id: sessionId,
           route: "/qa-tone-suite",
           language: sample.language,
-          turn_count: 1,
+          turn_count: turnIndex,
           current_mode: 1,
           chip_phase_floor: 0,
           greeting_phase_seen: 0,
@@ -75,7 +95,7 @@ async function callSelena(sample: ToneTestSample): Promise<{ reply: string; dura
           guides_completed: [],
           readiness_score: 0,
         },
-        history: [],
+        history,
       }),
     }
   );
@@ -101,31 +121,68 @@ const V2QAToneSuite = () => {
   const [status, setStatus] = useState<RunStatus>("idle");
   const [results, setResults] = useState<RunResult[]>([]);
   const [progress, setProgress] = useState(0);
-  const [filter, setFilter] = useState<"all" | "fail" | "pass">("all");
+  const [filter, setFilter] = useState<"all" | "fail" | "pass" | "followups">("all");
 
   const runSuite = useCallback(async () => {
     setStatus("running");
     setResults([]);
     setProgress(0);
     const collected: RunResult[] = [];
+    let turnsCompleted = 0;
 
     for (let i = 0; i < TONE_TEST_SAMPLES.length; i++) {
       const sample = TONE_TEST_SAMPLES[i];
-      try {
-        const { reply, durationMs } = await callSelena(sample);
-        const evaluation = evaluateReply(reply, sample.language);
-        collected.push({ sample, evaluation, durationMs });
-      } catch (err) {
-        collected.push({
-          sample,
-          error: err instanceof Error ? err.message : String(err),
-          durationMs: 0,
-        });
+      // One stable session id per sample so follow-ups share context.
+      const sessionId = `qa-tone-${sample.id}-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 8)}`;
+
+      // Build the full turn list: cold-start + each follow-up.
+      const turns = [sample.message, ...(sample.followUps ?? [])];
+      const history: ChatMessage[] = [];
+
+      for (let t = 0; t < turns.length; t++) {
+        const userMessage = turns[t];
+        const turnIndex = t + 1;
+        const turnId = t === 0 ? sample.id : `${sample.id}:t${turnIndex}`;
+
+        try {
+          const { reply, durationMs } = await callSelena(
+            sample,
+            userMessage,
+            sessionId,
+            history,
+            turnIndex
+          );
+          const evaluation = evaluateReply(reply, sample.language);
+          collected.push({
+            turnId,
+            sample,
+            turnIndex,
+            userMessage,
+            evaluation,
+            durationMs,
+          });
+          history.push({ role: "user", content: userMessage });
+          history.push({ role: "assistant", content: reply });
+        } catch (err) {
+          collected.push({
+            turnId,
+            sample,
+            turnIndex,
+            userMessage,
+            error: err instanceof Error ? err.message : String(err),
+            durationMs: 0,
+          });
+          // Stop the chain for this sample if a turn errors out.
+          break;
+        }
+
+        turnsCompleted++;
+        setResults([...collected]);
+        setProgress(Math.round((turnsCompleted / TOTAL_TURN_COUNT) * 100));
+        await new Promise((r) => setTimeout(r, 250));
       }
-      setResults([...collected]);
-      setProgress(Math.round(((i + 1) / TONE_TEST_SAMPLES.length) * 100));
-      // Light delay between calls — keep edge function happy.
-      await new Promise((r) => setTimeout(r, 250));
     }
 
     setStatus("complete");
@@ -136,6 +193,10 @@ const V2QAToneSuite = () => {
     const passed = results.filter((r) => r.evaluation?.passed).length;
     const failed = results.filter((r) => r.evaluation && !r.evaluation.passed).length;
     const errored = results.filter((r) => r.error).length;
+    const followUpTurns = results.filter((r) => r.turnIndex > 1).length;
+    const followUpFailed = results.filter(
+      (r) => r.turnIndex > 1 && r.evaluation && !r.evaluation.passed
+    ).length;
     const avgWords =
       results.length > 0
         ? Math.round(
@@ -143,12 +204,14 @@ const V2QAToneSuite = () => {
               Math.max(results.length, 1)
           )
         : 0;
-    return { total, passed, failed, errored, avgWords };
+    return { total, passed, failed, errored, avgWords, followUpTurns, followUpFailed };
   }, [results]);
 
   const visibleResults = useMemo(() => {
     if (filter === "all") return results;
-    if (filter === "fail") return results.filter((r) => r.error || (r.evaluation && !r.evaluation.passed));
+    if (filter === "fail")
+      return results.filter((r) => r.error || (r.evaluation && !r.evaluation.passed));
+    if (filter === "followups") return results.filter((r) => r.turnIndex > 1);
     return results.filter((r) => r.evaluation?.passed);
   }, [results, filter]);
 
@@ -168,10 +231,11 @@ const V2QAToneSuite = () => {
             </Badge>
           </div>
           <p className="text-white/70 text-sm max-w-2xl">
-            Fires {TONE_TEST_SAMPLES.length} sample messages at selena-chat. Flags replies with KB-16
-            banned phrases, brevity violations (over 70 words or 3 sentences), or legacy brokerage
-            mentions (Coldwell, MoxiWorks, Diamond Society). Each sample runs in a fresh session.
-            Language: {language}
+            Fires {TONE_TEST_SAMPLES.length} scenarios ({TOTAL_TURN_COUNT} total turns including
+            multi-turn follow-ups) at selena-chat. Flags replies with KB-16 banned phrases, brevity
+            violations (over 70 words or 3 sentences), or legacy brokerage mentions (Coldwell,
+            MoxiWorks, Diamond Society). Follow-ups share session_id + history to test
+            conversational drift. Language: {language}
           </p>
         </div>
       </section>
@@ -194,7 +258,7 @@ const V2QAToneSuite = () => {
                 ) : status === "complete" ? (
                   "Run again"
                 ) : (
-                  `Run ${TONE_TEST_SAMPLES.length} samples`
+                  `Run ${TONE_TEST_SAMPLES.length} scenarios (${TOTAL_TURN_COUNT} turns)`
                 )}
               </Button>
 
@@ -202,27 +266,33 @@ const V2QAToneSuite = () => {
                 <div className="flex-1 min-w-[200px]">
                   <Progress value={progress} className="h-2" />
                   <p className="text-xs text-muted-foreground mt-1">
-                    {results.length} / {TONE_TEST_SAMPLES.length} complete
+                    {results.length} / {TOTAL_TURN_COUNT} turns complete
                   </p>
                 </div>
               )}
             </div>
 
             {results.length > 0 && (
-              <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
-                <SummaryStat label="Total" value={summary.total} />
+              <div className="mt-6 grid grid-cols-2 md:grid-cols-6 gap-3 text-sm">
+                <SummaryStat label="Total turns" value={summary.total} />
                 <SummaryStat label="Passed" value={summary.passed} tone="success" />
                 <SummaryStat label="Failed" value={summary.failed} tone="destructive" />
                 <SummaryStat label="Errored" value={summary.errored} tone="warning" />
+                <SummaryStat
+                  label="Follow-up fails"
+                  value={`${summary.followUpFailed}/${summary.followUpTurns}`}
+                  tone={summary.followUpFailed > 0 ? "destructive" : "success"}
+                />
                 <SummaryStat label="Avg words" value={summary.avgWords} />
               </div>
             )}
 
             {results.length > 0 && (
-              <div className="mt-4 flex gap-2">
+              <div className="mt-4 flex flex-wrap gap-2">
                 <FilterButton current={filter} value="all" onClick={setFilter}>All</FilterButton>
                 <FilterButton current={filter} value="fail" onClick={setFilter}>Failures only</FilterButton>
                 <FilterButton current={filter} value="pass" onClick={setFilter}>Passes only</FilterButton>
+                <FilterButton current={filter} value="followups" onClick={setFilter}>Follow-ups only</FilterButton>
               </div>
             )}
           </Card>
@@ -232,10 +302,11 @@ const V2QAToneSuite = () => {
             <Accordion type="multiple" className="space-y-3">
               {visibleResults.map((result) => {
                 const failed = !!result.error || (result.evaluation && !result.evaluation.passed);
+                const isFollowUp = result.turnIndex > 1;
                 return (
                   <AccordionItem
-                    key={result.sample.id}
-                    value={result.sample.id}
+                    key={result.turnId}
+                    value={result.turnId}
                     className="border rounded-lg bg-card px-4"
                   >
                     <AccordionTrigger className="hover:no-underline">
@@ -255,12 +326,17 @@ const V2QAToneSuite = () => {
                             <Badge variant="outline" className="text-xs">
                               {result.sample.language}
                             </Badge>
+                            {isFollowUp && (
+                              <Badge className="bg-cc-navy text-white text-xs hover:bg-cc-navy">
+                                Turn {result.turnIndex}
+                              </Badge>
+                            )}
                             <span className="text-xs text-muted-foreground">
-                              #{result.sample.id} · {Math.round(result.durationMs)}ms
+                              #{result.turnId} · {Math.round(result.durationMs)}ms
                             </span>
                           </div>
                           <p className="text-sm font-medium truncate">
-                            {result.sample.message}
+                            {result.userMessage}
                           </p>
                         </div>
                       </div>
@@ -275,6 +351,11 @@ const V2QAToneSuite = () => {
                           {result.sample.expectation && (
                             <p className="text-xs italic text-muted-foreground">
                               Expectation: {result.sample.expectation}
+                            </p>
+                          )}
+                          {isFollowUp && (
+                            <p className="text-xs text-muted-foreground">
+                              Cold-start was: <span className="italic">"{result.sample.message}"</span>
                             </p>
                           )}
                           <div className="bg-muted/50 p-3 rounded text-sm whitespace-pre-wrap">
@@ -319,8 +400,8 @@ const V2QAToneSuite = () => {
           {status === "idle" && (
             <Card className="p-8 text-center text-muted-foreground">
               <p className="text-sm">
-                Click <strong>Run {TONE_TEST_SAMPLES.length} samples</strong> to start the regression.
-                Expected runtime: ~{Math.ceil(TONE_TEST_SAMPLES.length * 2.5)}s.
+                Click <strong>Run {TONE_TEST_SAMPLES.length} scenarios</strong> to start the regression.
+                Total turns: {TOTAL_TURN_COUNT}. Expected runtime: ~{Math.ceil(TOTAL_TURN_COUNT * 2.5)}s.
               </p>
             </Card>
           )}
@@ -330,13 +411,15 @@ const V2QAToneSuite = () => {
   );
 };
 
+type FilterValue = "all" | "fail" | "pass" | "followups";
+
 const SummaryStat = ({
   label,
   value,
   tone,
 }: {
   label: string;
-  value: number;
+  value: number | string;
   tone?: "success" | "destructive" | "warning";
 }) => {
   const colorClass =
@@ -362,8 +445,8 @@ const FilterButton = ({
   children,
 }: {
   current: string;
-  value: "all" | "fail" | "pass";
-  onClick: (v: "all" | "fail" | "pass") => void;
+  value: FilterValue;
+  onClick: (v: FilterValue) => void;
   children: React.ReactNode;
 }) => (
   <button
