@@ -80,8 +80,8 @@ const V2Navigation = () => {
       )}
 
       {/* Branding / Compliance Strip — REALTOR®, Fair Housing, Equal Housing */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-cc-sand-dark/20">
-        <div className="flex items-center justify-center py-1 px-4">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-cc-sand-dark/20 overflow-hidden">
+        <div className="flex items-center justify-center py-2 px-4 h-9 md:h-10">
           <img
             src="/images/kasandra-brand-lockup.jpg"
             alt="Kasandra Prieto — REALTOR®, Equal Housing Opportunity"
@@ -89,7 +89,7 @@ const V2Navigation = () => {
             height={32}
             fetchPriority="high"
             decoding="async"
-            className="h-7 md:h-8 w-auto object-contain"
+            className="h-5 md:h-6 w-auto object-contain max-w-full"
           />
         </div>
       </div>
