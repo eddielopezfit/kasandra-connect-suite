@@ -174,7 +174,7 @@ const V2Footer = () => {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cc-gold/10 border border-cc-gold/30 text-cc-gold text-xs font-medium hover:bg-cc-gold/15 hover:border-cc-gold/50 transition-colors"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-cc-gold animate-pulse" />
-              {t("Powered by Selena AI · Bilingual Concierge", "Impulsado por Selena AI · Concierge Bilingüe")}
+              {t("Powered by Selena AI · Bilingual Concierge", "Selena AI · Concierge Bilingüe")}
             </Link>
           </div>
 

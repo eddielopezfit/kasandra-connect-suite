@@ -142,8 +142,8 @@ export default function ExitIntentModal() {
                         "Has explorado herramientas y guías. Guarda tu correo para que Selena retome donde lo dejaste la próxima vez."
                       )
                     : t(
-                        "Kasandra sends a free monthly Tucson market update to her community. Want yours?",
-                        "Kasandra envía una actualización mensual gratuita del mercado de Tucson a su comunidad. ¿Quieres la tuya?"
+                        "Kasandra sends a monthly Tucson market update to her community. Want yours?",
+                        "Kasandra envía una actualización mensual del mercado de Tucson a su comunidad. ¿Quieres la tuya?"
                       )}
                 </p>
               </div>
@@ -177,7 +177,7 @@ export default function ExitIntentModal() {
                       <Mail className="w-4 h-4 mr-2" />
                       {progress.journeyDepth === 'engaged' || progress.journeyDepth === 'ready'
                         ? t("Save My Progress", "Guardar Mi Progreso")
-                        : t("Get the Free Market Report", "Recibe el Reporte Gratuito")}
+                        : t("Send Me the Market Report", "Envíame el Reporte de Mercado")}
                     </>
                   )}
                 </Button>

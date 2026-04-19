@@ -34,7 +34,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   },
   '/buy': {
     title: 'Buy a Home in Tucson, AZ | First-Time Buyer & Relocation Guide — Kasandra Prieto',
-    description: 'Step-by-step home buying in Tucson. Down payment assistance, bilingual support, off-market access, and a free AI readiness check — no pressure.',
+    description: 'Step-by-step home buying in Tucson. Down payment assistance, bilingual support, off-market access, and an AI readiness check — no pressure.',
     canonical: 'https://kasandraprietorealtor.com/buy',
     schemaType: 'Service',
   },
@@ -46,17 +46,17 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   },
   '/seller-decision': {
     title: 'Which Selling Path is Right For You? | Tucson Seller Decision Tool',
-    description: 'Answer 5 questions about your Tucson property and get a personalized selling path — cash offer, traditional listing, or hybrid. Free, no commitment.',
+    description: 'Answer 5 questions about your Tucson property and get a personalized selling path — cash offer, traditional listing, or hybrid. No commitment.',
     canonical: 'https://kasandraprietorealtor.com/seller-decision',
   },
   '/seller-readiness': {
     title: 'Seller Readiness Check | Tucson Home Selling — Kasandra Prieto',
-    description: 'How ready are you to sell your Tucson home? Take the free 3-minute readiness check and get a personalized score with action steps.',
+    description: 'How ready are you to sell your Tucson home? Take the 3-minute readiness check and get a personalized score with action steps.',
     canonical: 'https://kasandraprietorealtor.com/seller-readiness',
   },
   '/buyer-readiness': {
     title: 'Buyer Readiness Quiz | Are You Ready to Buy in Tucson? — Kasandra Prieto',
-    description: 'Take the free 3-minute buyer readiness quiz. Know exactly where you stand on financing, savings, and timeline before you start house hunting in Tucson.',
+    description: 'Take the 3-minute buyer readiness quiz. Know exactly where you stand on financing, savings, and timeline before you start house hunting in Tucson.',
     canonical: 'https://kasandraprietorealtor.com/buyer-readiness',
   },
   '/market': {
@@ -66,8 +66,8 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     schemaType: 'Dataset',
   },
   '/book': {
-    title: 'Schedule a Free Consultation | Kasandra Prieto, Tucson REALTOR®',
-    description: 'Book a free 20-minute consultation with Kasandra Prieto — bilingual Tucson REALTOR®. No pressure. Buyers, sellers, and investors welcome.',
+    title: 'Schedule a Strategy Session | Kasandra Prieto, Tucson REALTOR®',
+    description: 'Book a 20-minute strategy session with Kasandra Prieto — bilingual Tucson REALTOR®. No pressure. Buyers, sellers, and investors welcome.',
     canonical: 'https://kasandraprietorealtor.com/book',
   },
   '/about': {
@@ -77,8 +77,8 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     schemaType: 'Person',
   },
   '/guides': {
-    title: 'Free Tucson Real Estate Guides | Home Buying & Selling Education — Kasandra Prieto',
-    description: '38 free bilingual guides on buying, selling, cash offers, Pima County taxes, and Tucson neighborhoods. Learn at your own pace, no pressure, no sign-up.',
+    title: 'Tucson Real Estate Guides | Home Buying & Selling Education — Kasandra Prieto',
+    description: '38 bilingual guides on buying, selling, cash offers, Pima County taxes, and Tucson neighborhoods. Learn at your own pace, no sign-up required.',
     canonical: 'https://kasandraprietorealtor.com/guides',
     schemaType: 'CollectionPage',
   },
@@ -138,7 +138,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
 export const GUIDE_ROUTE_META: Record<string, RouteMeta> = {
   '/guides/first-time-buyer-guide': {
     title: 'First-Time Home Buyer Guide in Tucson, AZ (2026) — Kasandra Prieto',
-    description: 'Everything a first-time buyer in Tucson needs to know — financing, inspections, down payment programs, and Pima County market tips. Free bilingual guide.',
+    description: 'Everything a first-time buyer in Tucson needs to know — financing, inspections, down payment programs, and Pima County market tips. Bilingual guide.',
     canonical: 'https://kasandraprietorealtor.com/guides/first-time-buyer-guide',
     schemaType: 'HowTo',
   },
@@ -156,7 +156,7 @@ export const GUIDE_ROUTE_META: Record<string, RouteMeta> = {
   },
   '/guides/inherited-probate-property': {
     title: 'Selling an Inherited Home in Tucson, AZ — Probate & Estate Guide',
-    description: 'Inherited a home in Tucson? Understand Arizona probate, your selling options, timeline, and how to protect the family\'s interests. Free guide.',
+    description: 'Inherited a home in Tucson? Understand Arizona probate, your selling options, timeline, and how to protect the family\'s interests. Bilingual guide.',
     canonical: 'https://kasandraprietorealtor.com/guides/inherited-probate-property',
     schemaType: 'HowTo',
   },
@@ -218,7 +218,7 @@ export const GUIDE_ROUTE_META: Record<string, RouteMeta> = {
   },
   '/affordability-calculator': {
     title: 'Affordability Calculator | How Much Home Can You Afford? — Kasandra Prieto',
-    description: 'Calculate your Tucson home buying power with DTI analysis, PMI estimates, and credit score adjustments. Free tool — no login required.',
+    description: 'Calculate your Tucson home buying power with DTI analysis, PMI estimates, and credit score adjustments. No login required.',
     canonical: 'https://kasandraprietorealtor.com/affordability-calculator',
     schemaType: 'WebApplication',
   },
@@ -229,7 +229,7 @@ export const GUIDE_ROUTE_META: Record<string, RouteMeta> = {
     schemaType: 'WebApplication',
   },
   '/home-valuation': {
-    title: 'Free Home Valuation | Personalized CMA — Kasandra Prieto',
+    title: 'Home Valuation | Personalized CMA — Kasandra Prieto',
     description: 'Get a personalized comparative market analysis for your Tucson home — not an algorithm. Kasandra reviews active, pending, and sold data.',
     canonical: 'https://kasandraprietorealtor.com/home-valuation',
     schemaType: 'Service',

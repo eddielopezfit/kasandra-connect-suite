@@ -313,8 +313,8 @@ const V2AffordabilityCalculator = () => {
   useDocumentHead({
     titleEn: "Affordability Calculator | How Much Home Can You Afford? — Kasandra Prieto",
     titleEs: "Calculadora de Presupuesto | ¿Cuánta Casa Puedes Pagar? — Kasandra Prieto",
-    descriptionEn: "Calculate your Tucson home buying power with DTI analysis, PMI estimates, and credit score adjustments. Free tool — no login required.",
-    descriptionEs: "Calcula tu poder de compra en Tucson con análisis DTI, estimados de PMI y ajustes de crédito. Herramienta gratuita — sin registro.",
+    descriptionEn: "Calculate your Tucson home buying power with DTI analysis, PMI estimates, and credit score adjustments. No login required.",
+    descriptionEs: "Calcula tu poder de compra en Tucson con análisis DTI, estimados de PMI y ajustes de crédito. Sin registro.",
   });
 
   return (

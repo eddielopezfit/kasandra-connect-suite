@@ -13,10 +13,10 @@ const SellerLanding = () => {
 
   // noindex: paid ad funnel page — should not be indexed by search engines [audit SEO-04]
   useDocumentHead({
-    titleEn: "Free Net Sheet — Tucson Home Sale Analysis | Kasandra Prieto",
-    titleEs: "Reporte Gratuito — Análisis de Venta en Tucson | Kasandra Prieto",
-    descriptionEn: "Compare cash offer vs. traditional listing for your Tucson home. Free, no obligation.",
-    descriptionEs: "Compara oferta en efectivo vs. listado tradicional para tu casa en Tucson. Gratis, sin compromiso.",
+    titleEn: "Net Sheet — Tucson Home Sale Analysis | Kasandra Prieto",
+    titleEs: "Net Sheet — Análisis de Venta en Tucson | Kasandra Prieto",
+    descriptionEn: "Compare cash offer vs. traditional listing for your Tucson home. No obligation.",
+    descriptionEs: "Compara oferta en efectivo vs. listado tradicional para tu casa en Tucson. Sin compromiso.",
     noindex: true,
   });
 
@@ -63,7 +63,7 @@ const SellerLanding = () => {
                 to="/ad/seller-quiz"
                 onClick={() => trackCustom("SellerQuizStarted", { content_category: "seller_funnel" })}
               >
-                {t("Start Free Net Sheet", "Comenzar reporte gratis")}
+                {t("Start My Net Sheet", "Comenzar mi Net Sheet")}
               </Link>
             </Button>
           </div>

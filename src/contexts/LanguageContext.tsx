@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 export type Language = "en" | "es";
 
@@ -12,21 +12,54 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 const STORAGE_KEY = "kasandra-language";
 
-function getInitialLanguage(): Language {
+function readStoredLanguage(): Language {
   if (typeof window === "undefined") return "en";
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  return stored === "es" ? "es" : "en";
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    return stored === "es" ? "es" : "en";
+  } catch {
+    return "en";
+  }
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(getInitialLanguage);
+  // Synchronous initialization — guarantees first paint uses stored value.
+  const [language, setLanguageState] = useState<Language>(readStoredLanguage);
 
-  const setLanguage = (lang: Language) => {
+  // Re-sync once after mount in case localStorage was modified between module load
+  // and provider mount (e.g., another tab, ?lang= URL param handler, deferred hydration).
+  useEffect(() => {
+    const fresh = readStoredLanguage();
+    if (fresh !== language) {
+      setLanguageState(fresh);
+    }
+    // intentionally only on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Cross-tab + cross-iframe sync: if another instance changes the language,
+  // mirror it here so the entire app stays in lockstep.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY) return;
+      const next = e.newValue === "es" ? "es" : "en";
+      setLanguageState((prev) => (prev === next ? prev : next));
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  // Stable setter — prevents downstream `useEffect([..., setLanguage])` re-fires.
+  const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
     if (typeof window !== "undefined") {
-      window.localStorage.setItem(STORAGE_KEY, lang);
+      try {
+        window.localStorage.setItem(STORAGE_KEY, lang);
+      } catch {
+        /* storage may be blocked (Safari private mode) — UI state still updates */
+      }
     }
-  };
+  }, []);
 
   // Keep <html lang="..."> in sync for SEO/accessibility
   useEffect(() => {
@@ -41,7 +74,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       setLanguage,
       t: (en: string, es: string) => (language === "en" ? en : es),
     };
-  }, [language]);
+  }, [language, setLanguage]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }

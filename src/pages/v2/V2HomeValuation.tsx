@@ -454,8 +454,8 @@ const V2HomeValuationContent = () => {
 
 const V2HomeValuation = () => {
   useDocumentHead({
-    titleEn: "Free Home Valuation | Personalized CMA — Kasandra Prieto",
-    titleEs: "Valuación Gratuita | Análisis de Mercado Personalizado — Kasandra Prieto",
+    titleEn: "Home Valuation | Personalized CMA — Kasandra Prieto",
+    titleEs: "Valuación de Casa | Análisis de Mercado Personalizado — Kasandra Prieto",
     descriptionEn: "Get a personalized comparative market analysis for your Tucson home — not an algorithm. Kasandra reviews active, pending, and sold data specific to your property.",
     descriptionEs: "Obtén un análisis de mercado comparativo personalizado para tu casa en Tucson — no es un algoritmo. Kasandra revisa datos activos, pendientes y vendidos.",
   });

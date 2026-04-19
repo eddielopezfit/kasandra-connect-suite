@@ -314,7 +314,7 @@ const V2SellContent = () => {
               <Input
                 value={addressInput}
                 onChange={(e) => setAddressInput(e.target.value)}
-                placeholder={t("Enter your address for a free estimate…", "Ingrese su dirección para un estimado gratis…")}
+                placeholder={t("Enter your address for an instant estimate…", "Ingresa tu dirección para un estimado instantáneo…")}
                 className="pl-10 h-12 border-border/40 bg-white rounded-full text-sm"
               />
             </div>
