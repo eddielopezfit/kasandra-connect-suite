@@ -76,6 +76,7 @@ import {
   PROGRESSION_MAP, getSuggestedReplies, PROCEEDS_PATTERNS,
 } from "./chipGovernance.ts";
 import { SYSTEM_PROMPT_EN, SYSTEM_PROMPT_ES, stripSection, buildSystemPrompt } from "./systemPromptBuilder.ts";
+import { detectBannedPhrase, buildAntiDeflectionNudge } from "./bannedPhrases.ts";
 
 // ============= MAIN HANDLER =============
 serve(async (req) => {
@@ -1417,6 +1418,48 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       // Capitalize first letter after strip
       if (reply.length > 0) {
         reply = reply.charAt(0).toUpperCase() + reply.slice(1);
+      }
+    }
+
+    // ============= KB-16 ANTI-DEFLECTION POST-PROCESSOR =============
+    // If the model emitted a banned deflection phrase, regenerate ONCE with
+    // a stronger anti-deflection nudge appended to the system prompt.
+    const banned = detectBannedPhrase(reply, language);
+    if (banned.matched) {
+      console.log(`[KB-16] Banned phrase detected: "${banned.phrase}" — regenerating once`);
+      try {
+        const regenSystem = (messagesPayload[0] as { content: string }).content
+          + buildAntiDeflectionNudge(language, banned.phrase);
+        const regenPayload = [
+          { role: "system", content: regenSystem },
+          ...messagesPayload.slice(1),
+        ];
+        const regenResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${Deno.env.get("LOVABLE_API_KEY")}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: modelUsed,
+            messages: regenPayload,
+            max_tokens: 200,
+            temperature: 0.7,
+          }),
+        });
+        if (regenResp.ok) {
+          const regenData = await regenResp.json();
+          const regenRaw = regenData.choices?.[0]?.message?.content;
+          if (regenRaw) {
+            let regen = sanitizeBracketCTAs(regenRaw);
+            const regenSentences = regen.split(SENTENCE_BOUNDARY).filter(s => s.trim().length > 0);
+            if (regenSentences.length > 3) {
+              regen = regenSentences.slice(0, 3).join(' ');
+            }
+            if (!detectBannedPhrase(regen, language).matched && regen.length > 10) {
+              reply = regen;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("[KB-16] Regenerate failed, keeping original reply", e);
       }
     }
 
