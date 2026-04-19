@@ -69,7 +69,7 @@ const data: GuideContentData = {
         {
           question: 'Is now a good time to buy a home in Tucson?',
           questionEs: '¿Es buen momento para comprar una casa en Tucson?',
-          answer: 'It depends on your personal situation more than market timing. Tucson prices have stabilized, inventory is reasonable, and buyers have more negotiating room than at any point since 2019. The main challenge is mortgage rates. If you have stable income, a down payment, and a 5+ year horizon, the math often favors buying over continuing to rent in Tucson right now. I can run the specific numbers for your situation in a free strategy call.',
+          answer: 'It depends on your personal situation more than market timing. Tucson prices have stabilized, inventory is reasonable, and buyers have more negotiating room than at any point since 2019. The main challenge is mortgage rates. If you have stable income, a down payment, and a 5+ year horizon, the math often favors buying over continuing to rent in Tucson right now. I can run the specific numbers for your situation in a strategy call.',
           answerEs: 'Depende más de tu situación personal que del momento del mercado. Los precios de Tucson se han estabilizado, el inventario es razonable y los compradores tienen más margen de negociación que en cualquier momento desde 2019. El principal desafío son las tasas hipotecarias. Si tienes ingresos estables, un pago inicial y un horizonte de 5+ años, la matemática a menudo favorece comprar sobre seguir rentando en Tucson ahora.',
         },
         {
