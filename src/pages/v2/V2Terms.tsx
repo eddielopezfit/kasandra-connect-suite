@@ -20,7 +20,7 @@ const V2TermsContent = () => {
             {t("Terms of Service", "Términos de Servicio")}
           </h1>
           <p className="text-cc-ivory/60 mt-2 text-sm">
-            {t("Last updated: March 2026", "Última actualización: Marzo 2026")}
+            {t("Last updated: April 2026", "Última actualización: Abril 2026")}
           </p>
         </div>
       </section>
