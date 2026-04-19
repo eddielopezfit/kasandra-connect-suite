@@ -1,10 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import singingKaraoke from "@/assets/kasandra/singing-karaoke.jpg";
-import dancingStars from "@/assets/kasandra/dancing-stars-2024.jpg";
-import desertSunset from "@/assets/kasandra/desert-sunset-cowboy.jpg";
-import navyDressIronGate from "@/assets/kasandra/navy-dress-iron-gate.jpg";
-import constructionClass from "@/assets/kasandra/construction-class.jpg";
-import missLilly from "@/assets/kasandra/miss-lilly-gold-balloons.jpg";
+import singingKaraoke from "@/assets/kasandra/singing-karaoke.webp";
+import dancingStars from "@/assets/kasandra/dancing-stars-2024.webp";
+import desertSunset from "@/assets/kasandra/desert-sunset-cowboy.webp";
+import navyDressIronGate from "@/assets/kasandra/navy-dress-iron-gate.webp";
+import constructionClass from "@/assets/kasandra/construction-class.webp";
+import missLilly from "@/assets/kasandra/miss-lilly-gold-balloons.webp";
 
 interface GalleryItem {
   src: string;
@@ -93,8 +93,11 @@ const KasandraPhotoGallery = ({ className = '' }: KasandraPhotoGalleryProps) => 
               <img
                 src={item.src}
                 alt={t(item.altEn, item.altEs)}
+                width={400}
+                height={300}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                 loading="lazy"
+                decoding="async"
               />
               {/* Hover caption overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-cc-navy/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">

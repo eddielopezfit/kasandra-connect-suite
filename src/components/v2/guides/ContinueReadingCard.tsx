@@ -49,7 +49,10 @@ export function ContinueReadingCard({ guideId, onClick, className }: ContinueRea
               <img
                 src={thumbnailSrc}
                 alt={t(entry.titleEn, entry.titleEs)}
+                width={80}
+                height={80}
                 loading='lazy'
+                decoding='async'
                 className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
               />
             </div>

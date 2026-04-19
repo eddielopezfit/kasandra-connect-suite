@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
+import kasandraHeadshot from "@/assets/kasandra-headshot.webp";
 import { motion } from "framer-motion";
 
 interface KasandraPresenceCardProps {
@@ -33,8 +33,11 @@ const KasandraPresenceCard = ({
           <img
             src={image}
             alt="Kasandra Prieto"
+            width={48}
+            height={48}
             className="w-12 h-12 rounded-full object-cover flex-shrink-0"
             loading="lazy"
+            decoding="async"
           />
           <div>
             <p className="text-sm text-cc-charcoal leading-relaxed">
@@ -63,8 +66,11 @@ const KasandraPresenceCard = ({
             <img
               src={image}
               alt="Kasandra Prieto"
+              width={144}
+              height={144}
               className="w-28 h-28 md:w-36 md:h-36 rounded-2xl object-cover shadow-lg flex-shrink-0"
               loading="lazy"
+              decoding="async"
             />
             <div>
               <blockquote className="text-lg md:text-xl text-cc-charcoal italic leading-relaxed font-serif">
@@ -96,8 +102,11 @@ const KasandraPresenceCard = ({
         <img
           src={image}
           alt="Kasandra Prieto"
+          width={64}
+          height={64}
           className="w-16 h-16 rounded-full object-cover flex-shrink-0 ring-2 ring-cc-gold/20"
           loading="lazy"
+          decoding="async"
         />
         <div>
           <p className="text-base text-cc-charcoal leading-relaxed">

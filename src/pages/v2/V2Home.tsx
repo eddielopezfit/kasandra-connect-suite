@@ -28,7 +28,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import kasandraHeadshot from "@/assets/kasandra/desert-landscape-mountains.jpg";
+import kasandraHeadshot from "@/assets/kasandra/desert-landscape-mountains.webp";
 
 import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
@@ -458,8 +458,11 @@ const V2HomeContent = () => {
                     <img
                       src="https://img.youtube.com/vi/xmJ62GGtKgo/hqdefault.jpg"
                       alt="Lifting You Up podcast episode thumbnail"
+                      width={480}
+                      height={360}
                       className="absolute inset-0 w-full h-full object-cover"
                       loading="lazy"
+                      decoding="async"
                     />
                     <div className="relative z-10 w-16 h-16 rounded-full bg-cc-gold/90 flex items-center justify-center shadow-lg group-hover:bg-cc-gold transition-colors">
                       <svg viewBox="0 0 24 24" className="w-7 h-7 text-cc-navy ml-1" fill="currentColor"><polygon points="5,3 19,12 5,21" /></svg>

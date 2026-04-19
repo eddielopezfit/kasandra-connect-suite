@@ -11,7 +11,7 @@ import { lazy, Suspense } from "react";
 
 const GoogleReviewsSection = lazy(() => import("@/components/v2/GoogleReviewsSection"));
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
-import heroImage from "@/assets/hero-community-neighborhood.png";
+import heroImage from "@/assets/hero-community-neighborhood.webp";
 
 
 const V2CommunityContent = () => {
@@ -122,6 +122,10 @@ const V2CommunityContent = () => {
                   <img
                     src={arizonaDiaperBankLogo}
                     alt={t("Arizona Diaper Bank logo", "Logotipo de Arizona Diaper Bank")}
+                    width={240}
+                    height={120}
+                    loading="lazy"
+                    decoding="async"
                     className="max-h-[120px] w-auto object-contain"
                   />
                 </div>
@@ -140,6 +144,10 @@ const V2CommunityContent = () => {
                 <img
                   src={rumboAlExitoLogo}
                   alt={t("Rumbo al Éxito Latino Business Group logo", "Logotipo de Rumbo al Éxito Latino Business Group")}
+                  width={240}
+                  height={120}
+                  loading="lazy"
+                  decoding="async"
                   className="max-h-[120px] w-auto object-contain"
                 />
               </div>
@@ -216,6 +224,10 @@ const V2CommunityContent = () => {
                 <img
                   src={tucsonApplianceLogo}
                   alt={t("Tucson Appliance logo", "Logotipo de Tucson Appliance")}
+                  width={240}
+                  height={120}
+                  loading="lazy"
+                  decoding="async"
                   className="max-h-[120px] w-auto object-contain"
                 />
               </div>

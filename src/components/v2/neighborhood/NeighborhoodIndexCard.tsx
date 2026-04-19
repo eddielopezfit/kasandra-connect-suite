@@ -67,8 +67,11 @@ const NeighborhoodIndexCard = ({ neighborhood }: NeighborhoodIndexCardProps) => 
           <img
             src={heroUrl}
             alt={`${neighborhood.name} neighborhood`}
+            width={600}
+            height={288}
             className={`absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ${loaded ? 'opacity-100' : 'opacity-0'}`}
             loading="lazy"
+            decoding="async"
             onLoad={() => setLoaded(true)}
             onError={() => setImgError(true)}
           />
