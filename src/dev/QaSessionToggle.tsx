@@ -11,6 +11,8 @@ export default function QaSessionToggle() {
   const [copied, setCopied] = useState(false);
 
   const currentSessionId = useMemo(() => getOrCreateSessionId(), []);
+  // Re-read override when panel opens (DEV-only QA toggle)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const activeOverride = useMemo(() => getQaSessionId(), [open]);
 
   useEffect(() => {

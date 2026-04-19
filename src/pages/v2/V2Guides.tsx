@@ -200,7 +200,7 @@ function GuidesContent() {
   
   const isReturning = guidesRead.length > 0 || lastGuideId !== null;
   const currentIntent = getIntent();
-  const recommendedItems = useMemo(() => getRecommendedGuides(allGuides), [guidesRead, lastGuideId, allGuides]);
+  const recommendedItems = useMemo(() => getRecommendedGuides(allGuides), [allGuides]);
 
   // Filter educational guides by active category + search
   const filteredGuides = useMemo(() => {

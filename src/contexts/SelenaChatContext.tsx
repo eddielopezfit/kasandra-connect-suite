@@ -168,6 +168,9 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
       setMessages([freshGreeting]);
       saveHistory([freshGreeting]);
     }
+    // Initialization effect — must only run on language/init/open changes,
+    // NOT on every message append or `t` re-render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language, hasInitialized, isOpen]);
 
   useEffect(() => {
@@ -672,7 +675,7 @@ export function SelenaChatProvider({ children }: { children: ReactNode }) {
     setMessages([greeting]);
     saveHistory([greeting]);
     logEvent('selena_clear_history', { route: location.pathname });
-  }, [t, location.pathname]);
+  }, [t, location.pathname, language]);
 
   const setLeadIdentity = useCallback((newLeadId: string) => {
     if (newLeadId && newLeadId !== leadId) {

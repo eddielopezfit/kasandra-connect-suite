@@ -3,7 +3,7 @@
  * Fetches from check-availability edge function.
  * Passes selected slot to parent for booking via book-appointment.
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,7 +34,7 @@ const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName, isBooking }:
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [window, setWindow] = useState<WindowOption>("next_3_days");
 
-  const fetchSlots = async (preferred: WindowOption) => {
+  const fetchSlots = useCallback(async (preferred: WindowOption) => {
     setLoading(true);
     setError(false);
     setSelectedSlot(null);
@@ -60,11 +60,11 @@ const AvailableSlots = ({ leadId, onSlotSelected, onBack, userName, isBooking }:
     } finally {
       setLoading(false);
     }
-  };
+  }, [leadId]);
 
   useEffect(() => {
     fetchSlots(window);
-  }, [window, leadId]);
+  }, [window, fetchSlots]);
 
   const windowLabels: { key: WindowOption; en: string; es: string }[] = [
     { key: "today", en: "Today", es: "Hoy" },

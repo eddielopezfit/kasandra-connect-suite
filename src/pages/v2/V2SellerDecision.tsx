@@ -79,6 +79,8 @@ const V2SellerDecision = () => {
       const source = searchParams.get("from") ?? "direct";
       logEvent('seller_decision_started', { source, preseeded: !!searchParams.get("situation") });
     }
+    // searchParams read once on step=1 mount; effect intentionally tracks step only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
   const goTo = useCallback((nextStep: number) => {

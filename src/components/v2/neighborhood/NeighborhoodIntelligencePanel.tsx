@@ -82,6 +82,8 @@ const NeighborhoodIntelligencePanel = ({ zipCode, neighborhoodName }: Neighborho
     };
 
     fetchProfile();
+    // errorType is intentionally read as stale — re-fetching on error change would loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [zipCode, neighborhoodName, slug]);
 
   const profile = language === 'es' ? profileEs : profileEn;

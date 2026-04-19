@@ -94,7 +94,8 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
 
   const handleExplore = () => doExplore(zip.trim());
 
-  // Handle external ZIP from quiz
+  // Handle external ZIP from quiz — must only fire on externalZip change,
+  // NOT on every keystroke of `zip` or change of `doExplore` closure.
   useEffect(() => {
     if (externalZip && externalZip !== processedExternalZip.current) {
       processedExternalZip.current = externalZip;
@@ -106,7 +107,8 @@ const NeighborhoodExplorer = ({ externalZip }: NeighborhoodExplorerProps) => {
       // Auto-trigger explore
       doExplore(externalZip);
     }
-  }, [externalZip, t]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [externalZip]);
 
   return (
     <section ref={sectionRef} className="py-16 lg:py-20 bg-cc-ivory">
