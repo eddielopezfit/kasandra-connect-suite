@@ -19,8 +19,8 @@ const V2Footer = () => {
             </span>
             <p className="text-white/70 mt-1 text-sm">REALTOR®</p>
             <div className="mt-3 space-y-1 text-sm text-white/80">
-              <p>Corner Connect</p>
-              <p>Realty Executives Arizona Territory</p>
+              <p>{TEAM_NAME}</p>
+              <p>{BROKERAGE_NAME}</p>
             </div>
             {/* Equal Housing */}
             <div className="mt-4 flex items-center gap-2">
