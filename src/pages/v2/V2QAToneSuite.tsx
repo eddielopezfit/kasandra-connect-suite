@@ -35,6 +35,7 @@ import {
   type EvaluationResult,
   type Violation,
 } from "@/lib/qa/toneEvaluator";
+import { BrevityViolationsPanel } from "@/components/v2/qa/BrevityViolationsPanel";
 import { CheckCircle2, AlertTriangle, XCircle, Loader2 } from "lucide-react";
 
 interface RunResult {
@@ -242,6 +243,9 @@ const V2QAToneSuite = () => {
 
       <section className="py-8 bg-cc-ivory">
         <div className="container mx-auto px-4 space-y-6">
+          {/* Brevity Violations telemetry */}
+          <BrevityViolationsPanel />
+
           {/* Controls */}
           <Card className="p-6">
             <div className="flex flex-wrap items-center gap-4">
