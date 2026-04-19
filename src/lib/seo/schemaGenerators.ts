@@ -1,26 +1,35 @@
 /**
  * Centralized JSON-LD schema generators for SEO.
  * Used with <JsonLd data={...} /> component.
+ *
+ * All identity / brokerage / contact constants come from `@/lib/brand` —
+ * the single source of truth. Update brand.ts to change them everywhere.
  */
 
-// ─── Shared constants ──────────────────────────────────────────────────────────
+import {
+  AGENT_NAME,
+  TEAM_NAME,
+  BROKERAGE_NAME,
+  BROKERAGE_LICENSE_NUMBER,
+  ADDRESS_STREET,
+  ADDRESS_CITY,
+  ADDRESS_STATE,
+  ADDRESS_ZIP,
+  ADDRESS_COUNTRY,
+  PHONE,
+  EMAIL,
+  WEBSITE,
+  REVIEW_COUNT,
+  REVIEW_RATING,
+  GEO_LAT,
+  GEO_LNG,
+  LANGUAGES,
+} from "@/lib/brand";
 
-const AGENT_NAME = "Kasandra Prieto";
-const BROKERAGE_NAME = "Corner Connect Real Estate";
-const BROKERAGE_DBA = "Realty Executives Arizona Territory";
-const LICENSE_NUMBER = "LC706691000";
-const ADDRESS_STREET = "4007 E Paradise Falls Dr, Suite 125";
-const ADDRESS_CITY = "Tucson";
-const ADDRESS_STATE = "AZ";
-const ADDRESS_ZIP = "85712";
-const ADDRESS_COUNTRY = "US";
-const PHONE = "(520) 349-3248";
-const EMAIL = "kasandra@prietorealestategroup.com";
-const WEBSITE = "https://kasandraprietorealtor.com";
-const REVIEW_COUNT = 126;
-const REVIEW_RATING = 5.0;
-const GEO_LAT = 32.2226;
-const GEO_LNG = -110.9747;
+// Schema-local aliases (preserve historical naming inside this file).
+const BROKERAGE_DBA = BROKERAGE_NAME;
+const LICENSE_NUMBER = BROKERAGE_LICENSE_NUMBER;
+const BROKERAGE_DISPLAY_NAME = `${TEAM_NAME} Real Estate`;
 
 const sharedAddress = {
   "@type": "PostalAddress",
@@ -36,7 +45,7 @@ const sharedContactPoint = {
   telephone: PHONE,
   contactType: "customer service",
   areaServed: "Tucson, AZ",
-  availableLanguage: ["English", "Spanish"],
+  availableLanguage: [...LANGUAGES],
 };
 
 const sharedAggregateRating = {
