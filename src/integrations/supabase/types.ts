@@ -811,6 +811,7 @@ export type Database = {
       cleanup_old_events: { Args: never; Returns: undefined }
       cleanup_rate_limits: { Args: never; Returns: undefined }
       invoke_refresh_market_pulse: { Args: never; Returns: undefined }
+      invoke_sync_listings: { Args: never; Returns: undefined }
       monitor_market_pulse_freshness: { Args: never; Returns: undefined }
     }
     Enums: {
