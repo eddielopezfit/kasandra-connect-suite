@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Play, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
+import kasandraHeadshot from "@/assets/kasandra-headshot.webp";
 
 type Platform = 'youtube' | 'vimeo' | 'instagram' | 'tiktok' | 'unknown';
 

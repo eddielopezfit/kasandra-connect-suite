@@ -3,7 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import V2Layout from "@/components/v2/V2Layout";
 import { Sun, MapPin, ArrowRight, Calendar, Heart } from "lucide-react";
-import desertSunsetHero from "@/assets/kasandra/desert-sunset-cowboy.jpg";
+import desertSunsetHero from "@/assets/kasandra/desert-sunset-cowboy.webp";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

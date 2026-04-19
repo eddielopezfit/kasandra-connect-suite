@@ -12,7 +12,7 @@ import TikTokIcon from "@/components/icons/TikTokIcon";
 import { logEvent } from "@/lib/analytics/logEvent";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import kasandraHeadshot from "@/assets/kasandra/desert-garden-closeup.jpg";
+import kasandraHeadshot from "@/assets/kasandra/desert-garden-closeup.webp";
 import KasandraPortrait from "@/components/v2/KasandraPortrait";
 
 const ContactForm = () => {

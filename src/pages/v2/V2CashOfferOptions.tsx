@@ -11,7 +11,7 @@ import { AlertTriangle, Calendar, MessageCircle } from "lucide-react";
 import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
 import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
-import heroImage from "@/assets/hero-cash-calm.png";
+import heroImage from "@/assets/hero-cash-calm.webp";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 
 const V2CashOfferOptionsContent = () => {

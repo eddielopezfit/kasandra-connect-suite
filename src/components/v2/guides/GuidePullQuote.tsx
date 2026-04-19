@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import kasandraHeadshot from "@/assets/kasandra-headshot.jpg";
+import kasandraHeadshot from "@/assets/kasandra-headshot.webp";
 
 interface GuidePullQuoteProps {
   quote?: string;
