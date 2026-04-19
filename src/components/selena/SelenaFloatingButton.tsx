@@ -52,9 +52,11 @@ export function SelenaFloatingButton() {
     <button
       onClick={handleClick}
       className={cn(
-        "fixed right-4 z-50 lg:bottom-6",
-        "bottom-[calc(6rem+env(safe-area-inset-bottom,0px))]",
-        "w-14 h-14 rounded-full",
+        "fixed right-3 z-50 lg:bottom-6",
+        // Sit just above the mobile sticky "Book" bar with extra clearance
+        "bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))]",
+        // Slightly smaller on mobile to reduce content collision; full size on desktop
+        "w-12 h-12 sm:w-14 sm:h-14 rounded-full",
         "bg-cc-gold text-cc-navy",
         "shadow-lg hover:shadow-xl",
         "flex items-center justify-center",
