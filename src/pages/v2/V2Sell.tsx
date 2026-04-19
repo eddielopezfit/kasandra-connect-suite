@@ -186,7 +186,7 @@ const V2SellContent = () => {
   const { openChat } = useSelenaChat();
   const navigate = useNavigate();
   const progress = useJourneyProgress();
-  const [leadName, setLeadName] = useState<string | null>(null);
+  const [, setLeadName] = useState<string | null>(null);
   const [addressInput, setAddressInput] = useState("");
   useDocumentHead({
     titleEn: "Tucson Home Selling | Cash Offer & Traditional Listing — Kasandra Prieto",

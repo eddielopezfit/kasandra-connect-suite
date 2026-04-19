@@ -34,7 +34,7 @@ const saveResults = (results: Record<string, TestResult>) => {
 };
 
 const V2CTAQualityAssurance = () => {
-  const { t } = useLanguage();
+  useLanguage();
   useDocumentHead({
     titleEn: "CTA Quality Assurance | Internal",
     titleEs: "QA de CTAs | Interno",

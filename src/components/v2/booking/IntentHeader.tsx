@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Home, DollarSign, Key, ArrowRightLeft, Search, Calendar } from "lucide-react";
+import { Home, DollarSign, Key, ArrowRightLeft, Calendar } from "lucide-react";
 
 type IntentCanonical = 'cash' | 'sell' | 'buy' | 'dual' | 'explore' | null;
 

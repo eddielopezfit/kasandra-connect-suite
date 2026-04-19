@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useGoogleReviews, type GoogleReview, type ReviewsSource } from "@/hooks/useGoogleReviews";
+import { useGoogleReviews, type ReviewsSource } from "@/hooks/useGoogleReviews";
 import { Star } from "lucide-react";
 import { useState, useCallback, useRef } from "react";
 import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";

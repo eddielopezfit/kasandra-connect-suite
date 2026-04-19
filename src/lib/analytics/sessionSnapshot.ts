@@ -6,7 +6,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import { getSessionContext, getOrCreateSessionId, type SessionContext } from './selenaSession';
+import { getSessionContext } from './selenaSession';
 import { logEvent } from './logEvent';
 
 // ============= DEBOUNCE =============

@@ -25,8 +25,8 @@ const FeaturedGuideCard = ({
   titleEs,
   descriptionEn,
   descriptionEs,
-  readTimeEn,
-  readTimeEs,
+  readTimeEn: _readTimeEn,
+  readTimeEs: _readTimeEs,
   ctaSource,
 }: FeaturedGuideCardProps) => {
   const { t } = useLanguage();

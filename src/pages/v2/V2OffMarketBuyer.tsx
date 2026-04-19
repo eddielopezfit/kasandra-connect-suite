@@ -176,7 +176,7 @@ const V2OffMarketBuyerContent = () => {
   };
 
   const step0Valid = criteria.areas.length > 0 && criteria.budget && criteria.timeline && criteria.property_type;
-  const step1Valid = true; // must_haves optional
+  // step1 (must_haves) is optional, so always valid
   const contactValid = contact.name.trim().length > 1 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email);
 
   const handleSubmit = useCallback(async () => {
