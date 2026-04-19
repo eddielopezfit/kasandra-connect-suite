@@ -101,7 +101,7 @@ export function init() {
 
   const n: FbqFunction = (f.fbq = function (...args: unknown[]) {
     if (n.callMethod) {
-      n.callMethod.apply(n, args);
+      n.callMethod(...args);
     } else if (Array.isArray(n.queue)) {
       n.queue.push(args);
     }

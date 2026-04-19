@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import { 
   ArrowRight, 
   BookOpen, 
-  FileText, 
   Home, 
   ShoppingBag, 
   Compass,
@@ -409,16 +408,6 @@ function MyOptionsPanel({
   onNavigate: (path: string, eventType?: EventType) => void;
   effectiveIntent?: Intent;
 }) {
-  const handleViewLastReport = () => {
-    logEvent('report_view_click', { source: 'concierge_tabs' });
-    onActionClick({
-      label: t('View My Report', 'Ver Mi Reporte'),
-      type: 'open_report',
-      eventType: 'report_view_click',
-    });
-    onClose();
-  };
-
   // Valuation card → Trigger Selena chat to ask for property address
   const handleValuationClick = () => {
     logEvent('concierge_valuation_click', { source: 'my_options', intent: effectiveIntent });
@@ -454,18 +443,6 @@ function MyOptionsPanel({
           {t("Personalized insights, no obligation.", "Información personalizada, sin compromiso.")}
         </p>
       </div>
-
-      {/* View Latest Report — hidden until report system tracks generated state */}
-      {false && leadId && (
-        <Button
-          variant="outline"
-          onClick={handleViewLastReport}
-          className="w-full mb-4 border-cc-gold text-cc-gold hover:bg-cc-gold/10"
-        >
-          <FileText className="w-4 h-4 mr-2" />
-          {t("View My Latest Report", "Ver Mi Último Reporte")}
-        </Button>
-      )}
 
       <div className="space-y-2">
         {/* Buyer-first ordering: Readiness → Valuation → Cash Comparison */}

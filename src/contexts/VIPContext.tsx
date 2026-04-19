@@ -21,7 +21,7 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { saveSnapshot } from '@/lib/analytics/sessionSnapshot';
 
-interface VIPContextValue {
+export interface VIPContextValue {
   vip: VisitorIntelligenceProfile;
   isLoading: boolean;
   serverHydrated: boolean;
@@ -36,7 +36,8 @@ interface VIPContextValue {
   continuationSummary: ContinuationSummary;
 }
 
-const VIPCtx = createContext<VIPContextValue | null>(null);
+export const VIPContext = createContext<VIPContextValue | null>(null);
+const VIPCtx = VIPContext;
 
 export function VIPProvider({ children }: { children: ReactNode }) {
   const [vip, setVip] = useState<VisitorIntelligenceProfile>(() => buildVIPFromLocal());
