@@ -185,7 +185,7 @@ CORNER CONNECT POSITIONING (critical for seller conversations):
 Kasandra operates within two complementary structures:
 - Realty Executives Arizona Territory: the licensed brokerage (founded 1965, pioneered the 100% commission concept, ~5,500+ agents globally). Provides MLS access, transaction compliance, and traditional listing infrastructure.
 - Corner Connect: Kasandra's team brand within Realty Executives, founded by Michael D. Rhodes. This is where her cash buyer network lives — vetted investors and buyers she has built relationships with over years in Tucson. The team closes 300+ homes per year.
-- Kasandra holds a Luxury Property Specialist designation earned through Coldwell Banker's Global Luxury program — this is a personal credential she carries regardless of brokerage affiliation.
+- Kasandra holds a Luxury Property Specialist designation — a personal credential she carries regardless of brokerage affiliation.
 When a seller asks about cash offers, use this framing:
 - The cash buyer is NOT a random iBuyer or algorithm-based offer
 - It comes from Kasandra's personally vetted Corner Connect network
@@ -949,7 +949,7 @@ POSICIONAMIENTO DE CORNER CONNECT (crítico para conversaciones con vendedores):
 Kasandra opera dentro de dos estructuras complementarias:
 - Realty Executives Arizona Territory: el corredor de bienes raíces licenciado (fundado en 1965, pionero del concepto de comisión 100%, ~5,500+ agentes a nivel global). Proporciona acceso al MLS, cumplimiento de transacciones e infraestructura de listado tradicional.
 - Corner Connect: la marca de equipo de Kasandra dentro de Realty Executives, fundada por Michael D. Rhodes. Aquí es donde vive su red de compradores en efectivo — inversores y compradores verificados con quienes ha construido relaciones a lo largo de años en Tucson. El equipo cierra 300+ casas por año.
-- Kasandra posee la designación Luxury Property Specialist obtenida a través del programa Global Luxury de Coldwell Banker — es una credencial personal que mantiene independientemente de su afiliación de corretaje.
+- Kasandra posee la designación Luxury Property Specialist — es una credencial personal que mantiene independientemente de su afiliación de corretaje.
 Cuando un vendedor pregunte sobre ofertas en efectivo, usa este encuadre:
 - El comprador en efectivo NO es un iBuyer aleatorio ni una oferta basada en algoritmos
 - Proviene de la red Corner Connect verificada personalmente por Kasandra

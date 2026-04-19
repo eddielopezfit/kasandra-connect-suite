@@ -54,10 +54,10 @@ const cells: BentoCell[] = [
   },
   {
     icon: Star,
-    titleEn: "Diamond Society & 126+ Reviews",
-    titleEs: "Diamond Society y 126+ Reseñas",
-    descEn: "Coldwell Banker International Diamond Society (2024) · 126+ five-star reviews on Birdeye",
-    descEs: "Coldwell Banker International Diamond Society (2024) · 126+ reseñas de cinco estrellas en Birdeye",
+    titleEn: "126+ Five-Star Reviews",
+    titleEs: "126+ Reseñas de Cinco Estrellas",
+    descEn: "126+ verified five-star client reviews on Birdeye · Trusted across Tucson and Pima County",
+    descEs: "126+ reseñas verificadas de cinco estrellas en Birdeye · Confianza en todo Tucson y el condado de Pima",
   },
 ];
 
