@@ -221,6 +221,9 @@ const V2NeighborhoodCompareContent = () => {
     } finally {
       setLoadingZip(null);
     }
+    // results/toolStarted intentionally omitted: setResults uses functional update,
+    // toolStarted gates a one-time analytics flag (not render-driven)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results.length, t]);
 
   const removeZip = (zip: string) => setResults(prev => prev.filter(r => r.zip !== zip));

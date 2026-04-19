@@ -60,5 +60,5 @@ export function useProgramData(): DynamicGuideData {
       pthsIncomeLimit: PROGRAM_DATA.pthsIncomeLimitFormatted,
       lastUpdated: PROGRAM_DATA.lastUpdated,
     };
-  }, [stats, isLive, language]);
+  }, [stats, isLive]);
 }

@@ -83,7 +83,7 @@ const StepContact = ({
     defaultValues: { email: "", consent: false as unknown as true },
   });
 
-  // Pre-populate from session
+  // Pre-populate from session — mount-only; react-hook-form instances are stable
   useEffect(() => {
     const storedName = getStoredUserName();
     const storedEmail = getStoredEmail();
@@ -95,6 +95,7 @@ const StepContact = ({
       emailForm.setValue("email", storedEmail);
     }
     if (storedPhone) fullForm.setValue("phone", storedPhone);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const submitLead = async (data: { name?: string; email: string; phone?: string }) => {
