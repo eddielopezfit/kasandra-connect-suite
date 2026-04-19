@@ -13,12 +13,12 @@
  * To manually refresh live data at any time, call:
  *   POST /functions/v1/refresh-market-pulse  with header  x-admin-secret: <ADMIN_SECRET>
  *
- * Last verified: March 2026 (Perplexity cross-ref Zillow Feb 2026 data)
+ * Last verified: April 2026 (Perplexity cross-ref Zillow March 2026 data)
  */
 
 export const tucsonMarketPulse = {
   /** Display month — updated by cron pipeline, this value is fallback only */
-  month: { en: "March 2026", es: "Marzo 2026" },
+  month: { en: "April 2026", es: "Abril 2026" },
 
   /** Core metrics — Tucson market as of Feb/March 2026 (Zillow + Perplexity verified) */
   saleToListRatio: "98.6%",
