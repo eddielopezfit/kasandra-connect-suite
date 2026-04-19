@@ -772,7 +772,21 @@ export const CHIPS_REGISTRY: readonly ChipRegistryEntry[] = [
     normalized_key: 'tengo una pregunta especifica',
     chipKey: CHIP_KEYS.SPECIFIC_QUESTION,
   },
-  // --- Greeting safety net: "I'm ready to talk to Kasandra" ---
+  // --- Conversational: "Just answer that" (KB-16 escape hatch — bypasses tool routing) ---
+  {
+    id: 'conv-just-answer-en',
+    label_en: 'Just answer that',
+    label_es: 'Solo respóndeme eso',
+    normalized_key: 'just answer that',
+    chipKey: CHIP_KEYS.JUST_ANSWER_THAT,
+  },
+  {
+    id: 'conv-just-answer-es',
+    label_en: 'Just answer that',
+    label_es: 'Solo respóndeme eso',
+    normalized_key: 'solo respondeme eso',
+    chipKey: CHIP_KEYS.JUST_ANSWER_THAT,
+  },
   {
     id: 'legacy-ready-talk-en',
     label_en: "I'm ready to talk to Kasandra",

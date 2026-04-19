@@ -1356,6 +1356,23 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         : '\n\nLOW-SIGNAL DETECTED: User gave a brief acknowledgment. Do NOT re-summarize tools or guides. Ask ONE forward-moving question: "What would help most right now — seeing your specific numbers, or talking through your situation with Kasandra?"';
     }
 
+    // KB-16/18 ESCAPE HATCH: "Just answer that" chip — user wants a direct substance answer, not a tool route.
+    // Pulls the most recent user question from history and forces a substance-first reply.
+    const JUST_ANSWER_PATTERN = /^(just answer that|solo resp[oó]ndeme eso|just answer my question|respond[eé]me directamente)\.?$/i;
+    let substanceModeActive = false;
+    if (JUST_ANSWER_PATTERN.test(message.trim())) {
+      substanceModeActive = true;
+      // Find the last real user question in history (skip the chip click itself)
+      const priorUserMsg = [...history].reverse().find(
+        (m: any) => m?.role === 'user' && typeof m?.content === 'string' && !JUST_ANSWER_PATTERN.test(String(m.content).trim())
+      );
+      const lastQuestion = priorUserMsg?.content ?? '';
+      governanceHint += language === 'es'
+        ? `\n\nKB-16/18 ESCAPE HATCH ACTIVO: El usuario pidió una respuesta DIRECTA, no un enrutamiento a herramienta. Responda la pregunta previa con sustancia siguiendo KB-16 (respuesta direccional primero) y KB-18 (al menos un detalle hiper-local de Tucson/Pima). 3-4 oraciones, ~90 palabras. NO ofrezca chips de herramientas. Cierre con UNA línea cálida sobre cómo Kasandra puede llevarlo a lo exacto.\n\nPREGUNTA PREVIA DEL USUARIO: "${lastQuestion}"`
+        : `\n\nKB-16/18 ESCAPE HATCH ACTIVE: User requested a DIRECT answer, not a tool route. Answer the prior question with substance per KB-16 (directional answer first) and KB-18 (at least one hyper-local Tucson/Pima County detail). 3-4 sentences, ~90 words. Do NOT offer tool chips. Close with ONE warm line on how Kasandra takes it from directional to exact.\n\nUSER'S PRIOR QUESTION: "${lastQuestion}"`;
+    }
+
+
     const messagesPayload = [
       { role: "system", content: systemPrompt + vipHint + memorySummary + reflectionHint + sellerDecisionHint + marketPulseHint + neighborhoodHint + listingsHint + toolOutputHint + governanceHint + journeyHint + trailHint + guideModeHint + entryGreetingHint + modeHint + guardRules.guardHints + (guardState.containment_active ? (language === 'es' ? '\n\nCONTENCIÓN ACTIVA — OBLIGATORIO: Responda en MÁXIMO 2 oraciones cortas. NO explique quién es. NO ofrezca credenciales. Solo reconozca + ofrezca hablar con Kasandra.' : '\n\nCONTAINMENT ACTIVE — MANDATORY: Respond in MAXIMUM 2 short sentences. Do NOT explain who you are. Do NOT offer credentials. Just acknowledge + offer to talk with Kasandra.') : '') }, 
       ...history.slice(-10), // Extended to -10 to support persistent memory context
@@ -1372,7 +1389,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         body: JSON.stringify({
           model: modelUsed,
           messages: messagesPayload,
-          max_tokens: guardRules.maxTokensOverride ?? (effectiveChipPhase >= 2 ? 160 : 200),
+          max_tokens: substanceModeActive ? 260 : (guardRules.maxTokensOverride ?? (effectiveChipPhase >= 2 ? 160 : 200)),
           temperature: 0.7,
         }),
       });
@@ -1389,7 +1406,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         body: JSON.stringify({
           model: modelUsed,
           messages: messagesPayload,
-          max_tokens: guardRules.maxTokensOverride ?? (effectiveChipPhase >= 2 ? 160 : 200),
+          max_tokens: substanceModeActive ? 260 : (guardRules.maxTokensOverride ?? (effectiveChipPhase >= 2 ? 160 : 200)),
           temperature: 0.7,
         }),
       });

@@ -69,26 +69,28 @@ serve(async (req: Request) => {
         );
       }
 
-      // Upsert each memory (session_id + memory_key is the natural key)
-      let stored = 0;
-      for (const mem of memories) {
-        const { error } = await supabase
-          .from("conversation_memory")
-          .upsert(
-            {
-              session_id,
-              lead_id: lead_id || null,
-              memory_key: mem.key,
-              memory_value: mem.value,
-              category: mem.category,
-            },
-            { onConflict: "session_id,memory_key", ignoreDuplicates: false }
-          );
+      // Batch upsert all memories in a single round-trip (perf hardening)
+      const rows = memories.map((mem) => ({
+        session_id,
+        lead_id: lead_id || null,
+        memory_key: mem.key,
+        memory_value: mem.value,
+        category: mem.category,
+      }));
 
-        if (!error) stored++;
-        else console.error(`[selena-memory] Upsert error for ${mem.key}:`, error.message);
+      const { error: batchErr, count } = await supabase
+        .from("conversation_memory")
+        .upsert(rows, { onConflict: "session_id,memory_key", ignoreDuplicates: false, count: "exact" });
+
+      if (batchErr) {
+        console.error("[selena-memory] Batch upsert error:", batchErr.message);
+        return new Response(
+          JSON.stringify({ ok: false, error: "Failed to store memories" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
       }
 
+      const stored = count ?? rows.length;
       console.log(`[selena-memory] Stored ${stored}/${memories.length} memories for session ${session_id}`);
 
       return new Response(
@@ -221,15 +223,15 @@ function extractMemories(
     });
   }
 
-  // --- Neighborhood/area detection ---
+  // --- Neighborhood/area detection (expanded set + paraphrased verbs) ---
   const areaPatterns = [
-    /(?:interested in|looking at|love|like|prefer|considering|want to live in|near|around)\s+(marana|oro valley|vail|sahuarita|tucson|rita ranch|dove mountain|tanque verde|catalina foothills|midtown|downtown|sam hughes|barrio viejo)/gi,
-    /(?:me interesa|buscando en|cerca de|en)\s+(marana|oro valley|vail|sahuarita|tucson|rita ranch|dove mountain|tanque verde|catalina foothills|midtown|downtown)/gi,
+    /(?:interested in|looking at|love|like|prefer|considering|want to live in|near|around|exploring|focused on|leaning toward|thinking about|drawn to|eyeing|targeting)\s+(marana|oro valley|vail|sahuarita|tucson|rita ranch|dove mountain|tanque verde|catalina foothills|midtown|downtown|sam hughes|barrio viejo|civano|green valley|corona de tucson|picture rocks|flowing wells|rincon|pantano|central tucson|foothills|north[\s-]?west|east[\s-]?side|west[\s-]?side)/gi,
+    /(?:me interesa|buscando en|cerca de|en|explorando|enfocad[oa] en|inclinad[oa] hacia|pensando en|atra[ií]d[oa] a)\s+(marana|oro valley|vail|sahuarita|tucson|rita ranch|dove mountain|tanque verde|catalina foothills|midtown|downtown|sam hughes|civano|green valley|corona de tucson|picture rocks|flowing wells|rincon|pantano)/gi,
   ];
   for (const pattern of areaPatterns) {
     const matches = [...message.matchAll(pattern)];
     if (matches.length > 0) {
-      const areas = [...new Set(matches.map((m) => m[1].trim()))];
+      const areas = [...new Set(matches.map((m) => m[1].trim().toLowerCase()))];
       memories.push({
         key: "neighborhoods",
         value: { areas },
@@ -271,6 +273,55 @@ function extractMemories(
       });
       break;
     }
+  }
+
+  // --- Military / PCS / VA detection ---
+  if (/\b(military|active duty|pcs|pcsing|veteran|va loan|davis[\s-]?monthan|dm afb|deployment|reserves|guard|militar|veterano|préstamo va)\b/i.test(message)) {
+    memories.push({
+      key: "military_status",
+      value: { detected: true, raw: message.match(/\b(military|active duty|pcs(?:ing)?|veteran|va loan|davis[\s-]?monthan|dm afb|deployment|militar|veterano)\b/i)?.[0] ?? "military" },
+      category: "fact",
+    });
+  }
+
+  // --- Financing type detection ---
+  const financingMatch = message.match(/\b(cash buyer|all cash|paying cash|fha|va loan|conventional|usda|jumbo|itin|hard money|al contado|en efectivo|convencional)\b/i);
+  if (financingMatch) {
+    memories.push({
+      key: "financing_type",
+      value: { type: financingMatch[1].toLowerCase() },
+      category: "fact",
+    });
+  }
+
+  // --- Motivation / life event detection ---
+  const motivationMatch = message.match(/\b(relocating|relocation|new job|job transfer|inherited|probate|empty nest|need more space|outgrown|tired of renting|first home|investment property|second home|me reubico|nuevo trabajo|herencia|sucesión|primera casa|propiedad de inversión)\b/i);
+  if (motivationMatch) {
+    memories.push({
+      key: "motivation",
+      value: { reason: motivationMatch[1].toLowerCase() },
+      category: "intent",
+    });
+  }
+
+  // --- Property condition detection ---
+  const conditionMatch = message.match(/\b(needs work|fixer[\s-]?upper|move[\s-]?in ready|turnkey|distressed|behind on payments|underwater|as[\s-]?is|necesita trabajo|listo para mudarse|llave en mano|atrasado en pagos)\b/i);
+  if (conditionMatch) {
+    memories.push({
+      key: "property_condition",
+      value: { condition: conditionMatch[1].toLowerCase() },
+      category: "fact",
+    });
+  }
+
+  // --- ZIP code detection (Tucson area: 856xx, 857xx) ---
+  const zipMatch = message.match(/\b(85[67]\d{2})\b/);
+  if (zipMatch) {
+    memories.push({
+      key: "zip_code",
+      value: { zip: zipMatch[1] },
+      category: "fact",
+    });
   }
 
   // --- Property value from context ---
@@ -325,6 +376,21 @@ function buildMemorySummary(
 
   const family = val("family_situation");
   if (family?.raw) parts.push(`Family: ${family.raw}`);
+
+  const military = val("military_status");
+  if (military?.detected) parts.push(`Military: ${military.raw ?? 'yes'}`);
+
+  const financing = val("financing_type");
+  if (financing?.type) parts.push(`Financing: ${financing.type}`);
+
+  const motivation = val("motivation");
+  if (motivation?.reason) parts.push(`Motivation: ${motivation.reason}`);
+
+  const condition = val("property_condition");
+  if (condition?.condition) parts.push(`Condition: ${condition.condition}`);
+
+  const zip = val("zip_code");
+  if (zip?.zip) parts.push(`ZIP: ${zip.zip}`);
 
   const propValue = val("property_value");
   if (propValue?.amount) parts.push(`Property: $${Number(propValue.amount).toLocaleString()}`);
