@@ -8,9 +8,10 @@ interface GuidePullQuoteProps {
 }
 
 const GuidePullQuote = ({ quote, quoteEs, className = "" }: GuidePullQuoteProps) => {
+  const { t } = useLanguage();
+
   if (!quote && !quoteEs) return null;
 
-  const { t } = useLanguage();
   const displayQuote = t(quote || "", quoteEs || "");
   if (!displayQuote) return null;
 
