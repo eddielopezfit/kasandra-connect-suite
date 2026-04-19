@@ -99,10 +99,10 @@ const V2Footer = () => {
               </a>
               <a
                 href="mailto:kasandra@prietorealestategroup.com"
-                className="flex items-center justify-center md:justify-end gap-2 text-white/80 hover:text-white transition-colors min-w-0"
+                className="flex items-center justify-center md:justify-end gap-2 text-white/80 hover:text-white transition-colors min-w-0 max-w-full"
               >
                 <Mail className="w-4 h-4 flex-shrink-0" />
-                <span className="break-words">kasandra@prietorealestategroup.com</span>
+                <span className="text-xs sm:text-sm break-all truncate">kasandra@prietorealestategroup.com</span>
               </a>
             </div>
             {/* Social Links */}
