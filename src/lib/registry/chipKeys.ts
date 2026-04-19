@@ -47,6 +47,7 @@ export const CHIP_KEYS = {
   SUMMARIZE_WHERE_I_AM: 'summarize_where_i_am',
   KEEP_EXPLORING: 'keep_exploring',
   SPECIFIC_QUESTION: 'specific_question',
+  JUST_ANSWER_THAT: 'just_answer_that',
 
   // === Specific Guides ===
   GUIDE_CASH_VS_LISTING: 'guide_cash_vs_listing',
@@ -129,6 +130,7 @@ export const CHIP_KEY_TO_DESTINATION: Record<ChipKey, string> = {
   [CHIP_KEYS.SUMMARIZE_WHERE_I_AM]: '',
   [CHIP_KEYS.KEEP_EXPLORING]: '',
   [CHIP_KEYS.SPECIFIC_QUESTION]: '',
+  [CHIP_KEYS.JUST_ANSWER_THAT]: '',
 
   // Guides
   [CHIP_KEYS.GUIDE_CASH_VS_LISTING]: '/guides/cash-vs-traditional-sale',
