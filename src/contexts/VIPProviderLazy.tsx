@@ -9,7 +9,7 @@
  *  - After idle, dynamically import the real VIPProvider and swap it in.
  *  - This removes ~all VIP code from the homepage critical path.
  */
-import { useEffect, useState, type ReactNode, type ComponentType } from "react";
+import { useEffect, useState, startTransition, type ReactNode, type ComponentType } from "react";
 
 type ProviderProps = { children: ReactNode };
 type RealProvider = ComponentType<ProviderProps>;
@@ -22,7 +22,9 @@ export function VIPProvider({ children }: ProviderProps) {
     const load = () => {
       import("@/contexts/VIPContext")
         .then((m) => {
-          if (!cancelled) setReal(() => m.VIPProvider);
+          if (!cancelled) {
+            startTransition(() => setReal(() => m.VIPProvider));
+          }
         })
         .catch(() => {
           /* silent — fallback path in useVIP keeps the app functional */
