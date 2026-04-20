@@ -10,7 +10,8 @@ const LazyGoogleReviews = lazy(() => import("@/components/v2/GoogleReviewsSectio
 import { AlertTriangle, Calendar, MessageCircle } from "lucide-react";
 import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
-import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
+import { logEvent } from "@/lib/analytics/logEvent";
 import heroImage from "@/assets/hero-cash-calm.webp";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 
