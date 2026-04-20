@@ -318,23 +318,23 @@ export function computeGreeting(
     if (rd && rd.score > 0) {
       const score = rd.score;
       const band = score >= 75 ? t('ready to move forward', 'listo/a para avanzar') : score >= 50 ? t('nearly ready', 'casi listo/a') : t('building readiness', 'construyendo preparación');
-      const priority = rd.primaryPriority || t('your situation', 'tu situación');
+      const priority = rd.primaryPriority || t('your situation', 'su situación');
       const toolLabel = rd.toolType === 'buyer' ? t('Buyer Readiness', 'Preparación del Comprador') : rd.toolType === 'cash' ? t('Cash Readiness', 'Preparación para Efectivo') : t('Seller Readiness', 'Preparación del Vendedor');
       
       if (score >= 75) {
         greetingContent = t(
           `Your ${toolLabel} score is ${score}/100 — you're ${band}. Your top priority is ${priority}.\n\nAt this level of readiness, a short strategy call with Kasandra could save you time and money on your next steps.`,
-          `Tu puntuación de ${toolLabel} es ${score}/100 — estás ${band}. Tu prioridad principal es ${priority}.\n\nCon este nivel de preparación, una llamada corta de estrategia con Kasandra podría ahorrarte tiempo y dinero en tus próximos pasos.`
+          `Su puntuación de ${toolLabel} es ${score}/100 — está ${band}. Su prioridad principal es ${priority}.\n\nCon este nivel de preparación, una llamada corta de estrategia con Kasandra podría ahorrarle tiempo y dinero en sus próximos pasos.`
         );
       } else if (score >= 50) {
         greetingContent = t(
           `Your ${toolLabel} score is ${score}/100 — you're ${band}. Your top priority is ${priority}.\n\nThere are a few areas to strengthen. Kasandra can walk you through exactly what to focus on.`,
-          `Tu puntuación de ${toolLabel} es ${score}/100 — estás ${band}. Tu prioridad principal es ${priority}.\n\nHay algunas áreas que fortalecer. Kasandra puede orientarte sobre exactamente en qué enfocarte.`
+          `Su puntuación de ${toolLabel} es ${score}/100 — está ${band}. Su prioridad principal es ${priority}.\n\nHay algunas áreas que fortalecer. Kasandra puede orientarle sobre exactamente en qué enfocarse.`
         );
       } else {
         greetingContent = t(
           `Your ${toolLabel} score is ${score}/100 — you're still ${band}, and that's completely normal. Your top priority is ${priority}.\n\nKasandra can help you build a plan to get there at your own pace.`,
-          `Tu puntuación de ${toolLabel} es ${score}/100 — aún estás ${band}, y eso es completamente normal. Tu prioridad principal es ${priority}.\n\nKasandra puede ayudarte a crear un plan para llegar a tu ritmo.`
+          `Su puntuación de ${toolLabel} es ${score}/100 — aún está ${band}, y eso es completamente normal. Su prioridad principal es ${priority}.\n\nKasandra puede ayudarle a crear un plan para llegar a su ritmo.`
         );
       }
       suggestedReplies = [
@@ -345,7 +345,7 @@ export function computeGreeting(
     } else {
       greetingContent = t(
         "Great job completing the readiness check. How can I help you take the next step?",
-        "Excelente trabajo completando la evaluación. ¿Cómo puedo ayudarte a dar el siguiente paso?"
+        "Excelente trabajo completando la evaluación. ¿Cómo puedo ayudarle a dar el siguiente paso?"
       );
       suggestedReplies = [
         { label: t("What should I do next?", "¿Qué debería hacer ahora?") },
