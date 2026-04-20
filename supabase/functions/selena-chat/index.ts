@@ -1303,7 +1303,18 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // This prevents the intercept from looping when the route always injects 'sell'.
     const TIMELINE_REPLY_PATTERNS = /^(asap|lo antes posible|\d[\d\s\-–]+\s*(month|mes|day|día)|1.?3\s*(month|mes)|3.?6\s*(month|mes)|just exploring|solo explorando|months?|meses?|\d+.?\d+\s*(days?|días?))/i;
     const isTimelineReply = TIMELINE_REPLY_PATTERNS.test(message.trim());
-    
+
+    // KB-18 ANSWER-FIRST: substantive sell-intent questions must be answered
+    // with hyper-local Tucson/Pima detail BEFORE we elicit timeline. Timeline
+    // is a turn-2 follow-up, not a gate. Detected via topical keywords +
+    // question shape (ends in '?' OR starts with what/how/when/why/can/etc).
+    const SUBSTANTIVE_SELL_TOPICS = /\b(closing\s*cost|cost\s*to\s*sell|net\s*proceed|commission|capital\s*gain|tax|days?\s*on\s*market|dom|how\s*long|prep|stag(e|ing)|repair|disclosure|escrow|title|appraisal|inspection|hoa|equity|mortgage\s*payoff|cash\s*offer|ibuyer|listing\s*agent|costos?\s*de\s*cierre|comisi[oó]n|impuestos?\s*sobre|d[ií]as\s*en\s*el\s*mercado|cu[aá]nto\s*tarda|preparaci[oó]n)\b/i;
+    const QUESTION_SHAPE = /\?|^\s*(what|how|when|why|can|do|does|should|could|where|is|are|will|qu[eé]|c[oó]mo|cu[aá]ndo|por\s*qu[eé]|puedo|debo|cu[aá]nto|d[oó]nde|es|son)\b/i;
+    const isSubstantiveSellQuestion =
+      (primaryIntent === 'sell' || primaryIntent === 'cash')
+      && SUBSTANTIVE_SELL_TOPICS.test(message)
+      && QUESTION_SHAPE.test(message.trim());
+
     // Timeline re-ask guard: skip first-seller intercept if timeline was recently asked
     const turnCount = context.turn_count ?? 0;
     const timelineRecentlyAsked = context.timeline_last_asked_turn !== undefined && 
@@ -1315,6 +1326,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       && !context.last_tool_completed
       && !context.quiz_completed
       && !isTimelineReply    // Never re-fire on timeline chip responses
+      && !isSubstantiveSellQuestion // KB-18 answer-first: substantive Q's bypass elicitation
       && !proceedsOverride   // PROCEEDS override takes absolute priority over first-turn intercept
       && !asapTimeline       // ASAP override also bypasses first-turn intercept
       && !context.timeline   // Don't re-ask if timeline already known
@@ -1348,6 +1360,16 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
+
+    // KB-18 ANSWER-FIRST INJECTION: when a substantive sell question lands
+    // without a known timeline, force a substance-first reply and softly
+    // elicit timeline as a turn-2 follow-up question (not a gate).
+    if (isSubstantiveSellQuestion && !context.timeline) {
+      governanceHint += language === 'es'
+        ? `\n\nKB-18 RESPUESTA-PRIMERO ACTIVA: El usuario hizo una pregunta sustantiva de venta. Responda DIRECTO con KB-18 (al menos UN dato hiper-local de Pima County / Tucson — rango específico, regla de AZ, o detalle de vecindario). 3 oraciones, ~70 palabras. Cierre con UNA pregunta suave de plazo: "¿Cuál es su plazo aproximado — pronto, o más exploratorio?" — no como bloqueo, como contexto para afinar.`
+        : `\n\nKB-18 ANSWER-FIRST ACTIVE: User asked a substantive sell question. Answer DIRECTLY using KB-18 (at least ONE hyper-local Pima County / Tucson fact — specific range, AZ rule, or neighborhood detail). 3 sentences, ~70 words. Close with ONE soft timeline question: "What's your rough timeline — soon, or more exploratory?" — not as a gate, as context for sharpening.`;
+    }
+
 
     // FIX 3: Low-signal acknowledgment handler — prevent tool re-summarization on "ok"/"sure"
     const LOW_SIGNAL_PATTERN = /^(ok|okay|sure|got it|alright|ya|yep|yea|yeah|sí|si|vale|entendido|claro|bueno|dale|ándale|orale|mhm|hmm|k)\.?$/i;
