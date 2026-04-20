@@ -1,28 +1,46 @@
 
-The user is moving operations into GoHighLevel and wants Perplexity Comet (agentic browser) to build out the workflows + AI agents. They need a copy-paste-ready SOP/prompt artifact that Comet can execute against GHL's UI.
+The user wants a full audit + fix pass: every chip/subchip functional, no dead code, every tool/quiz terminates in a CTA, all wiring correct. This is a system-wide QA + remediation task across chips registry, ActionSpec resolution, tool result CTAs, quiz completion handlers, and orphaned components.
 
-This is a documentation/artifact task — generate one comprehensive markdown file. No code changes. I have full context from CLAUDE.md, memory files (especially `ghl-payload-standard.md`, `ghl-agent-studio-ecosystem`, `lead-scoring-buckets`, `voice-concierge-persona`, `ai-calendar-booking`, `native-booking-system`), and the screenshot showing GHL Agent Studio is empty (10 agent slots available, payment method missing — flag this).
+Scope I'll cover:
 
-What the artifact must contain:
+**1. Chip & ActionSpec wiring audit**
+- Walk `chipsRegistry.ts` + `chipKeys.ts` + `guideChipMap.ts` and verify every chip resolves to a valid ActionSpec via `isActionValid()`.
+- Cross-check `chipGovernance.ts` (client) and `selena-chat/chipGovernance.ts` (edge) emit only registered chip keys.
+- Validate every `destinationsRegistry` key matches an actual route in `App.tsx`.
+- Fix any chip that produces a dead-end (no openChat callback, no navigate target, missing guideId).
 
-**Part A — Pre-flight (resolve blockers):** Add payment method, confirm webhook URL matches `GHL_WEBHOOK_URL` env, confirm calendar ID `N7himS3BLf5KxaVbQPz6` is live, set timezone to America/Phoenix.
+**2. Tool → CTA terminus audit**
+- BuyerReadinessCheck, SellerReadinessCheck, CashReadinessCheck, OffMarketBuyer, TucsonAlphaCalculator, AffordabilityCalculator, BAHCalculator, NetToSeller, HomeValuation, BuyerClosingCosts, SellerTimeline, NeighborhoodQuiz, SellerDecision quiz.
+- Each must end on either: (a) `LeadCaptureModal` → `/book` or `/thank-you`, (b) `ToolResultNextStep` with a primary gold CTA, or (c) `NextBestActionCard`.
+- Confirm `useEscalationTrigger` and `useRecommendationEngine` fire post-completion.
 
-**Part B — Custom Fields (the contract).** Hub already POSTs ~30 `selena_*` fields via notify-handoff. Comet must create every field with exact API name + type. Source of truth: `notify-handoff/index.ts` payload + `ghl-payload-standard.md`. Include: selena_lead_id, selena_session_id, selena_intent_canonical, selena_score, selena_readiness_score, selena_journey_state, selena_journey_depth, selena_tools_completed, selena_guide_count, selena_timeframe_clean, selena_estimated_value_raw, selena_budget_clean, selena_language_clean, selena_booking_readiness, selena_friction_score, selena_primary_priority, selena_seller_path, selena_is_preapproved (NOT _pre_approved — this is a known quirk), selena_last_sync_trigger, selena_last_sync_detail, selena_last_data_parse_date, selena_dossier_json, selena_summary, etc.
+**3. Quiz funnels**
+- `/ad/seller` quiz → result → `/book` handoff.
+- `NeighborhoodQuiz` → `QuizResults` → CTA to `/book` or `/neighborhoods/:slug`.
+- `SellerDecision` 6-step → `StepReceiptView` → primary CTA.
 
-**Part C — Tags taxonomy.** Pre-create all tags emitted by `deriveBehaviorTags`: selena_os_lead, selena_buyer_lead, selena_seller_lead, selena_cash_lead, selena_dual_lead, score_hot/warm/cold, selena_high_intent, selena_multi_tool_user, selena_guide_reader, selena_high_friction, selena_booking_overdue, selena_booking_ready, selena_booked, selena_path_*, selena_journey_ready/engaged, selena_language_es, selena_returning_visitor, selena_tool_*, "selena - intake completed", "selena - website lead", "cc | entry |webhook".
+**4. Dead-code sweep (confirmed orphans + new finds)**
+- Delete: `useConsultationForm.ts`, `ConsultationFormFields.tsx` (per CLAUDE.md confirmed orphans).
+- Scan for unreferenced exports in `components/v2/`, `lib/`, `hooks/`. Candidates from memory: any component not in an index/import graph.
+- Remove unused chip keys, dead route paths in `destinationsRegistry`, orphaned ActionSpec types.
 
-**Part D — Pipelines.** Two pipelines: Buyer Journey + Seller Journey. Stages map to lead score + journey_state. Bilingual handling.
+**5. Wiring fixes**
+- Verify `LeadCaptureModal` triggers fire after every high-intent tool (per `lead-capture-triggers` mem).
+- Verify NBA/predictive engine routes match `readiness-score-routing` mem.
+- Confirm `notify-handoff` POSTs after every terminal CTA (book, lead capture, quiz completion).
 
-**Part E — The 12 Workflows (numbered WF-01 through WF-12).** Each workflow gets: trigger, filters, step-by-step Comet actions, AI agent prompt if applicable. Cover: inbound webhook intake → tag/score routing, hot lead 5-min call alert (Kasandra SMS), warm lead 7-touch nurture, cold lead long-term nurture, ES-language branch (Spanish nurture), booking confirmation + reminder cascade, no-show recovery, post-booking handoff dossier, returning visitor re-engagement, cash-path expedited follow-up, seller_booking_overdue rescue, calendar invite for /book (calendar ID handoff).
+**6. Validation**
+- Run `bun run build` + tsc to catch dead imports.
+- Add a dev-only `chipWiringValidator` that boots once and console-warns on any registered chip whose ActionSpec fails `isActionValid()`.
+- Add same validator for tool result CTAs.
 
-**Part F — AI Agents (10 slots available per screenshot).** Build: (1) Lead Qualifier Agent, (2) Inbound Voice Concierge (matches `voice-concierge-persona` mem — equity protection framing, 'usted', books strategy session), (3) SMS Reply Agent EN, (4) SMS Reply Agent ES, (5) Email Concierge, (6) No-show Recovery Agent, (7) Returning Visitor Agent, (8) Booking Reminder Agent, (9) Cash Path Specialist, (10) Seller Decision Coach. Each agent gets: knowledge base (paste KB-0/KB-6/KB-7.1 brevity rules), system prompt anchored on Selena persona memory, calendar tool binding, escalation rules (defer to Kasandra, never give legal/financial advice).
+**Deliverables:**
+- Audit report saved to `/mnt/documents/wiring-audit-report.md` listing every chip, every tool terminus, every dead file removed.
+- Code fixes for each broken link found.
+- New `src/lib/qa/wiringValidator.ts` that runs in DEV and logs gaps.
 
-**Part G — Brand & compliance guardrails for every agent prompt:** non-advisory, defer to Kasandra, no "we"/"our team", 'tú' for Selena chat / 'usted' for voice, never discuss crime/demographics, must include Corner Connect | Realty Executives in any signature, Strategy Session not Free Consultation.
+**Out of scope:** GHL/Comet SOP work (already delivered), redesigns, new features.
 
-**Part H — Comet operating instructions:** identity as senior RevOps engineer, login flow, screenshot after each major step, confirm before delete, validation checklist after each workflow build (test trigger with dummy contact), output format = build log per workflow.
+Estimated touch surface: ~15-25 files edited, 2-5 deleted, 2 created. One migration not needed.
 
-**Part I — Test plan.** End-to-end smoke tests Comet should run (POST a fake hot/warm/cold lead via webhook URL, verify tag → pipeline stage → AI response → calendar invite).
-
-Length target: ~700 lines. Save to `/mnt/documents/ghl-comet-build-sop.md`.
-
-This is a one-shot artifact generation. Approve and I'll write the file.
+Approve and I'll execute.
