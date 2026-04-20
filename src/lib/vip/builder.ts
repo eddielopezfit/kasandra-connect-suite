@@ -60,9 +60,15 @@ export function buildVIPFromLocal(): VisitorIntelligenceProfile {
 
   // Identity
   const leadId = getLeadId() || getStoredLeadId();
-  const name = getStoredUserName();
-  const email = getStoredEmail();
-  const phone = getStoredPhone();
+  // Verified-only name: requires a real lead_id to prevent stale "Test Auditor"
+  // from leaking into "Welcome back, X" personalization on fresh visitors.
+  const rawName = getStoredUserName();
+  const nameLower = rawName?.trim().toLowerCase() ?? '';
+  const NAME_BLOCKLIST = ['test', 'test auditor', 'test user', 'demo', 'sample', 'lovable', 'admin'];
+  const isBlockedName = !!nameLower && NAME_BLOCKLIST.some((b) => nameLower === b || nameLower.startsWith(b + ' '));
+  const name = leadId && rawName && !isBlockedName ? rawName : null;
+  const email = leadId ? getStoredEmail() : null;
+  const phone = leadId ? getStoredPhone() : null;
 
   if (leadId || name || email || phone) sources.push('localStorage');
   if (ctx) sources.push('sessionContext');
