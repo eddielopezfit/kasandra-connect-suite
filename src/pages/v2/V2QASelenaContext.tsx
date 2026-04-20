@@ -141,9 +141,27 @@ export default function V2QASelenaContext() {
     <div className="min-h-screen bg-background py-10 px-4">
       <div className="max-w-5xl mx-auto space-y-6">
         <header className="space-y-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Badge variant="outline" className="text-xs">DEV ONLY</Badge>
             <Badge variant="secondary" className="text-xs">Auto-refresh 1.5s</Badge>
+            <div className="ml-auto flex items-center gap-1 rounded-md border border-border/60 p-0.5">
+              <Button
+                variant={lang === 'en' ? 'default' : 'ghost'}
+                size="sm"
+                className="h-7 px-2 text-xs"
+                onClick={() => setLang('en')}
+              >
+                EN
+              </Button>
+              <Button
+                variant={lang === 'es' ? 'default' : 'ghost'}
+                size="sm"
+                className="h-7 px-2 text-xs"
+                onClick={() => setLang('es')}
+              >
+                ES
+              </Button>
+            </div>
           </div>
           <h1 className="text-2xl font-serif">Selena Context Inspector</h1>
           <p className="text-sm text-muted-foreground">
