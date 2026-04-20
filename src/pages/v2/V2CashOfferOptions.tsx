@@ -10,7 +10,8 @@ const LazyGoogleReviews = lazy(() => import("@/components/v2/GoogleReviewsSectio
 import { AlertTriangle, Calendar, MessageCircle } from "lucide-react";
 import StickyMobileBookingBar from "@/components/v2/StickyMobileBookingBar";
 import { logCTAClick } from "@/lib/analytics/ctaDefaults";
-import { setFieldIfEmpty } from "@/lib/analytics/selenaSession";
+import { setFieldIfEmpty, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
+import { logEvent } from "@/lib/analytics/logEvent";
 import heroImage from "@/assets/hero-cash-calm.webp";
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
 
@@ -18,9 +19,19 @@ const V2CashOfferOptionsContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
 
-  // Set intent to 'cash' so JourneyBreadcrumb shows cash-relevant next steps
+  // Set intent to 'cash' and mark cash_offer_options as a completed tool
+  // so Selena/chip filters stop re-suggesting "explore cash offer options".
   useEffect(() => {
     setFieldIfEmpty('intent', 'cash');
+    const ctx = getSessionContext();
+    const already = (ctx?.tools_completed ?? []).includes('cash_offer_options');
+    if (!already) {
+      updateSessionContext({
+        last_tool_completed: 'cash_offer_options',
+        tools_completed: [...new Set([...(ctx?.tools_completed ?? []), 'cash_offer_options'])],
+      });
+      logEvent('tool_completed', { tool_id: 'cash_offer_options', source: 'website', page_path: '/cash-offer-options' });
+    }
   }, []);
   useDocumentHead({
     titleEn: "Cash Offer vs. Traditional Listing | Tucson Home Sale Calculator",

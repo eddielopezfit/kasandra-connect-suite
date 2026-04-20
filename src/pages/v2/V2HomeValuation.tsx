@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { setFieldIfEmpty, getOrCreateSessionId } from "@/lib/analytics/selenaSession";
+import { setFieldIfEmpty, getOrCreateSessionId, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import { bridgeLeadIdToV2 } from "@/lib/analytics/bridgeLeadIdToV2";
 import {
   Home, MapPin, ArrowRight, ArrowLeft, CheckCircle, Loader2, MessageCircle, Phone, Mail, User,
@@ -114,6 +114,14 @@ const V2HomeValuationContent = () => {
         tool_origin: "home_valuation",
         has_phone: true,
       });
+
+      // Mark tool complete in SessionContext so Selena/chip filter suppress re-suggestions
+      const ctx = getSessionContext();
+      updateSessionContext({
+        last_tool_completed: "home_valuation",
+        tools_completed: [...new Set([...(ctx?.tools_completed ?? []), "home_valuation"])],
+      });
+      logEvent("tool_completed", { tool_id: "home_valuation", source: "website", page_path: "/home-valuation" });
 
       setStep(4); // Success
     } catch {
