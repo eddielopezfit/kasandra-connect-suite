@@ -10,6 +10,7 @@ import ScrollManager from "@/components/ScrollManager";
 import RouteAnalytics from "@/components/RouteAnalytics";
 import NotFound from "./pages/NotFound";
 import { initQaAccess } from "@/lib/qa/qaAccess";
+import RouteFallback from "@/components/RouteFallback";
 
 const V2Redirect = () => {
   const location = useLocation();
@@ -62,28 +63,7 @@ const V2Listings = lazy(() => import("./pages/v2/V2Listings"));
 
 const queryClient = new QueryClient();
 
-const RouteFallback = () => (
-  <div className="min-h-screen bg-background">
-    {/* Nav skeleton */}
-    <div className="h-16 border-b border-border/40 flex items-center px-4 gap-4">
-      <div className="w-32 h-6 rounded bg-muted animate-pulse" />
-      <div className="flex-1" />
-      <div className="w-20 h-8 rounded-full bg-muted animate-pulse" />
-    </div>
-    {/* Hero skeleton */}
-    <div className="px-4 pt-10 pb-6 space-y-4 max-w-2xl mx-auto">
-      <div className="w-3/4 h-8 rounded bg-muted animate-pulse" />
-      <div className="w-full h-5 rounded bg-muted animate-pulse" />
-      <div className="w-2/3 h-5 rounded bg-muted animate-pulse" />
-      <div className="w-40 h-12 rounded-full bg-muted animate-pulse mt-6" />
-    </div>
-    {/* Content skeleton */}
-    <div className="px-4 space-y-3 max-w-2xl mx-auto">
-      <div className="w-full h-28 rounded-xl bg-muted animate-pulse" />
-      <div className="w-full h-28 rounded-xl bg-muted animate-pulse" />
-    </div>
-  </div>
-);
+// RouteFallback now imported from @/components/RouteFallback (chrome-matching skeleton)
 
 const App = () => {
   useEffect(() => {
