@@ -183,3 +183,52 @@ describe("computeGreeting (ES) — buy intent + buyer_readiness_capture + score=
     expect(replyLabels.some((l) => retakeRegexEs.test(l))).toBe(false);
   });
 });
+
+const sellerReadinessLabelEs =
+  findChipByKey(CHIP_KEYS.SELLER_READINESS)?.label_es ?? "";
+
+describe("computeGreeting (ES) — sell intent + seller_readiness_capture + score=42", () => {
+  it("surfaces '42/100' in the Spanish greeting and never offers the seller readiness chip", () => {
+    const tEs = (_en: string, es: string) => es;
+
+    const entryContext: EntryContext = {
+      source: "seller_readiness_capture",
+      readinessData: {
+        score: 42,
+        primaryPriority: "tiempo",
+        toolType: "seller",
+      },
+    };
+
+    const sellerCtx = {
+      intent: "sell",
+      tools_completed: ["seller_readiness"],
+      readiness_score: 42,
+      chip_phase_floor: 2,
+    } as unknown as SessionContext;
+
+    const result = computeGreeting(
+      entryContext,
+      sellerCtx,
+      [],
+      false,
+      tEs,
+      "es",
+    );
+
+    expect(result).not.toBeNull();
+    expect(result!.greetingContent).toContain("42/100");
+    // Spanish, not the EN fallback
+    expect(result!.greetingContent).not.toContain("Your Seller Readiness score");
+
+    const replyLabels = result!.suggestedReplies.map((r) =>
+      typeof r === "string" ? r : r.label,
+    );
+    expect(sellerReadinessLabelEs.length).toBeGreaterThan(0);
+    expect(replyLabels).not.toContain(sellerReadinessLabelEs);
+    expect(replyLabels).not.toContain(sellerReadinessLabelEn);
+
+    const retakeRegexEs = /preparación del vendedor|evaluación de preparación|hacer.*evaluación/i;
+    expect(replyLabels.some((l) => retakeRegexEs.test(l))).toBe(false);
+  });
+});
