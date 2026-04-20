@@ -6,14 +6,14 @@
 import { ArrowRight, Sparkles, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useVIPContext } from '@/contexts/VIPContext';
+import { useVIP } from '@/hooks/useVIP';
 import { motion, AnimatePresence } from 'framer-motion';
 import { clearVisitorIdentity } from '@/lib/analytics/bridgeLeadIdToV2';
 import { logEvent } from '@/lib/analytics/logEvent';
 
 export default function ReturningUserBanner({ className = '' }: { className?: string }) {
   const { language } = useLanguage();
-  const { vip, continuationSummary, recommendedNextStep } = useVIPContext();
+  const { vip, continuationSummary, recommendedNextStep } = useVIP();
   const isEs = language === 'es';
 
   // Only show for returning users with real engagement

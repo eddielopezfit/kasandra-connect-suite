@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { getSessionContext } from "@/lib/analytics/selenaSession";
-import { useSelenaChat } from "@/contexts/SelenaChatContext";
+import { useSelenaChatOptional } from "@/contexts/SelenaChatContext";
 import { Sparkles, ArrowRight, RefreshCw, TrendingUp } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -33,7 +33,8 @@ interface BannerAction {
 const SessionIntelligenceBanner = () => {
   const { t } = useLanguage();
   const progress = useJourneyProgress();
-  const { openChat } = useSelenaChat();
+  const selenaChat = useSelenaChatOptional();
+  const openChat = selenaChat?.openChat ?? (() => {});
   const ctx = getSessionContext();
   const { pathname } = useLocation();
 

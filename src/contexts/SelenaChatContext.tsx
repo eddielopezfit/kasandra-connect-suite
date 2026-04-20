@@ -745,3 +745,12 @@ export function useSelenaChat() {
   }
   return context;
 }
+
+/**
+ * useSelenaChatOptional — non-throwing variant for components that may render
+ * during HMR transients or outside the provider tree (e.g., top-level banners).
+ * Returns null when no provider is mounted; consumers should null-check.
+ */
+export function useSelenaChatOptional(): SelenaChatContextType | null {
+  return useContext(SelenaChatContext) ?? null;
+}
