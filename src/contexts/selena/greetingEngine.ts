@@ -456,7 +456,7 @@ export function computeGreeting(
       const areasStr = om.areas.slice(0, 3).join(', ');
       greetingContent = t(
         `You're registered for off-market access in ${areasStr} — ${om.budgetRange} range, ${om.propertyType}. Kasandra works with sellers before they list — you're in the right place.\n\nWant to share more about what you're looking for so she can keep an eye out?`,
-        `Estás registrado/a para acceso fuera del mercado en ${areasStr} — rango ${om.budgetRange}, ${om.propertyType}. Kasandra trabaja con vendedores antes de que publiquen — estás en el lugar correcto.\n\n¿Quieres compartir más sobre lo que buscas para que ella esté atenta?`
+        `Está registrado/a para acceso fuera del mercado en ${areasStr} — rango ${om.budgetRange}, ${om.propertyType}. Kasandra trabaja con vendedores antes de que publiquen — está en el lugar correcto.\n\n¿Desea compartir más sobre lo que busca para que ella esté atenta?`
       );
       suggestedReplies = [
         { label: t("What does off-market mean?", "¿Qué significa fuera del mercado?") },
@@ -466,7 +466,7 @@ export function computeGreeting(
     } else {
       greetingContent = t(
         "You're on the list for off-market properties. Kasandra will personally reach out when something matches your criteria.\n\nIs there anything about the buying process you'd like to understand better?",
-        "Estás en la lista para propiedades fuera del mercado. Kasandra te contactará personalmente cuando algo coincida con tus criterios.\n\n¿Hay algo sobre el proceso de compra que te gustaría entender mejor?"
+        "Está en la lista para propiedades fuera del mercado. Kasandra le contactará personalmente cuando algo coincida con sus criterios.\n\n¿Hay algo sobre el proceso de compra que le gustaría entender mejor?"
       );
       suggestedReplies = [
         { label: t("Explore Tucson neighborhoods", "Explorar vecindarios de Tucson") },
@@ -480,12 +480,12 @@ export function computeGreeting(
       const areasStr = nc.areasCompared.slice(0, 3).join(' vs ');
       greetingContent = t(
         `You compared ${areasStr} — a comparison tool gives you the numbers, but Kasandra knows the streets. Want her perspective on which is the better fit for your situation?`,
-        `Comparaste ${areasStr} — una herramienta de comparación te da los números, pero Kasandra conoce las calles. ¿Quieres su perspectiva sobre cuál se ajusta mejor a tu situación?`
+        `Comparó ${areasStr} — una herramienta de comparación le da los números, pero Kasandra conoce las calles. ¿Desea su perspectiva sobre cuál se ajusta mejor a su situación?`
       );
     } else {
       greetingContent = t(
         "You're comparing Tucson neighborhoods — smart move. Kasandra knows these communities personally.\n\nIs there something specific you're looking for in a neighborhood?",
-        "Estás comparando vecindarios de Tucson — buena decisión. Kasandra conoce estas comunidades personalmente.\n\n¿Hay algo específico que estés buscando en un vecindario?"
+        "Está comparando vecindarios de Tucson — buena decisión. Kasandra conoce estas comunidades personalmente.\n\n¿Hay algo específico que esté buscando en un vecindario?"
       );
     }
     suggestedReplies = [
@@ -503,12 +503,12 @@ export function computeGreeting(
         : t("a buyer's market with more negotiating room", "un mercado de compradores con más margen para negociar");
       greetingContent = t(
         `Tucson homes are averaging ${mi.daysOnMarket} days on market with a ${mi.saleToListRatio} sale-to-list ratio — that's ${implication}.\n\nThese are county-wide averages. Want to understand what this means for your specific ZIP and price point?`,
-        `Las casas de Tucson promedian ${mi.daysOnMarket} días en mercado con un ratio de ${mi.saleToListRatio} precio/lista — eso es ${implication}.\n\nEstos son promedios del condado. ¿Quieres entender qué significa para tu código postal y rango de precio específico?`
+        `Las casas de Tucson promedian ${mi.daysOnMarket} días en mercado con un ratio de ${mi.saleToListRatio} precio/lista — eso es ${implication}.\n\nEstos son promedios del condado. ¿Desea entender qué significa para su código postal y rango de precio específico?`
       );
     } else {
       greetingContent = t(
         "You're looking at live Tucson market data — days on market, sale-to-list ratio, and daily holding costs.\n\nWant to understand what these numbers mean for your specific situation?",
-        "Estás viendo datos en vivo del mercado de Tucson — días en mercado, ratio precio/lista y costos diarios.\n\n¿Quieres entender qué significan estos números para tu situación específica?"
+        "Está viendo datos en vivo del mercado de Tucson — días en mercado, ratio precio/lista y costos diarios.\n\n¿Desea entender qué significan estos números para su situación específica?"
       );
     }
     suggestedReplies = [
