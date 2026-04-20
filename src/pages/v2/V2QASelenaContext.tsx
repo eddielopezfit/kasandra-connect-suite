@@ -59,6 +59,20 @@ const GUIDE_TITLE_MAP: Record<string, string> = {
   'tucson-market-update-2026': 'Tucson Market Update 2026',
 };
 
+// Maps quiz trail paths → canonical tool_id that should appear in tools_completed.
+// If a path is in the trail but its tool_id is missing, we have a wiring gap.
+const QUIZ_PATH_TO_TOOL_ID: Array<{ pattern: RegExp; toolId: string; label: string }> = [
+  { pattern: /^\/buyer-readiness/,  toolId: 'buyer_readiness',  label: 'Buyer Readiness' },
+  { pattern: /^\/seller-readiness/, toolId: 'seller_readiness', label: 'Seller Readiness' },
+  { pattern: /^\/cash-readiness/,   toolId: 'cash_readiness',   label: 'Cash Readiness' },
+];
+
+interface WiringGap {
+  toolId: string;
+  label: string;
+  path: string;
+}
+
 function buildTrailHintPreview(
   sessionTrail: ReturnType<typeof serializeTrailForSelena>,
   guidesCompleted: string[],
@@ -135,6 +149,23 @@ export default function V2QASelenaContext() {
   const toolsCompleted = (ctx?.tools_completed as string[] | undefined) ?? [];
   const trailHintPreview = buildTrailHintPreview(trailSerialized, guidesCompleted, lang);
 
+  // Wiring gap detection: quiz visited (in trail) but tool_id missing from tools_completed.
+  const wiringGaps: WiringGap[] = [];
+  for (const event of trail) {
+    for (const { pattern, toolId, label } of QUIZ_PATH_TO_TOOL_ID) {
+      if (pattern.test(event.path) && !toolsCompleted.includes(toolId)) {
+        if (!wiringGaps.some(g => g.toolId === toolId)) {
+          wiringGaps.push({ toolId, label, path: event.path });
+        }
+      }
+    }
+  }
+  // Also flag: readiness_score exists but buyer_readiness missing from tools_completed
+  const hasReadinessScore = typeof ctx?.readiness_score === 'number' && ctx.readiness_score > 0;
+  if (hasReadinessScore && !toolsCompleted.includes('buyer_readiness') && !wiringGaps.some(g => g.toolId === 'buyer_readiness')) {
+    wiringGaps.push({ toolId: 'buyer_readiness', label: 'Buyer Readiness (score exists, tool_id missing)', path: '(readiness_score field)' });
+  }
+
   const ctxFieldCount = ctx ? Object.keys(ctx).length : 0;
 
   return (
@@ -196,6 +227,34 @@ export default function V2QASelenaContext() {
         </header>
 
         <Separator />
+
+        {/* Wiring gap warning — surfaces persistence races at a glance */}
+        {wiringGaps.length > 0 && (
+          <div className="rounded-md border border-destructive/50 bg-destructive/10 p-4">
+            <div className="flex items-start gap-3">
+              <span className="text-xl leading-none text-destructive" aria-hidden>⚠</span>
+              <div className="flex-1 space-y-2">
+                <h2 className="text-sm font-semibold text-destructive">
+                  Wiring gap detected ({wiringGaps.length})
+                </h2>
+                <p className="text-xs text-foreground/80">
+                  A quiz appears in <code className="font-mono">session_trail</code> but its <code className="font-mono">tool_id</code> is missing from <code className="font-mono">tools_completed</code>.
+                  Selena will re-recommend completed tools and chip-suppression filters will not fire.
+                </p>
+                <ul className="space-y-1 pt-1">
+                  {wiringGaps.map(gap => (
+                    <li key={gap.toolId} className="text-xs flex items-center gap-2 flex-wrap">
+                      <Badge variant="destructive" className="text-[10px]">{gap.toolId}</Badge>
+                      <span className="text-foreground">missing →</span>
+                      <span className="text-foreground/80">{gap.label}</span>
+                      <span className="text-muted-foreground font-mono text-[10px]">({gap.path})</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* trailHint preview — most important block for synthesis QA */}
         <Section title={`trailHint preview — ${lang.toUpperCase()} (what Selena receives)`}>
