@@ -902,22 +902,81 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     }
 
     // ============= SESSION TRAIL HINT (Level 2 Intelligence) =============
-    // Gives Selena full breadcrumb context of what the user visited this session.
-    // Uses this to: reference prior exploration, avoid repetition, make connections.
+    // Gives Selena full breadcrumb context of what the user visited this session,
+    // PLUS the titles of all guides completed cross-session (for synthesis).
     let trailHint = "";
     const sessionTrail = context.session_trail ?? [];
-    if (sessionTrail.length >= 2) {
-      const trailSummary = sessionTrail
-        .map(e => {
-          const mins = e.minutes_ago;
-          const ago = mins < 1 ? 'just now' : mins === 1 ? '1 min ago' : `${mins} min ago`;
-          return `${e.label} [${e.type}, ${ago}]`;
-        })
-        .join(' → ');
+
+    // Guide ID → human title map (mirrors client GUIDE_LABELS in sessionTrail.ts).
+    // Used to enrich trail with completed guides Selena can synthesize across.
+    const GUIDE_TITLE_MAP: Record<string, string> = {
+      'cost-to-sell-tucson':                'Cost to Sell in Tucson',
+      'home-prep-staging':                  'Home Prep & Staging',
+      'pricing-strategy':                   'Pricing Strategy',
+      'how-long-to-sell-tucson':            'How Long to Sell',
+      'cash-vs-traditional-sale':           'Cash vs. Traditional Sale',
+      'sell-now-or-wait':                   'Sell Now or Wait',
+      'sell-or-rent-tucson':                'Sell or Rent',
+      'first-time-buyer-guide':             'First-Time Buyer',
+      'arizona-first-time-buyer-programs':  'AZ First-Time Buyer Programs',
+      'first-time-buyer-programs-pima-county': 'Pima County First-Time Buyer Programs',
+      'buying-home-noncitizen-arizona':     'Buying as a Non-Citizen',
+      'tucson-neighborhoods':               'Tucson Neighborhoods',
+      'tucson-suburb-comparison':           'Tucson Suburb Comparison',
+      'relocating-to-tucson':               'Relocating to Tucson',
+      'military-pcs-guide':                 'Military PCS',
+      'va-home-loan-tucson':                'VA Home Loan',
+      'fha-loan-pima-county-2026':          'FHA Loan Pima County',
+      'down-payment-assistance-tucson':     'Down Payment Assistance',
+      'bad-credit-home-buying-tucson':      'Bad Credit Home Buying',
+      'itin-loan-guide':                    'ITIN Loan',
+      'divorce-selling':                    'Selling During Divorce',
+      'divorce-home-sale-arizona':          'Divorce Home Sale Arizona',
+      'senior-downsizing':                  'Senior Downsizing',
+      'distressed-preforeclosure':          'Pre-Foreclosure',
+      'move-up-buyer':                      'Move-Up Buyer',
+      'pima-county-property-taxes':         'Pima County Property Taxes',
+      'capital-gains-home-sale-arizona':    'Capital Gains',
+      'arizona-real-estate-glossary':       'Real Estate Glossary',
+      'inherited-probate-property':         'Inherited/Probate Property',
+      'life-change-selling':                'Life Change Selling',
+      'selling-for-top-dollar':             'Selling for Top Dollar',
+      'cash-offer-guide':                   'Cash Offer',
+      'understanding-home-valuation':       'Home Valuation',
+      'tucson-market-update-2026':          'Tucson Market Update 2026',
+    };
+
+    // Build completed-guides title list (cross-session, from session_snapshots)
+    const completedGuideTitles = guidesCompletedList
+      .map(id => GUIDE_TITLE_MAP[id] ?? id)
+      .filter(Boolean);
+
+    if (sessionTrail.length >= 2 || completedGuideTitles.length > 0) {
+      const trailSummary = sessionTrail.length >= 2
+        ? sessionTrail
+            .map(e => {
+              const mins = e.minutes_ago;
+              const ago = mins < 1 ? 'just now' : mins === 1 ? '1 min ago' : `${mins} min ago`;
+              return `${e.label} [${e.type}, ${ago}]`;
+            })
+            .join(' → ')
+        : '';
+
+      const guidesLine = completedGuideTitles.length > 0
+        ? (language === 'es'
+            ? `\nGUÍAS COMPLETADAS (todas las sesiones): ${completedGuideTitles.join(', ')}`
+            : `\nGUIDES COMPLETED (all sessions): ${completedGuideTitles.join(', ')}`)
+        : '';
+
+      const trailLine = trailSummary
+        ? (language === 'es'
+            ? `\nRECORRIDO DE SESIÓN (cronológico): ${trailSummary}`
+            : `\nSESSION TRAIL (chronological): ${trailSummary}`)
+        : '';
 
       trailHint = language === 'es'
-        ? `\n\nRECORRIDO DE SESIÓN (cronológico): ${trailSummary}\n\nUsa este historial para: mencionar lo que ya exploró ("ya viste los costos de venta..."), conectar puntos entre páginas visitadas, y evitar repetir información que ya cubrió. Si el recorrido muestra una progresión natural (guía → herramienta), reconócela. No leas la lista — úsala como contexto implícito.`
-        : `\n\nSESSION TRAIL (chronological): ${trailSummary}\n\nUse this to: reference what they've already explored ("you've already looked at selling costs..."), connect dots between pages visited, and avoid repeating information they've covered. If the trail shows a natural progression (guide → tool), acknowledge it. Do NOT read the list aloud — use it as implicit context to inform your response.`;
+        ? `\n${trailLine}${guidesLine}\n\nUsa este historial para: mencionar lo que ya exploró ("ya viste los costos de venta..."), sintetizar entre las guías completadas (conectar temas: ej. "entre los costos de venta y la estrategia de precios..."), y evitar repetir información que ya cubrió. Si el recorrido muestra una progresión natural (guía → herramienta), reconócela. No leas las listas — úsalas como contexto implícito.`
+        : `\n${trailLine}${guidesLine}\n\nUse this to: reference what they've already explored ("you've already looked at selling costs..."), synthesize across completed guides (connect themes: e.g. "between selling costs and pricing strategy..."), and avoid repeating information they've covered. If the trail shows a natural progression (guide → tool), acknowledge it. Do NOT read the lists aloud — use them as implicit context.`;
     }
 
     // ============= TOOL OUTPUT HINT (Level 3 Intelligence) =============
@@ -1637,7 +1696,10 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     const isMilitaryBypass = isBAHTool;
     suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3 || isInvestorRedirect || isMilitaryBypass);
 
-    // Apply journey awareness filter: remove chips for already-completed tools (destination-based)
+    // Apply journey awareness filter: remove chips for already-completed tools (destination-based).
+    // CANONICAL FILTER POINT: This is the single chokepoint for tool-completion-aware filtering.
+    // Downstream reassignments (email-asking, guard chipOverrides, forced guide delivery) are
+    // intentional terminal overrides that emit non-tool chips — they do NOT need re-filtering.
     const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3 || isInvestorRedirect || isMilitaryBypass);
     suggestedReplies = journeyFilter.filtered;
 
