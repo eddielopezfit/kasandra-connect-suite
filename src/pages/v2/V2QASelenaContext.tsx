@@ -198,7 +198,7 @@ export default function V2QASelenaContext() {
         <Separator />
 
         {/* trailHint preview — most important block for synthesis QA */}
-        <Section title="trailHint preview (what Selena receives)">
+        <Section title={`trailHint preview — ${lang.toUpperCase()} (what Selena receives)`}>
           <pre className="text-xs bg-muted/50 p-3 rounded whitespace-pre-wrap font-mono text-foreground">
 {trailHintPreview}
           </pre>
