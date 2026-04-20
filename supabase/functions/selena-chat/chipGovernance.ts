@@ -554,12 +554,37 @@ export function filterChipsForCompletedTools(
   toolsCompleted: string[],
   language: 'en' | 'es',
   hasEarnedBooking: boolean,
+  /**
+   * Defensive backup: if these context signals exist, treat the corresponding tool
+   * as completed even when tools_completed is missing/empty. Catches persistence
+   * races where the score landed but the tools_completed array did not.
+   */
+  contextSignals?: {
+    readiness_score?: number | null;
+    seller_readiness_score?: number | null;
+    cash_readiness_score?: number | null;
+  },
 ): { filtered: string[]; suppressions: ChipSuppressionEvent[] } {
-  if (!toolsCompleted?.length) return { filtered: chips, suppressions: [] };
+  // Defensive: infer completed tools from context signals when array is missing.
+  const inferredCompleted = new Set<string>(toolsCompleted ?? []);
+  if (contextSignals) {
+    if (typeof contextSignals.readiness_score === 'number') {
+      inferredCompleted.add('buyer_readiness');
+    }
+    if (typeof contextSignals.seller_readiness_score === 'number') {
+      inferredCompleted.add('seller_readiness');
+    }
+    if (typeof contextSignals.cash_readiness_score === 'number') {
+      inferredCompleted.add('cash_readiness');
+    }
+  }
+  const effectiveCompleted = Array.from(inferredCompleted);
+
+  if (!effectiveCompleted.length) return { filtered: chips, suppressions: [] };
 
   // Build set of blocked destinations from completed tools
   const blockedDests = new Set<string>();
-  for (const toolId of toolsCompleted) {
+  for (const toolId of effectiveCompleted) {
     const dests = TOOL_BLOCKED_DESTINATIONS[toolId];
     if (dests) dests.forEach(d => blockedDests.add(d));
   }
@@ -571,7 +596,7 @@ export function filterChipsForCompletedTools(
     // Dual lookup: try semantic key first, then display string
     const dest = CHIP_KEY_DESTINATION[chip] || CHIP_DESTINATION[chip];
     if (dest && blockedDests.has(dest)) {
-      const blockingTool = toolsCompleted.find(tid =>
+      const blockingTool = effectiveCompleted.find(tid =>
         TOOL_BLOCKED_DESTINATIONS[tid]?.includes(dest)
       );
       suppressions.push({
@@ -587,7 +612,7 @@ export function filterChipsForCompletedTools(
 
   // Add replacement chips for suppressed tools — emit semantic keys
   const existingDests = new Set(filtered.map(c => CHIP_KEY_DESTINATION[c] || CHIP_DESTINATION[c]).filter(Boolean));
-  for (const toolId of toolsCompleted) {
+  for (const toolId of effectiveCompleted) {
     const replacementDest = TOOL_REPLACEMENT_DESTINATION[toolId];
     if (!replacementDest) continue;
     if (blockedDests.has(replacementDest)) continue;
