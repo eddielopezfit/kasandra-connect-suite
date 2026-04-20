@@ -153,6 +153,43 @@ const V2Layout = ({ children }: V2LayoutProps) => {
   // Session enrichment (scroll depth, time tracking, page views)
   useSessionEnrichment();
 
+  // Defer drawer + exit-intent modal mount until after first paint so their
+  // chunks (and supabase client transitively) don't compete with hero render.
+  const [deferredMount, setDeferredMount] = useState(false);
+  useEffect(() => {
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+    };
+    const trigger = () => setDeferredMount(true);
+    let id: number | undefined;
+    if (typeof w.requestIdleCallback === "function") {
+      id = w.requestIdleCallback(trigger, { timeout: 2500 });
+    } else {
+      id = window.setTimeout(trigger, 1500) as unknown as number;
+    }
+    // Promote sooner on first user interaction (mouse/touch/scroll)
+    const promote = () => {
+      setDeferredMount(true);
+      cleanup();
+    };
+    const cleanup = () => {
+      window.removeEventListener("pointerdown", promote);
+      window.removeEventListener("scroll", promote);
+      window.removeEventListener("keydown", promote);
+    };
+    window.addEventListener("pointerdown", promote, { passive: true, once: true });
+    window.addEventListener("scroll", promote, { passive: true, once: true });
+    window.addEventListener("keydown", promote, { once: true });
+    return () => {
+      cleanup();
+      if (typeof w.requestIdleCallback === "function" && id !== undefined) {
+        (w as unknown as { cancelIdleCallback?: (h: number) => void }).cancelIdleCallback?.(id);
+      } else if (id !== undefined) {
+        clearTimeout(id);
+      }
+    };
+  }, []);
+
   return (
     <SelenaChatProvider>
       {/* IMPORTANT: Do NOT add key={language} here - it causes full tree remount */}
@@ -170,8 +207,11 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         {/* Selena Chat - Site Wide */}
         <ChatErrorBoundary>
           <SelenaFloatingButton />
-          <SelenaChatDrawer />
-          
+          {deferredMount && (
+            <Suspense fallback={null}>
+              <SelenaChatDrawer />
+            </Suspense>
+          )}
         </ChatErrorBoundary>
 
         {/* Sticky mobile Book CTA — lg:hidden so desktop nav button handles it */}
@@ -194,7 +234,11 @@ const V2Layout = ({ children }: V2LayoutProps) => {
           </div>
         )}
       </div>
-      <ExitIntentModal />
+      {deferredMount && (
+        <Suspense fallback={null}>
+          <ExitIntentModal />
+        </Suspense>
+      )}
     </SelenaChatProvider>
   );
 };
