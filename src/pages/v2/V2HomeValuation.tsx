@@ -115,6 +115,14 @@ const V2HomeValuationContent = () => {
         has_phone: true,
       });
 
+      // Mark tool complete in SessionContext so Selena/chip filter suppress re-suggestions
+      const ctx = getSessionContext();
+      updateSessionContext({
+        last_tool_completed: "home_valuation",
+        tools_completed: [...new Set([...(ctx?.tools_completed ?? []), "home_valuation"])],
+      });
+      logEvent("tool_completed", { tool_id: "home_valuation", source: "website", page_path: "/home-valuation" });
+
       setStep(4); // Success
     } catch {
       setError(t("Network error. Please try again.", "Error de red. Por favor intenta de nuevo."));
