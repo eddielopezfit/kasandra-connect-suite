@@ -554,8 +554,33 @@ export function filterChipsForCompletedTools(
   toolsCompleted: string[],
   language: 'en' | 'es',
   hasEarnedBooking: boolean,
+  /**
+   * Defensive backup: if these context signals exist, treat the corresponding tool
+   * as completed even when tools_completed is missing/empty. Catches persistence
+   * races where the score landed but the tools_completed array did not.
+   */
+  contextSignals?: {
+    readiness_score?: number | null;
+    seller_readiness_score?: number | null;
+    cash_readiness_score?: number | null;
+  },
 ): { filtered: string[]; suppressions: ChipSuppressionEvent[] } {
-  if (!toolsCompleted?.length) return { filtered: chips, suppressions: [] };
+  // Defensive: infer completed tools from context signals when array is missing.
+  const inferredCompleted = new Set<string>(toolsCompleted ?? []);
+  if (contextSignals) {
+    if (typeof contextSignals.readiness_score === 'number') {
+      inferredCompleted.add('buyer_readiness');
+    }
+    if (typeof contextSignals.seller_readiness_score === 'number') {
+      inferredCompleted.add('seller_readiness');
+    }
+    if (typeof contextSignals.cash_readiness_score === 'number') {
+      inferredCompleted.add('cash_readiness');
+    }
+  }
+  const effectiveCompleted = Array.from(inferredCompleted);
+
+  if (!effectiveCompleted.length) return { filtered: chips, suppressions: [] };
 
   // Build set of blocked destinations from completed tools
   const blockedDests = new Set<string>();
