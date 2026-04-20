@@ -24,12 +24,12 @@ const QuizResults = ({ matches, onExploreZip, onRetake }: QuizResultsProps) => {
   const isEs = language === "es";
 
   const handleSelenaOpen = () => {
-    logEvent("quiz_result_cta_click", { quiz: "neighborhood", cta: "selena" });
+    logEvent("cta_click", { cta: "neighborhood_quiz_selena", source: "quiz_result", intent: "buy" });
     openChat({ source: "quiz_result", intent: "buy" });
   };
 
   const handleBookClick = () => {
-    logEvent("quiz_result_cta_click", { quiz: "neighborhood", cta: "book" });
+    logEvent("cta_click", { cta: "neighborhood_quiz_book", source: "quiz_result", intent: "buy" });
   };
 
   return (
@@ -92,7 +92,7 @@ const QuizResults = ({ matches, onExploreZip, onRetake }: QuizResultsProps) => {
 
                 <Button
                   onClick={() => {
-                    logEvent("quiz_result_cta_click", { quiz: "neighborhood", cta: "explore_zip", zip: match.zip });
+                    logEvent("cta_click", { cta: "neighborhood_quiz_explore_zip", zip: match.zip, source: "quiz_result" });
                     onExploreZip(match.zip);
                   }}
                   variant="outline"

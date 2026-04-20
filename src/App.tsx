@@ -10,6 +10,7 @@ import ScrollManager from "@/components/ScrollManager";
 import RouteAnalytics from "@/components/RouteAnalytics";
 import NotFound from "./pages/NotFound";
 import { initQaAccess } from "@/lib/qa/qaAccess";
+import { runWiringValidator } from "@/lib/qa/wiringValidator";
 
 const V2Redirect = () => {
   const location = useLocation();
@@ -88,6 +89,7 @@ const RouteFallback = () => (
 const App = () => {
   useEffect(() => {
     initQaAccess();
+    runWiringValidator();
   }, []);
 
   return (
