@@ -335,8 +335,14 @@ export function getSessionContext(): SessionContext | null {
 export function updateSessionContext(updates: Partial<SessionContext>): SessionContext | null {
   if (typeof window === 'undefined') return null;
   
-  const current = getSessionContext();
-  if (!current) return null;
+  // Auto-initialize if context doesn't exist yet (e.g., user lands directly on a tool
+  // page without opening Selena first). Without this, tool completions silently no-op.
+  let current = getSessionContext();
+  if (!current) {
+    const lang = (localStorage.getItem('kasandra-language') === 'es' ? 'es' : 'en') as 'en' | 'es';
+    current = initSessionContext(lang);
+    devLog('[Selena] updateSessionContext auto-initialized context', { keys: Object.keys(updates) });
+  }
   
   // Normalize intent if provided
   const normalizedUpdates = { ...updates };
