@@ -1696,7 +1696,10 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     const isMilitaryBypass = isBAHTool;
     suggestedReplies = filterSuggestionsForEarnedAccess(suggestedReplies, hasEarned || isPhase3 || isInvestorRedirect || isMilitaryBypass);
 
-    // Apply journey awareness filter: remove chips for already-completed tools (destination-based)
+    // Apply journey awareness filter: remove chips for already-completed tools (destination-based).
+    // CANONICAL FILTER POINT: This is the single chokepoint for tool-completion-aware filtering.
+    // Downstream reassignments (email-asking, guard chipOverrides, forced guide delivery) are
+    // intentional terminal overrides that emit non-tool chips — they do NOT need re-filtering.
     const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3 || isInvestorRedirect || isMilitaryBypass);
     suggestedReplies = journeyFilter.filtered;
 
