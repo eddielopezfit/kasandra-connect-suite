@@ -300,7 +300,6 @@ export function initSessionContext(language: 'en' | 'es' = 'en'): SessionContext
     tools_completed: existingContext.tools_completed,
     last_tool_completed: existingContext.last_tool_completed,
     guides_completed: existingContext.guides_completed,
-    last_tool_used_at: existingContext.last_tool_used_at,
     readiness_score: existingContext.readiness_score,
     primary_priority: existingContext.primary_priority,
     quiz_completed: existingContext.quiz_completed,
