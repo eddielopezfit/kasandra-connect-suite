@@ -1,6 +1,9 @@
+import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import { MapPin, Search, RotateCcw, Trophy, Star } from "lucide-react";
+import { MapPin, Search, RotateCcw, Trophy, Star, ArrowRight, MessageCircle } from "lucide-react";
+import { useSelenaChat } from "@/contexts/SelenaChatContext";
+import { logEvent } from "@/lib/analytics/logEvent";
 import type { NeighborhoodMatch } from "@/lib/neighborhood/quizScoring";
 
 interface QuizResultsProps {
@@ -17,6 +20,17 @@ const RANK_STYLES = [
 
 const QuizResults = ({ matches, onExploreZip, onRetake }: QuizResultsProps) => {
   const { language, t } = useLanguage();
+  const { openChat } = useSelenaChat();
+  const isEs = language === "es";
+
+  const handleSelenaOpen = () => {
+    logEvent("cta_click", { cta: "neighborhood_quiz_selena", source: "quiz_result", intent: "buy" });
+    openChat({ source: "quiz_result", intent: "buy" });
+  };
+
+  const handleBookClick = () => {
+    logEvent("cta_click", { cta: "neighborhood_quiz_book", source: "quiz_result", intent: "buy" });
+  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -77,7 +91,10 @@ const QuizResults = ({ matches, onExploreZip, onRetake }: QuizResultsProps) => {
                 </p>
 
                 <Button
-                  onClick={() => onExploreZip(match.zip)}
+                  onClick={() => {
+                    logEvent("cta_click", { cta: "neighborhood_quiz_explore_zip", zip: match.zip, source: "quiz_result" });
+                    onExploreZip(match.zip);
+                  }}
                   variant="outline"
                   className="border-cc-navy text-cc-navy hover:bg-cc-navy hover:text-white rounded-full text-sm font-medium"
                 >
@@ -90,8 +107,44 @@ const QuizResults = ({ matches, onExploreZip, onRetake }: QuizResultsProps) => {
         })}
       </div>
 
+      {/* Terminal CTA — primary book + secondary Selena (no dead-end) */}
+      <div className="mt-8 rounded-2xl bg-cc-navy text-white p-6 sm:p-7">
+        <h3 className="font-serif text-xl sm:text-2xl mb-2 leading-snug">
+          {isEs
+            ? "¿Lista para ver casas en estas zonas?"
+            : "Ready to tour homes in these areas?"}
+        </h3>
+        <p className="text-white/70 text-sm mb-5">
+          {isEs
+            ? "Una sesión de estrategia con Kasandra es el siguiente paso natural — sin presión."
+            : "A strategy session with Kasandra is the natural next step — no pressure."}
+        </p>
+        <div className="flex flex-wrap items-center gap-4">
+          <Button
+            asChild
+            className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-5 py-2.5 text-sm"
+          >
+            <Link
+              to="/book?intent=buy&source=neighborhood_quiz"
+              onClick={handleBookClick}
+            >
+              {isEs ? "Agendar con Kasandra" : "Book with Kasandra"}
+              <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+            </Link>
+          </Button>
+          <button
+            type="button"
+            onClick={handleSelenaOpen}
+            className="inline-flex items-center gap-1.5 text-cc-gold hover:text-cc-gold/80 font-medium text-sm transition-colors"
+          >
+            <MessageCircle className="w-4 h-4" />
+            {isEs ? "Hablar primero con Selena" : "Talk to Selena first"}
+          </button>
+        </div>
+      </div>
+
       {/* Retake */}
-      <div className="text-center mt-8">
+      <div className="text-center mt-6">
         <Button
           variant="ghost"
           onClick={onRetake}

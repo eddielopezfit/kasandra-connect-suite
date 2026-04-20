@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, lazy, Suspense, useState } from "react";
+import { ReactNode, useEffect, lazy, Suspense } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Calendar } from "lucide-react";
 import V2Navigation from "./V2Navigation";
@@ -7,12 +7,9 @@ import V2Footer from "./V2Footer";
 import SessionIntelligenceBanner from "./SessionIntelligenceBanner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SelenaChatProvider } from "@/contexts/SelenaChatContext";
-import { SelenaFloatingButton } from "@/components/selena";
+import { SelenaFloatingButton, SelenaChatDrawer } from "@/components/selena";
 import { ChatErrorBoundary } from "@/components/selena/ChatErrorBoundary";
-const SelenaChatDrawer = lazy(() =>
-  import("@/components/selena").then((m) => ({ default: m.SelenaChatDrawer }))
-);
-const ExitIntentModal = lazy(() => import("@/components/v2/ExitIntentModal"));
+import ExitIntentModal from "@/components/v2/ExitIntentModal";
 const ReturningUserBanner = lazy(() => import("@/components/v2/ReturningUserBanner"));
 
 import EscalationBanner from "@/components/v2/EscalationBanner";
@@ -20,6 +17,7 @@ import { logPageView, logEvent } from "@/lib/analytics/logEvent";
 import { initSessionContext, getSessionContext, updateSessionContext } from "@/lib/analytics/selenaSession";
 import { bridgeAuthToLead } from "@/lib/analytics/bridgeAuthToLead";
 import { restoreSnapshot } from "@/lib/analytics/sessionSnapshot";
+import { supabase } from "@/integrations/supabase/client";
 import { useSessionEnrichment } from "@/hooks/useSessionEnrichment";
 
 interface V2LayoutProps {
@@ -108,41 +106,20 @@ const V2Layout = ({ children }: V2LayoutProps) => {
     logPageView(location.pathname);
   }, [location.pathname]);
   
-  // Auth state listener for identity bridging — defer to idle so the supabase
-  // client (~80KB gz) doesn't load on the homepage critical path. The OAuth
-  // callback only fires post-redirect, which is well after first paint.
+  // Auth state listener for identity bridging
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
-    let cancelled = false;
-    const attach = () => {
-      import("@/integrations/supabase/client").then(({ supabase }) => {
-        if (cancelled) return;
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (event, session) => {
-            if (event === 'SIGNED_IN' && session?.user) {
-              await bridgeAuthToLead(session.user);
-              logEvent('google_auth_complete', {
-                email: session.user.email,
-                provider: session.user.app_metadata?.provider || 'unknown',
-              });
-            }
-          }
-        );
-        unsubscribe = () => subscription.unsubscribe();
-      }).catch(() => { /* silent — auth listener is non-critical */ });
-    };
-    const w = window as Window & {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-    };
-    if (typeof w.requestIdleCallback === "function") {
-      w.requestIdleCallback(attach, { timeout: 2000 });
-    } else {
-      setTimeout(attach, 300);
-    }
-    return () => {
-      cancelled = true;
-      unsubscribe?.();
-    };
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          await bridgeAuthToLead(session.user);
+          logEvent('google_auth_complete', { 
+            email: session.user.email,
+            provider: session.user.app_metadata?.provider || 'unknown',
+          });
+        }
+      }
+    );
+    return () => subscription.unsubscribe();
   }, []);
   
   // Pages where the sticky book bar should be suppressed —
@@ -152,43 +129,6 @@ const V2Layout = ({ children }: V2LayoutProps) => {
 
   // Session enrichment (scroll depth, time tracking, page views)
   useSessionEnrichment();
-
-  // Defer drawer + exit-intent modal mount until after first paint so their
-  // chunks (and supabase client transitively) don't compete with hero render.
-  const [deferredMount, setDeferredMount] = useState(false);
-  useEffect(() => {
-    const w = window as Window & {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-    };
-    const trigger = () => setDeferredMount(true);
-    let id: number | undefined;
-    if (typeof w.requestIdleCallback === "function") {
-      id = w.requestIdleCallback(trigger, { timeout: 2500 });
-    } else {
-      id = window.setTimeout(trigger, 1500) as unknown as number;
-    }
-    // Promote sooner on first user interaction (mouse/touch/scroll)
-    const promote = () => {
-      setDeferredMount(true);
-      cleanup();
-    };
-    const cleanup = () => {
-      window.removeEventListener("pointerdown", promote);
-      window.removeEventListener("scroll", promote);
-      window.removeEventListener("keydown", promote);
-    };
-    window.addEventListener("pointerdown", promote, { passive: true, once: true });
-    window.addEventListener("scroll", promote, { passive: true, once: true });
-    window.addEventListener("keydown", promote, { once: true });
-    return () => {
-      cleanup();
-      if (typeof w.requestIdleCallback === "function" && id !== undefined) {
-        (w as unknown as { cancelIdleCallback?: (h: number) => void }).cancelIdleCallback?.(id);
-      } else if (id !== undefined) {
-        clearTimeout(id);
-      }
-    };
-  }, []);
 
   return (
     <SelenaChatProvider>
@@ -207,11 +147,8 @@ const V2Layout = ({ children }: V2LayoutProps) => {
         {/* Selena Chat - Site Wide */}
         <ChatErrorBoundary>
           <SelenaFloatingButton />
-          {deferredMount && (
-            <Suspense fallback={null}>
-              <SelenaChatDrawer />
-            </Suspense>
-          )}
+          <SelenaChatDrawer />
+          
         </ChatErrorBoundary>
 
         {/* Sticky mobile Book CTA — lg:hidden so desktop nav button handles it */}
@@ -234,11 +171,7 @@ const V2Layout = ({ children }: V2LayoutProps) => {
           </div>
         )}
       </div>
-      {deferredMount && (
-        <Suspense fallback={null}>
-          <ExitIntentModal />
-        </Suspense>
-      )}
+      <ExitIntentModal />
     </SelenaChatProvider>
   );
 };
