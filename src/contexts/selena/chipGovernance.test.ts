@@ -20,6 +20,10 @@ function labelOf(key: string): string {
   return findChipByKey(key)?.label_en ?? "";
 }
 
+function toLabel(reply: string | { label: string }): string {
+  return typeof reply === "string" ? reply : reply.label;
+}
+
 function buildCtx(overrides: Partial<SessionContext> & { _lang?: "en" | "es" }): SessionContext {
   return {
     chip_phase_floor: 2,
@@ -43,7 +47,7 @@ describe("getPhaseAwareChips — tools_completed suppression", () => {
     });
 
     const chips = getPhaseAwareChips(t, ctx);
-    const labels = chips.map((c) => c.label);
+    const labels = chips.map(toLabel);
 
     const buyerReadinessLabel = labelOf(CHIP_KEYS.BUYER_READINESS);
     expect(buyerReadinessLabel.length).toBeGreaterThan(0);
@@ -63,7 +67,7 @@ describe("getPhaseAwareChips — tools_completed suppression", () => {
     });
 
     const chips = getPhaseAwareChips(t, ctx);
-    const labels = chips.map((c) => c.label);
+    const labels = chips.map(toLabel);
 
     // Must not re-suggest the completed readiness check
     expect(labels).not.toContain(labelOf(CHIP_KEYS.SELLER_READINESS));
