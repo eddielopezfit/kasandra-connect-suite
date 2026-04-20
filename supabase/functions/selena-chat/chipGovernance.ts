@@ -584,7 +584,7 @@ export function filterChipsForCompletedTools(
 
   // Build set of blocked destinations from completed tools
   const blockedDests = new Set<string>();
-  for (const toolId of toolsCompleted) {
+  for (const toolId of effectiveCompleted) {
     const dests = TOOL_BLOCKED_DESTINATIONS[toolId];
     if (dests) dests.forEach(d => blockedDests.add(d));
   }
@@ -596,7 +596,7 @@ export function filterChipsForCompletedTools(
     // Dual lookup: try semantic key first, then display string
     const dest = CHIP_KEY_DESTINATION[chip] || CHIP_DESTINATION[chip];
     if (dest && blockedDests.has(dest)) {
-      const blockingTool = toolsCompleted.find(tid =>
+      const blockingTool = effectiveCompleted.find(tid =>
         TOOL_BLOCKED_DESTINATIONS[tid]?.includes(dest)
       );
       suppressions.push({
@@ -612,7 +612,7 @@ export function filterChipsForCompletedTools(
 
   // Add replacement chips for suppressed tools — emit semantic keys
   const existingDests = new Set(filtered.map(c => CHIP_KEY_DESTINATION[c] || CHIP_DESTINATION[c]).filter(Boolean));
-  for (const toolId of toolsCompleted) {
+  for (const toolId of effectiveCompleted) {
     const replacementDest = TOOL_REPLACEMENT_DESTINATION[toolId];
     if (!replacementDest) continue;
     if (blockedDests.has(replacementDest)) continue;
