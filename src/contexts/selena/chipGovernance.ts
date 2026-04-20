@@ -28,13 +28,26 @@ export const CLIENT_TOOL_BLOCKED_CHIPS: Record<string, ChipKey[]> = {
   ],
 };
 
-/** Tool ID → semantic chip key to use as replacement when tool is completed */
+/** Tool ID → primary semantic chip key to use as replacement when tool is completed */
 export const CLIENT_TOOL_REPLACEMENT: Record<string, ChipKey> = {
   buyer_readiness:          CHIP_KEYS.BROWSE_GUIDES,
   seller_readiness:         CHIP_KEYS.ESTIMATE_PROCEEDS,
   cash_readiness:           CHIP_KEYS.ESTIMATE_PROCEEDS,
   seller_decision:          CHIP_KEYS.TALK_WITH_KASANDRA,
   tucson_alpha_calculator:  CHIP_KEYS.TALK_WITH_KASANDRA,
+};
+
+/**
+ * Tool ID → fallback replacement when the primary replacement is itself blocked
+ * (e.g., seller_readiness + tucson_alpha_calculator both completed → ESTIMATE_PROCEEDS
+ * is blocked, so fall back to TALK_WITH_KASANDRA).
+ */
+export const CLIENT_TOOL_REPLACEMENT_FALLBACK: Record<string, ChipKey> = {
+  buyer_readiness:          CHIP_KEYS.BROWSE_LISTINGS,
+  seller_readiness:         CHIP_KEYS.TALK_WITH_KASANDRA,
+  cash_readiness:           CHIP_KEYS.TALK_WITH_KASANDRA,
+  seller_decision:          CHIP_KEYS.BROWSE_GUIDES,
+  tucson_alpha_calculator:  CHIP_KEYS.BROWSE_GUIDES,
 };
 
 // ============= FIX 3: GUIDE CHIP SUPPRESSION =============
@@ -193,19 +206,23 @@ export function getPhaseAwareChips(
       }
     }
 
-    // Add replacements for completed tools
+    // Add replacements for completed tools (with fallback when primary is blocked)
     for (const toolId of toolsDone) {
       const blocked = CLIENT_TOOL_BLOCKED_CHIPS[toolId] ?? [];
       const wasBlocked = blocked.some(b => candidates.includes(b));
       if (!wasBlocked) continue;
 
-      const replacement = CLIENT_TOOL_REPLACEMENT[toolId];
-      if (!replacement) continue;
-      if (addedKeys.has(replacement)) continue;
-      if (isBlocked(replacement)) continue;
-
-      out.push(replacement);
-      addedKeys.add(replacement);
+      const primary = CLIENT_TOOL_REPLACEMENT[toolId];
+      const fallback = CLIENT_TOOL_REPLACEMENT_FALLBACK[toolId];
+      const pick = (key: ChipKey | undefined): boolean => {
+        if (!key) return false;
+        if (addedKeys.has(key)) return false;
+        if (isBlocked(key)) return false;
+        out.push(key);
+        addedKeys.add(key);
+        return true;
+      };
+      if (!pick(primary)) pick(fallback);
     }
 
     return out;
