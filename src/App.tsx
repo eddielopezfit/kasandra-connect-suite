@@ -5,8 +5,19 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import { VIPProvider } from "@/contexts/VIPContext";
 import ScrollManager from "@/components/ScrollManager";
+
+// Lazy-load VIPProvider — its selectors, snapshot writer, and CRM sync
+// are not needed for first paint. Until it hydrates, render children
+// passthrough so the tree mounts without blocking.
+const VIPProvider = lazy(() =>
+  import("@/contexts/VIPContext").then((m) => ({ default: m.VIPProvider }))
+);
+const VIPProviderPassthrough = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<>{children}</>}>
+    <VIPProvider>{children}</VIPProvider>
+  </Suspense>
+);
 import RouteAnalytics from "@/components/RouteAnalytics";
 import NotFound from "./pages/NotFound";
 import { initQaAccess } from "@/lib/qa/qaAccess";
