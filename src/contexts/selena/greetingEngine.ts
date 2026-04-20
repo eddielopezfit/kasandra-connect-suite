@@ -251,17 +251,17 @@ export function computeGreeting(
       if (sc.recommendation === 'cash') {
         greetingContent = t(
           `On a ${value} home, cash nets you ${cashNet} — ${diff} less than listing at ${listNet}, but you close faster with zero prep costs.\n\nKasandra can walk you through the right strategy based on your timeline. That conversation is worth having.`,
-          `En una casa de ${value}, efectivo te da ${cashNet} — ${diff} menos que listado a ${listNet}, pero cierras más rápido sin costos de preparación.\n\nKasandra puede orientarte sobre la estrategia correcta según tu plazo. Esa conversación vale la pena.`
+          `En una casa de ${value}, el efectivo le da ${cashNet} — ${diff} menos que listado a ${listNet}, pero cierra más rápido sin costos de preparación.\n\nKasandra puede orientarle sobre la estrategia correcta según su plazo. Esa conversación vale la pena.`
         );
       } else if (sc.recommendation === 'traditional') {
         greetingContent = t(
           `On a ${value} home, listing could net you ${listNet} — about ${diff} more than a cash offer at ${cashNet}. If you have the time, the traditional path pays off.\n\nKasandra can help you maximize that number with the right pricing and negotiation strategy.`,
-          `En una casa de ${value}, el listado podría darte ${listNet} — unos ${diff} más que una oferta en efectivo de ${cashNet}. Si tienes el tiempo, el camino tradicional vale la pena.\n\nKasandra puede ayudarte a maximizar ese número con la estrategia correcta de precios y negociación.`
+          `En una casa de ${value}, el listado podría darle ${listNet} — unos ${diff} más que una oferta en efectivo de ${cashNet}. Si tiene el tiempo, el camino tradicional vale la pena.\n\nKasandra puede ayudarle a maximizar ese número con la estrategia correcta de precios y negociación.`
         );
       } else {
         greetingContent = t(
           `On a ${value} home, the difference between cash (${cashNet}) and listing (${listNet}) is only ${diff}. Your timeline and priorities matter more than the number.\n\nKasandra can help you decide which path fits your situation best.`,
-          `En una casa de ${value}, la diferencia entre efectivo (${cashNet}) y listado (${listNet}) es solo ${diff}. Tu plazo y prioridades importan más que el número.\n\nKasandra puede ayudarte a decidir qué camino se ajusta mejor a tu situación.`
+          `En una casa de ${value}, la diferencia entre efectivo (${cashNet}) y listado (${listNet}) es solo ${diff}. Su plazo y prioridades importan más que el número.\n\nKasandra puede ayudarle a decidir qué camino se ajusta mejor a su situación.`
         );
       }
       suggestedReplies = [
