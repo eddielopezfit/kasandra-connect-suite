@@ -59,6 +59,20 @@ const GUIDE_TITLE_MAP: Record<string, string> = {
   'tucson-market-update-2026': 'Tucson Market Update 2026',
 };
 
+// Maps quiz trail paths → canonical tool_id that should appear in tools_completed.
+// If a path is in the trail but its tool_id is missing, we have a wiring gap.
+const QUIZ_PATH_TO_TOOL_ID: Array<{ pattern: RegExp; toolId: string; label: string }> = [
+  { pattern: /^\/buyer-readiness/,  toolId: 'buyer_readiness',  label: 'Buyer Readiness' },
+  { pattern: /^\/seller-readiness/, toolId: 'seller_readiness', label: 'Seller Readiness' },
+  { pattern: /^\/cash-readiness/,   toolId: 'cash_readiness',   label: 'Cash Readiness' },
+];
+
+interface WiringGap {
+  toolId: string;
+  label: string;
+  path: string;
+}
+
 function buildTrailHintPreview(
   sessionTrail: ReturnType<typeof serializeTrailForSelena>,
   guidesCompleted: string[],
