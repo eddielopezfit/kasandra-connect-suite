@@ -3,11 +3,13 @@
  * "Welcome back — continue where you left off"
  */
 
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useVIPContext } from '@/contexts/VIPContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { clearVisitorIdentity } from '@/lib/analytics/bridgeLeadIdToV2';
+import { logEvent } from '@/lib/analytics/logEvent';
 
 export default function ReturningUserBanner({ className = '' }: { className?: string }) {
   const { language } = useLanguage();
@@ -18,6 +20,8 @@ export default function ReturningUserBanner({ className = '' }: { className?: st
   if (!vip.identity.isReturning || vip.journey.journeyDepth === 'new') return null;
   if (vip.journey.hasBooked) return null;
 
+  // Verified-name policy: vip.identity.name is already gated by lead_id
+  // in the VIP builder. If no name, render the generic welcome variant.
   const name = vip.identity.name;
   const headline = name
     ? isEs ? `Bienvenido/a de nuevo, ${name}` : `Welcome back, ${name}`
@@ -29,6 +33,13 @@ export default function ReturningUserBanner({ className = '' }: { className?: st
 
   const step = recommendedNextStep;
   const isSelenaAction = step.destination.startsWith('selena:');
+
+  const handleReset = () => {
+    logEvent('visitor_identity_reset', { source: 'returning_user_banner', had_name: !!name });
+    clearVisitorIdentity();
+    // Hard reload so all hooks re-derive against the cleared state.
+    window.location.reload();
+  };
 
   return (
     <AnimatePresence>
@@ -47,15 +58,27 @@ export default function ReturningUserBanner({ className = '' }: { className?: st
                 <span className="text-white/50 text-xs ml-2 hidden sm:inline">{subtitle}</span>
               </div>
             </div>
-            {!isSelenaAction && (
-              <Link
-                to={step.destination}
-                className="inline-flex items-center gap-1.5 text-cc-gold hover:text-cc-gold/80 text-xs font-medium transition-colors shrink-0"
+            <div className="flex items-center gap-3 shrink-0">
+              {!isSelenaAction && (
+                <Link
+                  to={step.destination}
+                  className="inline-flex items-center gap-1.5 text-cc-gold hover:text-cc-gold/80 text-xs font-medium transition-colors"
+                >
+                  {isEs ? step.labelEs : step.labelEn}
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+              )}
+              <button
+                type="button"
+                onClick={handleReset}
+                className="inline-flex items-center gap-1 text-white/40 hover:text-white/70 text-[11px] transition-colors"
+                aria-label={isEs ? 'No eres tú? Empezar de nuevo' : 'Not you? Start fresh'}
+                title={isEs ? '¿No eres tú? Empezar de nuevo' : 'Not you? Start fresh'}
               >
-                {isEs ? step.labelEs : step.labelEn}
-                <ArrowRight className="w-3 h-3" />
-              </Link>
-            )}
+                <X className="w-3 h-3" />
+                {isEs ? '¿No eres tú?' : 'Not you?'}
+              </button>
+            </div>
           </div>
         </div>
       </motion.div>

@@ -90,6 +90,7 @@ export type EventType =
   | 'google_auth_complete'
   | 'auth_lead_bridge_success'
   | 'lead_id_bridged'
+  | 'visitor_identity_reset'
   // UI events
   | 'ui_language_toggle'
   // Consultation intake events
