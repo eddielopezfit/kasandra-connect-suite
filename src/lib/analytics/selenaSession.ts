@@ -335,8 +335,14 @@ export function getSessionContext(): SessionContext | null {
 export function updateSessionContext(updates: Partial<SessionContext>): SessionContext | null {
   if (typeof window === 'undefined') return null;
   
-  const current = getSessionContext();
-  if (!current) return null;
+  // Auto-initialize if context doesn't exist yet (e.g., user lands directly on a tool
+  // page without opening Selena first). Without this, tool completions silently no-op.
+  let current = getSessionContext();
+  if (!current) {
+    const lang = (localStorage.getItem('kasandra-language') === 'es' ? 'es' : 'en') as 'en' | 'es';
+    current = initSessionContext(lang);
+    devLog('[Selena] updateSessionContext auto-initialized context', { keys: Object.keys(updates) });
+  }
   
   // Normalize intent if provided
   const normalizedUpdates = { ...updates };
@@ -408,8 +414,12 @@ export function setFieldIfEmpty<K extends keyof SessionContext>(
   key: K,
   value: SessionContext[K]
 ): boolean {
-  const current = getSessionContext();
-  if (!current) return false;
+  // updateSessionContext auto-initializes context if missing, so no-op guard removed.
+  // We still read current to check if the field is already populated.
+  const current = getSessionContext() ?? (() => {
+    const lang = (typeof window !== 'undefined' && localStorage.getItem('kasandra-language') === 'es' ? 'es' : 'en') as 'en' | 'es';
+    return initSessionContext(lang);
+  })();
 
   const currentValue = current[key];
   if (!isEmptyValue(currentValue)) {
