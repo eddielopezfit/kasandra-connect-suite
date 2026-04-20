@@ -89,3 +89,49 @@ describe("computeGreeting — buy intent + readiness_score=82", () => {
     }
   });
 });
+
+const sellerReadinessLabelEn =
+  findChipByKey(CHIP_KEYS.SELLER_READINESS)?.label_en ?? "";
+
+describe("computeGreeting — sell intent + seller_readiness_capture + score=42", () => {
+  it("surfaces '42/100' in the greeting and never offers the seller readiness chip", () => {
+    const entryContext: EntryContext = {
+      source: "seller_readiness_capture",
+      readinessData: {
+        score: 42,
+        primaryPriority: "timing",
+        toolType: "seller",
+      },
+    };
+
+    const sellerCtx = {
+      intent: "sell",
+      tools_completed: ["seller_readiness"],
+      readiness_score: 42,
+      chip_phase_floor: 2,
+    } as unknown as SessionContext;
+
+    const result = computeGreeting(
+      entryContext,
+      sellerCtx,
+      [],
+      false,
+      t,
+      "en",
+    );
+
+    expect(result).not.toBeNull();
+    expect(result!.greetingContent).toContain("42/100");
+
+    const replyLabels = result!.suggestedReplies.map((r) =>
+      typeof r === "string" ? r : r.label,
+    );
+    // Sanity: registry resolved the canonical label
+    expect(sellerReadinessLabelEn.length).toBeGreaterThan(0);
+    // Must not re-suggest the readiness check the user just completed
+    expect(replyLabels).not.toContain(sellerReadinessLabelEn);
+
+    const retakeRegex = /seller readiness|take.*readiness|readiness check/i;
+    expect(replyLabels.some((l) => retakeRegex.test(l))).toBe(false);
+  });
+});
