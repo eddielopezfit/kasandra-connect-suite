@@ -432,7 +432,7 @@ export function computeGreeting(
       const loanLabel = cc.loanType === 'fha' ? 'FHA' : cc.loanType === 'va' ? 'VA' : cc.loanType === 'cash' ? t('cash', 'efectivo') : t('conventional', 'convencional');
       greetingContent = t(
         `You're looking at ${fmtNum(cc.estimatedLow)}–${fmtNum(cc.estimatedHigh)} in closing costs on a ${fmtNum(cc.purchasePrice)} ${loanLabel} purchase — plus your down payment, that's about ${fmtNum(cc.totalCashNeeded)} total at closing.\n\nThe good news: some of these line items are negotiable. Kasandra has reduced these costs on recent Tucson transactions.`,
-        `Estás viendo ${fmtNum(cc.estimatedLow)}–${fmtNum(cc.estimatedHigh)} en costos de cierre para una compra ${loanLabel} de ${fmtNum(cc.purchasePrice)} — más tu enganche, eso es aproximadamente ${fmtNum(cc.totalCashNeeded)} total al cierre.\n\nLa buena noticia: algunos de estos rubros son negociables. Kasandra ha reducido estos costos en transacciones recientes en Tucson.`
+        `Está viendo ${fmtNum(cc.estimatedLow)}–${fmtNum(cc.estimatedHigh)} en costos de cierre para una compra ${loanLabel} de ${fmtNum(cc.purchasePrice)} — más su enganche, eso es aproximadamente ${fmtNum(cc.totalCashNeeded)} total al cierre.\n\nLa buena noticia: algunos de estos rubros son negociables. Kasandra ha reducido estos costos en transacciones recientes en Tucson.`
       );
       suggestedReplies = [
         { label: t("What's negotiable?", "¿Qué es negociable?") },
@@ -442,7 +442,7 @@ export function computeGreeting(
     } else {
       greetingContent = t(
         "You're looking into closing costs — smart to do before making an offer. Are you working with a specific price range or loan type?",
-        "Estás investigando los costos de cierre — inteligente hacerlo antes de hacer una oferta. ¿Tienes un rango de precio o tipo de préstamo específico?"
+        "Está investigando los costos de cierre — es inteligente hacerlo antes de hacer una oferta. ¿Tiene un rango de precio o tipo de préstamo específico?"
       );
       suggestedReplies = [
         { label: t("I'm using FHA", "Estoy usando FHA") },
