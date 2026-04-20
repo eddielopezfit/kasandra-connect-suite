@@ -129,6 +129,8 @@ const V2Navigation = () => {
                     <Link
                       key={link.href}
                       to={link.href}
+                      onMouseEnter={() => preloadRoute(link.href)}
+                      onFocus={() => preloadRoute(link.href)}
                       className={`relative text-sm font-semibold transition-all duration-200 px-3 py-1 rounded-full border ${
                         isActive(link.href)
                           ? "bg-cc-gold/15 text-cc-gold border-cc-gold/60"
@@ -143,7 +145,14 @@ const V2Navigation = () => {
                   );
                 }
                 return (
-                  <Link key={link.href} to={link.href} className={linkClass(isActive(link.href))} aria-current={isActive(link.href) ? "page" : undefined}>
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    onMouseEnter={() => preloadRoute(link.href)}
+                    onFocus={() => preloadRoute(link.href)}
+                    className={linkClass(isActive(link.href))}
+                    aria-current={isActive(link.href) ? "page" : undefined}
+                  >
                     {link.label}
                     {isActive(link.href) && (
                       <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cc-gold rounded-full" />
@@ -167,6 +176,8 @@ const V2Navigation = () => {
                       <Link
                         key={link.href}
                         to={link.href}
+                        onMouseEnter={() => preloadRoute(link.href)}
+                        onFocus={() => preloadRoute(link.href)}
                         onClick={() => setIsExploreOpen(false)}
                         className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
                           isActive(link.href)
@@ -217,7 +228,7 @@ const V2Navigation = () => {
                 <span className="text-xs">520.349.3248</span>
               </a>
               <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 shadow-gold">
-                <Link to="/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
+                <Link to="/book" onMouseEnter={() => preloadRoute("/book")} onFocus={() => preloadRoute("/book")}>{t("Book a Consultation", "Agendar una Cita")}</Link>
               </Button>
             </div>
 
