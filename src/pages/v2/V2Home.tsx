@@ -30,7 +30,19 @@ import {
 import { Button } from "@/components/ui/button";
 import kasandraHeadshot from "@/assets/kasandra/desert-landscape-mountains.webp";
 
-import GlassmorphismHero from "@/components/v2/hero/GlassmorphismHero";
+const LazyGlassmorphismHero = lazy(() => import("@/components/v2/hero/GlassmorphismHero"));
+
+const HeroSkeleton = () => (
+  <div className="min-h-[85dvh] bg-cc-navy flex items-center justify-center">
+    <div className="container mx-auto px-4 max-w-3xl space-y-5">
+      <div className="h-4 w-40 rounded bg-white/10 animate-pulse mx-auto" />
+      <div className="h-12 w-3/4 rounded bg-white/10 animate-pulse mx-auto" />
+      <div className="h-12 w-2/3 rounded bg-white/10 animate-pulse mx-auto" />
+      <div className="h-5 w-1/2 rounded bg-white/10 animate-pulse mx-auto" />
+      <div className="h-12 w-48 rounded-full bg-white/10 animate-pulse mx-auto mt-8" />
+    </div>
+  </div>
+);
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { updateSessionContext, getSessionContext } from '@/lib/analytics/selenaSession';
 import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
@@ -60,8 +72,9 @@ const V2HomeContent = () => {
       <JsonLd data={realEstateAgentSchema()} />
       <JsonLd data={localBusinessSchema()} />
       {/* Hero Section */}
-      <GlassmorphismHero showMarketPulse={false} />
-
+      <Suspense fallback={<HeroSkeleton />}>
+        <LazyGlassmorphismHero showMarketPulse={false} />
+      </Suspense>
       {/* Journey Progress — returning users see their accumulated state */}
       {progress.isReturningUser && (
         <section className="py-4 bg-cc-sand">
