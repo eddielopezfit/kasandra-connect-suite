@@ -19,9 +19,19 @@ const V2CashOfferOptionsContent = () => {
   const { t } = useLanguage();
   const { openChat } = useSelenaChat();
 
-  // Set intent to 'cash' so JourneyBreadcrumb shows cash-relevant next steps
+  // Set intent to 'cash' and mark cash_offer_options as a completed tool
+  // so Selena/chip filters stop re-suggesting "explore cash offer options".
   useEffect(() => {
     setFieldIfEmpty('intent', 'cash');
+    const ctx = getSessionContext();
+    const already = (ctx?.tools_completed ?? []).includes('cash_offer_options');
+    if (!already) {
+      updateSessionContext({
+        last_tool_completed: 'cash_offer_options',
+        tools_completed: [...new Set([...(ctx?.tools_completed ?? []), 'cash_offer_options'])],
+      });
+      logEvent('tool_completed', { tool_id: 'cash_offer_options', source: 'website', page_path: '/cash-offer-options' });
+    }
   }, []);
   useDocumentHead({
     titleEn: "Cash Offer vs. Traditional Listing | Tucson Home Sale Calculator",
