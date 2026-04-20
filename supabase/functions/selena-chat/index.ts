@@ -987,6 +987,37 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
 
     const toolUsed = context.last_tool_completed;
 
+    // --- GLOBAL: Completed tools — DO NOT re-recommend (forward-synthesis directive) ---
+    const completedTools = context.tools_completed ?? [];
+    if (completedTools.length > 0 || context.readiness_score) {
+      const toolLabelMap: Record<string, { en: string; es: string }> = {
+        buyer_readiness: { en: 'Buyer Readiness Check', es: 'Evaluación de Preparación del Comprador' },
+        seller_readiness: { en: 'Seller Readiness Check', es: 'Evaluación de Preparación del Vendedor' },
+        cash_readiness: { en: 'Cash Readiness Quiz', es: 'Cuestionario de Preparación en Efectivo' },
+        tucson_alpha_calculator: { en: 'Net-to-Seller Calculator', es: 'Calculadora de Neto del Vendedor' },
+        affordability_calculator: { en: 'Affordability Calculator', es: 'Calculadora de Asequibilidad' },
+        bah_calculator: { en: 'VA/BAH Calculator', es: 'Calculadora VA/BAH' },
+        home_valuation: { en: 'Home Valuation', es: 'Valoración de Casa' },
+        cash_offer_options: { en: 'Cash Offer Options', es: 'Opciones de Oferta en Efectivo' },
+        buyer_closing_costs: { en: 'Buyer Closing Cost Estimator', es: 'Estimador de Costos de Cierre' },
+        neighborhood_compare: { en: 'Neighborhood Comparison', es: 'Comparación de Vecindarios' },
+      };
+      const completedLabels = completedTools
+        .map((t: string) => toolLabelMap[t]?.[language === 'es' ? 'es' : 'en'] ?? t)
+        .join(', ');
+      const scoreLine = context.readiness_score
+        ? (language === 'es'
+            ? `Puntuación de preparación conocida: ${context.readiness_score}/100.`
+            : `Known readiness score: ${context.readiness_score}/100.`)
+        : '';
+
+      if (language === 'es') {
+        toolOutputHint += `\n\nHERRAMIENTAS YA COMPLETADAS POR EL USUARIO: ${completedLabels || '(ninguna registrada)'}\n${scoreLine}\n\nREGLA ABSOLUTA — NO RE-RECOMENDAR:\n- NUNCA sugieras, propongas o vuelvas a ofrecer ninguna herramienta de la lista anterior. Ya la hicieron.\n- NUNCA digas "podrías tomar la Evaluación de Preparación" o "te recomiendo usar la calculadora" si está en esa lista.\n- En su lugar, SINTETIZA HACIA ADELANTE: referencia el resultado (puntuación, número, camino) y propone el próximo paso lógico distinto (otra herramienta no completada, una guía, o hablar con Kasandra).\n- Si el usuario pregunta "¿qué debería hacer ahora?" y ya completó la evaluación de preparación, NUNCA respondas con "toma la evaluación de preparación". Referencia su puntuación${context.readiness_score ? ` (${context.readiness_score}/100)` : ''} y avanza desde ahí.`;
+      } else {
+        toolOutputHint += `\n\nTOOLS THE USER HAS ALREADY COMPLETED: ${completedLabels || '(none recorded)'}\n${scoreLine}\n\nABSOLUTE RULE — DO NOT RE-RECOMMEND:\n- NEVER suggest, propose, or re-offer any tool from the list above. They already did it.\n- NEVER say "you could take the Readiness Check" or "I recommend using the calculator" if it appears in that list.\n- Instead, SYNTHESIZE FORWARD: reference the result (score, number, path) and propose a different logical next step (a tool they have NOT completed, a guide, or talking with Kasandra).\n- If the user asks "what should I do next?" and they've already completed the readiness check, NEVER answer "take the readiness check." Reference their score${context.readiness_score ? ` (${context.readiness_score}/100)` : ''} and advance from there.`;
+      }
+    }
+
     // --- Seller Net Calculator output ---
     if (
       (toolUsed === 'tucson_alpha_calculator' || (context.tools_completed ?? []).includes('tucson_alpha_calculator'))
