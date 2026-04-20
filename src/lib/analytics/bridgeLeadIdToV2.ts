@@ -77,6 +77,50 @@ export function getStoredUserName(): string | null {
 }
 
 /**
+ * Verified-only name retrieval — returns name ONLY when a real lead_id
+ * is present (i.e. the visitor completed a form / was bridged from auth).
+ * Prevents stale localStorage from leaking "Welcome back, Test" to fresh visitors.
+ */
+export function getVerifiedUserName(): string | null {
+  if (typeof window === 'undefined') return null;
+  const leadId = localStorage.getItem(LEAD_ID_KEY);
+  if (!leadId) return null;
+  const name = localStorage.getItem('cc_user_name');
+  if (!name) return null;
+  // Reject obvious test/placeholder values
+  const lower = name.trim().toLowerCase();
+  const blocklist = ['test', 'test auditor', 'test user', 'demo', 'sample', 'lovable', 'admin'];
+  if (blocklist.some((b) => lower === b || lower.startsWith(b + ' '))) return null;
+  return name.trim();
+}
+
+export function getVerifiedFirstName(): string | null {
+  const full = getVerifiedUserName();
+  if (!full) return null;
+  return full.split(/\s+/)[0] || null;
+}
+
+/**
+ * Hard reset — clears all visitor identity from localStorage.
+ * Used by the "Not you?" affordance.
+ */
+export function clearVisitorIdentity(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(LEAD_ID_KEY);
+    localStorage.removeItem(LAST_REPORT_KEY);
+    localStorage.removeItem('cc_user_name');
+    localStorage.removeItem('cc_user_email');
+    localStorage.removeItem('cc_user_phone');
+    localStorage.removeItem('selena_context_v2');
+    localStorage.removeItem('selena_chat_history');
+    localStorage.removeItem('selena_last_entry_sig');
+  } catch (e) {
+    console.warn('[LeadBridge] clearVisitorIdentity failed:', e);
+  }
+}
+
+/**
  * Store user name for personalization
  */
 export function setStoredUserName(name: string): void {
