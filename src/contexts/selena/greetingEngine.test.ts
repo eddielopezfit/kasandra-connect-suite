@@ -89,3 +89,92 @@ describe("computeGreeting — buy intent + readiness_score=82", () => {
     }
   });
 });
+
+const sellerReadinessLabelEn =
+  findChipByKey(CHIP_KEYS.SELLER_READINESS)?.label_en ?? "";
+const buyerReadinessLabelEs =
+  findChipByKey(CHIP_KEYS.BUYER_READINESS)?.label_es ?? "";
+const buyerReadinessShortLabelEs =
+  findChipByKey(CHIP_KEYS.BUYER_READINESS_SHORT)?.label_es ?? "";
+
+describe("computeGreeting — sell intent + seller_readiness_capture + score=42", () => {
+  it("surfaces '42/100' in the greeting and never offers the seller readiness chip", () => {
+    const entryContext: EntryContext = {
+      source: "seller_readiness_capture",
+      readinessData: {
+        score: 42,
+        primaryPriority: "timing",
+        toolType: "seller",
+      },
+    };
+
+    const sellerCtx = {
+      intent: "sell",
+      tools_completed: ["seller_readiness"],
+      readiness_score: 42,
+      chip_phase_floor: 2,
+    } as unknown as SessionContext;
+
+    const result = computeGreeting(entryContext, sellerCtx, [], false, t, "en");
+
+    expect(result).not.toBeNull();
+    expect(result!.greetingContent).toContain("42/100");
+
+    const replyLabels = result!.suggestedReplies.map((r) =>
+      typeof r === "string" ? r : r.label,
+    );
+    expect(sellerReadinessLabelEn.length).toBeGreaterThan(0);
+    expect(replyLabels).not.toContain(sellerReadinessLabelEn);
+
+    const retakeRegex = /seller readiness|take.*readiness|readiness check/i;
+    expect(replyLabels.some((l) => retakeRegex.test(l))).toBe(false);
+  });
+});
+
+describe("computeGreeting (ES) — buy intent + buyer_readiness_capture + score=82", () => {
+  it("surfaces '82/100' in the Spanish greeting and never offers the buyer readiness chip", () => {
+    // Spanish-aware translator mirrors the LanguageContext behavior
+    const tEs = (_en: string, es: string) => es;
+
+    const entryContext: EntryContext = {
+      source: "buyer_readiness_capture",
+      readinessData: {
+        score: 82,
+        primaryPriority: "pago inicial",
+        toolType: "buyer",
+      },
+    };
+
+    const result = computeGreeting(
+      entryContext,
+      buildSessionCtx({}),
+      [],
+      false,
+      tEs,
+      "es",
+    );
+
+    expect(result).not.toBeNull();
+
+    // Real ES copy shape: "Tu puntuación de Preparación del Comprador es 82/100"
+    expect(result!.greetingContent).toContain("82/100");
+    expect(result!.greetingContent).toContain("Preparación del Comprador");
+    expect(result!.greetingContent).toMatch(/puntuación.*82\/100/);
+
+    // Greeting must be Spanish, not the EN fallback
+    expect(result!.greetingContent).not.toContain("Your Buyer Readiness score");
+
+    const replyLabels = result!.suggestedReplies.map((r) =>
+      typeof r === "string" ? r : r.label,
+    );
+    // Sanity: ES labels resolved
+    expect(buyerReadinessLabelEs.length).toBeGreaterThan(0);
+    // Must not re-suggest the readiness check (in either ES or EN)
+    expect(replyLabels).not.toContain(buyerReadinessLabelEs);
+    expect(replyLabels).not.toContain(buyerReadinessShortLabelEs);
+    expect(replyLabels).not.toContain(buyerReadinessLabelEn);
+
+    const retakeRegexEs = /preparación del comprador|evaluación de preparación|hacer.*evaluación/i;
+    expect(replyLabels.some((l) => retakeRegexEs.test(l))).toBe(false);
+  });
+});
