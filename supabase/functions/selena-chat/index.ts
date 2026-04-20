@@ -1700,7 +1700,17 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // CANONICAL FILTER POINT: This is the single chokepoint for tool-completion-aware filtering.
     // Downstream reassignments (email-asking, guard chipOverrides, forced guide delivery) are
     // intentional terminal overrides that emit non-tool chips — they do NOT need re-filtering.
-    const journeyFilter = filterChipsForCompletedTools(suggestedReplies, toolsCompleted, language, hasEarned || isPhase3 || isInvestorRedirect || isMilitaryBypass);
+    const journeyFilter = filterChipsForCompletedTools(
+      suggestedReplies,
+      toolsCompleted,
+      language,
+      hasEarned || isPhase3 || isInvestorRedirect || isMilitaryBypass,
+      {
+        readiness_score: context.readiness_score ?? null,
+        seller_readiness_score: (context as Record<string, unknown>).seller_readiness_score as number | undefined ?? null,
+        cash_readiness_score: (context as Record<string, unknown>).cash_readiness_score as number | undefined ?? null,
+      },
+    );
     suggestedReplies = journeyFilter.filtered;
 
     // Telemetry: log suppressions for audit trail
