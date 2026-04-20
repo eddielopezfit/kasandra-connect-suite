@@ -2,14 +2,31 @@
 
 ## Assembly
 
-System prompt assembled dynamically in `selena-chat/index.ts` (3,673 lines total).
+System prompt assembled dynamically in `selena-chat/index.ts`.
 
 ### Static Base
 - `SYSTEM_PROMPT_EN` / `SYSTEM_PROMPT_ES` (~2,500 lines combined)
 - Contains: KB-0, KB-1, KB-4, KB-6, KB-7, KB-7.1, KB-8, KB-12
 
-### 13 Dynamic Context Blocks (appended at runtime)
-memorySummary, reflectionHint, sellerDecisionHint, marketPulseHint, neighborhoodHint, toolOutputHint, governanceHint, journeyHint, trailHint, guideModeHint, modeHint, guardHints, containment override
+### 16 Dynamic Context Blocks (appended at runtime, in order)
+Concatenated onto the system message at index.ts line ~1459:
+
+1. **vipHint** — Visitor Intelligence Profile summary (intent, journey depth, friction signals, tools/guides completed)
+2. **memorySummary** — Cross-session memory recall from `conversation_memory` table
+3. **reflectionHint** — Mid-session reflection nudge (when turn count crosses thresholds)
+4. **sellerDecisionHint** — Seller Decision Wizard receipt context
+5. **marketPulseHint** — Live market_pulse data (DOM, sale-to-list, holding cost)
+6. **neighborhoodHint** — Last viewed neighborhood profile
+7. **listingsHint** — Featured listing context (when on /listings or referenced)
+8. **toolOutputHint** — Specific tool result numbers (calculator $, readiness score, closing costs)
+9. **governanceHint** — Chip governance state, phase floor, earned-access status
+10. **journeyHint** — TOFU/MOFU/BOFU journey state + tools completed list
+11. **trailHint** — Session breadcrumb + cross-session GUIDES COMPLETED titles (with synthesis directive)
+12. **guideModeHint** — Active guide context when user is on a guide detail page
+13. **entryGreetingHint** — First-turn entry greeting context (route + UTM)
+14. **modeHint** — Current mode (Welcome/Guide/Tool/Concierge) instructions
+15. **guardRules.guardHints** — Containment + drift prevention overlay
+16. **containment override** — Mandatory 2-sentence cap when `containment_active`
 
 ## Model Configuration
 
@@ -27,6 +44,7 @@ memorySummary, reflectionHint, sellerDecisionHint, marketPulseHint, neighborhood
 - `guardState.ts` (549 lines) — containment + drift prevention
 - `journeyState.ts` (153 lines) — TOFU/MOFU/BOFU classifier
 - `entryGreetings.ts` — server-side greeting variants
+- `chipGovernance.ts` — `filterChipsForCompletedTools` canonical chokepoint at line ~1699
 
 ## Response Shape
 
