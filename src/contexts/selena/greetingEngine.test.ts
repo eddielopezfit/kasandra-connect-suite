@@ -164,7 +164,7 @@ describe("computeGreeting (ES) — buy intent + buyer_readiness_capture + score=
     );
 
     expect(result).not.toBeNull();
-    // Real ES copy: "Tu puntuación de Preparación del Comprador es 82/100 — ..."
+    // Real ES copy (formal 'usted'): "Su puntuación de Preparación del Comprador es 82/100 — ..."
     expect(result!.greetingContent).toContain("82/100");
     expect(result!.greetingContent).toContain("Preparación del Comprador");
     expect(result!.greetingContent).toMatch(/puntuación.*82\/100/);

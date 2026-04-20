@@ -205,25 +205,25 @@ export function computeGreeting(
       // <4 hours: "we were right in the middle of..."
       greetingContent = t(
         `Welcome back — we were right in the middle of things.${intentFragment} Want to pick up where you left off?`,
-        `Bienvenido/a — estábamos justo en medio de las cosas.${intentFragment} ¿Quieres continuar donde lo dejamos?`
+        `Bienvenido/a — estábamos justo en medio de las cosas.${intentFragment} ¿Desea continuar donde lo dejamos?`
       );
     } else if (hoursSinceActive < 24) {
       // 4-24 hours: "you were looking at X"
       greetingContent = t(
         `Hey, you were looking at some things earlier today.${intentFragment} Ready to continue?`,
-        `Hola, estabas revisando algunas cosas hoy.${intentFragment} ¿Listo/a para continuar?`
+        `Hola, estaba revisando algunas cosas hoy.${intentFragment} ¿Listo/a para continuar?`
       );
     } else if (hoursSinceActive < 168) { // 7 days
       // >24 hours, <7 days: "good to see you again"
       greetingContent = t(
         `Good to see you again — I saved your progress.${intentFragment} Want to continue where you left off?`,
-        `Qué gusto verte de nuevo — guardé tu progreso.${intentFragment} ¿Quieres continuar donde lo dejamos?`
+        `Qué gusto verle de nuevo — guardé su progreso.${intentFragment} ¿Desea continuar donde lo dejamos?`
       );
     } else {
       // >7 days: fresh start
       greetingContent = t(
         `Welcome back! It's been a while.${intentFragment} A lot may have changed — want to start fresh or pick up where you left off?`,
-        `¡Bienvenido/a de vuelta! Ha pasado un tiempo.${intentFragment} Mucho puede haber cambiado — ¿quieres empezar de nuevo o continuar donde lo dejamos?`
+        `¡Bienvenido/a de vuelta! Ha pasado un tiempo.${intentFragment} Mucho puede haber cambiado — ¿desea empezar de nuevo o continuar donde lo dejamos?`
       );
     }
 
@@ -251,17 +251,17 @@ export function computeGreeting(
       if (sc.recommendation === 'cash') {
         greetingContent = t(
           `On a ${value} home, cash nets you ${cashNet} — ${diff} less than listing at ${listNet}, but you close faster with zero prep costs.\n\nKasandra can walk you through the right strategy based on your timeline. That conversation is worth having.`,
-          `En una casa de ${value}, efectivo te da ${cashNet} — ${diff} menos que listado a ${listNet}, pero cierras más rápido sin costos de preparación.\n\nKasandra puede orientarte sobre la estrategia correcta según tu plazo. Esa conversación vale la pena.`
+          `En una casa de ${value}, el efectivo le da ${cashNet} — ${diff} menos que listado a ${listNet}, pero cierra más rápido sin costos de preparación.\n\nKasandra puede orientarle sobre la estrategia correcta según su plazo. Esa conversación vale la pena.`
         );
       } else if (sc.recommendation === 'traditional') {
         greetingContent = t(
           `On a ${value} home, listing could net you ${listNet} — about ${diff} more than a cash offer at ${cashNet}. If you have the time, the traditional path pays off.\n\nKasandra can help you maximize that number with the right pricing and negotiation strategy.`,
-          `En una casa de ${value}, el listado podría darte ${listNet} — unos ${diff} más que una oferta en efectivo de ${cashNet}. Si tienes el tiempo, el camino tradicional vale la pena.\n\nKasandra puede ayudarte a maximizar ese número con la estrategia correcta de precios y negociación.`
+          `En una casa de ${value}, el listado podría darle ${listNet} — unos ${diff} más que una oferta en efectivo de ${cashNet}. Si tiene el tiempo, el camino tradicional vale la pena.\n\nKasandra puede ayudarle a maximizar ese número con la estrategia correcta de precios y negociación.`
         );
       } else {
         greetingContent = t(
           `On a ${value} home, the difference between cash (${cashNet}) and listing (${listNet}) is only ${diff}. Your timeline and priorities matter more than the number.\n\nKasandra can help you decide which path fits your situation best.`,
-          `En una casa de ${value}, la diferencia entre efectivo (${cashNet}) y listado (${listNet}) es solo ${diff}. Tu plazo y prioridades importan más que el número.\n\nKasandra puede ayudarte a decidir qué camino se ajusta mejor a tu situación.`
+          `En una casa de ${value}, la diferencia entre efectivo (${cashNet}) y listado (${listNet}) es solo ${diff}. Su plazo y prioridades importan más que el número.\n\nKasandra puede ayudarle a decidir qué camino se ajusta mejor a su situación.`
         );
       }
       suggestedReplies = [
@@ -318,23 +318,23 @@ export function computeGreeting(
     if (rd && rd.score > 0) {
       const score = rd.score;
       const band = score >= 75 ? t('ready to move forward', 'listo/a para avanzar') : score >= 50 ? t('nearly ready', 'casi listo/a') : t('building readiness', 'construyendo preparación');
-      const priority = rd.primaryPriority || t('your situation', 'tu situación');
+      const priority = rd.primaryPriority || t('your situation', 'su situación');
       const toolLabel = rd.toolType === 'buyer' ? t('Buyer Readiness', 'Preparación del Comprador') : rd.toolType === 'cash' ? t('Cash Readiness', 'Preparación para Efectivo') : t('Seller Readiness', 'Preparación del Vendedor');
       
       if (score >= 75) {
         greetingContent = t(
           `Your ${toolLabel} score is ${score}/100 — you're ${band}. Your top priority is ${priority}.\n\nAt this level of readiness, a short strategy call with Kasandra could save you time and money on your next steps.`,
-          `Tu puntuación de ${toolLabel} es ${score}/100 — estás ${band}. Tu prioridad principal es ${priority}.\n\nCon este nivel de preparación, una llamada corta de estrategia con Kasandra podría ahorrarte tiempo y dinero en tus próximos pasos.`
+          `Su puntuación de ${toolLabel} es ${score}/100 — está ${band}. Su prioridad principal es ${priority}.\n\nCon este nivel de preparación, una llamada corta de estrategia con Kasandra podría ahorrarle tiempo y dinero en sus próximos pasos.`
         );
       } else if (score >= 50) {
         greetingContent = t(
           `Your ${toolLabel} score is ${score}/100 — you're ${band}. Your top priority is ${priority}.\n\nThere are a few areas to strengthen. Kasandra can walk you through exactly what to focus on.`,
-          `Tu puntuación de ${toolLabel} es ${score}/100 — estás ${band}. Tu prioridad principal es ${priority}.\n\nHay algunas áreas que fortalecer. Kasandra puede orientarte sobre exactamente en qué enfocarte.`
+          `Su puntuación de ${toolLabel} es ${score}/100 — está ${band}. Su prioridad principal es ${priority}.\n\nHay algunas áreas que fortalecer. Kasandra puede orientarle sobre exactamente en qué enfocarse.`
         );
       } else {
         greetingContent = t(
           `Your ${toolLabel} score is ${score}/100 — you're still ${band}, and that's completely normal. Your top priority is ${priority}.\n\nKasandra can help you build a plan to get there at your own pace.`,
-          `Tu puntuación de ${toolLabel} es ${score}/100 — aún estás ${band}, y eso es completamente normal. Tu prioridad principal es ${priority}.\n\nKasandra puede ayudarte a crear un plan para llegar a tu ritmo.`
+          `Su puntuación de ${toolLabel} es ${score}/100 — aún está ${band}, y eso es completamente normal. Su prioridad principal es ${priority}.\n\nKasandra puede ayudarle a crear un plan para llegar a su ritmo.`
         );
       }
       suggestedReplies = [
@@ -345,7 +345,7 @@ export function computeGreeting(
     } else {
       greetingContent = t(
         "Great job completing the readiness check. How can I help you take the next step?",
-        "Excelente trabajo completando la evaluación. ¿Cómo puedo ayudarte a dar el siguiente paso?"
+        "Excelente trabajo completando la evaluación. ¿Cómo puedo ayudarle a dar el siguiente paso?"
       );
       suggestedReplies = [
         { label: t("What should I do next?", "¿Qué debería hacer ahora?") },
@@ -432,7 +432,7 @@ export function computeGreeting(
       const loanLabel = cc.loanType === 'fha' ? 'FHA' : cc.loanType === 'va' ? 'VA' : cc.loanType === 'cash' ? t('cash', 'efectivo') : t('conventional', 'convencional');
       greetingContent = t(
         `You're looking at ${fmtNum(cc.estimatedLow)}–${fmtNum(cc.estimatedHigh)} in closing costs on a ${fmtNum(cc.purchasePrice)} ${loanLabel} purchase — plus your down payment, that's about ${fmtNum(cc.totalCashNeeded)} total at closing.\n\nThe good news: some of these line items are negotiable. Kasandra has reduced these costs on recent Tucson transactions.`,
-        `Estás viendo ${fmtNum(cc.estimatedLow)}–${fmtNum(cc.estimatedHigh)} en costos de cierre para una compra ${loanLabel} de ${fmtNum(cc.purchasePrice)} — más tu enganche, eso es aproximadamente ${fmtNum(cc.totalCashNeeded)} total al cierre.\n\nLa buena noticia: algunos de estos rubros son negociables. Kasandra ha reducido estos costos en transacciones recientes en Tucson.`
+        `Está viendo ${fmtNum(cc.estimatedLow)}–${fmtNum(cc.estimatedHigh)} en costos de cierre para una compra ${loanLabel} de ${fmtNum(cc.purchasePrice)} — más su enganche, eso es aproximadamente ${fmtNum(cc.totalCashNeeded)} total al cierre.\n\nLa buena noticia: algunos de estos rubros son negociables. Kasandra ha reducido estos costos en transacciones recientes en Tucson.`
       );
       suggestedReplies = [
         { label: t("What's negotiable?", "¿Qué es negociable?") },
@@ -442,7 +442,7 @@ export function computeGreeting(
     } else {
       greetingContent = t(
         "You're looking into closing costs — smart to do before making an offer. Are you working with a specific price range or loan type?",
-        "Estás investigando los costos de cierre — inteligente hacerlo antes de hacer una oferta. ¿Tienes un rango de precio o tipo de préstamo específico?"
+        "Está investigando los costos de cierre — es inteligente hacerlo antes de hacer una oferta. ¿Tiene un rango de precio o tipo de préstamo específico?"
       );
       suggestedReplies = [
         { label: t("I'm using FHA", "Estoy usando FHA") },
@@ -456,7 +456,7 @@ export function computeGreeting(
       const areasStr = om.areas.slice(0, 3).join(', ');
       greetingContent = t(
         `You're registered for off-market access in ${areasStr} — ${om.budgetRange} range, ${om.propertyType}. Kasandra works with sellers before they list — you're in the right place.\n\nWant to share more about what you're looking for so she can keep an eye out?`,
-        `Estás registrado/a para acceso fuera del mercado en ${areasStr} — rango ${om.budgetRange}, ${om.propertyType}. Kasandra trabaja con vendedores antes de que publiquen — estás en el lugar correcto.\n\n¿Quieres compartir más sobre lo que buscas para que ella esté atenta?`
+        `Está registrado/a para acceso fuera del mercado en ${areasStr} — rango ${om.budgetRange}, ${om.propertyType}. Kasandra trabaja con vendedores antes de que publiquen — está en el lugar correcto.\n\n¿Desea compartir más sobre lo que busca para que ella esté atenta?`
       );
       suggestedReplies = [
         { label: t("What does off-market mean?", "¿Qué significa fuera del mercado?") },
@@ -466,7 +466,7 @@ export function computeGreeting(
     } else {
       greetingContent = t(
         "You're on the list for off-market properties. Kasandra will personally reach out when something matches your criteria.\n\nIs there anything about the buying process you'd like to understand better?",
-        "Estás en la lista para propiedades fuera del mercado. Kasandra te contactará personalmente cuando algo coincida con tus criterios.\n\n¿Hay algo sobre el proceso de compra que te gustaría entender mejor?"
+        "Está en la lista para propiedades fuera del mercado. Kasandra le contactará personalmente cuando algo coincida con sus criterios.\n\n¿Hay algo sobre el proceso de compra que le gustaría entender mejor?"
       );
       suggestedReplies = [
         { label: t("Explore Tucson neighborhoods", "Explorar vecindarios de Tucson") },
@@ -480,12 +480,12 @@ export function computeGreeting(
       const areasStr = nc.areasCompared.slice(0, 3).join(' vs ');
       greetingContent = t(
         `You compared ${areasStr} — a comparison tool gives you the numbers, but Kasandra knows the streets. Want her perspective on which is the better fit for your situation?`,
-        `Comparaste ${areasStr} — una herramienta de comparación te da los números, pero Kasandra conoce las calles. ¿Quieres su perspectiva sobre cuál se ajusta mejor a tu situación?`
+        `Comparó ${areasStr} — una herramienta de comparación le da los números, pero Kasandra conoce las calles. ¿Desea su perspectiva sobre cuál se ajusta mejor a su situación?`
       );
     } else {
       greetingContent = t(
         "You're comparing Tucson neighborhoods — smart move. Kasandra knows these communities personally.\n\nIs there something specific you're looking for in a neighborhood?",
-        "Estás comparando vecindarios de Tucson — buena decisión. Kasandra conoce estas comunidades personalmente.\n\n¿Hay algo específico que estés buscando en un vecindario?"
+        "Está comparando vecindarios de Tucson — buena decisión. Kasandra conoce estas comunidades personalmente.\n\n¿Hay algo específico que esté buscando en un vecindario?"
       );
     }
     suggestedReplies = [
@@ -503,12 +503,12 @@ export function computeGreeting(
         : t("a buyer's market with more negotiating room", "un mercado de compradores con más margen para negociar");
       greetingContent = t(
         `Tucson homes are averaging ${mi.daysOnMarket} days on market with a ${mi.saleToListRatio} sale-to-list ratio — that's ${implication}.\n\nThese are county-wide averages. Want to understand what this means for your specific ZIP and price point?`,
-        `Las casas de Tucson promedian ${mi.daysOnMarket} días en mercado con un ratio de ${mi.saleToListRatio} precio/lista — eso es ${implication}.\n\nEstos son promedios del condado. ¿Quieres entender qué significa para tu código postal y rango de precio específico?`
+        `Las casas de Tucson promedian ${mi.daysOnMarket} días en mercado con un ratio de ${mi.saleToListRatio} precio/lista — eso es ${implication}.\n\nEstos son promedios del condado. ¿Desea entender qué significa para su código postal y rango de precio específico?`
       );
     } else {
       greetingContent = t(
         "You're looking at live Tucson market data — days on market, sale-to-list ratio, and daily holding costs.\n\nWant to understand what these numbers mean for your specific situation?",
-        "Estás viendo datos en vivo del mercado de Tucson — días en mercado, ratio precio/lista y costos diarios.\n\n¿Quieres entender qué significan estos números para tu situación específica?"
+        "Está viendo datos en vivo del mercado de Tucson — días en mercado, ratio precio/lista y costos diarios.\n\n¿Desea entender qué significan estos números para su situación específica?"
       );
     }
     suggestedReplies = [
