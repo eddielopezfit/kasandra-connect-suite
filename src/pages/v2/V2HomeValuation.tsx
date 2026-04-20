@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDocumentHead } from "@/hooks/useDocumentHead";
 import { logEvent } from "@/lib/analytics/logEvent";
-import { setFieldIfEmpty, getOrCreateSessionId } from "@/lib/analytics/selenaSession";
+import { setFieldIfEmpty, getOrCreateSessionId, updateSessionContext, getSessionContext } from "@/lib/analytics/selenaSession";
 import { bridgeLeadIdToV2 } from "@/lib/analytics/bridgeLeadIdToV2";
 import {
   Home, MapPin, ArrowRight, ArrowLeft, CheckCircle, Loader2, MessageCircle, Phone, Mail, User,
