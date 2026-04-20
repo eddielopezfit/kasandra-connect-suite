@@ -195,13 +195,21 @@ const BuyerReadinessCheck = ({ onScoreRevealed }: BuyerReadinessCheckProps) => {
     // Session persistence
     setFieldIfEmpty("intent", "buy");
     const ctx = getSessionContext();
-    updateSessionContext({
+    const written = updateSessionContext({
       readiness_score,
       primary_priority,
       tool_used: 'buyer_readiness',
       last_tool_completed: 'buyer_readiness',
       tools_completed: [...new Set([...(ctx?.tools_completed ?? []), 'buyer_readiness'])],
     });
+    if (import.meta.env.DEV) {
+      console.log('[BuyerReadinessCheck] persisted to SessionContext', {
+        readiness_score,
+        primary_priority,
+        tools_completed: written?.tools_completed,
+        ok: !!written,
+      });
+    }
     // Fire-and-forget lead score sync
     const storedLeadId = localStorage.getItem('selena_lead_id');
     if (storedLeadId) void syncLeadScore(storedLeadId, readiness_score);
