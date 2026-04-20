@@ -115,6 +115,7 @@ const Section = ({ title, children, count }: { title: string; children: React.Re
 
 export default function V2QASelenaContext() {
   const [, setTick] = useState(0);
+  const [lang, setLang] = useState<'en' | 'es'>('en');
 
   // Auto-refresh every 1.5s — cheap reads from sessionStorage/localStorage
   useEffect(() => {
@@ -132,7 +133,7 @@ export default function V2QASelenaContext() {
   const trailSerialized = serializeTrailForSelena();
   const guidesCompleted = (ctx?.guides_completed as string[] | undefined) ?? [];
   const toolsCompleted = (ctx?.tools_completed as string[] | undefined) ?? [];
-  const trailHintPreview = buildTrailHintPreview(trailSerialized, guidesCompleted, 'en');
+  const trailHintPreview = buildTrailHintPreview(trailSerialized, guidesCompleted, lang);
 
   const ctxFieldCount = ctx ? Object.keys(ctx).length : 0;
 
@@ -140,9 +141,27 @@ export default function V2QASelenaContext() {
     <div className="min-h-screen bg-background py-10 px-4">
       <div className="max-w-5xl mx-auto space-y-6">
         <header className="space-y-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Badge variant="outline" className="text-xs">DEV ONLY</Badge>
             <Badge variant="secondary" className="text-xs">Auto-refresh 1.5s</Badge>
+            <div className="ml-auto flex items-center gap-1 rounded-md border border-border/60 p-0.5">
+              <Button
+                variant={lang === 'en' ? 'default' : 'ghost'}
+                size="sm"
+                className="h-7 px-2 text-xs"
+                onClick={() => setLang('en')}
+              >
+                EN
+              </Button>
+              <Button
+                variant={lang === 'es' ? 'default' : 'ghost'}
+                size="sm"
+                className="h-7 px-2 text-xs"
+                onClick={() => setLang('es')}
+              >
+                ES
+              </Button>
+            </div>
           </div>
           <h1 className="text-2xl font-serif">Selena Context Inspector</h1>
           <p className="text-sm text-muted-foreground">
@@ -179,7 +198,7 @@ export default function V2QASelenaContext() {
         <Separator />
 
         {/* trailHint preview — most important block for synthesis QA */}
-        <Section title="trailHint preview (what Selena receives)">
+        <Section title={`trailHint preview — ${lang.toUpperCase()} (what Selena receives)`}>
           <pre className="text-xs bg-muted/50 p-3 rounded whitespace-pre-wrap font-mono text-foreground">
 {trailHintPreview}
           </pre>
