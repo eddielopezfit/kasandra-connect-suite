@@ -626,24 +626,31 @@ export function filterChipsForCompletedTools(
     filtered.push(chip);
   }
 
-  // Add replacement chips for suppressed tools — emit semantic keys
+  // Add replacement chips for suppressed tools — emit semantic keys.
+  // Try the primary replacement first; if it's blocked or already present,
+  // fall back to TOOL_REPLACEMENT_FALLBACK_DESTINATION (mirrors client governance).
   const existingDests = new Set(filtered.map(c => CHIP_KEY_DESTINATION[c] || CHIP_DESTINATION[c]).filter(Boolean));
-  for (const toolId of effectiveCompleted) {
-    const replacementDest = TOOL_REPLACEMENT_DESTINATION[toolId];
-    if (!replacementDest) continue;
-    if (blockedDests.has(replacementDest)) continue;
-    if (existingDests.has(replacementDest)) continue;
-    if (filtered.length >= 3) break;
 
-    // Emit semantic key for replacement chip
-    const replacementKey = DESTINATION_TO_CHIP_KEY[replacementDest];
-    if (!replacementKey) continue;
-
+  const tryAddReplacement = (dest: string | undefined): boolean => {
+    if (!dest) return false;
+    if (blockedDests.has(dest)) return false;
+    if (existingDests.has(dest)) return false;
+    if (filtered.length >= 3) return false;
+    const replacementKey = DESTINATION_TO_CHIP_KEY[dest];
+    if (!replacementKey) return false;
     // Booking chips require earned access
-    if (replacementDest === '/book' && !hasEarnedBooking) continue;
-
+    if (dest === '/book' && !hasEarnedBooking) return false;
     filtered.push(replacementKey);
-    existingDests.add(replacementDest);
+    existingDests.add(dest);
+    return true;
+  };
+
+  for (const toolId of effectiveCompleted) {
+    if (filtered.length >= 3) break;
+    const primary = TOOL_REPLACEMENT_DESTINATION[toolId];
+    if (tryAddReplacement(primary)) continue;
+    // Primary blocked/duplicate/booking-gated → try fallback
+    tryAddReplacement(TOOL_REPLACEMENT_FALLBACK_DESTINATION[toolId]);
   }
 
   // Fallback: emit semantic key
