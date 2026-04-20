@@ -5,7 +5,7 @@ import { useSelenaChat } from "@/contexts/SelenaChatContext";
 import { useMarketPulse } from "@/hooks/useMarketPulse";
 import { logCTAClick, CTA_NAMES } from "@/lib/analytics/ctaDefaults";
 import { isReturningVisitor, getIntent, getGuidesRead } from "@/lib/guides/personalization";
-import { getStoredUserName } from "@/lib/analytics/bridgeLeadIdToV2";
+import { getVerifiedFirstName } from "@/lib/analytics/bridgeLeadIdToV2";
 import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import { useState, useEffect, useRef, useCallback } from "react";
 import heroImage from "@/assets/hero-bg.webp";
@@ -134,8 +134,9 @@ export default function GlassmorphismHero({
   useEffect(() => {
     const isRet = isReturningVisitor();
     if (!isRet) return;
-    const fullName = getStoredUserName();
-    const firstName = fullName ? fullName.split(" ")[0] : null;
+    // Only show personalized name when verified (real lead_id present);
+    // prevents stale "Welcome back, Test" from leaking to fresh visitors.
+    const firstName = getVerifiedFirstName();
     const intent = getIntent() || null;
     const guidesReadCount = getGuidesRead().length;
     setReturningContext({ isReturning: true, firstName, intent, guidesReadCount });
