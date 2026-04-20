@@ -1314,6 +1314,7 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
       (primaryIntent === 'sell' || primaryIntent === 'cash')
       && SUBSTANTIVE_SELL_TOPICS.test(message)
       && QUESTION_SHAPE.test(message.trim());
+    console.log('[KB-18 answer-first]', { primaryIntent, isSubstantiveSellQuestion, msg: message.slice(0, 60), topicHit: SUBSTANTIVE_SELL_TOPICS.test(message), shapeHit: QUESTION_SHAPE.test(message.trim()) });
 
     // Timeline re-ask guard: skip first-seller intercept if timeline was recently asked
     const turnCount = context.turn_count ?? 0;
