@@ -228,6 +228,34 @@ export default function V2QASelenaContext() {
 
         <Separator />
 
+        {/* Wiring gap warning — surfaces persistence races at a glance */}
+        {wiringGaps.length > 0 && (
+          <div className="rounded-md border border-destructive/50 bg-destructive/10 p-4">
+            <div className="flex items-start gap-3">
+              <span className="text-xl leading-none text-destructive" aria-hidden>⚠</span>
+              <div className="flex-1 space-y-2">
+                <h2 className="text-sm font-semibold text-destructive">
+                  Wiring gap detected ({wiringGaps.length})
+                </h2>
+                <p className="text-xs text-foreground/80">
+                  A quiz appears in <code className="font-mono">session_trail</code> but its <code className="font-mono">tool_id</code> is missing from <code className="font-mono">tools_completed</code>.
+                  Selena will re-recommend completed tools and chip-suppression filters will not fire.
+                </p>
+                <ul className="space-y-1 pt-1">
+                  {wiringGaps.map(gap => (
+                    <li key={gap.toolId} className="text-xs flex items-center gap-2 flex-wrap">
+                      <Badge variant="destructive" className="text-[10px]">{gap.toolId}</Badge>
+                      <span className="text-foreground">missing →</span>
+                      <span className="text-foreground/80">{gap.label}</span>
+                      <span className="text-muted-foreground font-mono text-[10px]">({gap.path})</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* trailHint preview — most important block for synthesis QA */}
         <Section title={`trailHint preview — ${lang.toUpperCase()} (what Selena receives)`}>
           <pre className="text-xs bg-muted/50 p-3 rounded whitespace-pre-wrap font-mono text-foreground">
