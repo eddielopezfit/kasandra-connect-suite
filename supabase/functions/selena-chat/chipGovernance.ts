@@ -493,6 +493,7 @@ export const DESTINATION_TO_CHIP_KEY: Record<string, string> = {
   '/cash-offer-options': CHIP_KEYS.ESTIMATE_PROCEEDS,
   '/book': CHIP_KEYS.TALK_WITH_KASANDRA,
   '/seller-decision': CHIP_KEYS.GET_SELLING_OPTIONS,
+  '/listings': CHIP_KEYS.BROWSE_LISTINGS,
   // New tools (March 2026 connection pass)
   '/affordability-calculator': CHIP_KEYS.AFFORDABILITY_CALCULATOR,
   '/bah-calculator': CHIP_KEYS.BAH_CALCULATOR,
