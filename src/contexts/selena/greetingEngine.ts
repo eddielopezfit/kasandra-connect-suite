@@ -606,7 +606,45 @@ export function computeGreeting(
     const quizDone = sessionCtx?.quiz_completed;
 
     if (declaredIntent === 'sell' || declaredIntent === 'cash') {
-      if (declaredTimeline === 'asap') {
+      // Treat seller/cash readiness as completed if score exists OR tool_id is in tools_completed
+      const toolsCompleted = sessionCtx?.tools_completed ?? [];
+      const isCashIntent = declaredIntent === 'cash';
+      const readinessToolId = isCashIntent ? 'cash_readiness' : 'seller_readiness';
+      const readinessCompleted =
+        readinessScore !== undefined ||
+        toolUsed === readinessToolId ||
+        toolsCompleted.includes(readinessToolId) ||
+        // defensive: either tool's completion implies the seller is past the readiness gate
+        toolsCompleted.includes('seller_readiness') ||
+        toolsCompleted.includes('cash_readiness');
+
+      const readinessLabel = isCashIntent
+        ? t('cash readiness', 'preparación para efectivo')
+        : t('seller readiness', 'preparación del vendedor');
+
+      if (readinessScore !== undefined && readinessScore < 60) {
+        // Score known + low — synthesize forward, reference the number, never re-suggest the check
+        greetingContent = t(
+          `Welcome back. Your ${readinessLabel} score is ${readinessScore}/100 — there are a few areas to strengthen before listing. Let me help you get there.`,
+          `Bienvenido/a de vuelta. Su puntuación de ${readinessLabel} es ${readinessScore}/100 — hay algunas áreas que fortalecer antes de listar. Permítame ayudarle.`
+        );
+        suggestedReplies = [
+          { label: t("What should I work on first?", "¿En qué debería trabajar primero?") },
+          { label: t("Compare cash vs. listing", "Comparar efectivo vs. listado") },
+          { label: t("I have a question", "Tengo una pregunta") },
+        ];
+      } else if (readinessScore !== undefined) {
+        // Score known + strong — surface the number, advance the conversation
+        greetingContent = t(
+          `Welcome back. Your ${readinessLabel} score is ${readinessScore}/100 — that's a strong position. What would you like to explore next?`,
+          `Bienvenido/a de vuelta. Su puntuación de ${readinessLabel} es ${readinessScore}/100 — esa es una posición sólida. ¿Qué le gustaría explorar a continuación?`
+        );
+        suggestedReplies = [
+          { label: t("Compare cash vs. listing", "Comparar efectivo vs. listado") },
+          { label: t("I'm ready to talk to Kasandra", "Estoy listo/a para hablar con Kasandra") },
+          { label: t("I have a question", "Tengo una pregunta") },
+        ];
+      } else if (declaredTimeline === 'asap') {
         greetingContent = t(
           "Welcome back. Since you're on a tight timeline, comparing your cash vs. listing options is the fastest way to see where you stand.",
           "Bienvenido/a de vuelta. Como tiene un cronograma ajustado, comparar sus opciones de efectivo vs. listado es la forma más rápida de ver dónde está."
@@ -615,6 +653,17 @@ export function computeGreeting(
           { label: t("Compare cash vs. listing", "Comparar efectivo vs. listado") },
           { label: t("Get my selling options", "Ver mis opciones de venta") },
           { label: t("I have a question", "Tengo una pregunta") },
+        ];
+      } else if (readinessCompleted) {
+        // Tool completed but score missing — acknowledge completion, never re-suggest
+        greetingContent = t(
+          "Welcome back. You've already completed your readiness check — that's a great step. How can I help you move forward?",
+          "Bienvenido/a de vuelta. Ya completó su evaluación de preparación — ese es un gran paso. ¿Cómo puedo ayudarle a avanzar?"
+        );
+        suggestedReplies = [
+          { label: t("Compare cash vs. listing", "Comparar efectivo vs. listado") },
+          { label: t("Read the seller guide", "Leer la guía del vendedor") },
+          { label: t("I'm ready to talk to Kasandra", "Estoy listo/a para hablar con Kasandra") },
         ];
       } else {
         greetingContent = t(
