@@ -468,6 +468,21 @@ const TOOL_REPLACEMENT_DESTINATION: Record<string, string> = {
   'off_market_buyer': '/guides',
 };
 
+/**
+ * Fallback replacement destination when the primary replacement is itself blocked
+ * (e.g., seller_readiness + tucson_alpha_calculator both completed → primary
+ * `/cash-offer-options` is blocked, so fall back to `/book`). Mirrors
+ * CLIENT_TOOL_REPLACEMENT_FALLBACK in src/contexts/selena/chipGovernance.ts.
+ */
+const TOOL_REPLACEMENT_FALLBACK_DESTINATION: Record<string, string> = {
+  'buyer_readiness': '/listings',
+  'seller_readiness': '/book',
+  'cash_readiness': '/book',
+  'tucson_alpha_calculator': '/guides',
+  'seller_decision': '/guides',
+  'off_market_buyer': '/book',
+};
+
 // Reverse lookup: destination → semantic chip key
 export const DESTINATION_TO_CHIP_KEY: Record<string, string> = {
   '/guides': CHIP_KEYS.BROWSE_GUIDES,
