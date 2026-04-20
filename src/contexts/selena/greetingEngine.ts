@@ -628,17 +628,37 @@ export function computeGreeting(
         ];
       }
     } else if (declaredIntent === 'buy') {
+      // Treat readiness as completed if score exists OR tool_id is in tools_completed (defensive)
+      const toolsCompleted = sessionCtx?.tools_completed ?? [];
+      const readinessCompleted =
+        readinessScore !== undefined ||
+        toolUsed === 'buyer_readiness' ||
+        toolsCompleted.includes('buyer_readiness');
+
       if (readinessScore !== undefined && readinessScore < 60) {
+        // Score known + low — synthesize forward, reference the number, never re-suggest the quiz
         greetingContent = t(
-          "Welcome back. Based on your readiness check, there are a few steps that could strengthen your position. Let me help you get there.",
-          "Bienvenido/a de vuelta. Según su evaluación de preparación, hay algunos pasos que podrían fortalecer su posición. Permítame ayudarle."
+          `Welcome back. Your readiness score is ${readinessScore}/100 — there are a few steps that could strengthen your position. Let me help you get there.`,
+          `Bienvenido/a de vuelta. Su puntuación de preparación es ${readinessScore}/100 — hay algunos pasos que podrían fortalecer su posición. Permítame ayudarle.`
         );
         suggestedReplies = [
           { label: t("What should I work on first?", "¿En qué debería trabajar primero?") },
           { label: t("Review my readiness results", "Revisar mis resultados de preparación") },
           { label: t("I have a question", "Tengo una pregunta") },
         ];
-      } else if (toolUsed === 'buyer_readiness') {
+      } else if (readinessScore !== undefined) {
+        // Score known + strong — surface the number, advance the conversation
+        greetingContent = t(
+          `Welcome back. Your readiness score is ${readinessScore}/100 — that's a strong position. What would you like to explore next?`,
+          `Bienvenido/a de vuelta. Su puntuación de preparación es ${readinessScore}/100 — esa es una posición sólida. ¿Qué le gustaría explorar a continuación?`
+        );
+        suggestedReplies = [
+          { label: t("Browse buyer guides", "Explorar guías de comprador") },
+          { label: t("I'm ready to talk to Kasandra", "Estoy listo/a para hablar con Kasandra") },
+          { label: t("I have a question", "Tengo una pregunta") },
+        ];
+      } else if (readinessCompleted) {
+        // Tool completed but score missing — acknowledge completion, never re-suggest
         greetingContent = t(
           "Welcome back. You've already completed your readiness check — that's a great step. What would you like to explore next?",
           "Bienvenido/a de vuelta. Ya completó su evaluación de preparación — ese es un gran paso. ¿Qué le gustaría explorar a continuación?"
