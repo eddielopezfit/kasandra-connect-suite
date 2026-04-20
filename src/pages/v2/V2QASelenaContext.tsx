@@ -149,6 +149,23 @@ export default function V2QASelenaContext() {
   const toolsCompleted = (ctx?.tools_completed as string[] | undefined) ?? [];
   const trailHintPreview = buildTrailHintPreview(trailSerialized, guidesCompleted, lang);
 
+  // Wiring gap detection: quiz visited (in trail) but tool_id missing from tools_completed.
+  const wiringGaps: WiringGap[] = [];
+  for (const event of trail) {
+    for (const { pattern, toolId, label } of QUIZ_PATH_TO_TOOL_ID) {
+      if (pattern.test(event.path) && !toolsCompleted.includes(toolId)) {
+        if (!wiringGaps.some(g => g.toolId === toolId)) {
+          wiringGaps.push({ toolId, label, path: event.path });
+        }
+      }
+    }
+  }
+  // Also flag: readiness_score exists but buyer_readiness missing from tools_completed
+  const hasReadinessScore = typeof ctx?.readiness_score === 'number' && ctx.readiness_score > 0;
+  if (hasReadinessScore && !toolsCompleted.includes('buyer_readiness') && !wiringGaps.some(g => g.toolId === 'buyer_readiness')) {
+    wiringGaps.push({ toolId: 'buyer_readiness', label: 'Buyer Readiness (score exists, tool_id missing)', path: '(readiness_score field)' });
+  }
+
   const ctxFieldCount = ctx ? Object.keys(ctx).length : 0;
 
   return (
