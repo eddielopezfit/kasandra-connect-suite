@@ -317,7 +317,6 @@ export function initSessionContext(language: 'en' | 'es' = 'en'): SessionContext
     seller_decision_recommended_path: existingContext.seller_decision_recommended_path,
     seller_goal_priority: existingContext.seller_goal_priority,
     property_condition_raw: existingContext.property_condition_raw,
-    pages_viewed: existingContext.pages_viewed,
     chip_phase_floor: existingContext.chip_phase_floor,
     greeting_phase_seen: existingContext.greeting_phase_seen,
     booking_chips_shown_at: existingContext.booking_chips_shown_at,
