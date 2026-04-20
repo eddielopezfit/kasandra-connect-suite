@@ -133,7 +133,7 @@ export default function V2QASelenaContext() {
   const trailSerialized = serializeTrailForSelena();
   const guidesCompleted = (ctx?.guides_completed as string[] | undefined) ?? [];
   const toolsCompleted = (ctx?.tools_completed as string[] | undefined) ?? [];
-  const trailHintPreview = buildTrailHintPreview(trailSerialized, guidesCompleted, 'en');
+  const trailHintPreview = buildTrailHintPreview(trailSerialized, guidesCompleted, lang);
 
   const ctxFieldCount = ctx ? Object.keys(ctx).length : 0;
 
