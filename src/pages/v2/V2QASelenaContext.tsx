@@ -115,6 +115,7 @@ const Section = ({ title, children, count }: { title: string; children: React.Re
 
 export default function V2QASelenaContext() {
   const [, setTick] = useState(0);
+  const [lang, setLang] = useState<'en' | 'es'>('en');
 
   // Auto-refresh every 1.5s — cheap reads from sessionStorage/localStorage
   useEffect(() => {
