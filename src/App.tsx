@@ -60,6 +60,7 @@ const SellerLanding = lazy(() => import("./pages/ad/SellerLanding"));
 const SellerQuiz = lazy(() => import("./pages/ad/SellerQuiz"));
 const SellerResult = lazy(() => import("./pages/ad/SellerResult"));
 const V2Listings = lazy(() => import("./pages/v2/V2Listings"));
+const V2QASelenaContext = lazy(() => import("./pages/v2/V2QASelenaContext"));
 
 const queryClient = new QueryClient();
 
@@ -139,6 +140,7 @@ const App = () => {
                 <Route path="/qa-cta" element={import.meta.env.DEV ? <V2CTAQualityAssurance /> : <Navigate to="/" replace />} />
                 <Route path="/qa-determinism" element={import.meta.env.DEV ? <V2QADeterminism /> : <Navigate to="/" replace />} />
                 <Route path="/qa-tone-suite" element={<V2QAToneSuite />} />
+                <Route path="/qa/selena-context" element={import.meta.env.DEV ? <V2QASelenaContext /> : <Navigate to="/" replace />} />
                 <Route path="/neighborhoods" element={<V2Neighborhoods />} />
                 <Route path="/neighborhoods/:slug" element={<V2NeighborhoodDetail />} />
                 <Route path="/about" element={<V2About />} />
