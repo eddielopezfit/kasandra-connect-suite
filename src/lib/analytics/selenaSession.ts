@@ -293,6 +293,36 @@ export function initSessionContext(language: 'en' | 'es' = 'en'): SessionContext
     last_page: existingContext.last_page,
     last_guide_id: existingContext.last_guide_id,
     last_quiz_id: existingContext.last_quiz_id,
+    // Preserve tool completion / journey state — these are session-durable signals
+    // that drive Selena's "do not re-recommend" governance. Without these fields
+    // here, V2Layout's mount-time initSessionContext silently strips them on
+    // every language change or remount, causing tools_completed to vanish.
+    tools_completed: existingContext.tools_completed,
+    last_tool_completed: existingContext.last_tool_completed,
+    guides_completed: existingContext.guides_completed,
+    readiness_score: existingContext.readiness_score,
+    primary_priority: existingContext.primary_priority,
+    quiz_completed: existingContext.quiz_completed,
+    quiz_result_path: existingContext.quiz_result_path,
+    estimated_value: existingContext.estimated_value,
+    calculator_advantage: existingContext.calculator_advantage,
+    calculator_difference: existingContext.calculator_difference,
+    calculator_motivation: existingContext.calculator_motivation,
+    seller_calc_data: existingContext.seller_calc_data,
+    readiness_entry_data: existingContext.readiness_entry_data,
+    closing_cost_data: existingContext.closing_cost_data,
+    off_market_data: existingContext.off_market_data,
+    neighborhood_compare_data: existingContext.neighborhood_compare_data,
+    market_intel_data: existingContext.market_intel_data,
+    seller_decision_recommended_path: existingContext.seller_decision_recommended_path,
+    seller_goal_priority: existingContext.seller_goal_priority,
+    property_condition_raw: existingContext.property_condition_raw,
+    chip_phase_floor: existingContext.chip_phase_floor,
+    greeting_phase_seen: existingContext.greeting_phase_seen,
+    booking_chips_shown_at: existingContext.booking_chips_shown_at,
+    recovery_shown: existingContext.recovery_shown,
+    restored_from_snapshot: existingContext.restored_from_snapshot,
+    tool_used: existingContext.tool_used,
   };
 
   // Save updated context
