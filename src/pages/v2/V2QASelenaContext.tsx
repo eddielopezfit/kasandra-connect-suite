@@ -114,11 +114,6 @@ const Section = ({ title, children, count }: { title: string; children: React.Re
 );
 
 export default function V2QASelenaContext() {
-  // Production guard
-  if (!import.meta.env.DEV) {
-    return <Navigate to="/" replace />;
-  }
-
   const [, setTick] = useState(0);
 
   // Auto-refresh every 1.5s — cheap reads from sessionStorage/localStorage
@@ -126,6 +121,11 @@ export default function V2QASelenaContext() {
     const id = window.setInterval(() => setTick(t => t + 1), 1500);
     return () => window.clearInterval(id);
   }, []);
+
+  // Production guard (after hooks per Rules of Hooks)
+  if (!import.meta.env.DEV) {
+    return <Navigate to="/" replace />;
+  }
 
   const ctx = getSessionContext();
   const trail = getTrail();
