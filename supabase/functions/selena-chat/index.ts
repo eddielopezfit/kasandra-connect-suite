@@ -1308,13 +1308,12 @@ Reference this when the user asks about their area. NEVER rank, compare, or reco
     // with hyper-local Tucson/Pima detail BEFORE we elicit timeline. Timeline
     // is a turn-2 follow-up, not a gate. Detected via topical keywords +
     // question shape (ends in '?' OR starts with what/how/when/why/can/etc).
-    const SUBSTANTIVE_SELL_TOPICS = /\b(closing\s*cost|cost\s*to\s*sell|net\s*proceed|commission|capital\s*gain|tax|days?\s*on\s*market|dom|how\s*long|prep|stag(e|ing)|repair|disclosure|escrow|title|appraisal|inspection|hoa|equity|mortgage\s*payoff|cash\s*offer|ibuyer|listing\s*agent|costos?\s*de\s*cierre|comisi[oó]n|impuestos?\s*sobre|d[ií]as\s*en\s*el\s*mercado|cu[aá]nto\s*tarda|preparaci[oó]n)\b/i;
+    const SUBSTANTIVE_SELL_TOPICS = /(closing\s*costs?|cost\s*to\s*sell|net\s*proceeds?|commissions?|capital\s*gains?|days?\s*on\s*market|how\s*long.*(sell|list|on\s*market)|home\s*prep|stag(?:e|ing)|disclosures?|escrow|appraisals?|inspections?|equity|mortgage\s*payoff|cash\s*offers?|ibuyer|listing\s*agent|sell\s*for\s*top|top\s*dollar|costos?\s*de\s*cierre|comisi[oó]n|impuestos?\s*sobre|d[ií]as\s*en\s*el\s*mercado|cu[aá]nto\s*tarda|preparaci[oó]n)/i;
     const QUESTION_SHAPE = /\?|^\s*(what|how|when|why|can|do|does|should|could|where|is|are|will|qu[eé]|c[oó]mo|cu[aá]ndo|por\s*qu[eé]|puedo|debo|cu[aá]nto|d[oó]nde|es|son)\b/i;
     const isSubstantiveSellQuestion =
       (primaryIntent === 'sell' || primaryIntent === 'cash')
       && SUBSTANTIVE_SELL_TOPICS.test(message)
       && QUESTION_SHAPE.test(message.trim());
-    console.log('[KB-18 answer-first]', { primaryIntent, isSubstantiveSellQuestion, msg: message.slice(0, 60), topicHit: SUBSTANTIVE_SELL_TOPICS.test(message), shapeHit: QUESTION_SHAPE.test(message.trim()) });
 
     // Timeline re-ask guard: skip first-seller intercept if timeline was recently asked
     const turnCount = context.turn_count ?? 0;
