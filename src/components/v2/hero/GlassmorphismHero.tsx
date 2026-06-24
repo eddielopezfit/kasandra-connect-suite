@@ -107,12 +107,18 @@ export interface GlassmorphismHeroProps {
 
 export default function GlassmorphismHero({
   badge,
+  hideBadge = false,
+  hideRightCard = false,
+  hideSoftSelena = false,
+  helperLine,
   headline: headlineOverride,
   subtext: subtextOverride,
   primaryLabel: primaryLabelOverride,
+  primaryLink: primaryLinkOverride,
   secondaryLabel: secondaryLabelOverride,
   secondaryLink: secondaryLinkOverride,
   secondaryIcon,
+  secondaryOnClick,
   intent: intentOverride,
   entrySource,
   pagePath = "/",
