@@ -333,10 +333,6 @@ const V2HomeContent = () => {
         </div>
       </section>
 
-      {/* Featured Properties */}
-      <Suspense fallback={<div className="h-64 bg-cc-sand animate-pulse" />}>
-        <LazyFeaturedListings />
-      </Suspense>
 
       {/* Neighborhood Cards */}
       <Suspense fallback={<div className="h-64 bg-cc-sand/50 animate-pulse" />}>
