@@ -455,10 +455,10 @@ export default function GlassmorphismHero({
                     ★★★★★
                   </div>
                   <p className="font-serif text-xl font-bold text-cc-ivory">
-                    {t("Trusted by 126+ Tucson families", "Confiada por más de 126 familias")}
+                    {t("Highly reviewed by Tucson clients", "Altamente calificada por clientes de Tucson")}
                   </p>
                   <p className="text-sm text-cc-ivory/60">
-                    {t("5-star rated · Bilingual service", "5 estrellas · Servicio bilingüe")}
+                    {t("Bilingual service · Corner Connect", "Servicio bilingüe · Corner Connect")}
                   </p>
                 </div>
               )}
