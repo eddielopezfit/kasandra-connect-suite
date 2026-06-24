@@ -5,27 +5,20 @@ import { realEstateAgentSchema, localBusinessSchema } from "@/lib/seo/schemaGene
 import { useLanguage } from "@/contexts/LanguageContext";
 import V2Layout from "@/components/v2/V2Layout";
 import TrustBar from "@/components/v2/TrustBar";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense } from "react";
 import KasandraPortrait from "@/components/v2/KasandraPortrait";
-const LazyHomepageNeighborhoodCards = lazy(() => import("@/components/v2/neighborhood/HomepageNeighborhoodCards"));
-const LazyInstantAnswerWidget = lazy(() => import("@/components/v2/calculator/InstantAnswerWidget"));
 const LazyGoogleReviews = lazy(() => import("@/components/v2/GoogleReviewsSection"));
 
 import {
   Home,
-  Shield,
-  Clock,
-  Users,
-  Mic,
-  Heart,
-  HeartHandshake,
-  Star,
-  MessageCircle,
   ArrowRight,
   DollarSign,
   Banknote,
   Eye,
   ShieldCheck,
+  BookOpen,
+  MapPin,
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import kasandraHeadshot from "@/assets/kasandra/desert-landscape-mountains.webp";
@@ -35,7 +28,6 @@ const LazyGlassmorphismHero = lazy(() => import("@/components/v2/hero/Glassmorph
 const HeroSkeleton = () => (
   <div className="min-h-[85dvh] bg-cc-navy flex items-center justify-center">
     <div className="container mx-auto px-4 max-w-3xl space-y-5">
-      <div className="h-4 w-40 rounded bg-white/10 animate-pulse mx-auto" />
       <div className="h-12 w-3/4 rounded bg-white/10 animate-pulse mx-auto" />
       <div className="h-12 w-2/3 rounded bg-white/10 animate-pulse mx-auto" />
       <div className="h-5 w-1/2 rounded bg-white/10 animate-pulse mx-auto" />
@@ -44,21 +36,13 @@ const HeroSkeleton = () => (
   </div>
 );
 import { useSelenaChat } from "@/contexts/SelenaChatContext";
-import { updateSessionContext, getSessionContext } from '@/lib/analytics/selenaSession';
-import JourneyBreadcrumb from "@/components/v2/JourneyBreadcrumb";
-import { useJourneyProgress } from "@/hooks/useJourneyProgress";
+import { updateSessionContext } from '@/lib/analytics/selenaSession';
 import SelenaShowcase from "@/components/v2/SelenaShowcase";
-const LazyVIPNextBestAction = lazy(() => import("@/components/v2/VIPNextBestAction"));
-const LazyFrictionEscalation = lazy(() => import("@/components/v2/FrictionEscalation"));
 
 const V2HomeContent = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { openChat } = useSelenaChat();
-  const progress = useJourneyProgress();
-  const ctx = getSessionContext();
-  const isAdFunnelUser = !!ctx?.ad_funnel_source;
-  const [ytLoaded, setYtLoaded] = useState(false);
   useDocumentHead({
     titleEn: "Tucson Real Estate | Kasandra Prieto — Bilingual REALTOR® & Concierge",
     titleEs: "Bienes Raíces en Tucson | Kasandra Prieto — REALTOR® Bilingüe y Concierge",
@@ -66,141 +50,85 @@ const V2HomeContent = () => {
     descriptionEs: "Agente de bienes raíces en Tucson sirviendo Pima County. Ofertas en efectivo, listados, orientación de compra y asistente IA 24/7 — servicio bilingüe.",
   });
 
-
   return (
     <>
       <JsonLd data={realEstateAgentSchema()} />
       <JsonLd data={localBusinessSchema()} />
-      {/* Hero Section */}
-      <Suspense fallback={<HeroSkeleton />}>
-        <LazyGlassmorphismHero showMarketPulse={false} />
-      </Suspense>
-      {/* Journey Progress — returning users see their accumulated state */}
-      {progress.isReturningUser && (
-        <section className="py-4 bg-cc-sand">
-          <div className="container mx-auto px-4 max-w-3xl">
-            <JourneyBreadcrumb />
-          </div>
-        </section>
-      )}
 
-      {/* Buyer / Seller Fork */}
-      <section className="bg-cc-sand py-10">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <p className="text-center text-sm font-semibold uppercase tracking-widest text-cc-navy/50 mb-6">
-            {isAdFunnelUser && !progress.isReturningUser
-              ? t("Welcome — your results are ready to explore", "Bienvenido — tus resultados están listos para explorar")
-              : progress.isReturningUser
-              ? t("Welcome back — continue where you left off", "Bienvenido de nuevo — continúa donde lo dejaste")
-              : t("Where are you in your journey?", "¿En qué etapa estás?")}
+      {/* 1. Hero — calm, focused */}
+      <Suspense fallback={<HeroSkeleton />}>
+        <LazyGlassmorphismHero
+          showMarketPulse={false}
+          hideBadge
+          hideRightCard
+          hideSoftSelena
+          primaryLabel={t("Book a Consultation", "Agendar una Cita")}
+          primaryLink="/book?intent=explore&source=home_hero"
+          secondaryLabel={t("Start With Selena", "Empieza con Selena")}
+          secondaryIcon={<BookOpen className="w-5 h-5" />}
+          secondaryOnClick={() => openChat({ source: 'home_hero' })}
+          helperLine={t(
+            "Ready to talk? Book a call. Not sure yet? Start with Selena — no pressure.",
+            "¿Listo para hablar? Agenda una llamada. ¿No estás seguro? Empieza con Selena — sin presión."
+          )}
+        />
+      </Suspense>
+
+      {/* 2. Calm proof strip */}
+      <TrustBar />
+
+      {/* 3. Choose Your Path */}
+      <section className="bg-cc-sand py-14 lg:py-16">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <p className="text-center text-[12px] font-semibold uppercase tracking-widest text-cc-navy/50 mb-2">
+            {t("Step 1 · Choose your path", "Paso 1 · Elige tu camino")}
+            <span className="mx-2 text-cc-navy/30">·</span>
+            {t("Step 2 · Share context", "Paso 2 · Comparte contexto")}
+            <span className="mx-2 text-cc-navy/30">·</span>
+            {t("Step 3 · Connect with Kasandra", "Paso 3 · Conecta con Kasandra")}
           </p>
+          <h2 className="text-center font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-8">
+            {t("Where are you starting?", "¿Dónde estás empezando?")}
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Card A — Buyer */}
             <button
-              onClick={() => {
-                updateSessionContext({ intent: 'buy' });
-                navigate('/buy');
-              }}
-              className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
+              onClick={() => { updateSessionContext({ intent: 'buy' }); navigate('/buy'); }}
+              className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-center transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
             >
               <Home className="w-7 h-7 text-cc-gold" />
-              <div>
-                <p className="font-semibold text-cc-navy text-base leading-snug">
-                  {t("I'm looking to buy", "Quiero comprar")}
-                </p>
-                <p className="text-sm md:text-base text-cc-charcoal/60 mt-1">
-                  {t("Get your free buying game plan", "Obtén tu plan gratuito de compra")}
-                </p>
-              </div>
+              <p className="font-semibold text-cc-navy text-base">
+                {t("I'm Looking to Buy", "Quiero Comprar")}
+              </p>
             </button>
 
-            {/* Card B — Seller */}
             <button
-              onClick={() => {
-                updateSessionContext({ intent: 'sell' });
-                navigate('/sell');
-              }}
-              className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
+              onClick={() => { updateSessionContext({ intent: 'sell' }); navigate('/sell'); }}
+              className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-center transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
             >
               <DollarSign className="w-7 h-7 text-cc-gold" />
-              <div>
-                <p className="font-semibold text-cc-navy text-base leading-snug">
-                  {t("I'm looking to sell", "Quiero vender")}
-                </p>
-                <p className="text-sm md:text-base text-cc-charcoal/60 mt-1">
-                  {t("Find out your home's real value", "Descubre el valor real de tu casa")}
-                </p>
-              </div>
+              <p className="font-semibold text-cc-navy text-base">
+                {t("I'm Thinking About Selling", "Estoy Pensando en Vender")}
+              </p>
             </button>
 
-            {/* Card C — Cash Offer */}
             <button
-              onClick={() => {
-                updateSessionContext({ intent: 'cash' });
-                navigate('/cash-offer-options');
-              }}
-              className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-left transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
+              onClick={() => { updateSessionContext({ intent: 'cash' }); navigate('/cash-offer-options'); }}
+              className="flex flex-col items-center gap-3 rounded-2xl border border-cc-navy/10 bg-white px-6 py-8 shadow-sm text-center transition-all duration-200 hover:border-cc-gold hover:shadow-[0_0_0_3px_rgba(225,181,74,0.15)] focus:outline-none focus:ring-2 focus:ring-cc-gold"
             >
               <Banknote className="w-7 h-7 text-cc-gold" />
-              <div>
-                <p className="font-semibold text-cc-navy text-base leading-snug">
-                  {t("I want a cash offer", "Quiero una oferta en efectivo")}
-                </p>
-                <p className="text-sm md:text-base text-cc-charcoal/60 mt-1">
-                  {t("Close in days, skip the showings", "Cierra en días, sin visitas")}
-                </p>
-              </div>
+              <p className="font-semibold text-cc-navy text-base">
+                {t("I Want to Compare Cash Options", "Quiero Comparar Opciones en Efectivo")}
+              </p>
             </button>
           </div>
         </div>
       </section>
 
-      {/* VIP Next Best Action — only for returning/engaged users */}
-      {progress.isReturningUser && (
-        <section className="py-6 bg-cc-sand">
-          <div className="container mx-auto px-4 max-w-3xl">
-            <Suspense fallback={null}>
-              <LazyVIPNextBestAction
-                contextLine="Based on your progress"
-                contextLineEs="Basado en tu progreso"
-              />
-            </Suspense>
-          </div>
-        </section>
-      )}
+      {/* 4. Meet Selena */}
+      <SelenaShowcase />
 
-      {/* Friction Escalation — surfaces for high-friction users */}
-      <Suspense fallback={null}>
-        <div className="container mx-auto px-4 max-w-3xl py-4">
-          <LazyFrictionEscalation />
-        </div>
-      </Suspense>
-
-      {/* Selena Prompt Banner — with live presence indicator */}
-      <div className="bg-cc-navy py-3 px-4">
-        <div className="container mx-auto max-w-3xl flex items-center justify-between gap-4 flex-wrap">
-          <p className="text-white/80 text-sm md:text-base flex items-center gap-2">
-            <span className="relative inline-flex h-2 w-2 shrink-0" aria-hidden="true">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-            </span>
-            {t(
-              "Selena is online now — ask anything.",
-              "Selena está en línea ahora — pregunta lo que sea."
-            )}
-          </p>
-          <button
-            onClick={() => openChat({ source: 'homepage_banner' })}
-            className="text-cc-gold text-sm font-semibold whitespace-nowrap hover:underline flex items-center gap-1"
-          >
-            <MessageCircle className="w-4 h-4" />
-            {t("Ask Selena →", "Pregúntale a Selena →")}
-          </button>
-        </div>
-      </div>
-
-      {/* About Kasandra — Compact Teaser */}
-      <section className="py-16 lg:py-20 bg-cc-sand">
+      {/* 5. About Kasandra */}
+      <section className="py-16 lg:py-20 bg-cc-ivory">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="flex flex-col sm:flex-row items-center gap-8">
             <KasandraPortrait
@@ -233,185 +161,82 @@ const V2HomeContent = () => {
         </div>
       </section>
 
-      {/* Trust Bar */}
-      <TrustBar />
-
-      {/* Services Section - Header Band */}
-      <section className="py-16 lg:py-20 bg-cc-blue-bg">
-        <div className="container mx-auto px-4">
-          {/* Section Header with Blue Band */}
-          <div className="bg-cc-blue rounded-xl p-8 mb-12 text-center">
-            <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
-              {t("How I Help", "Cómo Puedo Ayudarle")}
-            </span>
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-white mt-2">
-              {t("Real Estate Services", "Servicios de Bienes Raíces")}
-            </h2>
-          </div>
-
-          {/* Cards Container */}
-          <div className="bg-cc-sand rounded-2xl p-6 md:p-10 shadow-soft">
-            <div className="grid md:grid-cols-3 gap-6">
-              {/* Buyers */}
-              <div className="bg-white p-8 rounded-xl shadow-soft hover:shadow-elevated transition-all group">
-                <div className="w-14 h-14 bg-cc-blue/10 group-hover:bg-cc-gold rounded-full flex items-center justify-center mb-6 transition-colors">
-                  <Home className="w-7 h-7 text-cc-blue group-hover:text-cc-navy transition-colors" />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-cc-blue mb-4">
-                  {t("For Buyers", "Para Compradores")}
-                </h3>
-                <ul className="space-y-2 text-sm md:text-base text-cc-text-muted mb-6">
-                  <li>• {t("Financing clarity and guidance", "Claridad y orientación sobre financiamiento")}</li>
-                  <li>• {t("Down payment assistance partners", "Socios de asistencia para pago inicial")}</li>
-                  <li>• {t("Step-by-step buying process", "Proceso de compra paso a paso")}</li>
-                  <li>• {t("Bilingual support throughout", "Apoyo bilingüe durante todo el proceso")}</li>
-                </ul>
-                <Link to="/buy" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                  {t("See how I help buyers", "Descubre cómo ayudo a compradores")} <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-
-              {/* Sellers */}
-              <div className="bg-white p-8 rounded-xl shadow-soft hover:shadow-elevated transition-all group">
-                <div className="w-14 h-14 bg-cc-blue/10 group-hover:bg-cc-gold rounded-full flex items-center justify-center mb-6 transition-colors">
-                  <Shield className="w-7 h-7 text-cc-blue group-hover:text-cc-navy transition-colors" />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-cc-blue mb-4">
-                  {t("For Sellers", "Para Vendedores")}
-                </h3>
-                <ul className="space-y-2 text-sm md:text-base text-cc-text-muted mb-6">
-                  <li>• {t("Market-based pricing strategy", "Estrategia de precios basada en el mercado")}</li>
-                  <li>• {t("Offer reliability assessment", "Evaluación de confiabilidad de ofertas")}</li>
-                  <li>• {t("Full disclosure guidance", "Orientación sobre divulgaciones")}</li>
-                  <li>• {t("Protection-first approach", "Enfoque en protección")}</li>
-                </ul>
-                <Link to="/sell" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                  {t("See how I protect sellers", "Descubre cómo protejo a vendedores")} <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-
-              {/* Cash Offer Options */}
-              <div className="bg-white p-8 rounded-xl shadow-soft hover:shadow-elevated transition-all group">
-                <div className="w-14 h-14 bg-cc-blue/10 group-hover:bg-cc-gold rounded-full flex items-center justify-center mb-6 transition-colors">
-                  <Clock className="w-7 h-7 text-cc-blue group-hover:text-cc-navy transition-colors" />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-cc-blue mb-4">
-                  {t("Cash Offer Options", "Opciones de Oferta en Efectivo")}
-                </h3>
-                <ul className="space-y-2 text-sm md:text-base text-cc-text-muted mb-6">
-                  <li>• {t("Compare cash vs traditional listing", "Compare efectivo vs venta tradicional")}</li>
-                  <li>• {t("Understand all your options", "Comprenda todas sus opciones")}</li>
-                  <li>• {t("Risk awareness guidance", "Orientación sobre riesgos")}</li>
-                  <li>• {t("No pressure, just clarity", "Sin presión, solo claridad")}</li>
-                </ul>
-                <Link to="/cash-offer-options" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                  {t("Understand your options", "Entiende tus opciones")} <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Meet Selena — Brand Asset */}
-      <SelenaShowcase />
-
-      {/* Instant Answer Widget — after orientation */}
-      <section className="py-16 lg:py-20 bg-cc-ivory">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
-              {t("Run the Numbers", "Haz los Números")}
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mt-2">
-              {t("Check Your Buying Power", "Descubre Tu Poder de Compra")}
-            </h2>
-          </div>
-          <Suspense fallback={<div className="h-64 bg-cc-sand/50 rounded-2xl animate-pulse" />}>
-            <LazyInstantAnswerWidget />
-          </Suspense>
-        </div>
-      </section>
-
-
-      {/* Neighborhood Cards */}
+      {/* 6. Client proof / reviews */}
       <Suspense fallback={<div className="h-64 bg-cc-sand/50 animate-pulse" />}>
-        <LazyHomepageNeighborhoodCards />
-      </Suspense>
-
-      {/* Social Proof — Live Google Reviews only (consolidated per audit:
-          TestimonialColumns previously rendered here was redundant with the
-          live multi-platform reviews carousel below. TestimonialColumns is
-          still available for other pages.) */}
-      <Suspense fallback={<div className="h-64 bg-cc-ivory animate-pulse" />}>
         <LazyGoogleReviews />
       </Suspense>
 
-      {/* Corner Connect Advantage — Strategic Positioning */}
-      <section className="bg-cc-navy py-16">
+      {/* 7. Cash Options / Corner Connect Advantage */}
+      <section className="bg-cc-navy py-16 lg:py-20">
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="text-center mb-10">
             <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
               {t("The Corner Connect Advantage", "La Ventaja de Corner Connect")}
             </span>
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mt-2 mb-4">
-              {t("Access Properties Others Can't Show You", "Accede a Propiedades que Otros No Pueden Mostrarte")}
+              {t("More Than the MLS", "Más Allá del MLS")}
             </h2>
             <p className="text-white/70 max-w-2xl mx-auto">
               {t(
-                "Most agents only show you what's on the MLS. Through Corner Connect, Kasandra has access to off-market inventory, cash-offer solutions, and investment opportunities that never hit public listings.",
-                "La mayoría de los agentes solo te muestran lo que está en el MLS. A través de Corner Connect, Kasandra tiene acceso a inventario fuera del mercado, soluciones de oferta en efectivo y oportunidades de inversión que nunca llegan a listados públicos."
+                "Through Corner Connect, Kasandra can compare a traditional listing, a cash-offer path, and off-market options — so you can decide what fits your timing.",
+                "A través de Corner Connect, Kasandra puede comparar una venta tradicional, una oferta en efectivo y opciones fuera del mercado — para que decidas lo que mejor se ajusta a tu tiempo."
               )}
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
               <div className="w-12 h-12 rounded-full bg-cc-gold/20 flex items-center justify-center mb-4">
                 <Eye className="w-6 h-6 text-cc-gold" />
               </div>
               <h3 className="text-white font-semibold text-lg mb-2">
-                {t("Off-Market Properties", "Propiedades Fuera del Mercado")}
+                {t("Off-Market Access", "Acceso Fuera del Mercado")}
               </h3>
-              <p className="text-white/60 text-sm md:text-base leading-relaxed">
+              <p className="text-white/60 text-sm leading-relaxed">
                 {t(
-                  "Properties that sell before they're ever listed. Corner Connect's network gives you first access to inventory most buyers never see.",
-                  "Propiedades que se venden antes de ser listadas. La red de Corner Connect te da primer acceso a inventario que la mayoría de compradores nunca ve."
+                  "Some properties sell before they're ever listed. Corner Connect's network surfaces inventory most buyers never see.",
+                  "Algunas propiedades se venden antes de ser listadas. La red de Corner Connect muestra inventario que la mayoría de compradores nunca ve."
                 )}
               </p>
             </div>
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
               <div className="w-12 h-12 rounded-full bg-cc-gold/20 flex items-center justify-center mb-4">
                 <Banknote className="w-6 h-6 text-cc-gold" />
               </div>
               <h3 className="text-white font-semibold text-lg mb-2">
-                {t("Cash Offer Solutions", "Soluciones de Oferta en Efectivo")}
+                {t("Cash-Offer Options", "Opciones en Efectivo")}
               </h3>
-              <p className="text-white/60 text-sm md:text-base leading-relaxed">
+              <p className="text-white/60 text-sm leading-relaxed">
                 {t(
-                  "Need to sell fast? No stress, no fees, we cover closing costs, no inspections required. A real solution for sellers who need speed and certainty.",
-                  "¿Necesitas vender rápido? Sin estrés, sin comisiones, cubrimos costos de cierre, sin inspecciones requeridas. Una solución real para vendedores que necesitan rapidez y certeza."
+                  "Cash-offer programs can simplify certain situations, but every option has tradeoffs. Kasandra helps you compare paths side-by-side.",
+                  "Los programas de oferta en efectivo pueden simplificar ciertas situaciones, pero cada opción tiene compensaciones. Kasandra te ayuda a comparar caminos lado a lado."
                 )}
               </p>
             </div>
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
               <div className="w-12 h-12 rounded-full bg-cc-gold/20 flex items-center justify-center mb-4">
                 <ShieldCheck className="w-6 h-6 text-cc-gold" />
               </div>
               <h3 className="text-white font-semibold text-lg mb-2">
-                {t("Distressed Property Solutions", "Soluciones para Propiedades en Dificultad")}
+                {t("Difficult Situations", "Situaciones Difíciles")}
               </h3>
-              <p className="text-white/60 text-sm md:text-base leading-relaxed">
+              <p className="text-white/60 text-sm leading-relaxed">
                 {t(
-                  "Behind on payments? Facing a difficult situation with your property? Kasandra specializes in finding solutions that protect your equity and your future — with discretion and care.",
-                  "¿Atrasado en pagos? ¿Enfrentando una situación difícil con tu propiedad? Kasandra se especializa en encontrar soluciones que protejan tu patrimonio y tu futuro — con discreción y cuidado."
+                  "Facing a tough decision about your property? Kasandra works through options that protect your equity — with discretion and care.",
+                  "¿Enfrentas una decisión difícil sobre tu propiedad? Kasandra evalúa opciones que protegen tu patrimonio — con discreción y cuidado."
                 )}
               </p>
             </div>
           </div>
-          <div className="text-center mt-10">
+          <p className="mt-8 text-center text-xs text-white/50 max-w-2xl mx-auto">
+            {t(
+              "Cash-offer terms, fees, inspection requirements, and closing costs vary by buyer/program and should be reviewed before making a decision.",
+              "Los términos, comisiones, requisitos de inspección y costos de cierre de las ofertas en efectivo varían según el comprador/programa y deben revisarse antes de tomar una decisión."
+            )}
+          </p>
+          <div className="text-center mt-8">
             <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-3">
-              <Link to="/off-market?source=homepage_corner_connect">
-                {t("See what's available off-market", "Descubre lo que hay fuera del mercado")}
+              <Link to="/cash-offer-options">
+                {t("Compare your options", "Compara tus opciones")}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
@@ -419,116 +244,66 @@ const V2HomeContent = () => {
         </div>
       </section>
 
-
-      {/* Podcast Section */}
-      <section className="py-16 lg:py-20 bg-cc-blue-bg">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
-                {t("Podcast & Radio", "Podcast y Radio")}
-              </span>
-              <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-blue mt-2 mb-6">
-                {t("Lifting You Up with Kasandra Prieto", "Lifting You Up con Kasandra Prieto")}
-              </h2>
-              <p className="text-cc-text-muted mb-6">
-                {t(
-                  "Join me every Saturday at 9:30 AM on Urbana 92.5 FM, or catch episodes on YouTube. We discuss community leaders, generational wealth, Hispanic leadership stories, and more.",
-                  "Acompáñeme cada sábado a las 9:30 AM en Urbana 92.5 FM, o vea los episodios en YouTube. Discutimos sobre líderes comunitarios, riqueza generacional, historias de liderazgo hispano, y más."
-                )}
-              </p>
-              <div className="flex items-center gap-4 mb-6">
-                <Mic className="w-8 h-8 text-cc-gold" />
-                <div>
-                  <p className="font-semibold text-cc-blue">Urbana 92.5 FM</p>
-                  <p className="text-sm text-cc-text-muted">{t("Saturdays 9:30 AM", "Sábados 9:30 AM")}</p>
-                </div>
-              </div>
-              <Link to="/podcast" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                {t("Explore Podcast", "Explorar Podcast")} <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <div className="bg-white rounded-2xl p-4 shadow-elevated">
-              <div className="aspect-video rounded-lg overflow-hidden relative">
-                {ytLoaded ? (
-                  <iframe
-                    src="https://www.youtube.com/embed/xmJ62GGtKgo?autoplay=1"
-                    title="Lifting You Up with Kasandra Prieto"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
-                  />
-                ) : (
-                  <button
-                    onClick={() => setYtLoaded(true)}
-                    className="w-full h-full bg-cc-navy flex items-center justify-center group cursor-pointer"
-                    aria-label="Play video"
-                  >
-                    <img
-                      src="https://img.youtube.com/vi/xmJ62GGtKgo/hqdefault.jpg"
-                      alt="Lifting You Up podcast episode thumbnail"
-                      width={480}
-                      height={360}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <div className="relative z-10 w-16 h-16 rounded-full bg-cc-gold/90 flex items-center justify-center shadow-lg group-hover:bg-cc-gold transition-colors">
-                      <svg viewBox="0 0 24 24" className="w-7 h-7 text-cc-navy ml-1" fill="currentColor"><polygon points="5,3 19,12 5,21" /></svg>
-                    </div>
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Community Section */}
+      {/* 8. Tucson buyer/seller resources teaser */}
       <section className="py-16 lg:py-20 bg-cc-sand">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="order-2 md:order-1 bg-white rounded-2xl p-8 shadow-soft">
-              <div className="grid grid-cols-2 gap-6">
-                <div className="text-center">
-                  <Heart className="w-10 h-10 text-cc-gold mx-auto mb-3" />
-                  <p className="text-sm md:text-base text-cc-text-muted">{t("Former Vice Chair, Arizona Diaper Bank", "Ex-Vicepresidenta, Arizona Diaper Bank")}</p>
-                </div>
-                <div className="text-center">
-                  <Users className="w-10 h-10 text-cc-gold mx-auto mb-3" />
-                  <p className="text-sm md:text-base text-cc-text-muted">{t("Vice President, Rumbo al Éxito", "Vicepresidenta, Rumbo al Éxito")}</p>
-                </div>
-                <div className="text-center">
-                  <Star className="w-10 h-10 text-cc-gold mx-auto mb-3" />
-                  <p className="text-sm md:text-base text-cc-text-muted">{t("Leadership Tucson", "Liderazgo Tucson")}</p>
-                </div>
-                <div className="text-center">
-                  <HeartHandshake className="w-10 h-10 text-cc-gold mx-auto mb-3" />
-                  <p className="text-sm md:text-base text-cc-text-muted">{t("Community Advocate", "Defensora Comunitaria")}</p>
-                </div>
-              </div>
-            </div>
-            <div className="order-1 md:order-2">
-              <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
-                {t("Community Leadership", "Liderazgo Comunitario")}
-              </span>
-              <h2 className="font-serif text-4xl md:text-5xl font-bold text-cc-blue mt-2 mb-6">
-                {t("Giving Back to Tucson", "Retribuyendo a Tucson")}
-              </h2>
-              <p className="text-cc-text-muted mb-6">
-                {t(
-                  "This work has never been just about houses for me. It's about the families inside them and the neighborhoods that hold them together.",
-                  "Este trabajo nunca ha sido solo sobre casas para mí. Se trata de las familias que viven en ellas y los vecindarios que las mantienen unidas."
-                )}
-              </p>
-              <Link to="/community" className="inline-flex items-center text-cc-gold font-semibold hover:gap-3 gap-2 transition-all">
-                {t("See how I give back", "Conoce cómo retribuyo")} <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-8">
+            <span className="text-cc-gold font-semibold text-[13px] tracking-wider uppercase">
+              {t("Resources", "Recursos")}
+            </span>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mt-2">
+              {t("Tucson Buyer & Seller Resources", "Recursos para Compradores y Vendedores en Tucson")}
+            </h2>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-4">
+            <Link to="/guides" className="group rounded-2xl bg-white border border-cc-navy/10 p-6 hover:border-cc-gold transition-all">
+              <BookOpen className="w-6 h-6 text-cc-gold mb-3" />
+              <h3 className="font-semibold text-cc-navy mb-1">{t("Guides", "Guías")}</h3>
+              <p className="text-sm text-cc-charcoal/70">{t("Plain-English walkthroughs", "Explicaciones claras")}</p>
+            </Link>
+            <Link to="/neighborhoods" className="group rounded-2xl bg-white border border-cc-navy/10 p-6 hover:border-cc-gold transition-all">
+              <MapPin className="w-6 h-6 text-cc-gold mb-3" />
+              <h3 className="font-semibold text-cc-navy mb-1">{t("Neighborhoods", "Vecindarios")}</h3>
+              <p className="text-sm text-cc-charcoal/70">{t("Explore Tucson areas", "Explora áreas de Tucson")}</p>
+            </Link>
+            <Link to="/market" className="group rounded-2xl bg-white border border-cc-navy/10 p-6 hover:border-cc-gold transition-all">
+              <Home className="w-6 h-6 text-cc-gold mb-3" />
+              <h3 className="font-semibold text-cc-navy mb-1">{t("Market Intel", "Mercado")}</h3>
+              <p className="text-sm text-cc-charcoal/70">{t("Local market signals", "Señales del mercado local")}</p>
+            </Link>
           </div>
         </div>
       </section>
 
+      {/* 9. Final CTA */}
+      <section className="py-16 lg:py-20 bg-cc-ivory">
+        <div className="container mx-auto px-4 max-w-2xl text-center">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-cc-navy mb-4">
+            {t("Ready when you are.", "Lista cuando tú lo estés.")}
+          </h2>
+          <p className="text-cc-charcoal/70 mb-8">
+            {t(
+              "Book a no-pressure consultation with Kasandra, or start a conversation with Selena anytime — in English or Spanish.",
+              "Agenda una consulta sin presión con Kasandra, o empieza una conversación con Selena en cualquier momento — en inglés o español."
+            )}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-8 py-6">
+              <Link to="/book">
+                <Calendar className="w-4 h-4 mr-2" />
+                {t("Book a Consultation", "Agendar una Cita")}
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => openChat({ source: 'home_final_cta' })}
+              className="border-2 border-cc-navy/20 text-cc-navy hover:bg-cc-navy hover:text-white rounded-full px-8 py-6 font-semibold"
+            >
+              {t("Start With Selena", "Empieza con Selena")}
+            </Button>
+          </div>
+        </div>
+      </section>
     </>
   );
 };
