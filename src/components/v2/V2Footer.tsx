@@ -77,7 +77,7 @@ const V2Footer = () => {
               <li>{t("Cash offer program", "Programa de oferta en efectivo")}</li>
               <li>{t("Distressed property solutions", "Soluciones para propiedades en dificultad")}</li>
               <li>{t("Bilingual service", "Servicio bilingüe")}</li>
-              <li>{t("126+ five-star reviews", "126+ reseñas de cinco estrellas")}</li>
+              <li>{t("Highly reviewed across public platforms", "Altamente calificada en plataformas públicas")}</li>
             </ul>
           </div>
 
@@ -155,10 +155,16 @@ const V2Footer = () => {
 
         {/* Disclaimer */}
         <div className="border-t border-white/20 pt-6 text-center">
-          <p className="text-[13px] text-white/80 max-w-3xl mx-auto mb-4">
+          <p className="text-[13px] text-white/80 max-w-3xl mx-auto mb-3">
             {t(
               "All information is deemed reliable but not guaranteed and should be independently verified. Kasandra Prieto is a licensed REALTOR® with Realty Executives Arizona Territory.",
               "Toda la información se considera confiable pero no está garantizada y debe ser verificada de forma independiente. Kasandra Prieto es una REALTOR® licenciada con Realty Executives Arizona Territory."
+            )}
+          </p>
+          <p className="text-[12px] text-white/60 max-w-3xl mx-auto mb-4">
+            {t(
+              "Cash-offer terms, fees, inspection requirements, and closing costs vary by buyer/program and should be reviewed before making a decision.",
+              "Los términos, comisiones, requisitos de inspección y costos de cierre de las ofertas en efectivo varían según el comprador/programa y deben revisarse antes de tomar una decisión."
             )}
           </p>
 

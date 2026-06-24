@@ -79,40 +79,46 @@ const StatItem = ({ value, label, icon, insight }: StatItemProps) => {
 };
 
 export interface GlassmorphismHeroProps {
-  /** Badge text override */
   badge?: string;
-  /** Whether to show Market Pulse stats card (default true). When false, shows social proof. */
+  /** Hide the top pill badge entirely (calmer hero). */
+  hideBadge?: boolean;
   showMarketPulse?: boolean;
-  /** Headline override (disables returning-visitor logic) */
+  /** Hide the right-side stats/social-proof card so the headline owns the space. */
+  hideRightCard?: boolean;
+  /** Hide the soft Selena under-button link (use when secondary CTA already opens Selena). */
+  hideSoftSelena?: boolean;
+  /** Small helper line under the CTAs. */
+  helperLine?: string;
   headline?: string;
-  /** Subtext override (disables returning-visitor logic) */
   subtext?: string;
-  /** Primary CTA label override */
   primaryLabel?: string;
-  /** Secondary CTA label override */
+  /** Override primary CTA destination. */
+  primaryLink?: string;
   secondaryLabel?: string;
-  /** Secondary CTA link override */
   secondaryLink?: string;
-  /** Secondary CTA icon override */
   secondaryIcon?: React.ReactNode;
-  /** Intent for analytics & openChat */
+  /** If provided, secondary CTA becomes a button with this onClick instead of a link. */
+  secondaryOnClick?: () => void;
   intent?: string;
-  /** Entry source for openChat */
   entrySource?: EntrySource;
-  /** Page path for analytics */
   pagePath?: string;
-  /** Background image override */
   backgroundImage?: string;
 }
 
 export default function GlassmorphismHero({
   badge,
+  hideBadge = false,
+  hideRightCard = false,
+  hideSoftSelena = false,
+  helperLine,
   headline: headlineOverride,
   subtext: subtextOverride,
   primaryLabel: primaryLabelOverride,
+  primaryLink: primaryLinkOverride,
   secondaryLabel: secondaryLabelOverride,
   secondaryLink: secondaryLinkOverride,
   secondaryIcon,
+  secondaryOnClick,
   intent: intentOverride,
   entrySource,
   pagePath = "/",
@@ -236,7 +242,8 @@ export default function GlassmorphismHero({
   const secondaryLink = secondaryLinkOverride
     || (isQuizPath ? "/seller-decision" : "/guides");
 
-  const primaryLink = `/book?intent=${resolvedIntent}&source=${entrySource || 'hero'}`;
+  const primaryLink = primaryLinkOverride
+    || `/book?intent=${resolvedIntent}&source=${entrySource || 'hero'}`;
 
   const badgeText = badge || t("AI Concierge · Bilingual", "Concierge IA · Bilingüe");
 
@@ -278,12 +285,14 @@ export default function GlassmorphismHero({
           {/* Left column — copy */}
           <div className="max-w-xl">
             {/* Badge */}
-            <div className="hero-fade-in hero-delay-100 mb-6">
-              <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-cc-gold/30 bg-cc-gold/10 text-cc-gold text-[11px] sm:text-[13px] font-semibold uppercase tracking-wide sm:tracking-wider text-center leading-tight max-w-[calc(100vw-3rem)]">
-                <TrendingUp className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{badgeText}</span>
-              </span>
-            </div>
+            {!hideBadge && (
+              <div className="hero-fade-in hero-delay-100 mb-6">
+                <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-cc-gold/30 bg-cc-gold/10 text-cc-gold text-[11px] sm:text-[13px] font-semibold uppercase tracking-wide sm:tracking-wider text-center leading-tight max-w-[calc(100vw-3rem)]">
+                  <TrendingUp className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">{badgeText}</span>
+                </span>
+              </div>
+            )}
 
             {/* Tagline */}
             <p className="hero-fade-in hero-delay-200 text-[13px] font-semibold uppercase tracking-widest text-cc-gold mb-3">
@@ -317,15 +326,27 @@ export default function GlassmorphismHero({
               </Link>
 
               <div className="flex flex-col items-start gap-1">
-                <Link
-                  to={secondaryLink}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
-                >
-                  {secondaryIcon || <BookOpen className="w-5 h-5" />}
-                  {secondaryLabel}
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                {secondaryHint && (
+                {secondaryOnClick ? (
+                  <button
+                    type="button"
+                    onClick={secondaryOnClick}
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
+                  >
+                    {secondaryIcon || <BookOpen className="w-5 h-5" />}
+                    {secondaryLabel}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <Link
+                    to={secondaryLink}
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
+                  >
+                    {secondaryIcon || <BookOpen className="w-5 h-5" />}
+                    {secondaryLabel}
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                )}
+                {secondaryHint && !secondaryOnClick && (
                   <span className="px-3 text-[11px] uppercase tracking-wider text-cc-ivory/50 font-medium">
                     {secondaryHint}
                   </span>
@@ -333,26 +354,35 @@ export default function GlassmorphismHero({
               </div>
             </div>
 
-            {/* V2: Elevated Selena soft-entry — Priority 5 */}
-            <div className="hero-fade-in hero-delay-500 mt-4">
-              <button
-                onClick={handleTalkToSelena}
-                className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-all group"
-                aria-label="Open Selena AI chat"
-              >
-                <span className="w-5 h-5 rounded-full bg-cc-gold/20 group-hover:bg-cc-gold/30 flex items-center justify-center flex-shrink-0 transition-colors">
-                  <svg viewBox="0 0 24 24" className="w-3 h-3 fill-cc-gold" aria-hidden="true">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-                  </svg>
-                </span>
-                <span className="underline underline-offset-2">
-                  {t("Not ready to book? Start with Selena — no pressure.", "¿Aún no estás listo para reservar? Empieza con Selena — sin presión.")}
-                </span>
-              </button>
-            </div>
+            {helperLine && (
+              <p className="hero-fade-in hero-delay-500 mt-4 text-sm text-cc-ivory/60 max-w-lg">
+                {helperLine}
+              </p>
+            )}
+
+            {/* V2: Elevated Selena soft-entry */}
+            {!hideSoftSelena && (
+              <div className="hero-fade-in hero-delay-500 mt-4">
+                <button
+                  onClick={handleTalkToSelena}
+                  className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-all group"
+                  aria-label="Open Selena AI chat"
+                >
+                  <span className="w-5 h-5 rounded-full bg-cc-gold/20 group-hover:bg-cc-gold/30 flex items-center justify-center flex-shrink-0 transition-colors">
+                    <svg viewBox="0 0 24 24" className="w-3 h-3 fill-cc-gold" aria-hidden="true">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                    </svg>
+                  </span>
+                  <span className="underline underline-offset-2">
+                    {t("Not ready to book? Start with Selena — no pressure.", "¿Aún no estás listo para reservar? Empieza con Selena — sin presión.")}
+                  </span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Right column — stats card or social proof */}
+          {!hideRightCard && (
           <div className="hero-fade-in hero-delay-500 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-sm">
               {/* Glow effect */}
@@ -425,15 +455,16 @@ export default function GlassmorphismHero({
                     ★★★★★
                   </div>
                   <p className="font-serif text-xl font-bold text-cc-ivory">
-                    {t("Trusted by 126+ Tucson families", "Confiada por más de 126 familias")}
+                    {t("Highly reviewed by Tucson clients", "Altamente calificada por clientes de Tucson")}
                   </p>
                   <p className="text-sm text-cc-ivory/60">
-                    {t("5-star rated · Bilingual service", "5 estrellas · Servicio bilingüe")}
+                    {t("Bilingual service · Corner Connect", "Servicio bilingüe · Corner Connect")}
                   </p>
                 </div>
               )}
             </div>
           </div>
+          )}
         </div>
       </div>
     </section>

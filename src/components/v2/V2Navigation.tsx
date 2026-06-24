@@ -1,20 +1,16 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, Phone } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useJourneyProgress } from "@/hooks/useJourneyProgress";
 import LanguageToggle from "./LanguageToggle";
 import { BROKERAGE_DISPLAY } from "@/lib/brand";
 
 const V2Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isExploreOpen, setIsExploreOpen] = useState(false);
-  const exploreRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
   const location = useLocation();
-  const progress = useJourneyProgress();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -22,51 +18,26 @@ const V2Navigation = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (exploreRef.current && !exploreRef.current.contains(e.target as Node)) {
-        setIsExploreOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const primaryLinks = [
     { href: "/", label: t("Home", "Inicio") },
     { href: "/buy", label: t("Buy", "Comprar") },
     { href: "/sell", label: t("Sell", "Vender") },
-    { href: "/cash-offer-options", label: t("Cash Options", "Opciones en Efectivo") },
-  ];
-
-  const exploreLinks = [
-    { href: "/neighborhoods", label: t("Neighborhoods", "Vecindarios") },
-    { href: "/guides", label: t("Guides", "Guías") },
-    { href: "/selena-ai", label: t("Meet Selena AI", "Conoce a Selena AI") },
-    { href: "/market", label: t("Market Intel", "Intel del Mercado") },
-    { href: "/tucson-living", label: t("Tucson Living", "Vida en Tucson") },
     { href: "/about", label: t("About", "Sobre Mí") },
-    { href: "/contact", label: t("Contact", "Contacto") },
   ];
-
-  const allLinks = [...primaryLinks, ...exploreLinks];
 
   const isActive = (href: string) => location.pathname === href;
-  const isExploreActive = exploreLinks.some((l) => isActive(l.href));
 
   const linkClass = (active: boolean) =>
     `relative text-sm font-medium transition-all duration-200 pb-1 ${
       active
         ? "text-cc-gold"
         : isScrolled
-          ? "text-cc-charcoal/70 hover:text-cc-charcoal hover:opacity-100"
-          : "text-white/70 hover:text-white hover:opacity-100"
+          ? "text-cc-charcoal/70 hover:text-cc-charcoal"
+          : "text-white/70 hover:text-white"
     }`;
 
   return (
     <>
-      {/* Mobile Menu Backdrop — outside nav so it covers the page */}
       {isMobileMenuOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/40 z-40"
@@ -75,7 +46,7 @@ const V2Navigation = () => {
         />
       )}
 
-      {/* Branding / Compliance Strip — REALTOR®, Fair Housing, Equal Housing */}
+      {/* Branding / Compliance Strip */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-cc-sand-dark/20 overflow-hidden">
         <div className="flex items-center justify-center py-2 px-4 h-9 md:h-10">
           <img
@@ -110,107 +81,28 @@ const V2Navigation = () => {
               <span className="hidden lg:block text-[13px] text-cc-gold font-medium tracking-wide">
                 {t("Your Best Friend in Real Estate", "Tu Mejor Amiga en Bienes Raíces")}
               </span>
-              <span className={`hidden lg:block text-[10px] tracking-wider uppercase mt-0.5 ${isScrolled ? "text-cc-gold/80" : "text-cc-gold/80"}`}>
-                {t("Off-Market Access · Cash Offers · Tucson", "Acceso Fuera del Mercado · Ofertas en Efectivo · Tucson")}
-              </span>
             </div>
 
             {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-6">
-              {primaryLinks.map((link) => {
-                const isCash = link.href === "/cash-offer-options";
-                if (isCash) {
-                  return (
-                    <Link
-                      key={link.href}
-                      to={link.href}
-                      className={`relative text-sm font-semibold transition-all duration-200 px-3 py-1 rounded-full border ${
-                        isActive(link.href)
-                          ? "bg-cc-gold/15 text-cc-gold border-cc-gold/60"
-                          : isScrolled
-                            ? "text-cc-gold-dark border-cc-gold/40 hover:bg-cc-gold/10 hover:border-cc-gold/70"
-                            : "text-cc-gold border-cc-gold/50 hover:bg-cc-gold/15 hover:border-cc-gold"
-                      }`}
-                      aria-current={isActive(link.href) ? "page" : undefined}
-                    >
-                      {link.label}
-                    </Link>
-                  );
-                }
-                return (
-                  <Link key={link.href} to={link.href} className={linkClass(isActive(link.href))} aria-current={isActive(link.href) ? "page" : undefined}>
-                    {link.label}
-                    {isActive(link.href) && (
-                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cc-gold rounded-full" />
-                    )}
-                  </Link>
-                );
-              })}
-
-              {/* Explore Dropdown */}
-              <div ref={exploreRef} className="relative">
-                <button
-                  onClick={() => setIsExploreOpen(!isExploreOpen)}
-                  className={`${linkClass(isExploreActive)} inline-flex items-center gap-1`}
+            <div className="hidden lg:flex items-center gap-8">
+              {primaryLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={linkClass(isActive(link.href))}
+                  aria-current={isActive(link.href) ? "page" : undefined}
                 >
-                  {t("Explore", "Explorar")}
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExploreOpen ? "rotate-180" : ""}`} />
-                </button>
-                {isExploreOpen && (
-                  <div className="absolute top-full mt-2 right-0 w-48 bg-white rounded-xl shadow-xl shadow-black/40 border border-cc-gold/20 py-2 z-50">
-                    {exploreLinks.map((link) => (
-                      <Link
-                        key={link.href}
-                        to={link.href}
-                        onClick={() => setIsExploreOpen(false)}
-                        className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
-                          isActive(link.href)
-                            ? "text-cc-gold bg-cc-sand/50"
-                            : "text-cc-charcoal hover:text-cc-gold hover:bg-cc-navy/[0.06]"
-                        }`}
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+                  {link.label}
+                  {isActive(link.href) && (
+                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-cc-gold rounded-full" />
+                  )}
+                </Link>
+              ))}
             </div>
 
             {/* Right Side */}
             <div className="hidden lg:flex items-center gap-4">
               <LanguageToggle variant={isScrolled ? "light" : "dark"} />
-              {progress.intent && progress.intent !== 'explore' && !(
-                (progress.intent === 'buy' && location.pathname === '/sell') ||
-                (progress.intent === 'sell' && location.pathname === '/buy') ||
-                (progress.intent === 'cash' && location.pathname === '/buy')
-              ) && (
-                <span className={`text-xs font-medium px-2.5 py-1 rounded-full transition-colors ${
-                  isScrolled
-                    ? 'bg-cc-gold/10 text-cc-gold-dark'
-                    : 'bg-white/10 text-white/80'
-                }`}>
-                  {progress.intent === 'buy'
-                    ? t('Buying', 'Comprando')
-                    : progress.intent === 'sell'
-                    ? t('Selling', 'Vendiendo')
-                    : progress.intent === 'cash'
-                    ? t('Cash Offer', 'Oferta en Efectivo')
-                    : progress.intent === 'dual'
-                    ? t('Buy & Sell', 'Comprar y Vender')
-                    : null}
-                </span>
-              )}
-              <a
-                href="tel:5203493248"
-                className={`hidden lg:flex items-center gap-1.5 text-sm transition-colors ${
-                  isScrolled ? 'text-cc-navy/70 hover:text-cc-navy' : 'text-white/70 hover:text-white'
-                }`}
-                aria-label="Call Kasandra"
-              >
-                <Phone className="w-3.5 h-3.5" />
-                <span className="text-xs">520.349.3248</span>
-              </a>
               <Button asChild className="bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full px-6 shadow-gold">
                 <Link to="/book">{t("Book a Consultation", "Agendar una Cita")}</Link>
               </Button>
@@ -234,7 +126,7 @@ const V2Navigation = () => {
               <div className="flex justify-center mb-4">
                 <LanguageToggle variant={isScrolled ? "light" : "dark"} />
               </div>
-              {allLinks.map((link) => (
+              {primaryLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
@@ -248,7 +140,7 @@ const V2Navigation = () => {
                   {link.label}
                 </Link>
               ))}
-              <Button asChild className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold">
+              <Button asChild className="w-full bg-cc-gold hover:bg-cc-gold-dark text-cc-navy font-semibold rounded-full shadow-gold mt-4">
                 <Link to="/book" onClick={() => setIsMobileMenuOpen(false)}>
                   {t("Book a Consultation", "Agendar una Cita")}
                 </Link>
