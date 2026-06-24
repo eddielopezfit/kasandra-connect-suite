@@ -285,12 +285,14 @@ export default function GlassmorphismHero({
           {/* Left column — copy */}
           <div className="max-w-xl">
             {/* Badge */}
-            <div className="hero-fade-in hero-delay-100 mb-6">
-              <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-cc-gold/30 bg-cc-gold/10 text-cc-gold text-[11px] sm:text-[13px] font-semibold uppercase tracking-wide sm:tracking-wider text-center leading-tight max-w-[calc(100vw-3rem)]">
-                <TrendingUp className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{badgeText}</span>
-              </span>
-            </div>
+            {!hideBadge && (
+              <div className="hero-fade-in hero-delay-100 mb-6">
+                <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-cc-gold/30 bg-cc-gold/10 text-cc-gold text-[11px] sm:text-[13px] font-semibold uppercase tracking-wide sm:tracking-wider text-center leading-tight max-w-[calc(100vw-3rem)]">
+                  <TrendingUp className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">{badgeText}</span>
+                </span>
+              </div>
+            )}
 
             {/* Tagline */}
             <p className="hero-fade-in hero-delay-200 text-[13px] font-semibold uppercase tracking-widest text-cc-gold mb-3">
@@ -324,15 +326,27 @@ export default function GlassmorphismHero({
               </Link>
 
               <div className="flex flex-col items-start gap-1">
-                <Link
-                  to={secondaryLink}
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
-                >
-                  {secondaryIcon || <BookOpen className="w-5 h-5" />}
-                  {secondaryLabel}
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                {secondaryHint && (
+                {secondaryOnClick ? (
+                  <button
+                    type="button"
+                    onClick={secondaryOnClick}
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
+                  >
+                    {secondaryIcon || <BookOpen className="w-5 h-5" />}
+                    {secondaryLabel}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <Link
+                    to={secondaryLink}
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-cc-ivory/25 text-cc-ivory font-medium text-base hover:bg-cc-ivory/10 hover:border-cc-ivory/40 transition-all duration-200"
+                  >
+                    {secondaryIcon || <BookOpen className="w-5 h-5" />}
+                    {secondaryLabel}
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                )}
+                {secondaryHint && !secondaryOnClick && (
                   <span className="px-3 text-[11px] uppercase tracking-wider text-cc-ivory/50 font-medium">
                     {secondaryHint}
                   </span>
@@ -340,23 +354,31 @@ export default function GlassmorphismHero({
               </div>
             </div>
 
-            {/* V2: Elevated Selena soft-entry — Priority 5 */}
-            <div className="hero-fade-in hero-delay-500 mt-4">
-              <button
-                onClick={handleTalkToSelena}
-                className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-all group"
-                aria-label="Open Selena AI chat"
-              >
-                <span className="w-5 h-5 rounded-full bg-cc-gold/20 group-hover:bg-cc-gold/30 flex items-center justify-center flex-shrink-0 transition-colors">
-                  <svg viewBox="0 0 24 24" className="w-3 h-3 fill-cc-gold" aria-hidden="true">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-                  </svg>
-                </span>
-                <span className="underline underline-offset-2">
-                  {t("Not ready to book? Start with Selena — no pressure.", "¿Aún no estás listo para reservar? Empieza con Selena — sin presión.")}
-                </span>
-              </button>
-            </div>
+            {helperLine && (
+              <p className="hero-fade-in hero-delay-500 mt-4 text-sm text-cc-ivory/60 max-w-lg">
+                {helperLine}
+              </p>
+            )}
+
+            {/* V2: Elevated Selena soft-entry */}
+            {!hideSoftSelena && (
+              <div className="hero-fade-in hero-delay-500 mt-4">
+                <button
+                  onClick={handleTalkToSelena}
+                  className="inline-flex items-center gap-2 text-cc-gold hover:text-cc-gold/80 text-sm font-medium transition-all group"
+                  aria-label="Open Selena AI chat"
+                >
+                  <span className="w-5 h-5 rounded-full bg-cc-gold/20 group-hover:bg-cc-gold/30 flex items-center justify-center flex-shrink-0 transition-colors">
+                    <svg viewBox="0 0 24 24" className="w-3 h-3 fill-cc-gold" aria-hidden="true">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                    </svg>
+                  </span>
+                  <span className="underline underline-offset-2">
+                    {t("Not ready to book? Start with Selena — no pressure.", "¿Aún no estás listo para reservar? Empieza con Selena — sin presión.")}
+                  </span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Right column — stats card or social proof */}
