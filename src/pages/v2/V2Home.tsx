@@ -66,7 +66,7 @@ const V2HomeContent = () => {
           primaryLink="/book?intent=explore&source=home_hero"
           secondaryLabel={t("Start With Selena", "Empieza con Selena")}
           secondaryIcon={<BookOpen className="w-5 h-5" />}
-          secondaryOnClick={() => openChat({ source: 'home_hero' })}
+          secondaryOnClick={() => openChat({ source: 'hero' })}
           helperLine={t(
             "Ready to talk? Book a call. Not sure yet? Start with Selena — no pressure.",
             "¿Listo para hablar? Agenda una llamada. ¿No estás seguro? Empieza con Selena — sin presión."
@@ -296,7 +296,7 @@ const V2HomeContent = () => {
             </Button>
             <Button
               variant="outline"
-              onClick={() => openChat({ source: 'home_final_cta' })}
+              onClick={() => openChat({ source: 'cta_section' })}
               className="border-2 border-cc-navy/20 text-cc-navy hover:bg-cc-navy hover:text-white rounded-full px-8 py-6 font-semibold"
             >
               {t("Start With Selena", "Empieza con Selena")}
