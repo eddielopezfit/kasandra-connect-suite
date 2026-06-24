@@ -77,7 +77,7 @@ const V2Footer = () => {
               <li>{t("Cash offer program", "Programa de oferta en efectivo")}</li>
               <li>{t("Distressed property solutions", "Soluciones para propiedades en dificultad")}</li>
               <li>{t("Bilingual service", "Servicio bilingüe")}</li>
-              <li>{t("126+ five-star reviews", "126+ reseñas de cinco estrellas")}</li>
+              <li>{t("Highly reviewed across public platforms", "Altamente calificada en plataformas públicas")}</li>
             </ul>
           </div>
 
