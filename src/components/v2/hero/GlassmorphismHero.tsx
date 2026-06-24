@@ -242,7 +242,8 @@ export default function GlassmorphismHero({
   const secondaryLink = secondaryLinkOverride
     || (isQuizPath ? "/seller-decision" : "/guides");
 
-  const primaryLink = `/book?intent=${resolvedIntent}&source=${entrySource || 'hero'}`;
+  const primaryLink = primaryLinkOverride
+    || `/book?intent=${resolvedIntent}&source=${entrySource || 'hero'}`;
 
   const badgeText = badge || t("AI Concierge · Bilingual", "Concierge IA · Bilingüe");
 
