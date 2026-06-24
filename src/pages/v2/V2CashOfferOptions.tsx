@@ -138,6 +138,23 @@ const V2CashOfferOptionsContent = () => {
         </div>
       </section>
 
+      {/* Tradeoffs / No-Guarantee Disclaimer */}
+      <section className="py-10 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto rounded-2xl border border-cc-sand-dark/40 bg-cc-sand/40 p-6">
+            <h3 className="font-serif text-lg font-bold text-cc-navy mb-2">
+              {t("Every Option Has Tradeoffs", "Cada Opción Tiene Sus Compromisos")}
+            </h3>
+            <p className="text-cc-charcoal/90 text-sm leading-relaxed">
+              {t(
+                "Cash-offer programs can simplify certain situations, but every option has tradeoffs. Terms, fees, inspection requirements, repair expectations, and closing costs can vary by buyer or program. Kasandra can help you compare a traditional listing, a cash-offer path, and what makes the most sense for your timing — no guarantees of price, fees, or terms until a specific offer is reviewed.",
+                "Los programas de oferta en efectivo pueden simplificar ciertas situaciones, pero cada opción tiene compromisos. Los términos, comisiones, requisitos de inspección, expectativas de reparación y costos de cierre pueden variar según el comprador o programa. Kasandra puede ayudarle a comparar una venta tradicional, una ruta de oferta en efectivo, y lo que tenga más sentido para su tiempo — sin garantías de precio, comisiones o términos hasta revisar una oferta específica."
+              )}
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Single Terminal CTA — Book + secondary Cash Readiness */}
       <section className="py-16 lg:py-20 pb-16 bg-cc-navy">
         <div className="container mx-auto px-4 text-center">
