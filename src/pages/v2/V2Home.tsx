@@ -10,7 +10,7 @@ import KasandraPortrait from "@/components/v2/KasandraPortrait";
 const LazyHomepageNeighborhoodCards = lazy(() => import("@/components/v2/neighborhood/HomepageNeighborhoodCards"));
 const LazyInstantAnswerWidget = lazy(() => import("@/components/v2/calculator/InstantAnswerWidget"));
 const LazyGoogleReviews = lazy(() => import("@/components/v2/GoogleReviewsSection"));
-const LazyFeaturedListings = lazy(() => import("@/components/v2/listings/FeaturedListingsSection"));
+
 import {
   Home,
   Shield,
@@ -333,10 +333,6 @@ const V2HomeContent = () => {
         </div>
       </section>
 
-      {/* Featured Properties */}
-      <Suspense fallback={<div className="h-64 bg-cc-sand animate-pulse" />}>
-        <LazyFeaturedListings />
-      </Suspense>
 
       {/* Neighborhood Cards */}
       <Suspense fallback={<div className="h-64 bg-cc-sand/50 animate-pulse" />}>

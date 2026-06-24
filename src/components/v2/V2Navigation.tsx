@@ -38,7 +38,6 @@ const V2Navigation = () => {
     { href: "/buy", label: t("Buy", "Comprar") },
     { href: "/sell", label: t("Sell", "Vender") },
     { href: "/cash-offer-options", label: t("Cash Options", "Opciones en Efectivo") },
-    { href: "/listings", label: t("Listings", "Propiedades") },
   ];
 
   const exploreLinks = [
@@ -46,9 +45,6 @@ const V2Navigation = () => {
     { href: "/guides", label: t("Guides", "Guías") },
     { href: "/selena-ai", label: t("Meet Selena AI", "Conoce a Selena AI") },
     { href: "/market", label: t("Market Intel", "Intel del Mercado") },
-    { href: "/podcast", label: t("Podcast", "Podcast") },
-    { href: "/community", label: t("Community", "Comunidad") },
-    { href: "/network", label: t("Trusted Network", "Red de Confianza") },
     { href: "/tucson-living", label: t("Tucson Living", "Vida en Tucson") },
     { href: "/about", label: t("About", "Sobre Mí") },
     { href: "/contact", label: t("Contact", "Contacto") },

@@ -59,7 +59,7 @@ const V2NetToSeller = lazy(() => import("./pages/v2/V2NetToSeller"));
 const SellerLanding = lazy(() => import("./pages/ad/SellerLanding"));
 const SellerQuiz = lazy(() => import("./pages/ad/SellerQuiz"));
 const SellerResult = lazy(() => import("./pages/ad/SellerResult"));
-const V2Listings = lazy(() => import("./pages/v2/V2Listings"));
+
 const V2QASelenaContext = lazy(() => import("./pages/v2/V2QASelenaContext"));
 
 const queryClient = new QueryClient();
@@ -154,7 +154,7 @@ const App = () => {
                 <Route path="/terms" element={<V2Terms />} />
                 <Route path="/network" element={<V2TrustedNetwork />} />
                 <Route path="/tucson-living" element={<V2TucsonLiving />} />
-                <Route path="/listings" element={<V2Listings />} />
+                <Route path="/listings" element={<Navigate to="/buy" replace />} />
 
                 {/* Ad Funnel Routes (Isolated) */}
                 <Route path="/ad/seller" element={<SellerLanding />} />
