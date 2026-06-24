@@ -79,29 +79,29 @@ const StatItem = ({ value, label, icon, insight }: StatItemProps) => {
 };
 
 export interface GlassmorphismHeroProps {
-  /** Badge text override */
   badge?: string;
-  /** Whether to show Market Pulse stats card (default true). When false, shows social proof. */
+  /** Hide the top pill badge entirely (calmer hero). */
+  hideBadge?: boolean;
   showMarketPulse?: boolean;
-  /** Headline override (disables returning-visitor logic) */
+  /** Hide the right-side stats/social-proof card so the headline owns the space. */
+  hideRightCard?: boolean;
+  /** Hide the soft Selena under-button link (use when secondary CTA already opens Selena). */
+  hideSoftSelena?: boolean;
+  /** Small helper line under the CTAs. */
+  helperLine?: string;
   headline?: string;
-  /** Subtext override (disables returning-visitor logic) */
   subtext?: string;
-  /** Primary CTA label override */
   primaryLabel?: string;
-  /** Secondary CTA label override */
+  /** Override primary CTA destination. */
+  primaryLink?: string;
   secondaryLabel?: string;
-  /** Secondary CTA link override */
   secondaryLink?: string;
-  /** Secondary CTA icon override */
   secondaryIcon?: React.ReactNode;
-  /** Intent for analytics & openChat */
+  /** If provided, secondary CTA becomes a button with this onClick instead of a link. */
+  secondaryOnClick?: () => void;
   intent?: string;
-  /** Entry source for openChat */
   entrySource?: EntrySource;
-  /** Page path for analytics */
   pagePath?: string;
-  /** Background image override */
   backgroundImage?: string;
 }
 
