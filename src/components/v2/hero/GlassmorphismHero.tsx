@@ -382,6 +382,7 @@ export default function GlassmorphismHero({
           </div>
 
           {/* Right column — stats card or social proof */}
+          {!hideRightCard && (
           <div className="hero-fade-in hero-delay-500 flex justify-center lg:justify-end">
             <div className="relative w-full max-w-sm">
               {/* Glow effect */}
